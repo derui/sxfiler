@@ -1,0 +1,36 @@
+{
+  "name": "electron-filer",
+  "version": "1.0.0",
+  "description": "Two screen filer by Electron",
+  "main": "main.js",
+  "scripts": {
+    "start": "npm run watch",
+    "app": "electron --debug=5858 src/",
+    "esdoc": "esdoc -c esdoc.json",
+    "build:css": "stylus -c ./src/stylus/app.styl -o ./src/bundle.css -m --sourcemap-root ./stylus",
+    "build:js-main": "browserify -t babelify ./src/js/main/Main.js  --im --node --no-detect-globals -d |  exorcist ./src/main.js.map > ./src/main.js",
+    "build:js-renderer": "browserify -t babelify ./src/js/renderer/App.js -d |  exorcist ./src/bundle.js.map > ./src/bundle.js",
+    "build": "npm-run-all -p build:css build:js-main build:js-renderer",
+    "lint": "eslint -c ./.eslintrc src/main/** src/renderer/**",
+    "watch:lint": "watch 'npm run lint' src/main src/renderer",
+    "watch:css": "stylus -c -w ./src/stylus/app.styl -o ./src/bundle.css -m --sourcemap-root ./stylus",
+    "watch:js-main": "watchify -v -t babelify ./src/js/main/Main.js  --im --node --no-detect-globals -d |  exorcist ./src/main.js.map > ./src/main.js",
+    "watch:js-renderer": "watchify -v -t babelify ./src/js/renderer/App.js -d |  exorcist ./src/bundle.js.map > ./src/bundle.js",
+    "watch": "npm-run-all -p watch:css watch:js-main watch:js-renderer watch:lint",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "derui",
+  "license": "ISC",
+  "devDependencies": {
+    "babelify": "^6.4.0",
+    "browserify": "^11.2.0",
+    "esdoc": "^0.4.1",
+    "exorcist": "^0.4.0",
+    "mocha": "^2.3.3",
+    "npm-run-all": "^1.2.12",
+    "stylus": "^0.52.4",
+    "watch": "^0.16.0",
+    "watchify": "^3.4.0"
+  }
+}
