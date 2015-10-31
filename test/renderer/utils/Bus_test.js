@@ -1,24 +1,27 @@
-import assert from 'power-assert';
+import test from 'tape';
 import Bus from 'sxfiler/renderer/utils/Bus';
 
 /** @test {Bus} */
-describe("renderer/utils/Bus", () => {
-  it("should be able to get named bus", () => {
+test("renderer/utils/Bus", (t) => {
+  t.test("should be able to get named bus", (st) => {
     let bus = new Bus();
     let channel = bus.bus("name");
 
-    assert.notEqual(channel, null);
-    assert.equal(bus.bus("name"), channel);
+    st.notEqual(channel, null);
+    st.equal(bus.bus("name"), channel);
+    st.end();
   });
 
-  it("can push any value to named channel", (cb) => {
+  t.test("can push any value to named channel", (st) => {
     let bus = new Bus();
     let channel = bus.bus("channel");
-    channel.subscribe((v) => {
-      assert.equal(v, 100);
-      cb();
+    channel.subscribe(([v]) => {
+      st.equal(v, 100);
+      st.end();
     });
 
     bus.push('channel', 100);
   });
+
+  t.end();
 });

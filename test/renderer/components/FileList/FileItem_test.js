@@ -1,5 +1,5 @@
+import test from 'tape';
 import React from 'react';
-import assert from 'power-assert';
 import FileItem from 'sxfiler/renderer/components/FileList/FileItem';
 import TestUtils from 'react-addons-test-utils';
 
@@ -14,12 +14,13 @@ class Wrapper extends React.Component {
 }
 
 /** @test {FileItem} */
-describe('renderer/components/FileList/FileItem', () => {
-  it('should be instance FileItem', () => {
-    assert.ok(React.createElement(FileItem) !== null);
+test('renderer/components/FileList/FileItem', (t) => {
+  t.test('should be instance FileItem', (t) => {
+    t.ok(React.createElement(FileItem) !== null);
+    t.end();
   });
 
-  it('should show file informations', () => {
+  t.test('should show file informations', (t) => {
     let view = TestUtils.renderIntoDocument(c(Wrapper, {
       item: {
         filename: 'sample.txt',
@@ -32,20 +33,24 @@ describe('renderer/components/FileList/FileItem', () => {
     view = TestUtils.findRenderedComponentWithType(view, FileItem);
     let d = React.findDOMNode;
 
-    assert.equal(d(view.refs.filename).innerHTML, 'sample.txt');
-    assert.equal(d(view.refs.mode).innerHTML, '-rw-r--r--');
-    assert.ok(d(view.refs.mode).classList.contains('file-list__item__mode--normal'));
-    assert.equal(d(view.refs.size).innerHTML, '527');
+    t.equal(d(view.refs.filename).innerHTML, 'sample.txt');
+    t.equal(d(view.refs.mode).innerHTML, '-rw-r--r--');
+    t.ok(d(view).classList.contains('file-list__item--normal'));
+    t.equal(d(view.refs.size).innerHTML, '527');
+    t.end();
   });
 
-  it('should mark as current when setted current prop', () => {
+  t.test('should mark as current when setted current prop', (t) => {
     let view = TestUtils.renderIntoDocument(c(Wrapper, {
       current: true
     }));
     view = TestUtils.findRenderedComponentWithType(view, FileItem);
     let d = React.findDOMNode;
 
-    assert.ok(d(view).classList.contains('is-selected'));
+    t.ok(d(view).classList.contains('is-selected'));
+    t.end();
   });
+
+  t.end();
 });
 

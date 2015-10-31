@@ -12,7 +12,7 @@ function createState(props) {
   })))(items);
 
   return {
-    current: Math.min(Math.max(props.current, 0), items.length - 1),
+    current: Math.min(Math.max(props.paneInfo.position, 0), items.length - 1),
     items
   };
 }
@@ -47,5 +47,7 @@ export default class FileList extends React.Component {
 }
 
 FileList.defaultProps = {
-  current: 0
+  paneInfo: {
+    position: 0
+  }
 };

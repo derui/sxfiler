@@ -32,7 +32,7 @@ export default class RendererIPC {
    * @param {...any} args message to send channel
    */
   send(channel, ...args) {
-    this._ipc.send(channel, args);
+    this._ipc.send(channel, ...args);
   }
 
   /**
@@ -48,12 +48,13 @@ export default class RendererIPC {
 
   /**
    * @param {object} err error information for requesting file informations
+   * @param {string} path An absolute path what traversed
    * @param {array[object]} files fs.Stats objects in requested directory
    * @param {Pane} pane side of sending request
    */
-  _onFinishFilesInDirectory(err, files, pane) {
+  _onFinishFilesInDirectory(err, path, files, pane) {
     let bus = this._bus.bus(IPCKeys.FINISH_FILES_IN_DIRECTORY);
 
-    bus.onNext([err, files, pane]);
+    bus.onNext([err, path, files, pane]);
   }
 }

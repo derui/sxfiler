@@ -6,9 +6,9 @@ import keyMirror from 'keymirror';
  * @type {object}
  */
 export const ACTIONS = keyMirror({
-  UP_CURSOR:null,
-  DOWN_CURSOR: null,
-  CHANGE_PANE: null
+  MOVE_CURSOR:null,
+  CHANGE_PANE: null,
+  CHANGE_DIRECTORY: null
 });
 
 /**
@@ -32,7 +32,7 @@ export function dispose() {
  * @param {string} pane Specified pane to request directory
  */
 export function upCursor(pane) {
-  subject.onNext({key: ACTIONS.UP_CURSOR, pane});
+  subject.onNext({key: ACTIONS.MOVE_CURSOR, pane, direction: -1});
 }
 
 /**
@@ -41,7 +41,7 @@ export function upCursor(pane) {
  * @param {string} pane Pane
  */
 export function downCursor(pane) {
-  subject.onNext({key: ACTIONS.DOWN_CURSOR, pane});
+  subject.onNext({key: ACTIONS.MOVE_CURSOR, pane, direction: 1});
 }
 
 /**
@@ -51,4 +51,15 @@ export function downCursor(pane) {
  */
 export function changePane(pane) {
   subject.onNext({key: ACTIONS.CHANGE_PANE, pane});
+}
+
+
+/**
+ * Publish event to change directory.
+ *
+ * @param {string} path A path to change directory 
+ * @param {string} pane A pane to change directory
+ */
+export function changeDirectory(path, pane) {
+  subject.onNext({key: ACTIONS.CHANGE_DIRECTORY, path, pane});
 }

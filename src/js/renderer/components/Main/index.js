@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import {Pane} from 'sxfiler/common/Constants';
 import tmpl from './indexRT.rt';
 import KeyHandler from './KeyHandler';
 
@@ -15,6 +16,18 @@ export default class App extends React.Component {
    */
   constructor(props) {
     super(props);
+
+    this.state = {
+      leftSelected: props.paneInfo.current === Pane.LEFT,
+      rightSelected: props.paneInfo.current === Pane.RIGHT
+    };
+  }
+
+  componentWillReceiveProps(newProps) {
+    this.state = {
+      leftSelected: newProps.paneInfo.current === Pane.LEFT,
+      rightSelected: newProps.paneInfo.current === Pane.RIGHT
+    };
   }
 
   /**
@@ -40,6 +53,9 @@ export default class App extends React.Component {
   handleKeyEvents(e) {
     e.stopPropagation();
 
-    KeyHandler.handleKeyEvents(e.key, this.state);
+    let shouldPrevent = KeyHandler.handleKeyEvents(e.key, this.props);
+    if (shouldPrevent) {
+      e.preventDefault();
+    }
   }
 }

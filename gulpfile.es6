@@ -5,79 +5,89 @@ import seq from 'run-sequence';
 
 let opts = {
   testDir: './test',
-  testBundledDir: './test-bundled',
-  testBundled: './test-bundled/test.bundled.js',
+  rendererTestBundled: './test-bundled/test-renderer.bundled.js',
   rendererBundled: './src/bundle.js',
   rendererMain: './src/js/renderer/App.js',
 
+  mainTestBundledDir: './test-bundled',
+  mainTestBundled: './test-bundled/test-main.bundled.js',
   mainBundled: './src/main.js',
   mainMain: './src/js/main/Main.js'
 };
 
-function makeBundlerForTest(bundler) {
+function makeBundlerForRenderer(bundler, main, external) {
   var verbose = (bundler === 'watchify') ? '-v' : '';
   return function() {
-    let sources = glob.sync('./test/**/*_test.js');
-    sources = sources.join(' ');
-    let file = opts.testBundled;
-    let command = ` | exorcist ${file}.map > ${file}`;
+    let command = `${external} `;
     if (bundler === 'watchify') {
-      command = ` -o 'exorcist ${file}.map > ${file}'`;
+      command = ` -o '${external}'`;
     }
 
-    return shell.task([`${bundler} ${verbose} -t [ babelify --plugins babel-plugin-espower ] -t react-templatify ${sources} --node -d ${command}`])();
+    return shell.task([`${bundler} ${verbose} -t babelify -t react-templatify ${main} -d ${command}`])();
   };
 }
 
-function makeBundlerForRenderer(bundler) {
-  var verbose = (bundler === 'watchify') ? '-v' : '';
-  return function() {
-    let file = opts.rendererBundled;
-    let command = ` | exorcist ${file}.map > ${file}`;
-    if (bundler === 'watchify') {
-      command = ` -o 'exorcist ${file}.map > ${file}'`;
-    }
-
-    return shell.task([`${bundler} ${verbose} -t babelify -t react-templatify ${opts.rendererMain} -d ${command}`])();
-  };
+function makeRendererBundler(bundler) {
+  return makeBundlerForRenderer(
+    bundler, opts.rendererMain, `| exorcist ${opts.rendererBundled}.map > ${opts.rendererBundled}`);
 }
 
-function makeBundlerForMain(bundler) {
-  var verbose = (bundler === 'watchify') ? '-v' : '';
-  return function() {
-    let file = opts.rendererBundled;
-    let command = ` | exorcist ${file}.map > ${file}`;
-    if (bundler === 'watchify') {
-      command = ` -o 'exorcist ${file}.map > ${file}'`;
-    }
-
-    return shell.task([`${bundler} ${verbose} -t babelify --im --node --no-detect-globals ${opts.mainMain} -d ${command}`])();
-  };
+function makeRendererBundlerForTest(bundler, files) {
+  return makeBundlerForRenderer(
+    bundler, files.join(' '), `| tape-run | faucet`);
 }
 
-gulp.task('mocha', shell.task([`mocha --colors --require ${opts.testDir}/setup.js ${opts.testBundled}`]));
+function makeBundlerForMain(bundler, main, target) {
+  var verbose = (bundler === 'watchify') ? '-v' : '';
+  return function() {
+    let command = ` | exorcist ${target}.map > ${target}`;
+    if (bundler === 'watchify') {
+      command = ` -o 'exorcist ${target}.map > ${target}'`;
+    }
 
-gulp.task('mocha:watch', () => {
-  gulp.watch([opts.testBundled], shell.task([`mocha --colors --require ${opts.testDir}/setup.js ${opts.testBundled}`], {
-    ignoreErrors: true
-  }));
-});
+    return shell.task([`${bundler} ${verbose} -t babelify --im --node --no-detect-globals ${main} -d ${command}`])();
+  };
+}
 
 // bundle test sources before test.
-gulp.task('test:browserify', makeBundlerForTest('browserify'));
-gulp.task('test:watchify', makeBundlerForTest('watchify'));
+gulp.task('test:renderer:browserify', () => {
+  let sources = glob.sync('./test/renderer/**/*_test.js');
+  return makeRendererBundlerForTest('browserify', sources)();
+});
+gulp.task('test:renderer:watchify', () => {
+  let sources = glob.sync('./test/renderer/**/*_test.js');
+  return makeRendererBundlerForTest('watchify', sources)();
+});
+
+gulp.task('test:main:browserify', () => {
+  let sources = glob.sync('./test/main/**/*_test.js');
+  return makeBundlerForMain('browserify', sources.join(' '), opts.mainTestBundled)();
+});
+gulp.task('test:main:watchify', () => {
+  let sources = glob.sync('./test/main/**/*_test.js');
+  return makeBundlerForMain('watchify', sources.join(' '), opts.mainTestBundled)();
+});
+
+gulp.task('test:main', shell.task([`tape ${opts.mainTestBundled} | faucet`]));
+gulp.task('test:main:watch', shell.task([`tape ${opts.mainTestBundled} | faucet`]));
+gulp.task('test:main:watch', shell.task([`watch 'tape ${opts.mainTestBundled}' ${opts.mainTestBundledDir}`], {
+  ignoreErrors: true
+}));
 
 // execute test.
-gulp.task('test', (done) => seq('test:browserify', 'mocha', done));
-gulp.task('watch:test', (done) => seq(['test:watchify', 'mocha:watch'], done));
+gulp.task('test', (done) => seq(
+  ['test:main:browserify', 'test:renderer:browserify'], 'test:main', done
+));
+gulp.task('watch:test', (done) => seq(
+  ['test:main:watchify', 'test:renderer:watchify', 'test:main:watch'], done));
 
 // watch and build main bundle
-gulp.task('build:main:browserify', makeBundlerForMain('browserify'));
-gulp.task('build:main:watchify', makeBundlerForMain('watchify'));
+gulp.task('build:main:browserify', makeBundlerForMain('browserify', opts.mainMain, opts.mainBundled));
+gulp.task('build:main:watchify', makeBundlerForMain('watchify', opts.mainMain, opts.mainBundled));
 
 // watch and build renderer bundle
-gulp.task('build:renderer:browserify', makeBundlerForRenderer('browserify'));
-gulp.task('build:renderer:watchify', makeBundlerForRenderer('watchify'));
+gulp.task('build:renderer:browserify', makeRendererBundler('browserify'));
+gulp.task('build:renderer:watchify', makeRendererBundler('watchify'));
 
 // watch and build css bundle
 gulp.task('build:css', shell.task(['stylus -c ./src/stylus/app.styl -o ./src/bundle.css -m --sourcemap-root ./stylus']));
@@ -87,7 +97,6 @@ gulp.task('lint', shell.task(['eslint -c ./.eslintrc src/js/**/*.js']));
 gulp.task('watch:lint', shell.task(["watch 'eslint -c ./.eslintrc src/js/**/*.js' src/js"], {
   ignoreErrors: true
 }));
-
 
 // main build task.
 gulp.task('build', (done) => seq(['build:main:browserify',

@@ -1,14 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Rx from 'rx';
 
 import Main from './components/Main';
 
 import RendererIPC from './RendererIPC';
-import {IPCKeys, Pane} from 'sxfiler/common/Constants';
+import {Pane} from 'sxfiler/common/Constants';
 import Store from './stores/Store';
 import DirectoryBinder from './binders/Directory';
+import KeyboardBinder from './binders/Keyboard';
 import * as DirectoryAction from './actions/Directory';
-
 
 let directory = new Store({
   leftPane: {
@@ -21,22 +22,36 @@ let directory = new Store({
   }
 });
 
+let paneInfo = new Store({
+  current: Pane.LEFT,
+  left: {
+    position: 0
+  },
+  right: {
+    position: 0
+  }
+});
+
 let binder = new DirectoryBinder();
+let actionBinder = new KeyboardBinder();
 
-binder.bind(directory);
+let state = Rx.Observable.combineLatest(
+  directory.getSubject(),
+  paneInfo.getSubject(),
+  (directoryState, paneInfo) =>
+    ({
+      directory: directoryState,
+      paneInfo
+    })
+);
 
-directory.subscribe((state) => {
+state.subscribe((state) => {
   ReactDOM.render(React.createElement(Main, state), document.querySelector('.entry'));
 });
 
 let ipc = new RendererIPC(window.require('ipc'));
-ipc.subscribe(IPCKeys.FINISH_FILES_IN_DIRECTORY, ([err, files, pane]) => {
-  if (err) {
-    return;
-  }
+binder.bind(ipc, directory);
+actionBinder.bind(ipc, paneInfo);
 
-  DirectoryAction.receiveDirectory(files, pane);
-});
-
-ipc.send(IPCKeys.REQUEST_FILES_IN_DIRECTORY, '.', Pane.LEFT);
-ipc.send(IPCKeys.REQUEST_FILES_IN_DIRECTORY, '.', Pane.RIGHT);
+DirectoryAction.requestDirectory('.', Pane.LEFT);
+DirectoryAction.requestDirectory('.', Pane.RIGHT);

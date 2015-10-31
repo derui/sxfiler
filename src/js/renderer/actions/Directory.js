@@ -39,9 +39,10 @@ export function requestDirectory(path, pane) {
 /**
  * Publish event when receive directory information from ipc.
  *
+ * @param {string} path An absolute path of directory
  * @param {array[object]} fileList file information list
  * @param {string} pane Pane
  */
-export function receiveDirectory(fileList, pane) {
-  subject.onNext({key: ACTIONS.RECEIVE_DIRECTORY, fileList, pane});
+export function receiveDirectory(path, fileList, pane) {
+  subject.onNext({key: ACTIONS.RECEIVE_DIRECTORY, path, fileList, pane});
 }

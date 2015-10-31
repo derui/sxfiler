@@ -1,6 +1,6 @@
+import test from 'tape';
 import React from 'react';
 import R from 'ramda';
-import assert from 'power-assert';
 import FileList from 'sxfiler/renderer/components/FileList';
 import FileItem from 'sxfiler/renderer/components/FileList/FileItem';
 import TestUtils from 'react-addons-test-utils';
@@ -24,46 +24,65 @@ class Wrapper extends React.Component {
   }
 }
 
+let wrapper = (comment, f) => {
+  test(`renderer/components/FileList ${comment}`, f);
+};
+
 /** @test {FileList} */
-describe('renderer/components/FileList/FileList', () => {
-  it('should be instance FileItem', () => {
-    assert.ok(React.createElement(FileList) !== null);
-  });
-
-  it('should show information of files each line', () => {
-    let view = TestUtils.renderIntoDocument(c(Wrapper));
-    view = TestUtils.scryRenderedComponentsWithType(view, FileItem);
-    let d = React.findDOMNode;
-
-    assert.equal(view.length, 2);
-  });
-
-  it('should be top of the item when initial rendering', () => {
-    let view = TestUtils.renderIntoDocument(c(Wrapper));
-    view = TestUtils.scryRenderedComponentsWithType(view, FileItem);
-
-    assert.ok(view[0].props.current);
-    assert.ok(!view[1].props.current);
-  });
-
-  it('should not place cursor over backward on top of the list', () => {
-    let view = TestUtils.renderIntoDocument(c(Wrapper, {
-      current: 100
-    }));
-    let items = TestUtils.scryRenderedComponentsWithType(view, FileItem);
-
-    assert.ok(!items[0].props.current);
-    assert.ok(items[1].props.current);
-  });
-
-  it('should not place cursor over forward on bottom of the list', () => {
-    let view = TestUtils.renderIntoDocument(c(Wrapper, {
-      current: -100
-    }));
-    let items = TestUtils.scryRenderedComponentsWithType(view, FileItem);
-
-    assert.ok(items[0].props.current);
-    assert.ok(!items[1].props.current);
-  });
+wrapper('should be instance FileItem', (t) => {
+  t.ok(React.createElement(FileList) !== null);
+  t.end();
 });
 
+wrapper('should show information of files each line', (t) => {
+  let view = TestUtils.renderIntoDocument(c(Wrapper));
+  view = TestUtils.scryRenderedComponentsWithType(view, FileItem);
+  let d = React.findDOMNode;
+
+  t.equal(view.length, 2);
+  t.end();
+});
+
+wrapper('should be top of the item when initial rendering', (t) => {
+  let view = TestUtils.renderIntoDocument(c(Wrapper));
+  view = TestUtils.scryRenderedComponentsWithType(view, FileItem);
+
+  t.ok(view[0].props.current, 'top item selected');
+  t.ok(!view[1].props.current, 'last item not selected');
+  t.end();
+});
+
+wrapper('should not place cursor over backward on top of the list', (t) => {
+  let view = TestUtils.renderIntoDocument(c(Wrapper, {
+    paneInfo: {
+      position: 100
+    }
+  }));
+  let items = TestUtils.scryRenderedComponentsWithType(view, FileItem);
+
+  t.ok(!items[0].props.current);
+  t.ok(items[1].props.current);
+  t.end();
+});
+
+wrapper('should not place cursor over forward on bottom of the list', (t) => {
+  let view = TestUtils.renderIntoDocument(c(Wrapper, {
+    current: -100
+  }));
+  let items = TestUtils.scryRenderedComponentsWithType(view, FileItem);
+
+  t.ok(items[0].props.current);
+  t.ok(!items[1].props.current);
+  t.end();
+});
+
+wrapper('should be show directory path on filelist', (t) => {
+  let path = 'path/test/sample';
+  let view = TestUtils.renderIntoDocument(c(Wrapper, {
+    path
+  }));
+  let list = TestUtils.findRenderedComponentWithType(view, FileList);
+
+  t.equal(React.findDOMNode(list.refs.path).textContent, path);
+  t.end();
+});

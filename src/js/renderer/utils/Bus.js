@@ -39,7 +39,7 @@ export default class Bus {
    */
   bus(key) {
     if (!this._bus[key]) {
-      this._bus[key] = new Rx.Subject();
+      this._bus[key] = new Rx.ReplaySubject(1);
     }
 
     return this._bus[key];

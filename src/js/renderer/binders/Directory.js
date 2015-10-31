@@ -1,6 +1,6 @@
 
 import R from 'ramda';
-import {Pane} from 'sxfiler/common/Constants';
+import {IPCKeys, Pane} from 'sxfiler/common/Constants';
 import * as Actions from 'sxfiler/renderer/actions/Directory';
 
 /**
@@ -12,12 +12,12 @@ function mergeState(value, data, pane) {
   switch (pane) {
   case Pane.LEFT:
     return R.merge(value, {
-      leftPane: R.merge(data.leftPane, data)
+      leftPane: R.merge(value.leftPane, data)
     });
     break;
   case Pane.RIGHT:
     return R.merge(value, {
-      rightPane: R.merge(data.rightPane, data)
+      rightPane: R.merge(value.rightPane, data)
     });
   default:
     return value;
@@ -39,40 +39,45 @@ export default class Directory {
    */
   constructor() {
     this._dispose = null;
+    this._ipcDispose = {};
   }
 
   /**
    * Apply to update value of RECEIVE_DIRECTORY event.
    * 
+   * @param {RendererIPC} ipc A wrapper of IPC
    * @param {Store} store a store to update value
    * @param {object} action a action state from an action
    */
-  receiveDirectory(store, action) {
-    let {fileList, pane} = action;
-    let data = {fileList};
-    let value = store.currentValue();
+  receiveDirectory(ipc, store, action) {
+    let {path, fileList, pane} = action;
+    let data = {fileList, path};
 
-    store.update(mergeState(value, data, pane));
+    store.update((value) => mergeState(value, data, pane));
   }
 
   /**
    * Apply to update value of REQUEST_DIRECTORY event.
-   * 
+   *
+   * @param {RendererIPC} ipc A wrapper of IPC
    * @param {Store} store a store to update value
    * @param {object} action a action state from an action
    */
-  requestDirectory(store, action) {
+  requestDirectory(ipc, store, action) {
     let {path, pane} = action;
     let data = {path};
-    let value = store.currentValue();
 
-    store.update(mergeState(value, data, pane));
+    store.update((value) => mergeState(value, data, pane));
+    ipc.send(IPCKeys.REQUEST_FILES_IN_DIRECTORY, path, pane);
   }
 
   /**
    * Execute bindings with Directory action and given store.
+   *
+   * @param {RendererIPC} ipc IPC wrapper to send and handle events
+   * @param {Store} store A Store instance store directory informations
    */
-  bind(store) {
+  bind(ipc, store) {
     const A = Actions.ACTIONS;
 
     this.dispose();
@@ -82,15 +87,36 @@ export default class Directory {
       let {key} = action;
       switch (key) {
       case A.RECEIVE_DIRECTORY:
-        this.receiveDirectory(store, action);
+        this.receiveDirectory(ipc, store, action);
         break;
       case A.REQUEST_DIRECTORY:
-        this.requestDirectory(store, action);
+        this.requestDirectory(ipc, store, action);
         break;
       default:
         break;
       }
     });
+
+    this._bindIpcEvents(ipc);
+  }
+
+  /**
+   * Binding functions to ipc events.
+   * 
+   * @private
+   * @param {RendererIPC} ipc ipc wrapper to send events and handle it
+   */
+  _bindIpcEvents(ipc) {
+    let key = IPCKeys.FINISH_FILES_IN_DIRECTORY;
+    this._ipcDispose[key] =
+      ipc.subscribe(IPCKeys.FINISH_FILES_IN_DIRECTORY, ([err, path, files, pane]) => {
+        if (err) {
+          return;
+        }
+
+        Actions.receiveDirectory(path, files, pane);
+      });
+
   }
 
   /**
@@ -102,5 +128,6 @@ export default class Directory {
     }
 
     this._dispose.dispose();
+    R.pipe(R.keys, R.map((key) => this._ipcDispose[key].dispose()))(this._ipcDispose);
   }
 }
