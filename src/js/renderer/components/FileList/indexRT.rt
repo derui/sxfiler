@@ -1,0 +1,16 @@
+<rt-require dependency="./FileItem" as="FileItem" />
+<section class="file-list">
+  <header ref="path" class="file-list__header">{this.props.path}</header>
+  <table class="file-list__table">
+    <colgroup>
+      <col class="file-list__table__col--mode">
+      <col class="file-list__table__col--size">
+      <col class="file-list__table__col--name">
+    </colgroup>
+    <tbody>
+      <FileItem key="{item.id}" rt-repeat="item in this.state.items"
+                current="{itemIndex === this.state.current}"
+                item="{item}"></FileItem>
+    </tbody>
+  </table>
+</section>

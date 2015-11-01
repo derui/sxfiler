@@ -1,0 +1,20 @@
+<rt-require dependency="sxfiler/renderer/components/FileList" as="FileList" />
+<div tabindex="0" class="main" onKeyDown="{this.handleKeyEvents.bind(this)}"
+     onKeyPress="{this.handleKeyEvents.bind(this)}">
+  <div class="file-panes">
+    <div class="left-pane">
+      <FileList ref="leftPane" path="{this.props.directory.leftPane.path}"
+                paneInfo="{this.props.paneInfo.left}"
+                current="{this.state.leftSelected}"
+                files="{this.props.directory.leftPane.fileList}"></FileList>
+    </div>
+    <div class="right-pane">
+      <FileList ref="rightPane" path="{this.props.directory.rightPane.path}"
+                paneInfo="{this.props.paneInfo.right}"
+                current="{this.state.rightSelected}"
+                files="{this.props.directory.rightPane.fileList}"></FileList>
+    </div>
+  </div>
+  <div class="console-pane">
+  </div>
+</div>

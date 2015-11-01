@@ -1,36 +1,65 @@
 {
-  "name": "electron-filer",
+  "name": "sxfiler",
   "version": "1.0.0",
-  "description": "Two screen filer by Electron",
+  "description": "Simple and Extensible two screen filer by Electron",
   "main": "main.js",
   "scripts": {
-    "start": "npm run watch",
+    "start": "gulp watch",
     "app": "electron --debug=5858 src/",
-    "esdoc": "esdoc -c esdoc.json",
-    "build:css": "stylus -c ./src/stylus/app.styl -o ./src/bundle.css -m --sourcemap-root ./stylus",
-    "build:js-main": "browserify -t babelify ./src/js/main/Main.js  --im --node --no-detect-globals -d |  exorcist ./src/main.js.map > ./src/main.js",
-    "build:js-renderer": "browserify -t babelify ./src/js/renderer/App.js -d |  exorcist ./src/bundle.js.map > ./src/bundle.js",
-    "build": "npm-run-all -p build:css build:js-main build:js-renderer",
-    "lint": "eslint -c ./.eslintrc src/main/** src/renderer/**",
-    "watch:lint": "watch 'npm run lint' src/main src/renderer",
-    "watch:css": "stylus -c -w ./src/stylus/app.styl -o ./src/bundle.css -m --sourcemap-root ./stylus",
-    "watch:js-main": "watchify -v -t babelify ./src/js/main/Main.js  --im --node --no-detect-globals -d |  exorcist ./src/main.js.map > ./src/main.js",
-    "watch:js-renderer": "watchify -v -t babelify ./src/js/renderer/App.js -d |  exorcist ./src/bundle.js.map > ./src/bundle.js",
-    "watch": "npm-run-all -p watch:css watch:js-main watch:js-renderer watch:lint",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "esdoc": "esdoc -c ./esdoc.json",
+    "build": "gulp build",
+    "lint": "gulp lint",
+    "watch": "gulp watch",
+    "test": "gulp test",
+    "watch:test": "gulp watch:test"
   },
   "keywords": [],
   "author": "derui",
   "license": "ISC",
   "devDependencies": {
+    "aliasify": "^1.8.0",
+    "babel": "^5.8.29",
     "babelify": "^6.4.0",
+    "bluebird": "^2.10.2",
     "browserify": "^11.2.0",
+    "electron-prebuilt": "^0.34.1",
     "esdoc": "^0.4.1",
+    "eslint": "^1.7.3",
     "exorcist": "^0.4.0",
-    "mocha": "^2.3.3",
+    "faucet": "0.0.1",
+    "glob": "^5.0.15",
+    "gulp": "^3.9.0",
+    "gulp-shell": "^0.5.0",
+    "jsdom": "^7.0.2",
+    "keymirror": "^0.1.1",
+    "lodash": "^3.10.1",
+    "node-inspector": "^0.12.3",
     "npm-run-all": "^1.2.12",
+    "ramda": "^0.18.0",
+    "react": "^0.14.0",
+    "react-addons-test-utils": "^0.14.0",
+    "react-dom": "^0.14.0",
+    "react-template": "^0.4.0",
+    "react-templatify": "^0.2.0",
+    "run-sequence": "^1.1.4",
+    "rx": "^4.0.6",
+    "sinon": "^1.17.2",
     "stylus": "^0.52.4",
+    "tape": "^4.2.2",
+    "tape-run": "^2.0.0",
+    "tmp": "0.0.28",
+    "uuid": "^2.0.1",
     "watch": "^0.16.0",
     "watchify": "^3.4.0"
+  },
+  "browserify": {
+    "transform": [
+      "aliasify"
+    ]
+  },
+  "aliasify": {
+    "aliases": {
+      "sxfiler": "./src/js"
+    }
   }
 }
