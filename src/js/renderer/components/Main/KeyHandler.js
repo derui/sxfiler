@@ -47,6 +47,9 @@ export default class KeyHandler {
         K.changeDirectory(path.join(directory.path, file), state.paneInfo.current);
       })();
       return false;
+    case 'Backspace':
+      K.changeDirectory(path.resolve(path.join(directory.path, '..')), state.paneInfo.current);
+      return true;
     case 'q':
       K.quitApplication();
       return false;
