@@ -11,7 +11,8 @@
     "lint": "gulp lint",
     "watch": "gulp watch",
     "test": "gulp test",
-    "watch:test": "gulp watch:test"
+    "watch:test": "gulp watch:test",
+    "release": "gulp release"
   },
   "keywords": [],
   "author": "derui",
@@ -22,6 +23,8 @@
     "babelify": "^6.4.0",
     "bluebird": "^2.10.2",
     "browserify": "^11.2.0",
+    "cpx": "^1.2.1",
+    "electron-packager": "^5.1.1",
     "electron-prebuilt": "^0.34.1",
     "esdoc": "^0.4.1",
     "eslint": "^1.7.3",
@@ -41,6 +44,7 @@
     "react-dom": "^0.14.0",
     "react-template": "^0.4.0",
     "react-templatify": "^0.2.0",
+    "rimraf": "^2.4.3",
     "run-sequence": "^1.1.4",
     "rx": "^4.0.6",
     "sinon": "^1.17.2",
@@ -48,6 +52,7 @@
     "tape": "^4.2.2",
     "tape-run": "^2.0.0",
     "tmp": "0.0.28",
+    "uglifyjs": "^2.4.10",
     "uuid": "^2.0.1",
     "watch": "^0.16.0",
     "watchify": "^3.4.0"
