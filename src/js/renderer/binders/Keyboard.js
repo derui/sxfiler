@@ -111,6 +111,9 @@ export default class Keyboard {
       case A.CHANGE_DIRECTORY:
         this.changeDirectory(ipc, store, action);
         break;
+      case A.QUIT_APPLICATION:
+        ipc.send(IPCKeys.QUIT_APPLICATION);
+        break;
       default:
         break;
       }

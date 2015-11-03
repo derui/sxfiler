@@ -8,7 +8,8 @@ import keyMirror from 'keymirror';
 export const ACTIONS = keyMirror({
   MOVE_CURSOR:null,
   CHANGE_PANE: null,
-  CHANGE_DIRECTORY: null
+  CHANGE_DIRECTORY: null,
+  QUIT_APPLICATION: null
 });
 
 /**
@@ -62,4 +63,11 @@ export function changePane(pane) {
  */
 export function changeDirectory(path, pane) {
   subject.onNext({key: ACTIONS.CHANGE_DIRECTORY, path, pane});
+}
+
+/**
+ * Publish event to quit application.
+ */
+export function quitApplication(path, pane) {
+  subject.onNext({key: ACTIONS.QUIT_APPLICATION});
 }

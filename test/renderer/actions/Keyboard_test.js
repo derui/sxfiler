@@ -52,3 +52,17 @@ wrapper('should be able to enter into directory', (t) => {
 
   t.end();
 });
+
+wrapper('should be able to quit application', (t) => {
+  let spy = sinon.spy();
+
+  let dispose = K.subject.subscribe(spy);
+  K.quitApplication();
+
+  t.ok(spy.calledWith({
+    key: K.ACTIONS.QUIT_APPLICATION
+  }));
+  after();
+
+  t.end();
+});
