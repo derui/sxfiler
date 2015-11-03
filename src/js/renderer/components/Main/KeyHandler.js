@@ -47,6 +47,9 @@ export default class KeyHandler {
         K.changeDirectory(path.join(directory.path, file), state.paneInfo.current);
       })();
       return false;
+    case 'q':
+      K.quitApplication();
+      return false;
     default:
       return false;
     }

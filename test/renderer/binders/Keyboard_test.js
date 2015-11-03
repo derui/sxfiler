@@ -83,3 +83,18 @@ wrapper('should be able to notify to change directory', (t) => {
   after();
   t.end();
 });
+
+wrapper('should be able to send event to quit application', (t) => {
+  let store = new Store();
+  let binder = new Binder();
+  let ipc = createIpc();
+  let spy = sinon.spy();
+  ipc.on(IPCKeys.QUIT_APPLICATION, spy);
+  binder.bind(new RendererIPC(ipc), store);
+
+  D.quitApplication();
+
+  t.ok(spy.calledOnce, 'emitted event to quit');
+  after();
+  t.end();
+});

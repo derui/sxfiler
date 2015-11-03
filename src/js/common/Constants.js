@@ -7,19 +7,25 @@ import keyMirror from 'keymirror';
  *
  * @type {object}
  */
-export const IPCKeys = {
+export const IPCKeys = keyMirror({
   /**
    * Event name when request file informations in the directory.
    * @type {string}
    */
-  REQUEST_FILES_IN_DIRECTORY: 'REQUEST_FILES_IN_DIRECTORY',
+  REQUEST_FILES_IN_DIRECTORY: null,
 
   /**
    * Event name when finish getting file informations in the directory
    * @type {string}
    */
-  FINISH_FILES_IN_DIRECTORY: 'FINISH_FILES_IN_DIRECTORY'
-};
+  FINISH_FILES_IN_DIRECTORY: null,
+
+  /**
+   * Event sending when user request to quit application
+   * @type {string}
+   */
+  QUIT_APPLICATION: null
+});
 
 /**
  * Pane typess
