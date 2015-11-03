@@ -130,3 +130,62 @@ wrapper('should be able to execute to quit application', (st) => {
   after();
   st.end();
 });
+
+
+wrapper('should be able to go upward directory path', (st) => {
+  let spy = sinon.spy();
+
+  let dispose = K.subject.subscribe(spy);
+  KeyHandler.handleKeyEvents('Backspace', {
+    directory: {
+      leftPane: {
+        path: '/test/sample',
+        fileList: {'path':{}}
+      }
+    },
+    paneInfo: {
+      current: Pane.LEFT,
+      left: {
+        position: 0
+      }
+    }
+  });
+
+  let called = spy.firstCall;
+  st.deepEqual(called.args[0], {
+    key: K.ACTIONS.CHANGE_DIRECTORY,
+    path: '/test',
+    pane: Pane.LEFT
+  });
+  after();
+  st.end();
+});
+
+wrapper('should not go upward from root directory', (st) => {
+  let spy = sinon.spy();
+
+  let dispose = K.subject.subscribe(spy);
+  KeyHandler.handleKeyEvents('Backspace', {
+    directory: {
+      leftPane: {
+        path: '/',
+        fileList: {'path':{}}
+      }
+    },
+    paneInfo: {
+      current: Pane.LEFT,
+      left: {
+        position: 0
+      }
+    }
+  });
+
+  let called = spy.firstCall;
+  st.deepEqual(called.args[0], {
+    key: K.ACTIONS.CHANGE_DIRECTORY,
+    path: '/',
+    pane: Pane.LEFT
+  });
+  after();
+  st.end();
+});
