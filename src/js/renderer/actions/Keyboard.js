@@ -54,7 +54,6 @@ export function changePane(pane) {
   subject.onNext({key: ACTIONS.CHANGE_PANE, pane});
 }
 
-
 /**
  * Publish event to change directory.
  *

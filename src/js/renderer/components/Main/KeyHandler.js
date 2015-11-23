@@ -41,12 +41,14 @@ export default class KeyHandler {
     case 'Tab':
       K.changePane(swapPane(state.paneInfo.current));
       return true;
+    case 'l':
     case 'Enter':
       (() => {
         let file = Object.keys(directory.fileList)[paneInfo.position];
         K.changeDirectory(path.join(directory.path, file), state.paneInfo.current);
       })();
       return false;
+    case 'h':
     case 'Backspace':
       K.changeDirectory(path.resolve(path.join(directory.path, '..')), state.paneInfo.current);
       return true;

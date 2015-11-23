@@ -82,7 +82,8 @@ wrapper('should be able to execute change-directory action', (st) => {
   let spy = sinon.spy();
 
   let dispose = K.subject.subscribe(spy);
-  KeyHandler.handleKeyEvents('Enter', {
+  let keys = ['Enter', 'l'];
+  keys.forEach((k) => KeyHandler.handleKeyEvents(k, {
     directory: {
       leftPane: {
         path: 'sample',
@@ -95,9 +96,9 @@ wrapper('should be able to execute change-directory action', (st) => {
         position: 0
       }
     }
-  });
+  }));
 
-  let called = spy.firstCall;
+  let called = spy.getCall(0);
   st.deepEqual(called.args[0], {
     key: K.ACTIONS.CHANGE_DIRECTORY, pane: Pane.LEFT,
     path: path.join('sample', 'path')
@@ -136,7 +137,8 @@ wrapper('should be able to go upward directory path', (st) => {
   let spy = sinon.spy();
 
   let dispose = K.subject.subscribe(spy);
-  KeyHandler.handleKeyEvents('Backspace', {
+  let keys = ['Backspace', 'h'];
+  keys.forEach((k) => KeyHandler.handleKeyEvents(k, {
     directory: {
       leftPane: {
         path: '/test/sample',
@@ -149,9 +151,9 @@ wrapper('should be able to go upward directory path', (st) => {
         position: 0
       }
     }
-  });
+  }));
 
-  let called = spy.firstCall;
+  let called = spy.getCall(0);
   st.deepEqual(called.args[0], {
     key: K.ACTIONS.CHANGE_DIRECTORY,
     path: '/test',
