@@ -1,7 +1,10 @@
 node_modules/
 dist/*
-src/main.js*
-src/bundle.*
+*.css
+src/**/*.js
+!/aliaslifyConfig.js
+*.map
+typings
 esdoc/*
 test-bundled/*
 !test-bundled/.gitkeep

@@ -1,5 +1,5 @@
 {
-  "source": "./src/js",
+  "source": "./src/ts",
   "destination": "./esdoc",
   "test": {
     "type": "mocha",

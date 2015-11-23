@@ -1,0 +1,6 @@
+<tr class="file-list__item {this.props.current ? 'is-selected' : ''}
+           file-list__item--{this.state.fileType}">
+  <td ref="mode" class="file-list__item__mode ">{this.state.mode}</td>
+  <td ref="size" class="file-list__item__size">{this.state.size}</td>
+  <td ref="filename" class="file-list__item__name">{this.state.filename}</td>
+</tr>

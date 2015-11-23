@@ -1,4 +1,3 @@
-import sinon from 'sinon';
 import EventEmitter from 'events';
 
 /**
@@ -12,10 +11,10 @@ export default function createIpc() {
     ipc.emit(name, {
       sender: {
         send(name, ...args) {
-          ipc.emit(name, ...args);
+          ipc.emit(name, this, ...args);
         }
       }
     }, ...args);
   };
   return ipc;
-};
+}
