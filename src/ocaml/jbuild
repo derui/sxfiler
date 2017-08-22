@@ -1,0 +1,9 @@
+(jbuild_version 1)
+
+(copy_files# common/*)
+
+(library
+ ((name sxfiler_common)
+  (public_name sxfiler.common)
+  (libraries (js_of_ocaml))
+  (preprocess (pps (js_of_ocaml-ppx ppx_variants_conv)))))

@@ -6,13 +6,8 @@ html, body
   margin: 0
   padding: 0
 
-.entry
-  display: flex
-  width: 100%
-  height: 100%
-
-  margin: 0
-  padding: 0
+.grid
+  display: grid
 
 .main
   display: flex
@@ -49,8 +44,7 @@ html, body
 
   border-bottom: 1px solid sol_base2
 
-  &:first-of-type
-    border-left: 1px solid sol_base2
+  // border-left: 1px solid sol_base2
 
 .file-list__header
   flex: 0 0 auto
@@ -60,8 +54,8 @@ html, body
   background-color: sol_base01
   font-family: monospace
 
-  &.is-selected
-    color: sol_yellow
+.file-list__header.is-selected
+  color: sol_yellow
 
 .file-list__table
   flex: 1 1 auto
@@ -72,7 +66,7 @@ html, body
 
   border-spacing: 0px
 
-  &__col--mode
+.file-list__table-col--mode
     width: 6em
 
 .file-list__item
@@ -83,24 +77,24 @@ html, body
   color: sol_base0
   font-family: monospace
 
-  &--directory
-    color: sol_blue
+.file-list__item--directory
+  color: sol_blue
 
 
-  &.is-selected
-    background-color: sol_base02
+.file-list__item.is-selected
+  background-color: sol_base02
 
-  &__name
-    padding: 0.25em 0
-    font-weight: bold
+.file-list__child-name
+  padding: 0.25em 0
+  font-weight: bold
 
-  &__size
-    padding: 0.25em 0.5em
-    text-align: right
+.file-list__child-file-size
+  padding: 0.25em 0.5em
+  text-align: right
 
-  &__mode
-    padding: 0.25em 0
-    white-space: nowrap
+.file-list__child-file-mode
+  padding: 0.25em 0
+  white-space: nowrap
 
-  &__mode--symlink
-    color: sol_orange
+.file-list__child-file-mode--symlink
+  color: sol_orange
