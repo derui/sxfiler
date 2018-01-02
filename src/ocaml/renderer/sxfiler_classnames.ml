@@ -1,7 +1,9 @@
 (* support functions to create class name for component *)
 let make list = Js.Optdef.return @@ Js.string @@ String.concat " " list
 
+let join (cls, condition) list = if condition then cls :: list else list
+
 module Style = struct
-  let grid_container list = "grid" :: list
-  let grid_item list = "grid__item" :: list
+  let grid_container = join ("grid", true)
+  let grid_item = join ("grid__item", true)
 end
