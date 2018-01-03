@@ -11,6 +11,7 @@ end
 module Fs = struct
   class type stat = object
     method mode: Js.number Js.t Js.readonly_prop
+    method mtimeMs: float Js.readonly_prop
     method isDirectory: unit -> bool t meth
   end
 

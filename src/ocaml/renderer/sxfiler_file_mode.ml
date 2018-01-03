@@ -14,7 +14,12 @@ let component = Component.make (fun props ->
     R.Dom.of_tag `span
       ~props:(object%js
         val key = Js.Optdef.empty
-        val className = Sxfiler_classnames.make ["file-list__file-mode"]
+        val className =
+          let open Sxfiler_classnames.Infix in
+          Sxfiler_classnames.(["file-list__file-mode"]
+                              <|> Style.Grid.item_row 1
+                              <|> Style.Grid.item_col 1)
+          |> Sxfiler_classnames.make
       end)
       ~children:[|
         R.text @@ string_of_int mode

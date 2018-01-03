@@ -19,7 +19,10 @@ let component = Component.make (fun props ->
     R.Dom.of_tag `ul
       ~props:(object%js
         val key = Js.Optdef.empty
-        val className = Sxfiler_classnames.make ["file-list"]
+        val className =
+          let open Sxfiler_classnames.Infix in
+          Sxfiler_classnames.(["file-list"]
+                              <|> Style.Grid.container) |> Sxfiler_classnames.make
       end)
       ~children:elements
   )
