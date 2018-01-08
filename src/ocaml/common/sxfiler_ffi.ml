@@ -36,6 +36,7 @@ class type event_emitter = object
   (* handle some event raised from EventEmitter *)
   method on: js_string Js.t -> ('a -> unit) callback -> unit meth
   method once: js_string Js.t -> ('a -> unit) callback -> unit meth
+  method send: js_string t -> 'a -> unit meth
   method removeAllListener: js_string Js.t -> unit meth
   method removeAllListener_all: unit -> unit meth
 end
@@ -44,6 +45,7 @@ class type ipc = object
   (* handle some event raised from EventEmitter *)
   method on: js_string Js.t -> (Event.t Js.t -> 'a -> unit) callback -> unit meth
   method once: js_string Js.t -> (Event.t Js.t -> 'a -> unit) callback -> unit meth
+  method send: js_string t -> 'a -> unit meth
   method removeAllListener: js_string Js.t -> unit meth
   method removeAllListener_all: unit -> unit meth
 end

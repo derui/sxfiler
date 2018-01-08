@@ -26,14 +26,14 @@ module Core = struct
     let open Lwt.Infix in
     let lwt = File_list.get_file_stats ~fs:t.fs absolute
       >>= (fun files ->
-          Lwt.return @@ C.IPC_events.(send ~channel:(`FINISH_FILES_IN_DIRECTORY (None, absolute, files)) ~ev)
+          Lwt.return @@ C.IPC_events.(reply ~channel:(`FINISH_FILES_IN_DIRECTORY (None, absolute, files)) ~ev)
         )
     in
 
     let lwt = Lwt.catch (fun () -> lwt) (fun err ->
         match err with
         | File_list.Not_directory f ->
-          Lwt.return @@ C.IPC_events.(send ~channel:(`FINISH_FILES_IN_DIRECTORY (Some err, absolute, [||])) ~ev)
+          Lwt.return @@ C.IPC_events.(reply ~channel:(`FINISH_FILES_IN_DIRECTORY (Some err, absolute, [||])) ~ev)
 
         | _ -> raise Unhandled_promise
       )
