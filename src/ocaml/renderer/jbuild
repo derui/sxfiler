@@ -7,6 +7,6 @@
 (executable
  ((name sxfiler_renderer)
   (public_name sxfiler.renderer)
-  (libraries (js_of_ocaml sxfiler_common reactjscaml ocaml-flux-frp))
+  (libraries (js_of_ocaml js_of_ocaml.weak sxfiler_common reactjscaml ocaml-flux-frp))
   (js_of_ocaml ((flags ("--pretty"))))
   (preprocess (pps (js_of_ocaml-ppx ppx_variants_conv)))))
