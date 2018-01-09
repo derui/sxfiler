@@ -1,4 +1,4 @@
-module C = Sxfiler_common.Std.Const
+module E = Sxfiler_common.Std.Event
 module FFI = Sxfiler_common.Std.Ffi
 module Main_ipc = Sxfiler_ipc
 module M = Sxfiler_modules
@@ -25,7 +25,7 @@ let on_ready t _ =
   main_window##.webContents##openDevTools ();
   t.main_window <- Some main_window;
 
-  let file_path = 
+  let file_path =
     let array = Js.array [|dirname;Js.string "index.html"|] in
     M.path##join array |> Js.to_string in
 

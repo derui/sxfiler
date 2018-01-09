@@ -1,5 +1,5 @@
 
-module C = Sxfiler_common.Std.Const
+module E = Sxfiler_common.Std.Event
 module FFI = Sxfiler_common.Std.Ffi
 module M = Sxfiler_renderer_modules
 
@@ -18,7 +18,7 @@ module Core : sig
   val make: ipc:FFI.ipc Js.t -> runner:Sxfiler_flux_runner.t -> t
   (* Make ipc *)
 
-  val send_to_main: channel:C.IPC_events.t -> t -> unit
+  val send_to_main: channel:E.IPC.t -> t -> unit
   (* Send message to main ipc *)
 
 end = struct
@@ -33,9 +33,9 @@ end = struct
   let make ~ipc ~runner =
     let t = {ipc;runner} in
     let listener ev v = on_finish_files_in_directory t ev v in
-    C.IPC_events.(on ~target:Listener.finish_files_in_directory ~f:listener ipc);
+    E.IPC.(on ~target:Listener.finish_files_in_directory ~f:listener ipc);
     t
 
   let send_to_main ~channel t =
-    C.IPC_events.send ~channel ~ipc:t.ipc
+    E.IPC.send ~channel ~ipc:t.ipc
 end

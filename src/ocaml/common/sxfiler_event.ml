@@ -2,7 +2,7 @@ module FFI = Sxfiler_ffi
 module T = Sxfiler_types
 
 (* Event name to request file informations in the directory *)
-module IPC_events = struct
+module IPC = struct
   module Listener = struct
     type 'a listener = FFI.Event.t Js.t -> 'a -> unit
     type t = [

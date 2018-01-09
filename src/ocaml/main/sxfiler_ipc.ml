@@ -1,5 +1,5 @@
 
-module C = Sxfiler_common.Std.Const
+module E = Sxfiler_common.Std.Event
 module FFI = Sxfiler_common.Std.Ffi
 module M = Sxfiler_modules
 
@@ -26,14 +26,14 @@ module Core = struct
     let open Lwt.Infix in
     let lwt = File_list.get_file_stats ~fs:t.fs absolute
       >>= (fun files ->
-          Lwt.return @@ C.IPC_events.(reply ~channel:(`FINISH_FILES_IN_DIRECTORY (None, absolute, files)) ~ev)
+          Lwt.return @@ E.IPC.(reply ~channel:(`FINISH_FILES_IN_DIRECTORY (None, absolute, files)) ~ev)
         )
     in
 
     let lwt = Lwt.catch (fun () -> lwt) (fun err ->
         match err with
         | File_list.Not_directory f ->
-          Lwt.return @@ C.IPC_events.(reply ~channel:(`FINISH_FILES_IN_DIRECTORY (Some err, absolute, [||])) ~ev)
+          Lwt.return @@ E.IPC.(reply ~channel:(`FINISH_FILES_IN_DIRECTORY (Some err, absolute, [||])) ~ev)
 
         | _ -> raise Unhandled_promise
       )
@@ -43,6 +43,6 @@ module Core = struct
   let make ~ipc ~fs =
     let t = {ipc;fs} in
     let listener ev v = on_request_files_in_directory t ev v in
-    C.IPC_events.(on ~target:Listener.request_files_in_directory ~f:listener ipc);
+    E.IPC.(on ~target:Listener.request_files_in_directory ~f:listener ipc);
     t
 end
