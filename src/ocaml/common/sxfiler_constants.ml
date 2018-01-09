@@ -3,6 +3,17 @@ module T = Sxfiler_types
 
 (* Event name to request file informations in the directory *)
 module IPC_events = struct
+  module Listener = struct
+    type 'a listener = FFI.Event.t Js.t -> 'a -> unit
+    type t = [
+        `REQUEST_FILES_IN_DIRECTORY of string listener
+      | `FINISH_FILES_IN_DIRECTORY of (exn option * string * T.File_stat.t array) listener
+      | `REQUEST_QUIT_APPLICATION of unit listener
+    ]
+    [@@deriving variants]
+
+  end
+
   type t = [
       `REQUEST_FILES_IN_DIRECTORY of string
     | `FINISH_FILES_IN_DIRECTORY of (exn option * string * T.File_stat.t array)
@@ -10,17 +21,19 @@ module IPC_events = struct
   ] [@@deriving variants]
 
   (* Simple wrapper to regist listener to EventEmitter *)
-  let on: channel:t -> listener:(FFI.Event.t Js.t -> 'a -> unit) -> FFI.ipc Js.t -> unit
-    = fun ~channel ~listener emitter ->
-      let channel = Variants.to_name channel |> Js.string in
-      let listener = Js.wrap_callback listener in
+  let on: target:('a Listener.listener -> Listener.t) -> f:('a Listener.listener) -> FFI.ipc Js.t -> unit
+    = fun ~target ~f emitter ->
+      let typ = target f in
+      let channel = Listener.Variants.to_name typ |> Js.string in
+      let listener = Js.wrap_callback f in
       emitter##on channel listener
 
   (* Simple wrapper to regist one-time listener to EventEmitter *)
-  let once: channel:t -> listener:(FFI.Event.t Js.t -> 'a -> unit) -> FFI.ipc Js.t -> unit
-    = fun ~channel ~listener emitter ->
-      let channel = Variants.to_name channel |> Js.string in
-      let listener = Js.wrap_callback listener in
+  let once: target:('a Listener.listener -> Listener.t) -> f:'a Listener.listener -> FFI.ipc Js.t -> unit
+    = fun ~target ~f emitter ->
+      let typ = target f in
+      let channel = Listener.Variants.to_name typ |> Js.string in
+      let listener = Js.wrap_callback f in
       emitter##once channel listener
 
   (* Simple wrapper to reply message from event object *)

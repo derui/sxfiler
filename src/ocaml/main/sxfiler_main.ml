@@ -13,7 +13,7 @@ let () =
   let main_ipc = Main_ipc.Core.make ~ipc ~fs:(M.original_fs) in
   let main_process = Main_process.make main_ipc in
 
-  C.IPC_events.(ipc |> on ~channel:`REQUEST_QUIT_APPLICATION ~listener:(fun _ _ -> Main_process.on_quit main_process ()));
+  C.IPC_events.(ipc |> on ~target:Listener.request_quit_application ~f:(fun _ _ -> Main_process.on_quit main_process ()));
   let app : FFI.electron_app Js.t = M.electron##.app in begin
     let channel = Js.string "ready" in
     let listener = Js.wrap_callback (fun _ _ -> Main_process.on_ready main_process ()) in

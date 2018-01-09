@@ -43,6 +43,6 @@ module Core = struct
   let make ~ipc ~fs =
     let t = {ipc;fs} in
     let listener ev v = on_request_files_in_directory t ev v in
-    C.IPC_events.(on ~channel:(`REQUEST_FILES_IN_DIRECTORY "") ~listener ipc);
+    C.IPC_events.(on ~target:Listener.request_files_in_directory ~f:listener ipc);
     t
 end

@@ -33,7 +33,7 @@ end = struct
   let make ~ipc ~runner =
     let t = {ipc;runner} in
     let listener ev v = on_finish_files_in_directory t ev v in
-    C.IPC_events.(on ~channel:(`FINISH_FILES_IN_DIRECTORY (None, "", [||]) ) ~listener ipc);
+    C.IPC_events.(on ~target:Listener.finish_files_in_directory ~f:listener ipc);
     t
 
   let send_to_main ~channel t =
