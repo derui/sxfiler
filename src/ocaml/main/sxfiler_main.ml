@@ -20,6 +20,6 @@ let () =
     app##on channel listener;
 
     let channel = Js.string "window-all-closed" in
-    let listener = Js.wrap_callback (fun _ _ -> app##quit ()) in
+    let listener = Js.wrap_callback (fun () -> app##quit ()) in
     app##on channel listener
   end
