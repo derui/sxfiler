@@ -34,8 +34,8 @@ end
 
 class type event_emitter = object
   (* handle some event raised from EventEmitter *)
-  method on: js_string Js.t -> ('a -> unit) callback -> unit meth
-  method once: js_string Js.t -> ('a -> unit) callback -> unit meth
+  method on: js_string Js.t -> 'a  callback -> unit meth
+  method once: js_string Js.t -> 'a callback -> unit meth
   method send: js_string t -> 'a -> unit meth
   method removeAllListener: js_string Js.t -> unit meth
   method removeAllListener_all: unit -> unit meth
@@ -80,12 +80,13 @@ class type crash_reporter = object
 end
 
 class type electron_app = object
-  inherit ipc
+  inherit event_emitter
 
   method quit: unit -> unit meth
 end
 
 class type electron = object
   method ipcMain: ipc t readonly_prop
+  method ipcRenderer: ipc t readonly_prop
   method app: electron_app t readonly_prop
 end
