@@ -17,7 +17,7 @@ let component = Component.make (fun props ->
           Sxfiler_classnames.(["file-list__file-name"]
                               <|> Style.Grid.item_row 1
                               <|> Style.Grid.item_col 4
-                              )
+                             )
           |> Sxfiler_classnames.make
 
       end)
