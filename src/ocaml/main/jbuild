@@ -7,6 +7,6 @@
 (executable
  ((name sxfiler_main)
   (public_name sxfiler_main)
-  (libraries (js_of_ocaml sxfiler_common js_of_ocaml-lwt lwt))
+  (libraries (js_of_ocaml sxfiler_common js_of_ocaml-lwt lwt ocaml-flux-frp))
   (js_of_ocaml ((flags ("--pretty"))))
   (preprocess (pps (js_of_ocaml-ppx)))))

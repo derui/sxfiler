@@ -1,5 +1,6 @@
-module T = Sxfiler_common.Std.Types
-module FFI = Sxfiler_common.Std.Ffi
+module M = Sxfiler_message
+module T = Sxfiler_types
+module FFI = Sxfiler_ffi
 module Thread = Lwt
 
 (* All state of this application *)
@@ -14,7 +15,7 @@ class type _js = object
 end
 type js = _js Js.t
 
-type message = Sxfiler_message.t
+type message = M.t
 
 type command = message Thread.t
 

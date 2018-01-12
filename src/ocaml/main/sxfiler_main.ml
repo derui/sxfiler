@@ -4,17 +4,29 @@ module Main_ipc = Sxfiler_ipc
 module Main_process = Sxfiler_main_process
 module M = Sxfiler_modules
 
+let subscription ipc t = Lwt.return @@ E.IPC.(send ~channel:(`Update t) ~ipc)
+
 let dirname : Js.js_string Js.t option = Js.Unsafe.global##.__dirname
 
 let () =
   (* M.crash_reporter##start () |> ignore; *)
 
+  let runner = Sxfiler_flux_runner.run ~initial_state:(Sxfiler_common.Std.State.empty ()) () in
   let ipc = M.electron##.ipcMain in
-  let main_ipc = Main_ipc.Core.make ~ipc ~fs:(M.original_fs) in
-  let main_process = Main_process.make main_ipc in
+  let main_process = Main_process.make ~ipc ~fs:(M.original_fs) ~runner in
+  Main_ipc.bind main_process;
 
-  E.IPC.(ipc |> on ~target:Listener.request_quit_application ~f:(fun _ _ -> Main_process.on_quit main_process ()));
-  let app : FFI.electron_app Js.t = M.electron##.app in begin
+  let module Subscription = struct
+    let handle t =
+      match main_process.Main_process.main_window with
+      | None -> Lwt.return_unit
+      | Some w -> subscription w##.webContents_ipc t
+  end
+  in
+  Sxfiler_flux_runner.subscribe runner ~subscription:(module Subscription);
+
+  let app : FFI.electron_app Js.t = M.electron##.app in
+  begin
     let channel = Js.string "ready" in
     let listener = Js.wrap_callback (fun _ _ -> Main_process.on_ready main_process ()) in
     app##on channel listener;

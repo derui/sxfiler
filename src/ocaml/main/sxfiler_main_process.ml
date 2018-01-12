@@ -1,6 +1,5 @@
 module E = Sxfiler_common.Std.Event
 module FFI = Sxfiler_common.Std.Ffi
-module Main_ipc = Sxfiler_ipc
 module M = Sxfiler_modules
 
 let dirname : Js.js_string Js.t = Js.Unsafe.js_expr "__dirname"
@@ -9,7 +8,9 @@ exception No_main_window
 
 type t = {
   mutable main_window: FFI.BrowserWindow.t Js.t option;
-  main_ipc: Main_ipc.Core.t;
+  ipc: FFI.ipc Js.t;
+  fs: FFI.Fs.t Js.t;
+  runner: Sxfiler_flux_runner.t;
 }
 
 let on_ready t _ =
@@ -41,7 +42,9 @@ let on_quit t _ =
   | None -> raise No_main_window
   | Some window -> window##close ()
 
-let make main_ipc = {
+let make ~ipc ~fs ~runner = {
   main_window = None;
-  main_ipc;
+  ipc;
+  fs;
+  runner;
 }

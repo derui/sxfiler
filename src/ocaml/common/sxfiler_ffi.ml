@@ -72,6 +72,7 @@ module BrowserWindow = struct
     method focusOnWebView: unit -> unit meth
     method close: unit -> unit meth
     method webContents: web_contents Js.t readonly_prop
+    method webContents_ipc: ipc Js.t readonly_prop
   end
 end
 

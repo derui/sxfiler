@@ -1,23 +1,22 @@
+module M = Sxfiler_message
 module FFI = Sxfiler_ffi
 module T = Sxfiler_types
+module S = Sxfiler_state
 
 (* Event name to request file informations in the directory *)
 module IPC = struct
   module Listener = struct
     type 'a listener = FFI.Event.t Js.t -> 'a -> unit
-    type t = [
-        `REQUEST_FILES_IN_DIRECTORY of string listener
-      | `FINISH_FILES_IN_DIRECTORY of (exn option * string * T.File_stat.t array) listener
-      | `REQUEST_QUIT_APPLICATION of unit listener
-    ]
-    [@@deriving variants]
 
+    type t = [
+        `Action of M.t listener
+      | `Update of S.t listener
+    ] [@@deriving variants]
   end
 
   type t = [
-      `REQUEST_FILES_IN_DIRECTORY of string
-    | `FINISH_FILES_IN_DIRECTORY of (exn option * string * T.File_stat.t array)
-    | `REQUEST_QUIT_APPLICATION
+      `Action of M.t
+    | `Update of S.t
   ] [@@deriving variants]
 
   (* Simple wrapper to regist listener to EventEmitter *)
