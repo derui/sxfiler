@@ -4,7 +4,7 @@ module R = Reactjscaml.Std
 module Component = R.Component.Make_stateless (struct
     class type _t = object
       method state: Sxfiler_state.js Js.readonly_prop
-      method dispatch: Sxfiler_action.dispatcher Js.readonly_prop
+      method dispatch: Sxfiler_connector.t Js.readonly_prop
     end
     type t = _t Js.t
   end)

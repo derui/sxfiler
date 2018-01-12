@@ -6,9 +6,10 @@ module Ipc = Sxfiler_renderer_ipc
 let container_id = "top-entry"
 
 let () =
-  let dispatcher, adapter = Sxfiler_action.make () in
   let container = Dom_html.getElementById container_id in
 
+  let runner = Sxfiler_flux_runner.run ~initial_state:(Sxfiler_state.empty ()) () in
+  let dispatcher = Sxfiler_connector.connect runner in
   let module Renderer = struct
     let handle t =
       let element = R.element ~props:(object%js
@@ -18,6 +19,4 @@ let () =
       Lwt.return @@ R.dom##render element container
   end in
 
-  let runner = Sxfiler_flux_runner.run ~subscriptions:[(module Renderer)]
-      ~initial_state:(Sxfiler_state.empty ()) in
-  Sxfiler_action.connect ~runner adapter;
+  Sxfiler_flux_runner.subscribe ~subscription:(module Renderer) runner
