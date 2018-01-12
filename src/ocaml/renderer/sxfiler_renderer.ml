@@ -1,7 +1,7 @@
 module C = Sxfiler_common.Std
 module R = Reactjscaml.Std
 module Runner = Sxfiler_flux_runner
-module Ipc = Sxfiler_renderer_ipc
+module Ipc = Sxfiler_ipc
 
 let container_id = "top-entry"
 
