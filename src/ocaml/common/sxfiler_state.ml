@@ -21,6 +21,7 @@ type command = message Thread.t
 
 let equal = ( = )
 let update t = function
+  | M.FINISH_FILES_IN_DIRECTORY (_, _, list) -> ({t with file_list = Array.to_list list}, None)
   | _ -> failwith "not implemented"
 
 let empty () = {
@@ -34,3 +35,12 @@ let to_js t = object%js
                   |> Js.array
   val waiting = Js.bool t.waiting
 end
+
+let of_js t =
+  let file_list = Js.to_array t##.file_list in
+  let file_list = Array.to_list file_list
+                  |> List.map T.File_stat.of_js
+  in
+  {file_list;
+   waiting = Js.to_bool t##.waiting;
+  }

@@ -3,12 +3,12 @@ module FFI = Sxfiler_ffi
 module File_stat = struct
   type t = {
     filename: string;
-    stat: FFI.Fs.stat Js.t;
+    stat: FFI.Fs.stat_obj Js.t;
   }
 
   class type js = object
     method filename: Js.js_string Js.t Js.readonly_prop
-    method stat: FFI.Fs.stat Js.t Js.readonly_prop
+    method stat: FFI.Fs.stat_obj Js.t Js.readonly_prop
   end
 
   let to_js t = object%js
@@ -21,4 +21,3 @@ module File_stat = struct
     stat = js##.stat
   }
 end
-

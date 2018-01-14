@@ -4,7 +4,7 @@ module E = Sxfiler_common.Std.Event
 type t = (C.t -> unit) Js.callback
 
 let make ipc =
-  Js.wrap_callback @@ (fun message -> E.IPC.send ~channel:(`Action message) ~ipc)
+  Js.wrap_callback @@ (fun message -> E.IPC.send ~channel:(`Action (C.to_js message)) ~ipc)
 
-let dispatch dispatcher message =
+let dispatch : t -> C.t -> unit = fun dispatcher message ->
   Js.Unsafe.fun_call dispatcher [|Js.Unsafe.inject message|]

@@ -5,19 +5,24 @@ module S = Sxfiler_state
 
 (* Event name to request file informations in the directory *)
 module IPC = struct
+
+  module Core = struct
+    type t = [
+        `Action of M.js
+      | `Update of S.js
+    ] [@@deriving variants]
+  end
+
   module Listener = struct
     type 'a listener = FFI.Event.t Js.t -> 'a -> unit
 
     type t = [
-        `Action of M.t listener
-      | `Update of S.t listener
-    ] [@@deriving variants]
+        `Action of Core.t listener
+      | `Update of Core.t listener]
+    [@@deriving variants]
   end
 
-  type t = [
-      `Action of M.t
-    | `Update of S.t
-  ] [@@deriving variants]
+  include Core
 
   (* Simple wrapper to regist listener to EventEmitter *)
   let on: target:('a Listener.listener -> Listener.t) -> f:('a Listener.listener) -> FFI.ipc Js.t -> unit

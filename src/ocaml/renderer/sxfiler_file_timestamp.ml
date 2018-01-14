@@ -19,8 +19,8 @@ let format_date date =
 
 let component = Component.make (fun props ->
     let timestamp = props##.timestamp in
-    let date = new%js Js.date_fromTimeValue timestamp in 
-    let date = format_date date in 
+    let date = new%js Js.date_fromTimeValue timestamp in
+    let date = format_date date in
     R.Dom.of_tag `span
       ~props:(object%js
         val key = Js.Optdef.empty

@@ -4,7 +4,9 @@ module Main_ipc = Sxfiler_ipc
 module Main_process = Sxfiler_main_process
 module M = Sxfiler_modules
 
-let subscription ipc t = Lwt.return @@ E.IPC.(send ~channel:(`Update t) ~ipc)
+let subscription ipc t =
+  let module S = Sxfiler_common.Std.State in
+  Lwt.return @@ E.IPC.(send ~channel:(`Update (S.to_js t)) ~ipc)
 
 let dirname : Js.js_string Js.t option = Js.Unsafe.global##.__dirname
 

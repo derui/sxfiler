@@ -29,6 +29,7 @@ let on_request_files_in_directory t ev path =
   in
 
   let lwt = Lwt.catch (fun () -> lwt) (fun err ->
+      Firebug.console##log err;
       match err with
       | File_list.Not_directory f ->
         let module M = Sxfiler_common.Std.Message in
@@ -39,11 +40,14 @@ let on_request_files_in_directory t ev path =
   in
   Lwt.ignore_result lwt
 
-let on_message t ev = function
+let on_action t ev = function
   | M.REQUEST_FILES_IN_DIRECTORY v -> on_request_files_in_directory t ev v
   | M.REQUEST_QUIT_APPLICATION -> P.on_quit t ev
   | _ -> ()
 
 let bind t =
-  let listener ev v = on_message t ev v in
-  E.IPC.(on ~target:Listener.action ~f:listener t.P.ipc)
+  let listener ev = function
+    | `Action v -> on_action t ev @@ E.M.of_js v
+    | _ -> ()
+  in
+  E.IPC.(on ~target:action ~f:listener t.P.ipc)

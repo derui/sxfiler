@@ -21,6 +21,6 @@ let component = Component.make (fun props ->
       ~children:[|
         R.element ~props:(object%js val file_name = stat##.filename end) Sxfiler_file_name.component;
         R.element ~props:(object%js val mode = stat##.stat##.mode end) Sxfiler_file_mode.component;
-        R.element ~props:(object%js val timestamp = stat##.stat##.mtimeMs end) Sxfiler_file_timestamp.component;
+        R.element ~props:(object%js val timestamp = stat##.stat##.mtime end) Sxfiler_file_timestamp.component;
       |]
   )
