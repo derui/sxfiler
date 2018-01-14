@@ -3,12 +3,22 @@ require('./build-ocaml.js');
 require('./bundle-main.js');
 require('./pre-package.js');
 
+function getPlatforms() {
+  const args = process.argv.slice(2)
+
+  if (args.length === 0) {
+    return [
+      'darwin',
+      'win32',
+      'linux']
+  } else {
+    return args
+  }
+}
+
 const { execFileSync } = require('child_process');
 
-const platforms = [
-  'darwin',
-  'win32',
-  'linux'];
+const platforms = getPlatforms()
 
 platforms.forEach(platform => {
   const options = ['./dist', 'sxfiler', `--platform=${platform}`, '--arch=x64',
