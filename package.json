@@ -24,6 +24,7 @@
     "webpack": "^3.5.5"
   },
   "scripts": {
+    "app": "node ./scripts/run-app.js",
     "setup": "node ./scripts/setup.js",
     "build:css": "node ./scripts/build-css.js",
     "build:main": "node ./scripts/build-ocaml.js",
