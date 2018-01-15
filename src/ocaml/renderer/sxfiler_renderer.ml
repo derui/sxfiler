@@ -22,4 +22,4 @@ let () =
   C.Event.IPC.(on ~target:Listener.update ~f:handle electron##.ipcRenderer);
 
   let module M = Sxfiler_common.Std.Message in
-  Sxfiler_dispatcher.dispatch dispatcher @@ M.request_files_in_directory "/home/derui"
+  Sxfiler_dispatcher.dispatch dispatcher @@ M.request_files_in_directory "."
