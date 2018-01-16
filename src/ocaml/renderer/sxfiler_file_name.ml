@@ -12,9 +12,9 @@ let component = Component.make (fun props ->
     R.Dom.of_tag `span
       ~props:(object%js
         val key = Js.Optdef.empty
-        val className = 
+        val className =
           let open Sxfiler_classnames.Infix in
-          Sxfiler_classnames.(["file-list__file-name"]
+          Sxfiler_classnames.(["fp-FileItem_FileName"]
                               <|> Style.Grid.item_row 1
                               <|> Style.Grid.item_col 4
                              )

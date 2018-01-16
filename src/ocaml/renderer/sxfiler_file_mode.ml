@@ -16,7 +16,7 @@ let component = Component.make (fun props ->
         val key = Js.Optdef.empty
         val className =
           let open Sxfiler_classnames.Infix in
-          Sxfiler_classnames.(["file-list__file-mode"]
+          Sxfiler_classnames.(["fp-FileList_FileMode"]
                               <|> Style.Grid.item_row 1
                               <|> Style.Grid.item_col 1)
           |> Sxfiler_classnames.make

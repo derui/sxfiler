@@ -26,7 +26,7 @@ let component = Component.make (fun props ->
         val key = Js.Optdef.empty
         val className =
           let open Sxfiler_classnames.Infix in
-          Sxfiler_classnames.(["file-list__file-timestamp"]
+          Sxfiler_classnames.(["fp-FileList_Timestamp"]
                               <|> Style.Grid.item_row 1
                               <|> Style.Grid.item_col 3)
           |> Sxfiler_classnames.make
