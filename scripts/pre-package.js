@@ -6,16 +6,26 @@ let files = [
   '*.svg',
   '*.ttf',
   '*.woff',
-  'package.json'
+  'package.json',
 ].join(',');
-execFileSync('cpx', [`./src/{${files}}`, './dist'], {stdio: 'inherit'}, (error, stdout, stderr) => {
-  if (error) {
-    throw error;
+execFileSync(
+  'cpx',
+  [`./src/{${files}}`, './dist'],
+  { stdio: 'inherit' },
+  (error, stdout, stderr) => {
+    if (error) {
+      throw error;
+    }
   }
-});
+);
 
-execFileSync('cpx', [`./_build/default/src/ocaml/main/sxfiler_main.bc.js`, './dist'], {stdio: 'inherit'}, (error, stdout, stderr) => {
-  if (error) {
-    throw error;
+execFileSync(
+  'cpx',
+  [`./_build/default/src/ocaml/main/sxfiler_main.bc.js`, './dist'],
+  { stdio: 'inherit' },
+  (error, stdout, stderr) => {
+    if (error) {
+      throw error;
+    }
   }
-});
+);

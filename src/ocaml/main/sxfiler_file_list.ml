@@ -26,7 +26,7 @@ let get_file_stats ~fs path =
   >>= (fun names ->
       let module M = Sxfiler_modules in
       let names = Js.to_array names
-                |> Array.map (fun v -> M.path##join (Js.array [|path_; v|])) in
+                  |> Array.map (fun v -> M.path##join (Js.array [|path_; v|])) in
       Lwt.return @@
       Array.map (fun name ->
           let stat = fs##statSync name in

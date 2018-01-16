@@ -1,4 +1,41 @@
-const shell = require('shelljs');
+const { execFileSync } = require('child_process');
 
-let files = shell.find(`${__dirname}/../src/`, `${__dirname}/../test/`).filter(f => f.match(/\.ml$/));
-files.forEach(f => shell.exec(`ocp-indent -i ${f}`));
+const glob = require('glob');
+
+glob('src/**/*.{ml,mli}', (er, files) => {
+  files.forEach(f => {
+    console.log(`Formatting OCaml source: ${f}`);
+    execFileSync(
+      'ocp-indent',
+      ['-i', f],
+      { stdio: 'inherit' },
+      (error, stdout, stderr) => {
+        if (error) {
+          throw error;
+        }
+      }
+    );
+  });
+});
+
+execFileSync(
+  'prettier',
+  ['--single-quote', '--trailing-comma', 'es5', '--write', 'scripts/*.js'],
+  { stdio: 'inherit' },
+  (error, stdout, stderr) => {
+    if (error) {
+      throw error;
+    }
+  }
+);
+
+execFileSync(
+  'prettier',
+  ['--write', 'src/sass/**/*.scss'],
+  { stdio: 'inherit' },
+  (error, stdout, stderr) => {
+    if (error) {
+      throw error;
+    }
+  }
+);

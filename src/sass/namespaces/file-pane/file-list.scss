@@ -1,0 +1,22 @@
+@import "base/_colors";
+
+.fp-FileList {
+  display: grid;
+  height: 100%;
+  overflow: hidden;
+
+  border-bottom: 1px solid $sol_base2;
+}
+
+.fp-FileList_Header {
+  flex: 0 0 auto;
+  padding: 0.2rem 0.5rem;
+  font-weight: bold;
+  color: $sol_base1;
+  background-color: $sol_base01;
+  font-family: monospace;
+}
+
+.fp-FileList_Header.is-selected {
+  color: $sol_yellow;
+}
