@@ -8,17 +8,21 @@
   font-family: monospace;
 }
 
-.fp-FileItem-selected {
+.fp-FileItem-Selected {
   background-color: $sol_base02;
-}
-
-.fp-FileItem-Directory {
-  color: $sol_blue;
 }
 
 .fp-FileItem_FileName {
   padding: 0.25em 0;
   font-weight: bold;
+}
+
+.fp-FileItem_FileName-Directory {
+  color: $sol_yellow;
+}
+
+.fp-FileItem_FileName-Symlink {
+  color: $sol_orange;
 }
 
 .fp-FileItem_FileSize {
@@ -29,10 +33,6 @@
 .fp-FileItem_FileMode {
   padding: 0.25em 0;
   white-space: nowrap;
-}
-
-.fp-FileItem_FileMode-Symlink {
-  color: $sol_orange;
 }
 
 .fp-FileItem_Timestamp {

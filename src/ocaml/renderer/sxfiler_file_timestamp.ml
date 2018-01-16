@@ -24,12 +24,7 @@ let component = Component.make (fun props ->
     R.Dom.of_tag `span
       ~props:(object%js
         val key = Js.Optdef.empty
-        val className =
-          let open Sxfiler_classnames.Infix in
-          Sxfiler_classnames.(["fp-FileList_Timestamp"]
-                              <|> Style.Grid.item_row 1
-                              <|> Style.Grid.item_col 3)
-          |> Sxfiler_classnames.make
+        val className = Sxfiler_classnames.make ["fp-FileList_Timestamp"]
       end)
       ~children:[| R.text date |]
   )

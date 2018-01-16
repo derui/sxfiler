@@ -13,14 +13,15 @@ let component = Component.make (fun props ->
     R.Dom.of_tag `li
       ~props:(object%js
         val key = Js.Optdef.empty
-        val className =
-          let open Sxfiler_classnames.Infix in
-          Sxfiler_classnames.(["fp-FileItem"] <|> Style.Grid.item <|> Style.Grid.container)
-          |> Sxfiler_classnames.make
+        val className = Sxfiler_classnames.make ["fp-FileItem"]
       end)
       ~children:[|
-        R.element ~props:(object%js val file_name = stat##.filename end) Sxfiler_file_name.component;
         R.element ~props:(object%js val mode = stat##.stat##.mode end) Sxfiler_file_mode.component;
         R.element ~props:(object%js val timestamp = stat##.stat##.mtime end) Sxfiler_file_timestamp.component;
+        R.element ~props:(object%js val size = stat##.stat##.size end) Sxfiler_file_size.component;
+        R.element ~props:(object%js
+          val file_name = stat##.filename
+          val isDirectory = stat##.stat##.isDirectory
+        end) Sxfiler_file_name.component;
       |]
   )
