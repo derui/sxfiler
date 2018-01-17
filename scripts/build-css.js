@@ -4,7 +4,7 @@ const { execFileSync } = require('child_process');
 
 // Run command to build scss.
 // If this function gave an argument named watching, this function run a build command with watch option.
-function buildCss() {
+function buildCss(ignoreError = false) {
   let options = [
     '--include-path',
     'src/sass',
@@ -15,16 +15,13 @@ function buildCss() {
     './src/sass/app.scss',
   ];
 
-  execFileSync(
-    'node-sass',
-    options,
-    { stdio: 'inherit' },
-    (error, stdout, stderr) => {
-      if (error) {
-        throw error;
-      }
+  try {
+    execFileSync('node-sass', options, { stdio: 'inherit' });
+  } catch (e) {
+    if (!ignoreError) {
+      throw e;
     }
-  );
+  }
 }
 
 // Run command to build scss with watching file changes.
@@ -35,7 +32,7 @@ function buildCssWithWatch() {
   return chokidar
     .watch('src/sass/', { ignored: /(^|[\/\\])\../, ignoreInitial: true })
     .on('all', (event, path) => {
-      buildCss();
+      buildCss(true);
     });
 }
 
@@ -46,9 +43,11 @@ if (require.main === module) {
   (function() {
     let watched = false;
 
-    buildCss();
     if (process.argv.length > 2 && process.argv[2] === 'watch') {
+      buildCss(true);
       buildCssWithWatch();
+    } else {
+      buildCss();
     }
   })();
 }
