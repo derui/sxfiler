@@ -5,6 +5,7 @@ module Component = R.Component.Make_stateless (struct
     class type _t = object
       method file_name: Js.js_string Js.t Js.readonly_prop
       method isDirectory: bool Js.t Js.readonly_prop
+      method isSymbolicLink: bool Js.t Js.readonly_prop
     end
     type t = _t Js.t
   end)

@@ -27,6 +27,7 @@ module Fs = struct
     method isDirectory: unit -> bool t meth
     method isFile: unit -> bool t meth
     method isBlockDevice: unit -> bool t meth
+    method isSymbolicLink: unit -> bool t meth
   end
 
   class type stat_obj = object
@@ -47,6 +48,7 @@ module Fs = struct
     method isDirectory: bool t readonly_prop
     method isFile: bool t readonly_prop
     method isBlockDevice: bool t readonly_prop
+    method isSymbolicLink: bool t readonly_prop
   end
 
   (* Convert Stats class to pure json *)
@@ -68,10 +70,13 @@ module Fs = struct
     val isDirectory = t##isDirectory ()
     val isFile = t##isFile ()
     val isBlockDevice = t##isBlockDevice ()
+    val isSymbolicLink = t##isSymbolicLink ()
   end
 
   class type t = object
     method statSync: js_string Js.t -> stat Js.t meth
+    method lstatSync: js_string Js.t -> stat Js.t meth
+    method readlinkSync: js_string Js.t -> js_string Js.t meth
     method readdirSync: js_string Js.t -> js_string Js.t js_array Js.t meth
   end
 end

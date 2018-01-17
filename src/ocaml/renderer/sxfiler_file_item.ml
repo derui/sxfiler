@@ -22,6 +22,7 @@ let component = Component.make (fun props ->
         R.element ~props:(object%js
           val file_name = stat##.filename
           val isDirectory = stat##.stat##.isDirectory
+          val isSymbolicLink = stat##.stat##.isSymbolicLink
         end) Sxfiler_file_name.component;
       |]
   )
