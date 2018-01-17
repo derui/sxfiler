@@ -8,13 +8,5 @@ let files = [
   '*.woff',
   'package.json',
 ].join(',');
-execFileSync(
-  'cpx',
-  [`./src/{${files}}`, './dist'],
-  { stdio: 'inherit' },
-  (error, stdout, stderr) => {
-    if (error) {
-      throw error;
-    }
-  }
-);
+
+execFileSync('cpx', [`./src/{${files}}`, './dist'], { stdio: 'inherit' });

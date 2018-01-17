@@ -1,7 +1,7 @@
 require('./pre-package.js');
 
-const { buildCss} = require('./build-css.js');
-const { buildOCaml} = require('./build-ocaml.js');
+const { buildCss } = require('./build-css.js');
+const { buildOCaml } = require('./build-ocaml.js');
 
 function getPlatforms() {
   const args = process.argv.slice(2);
@@ -33,11 +33,5 @@ platforms.forEach(platform => {
   execFileSync(
     'electron-packager',
     options,
-    { stdio: 'inherit' },
-    (error, stdout, stderr) => {
-      if (error) {
-        throw error;
-      }
-    }
-  );
+    { stdio: 'inherit' });
 });

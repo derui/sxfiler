@@ -5,37 +5,16 @@ const glob = require('glob');
 glob('src/**/*.{ml,mli}', (er, files) => {
   files.forEach(f => {
     console.log(`Formatting OCaml source: ${f}`);
-    execFileSync(
-      'ocp-indent',
-      ['-i', f],
-      { stdio: 'inherit' },
-      (error, stdout, stderr) => {
-        if (error) {
-          throw error;
-        }
-      }
-    );
+    execFileSync('ocp-indent', ['-i', f], { stdio: 'inherit' });
   });
 });
 
 execFileSync(
   'prettier',
   ['--single-quote', '--trailing-comma', 'es5', '--write', 'scripts/*.js'],
-  { stdio: 'inherit' },
-  (error, stdout, stderr) => {
-    if (error) {
-      throw error;
-    }
-  }
+  { stdio: 'inherit' }
 );
 
-execFileSync(
-  'prettier',
-  ['--write', 'src/sass/**/*.scss'],
-  { stdio: 'inherit' },
-  (error, stdout, stderr) => {
-    if (error) {
-      throw error;
-    }
-  }
-);
+execFileSync('prettier', ['--write', 'src/sass/**/*.scss'], {
+  stdio: 'inherit',
+});
