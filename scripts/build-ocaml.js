@@ -3,6 +3,22 @@ const chokidar = require('chokidar');
 
 const { execFileSync } = require('child_process');
 
+function bundleRenderer() {
+  let options = ['--cache', '--config', 'webpack.main.config.js'];
+
+  execFileSync(
+    'webpack',
+    options,
+    { stdio: 'inherit' },
+    (error, stdout, stderr) => {
+      if (error) {
+        throw error;
+      }
+    }
+  );
+}
+
+
 function buildOCaml() {
   execFileSync(
     'jbuilder',
@@ -14,6 +30,8 @@ function buildOCaml() {
       }
     }
   );
+
+  bundleRenderer();
 
   execFileSync(
     'cpx',

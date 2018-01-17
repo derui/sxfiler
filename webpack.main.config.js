@@ -1,5 +1,6 @@
 const path = require('path');
 module.exports = {
+  bail: false,
   target: 'web',
   entry: './_build/default/src/ocaml/renderer/sxfiler_renderer.bc.js',
   output: {

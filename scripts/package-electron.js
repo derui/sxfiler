@@ -2,7 +2,6 @@ require('./pre-package.js');
 
 const { buildCss} = require('./build-css.js');
 const { buildOCaml} = require('./build-ocaml.js');
-const bundleRenderer = require('./bundle-main.js');
 
 function getPlatforms() {
   const args = process.argv.slice(2);
@@ -18,7 +17,6 @@ const { execFileSync } = require('child_process');
 
 buildCss();
 buildOCaml();
-bundleRenderer();
 
 const platforms = getPlatforms();
 
