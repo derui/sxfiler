@@ -1,4 +1,4 @@
-@import "base/_colors";
+@import "base/*";
 
 .fp-FileItem {
   justify-content: center;
@@ -26,7 +26,7 @@
 }
 
 .fp-FileItem_FileSize {
-  padding: 0.25em 0.5em;
+  padding: ($basePadding / 2) $basePadding;
   text-align: right;
 }
 

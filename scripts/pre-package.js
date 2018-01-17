@@ -18,14 +18,3 @@ execFileSync(
     }
   }
 );
-
-execFileSync(
-  'cpx',
-  [`./_build/default/src/ocaml/main/sxfiler_main.bc.js`, './dist'],
-  { stdio: 'inherit' },
-  (error, stdout, stderr) => {
-    if (error) {
-      throw error;
-    }
-  }
-);

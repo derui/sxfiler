@@ -21,24 +21,28 @@
     "karma-mocha": "^1.3.0",
     "mocha": "^4.0.1",
     "node-sass": "^4.7.2",
+    "node-sass-glob-importer": "^5.1.0",
     "node-sass-globbing": "0.0.23",
     "npm-run-all": "^4.1.1",
     "prettier": "^1.10.2",
     "webpack": "^3.5.5"
   },
   "scripts": {
+    "start": "npm run watch",
     "app": "node ./scripts/run-app.js",
-    "setup": "node ./scripts/setup.js",
+    "watch": "npm-ruin-all -s watch:css watch:main watch:bundle",
     "build:css": "node ./scripts/build-css.js",
     "build:main": "node ./scripts/build-ocaml.js",
     "bundle": "node ./scripts/bundle-main.js",
     "bundle:prod": "node ./scripts/bundle-main.js prod",
+    "watch:css": "node ./scripts/build-css.js watch",
+    "watch:main": "node ./scripts/build-ocaml.js watch",
+    "watch:bundle": "node ./scripts/bundle-main.js watch",
     "package": "node ./scripts/package-electron.js",
-    "package:linux": "node ./scripts/package-electron.js linux",
     "run:test": "karma start --single-run --browsers ChromeHeadless karma.conf.js",
     "test": "npm-run-all -s build bundle:test run:test",
     "format": "node ./scripts/format.js",
-    "clean": "rimraf dist/"
+    "clean": "node ./scripts/clean.js"
   },
   "repository": {
     "type": "git",

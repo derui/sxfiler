@@ -29,8 +29,8 @@ function buildOCaml() {
 
 function buildOCamlWithWatch() {
   // One-liner for current directory, ignores .dotfiles
-  chokidar
-    .watch('src/ocaml/', { ignored: /(^|[\/\\])\../ })
+  return chokidar
+    .watch('src/ocaml/', { ignored: /(^|[\/\\])\../, ignoreInitial: true })
     .on('all', (event, path) => {
       buildOCaml();
     });
@@ -41,10 +41,9 @@ module.exports.buildOCamlWithWatch = buildOCamlWithWatch;
 
 if (require.main === module) {
   (function() {
+    buildOCaml();
     if (process.argv.length > 2 && process.argv[2] === 'watch') {
       buildOCamlWithWatch();
-    } else {
-      buildOCaml();
     }
   })();
 }
