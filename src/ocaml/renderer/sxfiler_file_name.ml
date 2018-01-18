@@ -22,12 +22,13 @@ let get_classname props =
    <|> (symlink_modifier, Js.to_bool props##.isSymbolicLink)) |> C.make
 
 let component = Component.make (fun props ->
+    let name = props##.file_name |> Js.to_string |> Filename.basename in
     R.Dom.of_tag `span
       ~props:(object%js
         val key = Js.Optdef.empty
         val className = get_classname props
       end)
       ~children:[|
-        R.text @@ Js.to_string props##.file_name
+        R.text name
       |]
   )
