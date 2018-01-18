@@ -31,10 +31,10 @@ if (require.main === module) {
       ocamlFileWatcher.close();
 
       if (exit !== null) {
-        exit(exit);
+        process.exit(exit);
       } else {
         console.warn(signal);
-        exit(1);
+        process.exit(1);
       }
     });
   })();
