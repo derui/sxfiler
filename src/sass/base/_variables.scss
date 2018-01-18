@@ -1,1 +1,4 @@
-$basePadding: 8px;
+$baseSpace: 8px;
+$smallSpace: $baseSpace / 2;
+$nanoSpace: $smallSpace / 2;
+$largeSpace: $baseSpace * 2;

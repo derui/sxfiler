@@ -4,6 +4,8 @@
   display: grid;
   height: 100%;
   overflow: hidden;
+  margin: 0;
+  padding: $smallSpace;
 
   border-bottom: 1px solid $sol_base2;
 }
