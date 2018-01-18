@@ -30,8 +30,5 @@ platforms.forEach(platform => {
     '--overwrite',
     '--asar',
   ];
-  execFileSync(
-    'electron-packager',
-    options,
-    { stdio: 'inherit' });
+  execFileSync('electron-packager', options, { stdio: 'inherit' });
 });
