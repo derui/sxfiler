@@ -24,7 +24,7 @@ let component = Component.make (fun props ->
     R.Dom.of_tag `span
       ~props:(object%js
         val key = Js.Optdef.empty
-        val className = Sxfiler_classnames.make ["fp-FileList_Timestamp"]
+        val className = Sxfiler_classnames.make ["fp-FileItem_Timestamp"]
       end)
       ~children:[| R.text date |]
   )

@@ -73,7 +73,7 @@ let component = Component.make (fun props ->
     R.Dom.of_tag `span
       ~props:(object%js
         val key = Js.Optdef.empty
-        val className = Sxfiler_classnames.make ["fp-FileList_FileMode"]
+        val className = Sxfiler_classnames.make ["fp-FileItem_FileMode"]
       end)
       ~children:[|
         R.text @@ Mode_converter.(of_mode_bits mode |> to_string)

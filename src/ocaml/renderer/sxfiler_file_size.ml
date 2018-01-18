@@ -66,7 +66,7 @@ let component = Component.make (fun props ->
     R.Dom.of_tag `span
       ~props:(object%js
         val key = Js.Optdef.empty
-        val className = Sxfiler_classnames.make ["fp-FileList_FileSize"]
+        val className = Sxfiler_classnames.make ["fp-FileItem_FileSize"]
       end)
       ~children:[|
         File_size.of_size size |> File_size.to_string |> R.text
