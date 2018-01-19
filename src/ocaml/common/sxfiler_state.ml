@@ -3,15 +3,19 @@ module T = Sxfiler_types
 module FFI = Sxfiler_ffi
 module Thread = Lwt
 
+type selected_item = int
+
 (* All state of this application *)
 type t = {
   file_list: T.File_stat.t list;
   waiting: bool;
+  selected_item: selected_item;
 }
 
 class type _js = object
   method file_list: T.File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
   method waiting: bool Js.t Js.readonly_prop
+  method selectedKitem : Js.number Js.t Js.readonly_prop
 end
 type js = _js Js.t
 
@@ -27,6 +31,7 @@ let update t = function
 let empty () = {
   file_list = [];
   waiting = false;
+  selected_item = -1;
 }
 
 let to_js t = object%js
@@ -34,6 +39,7 @@ let to_js t = object%js
                   |> Array.of_list
                   |> Js.array
   val waiting = Js.bool t.waiting
+  val selected_item =float_of_int t.selected_item |>  Js.number_of_float
 end
 
 let of_js t =
@@ -43,4 +49,5 @@ let of_js t =
   in
   {file_list;
    waiting = Js.to_bool t##.waiting;
+   selected_item = Js.float_of_number t##.selected_item |> int_of_float
   }
