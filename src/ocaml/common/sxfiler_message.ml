@@ -23,8 +23,8 @@ let of_js = function
     let ary = Js.to_array ary |> Array.map T.File_stat.of_js in
     finish_files_in_directory (exn, Js.to_string s, ary)
   | `REQUEST_QUIT_APPLICATION -> request_quit_application
-  | `SELECT_MEXT_ITEM v -> select_next_item v
-  | `SELECT_PREV_ITEM v -> select_prev_item v
+  | `SELECT_NEXT_ITEM v -> Js.float_of_number v |> int_of_float |> select_next_item
+  | `SELECT_PREV_ITEM v -> Js.float_of_number v |> int_of_float |> select_prev_item
 
 let to_js = function
   | REQUEST_FILES_IN_DIRECTORY s -> `REQUEST_FILES_IN_DIRECTORY (Js.string s)

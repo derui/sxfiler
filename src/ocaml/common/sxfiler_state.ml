@@ -15,7 +15,7 @@ type t = {
 class type _js = object
   method file_list: T.File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
   method waiting: bool Js.t Js.readonly_prop
-  method selectedKitem : Js.number Js.t Js.readonly_prop
+  method selected_item : Js.number Js.t Js.readonly_prop
 end
 type js = _js Js.t
 
@@ -26,6 +26,11 @@ type command = message Thread.t
 let equal = ( = )
 let update t = function
   | M.FINISH_FILES_IN_DIRECTORY (_, _, list) -> ({t with file_list = Array.to_list list}, None)
+  | M.SELECT_NEXT_ITEM v ->
+    let file_count = List.length t.file_list in
+    ({t with selected_item = max file_count (v + t.selected_item)}, None)
+  | M.SELECT_PREV_ITEM v ->
+    ({t with selected_item = min 0 (v - t.selected_item)}, None)
   | _ -> failwith "not implemented"
 
 let empty () = {
