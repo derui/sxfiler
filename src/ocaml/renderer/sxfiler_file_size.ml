@@ -64,10 +64,9 @@ end
 let component = Component.make (fun props ->
     let size = Js.float_of_number props##.size in
     R.Dom.of_tag `span
-      ~props:(object%js
-        val key = Js.Optdef.empty
-        val className = Sxfiler_classnames.make ["fp-FileItem_FileSize"]
-      end)
+      ~props:R.Core.Element_spec.({
+          (empty ()) with class_name = Some (Sxfiler_classnames.make ["fp-FileItem_FileSize"])
+        })
       ~children:[|
         File_size.of_size size |> File_size.to_string |> R.text
       |]

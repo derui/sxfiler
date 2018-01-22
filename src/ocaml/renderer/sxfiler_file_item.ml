@@ -11,10 +11,9 @@ module Component = R.Component.Make_stateless (struct
 let component = Component.make (fun props ->
     let stat = props##.item in
     R.Dom.of_tag `li
-      ~props:(object%js
-        val key = Js.Optdef.empty
-        val className = Sxfiler_classnames.make ["fp-FileItem"]
-      end)
+      ~props:R.Core.Element_spec.({
+          (empty ()) with class_name = Some (Sxfiler_classnames.make ["fp-FileItem"])
+        })
       ~children:[|
         R.element ~props:(object%js val mode = stat##.stat##.mode end) Sxfiler_file_mode.component;
         R.element ~props:(object%js val timestamp = stat##.stat##.mtime end) Sxfiler_file_timestamp.component;

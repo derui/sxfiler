@@ -18,9 +18,8 @@ let component = Component.make (fun props ->
       ) props##.state##.file_list
     in
     R.Dom.of_tag `ul
-      ~props:(object%js
-        val key = Js.Optdef.empty
-        val className = Sxfiler_classnames.make ["fp-FileList"]
-      end)
+      ~props:R.Core.Element_spec.({
+          (empty ()) with class_name = Some (Sxfiler_classnames.make ["fp-FileList"])
+        })
       ~children:elements
   )

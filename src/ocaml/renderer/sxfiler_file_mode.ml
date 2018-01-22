@@ -71,10 +71,9 @@ let component = Component.make (fun props ->
     let mode = Js.float_of_number props##.mode in
     let mode = int_of_float mode in
     R.Dom.of_tag `span
-      ~props:(object%js
-        val key = Js.Optdef.empty
-        val className = Sxfiler_classnames.make ["fp-FileItem_FileMode"]
-      end)
+      ~props:R.Core.Element_spec.({
+          (empty ()) with class_name = Some (Sxfiler_classnames.make ["fp-FileItem_FileMode"])
+        })
       ~children:[|
         R.text @@ Mode_converter.(of_mode_bits mode |> to_string)
       |]

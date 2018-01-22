@@ -24,10 +24,9 @@ let get_classname props =
 let component = Component.make (fun props ->
     let name = props##.file_name |> Js.to_string |> Filename.basename in
     R.Dom.of_tag `span
-      ~props:(object%js
-        val key = Js.Optdef.empty
-        val className = get_classname props
-      end)
+      ~props:R.Core.Element_spec.({
+        (empty ()) with class_name = Some (get_classname props)
+      })
       ~children:[|
         R.text name
       |]
