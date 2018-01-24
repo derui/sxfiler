@@ -1,7 +1,7 @@
 
-module E = Sxfiler_common.Std.Event
-module FFI = Sxfiler_common.Std.Ffi
-module M = Sxfiler_common.Std.Message
+module E = Sxfiler_common.Event
+module FFI = Sxfiler_common.Ffi
+module M = Sxfiler_common.Message
 module P = Sxfiler_main_process
 
 exception Unhandled_promise
@@ -22,7 +22,7 @@ let on_request_files_in_directory t ev path =
   let open Lwt.Infix in
   let lwt = File_list.get_file_stats ~fs:t.P.fs absolute
     >>= (fun files ->
-        let module M = Sxfiler_common.Std.Message in
+        let module M = Sxfiler_common.Message in
         let module R = Sxfiler_flux_runner in
         Lwt.return @@ R.send t.P.runner (M.finish_files_in_directory (None, absolute, files))
       )
@@ -32,7 +32,7 @@ let on_request_files_in_directory t ev path =
       Firebug.console##log err;
       match err with
       | File_list.Not_directory f ->
-        let module M = Sxfiler_common.Std.Message in
+        let module M = Sxfiler_common.Message in
         let module R = Sxfiler_flux_runner in
         Lwt.return @@ R.send t.P.runner (M.finish_files_in_directory (Some err, absolute, [||]))
       | _ -> raise Unhandled_promise

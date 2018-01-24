@@ -1,4 +1,4 @@
-module State = Sxfiler_common.Std.State
-module F = Flux_frp.Std
+module State = Sxfiler_common.State
+module F = Flux_frp
 
 include F.Flux.Make.Default_runner(State)

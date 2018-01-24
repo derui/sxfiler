@@ -1,5 +1,5 @@
-module C = Sxfiler_common.Std
-module R = Reactjscaml.Std
+module C = Sxfiler_common
+module R = Reactjscaml
 module M = Sxfiler_modules
 
 let container_id = "top-entry"
@@ -21,5 +21,5 @@ let () =
   in
   C.Event.IPC.(on ~target:Listener.update ~f:handle electron##.ipcRenderer);
 
-  let module M = Sxfiler_common.Std.Message in
+  let module M = Sxfiler_common.Message in
   Sxfiler_dispatcher.dispatch dispatcher @@ M.request_files_in_directory "."

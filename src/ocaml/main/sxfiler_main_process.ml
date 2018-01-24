@@ -1,5 +1,5 @@
-module E = Sxfiler_common.Std.Event
-module FFI = Sxfiler_common.Std.Ffi
+module E = Sxfiler_common.Event
+module FFI = Sxfiler_common.Ffi
 module M = Sxfiler_modules
 
 let dirname : Js.js_string Js.t = Js.Unsafe.js_expr "__dirname"

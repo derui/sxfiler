@@ -1,5 +1,5 @@
-module C = Sxfiler_common.Std
-module R = Reactjscaml.Std
+module C = Sxfiler_common
+module R = Reactjscaml
 
 module Component = R.Component.Make_stateless (struct
     class type _t = object

@@ -1,5 +1,5 @@
-module FFI = Sxfiler_common.Std.Ffi
-module T = Sxfiler_common.Std.Types
+module FFI = Sxfiler_common.Ffi
+module T = Sxfiler_common.Types
 
 exception Not_directory of string
 

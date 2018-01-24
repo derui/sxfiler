@@ -1,5 +1,5 @@
-module C = Sxfiler_common.Std.Message
-module E = Sxfiler_common.Std.Event
+module C = Sxfiler_common.Message
+module E = Sxfiler_common.Event
 
 type t = (C.t -> unit) Js.callback
 

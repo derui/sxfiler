@@ -1,4 +1,4 @@
-module FFI = Sxfiler_common.Std.Ffi
+module FFI = Sxfiler_common.Ffi
 
 (** Call require and return module. This function should use for nodejs's module. *)
 let require module_ : 'a Js.t =
