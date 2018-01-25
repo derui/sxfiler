@@ -71,6 +71,7 @@ module Export = struct
   class type _t = object
     method kbd: Js.js_string Js.t -> js Js.t Js.opt Js.meth
   end
+  type t = _t Js.t
 end
 
 let () =
