@@ -14,12 +14,12 @@ build: [
 depends: [
   "jbuilder" {build & >= "1.0+beta16"}
   "ocamlfind"
-  "js_of_ocaml" {build & >= "3.0.2"}
-  "js_of_ocaml-ppx" {build & >= "3.0.2"}
-  "js_of_ocaml-lwt" {build & >= "3.0.2"}
-  "ppx_variants_conv" {build & >= "v0.9.0"}
+  "js_of_ocaml" { >= "3.0.2"}
+  "js_of_ocaml-ppx" { >= "3.0.2"}
+  "js_of_ocaml-lwt" { >= "3.0.2"}
+  "ppx_variants_conv" { >= "v0.9.0"}
   "mocha_of_ocaml" {test}
-  "reactjscaml" {build}
-  "ocaml-flux-frp" {build}
+  "reactjscaml"
+  "ocaml-flux-frp"
 ]
 available: [ocaml-version >= "4.05.0"]
