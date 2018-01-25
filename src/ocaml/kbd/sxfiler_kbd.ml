@@ -29,16 +29,19 @@ let empty = {
   key = "";
 }
 
-let meta_prefix = (Str.regexp "^M-", Meta)
-let ctrl_prefix = (Str.regexp "^C-", Ctrl)
-let shift_prefix = (Str.regexp "^S-", Shift)
+let meta_prefix = ("M-", Meta)
+let ctrl_prefix = ("C-", Ctrl)
+let shift_prefix = ("S-", Shift)
 
 let parse_sequence seq =
   let rec parse_prefix seq prefixes = function
     | [] -> (seq ,prefixes)
     | (prefix, typ) :: rest -> begin
-        if Str.string_match prefix seq 0 then
-          let next_seq = Str.replace_first prefix seq "" in
+        let seq_len = String.length seq
+        and prefix_len = String.length prefix in
+        if seq_len = 1 then (seq, prefixes)
+        else if String.sub seq 0 prefix_len = prefix then
+          let next_seq = String.sub seq prefix_len (seq_len - prefix_len) in
           parse_prefix next_seq (typ :: prefixes) rest
         else
           parse_prefix seq prefixes rest
@@ -52,13 +55,14 @@ let parse_sequence seq =
     ) {empty with key} prefixes
 
 let invalid_formats = [
-  Str.regexp "^.+-$";
-  Str.regexp "^-.+$";
-  Str.regexp "^[^MCS].+-";
+  (fun seq -> seq = "");
+  (fun seq -> String.length seq > 1 && String.rindex_opt seq '-' = Some 0);
+  (fun seq -> String.length seq > 1 && String.index_opt seq '-' = Some 0);
 ]
 
 let of_keyseq key =
-  if List.exists (fun reg -> Str.string_match reg key 0) invalid_formats then
+  let key = String.trim key in
+  if List.exists (fun f -> f key) invalid_formats then
     None
   else
     Some (parse_sequence key)

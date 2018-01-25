@@ -1,0 +1,12 @@
+(jbuild_version 1)
+
+(alias
+ ((name runtest)
+  (deps (test_sxfiler_kbd.bc.js))
+  ))
+
+(executable
+ ((name test_sxfiler_kbd)
+  (libraries (js_of_ocaml sxfiler_kbd mocha_of_ocaml))
+  (js_of_ocaml ((flags ("--pretty" "--source-map-inline"))))
+  (preprocess (pps (js_of_ocaml-ppx)))))
