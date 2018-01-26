@@ -45,9 +45,33 @@ let on_action t ev = function
   | M.REQUEST_QUIT_APPLICATION -> P.on_quit t ev
   | _ -> ()
 
+let keyboard_event_to_key v =
+  let module K = Sxfiler_kbd in
+  {K.key = Js.to_string v##.key;
+   shift = Js.to_bool v##.shiftKey;
+   meta = Js.to_bool v##.altKey;
+   ctrl = Js.to_bool v##.ctrlKey;
+  }
+
+let on_key_event t ev v =
+  let module K = Sxfiler_key_handler in
+  let key = keyboard_event_to_key v in
+  match K.dispatch ~handlers:t.P.key_handler_map ~key with
+  | None -> ()
+  | Some ev -> E.IPC.(send ~channel:(`Action (M.to_js ev)) ~ipc:t.P.ipc)
+
 let bind t =
   let listener ev = function
     | `Action v -> on_action t ev @@ E.M.of_js v
     | _ -> ()
   in
-  E.IPC.(on ~target:action ~f:listener t.P.ipc)
+  let key_listener ev = function
+    | `KeyDown v -> on_key_event t ev v
+    | `KeyUp v -> on_key_event t ev v
+    | `KeyPress v -> on_key_event t ev v
+    | _ -> ()
+  in
+  E.IPC.(on ~target:action ~f:listener t.P.ipc);
+  E.IPC.(on ~target:keydown ~f:key_listener t.P.ipc);
+  E.IPC.(on ~target:keyup ~f:key_listener t.P.ipc);
+  E.IPC.(on ~target:keypress ~f:key_listener t.P.ipc)

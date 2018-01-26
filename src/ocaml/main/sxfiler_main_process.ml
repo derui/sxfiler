@@ -1,6 +1,7 @@
 module E = Sxfiler_common.Event
 module FFI = Sxfiler_common.Ffi
 module M = Sxfiler_modules
+module K = Sxfiler_key_handler
 
 let dirname : Js.js_string Js.t = Js.Unsafe.js_expr "__dirname"
 
@@ -11,6 +12,7 @@ type t = {
   ipc: FFI.ipc Js.t;
   fs: FFI.Fs.t Js.t;
   runner: Sxfiler_flux_runner.t;
+  key_handler_map: K.handler_map;
 }
 
 let on_ready t _ =
@@ -42,9 +44,10 @@ let on_quit t _ =
   | None -> raise No_main_window
   | Some window -> window##close ()
 
-let make ~ipc ~fs ~runner = {
+let make ~ipc ~fs ~runner ~key_handler_map = {
   main_window = None;
   ipc;
   fs;
   runner;
+  key_handler_map;
 }

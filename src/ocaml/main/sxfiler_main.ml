@@ -4,6 +4,8 @@ module Main_ipc = Sxfiler_ipc
 module Main_process = Sxfiler_main_process
 module M = Sxfiler_modules
 
+module H = Sxfiler_key_handler
+
 let subscription ipc t =
   let module S = Sxfiler_common.State in
   Lwt.return @@ E.IPC.(send ~channel:(`Update (S.to_js t)) ~ipc)
@@ -15,7 +17,8 @@ let () =
 
   let runner = Sxfiler_flux_runner.run ~initial_state:(Sxfiler_common.State.empty ()) () in
   let ipc = M.electron##.ipcMain in
-  let main_process = Main_process.make ~ipc ~fs:(M.original_fs) ~runner in
+  let key_handler_map = H.empty in
+  let main_process = Main_process.make ~ipc ~fs:(M.original_fs) ~runner ~key_handler_map in
   Main_ipc.bind main_process;
 
   let module Subscription = struct
@@ -23,8 +26,7 @@ let () =
       match main_process.Main_process.main_window with
       | None -> Lwt.return_unit
       | Some w -> subscription w##.webContents_ipc t
-  end
-  in
+  end in
   Sxfiler_flux_runner.subscribe runner ~subscription:(module Subscription);
 
   let app : FFI.electron_app Js.t = M.electron##.app in

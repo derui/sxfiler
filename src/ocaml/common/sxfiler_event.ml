@@ -10,6 +10,9 @@ module IPC = struct
     type t = [
         `Action of M.js
       | `Update of S.js
+      | `KeyDown of Reactjscaml.Event.keyboard_event
+      | `KeyUp of Reactjscaml.Event.keyboard_event
+      | `KeyPress of Reactjscaml.Event.keyboard_event
     ] [@@deriving variants]
   end
 
@@ -18,8 +21,11 @@ module IPC = struct
 
     type t = [
         `Action of Core.t listener
-      | `Update of Core.t listener]
-    [@@deriving variants]
+      | `Update of Core.t listener
+      | `KeyDown of Core.t listener
+      | `KeyUp of Core.t listener
+      | `KeyPress of Core.t listener
+    ] [@@deriving variants]
   end
 
   include Core
