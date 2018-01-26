@@ -8,6 +8,8 @@ module Handler_map = Map.Make(struct
     let compare = Pervasives.compare
   end)
 
+type handler_map = handler Handler_map.t
+
 let empty : handler Handler_map.t = Handler_map.empty
 
 let add_handler ~handlers ~key ~handler = Handler_map.add key handler handlers
