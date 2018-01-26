@@ -17,9 +17,6 @@ let () =
         assert_ok (Array.for_all (fun c ->
             let k = String.get alphabetical_keys c |> String.make 1 in
             let t = K.of_keyseq k in
-            if t <> Some {K.empty with key = k} then
-              Firebug.console##log t;
-
             t = Some {K.empty with key = k}
           ) parameter_list)
 
@@ -92,7 +89,7 @@ let () =
                 let seq = prefix ^ (String.make 1 k) in
                 match K.of_keyseq seq with
                 | None -> false
-                | Some t -> Firebug.console##log t; validator t && (t.K.key = (String.make 1 k))
+                | Some t -> validator t && (t.K.key = (String.make 1 k))
               ) prefix_patterns
           ) parameter_list
       );
