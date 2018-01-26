@@ -20,7 +20,11 @@ let to_js t = object%js
   val key = Js.string t.key
 end
 
-type prefix = Meta | Ctrl | Shift
+type token =
+  | Meta
+  | Ctrl
+  | Shift
+  | Key of string
 
 let empty = {
   shift = false;
@@ -29,34 +33,66 @@ let empty = {
   key = "";
 }
 
+let lexer_table = [
+  (Some "M-", Meta);
+  (Some "C-", Ctrl);
+  (Some "S-", Shift);
+]
+
 let meta_prefix = ("M-", Meta)
 let ctrl_prefix = ("C-", Ctrl)
 let shift_prefix = ("S-", Shift)
 
-let parse_sequence seq =
-  let rec parse_prefix seq prefixes = function
-    | [] -> (seq ,prefixes)
-    | (prefix, typ) :: rest -> begin
-        let seq_len = String.length seq
-        and prefix_len = String.length prefix in
-        if seq_len = 1 then (seq, prefixes)
-        else if String.sub seq 0 prefix_len = prefix then
-          let next_seq = String.sub seq prefix_len (seq_len - prefix_len) in
-          parse_prefix next_seq (typ :: prefixes) rest
-        else
-          parse_prefix seq prefixes rest
-      end
+let match_lexer_table seq =
+  let result = List.find_opt (fun (token, typ) ->
+      match token with
+      | Some tok -> tok = seq
+      | None -> false
+    ) lexer_table
   in
-  let key, prefixes = parse_prefix seq [] [meta_prefix;ctrl_prefix;shift_prefix] in
-  List.fold_left (fun item -> function
-      | Meta -> {item with meta = true}
-      | Ctrl -> {item with ctrl = true}
-      | Shift -> {item with shift = true}
-    ) {empty with key} prefixes
+  match result with
+  | None -> None
+  | Some (_, typ) -> Some typ
+
+let lex_combination seq =
+  let token = ref "" in
+  let types = ref [] in
+
+  match seq with
+  | "" -> !types
+  | seq -> begin
+      String.iter (fun c ->
+          let temp_token = !token ^ (String.make 1 c) in
+          match match_lexer_table temp_token with
+          | None -> begin
+              token := temp_token;
+            end
+          | Some typ -> begin
+              token := "";
+              types := typ :: !types
+            end
+        ) seq;
+
+      List.rev (Key !token :: !types)
+    end
+
+let parse_sequence seq =
+  let tokens = lex_combination seq in
+
+  match tokens with
+  | [] -> None
+  | _ ->
+    let k = List.fold_left (fun item -> function
+        | Meta -> {item with meta = true}
+        | Ctrl -> {item with ctrl = true}
+        | Shift -> {item with shift = true}
+        | Key key -> {item with key}
+      ) empty tokens
+    in
+    if k.key = "" then None else Some k
 
 let invalid_formats = [
   (fun seq -> seq = "");
-  (fun seq -> String.length seq > 1 && String.rindex_opt seq '-' = Some 0);
   (fun seq -> String.length seq > 1 && String.index_opt seq '-' = Some 0);
 ]
 
@@ -65,7 +101,7 @@ let of_keyseq key =
   if List.exists (fun f -> f key) invalid_formats then
     None
   else
-    Some (parse_sequence key)
+    parse_sequence key
 
 module Export = struct
   class type _t = object
