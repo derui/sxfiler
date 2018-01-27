@@ -4,7 +4,6 @@ module R = Reactjscaml
 module Component = R.Component.Make_stateless (struct
     class type _t = object
       method state: C.State.js Js.readonly_prop
-      method dispatch: Sxfiler_dispatcher.t Js.readonly_prop
     end
     type t = _t Js.t
   end)
