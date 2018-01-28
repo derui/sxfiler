@@ -18,6 +18,8 @@ depends: [
   "js_of_ocaml-ppx" { >= "3.0.2"}
   "js_of_ocaml-lwt" { >= "3.0.2"}
   "ppx_variants_conv" { >= "v0.9.0"}
+  "ppx_deriving_yojson" { >= "3.1"}
+  "yojson" { >= "1.4.0"}
   "mocha_of_ocaml" {test}
   "reactjscaml"
   "ocaml-flux-frp"
