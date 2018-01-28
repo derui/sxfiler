@@ -1,7 +1,7 @@
 module E = Sxfiler_common.Event
 module FFI = Sxfiler_common.Ffi
 module M = Sxfiler_modules
-module K = Sxfiler_key_handler
+module K = Sxfiler_key_map
 
 let dirname : Js.js_string Js.t = Js.Unsafe.js_expr "__dirname"
 
@@ -12,7 +12,7 @@ type t = {
   ipc: FFI.ipc Js.t;
   fs: FFI.Fs.t Js.t;
   runner: Sxfiler_flux_runner.t;
-  key_handler_map: K.handler_map;
+  key_map: K.key_map;
 }
 
 let on_ready t _ =
@@ -39,10 +39,10 @@ let on_ready t _ =
       window##focusOnWebView ()
     end
 
-let make ~ipc ~fs ~runner ~key_handler_map = {
+let make ~ipc ~fs ~runner ~key_map = {
   main_window = None;
   ipc;
   fs;
   runner;
-  key_handler_map;
+  key_map;
 }
