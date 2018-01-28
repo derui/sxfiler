@@ -19,7 +19,7 @@ let () =
   let ipc = M.electron##.ipcMain in
   let key_handler_map = H.empty in
   let main_process = Main_process.make ~ipc ~fs:(M.original_fs) ~runner ~key_handler_map in
-  Main_ipc.bind main_process;
+  Main_ipc.bind ~action_handler:(Sxfiler_action.on_action main_process) main_process;
 
   let module Subscription = struct
     let handle t =

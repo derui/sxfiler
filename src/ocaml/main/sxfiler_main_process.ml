@@ -39,11 +39,6 @@ let on_ready t _ =
       window##focusOnWebView ()
     end
 
-let on_quit t _ =
-  match t.main_window with
-  | None -> raise No_main_window
-  | Some window -> window##close ()
-
 let make ~ipc ~fs ~runner ~key_handler_map = {
   main_window = None;
   ipc;

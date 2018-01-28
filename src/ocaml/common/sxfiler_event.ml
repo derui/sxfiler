@@ -1,4 +1,3 @@
-module M = Sxfiler_message
 module FFI = Sxfiler_ffi
 module T = Sxfiler_types
 module S = Sxfiler_state
@@ -8,11 +7,8 @@ module IPC = struct
 
   module Core = struct
     type t = [
-        `Action of M.js
       | `Update of S.js
-      | `KeyDown of Reactjscaml.Event.keyboard_event
-      | `KeyUp of Reactjscaml.Event.keyboard_event
-      | `KeyPress of Reactjscaml.Event.keyboard_event
+      | `Request_key_handling of Reactjscaml.Event.Keyboard_event.t
     ] [@@deriving variants]
   end
 
@@ -20,11 +16,8 @@ module IPC = struct
     type 'a listener = FFI.Event.t Js.t -> 'a -> unit
 
     type t = [
-        `Action of Core.t listener
       | `Update of Core.t listener
-      | `KeyDown of Core.t listener
-      | `KeyUp of Core.t listener
-      | `KeyPress of Core.t listener
+      | `Request_key_handling of Core.t listener
     ] [@@deriving variants]
   end
 

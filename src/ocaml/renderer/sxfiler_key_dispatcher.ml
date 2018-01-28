@@ -7,13 +7,12 @@ let make ipc =
       let module E = Sxfiler_common.Event in
       E.IPC.send ~channel ~ipc)
 
-let dispatch : t -> Reactjscaml.Event.keyboard_event -> unit = fun dispatcher ev ->
+let dispatch : t -> Reactjscaml.Event.Keyboard_event.t -> unit = fun dispatcher ev ->
   let module E = Sxfiler_common.Event in
-  let channel = match Js.to_string ev##._type with
-    | "keydown" -> Some (E.IPC.keydown ev)
-    | "keyup" -> Some (E.IPC.keyup ev)
-    | "keypress" -> Some (E.IPC.keypress ev)
-    | _ -> None
+  let module K = Reactjscaml.Event.Keyboard_event in
+  let channel = match K.to_event_type ev with
+    | K.Unknown -> None
+    | _ -> Some (E.IPC.request_key_handling ev)
   in
   match channel with
   | None -> ()
