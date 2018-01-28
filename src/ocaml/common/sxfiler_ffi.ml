@@ -78,6 +78,7 @@ module Fs = struct
     method lstatSync: js_string Js.t -> stat Js.t meth
     method readlinkSync: js_string Js.t -> js_string Js.t meth
     method readdirSync: js_string Js.t -> js_string Js.t js_array Js.t meth
+    method readFileSync: js_string Js.t -> js_string Js.t Js.t meth
   end
 end
 
