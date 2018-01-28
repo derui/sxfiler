@@ -11,8 +11,13 @@ module Option = struct
 
   let return v = Some v
 
+  let get ~default = function
+    | Some v -> v
+    | None -> default
+
   module Infix = struct
     let (>>=) = bind
+    let (>>|) v f = map ~f v
     let return = return
   end
 end
