@@ -7,6 +7,7 @@ let files = [
   '*.ttf',
   '*.woff',
   'package.json',
+  'default.json',
 ].join(',');
 
 execFileSync('cpx', [`./src/{${files}}`, './dist'], { stdio: 'inherit' });
