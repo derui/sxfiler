@@ -11,13 +11,13 @@ type key_map = action Key_map.t
 val empty : key_map
 
 (** Add a new mapping with key and handler function. *)
-val add_keymap :
+val add_key_map :
   key_map:key_map ->
   key:Key_map.key ->
   action:action -> key_map
 
 (** Remove a handler mapped with given key. *)
-val remove_keymap :
+val remove_key_map :
   key_map:key_map ->
   key:Key_map.key ->
   key_map

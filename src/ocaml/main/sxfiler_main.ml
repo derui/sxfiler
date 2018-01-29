@@ -13,13 +13,23 @@ let subscription ipc t =
 
 let dirname : Js.js_string Js.t option = Js.Unsafe.global##.__dirname
 
-let () =
-  (* M.crash_reporter##start () |> ignore; *)
+let argv =
+  let argv = Js.to_array Js.Unsafe.global##.process##.argv in
+  Array.sub argv 2 (Array.length argv - 2)
 
+let option_config = ref ""
+let options = [
+  ("--config", Arg.Set_string option_config, "Path for configuraiton")
+]
+
+let () =
+  let app : FFI.electron_app Js.t = M.electron##.app in
+  Arg.parse_argv argv options ignore "Sxfiler";
+
+  let config = C.load app##getAppPath !option_config in
   let runner = Sxfiler_flux_runner.run ~initial_state:(Sxfiler_common.State.empty ()) () in
   let ipc = M.electron##.ipcMain in
-  let key_map = H.empty in
-  let main_process = Main_process.make ~ipc ~fs:(M.original_fs) ~runner ~key_map in
+  let main_process = Main_process.make ~ipc ~fs:(M.original_fs) ~runner ~key_map:config.C.key_map in
   Main_ipc.bind main_process;
 
   let module Subscription = struct
@@ -30,7 +40,6 @@ let () =
   end in
   Sxfiler_flux_runner.subscribe runner ~subscription:(module Subscription);
 
-  let app : FFI.electron_app Js.t = M.electron##.app in
   begin
     let channel = Js.string "ready" in
     let listener = Js.wrap_callback (fun _ _ -> Main_process.on_ready main_process ()) in
