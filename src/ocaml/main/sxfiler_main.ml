@@ -42,7 +42,11 @@ let () =
 
   begin
     let channel = Js.string "ready" in
-    let listener = Js.wrap_callback (fun _ _ -> Main_process.on_ready main_process ()) in
+    let listener = Js.wrap_callback (fun _ _ ->
+        Main_process.on_ready main_process ();
+        let module M = Sxfiler_common.Message in
+        Sxfiler_flux_runner.send runner (M.request_files_in_directory ".")
+      ) in
     app##on channel listener;
 
     let channel = Js.string "window-all-closed" in
