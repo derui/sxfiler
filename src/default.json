@@ -1,6 +1,6 @@
 {
   "key_map": {
-    "j": "Next_item",
-    "k": "Prev_item"
+    "j": ["Next_item"],
+    "k": ["Prev_item"]
   }
 }

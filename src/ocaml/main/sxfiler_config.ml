@@ -21,15 +21,6 @@ module Json_conf = struct
     let v = v.key_map in
     Yojson.Safe.Util.(to_option to_assoc v) >>= (fun v ->
         let v = List.filter (fun (name, value) ->
-            match Yojson.Safe.Util.to_string_option value with
-            | None -> false
-            | Some _ -> true
-          ) v
-                |> List.map (fun (name, value) -> (name, Yojson.Safe.Util.to_string value))
-        in
-        Some v
-      ) >>= (fun v ->
-        let v = List.filter (fun (name, value) ->
             match Sxfiler_kbd.of_keyseq name with
             | None -> false
             | Some _ -> true
@@ -44,8 +35,9 @@ module Json_conf = struct
       ) >>= (fun v ->
         let module K = Sxfiler_key_map in
         Some {Core.key_map = List.fold_left (fun key_map (key, action) ->
-            let action = Sxfiler_action.of_string action in
-            K.add_key_map ~key_map:key_map ~key ~action
+            match Sxfiler_action.of_yojson action with
+            | Error err -> Firebug.console##error ("Unknown action " ^ err); key_map
+            | Ok action -> K.add_key_map ~key_map:key_map ~key ~action
           ) K.empty v
           }
       ) |> U.get ~default:Core.default
