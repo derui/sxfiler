@@ -19,7 +19,7 @@ let get_file_stats ~fs path =
 
   current
   >>= (fun stat ->
-      if not (stat##isDirectory () |> Js.to_bool) then
+      if not (Js.to_bool stat##isDirectory) then
         Lwt.fail (Not_directory path)
       else
         Lwt.return @@ fs##readdirSync path_)

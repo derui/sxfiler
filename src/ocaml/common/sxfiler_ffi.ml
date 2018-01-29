@@ -24,10 +24,10 @@ module Fs = struct
     method mtime: date t readonly_prop
     method ctime: date t readonly_prop
     method birthtime: date t readonly_prop
-    method isDirectory: unit -> bool t meth
-    method isFile: unit -> bool t meth
-    method isBlockDevice: unit -> bool t meth
-    method isSymbolicLink: unit -> bool t meth
+    method isDirectory: bool t meth
+    method isFile: bool t meth
+    method isBlockDevice: bool t meth
+    method isSymbolicLink: bool t meth
   end
 
   class type stat_obj = object
@@ -67,10 +67,10 @@ module Fs = struct
     val mtime = t##.mtime##getTime
     val ctime = t##.ctime##getTime
     val birthtime = t##.birthtime##getTime
-    val isDirectory = t##isDirectory ()
-    val isFile = t##isFile ()
-    val isBlockDevice = t##isBlockDevice ()
-    val isSymbolicLink = t##isSymbolicLink ()
+    val isDirectory = t##isDirectory
+    val isFile = t##isFile
+    val isBlockDevice = t##isBlockDevice
+    val isSymbolicLink = t##isSymbolicLink
   end
 
   class type t = object
@@ -145,6 +145,8 @@ class type electron_app = object
   inherit event_emitter
 
   method quit: unit -> unit meth
+  method getPath: js_string t -> js_string t meth
+  method getAppPath: js_string t meth
 end
 
 class type electron = object
