@@ -105,7 +105,9 @@ end
 class type ipc = object
   (* handle some event raised from EventEmitter *)
   method on: js_string Js.t -> (Event.t Js.t -> 'a -> unit) callback -> unit meth
+  method on_0: js_string Js.t -> (Event.t Js.t -> unit) callback -> unit meth
   method once: js_string Js.t -> (Event.t Js.t -> 'a -> unit) callback -> unit meth
+  method once_0: js_string Js.t -> (Event.t Js.t -> unit) callback -> unit meth
   method send: js_string t -> 'a -> unit meth
   method removeAllListener: js_string Js.t -> unit meth
   method removeAllListener_all: unit -> unit meth
@@ -134,6 +136,13 @@ module BrowserWindow = struct
     method close: unit -> unit meth
     method webContents: web_contents Js.t readonly_prop
     method webContents_ipc: ipc Js.t readonly_prop
+  end
+
+  module Web_contents_event = struct
+    let on_did_finish_load ~(browser_window: #t Js.t) ~listener =
+      let channel = Js.string "did-finish-load" in
+      let ipc = browser_window##.webContents_ipc in
+      ipc##on_0 channel (Js.wrap_callback listener)
   end
 end
 

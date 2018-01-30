@@ -44,8 +44,16 @@ let () =
     let channel = Js.string "ready" in
     let listener = Js.wrap_callback (fun _ _ ->
         Main_process.on_ready main_process ();
-        let module M = Sxfiler_common.Message in
-        Sxfiler_flux_runner.send runner (M.request_files_in_directory ".")
+
+        match main_process.Main_process.main_window with
+        | None -> ()
+        | Some bw ->
+          let module M = Sxfiler_common.Message in
+          let module E = FFI.BrowserWindow.Web_contents_event in
+          E.on_did_finish_load ~browser_window:bw
+            ~listener:(fun _ ->
+              Sxfiler_flux_runner.send runner (M.request_files_in_directory ".")
+            )
       ) in
     app##on channel listener;
 
