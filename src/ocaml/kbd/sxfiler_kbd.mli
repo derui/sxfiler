@@ -6,7 +6,7 @@
    {[
      const {kbd} = require('sxfiler_kbd.bc.js');
      let obj = kbd('C-x');
-     console.log(obj); // => {key: "x", ctrl: true, shift: false, meta: false}
+       console.log(obj); // => {key: "x", ctrl: true, shift: false, meta: false}
    ]}
 *)
 

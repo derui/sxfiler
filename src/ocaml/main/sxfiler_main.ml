@@ -52,8 +52,8 @@ let () =
           let module E = FFI.BrowserWindow.Web_contents_event in
           E.on_did_finish_load ~browser_window:bw
             ~listener:(fun _ ->
-              Sxfiler_flux_runner.send runner (M.request_files_in_directory ".")
-            )
+                Sxfiler_flux_runner.send runner (M.request_files_in_directory ".")
+              )
       ) in
     app##on channel listener;
 
