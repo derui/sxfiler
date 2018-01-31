@@ -29,17 +29,12 @@ let get_file_stats ~fs path =
                   |> Array.map (fun v -> M.path##join (Js.array [|path_; v|])) in
       Lwt.return @@
       Array.map (fun name ->
-          let stat = fs##lstatSync name in
-          let stat = FFI.Fs.stat_to_obj stat in
+          let stat = fs##lstatSync name |> FFI.Fs.stat_to_obj in
           let link_path = match (stat##.isSymbolicLink |> Js.to_bool) with
             | false -> None
             | true -> let link_path = fs##readlinkSync name in
               Some (Js.to_string link_path)
           in
-          {
-            T.File_stat.filename = Js.to_string name;
-            stat;
-            link_path
-          }
+          T.File_stat.make ~filename:(Js.to_string name) ~stat ~link_path
         ) names
     )
