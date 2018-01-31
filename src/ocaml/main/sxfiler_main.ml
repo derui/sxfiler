@@ -1,6 +1,6 @@
 module E = Sxfiler_common.Event
 module FFI = Sxfiler_common.Ffi
-module Main_ipc = Sxfiler_ipc
+module Ipc_handler = Sxfiler_ipc_handler
 module Main_process = Sxfiler_main_process
 module M = Sxfiler_modules
 
@@ -30,7 +30,7 @@ let () =
   let runner = Sxfiler_flux_runner.run ~initial_state:(Sxfiler_common.State.empty ()) () in
   let ipc = M.electron##.ipcMain in
   let main_process = Main_process.make ~ipc ~fs:(M.original_fs) ~runner ~key_map:config.C.key_map in
-  Main_ipc.bind main_process;
+  Ipc_handler.bind main_process;
 
   let module Subscription = struct
     let handle t =
