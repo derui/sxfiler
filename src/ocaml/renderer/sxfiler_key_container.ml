@@ -20,6 +20,9 @@ let component = Component.make (fun props ->
                           on_key_down = Some (key_handler props);
                           on_key_up = Some (key_handler props);
                           on_key_press = Some (key_handler props);
+                          others = Some (object%js
+                            val tabIndex = "0"
+                          end);
 
         })
       ~children:([| R.element ~props:(props :> Sxfiler_file_list.Component.props)
