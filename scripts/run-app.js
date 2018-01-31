@@ -1,7 +1,7 @@
 require('./pre-package.js');
 
 const { buildCssWithWatch, buildCss } = require('./build-css.js');
-const { buildOCamlWithWatch } = require('./build-ocaml.js');
+const { buildOCamlWithWatch, buildOCaml } = require('./build-ocaml.js');
 
 const { spawn } = require('child_process');
 
@@ -23,6 +23,7 @@ module.exports = runApp;
 if (require.main === module) {
   (function() {
     buildCss();
+    buildOCaml();
 
     const cssFileWatcher = buildCssWithWatch();
     const ocamlFileWatcher = buildOCamlWithWatch();
