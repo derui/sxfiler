@@ -29,7 +29,7 @@
   "scripts": {
     "start": "npm run watch",
     "app": "node ./scripts/run-app.js",
-    "watch": "npm-ruin-all -s watch:css watch:main",
+    "watch": "npm-run-all -s watch:css watch:main",
     "build:css": "node ./scripts/build-css.js",
     "build:main": "node ./scripts/build-ocaml.js",
     "build:test": "node ./scripts/build-ocaml-test.js",
