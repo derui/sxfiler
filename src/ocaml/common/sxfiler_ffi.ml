@@ -146,9 +146,19 @@ module BrowserWindow = struct
   end
 end
 
-class type crash_reporter = object
-  method start: unit -> unit meth
+module Crash_reporter = struct
+  class type option = object
+    method companyName: js_string t optdef readonly_prop
+    method submitURL: js_string t readonly_prop
+    method uploadToServer: bool t optdef readonly_prop
+    method crashesDirectory: js_string t optdef readonly_prop
+  end
+
+  class type t = object
+    method start: option Js.t optdef -> unit meth
+  end
 end
+
 
 class type electron_app = object
   inherit event_emitter

@@ -22,7 +22,7 @@ let original_fs : FFI.Fs.t Js.t = require "original-fs"
 
 let electron = require "electron"
 
-let crash_reporter : FFI.crash_reporter Js.t =
+let crash_reporter : FFI.Crash_reporter.t Js.t =
   Js.Unsafe.get electron "crashReporter"
 
 let browser_window: FFI.BrowserWindow.option Js.t -> FFI.BrowserWindow.t Js.t = fun option ->
