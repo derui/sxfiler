@@ -9,12 +9,16 @@ module Component = R.Component.Make_stateless (struct
   end)
 
 let component = Component.make (fun props ->
-    let elements = Js.to_array @@ Js.array_map (fun item ->
-        R.element ~props:(object%js
+    let elements = Js.to_array props##.state##.file_list in
+    let elements = Array.mapi (fun index item ->
+        R.element ~key:(Js.to_string item##.uuid) ~props:(object%js
           val item = item
-        end)
-          Sxfiler_file_item.component
-      ) props##.state##.file_list
+          val selected = Js.float_of_number props##.state##.selected_item
+                         |> int_of_float
+                         |> ( = ) index
+                         |> Js.bool
+        end) Sxfiler_file_item.component
+      ) elements
     in
     R.Dom.of_tag `ul
       ~props:R.Core.Element_spec.({

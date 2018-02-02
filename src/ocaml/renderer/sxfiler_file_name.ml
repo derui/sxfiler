@@ -27,7 +27,5 @@ let component = Component.make (fun props ->
       ~props:R.Core.Element_spec.({
           (empty ()) with class_name = Some (get_classname props)
         })
-      ~children:[|
-        R.text name
-      |]
+      ~children:[| R.text name |]
   )

@@ -25,6 +25,7 @@ let component = Component.make (fun props ->
                           end);
 
         })
-      ~children:([| R.element ~props:(props :> Sxfiler_file_list.Component.props)
+      ~children:([| R.element ~key:"file-list"
+                      ~props:(props :> Sxfiler_file_list.Component.props)
                       Sxfiler_file_list.component |])
   )
