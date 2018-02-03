@@ -21,7 +21,7 @@ end
 let empty = {
   file_list = [];
   waiting = false;
-  selected_item = -1;
+  selected_item = 0;
 }
 
 let to_js t = object%js

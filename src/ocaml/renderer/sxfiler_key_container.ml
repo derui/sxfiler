@@ -43,7 +43,6 @@ let component = Component.make {
                               others = Some (object%js
                                   val tabIndex = "0"
                                 end);
-
             })
           ~children:([| R.element ~key:"file-list" ~props:(this##.state) Sxfiler_file_list.component
                      |])

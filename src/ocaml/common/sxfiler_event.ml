@@ -7,9 +7,10 @@ module K = Sxfiler_kbd
 module IPC = struct
 
   module Core = struct
+    type event_type = Reactjscaml.Event.Keyboard_event.event_type
     type t =
       | Update of S.js Js.t
-      | Request_key_handling of K.js Js.t
+      | Request_key_handling of (K.js Js.t * event_type)
     [@@deriving variants]
   end
 

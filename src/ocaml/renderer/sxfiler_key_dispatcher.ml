@@ -20,9 +20,9 @@ let dispatch : t -> Reactjscaml.Event.Keyboard_event.t -> unit = fun dispatcher 
   let module K = Reactjscaml.Event.Keyboard_event in
   match K.to_event_type ev with
   | K.Unknown -> ()
-  | _ -> begin
+  | _ as k -> begin
       let channel = keyboard_event_to_key ev
                     |> Sxfiler_kbd.to_js
-                    |> E.IPC.request_key_handling in
+                    |> fun v -> E.IPC.request_key_handling (v, k) in
       Js.Unsafe.fun_call dispatcher [|Js.Unsafe.inject channel|]
     end
