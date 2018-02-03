@@ -12,14 +12,13 @@ type t = {
   selected_item: selected_item;
 }
 
-class type _js = object
+class type js = object
   method file_list: T.File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
   method waiting: bool Js.t Js.readonly_prop
   method selected_item : Js.number Js.t Js.readonly_prop
 end
-type js = _js Js.t
 
-let empty () = {
+let empty = {
   file_list = [];
   waiting = false;
   selected_item = -1;

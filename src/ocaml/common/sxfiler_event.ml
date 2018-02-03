@@ -1,24 +1,25 @@
 module FFI = Sxfiler_ffi
 module T = Sxfiler_types
 module S = Sxfiler_state
+module K = Sxfiler_kbd
 
 (* Event name to request file informations in the directory *)
 module IPC = struct
 
   module Core = struct
-    type t = [
-      | `Update of S.js
-      | `Request_key_handling of Reactjscaml.Event.Keyboard_event.t
-    ] [@@deriving variants]
+    type t =
+      | Update of S.js Js.t
+      | Request_key_handling of K.js Js.t
+    [@@deriving variants]
   end
 
   module Listener = struct
     type 'a listener = FFI.Event.t Js.t -> 'a -> unit
 
-    type t = [
-      | `Update of Core.t listener
-      | `Request_key_handling of Core.t listener
-    ] [@@deriving variants]
+    type t =
+      | Update of Core.t listener
+      | Request_key_handling of Core.t listener
+    [@@deriving variants]
   end
 
   include Core

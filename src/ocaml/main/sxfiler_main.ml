@@ -9,7 +9,7 @@ module C = Sxfiler_config
 
 let subscription ipc t =
   let module S = Sxfiler_common.State in
-  Lwt.return @@ E.IPC.(send ~channel:(`Update (S.to_js t)) ~ipc)
+  Lwt.return @@ E.IPC.(send ~channel:(update (S.to_js t)) ~ipc)
 
 let dirname : Js.js_string Js.t option = Js.Unsafe.global##.__dirname
 
@@ -24,7 +24,7 @@ let options = [
 
 let () =
   M.crash_reporter##start (Js.Optdef.return @@ object%js
-    val companyName = Js.Optdef.empty
+    val companyName = Js.string "sxfiler" |> Js.Optdef.return
     val submitURL = Js.string ""
     val uploadToServer = Js.Optdef.return @@ Js.bool false
     val crashesDirectory = Js.Optdef.empty
@@ -33,7 +33,7 @@ let () =
   Arg.parse_argv argv options ignore "Sxfiler";
 
   let config = C.load app##getAppPath !option_config in
-  let runner = Sxfiler_flux_runner.run ~initial_state:(Sxfiler_common.State.empty ()) () in
+  let runner = Sxfiler_flux_runner.run ~initial_state:(Sxfiler_common.State.empty) () in
   let ipc = M.electron##.ipcMain in
   let main_process = Main_process.make ~ipc ~fs:(M.original_fs) ~runner ~key_map:config.C.key_map in
   Ipc_handler.bind main_process;

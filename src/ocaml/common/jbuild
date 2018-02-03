@@ -3,5 +3,5 @@
 (library
  ((name sxfiler_common)
   (public_name sxfiler.common)
-  (libraries (js_of_ocaml lwt uuidm reactjscaml))
+  (libraries (js_of_ocaml lwt uuidm reactjscaml sxfiler_kbd))
   (preprocess (pps (js_of_ocaml-ppx ppx_variants_conv)))))
