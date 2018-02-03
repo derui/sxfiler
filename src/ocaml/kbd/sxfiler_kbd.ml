@@ -20,6 +20,13 @@ let to_js t = object%js
   val key = Js.string t.key
 end
 
+let of_js js = {
+  shift = Js.to_bool js##.shift;
+  ctrl = Js.to_bool js##.ctrl;
+  meta = Js.to_bool js##.meta;
+  key = Js.to_string js##.key;
+}
+
 type token =
   | Meta
   | Ctrl

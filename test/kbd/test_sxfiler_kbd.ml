@@ -11,6 +11,14 @@ let alphabetical_keys =
 
 let () =
   "Sxfiler kbd macro" >::: [
+    "should convert between Javascript object and kbd type" >:: (fun _ ->
+        let k = {K.shift = false; ctrl = true; meta = false; key = "k"} in
+        let js = K.to_js k in
+        let json : K.js Js.t = Js._JSON##stringify js |> fun s -> Js._JSON##parse s in
+        let conv_k = K.of_js json in
+
+        assert_ok (k = conv_k);
+      );
     "should parse alphabetical key" >:: (fun _ ->
         let parameter_list = Array.init (String.length alphabetical_keys) id in
 

@@ -19,8 +19,19 @@ type t = {
   key : string;
 }
 
+class type js = object
+  method shift: bool Js.t Js.readonly_prop
+  method ctrl: bool Js.t Js.readonly_prop
+  method meta: bool Js.t Js.readonly_prop
+  method key: Js.js_string Js.t Js.readonly_prop
+end
+
 (** Empty key status. this have key that is empty string, and all modifiers are disabled.  *)
 val empty: t
 
 (** Convert from key combination to key status. Return None if key combination is invalid format. *)
 val of_keyseq : string -> t option
+
+(** Convert between JavaScript object and type *)
+val to_js: t -> js Js.t
+val of_js: js Js.t -> t
