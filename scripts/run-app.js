@@ -8,7 +8,7 @@ const { spawn } = require('child_process');
 function runApp() {
   return spawn(
     'electron',
-    ['./dist'],
+    ['--inspect=5858', './dist'],
     { stdio: 'inherit' },
     (error, stdout, stderr) => {
       if (error) {

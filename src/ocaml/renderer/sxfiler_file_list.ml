@@ -21,7 +21,7 @@ let component = Component.make (fun props ->
     let children = Array.of_list elements in
     R.Dom.of_tag `ul
       ~props:R.Core.Element_spec.({
-          (empty ()) with class_name = Some (Sxfiler_classnames.make ["fp-FileList"])
+          empty with class_name = Some (Sxfiler_classnames.make ["fp-FileList"])
         })
       ~children
   )

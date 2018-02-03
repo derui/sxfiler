@@ -25,7 +25,7 @@ let component = Component.make (fun props ->
     let name = props##.file_name |> Filename.basename in
     R.Dom.of_tag `span
       ~props:R.Core.Element_spec.({
-          (empty ()) with class_name = Some (get_classname props)
+          empty with class_name = Some (get_classname props)
         })
       ~children:[| R.text name |]
   )

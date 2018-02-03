@@ -36,7 +36,7 @@ let component = Component.make {
         let props = this##.props in
         R.Dom.of_tag `div
           ~props:R.Core.Element_spec.({
-              (empty ()) with class_name = Some (Sxfiler_classnames.make ["fp-KeyContainer"]);
+              empty with class_name = Some (Sxfiler_classnames.make ["fp-KeyContainer"]);
                               on_key_down = Some (key_handler props);
                               on_key_up = Some (key_handler props);
                               on_key_press = Some (key_handler props);
