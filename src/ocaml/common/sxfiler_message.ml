@@ -7,4 +7,6 @@ type t =
   | REQUEST_QUIT_APPLICATION
   | SELECT_NEXT_ITEM of int
   | SELECT_PREV_ITEM of int
+  | LEAVE_DIRECTORY
+  | ENTER_DIRECTORY
 [@@deriving variants]

@@ -1,6 +1,8 @@
 {
   "key_map": {
     "j": ["Next_item"],
-    "k": ["Prev_item"]
+    "k": ["Prev_item"],
+    "h": ["Leave_directory"],
+    "l": ["Enter_directory"]
   }
 }

@@ -1,8 +1,6 @@
 module S = Sxfiler_common.State
 module M = Sxfiler_common.Message
 
-type selected_item = int
-
 module Make(Reaction:Sxfiler_message_reaction.S) : Flux_frp.Flux.S.State
   with module Thread = Lwt
    and type message = M.t
@@ -18,11 +16,29 @@ module Make(Reaction:Sxfiler_message_reaction.S) : Flux_frp.Flux.S.State
   let equal = ( = )
   let update t = function
     | M.REQUEST_FILES_IN_DIRECTORY path -> (t, Some (Reaction.request_files_in_directory path))
-    | M.FINISH_FILES_IN_DIRECTORY (_, _, list) -> ({t with S.file_list = Array.to_list list}, None)
+    | M.FINISH_FILES_IN_DIRECTORY (_, path, list) -> ({t with
+                                                       S.current_dir = path;
+                                                       selected_item = 0;
+                                                       file_list = Array.to_list list}, None)
     | M.SELECT_NEXT_ITEM v ->
       let file_count = List.length t.file_list - 1 in
       ({t with selected_item = min file_count (v + t.selected_item)}, None)
     | M.SELECT_PREV_ITEM v ->
       ({t with selected_item = max 0 (t.selected_item - v)}, None)
-    | _ -> failwith "not implemented"
+    | M.LEAVE_DIRECTORY ->
+      let current_dir = t.S.current_dir in
+      (t, Some (Filename.dirname current_dir |> M.request_files_in_directory |> Lwt.return))
+    | M.ENTER_DIRECTORY -> begin
+      let module T = Sxfiler_common.Types in
+      match List.nth_opt t.S.file_list t.S.selected_item with
+      | None -> (t, None)
+      | Some item -> begin
+          if item.T.File_stat.stat##.isDirectory |> Js.to_bool then begin
+            let target_dir = item.T.File_stat.filename in
+            (t, Some (M.request_files_in_directory target_dir |> Lwt.return))
+          end else
+            (t, None)
+        end
+    end
+    | M.REQUEST_QUIT_APPLICATION -> (t, None)
 end

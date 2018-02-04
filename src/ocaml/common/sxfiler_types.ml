@@ -1,5 +1,7 @@
 module FFI = Sxfiler_ffi
 
+type selected_item = int
+
 module File_stat = struct
   type t = {
     uuid: string;
