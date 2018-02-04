@@ -24,11 +24,11 @@ let options = [
 
 let () =
   M.crash_reporter##start (Js.Optdef.return @@ object%js
-    val companyName = Js.string "sxfiler" |> Js.Optdef.return
-    val submitURL = Js.string ""
-    val uploadToServer = Js.Optdef.return @@ Js.bool false
-    val crashesDirectory = Js.Optdef.empty
-  end);
+                             val companyName = Js.string "sxfiler" |> Js.Optdef.return
+                             val submitURL = Js.string ""
+                             val uploadToServer = Js.Optdef.return @@ Js.bool false
+                             val crashesDirectory = Js.Optdef.empty
+                           end);
   let app : FFI.electron_app Js.t = M.electron##.app in
   Arg.parse_argv argv options ignore "Sxfiler";
 

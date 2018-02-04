@@ -29,16 +29,16 @@ module Make(Reaction:Sxfiler_message_reaction.S) : Flux_frp.Flux.S.State
       let current_dir = t.S.current_dir in
       (t, Some (Filename.dirname current_dir |> M.request_files_in_directory |> Lwt.return))
     | M.ENTER_DIRECTORY -> begin
-      let module T = Sxfiler_common.Types in
-      match List.nth_opt t.S.file_list t.S.selected_item with
-      | None -> (t, None)
-      | Some item -> begin
-          if item.T.File_stat.stat##.isDirectory |> Js.to_bool then begin
-            let target_dir = item.T.File_stat.filename in
-            (t, Some (M.request_files_in_directory target_dir |> Lwt.return))
-          end else
-            (t, None)
-        end
-    end
+        let module T = Sxfiler_common.Types in
+        match List.nth_opt t.S.file_list t.S.selected_item with
+        | None -> (t, None)
+        | Some item -> begin
+            if item.T.File_stat.stat##.isDirectory |> Js.to_bool then begin
+              let target_dir = item.T.File_stat.filename in
+              (t, Some (M.request_files_in_directory target_dir |> Lwt.return))
+            end else
+              (t, None)
+          end
+      end
     | M.REQUEST_QUIT_APPLICATION -> (t, None)
 end

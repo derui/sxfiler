@@ -11,10 +11,10 @@ let on_key_event t ev (key, event_type) =
   match event_type with
   | KE.KeyUp | KE.KeyDown -> ()
   | _ -> begin
-    match K.dispatch ~key_map:t.P.key_map ~key with
-    | None -> ()
-    | Some message -> R.send t.P.runner message
-  end
+      match K.dispatch ~key_map:t.P.key_map ~key with
+      | None -> ()
+      | Some message -> R.send t.P.runner message
+    end
 
 let bind t =
   let key_listener ev = function

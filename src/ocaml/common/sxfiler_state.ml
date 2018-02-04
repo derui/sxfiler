@@ -42,6 +42,6 @@ let of_js t =
   {
     current_dir = Js.to_string t##.current_dir;
     file_list;
-   waiting = Js.to_bool t##.waiting;
-   selected_item = Js.float_of_number t##.selected_item |> int_of_float
+    waiting = Js.to_bool t##.waiting;
+    selected_item = Js.float_of_number t##.selected_item |> int_of_float
   }

@@ -37,12 +37,12 @@ let component = Component.make {
         R.Dom.of_tag `div
           ~props:R.Core.Element_spec.({
               empty with class_name = Some (Sxfiler_classnames.make ["fp-KeyContainer"]);
-                              on_key_down = Some (key_handler props);
-                              on_key_up = Some (key_handler props);
-                              on_key_press = Some (key_handler props);
-                              others = Some (object%js
-                                  val tabIndex = "0"
-                                end);
+                         on_key_down = Some (key_handler props);
+                         on_key_up = Some (key_handler props);
+                         on_key_press = Some (key_handler props);
+                         others = Some (object%js
+                             val tabIndex = "0"
+                           end);
             })
           ~children:([| R.element ~key:"file-list" ~props:(this##.state) Sxfiler_file_list.component
                      |])

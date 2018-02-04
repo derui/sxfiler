@@ -6,11 +6,9 @@ function bundleDll() {
 
   execFileSync('webpack', options, { stdio: 'inherit' });
 
-    execFileSync(
-      'cpx',
-      [`vendor/dll.react.js`, './dist/web'],
-      { stdio: 'inherit' }
-    );
+  execFileSync('cpx', [`vendor/dll.react.js`, './dist/web'], {
+    stdio: 'inherit',
+  });
 }
 
 module.exports.bundleDll = bundleDll;
