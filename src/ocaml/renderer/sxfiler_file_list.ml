@@ -12,7 +12,6 @@ let component = Component.make (fun props ->
     let state = props##.state in
     let elements = List.mapi (fun index item ->
         let module T = C.Types.File_stat in
-        Firebug.console##log_2 index (T.to_js item);
         R.element ~key:item.T.uuid ~props:(object%js
           val item = item
           val selected = (props##.state).selected_item = index
