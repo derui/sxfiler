@@ -2,8 +2,9 @@
 
 .fp-FileList {
   display: grid;
+  grid-template-rows: repeat(auto-fill, $fontSize + ($nanoSpace * 2));
   height: 100%;
-  overflow: hidden;
+  overflow-y: scroll;
   margin: 0;
   padding: $smallSpace;
 
