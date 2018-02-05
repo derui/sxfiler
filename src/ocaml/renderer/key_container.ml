@@ -4,7 +4,7 @@ module R = Reactjscaml
 module Component = R.Component.Make_stateful (struct
     class type _t = object
       method state: C.State.t Js.readonly_prop
-      method dispatch: Sxfiler_key_dispatcher.t Js.readonly_prop
+      method dispatch: Key_dispatcher.t Js.readonly_prop
       method subscribe: (C.State.t -> unit) -> unit Js.meth
     end
     type t = _t Js.t
@@ -16,8 +16,7 @@ module Component = R.Component.Make_stateful (struct
   end)
 
 let key_handler props ev =
-  let module D = Sxfiler_key_dispatcher in
-  D.dispatch props##.dispatch ev
+  Key_dispatcher.dispatch props##.dispatch ev
 
 let component = Component.make {
     R.Core.Component_spec.empty with
@@ -36,7 +35,7 @@ let component = Component.make {
         let props = this##.props in
         R.Dom.of_tag `div
           ~props:R.Core.Element_spec.({
-              empty with class_name = Some (Sxfiler_classnames.make ["fp-KeyContainer"]);
+              empty with class_name = Some (Classnames.make ["fp-KeyContainer"]);
                          on_key_down = Some (key_handler props);
                          on_key_up = Some (key_handler props);
                          on_key_press = Some (key_handler props);
@@ -44,7 +43,7 @@ let component = Component.make {
                              val tabIndex = "0"
                            end);
             })
-          ~children:([| R.element ~key:"file-list" ~props:(this##.state) Sxfiler_file_list.component
+          ~children:([| R.element ~key:"file-list" ~props:(this##.state) File_list.component
                      |])
       )
 

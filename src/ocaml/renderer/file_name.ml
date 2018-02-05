@@ -15,8 +15,8 @@ let directory_modifier = base_selector ^ "-Directory"
 let symlink_modifier = base_selector ^ "-Symlink"
 
 let get_classname props =
-  let module C = Sxfiler_classnames in
-  let open Sxfiler_classnames.Infix in
+  let module C = Classnames in
+  let open C.Infix in
   ([base_selector]
    <|> (directory_modifier, Js.to_bool props##.isDirectory)
    <|> (symlink_modifier, Js.to_bool props##.isSymbolicLink)) |> C.make

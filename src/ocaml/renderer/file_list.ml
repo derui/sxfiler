@@ -15,13 +15,13 @@ let component = Component.make (fun props ->
         R.element ~key:item.T.uuid ~props:(object%js
           val item = item
           val selected = (props##.state).current_cursor = index
-        end) Sxfiler_file_item.component
+        end) File_item.component
       ) state.file_list
     in
     let children = Array.of_list elements in
     R.Dom.of_tag `ul
       ~props:R.Core.Element_spec.({
-          empty with class_name = Some (Sxfiler_classnames.make ["fp-FileList"])
+          empty with class_name = Some (Classnames.make ["fp-FileList"])
         })
       ~children
   )

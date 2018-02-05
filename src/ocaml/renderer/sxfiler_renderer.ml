@@ -1,6 +1,5 @@
 module C = Sxfiler_common
 module R = Reactjscaml
-module M = Sxfiler_modules
 
 let container_id = "top-entry"
 
@@ -20,9 +19,9 @@ module Publisher = struct
 end
 
 let () =
-  let electron = M.electron in
+  let electron = Modules.electron in
   let container = Dom_html.getElementById container_id in
-  let dispatcher = Sxfiler_key_dispatcher.make electron##.ipcRenderer in
+  let dispatcher = Key_dispatcher.make electron##.ipcRenderer in
   let publisher = Publisher.make () in
 
   let handle _ = function
@@ -36,5 +35,5 @@ let () =
       val dispatch = dispatcher
       val state = C.State.empty
       method subscribe = (fun f -> Publisher.subscribe f publisher)
-    end) Sxfiler_key_container.component in
+    end) Key_container.component in
   R.dom##render element container

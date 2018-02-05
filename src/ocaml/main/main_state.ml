@@ -1,7 +1,7 @@
 module S = Sxfiler_common.State
 module M = Sxfiler_common.Message
 
-module Make(Reaction:Sxfiler_message_reaction.S) : Flux_frp.Flux.S.State
+module Make(Reaction:Message_reaction.S) : Flux_frp.Flux.S.State
   with module Thread = Lwt
    and type message = M.t
    and type t = S.t = struct

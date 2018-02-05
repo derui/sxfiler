@@ -1,7 +1,7 @@
 module E = Sxfiler_common.Event
 module FFI = Sxfiler_common.Ffi
-module M = Sxfiler_modules
-module K = Sxfiler_key_map
+module M = Modules
+module K = Key_map
 
 let dirname : Js.js_string Js.t = Js.Unsafe.js_expr "__dirname"
 
@@ -11,7 +11,7 @@ type t = {
   mutable main_window: FFI.BrowserWindow.t Js.t option;
   ipc: FFI.ipc Js.t;
   fs: FFI.Fs.t Js.t;
-  runner: Sxfiler_flux_runner.t;
+  runner: Flux_runner.t;
   key_map: K.key_map;
 }
 

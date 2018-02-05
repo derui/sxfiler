@@ -20,10 +20,8 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
   (** Handle request_files_in_directory message *)
   let request_files_in_directory path =
-    let module File_list = Sxfiler_file_list in
-    let module M = Sxfiler_modules in
     let fs = Fs.resolve () in
-    let path_ = M.path in
+    let path_ = Modules.path in
     let path = Js.string path in
     let absolute = path_##resolve Js.(array [|path|]) |> Js.to_string in
 

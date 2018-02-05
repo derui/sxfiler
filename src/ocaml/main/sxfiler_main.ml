@@ -1,11 +1,9 @@
 module E = Sxfiler_common.Event
 module FFI = Sxfiler_common.Ffi
-module Ipc_handler = Sxfiler_ipc_handler
-module Main_process = Sxfiler_main_process
-module M = Sxfiler_modules
+module M = Modules
 
-module H = Sxfiler_key_map
-module C = Sxfiler_config
+module H = Key_map
+module C = Config
 
 let subscription ipc t =
   let module S = Sxfiler_common.State in
@@ -33,7 +31,7 @@ let () =
   Arg.parse_argv argv options ignore "Sxfiler";
 
   let config = C.load app##getAppPath !option_config in
-  let runner = Sxfiler_flux_runner.run ~initial_state:(Sxfiler_common.State.empty) () in
+  let runner = Flux_runner.run ~initial_state:(Sxfiler_common.State.empty) () in
   let ipc = M.electron##.ipcMain in
   let main_process = Main_process.make ~ipc ~fs:(M.original_fs) ~runner ~key_map:config.C.key_map in
   Ipc_handler.bind main_process;
@@ -48,7 +46,7 @@ let () =
           else subscription w##.webContents_ipc t
         end
   end in
-  Sxfiler_flux_runner.subscribe runner ~subscription:(module Subscription);
+  Flux_runner.subscribe runner ~subscription:(module Subscription);
 
   begin
     let channel = Js.string "ready" in
@@ -62,7 +60,7 @@ let () =
           let module E = FFI.BrowserWindow.Web_contents_event in
           E.on_did_finish_load ~browser_window:bw
             ~listener:(fun _ ->
-                Sxfiler_flux_runner.send runner (M.request_files_in_directory ".")
+                Flux_runner.send runner (M.request_files_in_directory ".")
               )
       ) in
     app##on channel listener;

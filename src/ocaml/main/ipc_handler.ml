@@ -1,10 +1,10 @@
 module E = Sxfiler_common.Event
-module P = Sxfiler_main_process
+module P = Main_process
 module Kbd = Sxfiler_kbd
 
 let on_key_event t ev (key, event_type) =
-  let module K = Sxfiler_key_map in
-  let module R = Sxfiler_flux_runner in
+  let module K = Key_map in
+  let module R = Flux_runner in
   let key = Kbd.of_js key in
 
   let module KE = Reactjscaml.Event.Keyboard_event in

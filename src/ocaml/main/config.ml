@@ -1,11 +1,11 @@
 
 module Core = struct
   type t = {
-    key_map: Sxfiler_key_map.key_map;
+    key_map: Key_map.key_map;
   }
 
   let default = {
-    key_map = Sxfiler_key_map.empty;
+    key_map = Key_map.empty;
   }
 
 end
@@ -33,9 +33,9 @@ module Json_conf = struct
                   ) in
         Some v
       ) >>= (fun v ->
-        let module K = Sxfiler_key_map in
+        let module K = Key_map in
         Some {Core.key_map = List.fold_left (fun key_map (key, action) ->
-            match Sxfiler_action.of_yojson action with
+            match Action.of_yojson action with
             | Error err -> Firebug.console##error ("Unknown action " ^ err); key_map
             | Ok action -> K.add_key_map ~key_map:key_map ~key ~action
           ) K.empty v
@@ -48,16 +48,14 @@ include Core
 let is_file path =
   let path = Js.string path in
   try
-    let module M = Sxfiler_modules in
-    let stat = M.fs##statSync path in
+    let stat = Modules.fs##statSync path in
     not (Js.to_bool stat##isDirectory)
   with Js.Error _ ->
     false
 
 let default_config_path = "default.json"
 let load_from_file app_dir path =
-  let module M = Sxfiler_modules in
-  let path = M.path##resolve (Js.array [|app_dir; Js.string path|]) |> Js.to_string in
+  let path = Modules.path##resolve (Js.array [|app_dir; Js.string path|]) |> Js.to_string in
   if not @@ is_file path then raise Not_found
   else
     let json = Yojson.Safe.from_file path in

@@ -1,6 +1,6 @@
 
 (** The type of key handler function *)
-type action = Sxfiler_action.t
+type action = Action.t
 
 (** The module to map key and handler function.  *)
 module Key_map : Map.S with type key = Sxfiler_kbd.t
