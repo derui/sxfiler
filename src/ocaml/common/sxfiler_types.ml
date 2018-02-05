@@ -1,6 +1,6 @@
 module FFI = Sxfiler_ffi
 
-type selected_item = int
+type current_cursor = int
 
 module File_stat = struct
   type t = {

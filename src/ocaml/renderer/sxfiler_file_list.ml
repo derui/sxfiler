@@ -14,7 +14,7 @@ let component = Component.make (fun props ->
         let module T = C.Types.File_stat in
         R.element ~key:item.T.uuid ~props:(object%js
           val item = item
-          val selected = (props##.state).selected_item = index
+          val selected = (props##.state).current_cursor = index
         end) Sxfiler_file_item.component
       ) state.file_list
     in
