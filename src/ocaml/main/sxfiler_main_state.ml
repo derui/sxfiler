@@ -40,5 +40,5 @@ module Make(Reaction:Sxfiler_message_reaction.S) : Flux_frp.Flux.S.State
               (t, None)
           end
       end
-    | M.REQUEST_QUIT_APPLICATION -> (t, None)
+    | M.REQUEST_QUIT_APPLICATION -> ({t with S.terminated = true}, None)
 end

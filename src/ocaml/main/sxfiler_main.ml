@@ -42,7 +42,11 @@ let () =
     let handle t =
       match main_process.Main_process.main_window with
       | None -> Lwt.return_unit
-      | Some w -> subscription w##.webContents_ipc t
+      | Some w -> begin
+          let module S = Sxfiler_common.State in
+          if t.S.terminated then app##quit () |> Lwt.return
+          else subscription w##.webContents_ipc t
+        end
   end in
   Sxfiler_flux_runner.subscribe runner ~subscription:(module Subscription);
 

@@ -3,6 +3,7 @@
     "j": ["Next_item"],
     "k": ["Prev_item"],
     "h": ["Leave_directory"],
-    "l": ["Enter_directory"]
+    "l": ["Enter_directory"],
+    "q": ["Quit"]
   }
 }

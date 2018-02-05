@@ -9,6 +9,7 @@ type t = {
   file_list: T.File_stat.t list;
   waiting: bool;
   current_cursor: T.current_cursor;
+  terminated: bool;
 }
 
 class type js = object
@@ -16,6 +17,7 @@ class type js = object
   method file_list: T.File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
   method waiting: bool Js.t Js.readonly_prop
   method currentCursor : Js.number Js.t Js.readonly_prop
+  method terminated: bool Js.t Js.readonly_prop
 end
 
 let empty = {
@@ -23,6 +25,7 @@ let empty = {
   file_list = [];
   waiting = false;
   current_cursor = 0;
+  terminated = false;
 }
 
 let to_js t = object%js
@@ -32,6 +35,7 @@ let to_js t = object%js
                   |> Js.array
   val waiting = Js.bool t.waiting
   val currentCursor = float_of_int t.current_cursor |>  Js.number_of_float
+  val terminated = Js.bool t.terminated
 end
 
 let of_js t =
@@ -43,5 +47,6 @@ let of_js t =
     current_dir = Js.to_string t##.currentDir;
     file_list;
     waiting = Js.to_bool t##.waiting;
-    current_cursor = Js.float_of_number t##.currentCursor |> int_of_float
+    current_cursor = Js.float_of_number t##.currentCursor |> int_of_float;
+    terminated = Js.to_bool t##.terminated
   }
