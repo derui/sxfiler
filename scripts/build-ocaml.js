@@ -3,17 +3,26 @@ const chokidar = require('chokidar');
 
 const { execFileSync } = require('child_process');
 
-function bundleRenderer() {
-  let options = ['--cache', '--config', 'webpack.main.config.js'];
+const defaultOptions = {
+  ignoreError: false,
+  production: false,
+};
 
-  execFileSync('webpack', options, { stdio: 'inherit' });
+function bundleRenderer(options) {
+  let cmdOptions = ['--cache', '--config', 'webpack.main.config.js'];
+
+  if (options.production) {
+    cmdOptions.push("-p");
+  }
+
+  execFileSync('webpack', cmdOptions, { stdio: 'inherit' });
 }
 
-function buildOCaml(ignoreError = false) {
+function buildOCaml(options=defaultOptions) {
   try {
     execFileSync('jbuilder', ['build', '@js'], { stdio: 'inherit' });
 
-    bundleRenderer();
+    bundleRenderer(options);
 
     execFileSync(
       'cpx',
@@ -21,7 +30,7 @@ function buildOCaml(ignoreError = false) {
       { stdio: 'inherit' }
     );
   } catch (e) {
-    if (!ignoreError) {
+    if (!options.ignoreError) {
       throw e;
     }
   }
@@ -32,7 +41,7 @@ function buildOCamlWithWatch() {
   return chokidar
     .watch('src/ocaml/', { ignored: /(^|[\/\\])\../, ignoreInitial: true })
     .on('all', (event, path) => {
-      buildOCaml(true);
+      buildOCaml(Object.assign({}, defaultOptions, {ignoreError: true}));
     });
 }
 
@@ -41,11 +50,21 @@ module.exports.buildOCamlWithWatch = buildOCamlWithWatch;
 
 if (require.main === module) {
   (function() {
+    let options = Object.assign({}, defaultOptions);
+    const argv = process.argv.slice(2);
+    argv.forEach(arg => {
+      switch (arg) {
+      case "watch": options.ignoreError = true; break;
+      case "prod": options.producion = true; break;
+      default: break;
+      }
+    });
+
     if (process.argv.length > 2 && process.argv[2] === 'watch') {
-      buildOCaml(true);
-      buildOCamlWithWatch();
+      buildOCaml(Object.assign({}, options, {ignoreError: true}));
+      buildOCamlWithWatch(options);
     } else {
-      buildOCaml();
+      buildOCaml(options);
     }
   })();
 }
