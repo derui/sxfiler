@@ -35,7 +35,7 @@ let component = Component.make {
         let props = this##.props in
         R.Dom.of_tag `div
           ~props:R.Core.Element_spec.({
-              empty with class_name = Some (Classnames.make ["fp-KeyContainer"]);
+              empty with class_name = Some (Classnames.(return "fp-KeyContainer" |> to_string));
                          on_key_down = Some (key_handler props);
                          on_key_up = Some (key_handler props);
                          on_key_press = Some (key_handler props);

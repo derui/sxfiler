@@ -13,11 +13,11 @@ let component = Component.make (fun props ->
     let stat = props##.item in
     let cls = let module C = Classnames in
       let open C.Infix in
-      C.make (["fp-FileItem"] <|> ("is-selected", props##.selected))
+      C.(return "fp-FileItem" <|> ("is-selected", props##.selected) |> to_string)
     in
     let module T = C.Types.File_stat in
     R.Dom.of_tag `li
-      ~props:R.Core.Element_spec.({empty with class_name = Some (cls)})
+      ~props:R.Core.Element_spec.({empty with class_name = Some cls})
       ~children:[|
         R.element ~key:"mode" ~props:(object%js val mode = stat.T.stat##.mode end) File_mode.component;
         R.element ~key:"timestamp" ~props:(object%js val timestamp = stat.T.stat##.mtime end) File_timestamp.component;

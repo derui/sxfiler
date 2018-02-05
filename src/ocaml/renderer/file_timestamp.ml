@@ -23,7 +23,7 @@ let component = Component.make (fun props ->
     let date = format_date date in
     R.Dom.of_tag `span
       ~props:R.Core.Element_spec.({
-          empty with class_name = Some (Classnames.make ["fp-FileItem_Timestamp"])
+          empty with class_name = Some (Classnames.(return "fp-FileItem_Timestamp" |> to_string))
         })
       ~children:[| R.text date |]
   )
