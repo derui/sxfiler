@@ -1,22 +1,23 @@
 module C = Sxfiler_common
+module T = C.Types
 module R = Reactjscaml
 
 module Component = R.Component.Make_stateless (struct
     class type _t = object
-      method state: C.State.t Js.readonly_prop
+      method pane: T.Pane.t Js.readonly_prop
     end
     type t = _t Js.t
   end)
 
 let component = Component.make (fun props ->
-    let state = props##.state in
+    let pane = props##.pane in
     let elements = List.mapi (fun index item ->
-        let module T = C.Types.File_stat in
-        R.element ~key:item.T.id ~props:(object%js
+        let module F = C.Types.File_stat in
+        R.element ~key:item.F.id ~props:(object%js
           val item = item
-          val selected = (props##.state).current_cursor = index
+          val selected = pane.T.Pane.cursor_pos = index
         end) File_item.component
-      ) state.file_list
+      ) pane.T.Pane.file_list
     in
     let children = Array.of_list elements in
     R.Dom.of_tag `ul

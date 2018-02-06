@@ -44,42 +44,42 @@ module File_stat = struct
   }
 end
 
-module Pane_position = struct
-  type t = Left | Right
+module Pane_location = struct
+  type t = Left | Right [@@deriving variants]
 end
 
 module Pane = struct
   type t = {
-    position: Pane_position.t;
+    location: Pane_location.t;
     directory: string;
     file_list: File_stat.t list;
     cursor_pos: current_cursor;
   }
 
   class type js = object
-    method position: Pane_position.t Js.readonly_prop
+    method location: Pane_location.t Js.readonly_prop
     method directory: Js.js_string Js.t Js.readonly_prop
     method fileList: File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
     method cursorPos : Js.number Js.t Js.readonly_prop
   end
 
-  let make ~position ~file_list ~cursor_pos ~directory =
+  let make ~location ~file_list ~cursor_pos ~directory =
     {
-      position;
+      location;
       directory;
       file_list;
       cursor_pos;
     }
 
   let to_js : t -> js Js.t = fun t -> object%js
-    val position = t.position
+    val location = t.location
     val fileList = List.map File_stat.to_js t.file_list |> Array.of_list |> Js.array
     val directory = Js.string t.directory
     val cursorPos = Js.number_of_float @@ float_of_int t.cursor_pos
   end
 
   let of_js : js Js.t -> t = fun js -> {
-    position = js##.position;
+    location = js##.location;
     directory = Js.to_string js##.directory;
     file_list = Js.to_array js##.fileList |> Array.map File_stat.of_js |> Array.to_list;
     cursor_pos = int_of_float @@ Js.float_of_number js##.cursorPos;

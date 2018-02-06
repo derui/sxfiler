@@ -5,48 +5,38 @@ module Thread = Lwt
 
 (* All state of this application *)
 type t = {
-  current_dir: string;
-  file_list: T.File_stat.t list;
+  panes: T.Pane.t array;
+  current_pane: T.Pane_location.t;
   waiting: bool;
-  current_cursor: T.current_cursor;
   terminated: bool;
 }
 
 class type js = object
-  method currentDir: Js.js_string Js.t Js.readonly_prop
-  method file_list: T.File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
+  method panes: T.Pane.js Js.t Js.js_array Js.t Js.readonly_prop
+  method currentPane: T.Pane_location.t Js.readonly_prop
   method waiting: bool Js.t Js.readonly_prop
-  method currentCursor : Js.number Js.t Js.readonly_prop
   method terminated: bool Js.t Js.readonly_prop
 end
 
 let empty = {
-  current_dir = "";
-  file_list = [];
+  panes = [||];
+  current_pane = T.Pane_location.Left;
   waiting = false;
-  current_cursor = 0;
   terminated = false;
 }
 
-let to_js t = object%js
-  val currentDir = Js.string t.current_dir
-  val file_list = List.map T.File_stat.to_js t.file_list
-                  |> Array.of_list
-                  |> Js.array
+let to_js : t -> js Js.t = fun t -> object%js
+  val panes = Array.map T.Pane.to_js t.panes |> Js.array
+  val currentPane = t.current_pane
   val waiting = Js.bool t.waiting
-  val currentCursor = float_of_int t.current_cursor |>  Js.number_of_float
   val terminated = Js.bool t.terminated
 end
 
-let of_js t =
-  let file_list = Js.to_array t##.file_list in
-  let file_list = Array.to_list file_list
-                  |> List.map T.File_stat.of_js
-  in
+let of_js : js Js.t -> t = fun t ->
+  let panes = Array.map T.Pane.of_js @@ Js.to_array t##.panes in
   {
-    current_dir = Js.to_string t##.currentDir;
-    file_list;
+    panes;
+    current_pane = t##.currentPane;
     waiting = Js.to_bool t##.waiting;
-    current_cursor = Js.float_of_number t##.currentCursor |> int_of_float;
     terminated = Js.to_bool t##.terminated
   }

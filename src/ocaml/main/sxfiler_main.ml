@@ -1,6 +1,7 @@
 module E = Sxfiler_common.Event
 module FFI = Sxfiler_common.Ffi
 module M = Modules
+  module T = Sxfiler_common.Types
 
 module H = Key_map
 module C = Config
@@ -60,7 +61,8 @@ let () =
           let module E = FFI.BrowserWindow.Web_contents_event in
           E.on_did_finish_load ~browser_window:bw
             ~listener:(fun _ ->
-                Flux_runner.send runner (M.request_files_in_directory ".")
+                let module L = T.Pane_location in
+                Flux_runner.send runner (M.request_files_in_directory (L.Left, "."))
               )
       ) in
     app##on channel listener;
