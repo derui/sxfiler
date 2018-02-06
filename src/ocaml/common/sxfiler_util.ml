@@ -17,7 +17,7 @@ module Option = struct
 
   module Infix = struct
     let (>>=) = bind
-    let (>>|) v f = map ~f v
+    let (>|=) v f = map ~f v
     let return = return
   end
 end
