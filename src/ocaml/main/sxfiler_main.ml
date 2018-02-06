@@ -1,7 +1,7 @@
 module E = Sxfiler_common.Event
 module FFI = Sxfiler_common.Ffi
 module M = Modules
-  module T = Sxfiler_common.Types
+module T = Sxfiler_common.Types
 
 module H = Key_map
 module C = Config

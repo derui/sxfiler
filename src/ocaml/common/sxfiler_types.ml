@@ -79,9 +79,9 @@ module Pane = struct
   end
 
   let of_js : js Js.t -> t = fun js -> {
-    location = js##.location;
-    directory = Js.to_string js##.directory;
-    file_list = Js.to_array js##.fileList |> Array.map File_stat.of_js |> Array.to_list;
-    cursor_pos = int_of_float @@ Js.float_of_number js##.cursorPos;
-  }
+      location = js##.location;
+      directory = Js.to_string js##.directory;
+      file_list = Js.to_array js##.fileList |> Array.map File_stat.of_js |> Array.to_list;
+      cursor_pos = int_of_float @@ Js.float_of_number js##.cursorPos;
+    }
 end

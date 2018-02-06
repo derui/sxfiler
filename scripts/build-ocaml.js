@@ -12,13 +12,13 @@ function bundleRenderer(options) {
   let cmdOptions = ['--cache', '--config', 'webpack.main.config.js'];
 
   if (options.production) {
-    cmdOptions.push("-p");
+    cmdOptions.push('-p');
   }
 
   execFileSync('webpack', cmdOptions, { stdio: 'inherit' });
 }
 
-function buildOCaml(options=defaultOptions) {
+function buildOCaml(options = defaultOptions) {
   try {
     execFileSync('jbuilder', ['build', '@js'], { stdio: 'inherit' });
 
@@ -41,7 +41,7 @@ function buildOCamlWithWatch() {
   return chokidar
     .watch('src/ocaml/', { ignored: /(^|[\/\\])\../, ignoreInitial: true })
     .on('all', (event, path) => {
-      buildOCaml(Object.assign({}, defaultOptions, {ignoreError: true}));
+      buildOCaml(Object.assign({}, defaultOptions, { ignoreError: true }));
     });
 }
 
@@ -54,14 +54,19 @@ if (require.main === module) {
     const argv = process.argv.slice(2);
     argv.forEach(arg => {
       switch (arg) {
-      case "watch": options.ignoreError = true; break;
-      case "prod": options.producion = true; break;
-      default: break;
+        case 'watch':
+          options.ignoreError = true;
+          break;
+        case 'prod':
+          options.producion = true;
+          break;
+        default:
+          break;
       }
     });
 
     if (process.argv.length > 2 && process.argv[2] === 'watch') {
-      buildOCaml(Object.assign({}, options, {ignoreError: true}));
+      buildOCaml(Object.assign({}, options, { ignoreError: true }));
       buildOCamlWithWatch(options);
     } else {
       buildOCaml(options);
