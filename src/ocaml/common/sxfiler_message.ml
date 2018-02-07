@@ -2,11 +2,12 @@
 module T = Sxfiler_types
 
 type t =
-    REQUEST_FILES_IN_DIRECTORY of (T.Pane_location.t * string)
-  | FINISH_FILES_IN_DIRECTORY of (T.Pane.t, exn) result
-  | REQUEST_QUIT_APPLICATION
-  | SELECT_NEXT_ITEM of int
-  | SELECT_PREV_ITEM of int
-  | LEAVE_DIRECTORY
-  | ENTER_DIRECTORY
+    Request_files_in_directory of (T.Pane_id.t * string)
+  | Finish_files_in_directory of (T.Pane.t, exn) result
+  | Request_quit_application
+  | Add_pane of T.Pane.t
+  | Select_next_item of int
+  | Select_prev_item of int
+  | Leave_directory
+  | Enter_directory
 [@@deriving variants]

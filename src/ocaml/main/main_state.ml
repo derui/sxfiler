@@ -16,19 +16,22 @@ module Make(Reaction:Message_reaction.S) : Flux_frp.Flux.S.State
 
   let replace_pane panes pane =
     let module P = Sxfiler_common.Types.Pane in
-    Array.map (fun v -> if v.P.location = pane.P.location then pane else v) panes
+    if Array.to_list panes |> List.exists (fun v -> v.P.id = pane.P.id) then
+      Array.map (fun v -> if v.P.id = pane.P.id then pane else v) panes
+    else
+      Array.concat [panes;[|pane|]]
 
-  let select_pane panes loc =
+  let select_pane panes id =
     let module P = Sxfiler_common.Types.Pane in
-    Array.to_list panes |> List.find_opt (fun v -> v.P.location = loc)
+    Array.to_list panes |> List.find_opt (fun v -> v.P.id = id)
 
   let equal = ( = )
   let update t = function
-    | M.REQUEST_FILES_IN_DIRECTORY (pane, path) -> (
+    | M.Request_files_in_directory (pane, path) -> (
         {t with S.waiting = true},
         Some (Reaction.request_files_in_directory pane path)
       )
-    | M.FINISH_FILES_IN_DIRECTORY ret -> begin
+    | M.Finish_files_in_directory ret -> begin
         match ret with
         | Ok pane -> (
             {t with
@@ -37,7 +40,7 @@ module Make(Reaction:Message_reaction.S) : Flux_frp.Flux.S.State
             }, None)
         | Error _ -> failwith "error"
       end
-    | M.SELECT_NEXT_ITEM v ->
+    | M.Select_next_item v ->
       let module O = Sxfiler_common.Util.Option in
       let open O.Infix in
       let t = O.get ~default:t (
@@ -49,7 +52,7 @@ module Make(Reaction:Message_reaction.S) : Flux_frp.Flux.S.State
           >|= (fun pane -> {t with S.panes = replace_pane t.S.panes pane})
         ) in
       (t, None)
-    | M.SELECT_PREV_ITEM v ->
+    | M.Select_prev_item v ->
       let module O = Sxfiler_common.Util.Option in
       let open O.Infix in
       let t = O.get ~default:t (
@@ -58,18 +61,18 @@ module Make(Reaction:Message_reaction.S) : Flux_frp.Flux.S.State
           >|= (fun pane -> {t with S.panes = replace_pane t.S.panes pane})
         ) in
       (t, None)
-    | M.LEAVE_DIRECTORY ->
+    | M.Leave_directory ->
       let module O = Sxfiler_common.Util.Option in
       let open O.Infix in
       let message = select_pane t.S.panes t.S.current_pane
         >>= (fun pane ->
             let module P = T.Pane in
             let next_dir = Filename.dirname pane.P.directory in
-            Some ((pane.P.location, next_dir) |> M.request_files_in_directory |> Lwt.return))
+            Some ((pane.P.id, next_dir) |> M.request_files_in_directory |> Lwt.return))
       in
       (t, message)
 
-    | M.ENTER_DIRECTORY -> begin
+    | M.Enter_directory -> begin
         let module O = Sxfiler_common.Util.Option in
         let open O.Infix in
         let message = select_pane t.S.panes t.S.current_pane
@@ -79,12 +82,13 @@ module Make(Reaction:Message_reaction.S) : Flux_frp.Flux.S.State
               >>= fun item ->
               if item.T.File_stat.stat##.isDirectory |> Js.to_bool then begin
                 let target_dir = item.T.File_stat.filename in
-                Some (M.request_files_in_directory (pane.P.location, target_dir) |> Lwt.return)
+                Some (M.request_files_in_directory (pane.P.id, target_dir) |> Lwt.return)
               end else
                 None
             )
         in
         (t, message)
       end
-    | M.REQUEST_QUIT_APPLICATION -> ({t with S.terminated = true}, None)
+    | M.Request_quit_application -> ({t with S.terminated = true}, None)
+    | M.Add_pane pane -> ({t with S.panes = replace_pane t.S.panes pane}, None)
 end

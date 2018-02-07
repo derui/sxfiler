@@ -6,10 +6,6 @@ module T = Sxfiler_common.Types
 module H = Key_map
 module C = Config
 
-let subscription ipc t =
-  let module S = Sxfiler_common.State in
-  Lwt.return @@ E.IPC.(send ~channel:(update (S.to_js t)) ~ipc)
-
 let dirname : Js.js_string Js.t option = Js.Unsafe.global##.__dirname
 
 let argv =
@@ -20,6 +16,12 @@ let option_config = ref ""
 let options = [
   ("--config", Arg.Set_string option_config, "Path for configuraiton")
 ]
+
+let subscription ipc t =
+  let module S = Sxfiler_common.State in
+  Lwt.return @@ E.IPC.(send ~channel:(update (S.to_js t)) ~ipc)
+
+let make_initial_pane id = T.Pane.make ~id ~directory:"." ()
 
 let () =
   M.crash_reporter##start (Js.Optdef.return @@ object%js
@@ -32,7 +34,8 @@ let () =
   Arg.parse_argv argv options ignore "Sxfiler";
 
   let config = C.load app##getAppPath !option_config in
-  let runner = Flux_runner.run ~initial_state:(Sxfiler_common.State.empty) () in
+  let initial_state = Sxfiler_common.State.empty in
+  let runner = Flux_runner.run ~initial_state () in
   let ipc = M.electron##.ipcMain in
   let main_process = Main_process.make ~ipc ~fs:(M.original_fs) ~runner ~key_map:config.C.key_map in
   Ipc_handler.bind main_process;
@@ -61,8 +64,11 @@ let () =
           let module E = FFI.BrowserWindow.Web_contents_event in
           E.on_did_finish_load ~browser_window:bw
             ~listener:(fun _ ->
-                let module L = T.Pane_location in
-                Flux_runner.send runner (M.request_files_in_directory (L.Left, "."))
+                let module S = Sxfiler_common.State in
+                Array.iter (fun pane ->
+                    let module P = Sxfiler_common.Types.Pane in
+                    Flux_runner.send runner (M.request_files_in_directory (pane.P.id, pane.P.directory))
+                  ) initial_state.S.panes
               )
       ) in
     app##on channel listener;

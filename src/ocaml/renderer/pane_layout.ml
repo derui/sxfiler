@@ -14,7 +14,7 @@ let component = Component.make (fun props ->
     let state = props##.state in
     let children = Array.map (fun pane ->
         let module P = T.Pane in
-        R.element ~key:(T.Pane_location.Variants.to_name pane.P.location) ~props:(object%js
+        R.element ~key:(T.Pane_id.to_string pane.P.id) ~props:(object%js
           val pane = pane
         end) File_list_pane.component
       ) state.C.State.panes

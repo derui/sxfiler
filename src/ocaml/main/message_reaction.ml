@@ -12,14 +12,14 @@ end
 module type S = sig
   module Fs : Fs
 
-  val request_files_in_directory: T.Pane_location.t -> string -> M.t Lwt.t
+  val request_files_in_directory: T.Pane_id.t -> string -> M.t Lwt.t
 end
 
 module Make(Fs:Fs) : S with module Fs = Fs = struct
   module Fs = Fs
 
   (** Handle request_files_in_directory message *)
-  let request_files_in_directory pane_loc path =
+  let request_files_in_directory pane_id path =
     let fs = Fs.resolve () in
     let path_ = Modules.path in
     let path = Js.string path in
@@ -30,7 +30,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       >>= (fun file_list ->
           let file_list = Array.to_list file_list in
           let module M = Sxfiler_common.Message in
-          let pane = T.Pane.make ~file_list ~directory:absolute ~location:pane_loc ~cursor_pos:0 in
+          let pane = T.Pane.make ~file_list ~directory:absolute ~id:pane_id () in
           Lwt.return @@ M.finish_files_in_directory (Ok pane)
         )
     in
