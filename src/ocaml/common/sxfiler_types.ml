@@ -60,9 +60,7 @@ end = struct
   type t = string
   type js = Js.js_string
 
-  let make () =
-    let state = Random.get_state () in
-    Uuidm.(v4_gen state () |> to_string)
+  let make () = Uuidm.(v `V4 |> to_string)
 
   let equal = ( = )
 

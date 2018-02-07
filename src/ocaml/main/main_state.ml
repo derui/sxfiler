@@ -16,14 +16,14 @@ module Make(Reaction:Message_reaction.S) : Flux_frp.Flux.S.State
 
   let replace_pane panes pane =
     let module P = Sxfiler_common.Types.Pane in
-    if Array.to_list panes |> List.exists (fun v -> v.P.id = pane.P.id) then
-      Array.map (fun v -> if v.P.id = pane.P.id then pane else v) panes
+    if Array.to_list panes |> List.exists (fun v -> T.Pane_id.equal v.P.id pane.P.id) then
+      Array.map (fun v -> if T.Pane_id.equal v.P.id pane.P.id then pane else v) panes
     else
       Array.concat [panes;[|pane|]]
 
   let select_pane panes id =
     let module P = Sxfiler_common.Types.Pane in
-    Array.to_list panes |> List.find_opt (fun v -> v.P.id = id)
+    Array.to_list panes |> List.find_opt (fun v -> T.Pane_id.equal v.P.id id)
 
   let equal = ( = )
   let update t = function
