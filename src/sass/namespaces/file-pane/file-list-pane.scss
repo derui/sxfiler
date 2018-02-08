@@ -1,0 +1,23 @@
+@import "base/*";
+@import "./_variables";
+
+.fp-FileListPane {
+  display: grid;
+  grid-template-rows: ($fontSize + $smallSpace * 2) 1fr;
+}
+
+.fp-FileListPane_Header {
+  padding: $smallSpace 0;
+  margin: 0;
+
+  font-weight: bold;
+  color: $sol_base1;
+  background-color: $sol_base03;
+  font-family: monospace;
+
+  border-bottom: 1px solid $sol_base01;
+}
+
+.fp-FileListPane_Header-selected {
+  color: $sol_yellow;
+}

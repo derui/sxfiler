@@ -16,6 +16,7 @@ let component = Component.make (fun props ->
         let module P = T.Pane in
         R.element ~key:(T.Pane_id.to_string pane.P.id) ~props:(object%js
           val pane = pane
+          val selected = T.Pane_id.equal pane.T.Pane.id state.C.State.current_pane
         end) File_list_pane.component
       ) state.C.State.panes
     in
