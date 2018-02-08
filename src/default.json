@@ -4,6 +4,7 @@
     "k": ["Prev_item"],
     "h": ["Leave_directory"],
     "l": ["Enter_directory"],
-    "q": ["Quit"]
+    "q": ["Quit"],
+    "Tab": ["Move_to_another"]
   }
 }

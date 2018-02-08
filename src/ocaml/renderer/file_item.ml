@@ -19,7 +19,6 @@ let component = Component.make {
         let module F = C.Types.File_stat in
         let should_update = (not @@ F.equal this##.props##.item new_props##.item) ||
                             (this##.props##.selected <> new_props##.selected) in
-        Firebug.console##log should_update;
         should_update
       );
     render = (fun this ->

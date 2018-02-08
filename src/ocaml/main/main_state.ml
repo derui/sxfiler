@@ -1,6 +1,7 @@
-module S = Sxfiler_common.State
-module T = Sxfiler_common.Types
-module M = Sxfiler_common.Message
+module C = Sxfiler_common
+module S = C.State
+module T = C.Types
+module M = C.Message
 
 module Make(Reaction:Message_reaction.S) : Flux_frp.Flux.S.State
   with module Thread = Lwt
@@ -24,6 +25,10 @@ module Make(Reaction:Message_reaction.S) : Flux_frp.Flux.S.State
   let select_pane panes id =
     let module P = Sxfiler_common.Types.Pane in
     Array.to_list panes |> List.find_opt (fun v -> T.Pane_id.equal v.P.id id)
+
+  let select_other_pane panes id =
+    let module P = Sxfiler_common.Types.Pane in
+    Array.to_list panes |> List.find_opt (fun v -> not @@ T.Pane_id.equal v.P.id id)
 
   let equal = ( = )
   let update t = function
@@ -91,4 +96,10 @@ module Make(Reaction:Message_reaction.S) : Flux_frp.Flux.S.State
       end
     | M.Request_quit_application -> ({t with S.terminated = true}, None)
     | M.Add_pane pane -> ({t with S.panes = replace_pane t.S.panes pane}, None)
+    | M.Move_to_another ->
+      let module O =  C.Util.Option in
+      let current_pane = t.S.current_pane in
+      let t = {t with S.current_pane = O.get ~default:current_pane @@
+                        O.Infix.(select_other_pane t.S.panes current_pane >|= fun pane -> pane.T.Pane.id)} in
+      (t, None)
 end

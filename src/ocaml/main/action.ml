@@ -5,6 +5,7 @@ type t =
   | Prev_item
   | Leave_directory
   | Enter_directory
+  | Move_to_another
   | Quit
 [@@deriving yojson]
 
@@ -14,3 +15,4 @@ let to_message = function
   | Leave_directory -> M.leave_directory
   | Enter_directory -> M.enter_directory
   | Quit -> M.request_quit_application
+  | Move_to_another -> M.move_to_another

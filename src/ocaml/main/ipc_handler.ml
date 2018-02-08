@@ -8,8 +8,9 @@ let on_key_event t ev (key, event_type) =
   let key = Kbd.of_js key in
 
   let module KE = Reactjscaml.Event.Keyboard_event in
+
   match event_type with
-  | KE.KeyUp | KE.KeyDown -> ()
+  | KE.KeyUp | KE.KeyPress -> ()
   | _ -> begin
       match K.dispatch ~key_map:t.P.key_map ~key with
       | None -> ()

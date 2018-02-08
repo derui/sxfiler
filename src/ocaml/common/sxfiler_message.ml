@@ -10,4 +10,5 @@ type t =
   | Select_prev_item of int
   | Leave_directory
   | Enter_directory
+  | Move_to_another
 [@@deriving variants]
