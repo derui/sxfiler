@@ -24,8 +24,14 @@ let component = Component.make (fun props ->
           val directory = Js.string pane.T.Pane.directory
           val selected = props##.selected
         end) File_list_pane_header.component;
-        R.element ~key:"file-list" ~props:(object%js
-          val pane = pane
-        end) File_list.component
+        R.Dom.of_tag `div ~key:"content"
+          ~props:R.Core.Element_spec.({
+              empty with class_name = Some (Classnames.(return "fp-FileListPane_Content" |> to_string))
+            })
+          ~children:[|
+            R.element ~key:"file-list" ~props:(object%js
+              val pane = pane
+            end) File_list.component
+          |]
       |]
   )

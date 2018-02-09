@@ -1,11 +1,14 @@
+@import "base/*";
 
 .fp-PaneLayout {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-gap: $nanoSpace;
   width: 100%;
   height: 100%;
   margin: 0;
   padding: 0;
 
   overflow: hidden;
+  background-color: $sol_base3;
 }

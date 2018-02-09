@@ -21,3 +21,11 @@
 .fp-FileListPane_Header-selected {
   color: $sol_yellow;
 }
+
+.fp-FileListPane_Content {
+  padding: 0;
+  margin: 0;
+
+  position: relative;
+  overflow: hidden;
+}
