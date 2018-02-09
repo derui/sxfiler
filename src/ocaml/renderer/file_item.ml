@@ -2,16 +2,12 @@ module C = Sxfiler_common
 module R = Reactjscaml
 
 module Component = R.Component.Make_stateful (struct
-    class type _t = object
+    class type t = object
       method item: C.Types.File_stat.t Js.readonly_prop
       method selected: bool Js.readonly_prop
     end
-    type t = _t Js.t
   end)
-    (struct
-      class type _t = object end
-      type t = _t Js.t
-    end)
+    (struct type t = unit end)
 
 let component = Component.make {
     R.Core.Component_spec.empty with

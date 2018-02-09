@@ -2,17 +2,15 @@ module C = Sxfiler_common
 module R = Reactjscaml
 
 module Component = R.Component.Make_stateful (struct
-    class type _t = object
+    class type t = object
       method state: C.State.t Js.readonly_prop
       method dispatch: Key_dispatcher.t Js.readonly_prop
       method subscribe: (C.State.t -> unit) -> unit Js.meth
     end
-    type t = _t Js.t
   end)(struct
-    class type _t = object
+    class type t = object
       method state: C.State.t Js.readonly_prop
     end
-    type t = _t Js.t
   end)
 
 let key_handler props ev =

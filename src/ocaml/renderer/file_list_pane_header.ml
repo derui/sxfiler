@@ -3,11 +3,10 @@ module T = C.Types
 module R = Reactjscaml
 
 module Component = R.Component.Make_stateless (struct
-    class type _t = object
+    class type t = object
       method directory: Js.js_string Js.t Js.readonly_prop
       method selected: bool Js.readonly_prop
     end
-    type t = _t Js.t
   end)
 
 let component = Component.make (fun props ->

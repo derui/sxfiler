@@ -2,10 +2,9 @@ module C = Sxfiler_common
 module R = Reactjscaml
 
 module Component = R.Component.Make_stateless (struct
-    class type _t = object
+    class type t = object
       method size: Js.number Js.t Js.readonly_prop
     end
-    type t = _t Js.t
   end)
 
 module File_size = struct
