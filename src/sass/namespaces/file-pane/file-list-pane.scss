@@ -3,7 +3,7 @@
 
 .fp-FileListPane {
   display: grid;
-  grid-template-rows: ($fontSize + $smallSpace * 2) 1fr;
+  grid-template-rows: $fontSize + $smallSpace * 2 1fr;
 }
 
 .fp-FileListPane_Header {

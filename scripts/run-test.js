@@ -1,19 +1,29 @@
 const { buildOCamlTest } = require('./build-ocaml-test.js');
 
-const { spawn} = require('child_process');
+const { spawn } = require('child_process');
 
 function testWithMocha(bundled) {
   spawn('mocha', [bundled], { stdio: 'inherit' });
 }
 
 function testWithKarma() {
-  spawn('karma', ["start", "--single-run", "--browsers", "ChromeHeadlessNoSandbox", "karma.conf.js"], {
-    stdio: 'inherit'
-  })
+  spawn(
+    'karma',
+    [
+      'start',
+      '--single-run',
+      '--browsers',
+      'ChromeHeadlessNoSandbox',
+      'karma.conf.js',
+    ],
+    {
+      stdio: 'inherit',
+    }
+  );
 }
 
 module.exports.testWithMocha = testWithMocha;
-module.exports.testWithKarma = testWithKarma
+module.exports.testWithKarma = testWithKarma;
 
 if (require.main === module) {
   (function() {
