@@ -1,6 +1,6 @@
 const { execFileSync } = require('child_process');
 
-function bundleRenderer() {
+function bundleTest() {
   let options = ['--cache', '--config', 'webpack.test.config.js'];
 
   execFileSync('webpack', options, { stdio: 'inherit' });
@@ -10,7 +10,7 @@ function buildOCamlTest(ignoreError = false) {
   try {
     execFileSync('jbuilder', ['runtest'], { stdio: 'inherit' });
 
-    // bundleRenderer();
+    bundleTest();
   } catch (e) {
     if (!ignoreError) {
       throw e;
