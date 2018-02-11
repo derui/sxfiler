@@ -1,6 +1,8 @@
 (* Utilities for binding js_of_ocaml *)
 
 module Option = struct
+  exception None_of_object
+
   let map ~f v = match v with
     | None -> None
     | Some v -> Some (f v)
@@ -14,6 +16,10 @@ module Option = struct
   let get ~default = function
     | Some v -> v
     | None -> default
+
+  let get_exn = function
+    | Some v -> v
+    | None -> raise None_of_object
 
   module Infix = struct
     let (>>=) = bind
