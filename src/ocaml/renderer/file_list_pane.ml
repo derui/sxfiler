@@ -30,7 +30,8 @@ let component = Component.make (fun props ->
             })
           ~children:[|
             R.element ~key:"file-list" ~props:(object%js
-              val pane = pane
+              val items = pane.T.Pane.file_list
+              val cursor_pos = pane.T.Pane.cursor_pos
             end) File_list.component
           |]
       |]

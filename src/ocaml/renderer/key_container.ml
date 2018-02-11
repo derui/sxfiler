@@ -20,7 +20,7 @@ let key_handler props ev =
 
 let component = Component.make {
     R.Core.Component_spec.empty with
-    initialize = Some (fun this ->
+    initialize = Some (fun this props ->
         this##.props##subscribe (fun state ->
             this##setState (object%js
               val state = state
