@@ -70,6 +70,33 @@ let () =
                   |> L.recalculate_visible_window 0
         in
         let new_lst = L.recalculate_visible_window 2 lst in
-        assert_strict_eq [|[|1;2;|];[|2;3|]|] [|L.get_items_in_window lst; L.get_items_in_window new_lst|];
+        let open Infix in
+        assert_strict_eq [|1;2|] @@ L.get_items_in_window lst
+        <|> assert_strict_eq [|2;3|] @@ L.get_items_in_window new_lst
+      );
+    "should be equal window between before and after move cursor" >:: (fun () ->
+        prepare ();
+        let index = Dom_html.getElementById "js" in
+        index##setAttribute (Js.string "style") (Js.string "height: 20px; margin: 0px; padding: 0px");
+        let style = "height: 10px;margin: 0px; padding: 0px" in
+        let items = [|append_div index ~text:"foo" [("id", "first");("style", style)];
+                      append_div index ~text:"bar" [("id", "second");("height", style)];
+                      append_div index ~text:"baz" [("id", "third");("height", style)];
+                    |]
+        in
+
+        let all_items = Array.init 3 succ in
+        let lst = L.empty
+                  |> L.update_all_items all_items
+                  |> L.update_list_element index
+                  |> L.update_item_cache items
+                  |> L.recalculate_visible_window 0
+        in
+        let step_one = L.recalculate_visible_window 1 lst in
+        let step_two = L.recalculate_visible_window 0 lst in
+        let open Infix in
+        assert_strict_eq [|1;2|] @@ L.get_items_in_window lst
+        <|> assert_strict_eq [|1;2|] @@ L.get_items_in_window step_one
+        <|> assert_strict_eq [|1;2|] @@ L.get_items_in_window step_two
       );
   ]
