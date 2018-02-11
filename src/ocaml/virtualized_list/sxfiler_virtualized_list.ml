@@ -58,3 +58,9 @@ let recalculate_visible_window cursor_position t =
 
 let get_items_in_window t = let window_start, window_size = t.visible_window in
   Array.sub t.all_items window_start window_size
+
+let percentage_by_visible t =
+  let _, size = t.visible_window in
+  let size = float_of_int size
+  and size_of_all = float_of_int @@ Array.length t.all_items in
+  size /. size_of_all
