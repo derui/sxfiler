@@ -36,17 +36,14 @@ let () =
         let index = Dom_html.getElementById "js" in
         index##setAttribute (Js.string "style") (Js.string "height: 40px; margin: 0px; padding: 0px");
         let style = "height: 10px;margin: 0px; padding: 0px" in
-        let items = [|append_div index ~text:"foo" [("id", "first");("style", style)];
-                      append_div index ~text:"bar" [("id", "second");("height", style)];
-                      append_div index ~text:"baz" [("id", "third");("height", style)];
-                    |]
-        in
+        append_div index ~text:"foo" [("id", "first");("style", style)] |> ignore;
+        append_div index ~text:"bar" [("id", "second");("height", style)] |> ignore;
+        append_div index ~text:"baz" [("id", "third");("height", style)] |> ignore;
 
         let all_items = Array.init 10 succ in
-        let lst = L.empty
+        let lst = L.make ~item_height:10 ()
                   |> L.update_all_items all_items
-                  |> L.update_list_element index
-                  |> L.update_item_cache items
+                  |> L.update_list_height index##.clientHeight
                   |> L.recalculate_visible_window 0
         in
         assert_strict_eq [|1;2;3;4|] (L.get_items_in_window lst)
@@ -56,17 +53,14 @@ let () =
         let index = Dom_html.getElementById "js" in
         index##setAttribute (Js.string "style") (Js.string "height: 20px; margin: 0px; padding: 0px");
         let style = "height: 10px;margin: 0px; padding: 0px" in
-        let items = [|append_div index ~text:"foo" [("id", "first");("style", style)];
-                      append_div index ~text:"bar" [("id", "second");("height", style)];
-                      append_div index ~text:"baz" [("id", "third");("height", style)];
-                    |]
-        in
+        append_div index ~text:"foo" [("id", "first");("style", style)] |> ignore;
+        append_div index ~text:"bar" [("id", "second");("height", style)] |> ignore;
+        append_div index ~text:"baz" [("id", "third");("height", style)] |> ignore;
 
         let all_items = Array.init 3 succ in
-        let lst = L.empty
+        let lst = L.make ~item_height:10 ()
                   |> L.update_all_items all_items
-                  |> L.update_list_element index
-                  |> L.update_item_cache items
+                  |> L.update_list_height index##.clientHeight
                   |> L.recalculate_visible_window 0
         in
         let new_lst = L.recalculate_visible_window 2 lst in
@@ -79,17 +73,14 @@ let () =
         let index = Dom_html.getElementById "js" in
         index##setAttribute (Js.string "style") (Js.string "height: 20px; margin: 0px; padding: 0px");
         let style = "height: 10px;margin: 0px; padding: 0px" in
-        let items = [|append_div index ~text:"foo" [("id", "first");("style", style)];
-                      append_div index ~text:"bar" [("id", "second");("height", style)];
-                      append_div index ~text:"baz" [("id", "third");("height", style)];
-                    |]
-        in
+        append_div index ~text:"foo" [("id", "first");("style", style)] |> ignore;
+        append_div index ~text:"bar" [("id", "second");("height", style)] |> ignore;
+        append_div index ~text:"baz" [("id", "third");("height", style)] |> ignore;
 
         let all_items = Array.init 3 succ in
-        let lst = L.empty
+        let lst = L.make ~item_height:10 ()
                   |> L.update_all_items all_items
-                  |> L.update_list_element index
-                  |> L.update_item_cache items
+                  |> L.update_list_height index##.clientHeight
                   |> L.recalculate_visible_window 0
         in
         let step_one = L.recalculate_visible_window 1 lst in
@@ -98,5 +89,25 @@ let () =
         assert_strict_eq [|1;2|] @@ L.get_items_in_window lst
         <|> assert_strict_eq [|1;2|] @@ L.get_items_in_window step_one
         <|> assert_strict_eq [|1;2|] @@ L.get_items_in_window step_two
+      );
+    "should be able to scroll window" >:: (fun () ->
+        prepare ();
+        let index = Dom_html.getElementById "js" in
+        index##setAttribute (Js.string "style") (Js.string "height: 20px; margin: 0px; padding: 0px");
+        let style = "height: 10px;margin: 0px; padding: 0px" in
+        append_div index ~text:"foo" [("id", "first");("style", style)] |> ignore;
+
+        let all_items = Array.init 10 succ in
+        let lst = L.make ~item_height:10 ()
+                  |> L.update_all_items all_items
+                  |> L.update_list_height index##.clientHeight
+                  |> L.recalculate_visible_window 0
+        in
+        let step_one = L.recalculate_visible_window 1 lst in
+        let step_two = L.recalculate_visible_window 3 lst in
+        let open Infix in
+        assert_strict_eq [|1;2|] @@ L.get_items_in_window lst
+        <|> assert_strict_eq [|1;2|] @@ L.get_items_in_window step_one
+        <|> assert_strict_eq [|3;4|] @@ L.get_items_in_window step_two
       );
   ]
