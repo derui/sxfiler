@@ -17,13 +17,6 @@ module Component = R.Component.Make_stateful (struct
     end
   end)
 
-let to_item_cache vl =
-  let keys = R.Ref_table.keys vl |> List.filter (fun v -> v <> key_of_filelist) in
-  Firebug.console##log (Array.of_list keys |> Array.map Js.string |> Js.array);
-  List.map (fun key -> R.Ref_table.find ~key vl) keys
-  |> List.map C.Util.Option.get_exn
-  |> Array.of_list
-
 let component = Component.make R.Core.Component_spec.({
     empty with
     initialize = Some (fun this props ->
