@@ -59,7 +59,6 @@ let component = Component.make R.Core.Component_spec.({
         and start_position = props##.cursor_pos - VL.start_position_of_window vl in
         let children = Array.mapi (fun index item ->
             let module F = C.Types.File_stat in
-            let key = "file_item" ^ (string_of_int index) in
             R.element ~key:item.F.id ~props:(object%js
               val item = item
               val selected = start_position = index

@@ -1,3 +1,4 @@
+module K = Sxfiler_common.Key_map
 module E = Reactjscaml.Event
 
 type t = (Sxfiler_common.Event.IPC.t -> unit) Js.callback
@@ -15,14 +16,21 @@ let keyboard_event_to_key v =
    ctrl = Js.to_bool v##.ctrlKey;
   }
 
-let dispatch : t -> Reactjscaml.Event.Keyboard_event.t -> unit = fun dispatcher ev ->
+let dispatch : t -> state:Sxfiler_common.State.t ->
+  ev:Reactjscaml.Event.Keyboard_event.t ->
+  key_map:K.t -> unit = fun dispatcher ~state ~ev ~key_map ->
   let module E = Sxfiler_common.Event in
-  let module K = Reactjscaml.Event.Keyboard_event in
-  match K.to_event_type ev with
-  | K.Unknown -> ()
+  let module KE = Reactjscaml.Event.Keyboard_event in
+  match KE.to_event_type ev with
+  | KE.Unknown -> ()
   | _ as k -> begin
-      let channel = keyboard_event_to_key ev
-                    |> Sxfiler_kbd.to_js
-                    |> fun v -> E.IPC.request_key_handling (v, k) in
-      Js.Unsafe.fun_call dispatcher [|Js.Unsafe.inject channel|]
+      let key = keyboard_event_to_key ev in
+
+      let open Sxfiler_common.Util.Option.Infix in
+      K.dispatch ~key_map ~key >>= (fun action ->
+          let message = Action_mapper.to_message state action in
+          Js.Unsafe.fun_call dispatcher [|Js.Unsafe.inject message|]
+        )
+      |> ignore
+
     end

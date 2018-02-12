@@ -1,7 +1,7 @@
 module E = Sxfiler_common.Event
 module FFI = Sxfiler_common.Ffi
 module M = Modules
-module K = Key_map
+module K = Sxfiler_common.Key_map
 
 let dirname : Js.js_string Js.t = Js.Unsafe.js_expr "__dirname"
 
@@ -12,7 +12,6 @@ type t = {
   ipc: FFI.ipc Js.t;
   fs: FFI.Fs.t Js.t;
   runner: Flux_runner.t;
-  key_map: K.key_map;
 }
 
 let on_ready t _ =
@@ -44,5 +43,4 @@ let make ~ipc ~fs ~runner ~key_map = {
   ipc;
   fs;
   runner;
-  key_map;
 }

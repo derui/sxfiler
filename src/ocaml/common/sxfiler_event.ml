@@ -1,3 +1,4 @@
+module Mes = Sxfiler_message
 module FFI = Sxfiler_ffi
 module T = Sxfiler_types
 module S = Sxfiler_state
@@ -10,7 +11,7 @@ module IPC = struct
     type event_type = Reactjscaml.Event.Keyboard_event.event_type
     type t =
       | Update of S.js Js.t
-      | Request_key_handling of (K.js Js.t * event_type)
+      | Action of Mes.t
     [@@deriving variants]
   end
 
@@ -19,7 +20,7 @@ module IPC = struct
 
     type t =
       | Update of Core.t listener
-      | Request_key_handling of Core.t listener
+      | Action of Core.t listener
     [@@deriving variants]
   end
 

@@ -1,14 +1,5 @@
-
-module Core = struct
-  type t = {
-    key_map: Key_map.key_map;
-  }
-
-  let default = {
-    key_map = Key_map.empty;
-  }
-
-end
+module Cm = Sxfiler_common
+module Core = Sxfiler_common.Config
 
 module Json_conf = struct
   type t = {
@@ -33,14 +24,14 @@ module Json_conf = struct
                   ) in
         Some v
       ) >>= (fun v ->
-        let module K = Key_map in
+        let module K = Cm.Key_map in
         Some {Core.key_map = List.fold_left (fun key_map (key, action) ->
-            match Action.of_yojson action with
+            match Cm.Key_bindable_action.of_yojson action with
             | Error err -> Firebug.console##error ("Unknown action " ^ err); key_map
             | Ok action -> K.add_key_map ~key_map:key_map ~key ~action
           ) K.empty v
           }
-      ) |> U.get ~default:Core.default
+      ) |> U.get ~default:Core.empty
 end
 
 include Core

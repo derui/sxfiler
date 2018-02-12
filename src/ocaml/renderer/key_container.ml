@@ -16,7 +16,9 @@ module Component = R.Component.Make_stateful (struct
 let key_handler props ev =
   ev##preventDefault;
   ev##stopPropagation;
-  Key_dispatcher.dispatch props##.dispatch ev
+  let state = props##.state in
+  let key_map = state.C.State.config.C.Config.key_map in
+  Key_dispatcher.dispatch props##.dispatch ~state ~ev ~key_map
 
 let component = Component.make {
     R.Core.Component_spec.empty with
