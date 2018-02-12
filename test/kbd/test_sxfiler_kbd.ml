@@ -19,6 +19,23 @@ let () =
 
         assert_ok (k = conv_k);
       );
+    "should convert kbd type to string" >:: (fun _ ->
+        let k = {K.shift = true; ctrl = true; meta = false; key = "k"} in
+        let js = K.to_keyseq k in
+
+        assert_ok (js = "S-C-k");
+      );
+    "should not equal key sequence and converted key sequence" >:: (fun _ ->
+        let k = {K.shift = true; ctrl = true; meta = false; key = "k"} in
+        let seq = K.to_keyseq k in
+        let seq_from_string = match K.of_keyseq "C-S-k" with
+          | Some k -> K.to_keyseq k
+          | None -> ""
+        in
+
+        let open Infix in
+        assert_ok (seq = seq_from_string) <|> assert_neq seq_from_string "C-S-k";
+      );
     "should be able to convert special key name" >:: (fun _ ->
         let k = {K.shift = false; ctrl = true; meta = false; key = "Tab"} in
         let js = K.to_js k in

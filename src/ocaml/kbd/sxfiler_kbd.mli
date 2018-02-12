@@ -30,7 +30,16 @@ end
 val empty: t
 
 (** Convert from key combination to key status. Return None if key combination is invalid format. *)
-val of_keyseq : string -> t option
+val of_keyseq: string -> t option
+
+(** Convert from key status to key sequence. Notice when you use combination of_keyseq and to_keyseq,
+    results are not equals.
+
+    Specification of key sequence that result of this function is below.
+    - sequence of meta-key should be Meta(M-),Shift(S-),Ctrl(C-)
+    - and add key
+*)
+val to_keyseq: t -> string
 
 (** Convert between JavaScript object and type *)
 val to_js: t -> js Js.t

@@ -110,6 +110,12 @@ let of_keyseq key =
   else
     parse_sequence key
 
+let to_keyseq t =
+  let meta = if t.meta then "M-" else ""
+  and shift = if t.shift then "S-" else ""
+  and ctrl = if t.ctrl then "C-" else "" in
+  meta ^ shift ^ ctrl ^ t.key
+
 module Export = struct
   class type _t = object
     method kbd: Js.js_string Js.t -> js Js.t Js.opt Js.meth
