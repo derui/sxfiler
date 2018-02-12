@@ -26,6 +26,7 @@ module Json_conf = struct
       ) >>= (fun v ->
         let module K = Cm.Key_map in
         Some {Core.key_map = List.fold_left (fun key_map (key, action) ->
+            let key = Sxfiler_kbd.to_keyseq key |> Js.string in
             match Cm.Key_bindable_action.of_yojson action with
             | Error err -> Firebug.console##error ("Unknown action " ^ err); key_map
             | Ok action -> K.add_key_map ~key_map:key_map ~key ~action

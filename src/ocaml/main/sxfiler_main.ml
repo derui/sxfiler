@@ -3,8 +3,7 @@ module FFI = Sxfiler_common.Ffi
 module M = Modules
 module T = Sxfiler_common.Types
 
-module H = Key_map
-module C = Config
+module C = Config_loader
 
 let dirname : Js.js_string Js.t option = Js.Unsafe.global##.__dirname
 
@@ -34,10 +33,10 @@ let () =
   Arg.parse_argv argv options ignore "Sxfiler";
 
   let config = C.load app##getAppPath !option_config in
-  let initial_state = Sxfiler_common.State.empty in
+  let initial_state = Sxfiler_common.State.{empty with config} in
   let runner = Flux_runner.run ~initial_state () in
   let ipc = M.electron##.ipcMain in
-  let main_process = Main_process.make ~ipc ~fs:(M.original_fs) ~runner ~key_map:config.C.key_map in
+  let main_process = Main_process.make ~ipc ~fs:(M.original_fs) ~runner in
   Ipc_handler.bind main_process;
 
   let module Subscription = struct

@@ -3,7 +3,7 @@
 type action = Key_bindable_action.t
 
 (** The module to map key and handler function.  *)
-module Key_map : Map.S with type key = Sxfiler_kbd.t
+module Key_map : Map.S with type key = Js.js_string Js.t
 
 type t = action Key_map.t
 

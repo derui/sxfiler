@@ -1,7 +1,6 @@
 module E = Sxfiler_common.Event
 module FFI = Sxfiler_common.Ffi
 module M = Modules
-module K = Sxfiler_common.Key_map
 
 let dirname : Js.js_string Js.t = Js.Unsafe.js_expr "__dirname"
 
@@ -38,7 +37,7 @@ let on_ready t _ =
       window##focusOnWebView ()
     end
 
-let make ~ipc ~fs ~runner ~key_map = {
+let make ~ipc ~fs ~runner = {
   main_window = None;
   ipc;
   fs;

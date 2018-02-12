@@ -13,12 +13,11 @@ module Component = R.Component.Make_stateful (struct
     end
   end)
 
-let key_handler props ev =
+let key_handler ~dispatch ~state ev =
   ev##preventDefault;
   ev##stopPropagation;
-  let state = props##.state in
   let key_map = state.C.State.config.C.Config.key_map in
-  Key_dispatcher.dispatch props##.dispatch ~state ~ev ~key_map
+  Key_dispatcher.dispatch dispatch ~state ~ev ~key_map
 
 let component = Component.make {
     R.Core.Component_spec.empty with
@@ -38,9 +37,7 @@ let component = Component.make {
         R.Dom.of_tag `div
           ~props:R.Core.Element_spec.({
               empty with class_name = Some (Classnames.(return "fp-KeyContainer" |> to_string));
-                         on_key_down = Some (key_handler props);
-                         on_key_up = Some (key_handler props);
-                         on_key_press = Some (key_handler props);
+                         on_key_down = Some (key_handler ~dispatch:props##.dispatch ~state:(this##.state##.state));
                          others = Some (object%js
                              val tabIndex = "0"
                            end);
