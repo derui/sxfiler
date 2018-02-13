@@ -164,6 +164,12 @@ module Operation_log = struct
     max_entry_count = default_max_entry_count;
   }
 
+  let add_entry ?(log_type=Info) t content =
+    let entries = (Entry.make ~log_type content) :: (List.rev t.entries) in
+    let entries = if List.length entries > t.max_entry_count then List.tl entries |> List.rev
+      else List.rev entries in
+    {t with entries;}
+
   let to_js : t -> js Js.t = fun t -> object%js
     val entries = Js.array @@ Array.of_list @@ List.map Entry.to_js t.entries
     val maxEntryCount = t.max_entry_count
