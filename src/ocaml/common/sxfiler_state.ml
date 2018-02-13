@@ -10,6 +10,7 @@ type t = {
   waiting: bool;
   terminated: bool;
   config: Config.t;
+  operation_log: T.Operation_log.t;
 }
 
 class type js = object
@@ -18,6 +19,7 @@ class type js = object
   method waiting: bool Js.t Js.readonly_prop
   method terminated: bool Js.t Js.readonly_prop
   method config: Config.js Js.t Js.readonly_prop
+  method operationLog: T.Operation_log.js Js.t Js.readonly_prop
 end
 
 let empty =
@@ -30,6 +32,7 @@ let empty =
     waiting = false;
     terminated = false;
     config = Config.empty;
+    operation_log = T.Operation_log.empty
   }
 
 let to_js : t -> js Js.t = fun t -> object%js
@@ -38,6 +41,7 @@ let to_js : t -> js Js.t = fun t -> object%js
   val waiting = Js.bool t.waiting
   val terminated = Js.bool t.terminated
   val config = Config.to_js t.config
+  val operationLog = T.Operation_log.to_js t.operation_log
 end
 
 let of_js : js Js.t -> t = fun t ->
@@ -47,5 +51,6 @@ let of_js : js Js.t -> t = fun t ->
     current_pane = T.Pane_id.of_js t##.currentPane;
     waiting = Js.to_bool t##.waiting;
     terminated = Js.to_bool t##.terminated;
-    config = Config.of_js t##.config
+    config = Config.of_js t##.config;
+    operation_log = T.Operation_log.of_js t##.operationLog;
   }

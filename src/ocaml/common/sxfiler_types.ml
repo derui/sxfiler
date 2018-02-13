@@ -107,3 +107,71 @@ module Pane = struct
       cursor_pos = int_of_float @@ Js.float_of_number js##.cursorPos;
     }
 end
+
+module Operation_log = struct
+  type log_type = Info | Error
+
+
+  module Entry = struct
+    type t = {
+      timestamp: int64;
+      content: string;
+      log_type: log_type;
+    }
+
+    class type js = object
+      method timestamp: float Js.readonly_prop
+      method content: Js.js_string Js.t Js.readonly_prop
+      method logType: log_type Js.readonly_prop
+    end
+
+    let make ?(log_type=Info) content =
+      let timestamp = Unix.time () |> Int64.bits_of_float in
+      {
+        timestamp;
+        content;
+        log_type;
+      }
+
+    let to_js : t -> js Js.t = fun t -> object%js
+      val timestamp = Int64.float_of_bits t.timestamp
+      val content = Js.string t.content
+      val logType = t.log_type
+    end
+
+    let of_js : js Js.t -> t = fun js -> {
+        timestamp = Int64.bits_of_float js##.timestamp;
+        content = Js.to_string js##.content;
+        log_type = js##.logType
+      }
+
+  end
+
+  type t = {
+    entries: Entry.t list;
+    max_entry_count: int;
+  }
+
+  class type js = object
+    method entries: Entry.js Js.t Js.js_array Js.t Js.readonly_prop
+    method maxEntryCount: int Js.readonly_prop
+  end
+
+  let default_max_entry_count = 100
+
+  let empty = {
+    entries = [];
+    max_entry_count = default_max_entry_count;
+  }
+
+  let to_js : t -> js Js.t = fun t -> object%js
+    val entries = Js.array @@ Array.of_list @@ List.map Entry.to_js t.entries
+    val maxEntryCount = t.max_entry_count
+  end
+
+  let of_js : js Js.t -> t = fun js -> {
+      entries = List.map Entry.of_js @@ Array.to_list @@ Js.to_array js##.entries;
+      max_entry_count = js##.maxEntryCount;
+    }
+
+end
