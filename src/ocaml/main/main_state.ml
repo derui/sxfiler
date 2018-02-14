@@ -41,7 +41,7 @@ module Make(Reaction:Message_reaction.S) : Flux_frp.Flux.S.State
         | Ok pane -> (
             {t with
              S.waiting = false;
-             panes = replace_pane t.S.panes pane;
+             panes = replace_pane t.S.panes @@ T.Pane.of_js pane;
             }, None)
         | Error _ -> failwith "error"
       end
@@ -95,7 +95,7 @@ module Make(Reaction:Message_reaction.S) : Flux_frp.Flux.S.State
         (t, message)
       end
     | M.Request_quit_application -> ({t with S.terminated = true}, None)
-    | M.Add_pane pane -> ({t with S.panes = replace_pane t.S.panes pane}, None)
+    | M.Add_pane pane -> ({t with S.panes = replace_pane t.S.panes @@ T.Pane.of_js pane}, None)
     | M.Move_to_another ->
       let module O =  C.Util.Option in
       let current_pane = t.S.current_pane in

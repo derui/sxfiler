@@ -31,7 +31,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
           let file_list = Array.to_list file_list in
           let module M = Sxfiler_common.Message in
           let pane = T.Pane.make ~file_list ~directory:absolute ~id:pane_id () in
-          Lwt.return @@ M.finish_files_in_directory (Ok pane)
+          Lwt.return @@ M.finish_files_in_directory (Ok (T.Pane.to_js pane))
         )
     in
 
