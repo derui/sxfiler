@@ -16,12 +16,12 @@ let component = Component.make (fun props ->
         R.element ~key:(T.Pane_id.to_string pane.P.id) ~props:(object%js
           val pane = pane
           val selected = T.Pane_id.equal pane.T.Pane.id state.C.State.current_pane
-        end) File_list_pane.component
+        end) C_file_list_pane.component
       ) state.C.State.panes
     in
     let children = Array.concat [children;[|R.element ~key:"operations" ~props:(object%js
                                              val operationLog = state.C.State.operation_log
-                                           end) Operation_log_pane.component|]
+                                           end) C_operation_log_pane.component|]
                                 ]
         in
     R.Dom.of_tag `div

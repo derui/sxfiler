@@ -55,7 +55,7 @@ let component = Component.make R.Core.Component_spec.({
             R.element ~key:item.F.id ~props:(object%js
               val item = item
               val selected = start_position = index
-            end) File_item.component
+            end) C_file_item.component
           ) items
         in
         R.Dom.of_tag `ul ~_ref:(fun e -> R.Ref_table.add ~key:key_of_filelist ~value:e this##.nodes)

@@ -15,7 +15,7 @@ let component = Component.make (fun props ->
     let children = List.mapi (fun index entry ->
         R.element ~key:(string_of_int index) ~props:(object%js
           val entry = entry
-        end) Operation_log_entry.component
+        end) C_operation_log_entry.component
       ) entries |> Array.of_list in
     R.Dom.of_tag `div
       ~props:R.Core.Element_spec.({empty with class_name})

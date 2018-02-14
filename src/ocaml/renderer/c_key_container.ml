@@ -42,7 +42,7 @@ let component = Component.make {
                              val tabIndex = "0"
                            end);
             })
-          ~children:[| R.element ~key:"file-list" ~props:(this##.state) Pane_layout.component |]
+          ~children:[| R.element ~key:"file-list" ~props:(this##.state) C_pane_layout.component |]
       )
 
   }

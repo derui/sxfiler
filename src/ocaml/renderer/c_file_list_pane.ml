@@ -23,7 +23,7 @@ let component = Component.make (fun props ->
         R.element ~key:"header" ~props:(object%js
           val directory = Js.string pane.T.Pane.directory
           val selected = props##.selected
-        end) File_list_pane_header.component;
+        end) C_file_list_pane_header.component;
         R.Dom.of_tag `div ~key:"content"
           ~props:R.Core.Element_spec.({
               empty with class_name = Some (Classnames.(return "fp-FileListPane_Content" |> to_string))
@@ -32,7 +32,7 @@ let component = Component.make (fun props ->
             R.element ~key:"file-list" ~props:(object%js
               val items = pane.T.Pane.file_list
               val cursor_pos = pane.T.Pane.cursor_pos
-            end) File_list.component
+            end) C_file_list.component
           |]
       |]
   )
