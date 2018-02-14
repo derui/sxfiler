@@ -28,25 +28,31 @@ let component = Component.make {
     should_component_update = Some (fun this _ _ -> true);
     render = (fun this ->
         let props = this##.props in
-        R.Dom.of_tag `div
-          ~props:R.Core.Element_spec.({
-              empty with class_name = Some (Classnames.(return "sf-ConfirmDialog" |> to_string));
-                         on_key_down = Some (key_handler ~dispatch:props##.dispatch ~state:(this##.props##.state));
-            })
-          ~children:[|
-            R.Dom.of_tag `span ~key:"yes" ~props:R.Core.Element_spec.({
-                empty with class_name = Some (Classnames.(
-                let open Infix in return "sf-ConfirmDialog_Confirm"
-                  <|> ("sf-ConfirmDialog_Confirm-Selected", this##.state##.confirmed)
-                  |> to_string))
-              });
-            R.Dom.of_tag `span ~key:"yes" ~props:R.Core.Element_spec.({
-                empty with class_name = Some (Classnames.(
-                let open Infix in return "sf-ConfirmDialog_Cancel"
-                  <|> ("sf-ConfirmDialog_Cancel-Selected", not this##.state##.confirmed)
-                  |> to_string))
-              });
-          |]
-      )
+        let state = props##.state in
+        R.element ~props:(object%js
+          val title = Js.string "Confirmation to copy"
+          val _open = Js.bool C.State.(state.dialog_state.Dialog.opening)
+        end) ~children:[|
+          R.Dom.of_tag `div
+            ~props:R.Core.Element_spec.({
+                empty with class_name = Some (Classnames.(return "sf-ConfirmDialog" |> to_string));
+                           on_key_down = Some (key_handler ~dispatch:props##.dispatch ~state:(this##.props##.state));
+              })
+            ~children:[|
+              R.Dom.of_tag `span ~key:"yes" ~props:R.Core.Element_spec.({
+                  empty with class_name = Some (Classnames.(
+                  let open Infix in return "sf-ConfirmDialog_Confirm"
+                                    <|> ("sf-ConfirmDialog_Confirm-Selected", this##.state##.confirmed)
+                                    |> to_string))
+                });
+              R.Dom.of_tag `span ~key:"yes" ~props:R.Core.Element_spec.({
+                  empty with class_name = Some (Classnames.(
+                  let open Infix in return "sf-ConfirmDialog_Cancel"
+                                    <|> ("sf-ConfirmDialog_Cancel-Selected", not this##.state##.confirmed)
+                                    |> to_string))
+                });
+            |]
 
+        |] C_dialog_base.component
+      )
   }
