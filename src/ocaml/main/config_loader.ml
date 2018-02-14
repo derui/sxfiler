@@ -2,14 +2,18 @@ module Cm = Sxfiler_common
 module Core = Sxfiler_common.Config
 
 module Json_conf = struct
-  type t = {
-    key_map: Yojson.Safe.json;
+  type key_maps = {
+    file_list: Yojson.Safe.json;
+    confirm_dialog: Yojson.Safe.json;
   } [@@deriving yojson]
 
-  let to_config v =
+  type t = {
+    key_map: key_maps;
+  } [@@deriving yojson]
+
+  let key_map_of_json v =
     let module U = Sxfiler_common.Util.Option in
     let open Sxfiler_common.Util.Option.Infix in
-    let v = v.key_map in
     Yojson.Safe.Util.(to_option to_assoc v) >>= (fun v ->
         let v = List.filter (fun (name, value) ->
             match Sxfiler_kbd.of_keyseq name with
@@ -25,14 +29,22 @@ module Json_conf = struct
         Some v
       ) >>= (fun v ->
         let module K = Cm.Key_map in
-        Some {Core.key_map = List.fold_left (fun key_map (key, action) ->
+        Some (List.fold_left (fun key_map (key, action) ->
             let key = Sxfiler_kbd.to_keyseq key |> Js.string in
             match Cm.Key_bindable_action.of_yojson action with
             | Error err -> Firebug.console##error ("Unknown action " ^ err); key_map
             | Ok action -> K.add_key_map ~key_map:key_map ~key ~action
-          ) K.empty v
-          }
-      ) |> U.get ~default:Core.empty
+          ) K.empty v)
+      )
+
+  let to_config v =
+    let module U = Sxfiler_common.Util.Option in
+    {
+      Core.key_maps = {
+        Core.file_list = U.get ~default:Cm.Key_map.empty (key_map_of_json v.key_map.file_list);
+        Core.confirm_dialog = U.get ~default:Cm.Key_map.empty (key_map_of_json v.key_map.confirm_dialog);
+      }
+    }
 end
 
 include Core

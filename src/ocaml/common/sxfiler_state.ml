@@ -3,6 +3,33 @@ module T = Sxfiler_types
 module FFI = Sxfiler_ffi
 module Thread = Lwt
 
+module Dialog = struct
+  type t = {
+    typ: T.dialog_type option;
+    opening: bool;
+  }
+
+  class type js = object
+    method typ: T.dialog_type Js.opt Js.readonly_prop
+    method opening: bool Js.t Js.readonly_prop
+  end
+
+  let empty = {
+    typ = None;
+    opening = false;
+  }
+
+  let to_js : t -> js Js.t = fun t -> object%js
+    val typ = Js.Opt.option t.typ
+    val opening = Js.bool t.opening
+  end
+
+  let of_js : js Js.t -> t = fun js -> {
+      typ = Js.Opt.to_option js##.typ;
+      opening = Js.to_bool js##.opening;
+    }
+end
+
 (* All state of this application *)
 type t = {
   panes: T.Pane.t array;
@@ -11,6 +38,8 @@ type t = {
   terminated: bool;
   config: Config.t;
   operation_log: T.Operation_log.t;
+
+  dialog_state: Dialog.t;
 }
 
 class type js = object
@@ -20,6 +49,8 @@ class type js = object
   method terminated: bool Js.t Js.readonly_prop
   method config: Config.js Js.t Js.readonly_prop
   method operationLog: T.Operation_log.js Js.t Js.readonly_prop
+
+  method dialogState: Dialog.js Js.t Js.readonly_prop
 end
 
 let empty =
@@ -32,7 +63,8 @@ let empty =
     waiting = false;
     terminated = false;
     config = Config.empty;
-    operation_log = T.Operation_log.empty
+    operation_log = T.Operation_log.empty;
+    dialog_state = Dialog.empty;
   }
 
 let to_js : t -> js Js.t = fun t -> object%js
@@ -42,6 +74,7 @@ let to_js : t -> js Js.t = fun t -> object%js
   val terminated = Js.bool t.terminated
   val config = Config.to_js t.config
   val operationLog = T.Operation_log.to_js t.operation_log
+  val dialogState = Dialog.to_js t.dialog_state
 end
 
 let of_js : js Js.t -> t = fun t ->
@@ -53,4 +86,5 @@ let of_js : js Js.t -> t = fun t ->
     terminated = Js.to_bool t##.terminated;
     config = Config.of_js t##.config;
     operation_log = T.Operation_log.of_js t##.operationLog;
+    dialog_state = Dialog.of_js t##.dialogState
   }

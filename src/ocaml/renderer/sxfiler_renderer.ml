@@ -35,5 +35,5 @@ let () =
       val dispatch = dispatcher
       val state = C.State.empty
       method subscribe = (fun f -> Publisher.subscribe f publisher)
-    end) Components.Key_container.component in
+    end) Components.Main.component in
   R.dom##render element container

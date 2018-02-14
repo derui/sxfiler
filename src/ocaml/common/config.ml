@@ -1,19 +1,32 @@
+type key_maps = {
+  file_list: Key_map.t;
+  confirm_dialog: Key_map.t;
+}
+
 type t = {
-  key_map: Key_map.t;
+  key_maps: key_maps;
 }
 
 class type js = object
-  method keyMap: Key_map.t Js.readonly_prop
+  method keyMapFileList: Key_map.t Js.readonly_prop
+  method keyMapConfirmDialog: Key_map.t Js.readonly_prop
 end
 
 let empty = {
-  key_map = Key_map.empty;
+  key_maps = {
+    file_list = Key_map.empty;
+    confirm_dialog = Key_map.empty;
+  }
 }
 
 let to_js t = object%js
-  val keyMap = t.key_map
+  val keyMapFileList = t.key_maps.file_list
+  val keyMapConfirmDialog = t.key_maps.confirm_dialog
 end
 
 let of_js js = {
-  key_map = js##.keyMap;
+  key_maps = {
+    file_list = js##.keyMapFileList;
+    confirm_dialog = js##.keyMapConfirmDialog;
+  }
 }

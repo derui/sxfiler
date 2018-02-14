@@ -1,10 +1,15 @@
 {
   "key_map": {
-    "j": ["Next_item"],
-    "k": ["Prev_item"],
-    "h": ["Leave_directory"],
-    "l": ["Enter_directory"],
-    "q": ["Quit"],
-    "Tab": ["Move_to_another"]
+    "file_list": {
+      "j": ["Next_item"],
+      "k": ["Prev_item"],
+      "h": ["Leave_directory"],
+      "l": ["Enter_directory"],
+      "q": ["Quit"],
+      "Tab": ["Move_to_another"]
+    },
+    "confirm_dialog": {
+      "Enter": ["Quit"]
+    }
   }
 }

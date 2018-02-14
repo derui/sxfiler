@@ -2,6 +2,11 @@ module FFI = Sxfiler_ffi
 
 type current_cursor = int
 
+type dialog_type =
+  | Confirm_copy
+  | Confirm_delete
+  | Confirm_move
+
 module File_stat = struct
   type t = {
     id: string;
