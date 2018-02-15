@@ -1,6 +1,8 @@
 (** This module provides types for message that is used as action on flux architecture *)
 module T = Sxfiler_types
 
+module P = Message_payload
+
 (** The type of message. This allows to pass to Javascript native functions all variant. *)
 type t =
     Request_files_in_directory of (T.Pane_id.t * string)
@@ -12,4 +14,5 @@ type t =
   | Leave_directory
   | Enter_directory
   | Move_to_another
+  | Request_copy_file of P.Request_copy_file.t
 [@@deriving variants]
