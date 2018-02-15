@@ -36,12 +36,12 @@ let () =
   let initial_state = Sxfiler_common.State.{empty with config} in
   let runner = Flux_runner.run ~initial_state () in
   let ipc = M.electron##.ipcMain in
-  let main_process = Main_process.make ~ipc ~fs:(M.original_fs) ~runner in
-  Ipc_handler.bind main_process;
+  let window_binder = Window_binder.make ~ipc ~fs:(M.original_fs) ~runner in
+  Ipc_handler.bind window_binder;
 
   let module Subscription = struct
     let handle t =
-      match main_process.Main_process.main_window with
+      match window_binder.Window_binder.main_window with
       | None -> Lwt.return_unit
       | Some w -> begin
           let module S = Sxfiler_common.State in
@@ -54,9 +54,9 @@ let () =
   begin
     let channel = Js.string "ready" in
     let listener = Js.wrap_callback (fun _ _ ->
-        Main_process.on_ready main_process ();
+        Window_binder.on_ready window_binder ();
 
-        match main_process.Main_process.main_window with
+        match window_binder.Window_binder.main_window with
         | None -> ()
         | Some bw ->
           let module M = Sxfiler_common.Message in
