@@ -23,5 +23,6 @@ depends: [
   "mocha_of_ocaml" {test}
   "reactjscaml"
   "ocaml-flux-frp"
+  "jsoo_node"
 ]
 available: [ocaml-version >= "4.05.0"]

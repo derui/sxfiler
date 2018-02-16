@@ -1,5 +1,6 @@
 module Cm = Sxfiler_common
 module Core = Sxfiler_common.Config
+module N = Jsoo_node
 
 module Json_conf = struct
   type key_maps = {
@@ -50,16 +51,17 @@ end
 include Core
 
 let is_file path =
-  let path = Js.string path in
+  let module Fs = N.Fs in
   try
-    let stat = Modules.fs##statSync path in
-    not (Js.to_bool stat##isDirectory)
+    match Fs.statSync path with
+    | Ok stat -> not (Js.to_bool stat##isDirectory)
+    | _ -> false
   with Js.Error _ ->
     false
 
 let default_config_path = "default.json"
 let load_from_file app_dir path =
-  let path = Modules.path##resolve (Js.array [|app_dir; Js.string path|]) |> Js.to_string in
+  let path = N.Path.resolve [app_dir; path] in
   if not @@ is_file path then raise Not_found
   else
     let json = Yojson.Safe.from_file path in

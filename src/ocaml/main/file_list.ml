@@ -1,5 +1,6 @@
-module FFI = Sxfiler_common.Ffi
 module T = Sxfiler_common.Types
+module Path = Jsoo_node.Path
+module Fs = Jsoo_node.Fs
 
 exception Not_directory of string
 
@@ -10,30 +11,48 @@ exception Not_directory of string
  * original-fs on electron.
 *)
 let get_file_stats ~fs path =
-  let path_ = Js.string path in
   let open Lwt.Infix in
   let current = Lwt_js.yield ()
-    >>= fun () ->
-    let stat = fs##statSync path_ in Lwt.return stat
+    >>= fun () -> let stat = Fs.statSync path in Lwt.return stat
   in
 
   current
   >>= (fun stat ->
-      if not (Js.to_bool stat##isDirectory) then
-        Lwt.fail (Not_directory path)
-      else
-        Lwt.return @@ fs##readdirSync path_)
-  >>= (fun names ->
-      let names = Js.to_array names
-                  |> Array.map (fun v -> Modules.path##join (Js.array [|path_; v|])) in
-      Lwt.return @@
-      Array.map (fun name ->
-          let stat = fs##lstatSync name |> FFI.Fs.stat_to_obj in
-          let link_path = match (stat##.isSymbolicLink |> Js.to_bool) with
-            | false -> None
-            | true -> let link_path = fs##readlinkSync name in
-              Some (Js.to_string link_path)
+      match stat with
+      | Ok stat -> begin
+          if not (Js.to_bool stat##isDirectory) then
+            Lwt.fail (Not_directory path)
+          else
+            Lwt.return @@ Fs.readdirSync path
+        end
+      | Error e -> Lwt.fail e
+    )
+  >>= (function
+      | Ok names -> begin
+          let names = Array.map (fun v -> Path.join [path; v]) names |> Array.to_list in
+          let names = List.map (fun filename ->
+              match Fs.lstatSync filename with
+              | Ok stat -> begin
+                  let stat = Fs.stat_to_obj stat in
+                  let link_path = match (stat##.isSymbolicLink |> Js.to_bool) with
+                    | false -> None
+                    | true -> begin
+                        match Fs.readlinkSync filename with
+                        | Ok link_path -> Some link_path
+                        | _ -> None
+                      end
+                  in
+                  Some (T.File_stat.make ~filename ~stat ~link_path)
+                end
+              | Error _ -> None
+            ) names
+                      |> List.filter (function
+                          | Some _ -> true
+                          | None -> false
+                        )
+                      |> List.map (Sxfiler_common.Util.Option.get_exn)
           in
-          T.File_stat.make ~filename:(Js.to_string name) ~stat ~link_path
-        ) names
+          Lwt.return names
+        end
+      | Error e -> Lwt.fail e
     )

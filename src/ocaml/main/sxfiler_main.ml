@@ -32,7 +32,7 @@ let () =
   let app : FFI.electron_app Js.t = M.electron##.app in
   Arg.parse_argv argv options ignore "Sxfiler";
 
-  let config = C.load app##getAppPath !option_config in
+  let config = C.load Js.(to_string app##getAppPath) !option_config in
   let initial_state = Sxfiler_common.State.{empty with config} in
   let runner = Flux_runner.run ~initial_state () in
   let ipc = M.electron##.ipcMain in

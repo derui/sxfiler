@@ -1,4 +1,5 @@
 module FFI = Sxfiler_ffi
+module FT = Jsoo_node.Fs_types
 
 type current_cursor = int
 
@@ -12,13 +13,13 @@ module File_stat = struct
     id: string;
     filename: string;
     link_path: string option;
-    stat: FFI.Fs.stat_obj Js.t;
+    stat: FT.stat_obj Js.t;
   }
 
   class type js = object
     method id: Js.js_string Js.t Js.readonly_prop
     method filename: Js.js_string Js.t Js.readonly_prop
-    method stat: FFI.Fs.stat_obj Js.t Js.readonly_prop
+    method stat: FT.stat_obj Js.t Js.readonly_prop
     method link_path: Js.js_string Js.t Js.optdef Js.readonly_prop
   end
 

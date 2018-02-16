@@ -1,15 +1,14 @@
 module E = Sxfiler_common.Event
 module FFI = Sxfiler_common.Ffi
 module M = Modules
-
-let dirname : Js.js_string Js.t = Js.Unsafe.js_expr "__dirname"
+module N = Jsoo_node
 
 exception No_main_window
 
 type t = {
   mutable main_window: FFI.BrowserWindow.t Js.t option;
   ipc: FFI.ipc Js.t;
-  fs: FFI.Fs.t Js.t;
+  fs: N.Fs_types.t Js.t;
   runner: Flux_runner.t;
 }
 
@@ -26,9 +25,7 @@ let on_ready t _ =
   main_window##.webContents##openDevTools ();
   t.main_window <- Some main_window;
 
-  let file_path =
-    let array = Js.array [|dirname;Js.string "index.html"|] in
-    M.path##join array |> Js.to_string in
+  let file_path = N.Path.join [Js.to_string N.__dirname;"index.html"] in
 
   match t.main_window with
   | None -> raise No_main_window
