@@ -1,6 +1,6 @@
-module M = Sxfiler_message
-module T = Sxfiler_types
-module FFI = Sxfiler_ffi
+module M = Common_message
+module T = Common_types
+module Config = Common_config
 module Thread = Lwt
 
 module Dialog = struct
@@ -88,3 +88,28 @@ let of_js : js Js.t -> t = fun t ->
     operation_log = T.Operation_log.of_js t##.operationLog;
     dialog_state = Dialog.of_js t##.dialogState
   }
+
+
+(* Utility functions *)
+
+let current_pane state =
+  let current_id = state.current_pane in
+  let module P = T.Pane in
+  let module PI = T.Pane_id in
+  List.find (fun pane -> PI.equal current_id pane.P.id) @@ Array.to_list state.panes
+
+let pointed_file pane =
+  let module P = T.Pane in
+  let pos = pane.P.cursor_pos
+  and files = Array.of_list pane.P.file_list in
+  files.(pos)
+
+let target_pane_directory state =
+  let current_id = state.current_pane in
+  let module P = T.Pane in
+  let module PI = T.Pane_id in
+  let panes = state.panes in
+  let pane = List.find_opt (fun pane -> not @@ PI.equal current_id pane.P.id) @@ Array.to_list panes in
+  match pane with
+  | None -> Js.string ""
+  | Some pane -> Js.string pane.P.directory

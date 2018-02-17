@@ -1,7 +1,7 @@
 (** This module provides types for message that is used as action on flux architecture *)
-module T = Sxfiler_types
+module T = Common_types
 
-module P = Message_payload
+module P = Common_message_payload
 
 (** The type of message. This allows to pass to Javascript native functions all variant. *)
 type t =

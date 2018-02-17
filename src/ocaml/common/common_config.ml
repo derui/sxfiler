@@ -1,3 +1,4 @@
+module Key_map = Common_key_map
 type key_maps = {
   file_list: Key_map.t;
   confirm_dialog: Key_map.t;

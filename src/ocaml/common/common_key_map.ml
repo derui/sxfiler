@@ -1,6 +1,6 @@
 module K = Sxfiler_kbd
 
-type action = Key_bindable_action.t
+type action = Common_key_bindable_action.t
 
 module Key_map = Map.Make(struct
     type t = Js.js_string Js.t

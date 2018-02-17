@@ -1,7 +1,7 @@
-module Mes = Sxfiler_message
-module FFI = Sxfiler_ffi
-module T = Sxfiler_types
-module S = Sxfiler_state
+module Mes = Common_message
+module FFI = Common_ffi
+module T = Common_types
+module S = Common_state
 module K = Sxfiler_kbd
 
 (* Event name to request file informations in the directory *)

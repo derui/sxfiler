@@ -1,6 +1,6 @@
 
 (** The type of key handler function *)
-type action = Key_bindable_action.t
+type action = Common_key_bindable_action.t
 
 (** The module to map key and handler function.  *)
 module Key_map : Map.S with type key = Js.js_string Js.t
