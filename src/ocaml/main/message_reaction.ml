@@ -72,7 +72,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
   let select_next_item t v =
     let module O = Sxfiler_common.Util.Option in
-    let open O.Infix in
+    let open Minimal_monadic_caml.Option.Infix in
     let t = O.get ~default:t (
         select_pane t.S.panes t.S.current_pane
         >|= (fun pane ->
@@ -85,7 +85,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
   let select_prev_item t v =
     let module O = Sxfiler_common.Util.Option in
-    let open O.Infix in
+    let open Minimal_monadic_caml.Option.Infix in
     let t = O.get ~default:t (
         select_pane t.S.panes t.S.current_pane
         >|= (fun pane -> {pane with T.Pane.cursor_pos = max 0 (pane.T.Pane.cursor_pos - v)})
@@ -95,7 +95,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
   let leave_directory t =
     let module O = Sxfiler_common.Util.Option in
-    let open O.Infix in
+    let open Minimal_monadic_caml.Option.Infix in
     let message = select_pane t.S.panes t.S.current_pane
       >>= (fun pane ->
           let module P = T.Pane in
@@ -105,7 +105,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     (t, message)
 
   let enter_directory t = let module O = Sxfiler_common.Util.Option in
-    let open O.Infix in
+    let open Minimal_monadic_caml.Option.Infix in
     let message = select_pane t.S.panes t.S.current_pane
       >>= (fun pane ->
           let module P = T.Pane in
@@ -123,9 +123,11 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
   let add_pane t pane = ({t with S.panes = replace_pane t.S.panes @@ T.Pane.of_js pane}, None)
   let move_to_another t =
     let module O =  C.Util.Option in
+    let module M = Minimal_monadic_caml.Option.Infix in
+
     let current_pane = t.S.current_pane in
     let t = {t with S.current_pane = O.get ~default:current_pane @@
-                      O.Infix.(select_other_pane t.S.panes current_pane >|= fun pane -> pane.T.Pane.id)} in
+                      M.(select_other_pane t.S.panes current_pane >|= fun pane -> pane.T.Pane.id)} in
     (t, None)
 
   let react t = function

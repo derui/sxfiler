@@ -16,5 +16,5 @@ let remove_key_map ~key_map ~key = Key_map.remove key key_map
 
 (** Dispatch key to handler. Return a message if the handler binded with a key *)
 let dispatch ~key_map ~key =
-  let open Sxfiler_util.Option.Infix in
+  let open Minimal_monadic_caml.Option.Infix in
   Key_map.find_opt key key_map

@@ -24,5 +24,6 @@ depends: [
   "reactjscaml"
   "ocaml-flux-frp"
   "jsoo_node"
+  "minimal-monadic-caml"
 ]
 available: [ocaml-version >= "4.05.0"]

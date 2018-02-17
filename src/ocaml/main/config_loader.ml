@@ -13,8 +13,7 @@ module Json_conf = struct
   } [@@deriving yojson]
 
   let key_map_of_json v =
-    let module U = Sxfiler_common.Util.Option in
-    let open Sxfiler_common.Util.Option.Infix in
+    let open Minimal_monadic_caml.Option.Infix in
     Yojson.Safe.Util.(to_option to_assoc v) >>= (fun v ->
         let v = List.filter (fun (name, value) ->
             match Sxfiler_kbd.of_keyseq name with

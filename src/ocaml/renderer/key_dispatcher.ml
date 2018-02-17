@@ -18,7 +18,7 @@ let dispatch : t -> state:Sxfiler_common.State.t ->
   | _ -> begin
       let key = Util.keyboard_event_to_key ev in
 
-      let open Sxfiler_common.Util.Option.Infix in
+      let open Minimal_monadic_caml.Option.Infix in
       K.dispatch ~key_map ~key >|= (fun action ->
           let message = Action_mapper.to_message state action in
           dispatcher message
