@@ -1,6 +1,21 @@
 module C = Sxfiler_common
 module R = Reactjscaml
 module T = C.Types
+module M = C.Message
+
+module Overlay = struct
+  module C = R.Component.Make_stateless(struct
+      class type t = object end
+    end)
+
+  let component = C.make (fun props ->
+      let class_name = Classnames.(return "sf-DialogContainer_Overlay" |> to_string) in
+      R.Dom.of_tag `div
+        ~props:R.Core.Element_spec.({
+            empty with class_name = Some class_name;
+          })
+    )
+end
 
 module Component = R.Component.Make_stateful (struct
     class type t = object
@@ -14,13 +29,12 @@ module Component = R.Component.Make_stateful (struct
   end)
 
 let make_dialog ~props = function
-  | T.Confirm_copy -> R.element ~props:(object%js
-                        val state = props##.state
-                        val dispatch = props##.dispatch
-                        val title = Js.string "Confirm copy file"
-                        val content = Js.string "Can filer copy file?"
-                      end) C_confirmation_dialog.component
-  | _ -> failwith "not implemented"
+  | M.Operation.Copy _ -> Js.debugger ();R.element ~key:"dialog" ~props:(object%js
+                            val state = props##.state
+                            val dispatch = props##.dispatch
+                            val title = Js.string "Confirm copy file"
+                            val content = Js.string "Can filer copy file?"
+                          end) C_confirmation_dialog.component
 
 let component = Component.make {
     R.Core.Component_spec.empty with
@@ -32,7 +46,7 @@ let component = Component.make {
     component_will_receive_props = Some (fun this new_props ->
         let state = new_props##.state in
         this##setState (object%js
-          val opened = C.State.(state.dialog_state.Dialog.opening)
+          val opened = C.State.(state.operation.Operation.confirming)
         end);
         true
       );
@@ -41,14 +55,18 @@ let component = Component.make {
         let state = this##.props##.state in
         if not this##.state##.opened then R.empty ()
         else
-          match C.State.(state.dialog_state.Dialog.typ) with
+          match C.State.(state.operation.Operation.next) with
           | None -> R.empty ()
           | Some typ -> begin
+              Firebug.console##log typ;
               R.Dom.of_tag `div
                 ~props:R.Core.Element_spec.({
                     empty with class_name = Some (Classnames.(return "sf-DialogContainer" |> to_string));
                   })
-                ~children:[| make_dialog ~props:this##.props typ |]
+                ~children:[|
+                  R.element ~key:"overlay" ~props:(object%js end) Overlay.component;
+                  make_dialog ~props:this##.props typ
+                |]
             end
       )
 

@@ -3,30 +3,30 @@ module T = Common_types
 module Config = Common_config
 module Thread = Lwt
 
-module Dialog = struct
+module Operation = struct
   type t = {
-    typ: T.dialog_type option;
-    opening: bool;
+    next: M.Operation.t option;
+    confirming: bool;
   }
 
   class type js = object
-    method typ: T.dialog_type Js.opt Js.readonly_prop
-    method opening: bool Js.t Js.readonly_prop
+    method next: M.Operation.t Js.opt Js.readonly_prop
+    method confirming: bool Js.t Js.readonly_prop
   end
 
   let empty = {
-    typ = None;
-    opening = false;
+    next = None;
+    confirming = false;
   }
 
   let to_js : t -> js Js.t = fun t -> object%js
-    val typ = Js.Opt.option t.typ
-    val opening = Js.bool t.opening
+    val next = Js.Opt.option t.next
+    val confirming = Js.bool t.confirming
   end
 
   let of_js : js Js.t -> t = fun js -> {
-      typ = Js.Opt.to_option js##.typ;
-      opening = Js.to_bool js##.opening;
+      next = Js.Opt.to_option js##.next;
+      confirming = Js.to_bool js##.confirming;
     }
 end
 
@@ -55,7 +55,7 @@ type t = {
   config: Config.t;
   operation_log: T.Operation_log.t;
 
-  dialog_state: Dialog.t;
+  operation: Operation.t
 }
 
 class type js = object
@@ -67,7 +67,7 @@ class type js = object
   method config: Config.js Js.t Js.readonly_prop
   method operationLog: T.Operation_log.js Js.t Js.readonly_prop
 
-  method dialogState: Dialog.js Js.t Js.readonly_prop
+  method operation: Operation.js Js.t Js.readonly_prop
 end
 
 let empty =
@@ -80,7 +80,7 @@ let empty =
     terminated = false;
     config = Config.empty;
     operation_log = T.Operation_log.empty;
-    dialog_state = Dialog.empty;
+    operation = Operation.empty;
   }
 
 let to_js : t -> js Js.t = fun t -> object%js
@@ -91,7 +91,7 @@ let to_js : t -> js Js.t = fun t -> object%js
   val terminated = Js.bool t.terminated
   val config = Config.to_js t.config
   val operationLog = T.Operation_log.to_js t.operation_log
-  val dialogState = Dialog.to_js t.dialog_state
+  val operation = Operation.to_js t.operation
 end
 
 let of_js : js Js.t -> t = fun t ->
@@ -103,7 +103,7 @@ let of_js : js Js.t -> t = fun t ->
     terminated = Js.to_bool t##.terminated;
     config = Config.of_js t##.config;
     operation_log = T.Operation_log.of_js t##.operationLog;
-    dialog_state = Dialog.of_js t##.dialogState
+    operation = Operation.of_js t##.operation
   }
 
 (* Utility functions *)

@@ -57,7 +57,7 @@ let key_handler ~dispatch ~state ev =
   let module M = C.Message in
   match key with
   | _ when key = enter_key ->
-    Key_dispatcher.dispatch ~dispatcher:dispatch ~message:M.request_confirm_operation
+    Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.confirm_operation state##.confirmed)
   | _ -> failwith ""
 
 let component = Component.make {
@@ -70,15 +70,14 @@ let component = Component.make {
     should_component_update = Some (fun this _ _ -> true);
     render = (fun this ->
         let props = this##.props in
-        let state = props##.state in
         R.element C_dialog_base.component ~props:(object%js
           val title = props##.title
-          val _open = Js.bool C.State.(state.dialog_state.Dialog.opening)
+          val _open = Js.bool true
         end) ~children:[|
           R.Dom.of_tag `div
             ~props:R.Core.Element_spec.({
                 empty with class_name = Some (Classnames.(return "sf-ConfirmDialog" |> to_string));
-                           on_key_down = Some (key_handler ~dispatch:props##.dispatch ~state:(this##.props##.state));
+                           on_key_down = Some (key_handler ~dispatch:props##.dispatch ~state:this##.state);
               })
             ~children:[|
               R.element ~key:"content" ~props:(object%js

@@ -25,7 +25,7 @@ let component = Component.make {
     R.Core.Component_spec.empty with
     initialize = Some (fun this props ->
         this##.state := object%js
-          val opened = false
+          val opened = Js.to_bool props##._open
         end
       );
     component_will_receive_props = Some (fun this new_props ->

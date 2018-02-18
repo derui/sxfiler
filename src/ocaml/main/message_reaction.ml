@@ -94,6 +94,8 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     (t, message)
 
   let move_to_another t = (S.swap_active_pane t, None)
+  let request_operation t op =
+    ({t with S.operation = {S.Operation.confirming = true; next = Some op}}, None)
 
   let react t = function
     | M.Request_files_in_directory (pane, path) -> request_files_in_directory t pane path
@@ -104,5 +106,6 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     | M.Enter_directory -> enter_directory t
     | M.Request_quit_application -> ({t with S.terminated = true}, None)
     | M.Move_to_another -> move_to_another t
+    | M.Request_operation op -> request_operation t op
     | _ -> failwith "not implement"
 end

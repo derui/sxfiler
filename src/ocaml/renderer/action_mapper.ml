@@ -15,7 +15,7 @@ let to_message state = function
     let module P = C.Message_payload in
     let module Pane = C.Types.Pane in
 
-    C.Message.request_copy_file P.Request_copy_file.({
+    C.Message.request_operation @@ C.Message.Operation.Copy P.Request_copy_file.({
         src = file;
         dest_dir = Js.string inactive_pane.Pane.directory;
         same_name_behavior = Overwrite
