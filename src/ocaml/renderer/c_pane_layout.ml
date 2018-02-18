@@ -20,10 +20,10 @@ let component = Component.make (fun props ->
       ) state.C.State.panes
     in
     let children = Array.concat [children;[|R.element ~key:"operations" ~props:(object%js
-                                             val operationLog = state.C.State.operation_log
-                                           end) C_operation_log_pane.component|]
+                                              val operationLog = state.C.State.operation_log
+                                            end) C_operation_log_pane.component|]
                                 ]
-        in
+    in
     R.Dom.of_tag `div
       ~props:R.Core.Element_spec.({
           empty with class_name = Some (Classnames.(return "fp-PaneLayout" |> to_string))

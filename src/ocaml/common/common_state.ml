@@ -92,24 +92,44 @@ let of_js : js Js.t -> t = fun t ->
 
 (* Utility functions *)
 
+module Panes = struct
+  (**  *)
+  let select_pane panes id =
+    let module P = T.Pane in
+    Array.to_list panes |> List.find_opt (fun v -> T.Pane_id.equal v.P.id id)
+
+  let select_other_pane panes id =
+    let module P = T.Pane in
+    Array.to_list panes |> List.find_opt (fun v -> not @@ T.Pane_id.equal v.P.id id)
+
+  (** Get file stats currently selected in [pane] *)
+  let pointed_file pane =
+    let module P = T.Pane in
+    let pos = pane.P.cursor_pos
+    and files = Array.of_list pane.P.file_list in
+    files.(pos)
+
+  (** Replace the [pane] having same id in [panes] *)
+  let replace_pane panes pane =
+    let module P = T.Pane in
+    match select_pane panes pane.P.id with
+    | Some pane ->
+      Array.map (fun v -> if T.Pane_id.equal v.P.id pane.P.id then pane else v) panes
+    | None -> Array.concat [panes;[|pane|]]
+
+end
+
+(** Get current pane from state *)
 let current_pane state =
   let current_id = state.current_pane in
-  let module P = T.Pane in
-  let module PI = T.Pane_id in
-  List.find (fun pane -> PI.equal current_id pane.P.id) @@ Array.to_list state.panes
+  match Panes.select_pane state.panes current_id with
+  | None -> assert false
+  | Some pane -> pane
 
-let pointed_file pane =
-  let module P = T.Pane in
-  let pos = pane.P.cursor_pos
-  and files = Array.of_list pane.P.file_list in
-  files.(pos)
-
-let target_pane_directory state =
+(** Get directory of current pane of [state]. *)
+let current_pane_directory state =
   let current_id = state.current_pane in
   let module P = T.Pane in
-  let module PI = T.Pane_id in
-  let panes = state.panes in
-  let pane = List.find_opt (fun pane -> not @@ PI.equal current_id pane.P.id) @@ Array.to_list panes in
-  match pane with
+  match Panes.select_pane state.panes current_id with
   | None -> Js.string ""
   | Some pane -> Js.string pane.P.directory

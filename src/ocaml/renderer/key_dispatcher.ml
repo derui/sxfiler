@@ -5,8 +5,8 @@ type t = Sxfiler_common.Message.t -> unit
 
 let make ipc =
   fun channel ->
-      let module E = Sxfiler_common.Event in
-      E.IPC.send ~channel:(E.IPC.action channel) ~ipc
+    let module E = Sxfiler_common.Event in
+    E.IPC.send ~channel:(E.IPC.action channel) ~ipc
 
 let dispatch : t -> state:Sxfiler_common.State.t ->
   ev:Reactjscaml.Event.Keyboard_event.t ->

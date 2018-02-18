@@ -29,9 +29,9 @@ let component = Component.make {
     render = (fun this ->
         let props = this##.props in
         let children_props = object%js
-              val dispatch = props##.dispatch
-              val state = this##.state##.state
-            end in
+          val dispatch = props##.dispatch
+          val state = this##.state##.state
+        end in
         R.Dom.of_tag `div
           ~props:R.Core.Element_spec.({
               empty with class_name = Some (Classnames.(return "sf-Main" |> to_string));
