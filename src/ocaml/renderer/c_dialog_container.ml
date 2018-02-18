@@ -14,7 +14,12 @@ module Component = R.Component.Make_stateful (struct
   end)
 
 let make_dialog ~props = function
-  | T.Confirm_copy -> R.element ~props C_copy_confirmation_dialog.component
+  | T.Confirm_copy -> R.element ~props:(object%js
+                        val state = props##.state
+                        val dispatch = props##.dispatch
+                        val title = Js.string "Confirm copy file"
+                        val content = Js.string "Can filer copy file?"
+                      end) C_confirmation_dialog.component
   | _ -> failwith "not implemented"
 
 let component = Component.make {
