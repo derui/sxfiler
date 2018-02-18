@@ -48,11 +48,17 @@ module Button = struct
     )
 end
 
+let enter_key = Sxfiler_kbd.(to_keyseq {empty with key = "Enter"})
 let key_handler ~dispatch ~state ev =
   ev##preventDefault;
   ev##stopPropagation;
-  let key_map = state.C.State.config.C.Config.key_maps.C.Config.confirm_dialog in
-  Key_dispatcher.dispatch dispatch ~state ~ev ~key_map
+
+  let key = Util.keyboard_event_to_key ev |> Js.to_string in
+  let module M = C.Message in
+  match key with
+  | _ when key = enter_key ->
+    Key_dispatcher.dispatch ~dispatcher:dispatch ~message:M.request_confirm_operation
+  | _ -> failwith ""
 
 let component = Component.make {
     R.Core.Component_spec.empty with
@@ -65,7 +71,7 @@ let component = Component.make {
     render = (fun this ->
         let props = this##.props in
         let state = props##.state in
-        R.element ~props:(object%js
+        R.element C_dialog_base.component ~props:(object%js
           val title = props##.title
           val _open = Js.bool C.State.(state.dialog_state.Dialog.opening)
         end) ~children:[|
@@ -87,7 +93,6 @@ let component = Component.make {
                 val selected = Js.bool @@ not this##.state##.confirmed
               end) Button.component;
             |]
-
-        |] C_dialog_base.component
+        |]
       )
   }

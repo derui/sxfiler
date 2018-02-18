@@ -14,7 +14,7 @@ let key_handler ~dispatch ~state ev =
   ev##preventDefault;
   ev##stopPropagation;
   let key_map = state.C.State.config.C.Config.key_maps.C.Config.file_list in
-  Key_dispatcher.dispatch dispatch ~state ~ev ~key_map
+  Key_dispatcher.dispatch_key dispatch ~state ~ev ~key_map
 
 let component = Component.make {
     R.Core.Component_spec.empty with
@@ -23,11 +23,12 @@ let component = Component.make {
         let props = this##.props in
         R.Dom.of_tag `div
           ~props:R.Core.Element_spec.({
-              empty with class_name = Some (Classnames.(return "sf-KeyContainer" |> to_string));
-                         on_key_down = Some (key_handler ~dispatch:props##.dispatch ~state:(props##.state));
-                         others = Some (object%js
-                             val tabIndex = "0"
-                           end);
+              empty with
+              class_name = Some (Classnames.(return "sf-KeyContainer" |> to_string));
+              on_key_down = Some (key_handler ~dispatch:props##.dispatch ~state:(props##.state));
+              others = Some (object%js
+                  val tabIndex = "0"
+                end);
             })
           ~children:[| R.element ~key:"file-list" ~props:(object%js
                          val state = props##.state

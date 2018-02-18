@@ -14,4 +14,6 @@ type t =
   | Enter_directory
   | Move_to_another
   | Request_copy_file of P.Request_copy_file.t
+  | Request_confirm_operation
+  | Request_cancel_operation
 [@@deriving variants]

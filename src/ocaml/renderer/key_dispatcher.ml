@@ -8,7 +8,9 @@ let make ipc =
     let module E = Sxfiler_common.Event in
     E.IPC.send ~channel:(E.IPC.action channel) ~ipc
 
-let dispatch : t -> state:Sxfiler_common.State.t ->
+let dispatch ~dispatcher ~message = dispatcher message
+
+let dispatch_key: t -> state:Sxfiler_common.State.t ->
   ev:Reactjscaml.Event.Keyboard_event.t ->
   key_map:K.t -> unit = fun dispatcher ~state ~ev ~key_map ->
   let module E = Sxfiler_common.Event in

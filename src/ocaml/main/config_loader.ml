@@ -42,7 +42,6 @@ module Json_conf = struct
     {
       Core.key_maps = {
         Core.file_list = U.get ~default:Cm.Key_map.empty (key_map_of_json v.key_map.file_list);
-        Core.confirm_dialog = U.get ~default:Cm.Key_map.empty (key_map_of_json v.key_map.confirm_dialog);
       }
     }
 end
