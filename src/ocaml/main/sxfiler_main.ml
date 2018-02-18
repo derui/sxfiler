@@ -64,10 +64,10 @@ let () =
           E.on_did_finish_load ~browser_window:bw
             ~listener:(fun _ ->
                 let module S = Sxfiler_common.State in
-                Array.iter (fun pane ->
+                List.iter (fun pane ->
                     let module P = Sxfiler_common.Types.Pane in
                     Flux_runner.send runner (M.request_files_in_directory (pane.P.id, pane.P.directory))
-                  ) initial_state.S.panes
+                  ) [initial_state.S.left_pane; initial_state.S.right_pane]
               )
       ) in
     app##on channel listener;

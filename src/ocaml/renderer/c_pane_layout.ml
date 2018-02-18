@@ -11,18 +11,24 @@ module Component = R.Component.Make_stateless (struct
 
 let component = Component.make (fun props ->
     let state = props##.state in
-    let children = Array.map (fun pane ->
-        let module P = T.Pane in
-        R.element ~key:(T.Pane_id.to_string pane.P.id) ~props:(object%js
-          val pane = pane
-          val selected = T.Pane_id.equal pane.T.Pane.id state.C.State.current_pane
-        end) C_file_list_pane.component
-      ) state.C.State.panes
+    let module P = T.Pane in
+    let create_pane_element pane selected =
+      R.element ~key:(T.Pane_id.to_string pane.P.id) ~props:(object%js
+        val pane = pane
+        val selected = selected
+      end) C_file_list_pane.component
     in
-    let children = Array.concat [children;[|R.element ~key:"operations" ~props:(object%js
-                                              val operationLog = state.C.State.operation_log
-                                            end) C_operation_log_pane.component|]
-                                ]
+    let left_pane = state.C.State.left_pane
+    and right_pane = state.C.State.right_pane in
+    let left_pane = create_pane_element left_pane @@ C.State.is_left_active state
+    and right_pane = create_pane_element right_pane @@ C.State.is_right_active state in
+    let children = [|
+      left_pane;
+      right_pane;
+      R.element ~key:"operations" ~props:(object%js
+        val operationLog = state.C.State.operation_log
+      end) C_operation_log_pane.component
+    |]
     in
     R.Dom.of_tag `div
       ~props:R.Core.Element_spec.({

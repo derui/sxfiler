@@ -46,42 +46,42 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
   let request_files_in_directory t pane path = ({t with S.waiting = true}, Some (fetch_files pane path))
   let finish_files_in_directory t ret = match ret with
-    | Ok pane -> (
+    | Ok pane -> begin (
+        let pane = T.Pane.of_js pane in
         {t with
          S.waiting = false;
-         panes = S.Panes.replace_pane t.S.panes @@ T.Pane.of_js pane;
+         left_pane = if T.Pane.equal t.S.left_pane pane then pane else t.S.left_pane;
+         right_pane = if T.Pane.equal t.S.right_pane pane then pane else t.S.right_pane;
         }, None)
+      end
     | Error _ -> failwith "error"
 
   let move_cursor t v =
     let module O = Sxfiler_common.Util.Option in
-    let open Minimal_monadic_caml.Option.Infix in
-    let t = O.get ~default:t (
-        S.Panes.select_pane t.S.panes t.S.current_pane
-        >|= (fun pane ->
-            let module P = T.Pane in
-            let file_count = List.length pane.P.file_list - 1 in
-            {pane with P.cursor_pos = max 0 @@ min file_count (v + pane.P.cursor_pos)})
-        >|= (fun pane -> {t with S.panes = S.Panes.replace_pane t.S.panes pane})
-      ) in
+    let t =
+      let pane = S.active_pane t in
+      let module P = T.Pane in
+      let file_count = List.length pane.P.file_list - 1 in
+      S.update_pane t {
+        pane with P.cursor_pos = max 0 @@ min file_count (v + pane.P.cursor_pos)
+      } in
     (t, None)
 
   let leave_directory t =
     let module O = Sxfiler_common.Util.Option in
-    let open Minimal_monadic_caml.Option.Infix in
-    let message = S.Panes.select_pane t.S.panes t.S.current_pane
-      >>= (fun pane ->
-          let module P = T.Pane in
-          let next_dir = Filename.dirname pane.P.directory in
-          Some ((pane.P.id, next_dir) |> M.request_files_in_directory |> Lwt.return))
+    let message =
+      let pane = S.active_pane t in
+      let module P = T.Pane in
+      let next_dir = Filename.dirname pane.P.directory in
+      Some ((pane.P.id, next_dir) |> M.request_files_in_directory |> Lwt.return)
     in
     (t, message)
 
   let enter_directory t =
     let module O = Sxfiler_common.Util.Option in
     let open Minimal_monadic_caml.Option.Infix in
-    let message = S.Panes.select_pane t.S.panes t.S.current_pane
-      >>= fun pane ->
+    let message =
+      let pane = S.active_pane t in
       let module P = T.Pane in
       List.nth_opt pane.P.file_list pane.P.cursor_pos
       >>= fun item ->
@@ -93,15 +93,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     in
     (t, message)
 
-  let add_pane t pane = ({t with S.panes = S.Panes.replace_pane t.S.panes @@ T.Pane.of_js pane}, None)
-  let move_to_another t =
-    let module O =  C.Util.Option in
-    let module M = Minimal_monadic_caml.Option.Infix in
-
-    let current_pane = t.S.current_pane in
-    let t = {t with S.current_pane = O.get ~default:current_pane @@
-                      M.(S.Panes.select_other_pane t.S.panes current_pane >|= fun pane -> pane.T.Pane.id)} in
-    (t, None)
+  let move_to_another t = (S.swap_active_pane t, None)
 
   let react t = function
     | M.Request_files_in_directory (pane, path) -> request_files_in_directory t pane path
@@ -111,7 +103,6 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     | M.Leave_directory -> leave_directory t
     | M.Enter_directory -> enter_directory t
     | M.Request_quit_application -> ({t with S.terminated = true}, None)
-    | M.Add_pane pane -> add_pane t pane
     | M.Move_to_another -> move_to_another t
     | _ -> failwith "not implement"
 end

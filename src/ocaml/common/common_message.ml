@@ -8,7 +8,6 @@ type t =
     Request_files_in_directory of (T.Pane_id.t * string)
   | Finish_files_in_directory of (T.Pane.js Js.t, exn) result
   | Request_quit_application
-  | Add_pane of T.Pane.js Js.t
   | Select_next_item of int
   | Select_prev_item of int
   | Leave_directory

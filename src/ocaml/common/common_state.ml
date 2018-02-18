@@ -30,10 +30,26 @@ module Dialog = struct
     }
 end
 
+module Active_pane_pointer = struct
+  type t = [`Left | `Right] [@@deriving variants]
+  type js = Js.js_string
+
+  let to_js = function
+    | `Left as v -> Js.string @@ Variants.to_name v
+    | `Right as v -> Js.string @@ Variants.to_name v
+
+  let of_js js =
+    match Js.to_string js with
+    | v when v = Variants.to_name `Left -> `Left
+    | v when v = Variants.to_name `Right -> `Right
+    | _ -> failwith "Unknown type"
+end
+
 (* All state of this application *)
 type t = {
-  panes: T.Pane.t array;
-  current_pane: T.Pane_id.t;
+  active_pane: Active_pane_pointer.t;
+  left_pane: T.Pane.t;
+  right_pane: T.Pane.t;
   waiting: bool;
   terminated: bool;
   config: Config.t;
@@ -43,8 +59,9 @@ type t = {
 }
 
 class type js = object
-  method panes: T.Pane.js Js.t Js.js_array Js.t Js.readonly_prop
-  method currentPane: T.Pane_id.js Js.t Js.readonly_prop
+  method activePane: Active_pane_pointer.js Js.t Js.readonly_prop
+  method leftPane: T.Pane.js Js.t Js.readonly_prop
+  method rightPane: T.Pane.js Js.t Js.readonly_prop
   method waiting: bool Js.t Js.readonly_prop
   method terminated: bool Js.t Js.readonly_prop
   method config: Config.js Js.t Js.readonly_prop
@@ -54,12 +71,11 @@ class type js = object
 end
 
 let empty =
-  let pane_size = 2 in
   let pane () = T.Pane.make ~id:(T.Pane_id.make ()) ~directory:"." () in
-  let panes = Array.init pane_size (fun _ -> pane ()) in
   {
-    panes;
-    current_pane = panes.(0).id;
+    active_pane = `Left;
+    left_pane = pane ();
+    right_pane = pane ();
     waiting = false;
     terminated = false;
     config = Config.empty;
@@ -68,8 +84,9 @@ let empty =
   }
 
 let to_js : t -> js Js.t = fun t -> object%js
-  val panes = Array.map T.Pane.to_js t.panes |> Js.array
-  val currentPane = T.Pane_id.to_js t.current_pane
+  val activePane = Active_pane_pointer.to_js t.active_pane
+  val leftPane = T.Pane.to_js t.left_pane
+  val rightPane = T.Pane.to_js t.right_pane
   val waiting = Js.bool t.waiting
   val terminated = Js.bool t.terminated
   val config = Config.to_js t.config
@@ -78,10 +95,10 @@ let to_js : t -> js Js.t = fun t -> object%js
 end
 
 let of_js : js Js.t -> t = fun t ->
-  let panes = Array.map T.Pane.of_js @@ Js.to_array t##.panes in
   {
-    panes;
-    current_pane = T.Pane_id.of_js t##.currentPane;
+    active_pane = Active_pane_pointer.of_js t##.activePane;
+    left_pane = T.Pane.of_js t##.leftPane;
+    right_pane = T.Pane.of_js t##.rightPane;
     waiting = Js.to_bool t##.waiting;
     terminated = Js.to_bool t##.terminated;
     config = Config.of_js t##.config;
@@ -89,47 +106,33 @@ let of_js : js Js.t -> t = fun t ->
     dialog_state = Dialog.of_js t##.dialogState
   }
 
-
 (* Utility functions *)
 
-module Panes = struct
-  (**  *)
-  let select_pane panes id =
-    let module P = T.Pane in
-    Array.to_list panes |> List.find_opt (fun v -> T.Pane_id.equal v.P.id id)
-
-  let select_other_pane panes id =
-    let module P = T.Pane in
-    Array.to_list panes |> List.find_opt (fun v -> not @@ T.Pane_id.equal v.P.id id)
-
+module Pane = struct
   (** Get file stats currently selected in [pane] *)
   let pointed_file pane =
     let module P = T.Pane in
     let pos = pane.P.cursor_pos
     and files = Array.of_list pane.P.file_list in
     files.(pos)
-
-  (** Replace the [pane] having same id in [panes] *)
-  let replace_pane panes pane =
-    let module P = T.Pane in
-    match select_pane panes pane.P.id with
-    | Some pane ->
-      Array.map (fun v -> if T.Pane_id.equal v.P.id pane.P.id then pane else v) panes
-    | None -> Array.concat [panes;[|pane|]]
-
 end
 
-(** Get current pane from state *)
-let current_pane state =
-  let current_id = state.current_pane in
-  match Panes.select_pane state.panes current_id with
-  | None -> assert false
-  | Some pane -> pane
+let is_left_active t = t.active_pane = `Left
+let is_right_active t = t.active_pane = `Right
+let swap_active_pane t =
+  {t with active_pane =
+            match t.active_pane with
+            | `Left -> `Right
+            | `Right -> `Left
+  }
 
-(** Get directory of current pane of [state]. *)
-let current_pane_directory state =
-  let current_id = state.current_pane in
-  let module P = T.Pane in
-  match Panes.select_pane state.panes current_id with
-  | None -> Js.string ""
-  | Some pane -> Js.string pane.P.directory
+let active_pane t =
+  if is_left_active t then t.left_pane else t.right_pane
+let inactive_pane t =
+  if is_left_active t then t.right_pane else t.left_pane
+
+let update_pane t pane =
+  {t with
+   left_pane = if T.Pane.equal pane t.left_pane then pane else t.left_pane;
+   right_pane = if T.Pane.equal pane t.right_pane then pane else t.right_pane;
+  }

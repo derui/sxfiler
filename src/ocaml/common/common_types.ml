@@ -91,6 +91,8 @@ module Pane = struct
     method cursorPos : Js.number Js.t Js.readonly_prop
   end
 
+  let equal v1 v2 = Pane_id.equal v1.id v2.id
+
   let make ?(file_list=[]) ?(cursor_pos=0) ~id ~directory () =
     {
       id;
