@@ -17,22 +17,23 @@ module Component = R.Component.Make_stateful (struct
 (* Content component to show content of the dialog *)
 module Content = struct
   module C = R.Component.Make_stateless(struct
-    class type t = object
-      method content: Js.js_string Js.t Js.readonly_prop
-    end
-  end)
+      class type t = object
+        method content: Js.js_string Js.t Js.readonly_prop
+      end
+    end)
 
   let component = C.make (fun props ->
-    R.Dom.of_tag `div ~key:"content" ~props:R.Core.Element_spec.({
-        empty with class_name = Some (Classnames.(return "sf-ConfirmDialog_Content" |> to_string))
-      })
-      ~children:[|R.text @@ Js.to_string props##.content|];
-  )
+      R.Dom.of_tag `div ~key:"content" ~props:R.Core.Element_spec.({
+          empty with class_name = Some (Classnames.(return "sf-ConfirmDialog_Content" |> to_string))
+        })
+        ~children:[|R.text @@ Js.to_string props##.content|];
+    )
 end
 
 module Button = struct
   module C = R.Component.Make_stateless(struct
       class type t = object
+        method text: Js.js_string Js.t Js.readonly_prop
         method selected: bool Js.t Js.readonly_prop
       end
     end)
@@ -44,9 +45,17 @@ module Button = struct
           let open Infix in return "sf-ConfirmDialog_Button"
                             <|> ("sf-ConfirmDialog_Button-Selected", selected)
                             |> to_string))
-        });
+        })
+      ~children:[|R.text @@ Js.to_string props##.text|];
     )
 end
+
+let button_container ~key ~children =
+  R.Dom.of_tag `div ~key ~props:R.Core.Element_spec.({
+      empty with class_name = Some (Classnames.(
+      let open Infix in return "sf-ConfirmDialog_ButtonContainer" |> to_string))
+    })
+    ~children
 
 let enter_key = Sxfiler_kbd.(to_keyseq {empty with key = "Enter"})
 let key_handler ~dispatch ~state ev =
@@ -84,13 +93,18 @@ let component = Component.make {
                 val content = props##.content
               end) Content.component;
 
-              R.element ~key:"yes" ~props:(object%js
-                val selected = Js.bool this##.state##.confirmed
-              end) Button.component;
+              button_container ~key:"button_container" ~children:[|
+                R.element ~key:"yes" ~props:(object%js
+                  val text = Js.string "Yes"
+                  val selected = Js.bool this##.state##.confirmed
+                end) Button.component;
 
-              R.element ~key:"no" ~props:(object%js
-                val selected = Js.bool @@ not this##.state##.confirmed
-              end) Button.component;
+                R.element ~key:"no" ~props:(object%js
+                  val text = Js.string "No"
+                  val selected = Js.bool @@ not this##.state##.confirmed
+                end) Button.component;
+              |]
+
             |]
         |]
       )

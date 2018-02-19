@@ -29,7 +29,7 @@ module Component = R.Component.Make_stateful (struct
   end)
 
 let make_dialog ~props = function
-  | M.Operation.Copy _ -> Js.debugger ();R.element ~key:"dialog" ~props:(object%js
+  | M.Operation.Copy _ -> R.element ~key:"dialog" ~props:(object%js
                             val state = props##.state
                             val dispatch = props##.dispatch
                             val title = Js.string "Confirm copy file"

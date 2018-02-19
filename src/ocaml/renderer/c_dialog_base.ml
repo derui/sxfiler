@@ -21,6 +21,10 @@ let body ~key ~children = R.Dom.of_tag `div ~key ~props:R.Core.Element_spec.({
     empty with class_name = Some (Classnames.(return "sf-DialogBase_Body" |> to_string))
   }) ~children
 
+let container ~key ~children = R.Dom.of_tag `div ~key ~props:R.Core.Element_spec.({
+    empty with class_name = Some (Classnames.(return "sf-DialogBase_ContentContainer" |> to_string))
+  }) ~children
+
 let component = Component.make {
     R.Core.Component_spec.empty with
     initialize = Some (fun this props ->
@@ -43,8 +47,10 @@ let component = Component.make {
                 empty with class_name = Some (Classnames.(return "sf-DialogBase" |> to_string));
               })
             ~children:[|
-              header ~key:"header" ~title:(Js.to_string this##.props##.title);
-              body ~key:"body" ~children:(Js.to_array this##.props_defined##.children)
+              container ~key:"container" ~children:[|
+                header ~key:"header" ~title:(Js.to_string this##.props##.title);
+                body ~key:"body" ~children:(Js.to_array this##.props_defined##.children)
+              |]
             |]
       )
   }

@@ -1,0 +1,35 @@
+@import "base/*";
+
+$gridGap: 1em;
+
+.sf-ConfirmDialog {
+  background-color: $sol_base02;
+  color: $sol_base2;
+
+  padding: 1em;
+
+  display: grid;
+  grid-template-rows: max-content;
+  grid-gap: $gridGap;
+
+  font-size: $baseFontSize;
+}
+
+.sf-ConfirmDialog_ButtonContainer {
+  display: flex;
+}
+
+.sf-ConfirmDialog_Button {
+  flex: 1 1 auto;
+  padding: 0.25em 0.5em;
+  margin: 0 1em;
+
+  border: 1px solid white;
+
+  text-align: center;
+}
+
+.sf-ConfirmDialog_Button.sf-ConfirmDialog_Button-Selected {
+  background-color: $sol_cyan;
+  color: $sol_base1;
+}
