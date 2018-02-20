@@ -45,6 +45,27 @@ module Active_pane_pointer = struct
     | _ -> failwith "Unknown type"
 end
 
+module Dialog_state = struct
+  type t =
+    | Open of T.dialog_type | Close [@@deriving variants]
+  class type js = object
+    method dialogType: T.dialog_type Js.optdef Js.readonly_prop
+  end
+
+  let to_js = function
+    | Open typ -> object%js
+      val dialogType = Js.Optdef.return typ
+    end
+    | Close -> object%js
+      val dialogType = Js.Optdef.empty
+    end
+
+  let of_js : js Js.t -> t = fun js ->
+    match Js.Optdef.to_option js##.dialogType with
+    | None -> Close
+    | Some typ -> Open typ
+end
+
 (* All state of this application *)
 type t = {
   active_pane: Active_pane_pointer.t;
@@ -55,6 +76,7 @@ type t = {
   config: Config.t;
   operation_log: T.Operation_log.t;
 
+  dialog_state: Dialog_state.t;
   operation: Operation.t
 }
 
@@ -67,6 +89,7 @@ class type js = object
   method config: Config.js Js.t Js.readonly_prop
   method operationLog: T.Operation_log.js Js.t Js.readonly_prop
 
+  method dialogState: Dialog_state.js Js.t Js.readonly_prop
   method operation: Operation.js Js.t Js.readonly_prop
 end
 
@@ -80,6 +103,8 @@ let empty =
     terminated = false;
     config = Config.empty;
     operation_log = T.Operation_log.empty;
+
+    dialog_state = Dialog_state.Close;
     operation = Operation.empty;
   }
 
@@ -91,6 +116,7 @@ let to_js : t -> js Js.t = fun t -> object%js
   val terminated = Js.bool t.terminated
   val config = Config.to_js t.config
   val operationLog = T.Operation_log.to_js t.operation_log
+  val dialogState = Dialog_state.to_js t.dialog_state
   val operation = Operation.to_js t.operation
 end
 
@@ -103,6 +129,7 @@ let of_js : js Js.t -> t = fun t ->
     terminated = Js.to_bool t##.terminated;
     config = Config.of_js t##.config;
     operation_log = T.Operation_log.of_js t##.operationLog;
+    dialog_state = Dialog_state.of_js t##.dialogState;
     operation = Operation.of_js t##.operation
   }
 

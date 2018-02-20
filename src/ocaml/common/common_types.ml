@@ -1,6 +1,8 @@
 module FT = Jsoo_node.Fs_types
 
 type current_cursor = int
+type dialog_type =
+  | Dialog_confirmation
 
 module File_stat = struct
   type t = {
