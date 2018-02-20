@@ -97,6 +97,10 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
   let request_operation t op =
     ({t with S.operation = {S.Operation.confirming = true; next = Some op}}, None)
 
+  let confirm_operation t confirmed =
+    if confirmed then failwith "not implement"
+    else ({t with S.operation = {S.Operation.confirming = false; next = None}}, None)
+
   let react t = function
     | M.Request_files_in_directory (pane, path) -> request_files_in_directory t pane path
     | M.Finish_files_in_directory ret -> finish_files_in_directory t ret
@@ -107,5 +111,5 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     | M.Request_quit_application -> ({t with S.terminated = true}, None)
     | M.Move_to_another -> move_to_another t
     | M.Request_operation op -> request_operation t op
-    | _ -> failwith "not implement"
+    | M.Confirm_operation confirmed -> confirm_operation t confirmed
 end

@@ -1,1 +1,1 @@
-module Main = C_main
+let main = C_main.component

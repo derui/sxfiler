@@ -46,7 +46,7 @@ module Button = struct
                             <|> ("sf-ConfirmDialog_Button-Selected", selected)
                             |> to_string))
         })
-      ~children:[|R.text @@ Js.to_string props##.text|];
+        ~children:[|R.text @@ Js.to_string props##.text|];
     )
 end
 
@@ -57,8 +57,10 @@ let button_container ~key ~children =
     })
     ~children
 
+let esc = Sxfiler_kbd.(to_keyseq {empty with key = "Escape"})
 let enter_key = Sxfiler_kbd.(to_keyseq {empty with key = "Enter"})
-let key_handler ~dispatch ~state ev =
+let tab = Sxfiler_kbd.(to_keyseq {empty with key = "Tab"})
+let key_handler ~dispatch ~this ev =
   ev##preventDefault;
   ev##stopPropagation;
 
@@ -66,14 +68,20 @@ let key_handler ~dispatch ~state ev =
   let module M = C.Message in
   match key with
   | _ when key = enter_key ->
-    Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.confirm_operation state##.confirmed)
-  | _ -> failwith ""
+    Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.confirm_operation this##.state##.confirmed)
+  | _ when key = esc ->
+    Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.confirm_operation false);
+  | _ when key = tab ->
+    this##setState (object%js
+      val confirmed = not this##.state##.confirmed
+    end)
+  | _ -> ()
 
 let component = Component.make {
     R.Core.Component_spec.empty with
     initialize = Some (fun this props ->
         this##.state := object%js
-          val confirmed = false
+          val confirmed = true
         end
       );
     should_component_update = Some (fun this _ _ -> true);
@@ -82,11 +90,11 @@ let component = Component.make {
         R.element C_dialog_base.component ~props:(object%js
           val title = props##.title
           val _open = Js.bool true
+          val keyHandler = Js.Optdef.return (key_handler ~dispatch:props##.dispatch ~this);
         end) ~children:[|
           R.Dom.of_tag `div
             ~props:R.Core.Element_spec.({
                 empty with class_name = Some (Classnames.(return "sf-ConfirmDialog" |> to_string));
-                           on_key_down = Some (key_handler ~dispatch:props##.dispatch ~state:this##.state);
               })
             ~children:[|
               R.element ~key:"content" ~props:(object%js
