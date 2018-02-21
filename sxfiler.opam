@@ -1,29 +1,29 @@
 
-opam-version: "1.2"
+opam-version: "2.0"
 version: "0.1.0"
 maintainer: "derutakayu@gmail.com"
 authors: "derui"
 license: "MIT"
 homepage: "https://github.com/derui/sxfiler"
 bug-reports: "https://github.com/derui/sxfiler"
-dev-repo: "https://github.com/derui/sxfiler"
+dev-repo: "git+https://github.com/derui/sxfiler"
 tags: []
 build: [
-  "jbuilder" "build" "-p" name "-j" jobs
+  ["jbuilder" "build" "-p" name "-j" jobs]
 ]
 depends: [
   "jbuilder" {build & >= "1.0+beta16"}
-  "ocamlfind"
   "js_of_ocaml" { >= "3.0.2"}
   "js_of_ocaml-ppx" { >= "3.0.2"}
   "js_of_ocaml-lwt" { >= "3.0.2"}
   "ppx_variants_conv" { >= "v0.9.0"}
   "ppx_deriving_yojson" { >= "3.1"}
   "yojson" { >= "1.4.0"}
+  "uuidm" { >= "0.9.6"}
   "mocha_of_ocaml" {test}
   "reactjscaml"
   "ocaml-flux-frp"
   "jsoo_node"
   "minimal-monadic-caml"
 ]
-available: [ocaml-version >= "4.05.0"]
+available: ["ocaml" >= "4.05.0"]
