@@ -42,8 +42,7 @@ let component = Component.make R.Core.Component_spec.({
         this##setState (object%js
           val virtualized_list = VL.update_all_items items this##.state##.virtualized_list
                                  |> VL.recalculate_visible_window props##.cursor_pos
-        end);
-        true
+        end)
       );
     render = (fun this ->
         let props = this##.props in

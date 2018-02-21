@@ -53,8 +53,7 @@ let component = Component.make {
     component_will_receive_props = Some (fun this new_props ->
         this##setState (object%js
           val opened = Js.to_bool new_props##._open
-        end);
-        true
+        end)
       );
     should_component_update = Some (fun this _ _ -> true);
     component_did_mount = Some (fun this ->

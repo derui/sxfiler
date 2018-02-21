@@ -1,3 +1,4 @@
+module C = Sxfiler_common
 
 let keyboard_event_to_key v =
   let module K = Sxfiler_kbd in
@@ -7,3 +8,7 @@ let keyboard_event_to_key v =
     meta = Js.to_bool v##.altKey;
     ctrl = Js.to_bool v##.ctrlKey;
   }
+
+let get_focus_target = function
+  | C.State.Dialog_state.Open _ -> Types.Focus_dialog
+  | C.State.Dialog_state.Close -> Types.Focus_file_pane
