@@ -42,7 +42,10 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     Fs.copy_file ~src ~dest () >>= (fun ret ->
         match ret with
         | Ok _ -> Lwt.return @@ M.finish_execute_operation (Ok ())
-        | Error _ -> Lwt.return @@ M.finish_execute_operation (Error "error")
+        | Error err -> begin
+            match err with
+            | `FsCopyError err -> Lwt.return @@ M.finish_execute_operation (Error err##toString)
+          end
       )
 
   let refresh_panes left right =
@@ -70,7 +73,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
         match err with
         | File_list.Not_directory f ->
           let module M = Sxfiler_common.Message in
-          Lwt.return @@ M.finish_files_in_directory (Error err)
+          Lwt.return @@ M.finish_files_in_directory (Error (Js.string f))
         | _ -> raise Unhandled_promise
       )
     in
