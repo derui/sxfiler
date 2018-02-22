@@ -66,7 +66,10 @@ let () =
                 let module S = Sxfiler_common.State in
                 List.iter (fun pane ->
                     let module P = Sxfiler_common.Types.Pane in
-                    Flux_runner.send runner (M.request_files_in_directory (pane.P.id, pane.P.directory))
+                    let pane = P.to_js pane
+                    and dir = Js.string pane.P.directory in
+                    let message = M.request_files_in_directory (pane, dir) in
+                    Flux_runner.send runner message
                   ) [initial_state.S.left_pane; initial_state.S.right_pane]
               )
       ) in

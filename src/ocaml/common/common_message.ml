@@ -10,8 +10,10 @@ end
 
 (** The type of message. This allows to pass to Javascript native functions all variant. *)
 type t =
-    Request_files_in_directory of (T.Pane_id.t * string)
+    Request_files_in_directory of (T.Pane.js Js.t * Js.js_string Js.t)
   | Finish_files_in_directory of (T.Pane.js Js.t, exn) result
+  | Request_refresh_panes
+  | Finish_refresh_panes of (T.Pane.js Js.t * T.Pane.js Js.t)
   | Request_quit_application
   | Select_next_item of int
   | Select_prev_item of int
@@ -19,5 +21,7 @@ type t =
   | Enter_directory
   | Move_to_another
   | Request_operation of Operation.t
+  | Request_execute_operation of Operation.t
+  | Finish_execute_operation of (unit, string) result
   | Confirm_operation of bool
 [@@deriving variants]

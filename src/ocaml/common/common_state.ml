@@ -7,26 +7,31 @@ module Operation = struct
   type t = {
     next: M.Operation.t option;
     confirming: bool;
+    executing: bool;
   }
 
   class type js = object
     method next: M.Operation.t Js.opt Js.readonly_prop
     method confirming: bool Js.t Js.readonly_prop
+    method executing: bool Js.t Js.readonly_prop
   end
 
   let empty = {
     next = None;
     confirming = false;
+    executing = false;
   }
 
   let to_js : t -> js Js.t = fun t -> object%js
     val next = Js.Opt.option t.next
     val confirming = Js.bool t.confirming
+    val executing = Js.bool t.executing
   end
 
   let of_js : js Js.t -> t = fun js -> {
       next = Js.Opt.to_option js##.next;
       confirming = Js.to_bool js##.confirming;
+      executing = Js.to_bool js##.executing
     }
 end
 
