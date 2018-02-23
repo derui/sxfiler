@@ -168,11 +168,14 @@ module Operation_log = struct
     max_entry_count = default_max_entry_count;
   }
 
-  let add_entry ?(log_type=Info) t content =
-    let entries = (Entry.make ~log_type content) :: (List.rev t.entries) in
+  let add_entry ~entry t =
+    let entries = List.rev t.entries in
     let entries = if List.length entries > t.max_entry_count then List.tl entries |> List.rev
       else List.rev entries in
-    {t with entries;}
+    {t with entries}
+
+  let add_entry_with_content ?(log_type=Info) t content =
+    add_entry ~entry:(Entry.make ~log_type content) t
 
   let to_js : t -> js Js.t = fun t -> object%js
     val entries = Js.array @@ Array.of_list @@ List.map Entry.to_js t.entries
@@ -184,4 +187,22 @@ module Operation_log = struct
       max_entry_count = js##.maxEntryCount;
     }
 
+end
+
+module Operation_result = struct
+  type recovery_strategy =
+    | Rs_retry
+    | Rs_ignore
+
+  type error = {
+      message: Operation_log.Entry.t;
+      recovery_strategy: recovery_strategy;
+    }
+  type 'a t = ('a, error) result
+
+  (** Make error with error message *)
+  let of_error ?(recovery_strategy=Rs_ignore) message = Error {
+      message = Operation_log.Entry.make ~log_type:Operation_log.Error message;
+      recovery_strategy;
+    }
 end

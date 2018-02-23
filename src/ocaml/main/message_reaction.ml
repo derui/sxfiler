@@ -44,10 +44,13 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
         | Ok _ -> Lwt.return @@ M.finish_execute_operation (Ok ())
         | Error err -> begin
             match err with
-            | `FsCopyError err -> Lwt.return @@ M.finish_execute_operation (Error err##toString)
+            | `FsCopyError err ->
+              let error = Js.to_string err##toString in
+              Lwt.return @@ M.finish_execute_operation @@ T.Operation_result.of_error error
           end
       )
 
+  (* refresh all panes *)
   let refresh_panes left right =
     let fs = Fs.resolve () in
     let left_wait, left_waker = Lwt.wait ()
@@ -58,7 +61,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
     Lwt.async (fun () -> fetch_files left_waker left <&> fetch_files right_waker right);
     left_wait >>= fun left -> right_wait >>= fun right ->
-    Lwt.return @@ M.finish_refresh_panes (T.Pane.to_js left, T.Pane.to_js right)
+    Lwt.return @@ M.finish_refresh_panes (Ok (T.Pane.to_js left, T.Pane.to_js right))
 
   let fetch_files pane path =
     let fs = Fs.resolve () in
@@ -68,16 +71,14 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       >>= fun pane -> Lwt.return @@ M.finish_files_in_directory (Ok (T.Pane.to_js pane))
     in
 
-    let lwt = Lwt.catch (fun () -> lwt) (fun err ->
+    Lwt.catch (fun () -> lwt) (fun err ->
         Firebug.console##log err;
         match err with
         | File_list.Not_directory f ->
           let module M = Sxfiler_common.Message in
-          Lwt.return @@ M.finish_files_in_directory (Error (Js.string f))
+          Lwt.return @@ M.finish_files_in_directory @@ T.Operation_result.of_error f
         | _ -> raise Unhandled_promise
       )
-    in
-    lwt
 
   let request_files_in_directory t pane path =
     let pane = T.Pane.of_js pane
@@ -156,10 +157,12 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     end
 
   let request_refresh_panes t = (t, Some (refresh_panes t.S.left_pane t.S.right_pane))
-  let finish_refresh_panes t (left_pane, right_pane) =
-    let left_pane = T.Pane.of_js left_pane
-        and right_pane = T.Pane.of_js right_pane in
-    ({t with S.left_pane; right_pane}, None)
+  let finish_refresh_panes t = function
+    | Ok (left_pane, right_pane) ->
+      let left_pane = T.Pane.of_js left_pane
+      and right_pane = T.Pane.of_js right_pane in
+      ({t with S.left_pane; right_pane}, None)
+    | Error err -> ({t with S.operation_log = T.Operation_log.add_entry t.S.operation_log ~entry:err.T.Operation_result.message}, None)
 
   let finish_operation t ret =
     ({t with S.operation = {t.S.operation with S.Operation.executing = false; next = None}},
