@@ -5,7 +5,6 @@ module N = Jsoo_node
 module Json_conf = struct
   type key_maps = {
     file_list: Yojson.Safe.json;
-    confirm_dialog: Yojson.Safe.json;
   } [@@deriving yojson]
 
   type t = {

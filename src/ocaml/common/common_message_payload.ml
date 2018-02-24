@@ -13,3 +13,9 @@ module Request_copy_file = struct
     same_name_behavior: same_name_behavior;
   }
 end
+
+module Request_delete_file = struct
+  type t = {
+    file: T.File_stat.js Js.t;
+  }
+end

@@ -6,11 +6,9 @@
       "h": ["Leave_directory"],
       "l": ["Enter_directory"],
       "q": ["Quit"],
+      "d": ["Delete"],
       "c": ["Copy"],
       "Tab": ["Move_to_another"]
-    },
-    "confirm_dialog": {
-      "Enter": ["Quit"]
     }
   }
 }

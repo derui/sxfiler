@@ -6,6 +6,7 @@ module P = Common_message_payload
 module Operation = struct
   type t =
     | Copy of P.Request_copy_file.t
+    | Delete of P.Request_delete_file.t
 end
 
 (** The type of message. This allows to pass to Javascript native functions all variant. *)

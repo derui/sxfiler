@@ -30,6 +30,15 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
   module Fs = Fs
   module S = C.State
 
+  let delete_file file =
+    let fs = Fs.resolve () in
+    let file = Js.to_string file##.filename in
+    let module Fs = N.Fs.Make(struct let instance = fs end) in
+    let open Minimal_monadic_caml.Result.Infix in
+    match Fs.unlinkSync file with
+    | Ok _ -> Lwt.return @@ M.finish_execute_operation (Ok ())
+    | Error _ -> Lwt.return @@ M.finish_execute_operation @@ T.Operation_result.of_error ""
+
   let copy_file src dest =
     let fs = Fs.resolve () in
     let src = Js.to_string src##.filename in
@@ -153,6 +162,12 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
           let src = payload.R.src
           and dest = Js.to_string payload.R.dest_dir in
           ({t with S.operation = {t.S.operation with S.Operation.executing = true}}, Some (copy_file src dest))
+        end
+      | M.Operation.Delete payload -> begin
+          let module R = C.Message_payload.Request_delete_file in
+          let file = payload.R.file in
+          ({t with S.operation = {t.S.operation with S.Operation.executing = true}},
+           Some (delete_file file))
         end
     end
 
