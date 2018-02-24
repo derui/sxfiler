@@ -30,6 +30,16 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
   module Fs = Fs
   module S = C.State
 
+  let move_file src dest =
+    let fs = Fs.resolve () in
+    let src = Js.to_string src##.filename in
+    let filename = Filename.basename src in
+    let dest = N.Path.resolve [dest; filename] in
+    let module Fs = N.Fs.Make(struct let instance = fs end) in
+    match Fs.renameSync src dest with
+    | Ok _ -> Lwt.return @@ M.finish_execute_operation (Ok ())
+    | Error _ -> Lwt.return @@ M.finish_execute_operation @@ T.Operation_result.of_error ""
+
   let delete_file file =
     let fs = Fs.resolve () in
     let file = Js.to_string file##.filename in
@@ -168,6 +178,12 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
           let file = payload.R.file in
           ({t with S.operation = {t.S.operation with S.Operation.executing = true}},
            Some (delete_file file))
+        end
+      | M.Operation.Move payload -> begin
+          let module R = C.Message_payload.Request_move_file in
+          let src = payload.R.src
+          and dest = Js.to_string payload.R.dest_dir in
+          ({t with S.operation = {t.S.operation with S.Operation.executing = true}}, Some (move_file src dest))
         end
     end
 

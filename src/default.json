@@ -8,6 +8,7 @@
       "q": ["Quit"],
       "d": ["Delete"],
       "c": ["Copy"],
+      "m": ["Move"],
       "Tab": ["Move_to_another"]
     }
   }

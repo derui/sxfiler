@@ -26,5 +26,15 @@ let to_message state = function
     C.Message.request_operation @@ C.Message.Operation.Delete P.Request_delete_file.({
         file;
       })
-  | Move | Delete -> failwith ""
+  | Move -> let pane = C.State.active_pane state in
+    let inactive_pane = C.State.inactive_pane state in
+    let file = C.State.Pane.pointed_file pane |> C.Types.File_stat.to_js in
+    let module P = C.Message_payload in
+    let module Pane = C.Types.Pane in
+
+    C.Message.request_operation @@ C.Message.Operation.Move P.Request_move_file.({
+        src = file;
+        dest_dir = Js.string inactive_pane.Pane.directory;
+        same_name_behavior = Overwrite
+      })
   | Quit -> C.Message.request_quit_application

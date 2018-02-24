@@ -7,6 +7,7 @@ module Operation = struct
   type t =
     | Copy of P.Request_copy_file.t
     | Delete of P.Request_delete_file.t
+    | Move of P.Request_move_file.t
 end
 
 (** The type of message. This allows to pass to Javascript native functions all variant. *)

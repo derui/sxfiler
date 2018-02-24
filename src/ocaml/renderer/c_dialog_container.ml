@@ -22,6 +22,12 @@ let make_dialog ~props = function
                               val title = Js.string "Confirm delete file"
                               val content = Js.string "Can delete file?"
                             end) C_confirmation_dialog.component
+  | M.Operation.Move _ -> R.element ~key:"dialog" ~props:(object%js
+                            val state = props##.state
+                            val dispatch = props##.dispatch
+                            val title = Js.string "Confirm move file"
+                            val content = Js.string "Can move file?"
+                          end) C_confirmation_dialog.component
 
 let component = Component.make (fun props ->
     let state = props##.state in
