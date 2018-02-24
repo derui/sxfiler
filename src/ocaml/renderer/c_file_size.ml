@@ -40,7 +40,7 @@ module File_size = struct
 
   let of_size size =
     let rec calc_unit size current =
-      if 0.0 < size && size < 1000.0 then (current, size)
+      if 0.0 <= size && size < 1000.0 then (current, size)
       else begin
         match next_unit current with
         | None -> (current, size)
