@@ -10,6 +10,7 @@ dev-repo: "git+https://github.com/derui/sxfiler"
 tags: []
 build: [
   ["jbuilder" "build" "-p" name "-j" jobs]
+  ["jbuilder" "runtest" "-p" name] {test}
 ]
 depends: [
   "jbuilder" {build & >= "1.0+beta16"}
@@ -25,5 +26,6 @@ depends: [
   "ocaml-flux-frp"
   "jsoo_node"
   "minimal-monadic-caml"
+  "snap-shot-it_of_ocaml" {test}
 ]
 available: ["ocaml" >= "4.05.0"]

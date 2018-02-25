@@ -27,7 +27,8 @@ module.exports.testWithKarma = testWithKarma;
 
 if (require.main === module) {
   (function() {
-    const bundledTests = ['_build/default/test/kbd/test_sxfiler_kbd.bc.js'];
+    const bundledTests = ['_build/default/test/kbd/test_sxfiler_kbd.bc.js',
+                         '_build/default/test/renderer/test_sxfiler_renderer.bc.js'];
 
     bundledTests.forEach(testWithMocha);
     testWithKarma();

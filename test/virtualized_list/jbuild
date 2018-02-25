@@ -2,8 +2,7 @@
 
 (alias
  ((name runtest)
-  (deps (test_sxfiler_virtualized_list.bc.js))
-  ))
+  (deps (test_sxfiler_virtualized_list.bc.js))))
 
 (executable
  ((name test_sxfiler_virtualized_list)

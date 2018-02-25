@@ -6,7 +6,9 @@
   "directories": {
     "test": "test"
   },
-  "dependencies": {},
+  "dependencies": {
+    "react-test-renderer": "^16.2.0"
+  },
   "devDependencies": {
     "ajv": "^5.2.2",
     "chokidar": "^2.0.0",
@@ -24,6 +26,7 @@
     "puppeteer": "^1.0.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "snap-shot-it": "^4.0.1",
     "username": "^3.0.0",
     "webpack": "^3.10.0"
   },

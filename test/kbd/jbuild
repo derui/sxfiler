@@ -2,8 +2,7 @@
 
 (alias
  ((name runtest)
-  (deps (test_sxfiler_kbd.bc.js))
-  ))
+  (deps (test_sxfiler_kbd.bc.js))))
 
 (executable
  ((name test_sxfiler_kbd)
