@@ -1,3 +1,4 @@
+open Sxfiler_renderer
 module C = Sxfiler_common
 module R = Reactjscaml
 

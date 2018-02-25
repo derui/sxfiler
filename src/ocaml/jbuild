@@ -1,0 +1,12 @@
+(jbuild_version 1)
+
+(alias
+ ((name js)
+  (deps (sxfiler_renderer_main.bc.js))))
+
+(executable
+ ((name sxfiler_renderer_main)
+  (modules sxfiler_renderer_main)
+  (libraries (sxfiler.renderer))
+  (js_of_ocaml ((flags ("--pretty"))))
+  (preprocess (pps (js_of_ocaml-ppx ppx_variants_conv)))))
