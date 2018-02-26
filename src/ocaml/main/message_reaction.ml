@@ -18,14 +18,14 @@ end
 
 let refresh_pane ?dir ~fs pane =
   let open Lwt.Infix in
-  let absolute = match dir with
+  let directory = match dir with
     | Some dir -> N.Path.resolve [dir]
     | None -> N.Path.resolve [pane.T.Pane.directory] in
-  File_list.get_file_stats ~fs absolute
+  File_list.get_file_stats ~fs directory
   >>= (fun file_list ->
-      let cursor_pos = if absolute <> pane.T.Pane.directory then None
+      let cursor_pos = if directory <> pane.T.Pane.directory then None
             else Some pane.T.Pane.cursor_pos in
-      Lwt.return @@ T.Pane.make ?cursor_pos ~file_list ~directory:absolute ~id:pane.T.Pane.id ()
+      Lwt.return @@ T.Pane.make ?cursor_pos ~file_list ~directory ~id:pane.T.Pane.id ()
     )
 
 module Make(Fs:Fs) : S with module Fs = Fs = struct
