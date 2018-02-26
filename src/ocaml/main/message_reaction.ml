@@ -23,7 +23,9 @@ let refresh_pane ?dir ~fs pane =
     | None -> N.Path.resolve [pane.T.Pane.directory] in
   File_list.get_file_stats ~fs absolute
   >>= (fun file_list ->
-      Lwt.return @@ T.Pane.make ~file_list ~directory:absolute ~id:pane.T.Pane.id ()
+      let cursor_pos = if absolute <> pane.T.Pane.directory then None
+            else Some pane.T.Pane.cursor_pos in
+      Lwt.return @@ T.Pane.make ?cursor_pos ~file_list ~directory:absolute ~id:pane.T.Pane.id ()
     )
 
 module Make(Fs:Fs) : S with module Fs = Fs = struct
