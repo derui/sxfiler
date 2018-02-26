@@ -67,3 +67,101 @@ exports['File size component should ignore fraction value less than 0.1 1'] = {
   "_owner": null,
   "_store": {}
 }
+
+exports['File mode component should show current permission of file 1'] = {
+  "type": "span",
+  "key": null,
+  "ref": null,
+  "props": {
+    "className": "fp-FileItem_FileMode",
+    "children": [
+      "-rw-r--r--"
+    ]
+  },
+  "_owner": null,
+  "_store": {}
+}
+
+exports['File mode component should be hyphen if no any permission 1'] = {
+  "type": "span",
+  "key": null,
+  "ref": null,
+  "props": {
+    "className": "fp-FileItem_FileMode",
+    "children": [
+      "----------"
+    ]
+  },
+  "_owner": null,
+  "_store": {}
+}
+
+exports['File mode component should be able to show symlink bit if mode contains symlink bit 1'] = {
+  "type": "span",
+  "key": null,
+  "ref": null,
+  "props": {
+    "className": "fp-FileItem_FileMode",
+    "children": [
+      "lrwxrwxrwx"
+    ]
+  },
+  "_owner": null,
+  "_store": {}
+}
+
+exports['File mode component should be able to show directory bit if mode contains directory bit 1'] = {
+  "type": "span",
+  "key": null,
+  "ref": null,
+  "props": {
+    "className": "fp-FileItem_FileMode",
+    "children": [
+      "drwxr-xr-x"
+    ]
+  },
+  "_owner": null,
+  "_store": {}
+}
+
+exports['File name component should who filename normally 1'] = {
+  "type": "span",
+  "key": null,
+  "ref": null,
+  "props": {
+    "className": "fp-FileItem_FileName",
+    "children": [
+      "sample.txt"
+    ]
+  },
+  "_owner": null,
+  "_store": {}
+}
+
+exports['File name component should make another color if item is directory 1'] = {
+  "type": "span",
+  "key": null,
+  "ref": null,
+  "props": {
+    "className": "fp-FileItem_FileName fp-FileItem_FileName-Directory",
+    "children": [
+      "sample"
+    ]
+  },
+  "_owner": null,
+  "_store": {}
+}
+
+exports['File name component should make another color if item is symbolic link 1'] = {
+  "type": "span",
+  "key": null,
+  "ref": null,
+  "props": {
+    "className": "fp-FileItem_FileName fp-FileItem_FileName-Symlink",
+    "children": [
+      "sample.txt"
+    ]
+  },
+  "_owner": null,
+  "_store": {}
+}

@@ -3,6 +3,6 @@ open Mocha_of_ocaml
 module R = Reactjscaml
 
 let () =
-  "Sxfiler renderer test" >::: [
-  ];
-  Test_c_file_size.suite ()
+  Test_c_file_size.suite ();
+  Test_c_file_mode.suite ();
+  Test_c_file_name.suite ()

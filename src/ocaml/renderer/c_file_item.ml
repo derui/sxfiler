@@ -32,7 +32,7 @@ let component = Component.make {
             R.element ~key:"timestamp" ~props:(object%js val timestamp = stat.T.stat##.mtime end) C_file_timestamp.component;
             R.element ~key:"size" ~props:(object%js val size = stat.T.stat##.size end) C_file_size.component;
             R.element ~key:"name" ~props:(object%js
-              val file_name = stat.T.filename
+              val fileName = Js.string stat.T.filename
               val isDirectory = stat.T.stat##.isDirectory
               val isSymbolicLink = stat.T.stat##.isSymbolicLink
             end) C_file_name.component;
