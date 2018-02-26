@@ -1,3 +1,4 @@
+open Sxfiler_main
 module E = Sxfiler_common.Event
 module FFI = Sxfiler_common.Ffi
 module M = Modules

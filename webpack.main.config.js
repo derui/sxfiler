@@ -11,7 +11,7 @@ const NodeTargetPlugin = require('webpack/lib/node/NodeTargetPlugin');
 
 module.exports = {
   bail: false,
-  entry: './_build/default/src/ocaml/sxfiler_renderer_main.bc.js',
+  entry: './_build/default/src/ocaml/sxfiler_renderer_entry.bc.js',
   output: output,
 
   target: function(compiler) {

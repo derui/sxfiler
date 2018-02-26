@@ -2,5 +2,5 @@
   "name": "sxfiler",
   "version": "1.0.0",
   "description": "Simple and Extensible two screen filer by Electron",
-  "main": "sxfiler_main.bc.js"
+  "main": "sxfiler_main_entry.bc.js"
 }

@@ -26,7 +26,7 @@ function buildOCaml(options = defaultOptions) {
 
     execFileSync(
       'cpx',
-      [`./_build/default/src/ocaml/main/sxfiler_main.bc.js`, './dist'],
+      [`./_build/default/src/ocaml/sxfiler_main_entry.bc.js`, './dist'],
       { stdio: 'inherit' }
     );
   } catch (e) {

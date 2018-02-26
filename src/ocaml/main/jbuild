@@ -1,12 +1,8 @@
 (jbuild_version 1)
 
-(alias
- ((name js)
-  (deps (sxfiler_main.bc.js))))
-
-(executable
+(library
  ((name sxfiler_main)
-  (public_name sxfiler_main)
+  (public_name sxfiler.main)
   (libraries (js_of_ocaml js_of_ocaml.weak
               yojson ppx_deriving_yojson.runtime js_of_ocaml-lwt lwt ocaml-flux-frp
               minimal-monadic-caml
