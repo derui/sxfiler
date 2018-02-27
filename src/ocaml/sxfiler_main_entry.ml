@@ -70,7 +70,7 @@ let () =
                     let pane = P.to_js pane
                     and dir = Js.string pane.P.directory
                     and loc = T.Pane_location.to_js loc in
-                    let message = M.request_files_in_directory (pane, dir, loc) in
+                    let message = M.update_pane_request (pane, dir, loc) in
                     Flux_runner.send runner message
                   ) [(initial_state.S.left_pane, `Left); (initial_state.S.right_pane, `Right)]
               )

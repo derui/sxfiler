@@ -39,8 +39,8 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     let dest = N.Path.resolve [dest; filename] in
     let module Fs = N.Fs.Make(struct let instance = fs end) in
     match Fs.renameSync src dest with
-    | Ok _ -> Lwt.return @@ M.finish_execute_operation (Ok ())
-    | Error _ -> Lwt.return @@ M.finish_execute_operation @@ T.Operation_result.of_error ""
+    | Ok _ -> Lwt.return @@ M.execute_operation_response (Ok ())
+    | Error _ -> Lwt.return @@ M.execute_operation_response @@ T.Operation_result.of_error ""
 
   let delete_file file =
     let fs = Fs.resolve () in
@@ -48,8 +48,8 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     let module Fs = N.Fs.Make(struct let instance = fs end) in
     let open Minimal_monadic_caml.Result.Infix in
     match Fs.unlinkSync file with
-    | Ok _ -> Lwt.return @@ M.finish_execute_operation (Ok ())
-    | Error _ -> Lwt.return @@ M.finish_execute_operation @@ T.Operation_result.of_error ""
+    | Ok _ -> Lwt.return @@ M.execute_operation_response (Ok ())
+    | Error _ -> Lwt.return @@ M.execute_operation_response @@ T.Operation_result.of_error ""
 
   let copy_file src dest =
     let fs = Fs.resolve () in
@@ -62,12 +62,12 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     let open Lwt.Infix in
     Fs.copy_file ~src ~dest () >>= (fun ret ->
         match ret with
-        | Ok _ -> Lwt.return @@ M.finish_execute_operation (Ok ())
+        | Ok _ -> Lwt.return @@ M.execute_operation_response (Ok ())
         | Error err -> begin
             match err with
             | `FsCopyError err ->
               let error = Js.to_string err##toString in
-              Lwt.return @@ M.finish_execute_operation @@ T.Operation_result.of_error error
+              Lwt.return @@ M.execute_operation_response @@ T.Operation_result.of_error error
           end
       )
 
@@ -78,18 +78,18 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     and right_wait, right_waker = Lwt.wait () in
 
     let open Lwt.Infix in
-    let fetch_files waker pane = refresh_pane ~fs pane >|= Lwt.wakeup waker in
+    let refresh_pane' waker pane = refresh_pane ~fs pane >|= Lwt.wakeup waker in
 
-    Lwt.async (fun () -> fetch_files left_waker left <&> fetch_files right_waker right);
+    Lwt.async (fun () -> refresh_pane' left_waker left <&> refresh_pane' right_waker right);
     left_wait >>= fun left -> right_wait >>= fun right ->
-    Lwt.return @@ M.finish_refresh_panes (Ok (T.Pane.to_js left, T.Pane.to_js right))
+    Lwt.return @@ M.refresh_panes_response (Ok (T.Pane.to_js left, T.Pane.to_js right))
 
-  let fetch_files ~loc ~pane ~path =
+  let update_pane ~loc ~pane ~path =
     let fs = Fs.resolve () in
 
     let open Lwt.Infix in
     let lwt = refresh_pane ~dir:path ~fs pane
-      >>= fun pane -> Lwt.return @@ M.finish_files_in_directory (Ok (T.Pane.to_js pane, loc))
+      >>= fun pane -> Lwt.return @@ M.update_pane_response (Ok (T.Pane.to_js pane, loc))
     in
 
     Lwt.catch (fun () -> lwt) (fun err ->
@@ -97,16 +97,16 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
         match err with
         | File_list.Not_directory f ->
           let module M = Sxfiler_common.Message in
-          Lwt.return @@ M.finish_files_in_directory @@ T.Operation_result.of_error f
+          Lwt.return @@ M.update_pane_response @@ T.Operation_result.of_error f
         | _ -> raise Unhandled_promise
       )
 
-  let request_files_in_directory t pane path loc =
+  let update_pane_request t pane path loc =
     let pane = T.Pane.of_js pane
     and path = Js.to_string path in
-    ({t with S.waiting = true}, Some (fetch_files ~pane ~path ~loc))
+    ({t with S.waiting = true}, Some (update_pane ~pane ~path ~loc))
 
-  let finish_files_in_directory t ret = match ret with
+  let update_pane_response t ret = match ret with
     | Ok (pane, loc) -> begin
         let pane = T.Pane.of_js pane in
         match T.Pane_location.of_js loc with
@@ -132,7 +132,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       let pane = S.active_pane t in
       let module P = T.Pane in
       let next_dir = Filename.dirname pane.P.directory in
-      Some ((T.Pane.to_js pane, Js.string next_dir, T.Pane_location.to_js t.S.active_pane) |> M.request_files_in_directory |> Lwt.return)
+      Some (M.update_pane_request (T.Pane.to_js pane, Js.string next_dir, T.Pane_location.to_js t.S.active_pane) |> Lwt.return)
     in
     (t, message)
 
@@ -146,8 +146,8 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       >>= fun item ->
       if item.T.File_stat.stat##.isDirectory |> Js.to_bool then begin
         let target_dir = item.T.File_stat.filename in
-        Some (M.request_files_in_directory (T.Pane.to_js pane, Js.string target_dir,
-                                           T.Pane_location.to_js t.S.active_pane) |> Lwt.return)
+        Some (M.update_pane_request (T.Pane.to_js pane, Js.string target_dir,
+                                     T.Pane_location.to_js t.S.active_pane) |> Lwt.return)
       end else
         None
     in
@@ -161,7 +161,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     if confirmed then begin
       match t.S.operation.S.Operation.next with
       | None -> ({t with S.operation = {t.S.operation with S.Operation.confirming = false;executing = false}}, None)
-      | Some op -> ({t with S.operation = {t.S.operation with S.Operation.confirming = false}}, Some (Lwt.return @@ M.request_execute_operation op))
+      | Some op -> ({t with S.operation = {t.S.operation with S.Operation.confirming = false}}, Some (Lwt.return @@ M.execute_operation_request op))
     end else ({t with S.operation = {S.Operation.confirming = false; executing = false;next = None}}, None)
 
   let execute_operation t op =
@@ -198,21 +198,21 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
   let finish_operation t ret =
     ({t with S.operation = {t.S.operation with S.Operation.executing = false; next = None}},
-     Some (Lwt.return M.request_refresh_panes))
+     Some (Lwt.return M.refresh_panes_request))
 
   let react t = function
-    | M.Request_files_in_directory (pane, path, loc) -> request_files_in_directory t pane path loc
-    | M.Finish_files_in_directory ret -> finish_files_in_directory t ret
-    | M.Request_refresh_panes -> request_refresh_panes t
-    | M.Finish_refresh_panes payload -> finish_refresh_panes t payload
+    | M.Update_pane_request (pane, path, loc) -> update_pane_request t pane path loc
+    | M.Update_pane_response ret -> update_pane_response t ret
+    | M.Refresh_panes_request -> request_refresh_panes t
+    | M.Refresh_panes_response payload -> finish_refresh_panes t payload
     | M.Select_next_item v -> move_cursor t @@ abs v
     | M.Select_prev_item v -> move_cursor t (-1 * abs v)
     | M.Leave_directory -> leave_directory t
     | M.Enter_directory -> enter_directory t
-    | M.Request_quit_application -> ({t with S.terminated = true}, None)
-    | M.Move_to_another -> move_to_another t
+    | M.Quit_application -> ({t with S.terminated = true}, None)
+    | M.Change_active_pane -> move_to_another t
     | M.Request_operation op -> request_operation t op
     | M.Confirm_operation confirmed -> confirm_operation t confirmed
-    | M.Request_execute_operation op -> execute_operation t op
-    | M.Finish_execute_operation ret -> finish_operation t ret
+    | M.Execute_operation_request op -> execute_operation t op
+    | M.Execute_operation_response ret -> finish_operation t ret
 end

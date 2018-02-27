@@ -8,7 +8,7 @@ let to_message state = function
   | Prev_item -> C.Message.select_prev_item 1
   | Leave_directory -> C.Message.leave_directory
   | Enter_directory -> C.Message.enter_directory
-  | Move_to_another -> C.Message.Move_to_another
+  | Change_active_pane -> C.Message.change_active_pane
   | Copy -> let pane = C.State.active_pane state in
     let inactive_pane = C.State.inactive_pane state in
     let file = C.State.Pane.pointed_file pane |> C.Types.File_stat.to_js in
@@ -37,4 +37,4 @@ let to_message state = function
         dest_dir = Js.string inactive_pane.Pane.directory;
         same_name_behavior = Overwrite
       })
-  | Quit -> C.Message.request_quit_application
+  | Quit -> C.Message.quit_application

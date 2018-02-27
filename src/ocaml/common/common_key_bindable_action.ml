@@ -3,7 +3,7 @@ type t =
   | Prev_item
   | Leave_directory
   | Enter_directory
-  | Move_to_another
+  | Change_active_pane
   | Copy
   | Move
   | Delete
