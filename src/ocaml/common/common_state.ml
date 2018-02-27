@@ -36,21 +36,6 @@ module Operation = struct
     }
 end
 
-module Active_pane_pointer = struct
-  type t = [`Left | `Right] [@@deriving variants]
-  type js = Js.js_string
-
-  let to_js = function
-    | `Left as v -> Js.string @@ Variants.to_name v
-    | `Right as v -> Js.string @@ Variants.to_name v
-
-  let of_js js =
-    match Js.to_string js with
-    | v when v = Variants.to_name `Left -> `Left
-    | v when v = Variants.to_name `Right -> `Right
-    | _ -> failwith "Unknown type"
-end
-
 module Dialog_state = struct
   type t =
     | Open of T.dialog_type | Close [@@deriving variants]
@@ -74,20 +59,19 @@ end
 
 (* All state of this application *)
 type t = {
-  active_pane: Active_pane_pointer.t;
+  active_pane: T.Pane_location.t;
   left_pane: T.Pane.t;
   right_pane: T.Pane.t;
   waiting: bool;
   terminated: bool;
   config: Config.t;
   operation_log: T.Operation_log.t;
-
   dialog_state: Dialog_state.t;
   operation: Operation.t
 }
 
 class type js = object
-  method activePane: Active_pane_pointer.js Js.t Js.readonly_prop
+  method activePane: T.Pane_location.js Js.t Js.readonly_prop
   method leftPane: T.Pane.js Js.t Js.readonly_prop
   method rightPane: T.Pane.js Js.t Js.readonly_prop
   method waiting: bool Js.t Js.readonly_prop
@@ -115,7 +99,7 @@ let empty =
   }
 
 let to_js : t -> js Js.t = fun t -> object%js
-  val activePane = Active_pane_pointer.to_js t.active_pane
+  val activePane = T.Pane_location.to_js t.active_pane
   val leftPane = T.Pane.to_js t.left_pane
   val rightPane = T.Pane.to_js t.right_pane
   val waiting = Js.bool t.waiting
@@ -128,7 +112,7 @@ end
 
 let of_js : js Js.t -> t = fun t ->
   {
-    active_pane = Active_pane_pointer.of_js t##.activePane;
+    active_pane = T.Pane_location.of_js t##.activePane;
     left_pane = T.Pane.of_js t##.leftPane;
     right_pane = T.Pane.of_js t##.rightPane;
     waiting = Js.to_bool t##.waiting;

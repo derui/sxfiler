@@ -226,3 +226,18 @@ module Operation_result = struct
       recovery_strategy;
     }
 end
+
+module Pane_location = struct
+  type t = [`Left | `Right] [@@deriving variants]
+  type js = Js.js_string
+
+  let to_js = function
+    | `Left as v -> Js.string @@ Variants.to_name v
+    | `Right as v -> Js.string @@ Variants.to_name v
+
+  let of_js js =
+    match Js.to_string js with
+    | v when v = Variants.to_name `Left -> `Left
+    | v when v = Variants.to_name `Right -> `Right
+    | _ -> failwith "Unknown type"
+end

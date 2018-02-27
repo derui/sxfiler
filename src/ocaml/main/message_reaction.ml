@@ -84,12 +84,12 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     left_wait >>= fun left -> right_wait >>= fun right ->
     Lwt.return @@ M.finish_refresh_panes (Ok (T.Pane.to_js left, T.Pane.to_js right))
 
-  let fetch_files pane path =
+  let fetch_files ~loc ~pane ~path =
     let fs = Fs.resolve () in
 
     let open Lwt.Infix in
     let lwt = refresh_pane ~dir:path ~fs pane
-      >>= fun pane -> Lwt.return @@ M.finish_files_in_directory (Ok (T.Pane.to_js pane))
+      >>= fun pane -> Lwt.return @@ M.finish_files_in_directory (Ok (T.Pane.to_js pane, loc))
     in
 
     Lwt.catch (fun () -> lwt) (fun err ->
@@ -101,19 +101,17 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
         | _ -> raise Unhandled_promise
       )
 
-  let request_files_in_directory t pane path =
+  let request_files_in_directory t pane path loc =
     let pane = T.Pane.of_js pane
     and path = Js.to_string path in
-    ({t with S.waiting = true}, Some (fetch_files pane path))
+    ({t with S.waiting = true}, Some (fetch_files ~pane ~path ~loc))
 
   let finish_files_in_directory t ret = match ret with
-    | Ok pane -> begin (
+    | Ok (pane, loc) -> begin
         let pane = T.Pane.of_js pane in
-        {t with
-         S.waiting = false;
-         left_pane = if T.Pane.equal t.S.left_pane pane then pane else t.S.left_pane;
-         right_pane = if T.Pane.equal t.S.right_pane pane then pane else t.S.right_pane;
-        }, None)
+        match T.Pane_location.of_js loc with
+        | `Left -> ({t with S.waiting = false; left_pane = pane}, None)
+        | `Right -> ({t with S.waiting = false; right_pane = pane}, None)
       end
     | Error _ -> failwith "error"
 
@@ -134,7 +132,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       let pane = S.active_pane t in
       let module P = T.Pane in
       let next_dir = Filename.dirname pane.P.directory in
-      Some ((T.Pane.to_js pane, Js.string next_dir) |> M.request_files_in_directory |> Lwt.return)
+      Some ((T.Pane.to_js pane, Js.string next_dir, T.Pane_location.to_js t.S.active_pane) |> M.request_files_in_directory |> Lwt.return)
     in
     (t, message)
 
@@ -148,7 +146,8 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       >>= fun item ->
       if item.T.File_stat.stat##.isDirectory |> Js.to_bool then begin
         let target_dir = item.T.File_stat.filename in
-        Some (M.request_files_in_directory (T.Pane.to_js pane, Js.string target_dir) |> Lwt.return)
+        Some (M.request_files_in_directory (T.Pane.to_js pane, Js.string target_dir,
+                                           T.Pane_location.to_js t.S.active_pane) |> Lwt.return)
       end else
         None
     in
@@ -202,7 +201,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
      Some (Lwt.return M.request_refresh_panes))
 
   let react t = function
-    | M.Request_files_in_directory (pane, path) -> request_files_in_directory t pane path
+    | M.Request_files_in_directory (pane, path, loc) -> request_files_in_directory t pane path loc
     | M.Finish_files_in_directory ret -> finish_files_in_directory t ret
     | M.Request_refresh_panes -> request_refresh_panes t
     | M.Finish_refresh_panes payload -> finish_refresh_panes t payload

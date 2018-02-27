@@ -12,8 +12,8 @@ end
 
 (** The type of message. This allows to pass to Javascript native functions all variant. *)
 type t =
-    Request_files_in_directory of (T.Pane.js Js.t * Js.js_string Js.t)
-  | Finish_files_in_directory of T.Pane.js Js.t T.Operation_result.t
+    Request_files_in_directory of (T.Pane.js Js.t * Js.js_string Js.t * T.Pane_location.js Js.t)
+  | Finish_files_in_directory of (T.Pane.js Js.t * T.Pane_location.js Js.t) T.Operation_result.t
   | Request_refresh_panes
   | Finish_refresh_panes of (T.Pane.js Js.t * T.Pane.js Js.t) T.Operation_result.t
   | Request_quit_application

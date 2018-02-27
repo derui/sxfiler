@@ -65,13 +65,14 @@ let () =
           E.on_did_finish_load ~browser_window:bw
             ~listener:(fun _ ->
                 let module S = Sxfiler_common.State in
-                List.iter (fun pane ->
+                List.iter (fun (pane, loc) ->
                     let module P = Sxfiler_common.Types.Pane in
                     let pane = P.to_js pane
-                    and dir = Js.string pane.P.directory in
-                    let message = M.request_files_in_directory (pane, dir) in
+                    and dir = Js.string pane.P.directory
+                    and loc = T.Pane_location.to_js loc in
+                    let message = M.request_files_in_directory (pane, dir, loc) in
                     Flux_runner.send runner message
-                  ) [initial_state.S.left_pane; initial_state.S.right_pane]
+                  ) [(initial_state.S.left_pane, `Left); (initial_state.S.right_pane, `Right)]
               )
       ) in
     app##on channel listener;
