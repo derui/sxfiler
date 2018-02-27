@@ -21,7 +21,7 @@ let subscription ipc t =
   let module S = Sxfiler_common.State in
   Lwt.return @@ E.IPC.(send ~channel:(update (S.to_js t)) ~ipc)
 
-let make_initial_pane id = T.Pane.make ~id ~directory:"." ()
+let make_initial_pane = T.Pane.make ~directory:"." ()
 
 let () =
   M.crash_reporter##start (Js.Optdef.return @@ object%js

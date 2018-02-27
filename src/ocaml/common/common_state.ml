@@ -3,6 +3,7 @@ module T = Common_types
 module Config = Common_config
 module Thread = Lwt
 
+(** State-inner modules *)
 module Operation = struct
   type t = {
     next: M.Operation.t option;
@@ -99,7 +100,7 @@ class type js = object
 end
 
 let empty =
-  let pane () = T.Pane.make ~id:(T.Pane_id.make ()) ~directory:"." () in
+  let pane () = T.Pane.make ~directory:"." () in
   {
     active_pane = `Left;
     left_pane = pane ();

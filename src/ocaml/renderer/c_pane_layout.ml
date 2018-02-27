@@ -12,16 +12,16 @@ module Component = R.Component.Make_stateless (struct
 let component = Component.make (fun props ->
     let state = props##.state in
     let module P = T.Pane in
-    let create_pane_element pane selected =
-      R.element ~key:(T.Pane_id.to_string pane.P.id) ~props:(object%js
+    let create_pane_element key pane selected =
+      R.element ~key ~props:(object%js
         val pane = pane
         val selected = selected
       end) C_file_list_pane.component
     in
     let left_pane = state.C.State.left_pane
     and right_pane = state.C.State.right_pane in
-    let left_pane = create_pane_element left_pane @@ C.State.is_left_active state
-    and right_pane = create_pane_element right_pane @@ C.State.is_right_active state in
+    let left_pane = create_pane_element "left" left_pane @@ C.State.is_left_active state
+    and right_pane = create_pane_element "right" right_pane @@ C.State.is_right_active state in
     let children = [|
       left_pane;
       right_pane;

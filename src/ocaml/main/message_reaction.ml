@@ -25,7 +25,7 @@ let refresh_pane ?dir ~fs pane =
   >>= (fun file_list ->
       let cursor_pos = if directory <> pane.T.Pane.directory then None
             else Some pane.T.Pane.cursor_pos in
-      Lwt.return @@ T.Pane.make ?cursor_pos ~file_list ~directory ~id:pane.T.Pane.id ()
+      Lwt.return @@ T.Pane.make ?cursor_pos ~file_list ~directory ()
     )
 
 module Make(Fs:Fs) : S with module Fs = Fs = struct
