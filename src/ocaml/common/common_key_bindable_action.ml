@@ -7,5 +7,6 @@ type t =
   | Copy
   | Move
   | Delete
+  | Rename
   | Quit
 [@@deriving yojson]
