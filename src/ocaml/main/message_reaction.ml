@@ -24,7 +24,7 @@ let refresh_pane ?dir ~fs pane =
   File_list.get_file_stats ~fs directory
   >>= (fun file_list ->
       let cursor_pos = if directory <> pane.T.Pane.directory then None
-            else Some pane.T.Pane.cursor_pos in
+        else Some pane.T.Pane.cursor_pos in
       Lwt.return @@ T.Pane.make ?cursor_pos ~file_list ~directory ()
     )
 
@@ -155,50 +155,50 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
   let move_to_another t = (S.swap_active_pane t, None)
   let request_operation t op =
-    ({t with S.operation = {S.Operation.confirming = true; executing = false;next = Some op}}, None)
+    ({t with S.operation = S.Operation.request t.S.operation op}, None)
 
   let confirm_operation t confirmed =
     if confirmed then begin
-      match t.S.operation.S.Operation.next with
-      | None -> ({t with S.operation = {t.S.operation with S.Operation.confirming = false;executing = false}}, None)
-      | Some op -> ({t with S.operation = {t.S.operation with S.Operation.confirming = false}}, Some (Lwt.return @@ M.execute_operation_request op))
-    end else ({t with S.operation = {S.Operation.confirming = false; executing = false;next = None}}, None)
+      let next = S.(Operation.next t.operation) in
+      let t = {t with S.operation = S.Operation.confirm t.S.operation} in
+      match next with
+      | None -> (t, None)
+      | Some op -> (t, Some (Lwt.return @@ M.execute_operation_request op))
+    end else ({t with S.operation = S.Operation.cancel t.S.operation}, None)
 
-  let execute_operation t op =
-    if t.S.operation.S.Operation.executing then (t, None)
-    else begin
-      match op with
+  let execute_operation t = function
       | M.Operation.Copy payload -> begin
           let module R = C.Message_payload.Request_copy_file in
           let src = payload.R.src
           and dest = Js.to_string payload.R.dest_dir in
-          ({t with S.operation = {t.S.operation with S.Operation.executing = true}}, Some (copy_file src dest))
+          ({t with S.operation = S.Operation.execute t.S.operation}, Some (copy_file src dest))
         end
       | M.Operation.Delete payload -> begin
           let module R = C.Message_payload.Request_delete_file in
           let file = payload.R.file in
-          ({t with S.operation = {t.S.operation with S.Operation.executing = true}},
-           Some (delete_file file))
+          ({t with S.operation = S.Operation.execute t.S.operation}, Some (delete_file file))
         end
       | M.Operation.Move payload -> begin
           let module R = C.Message_payload.Request_move_file in
           let src = payload.R.src
           and dest = Js.to_string payload.R.dest_dir in
-          ({t with S.operation = {t.S.operation with S.Operation.executing = true}}, Some (move_file src dest))
+          ({t with S.operation = S.Operation.execute t.S.operation}, Some (move_file src dest))
         end
-    end
+      | M.Operation.Rename payload -> failwith "not implement"
 
   let request_refresh_panes t = (t, Some (refresh_panes t.S.left_pane t.S.right_pane))
   let finish_refresh_panes t = function
-    | Ok (left_pane, right_pane) ->
-      let left_pane = T.Pane.of_js left_pane
-      and right_pane = T.Pane.of_js right_pane in
-      ({t with S.left_pane; right_pane}, None)
-    | Error err -> ({t with S.operation_log = T.Operation_log.add_entry t.S.operation_log ~entry:err.T.Operation_result.message}, None)
+    | Ok (left_pane, right_pane) -> begin
+        let left_pane = T.Pane.of_js left_pane
+        and right_pane = T.Pane.of_js right_pane in
+        ({t with S.left_pane; right_pane}, None)
+      end
+    | Error err ->
+      let entry = err.T.Operation_result.message in
+      ({t with S.operation_log = T.Operation_log.add_entry t.S.operation_log ~entry}, None)
 
   let finish_operation t ret =
-    ({t with S.operation = {t.S.operation with S.Operation.executing = false; next = None}},
-     Some (Lwt.return M.refresh_panes_request))
+    ({t with S.operation = S.Operation.finish t.S.operation}, Some (Lwt.return M.refresh_panes_request))
 
   let react t = function
     | M.Update_pane_request (pane, path, loc) -> update_pane_request t pane path loc

@@ -4,7 +4,44 @@ module Config = Common_config
 module Thread = Lwt
 
 (** State-inner modules *)
-module Operation = struct
+module Operation : sig
+  (** Type of Operation *)
+  type t
+
+  (** JS binding type of operation *)
+  class type js = object
+    method confirming : bool Js.t Js.readonly_prop
+    method executing : bool Js.t Js.readonly_prop
+    method next : M.Operation.t Js.opt Js.readonly_prop
+  end
+
+  (** Get next operation *)
+  val next : t -> M.Operation.t option
+
+  (** request operation *)
+  val request : t -> M.Operation.t -> t
+
+  (** confirm requested operation *)
+  val confirm : t -> t
+
+  (** cancel current requested operation *)
+  val cancel : t -> t
+
+  (** Update execution status as execute *)
+  val execute : t -> t
+
+  (** Update execution status as finish *)
+  val finish : t -> t
+
+  (** Get empty operation *)
+  val empty : t
+
+  (*+ Convert type to Js binding *)
+  val to_js : t -> js Js.t
+
+  (*+ Convert Js binding to type *)
+  val of_js : js Js.t -> t
+end = struct
   type t = {
     next: M.Operation.t option;
     confirming: bool;
@@ -16,6 +53,16 @@ module Operation = struct
     method confirming: bool Js.t Js.readonly_prop
     method executing: bool Js.t Js.readonly_prop
   end
+
+  let next t = t.next
+  let request t op = {next = Some op; executing = false; confirming = true}
+  let confirm t =
+    match t.next with
+    | None -> {t with confirming = false; executing = false}
+    | Some _ -> {t with confirming = false}
+  let cancel t = {executing = false; confirming = false; next = None}
+  let execute t = {t with executing = true}
+  let finish t = {t with executing = false; next = None}
 
   let empty = {
     next = None;

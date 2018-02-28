@@ -31,7 +31,7 @@ let make_dialog ~props = function
 
 let component = Component.make (fun props ->
     let state = props##.state in
-    match C.State.(state.operation.Operation.next) with
+    match C.State.(Operation.next state.operation) with
     | None -> R.empty ()
     | Some typ -> make_dialog ~props:props typ
   )
