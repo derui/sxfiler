@@ -3,7 +3,7 @@
 (library
  ((name sxfiler_common)
   (public_name sxfiler.common)
-  (libraries (js_of_ocaml lwt uuidm unix
+  (libraries (js_of_ocaml lwt unix
               reactjscaml sxfiler_kbd
               jsoo_node minimal-monadic-caml
               ppx_deriving_yojson.runtime))
