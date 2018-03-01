@@ -3,86 +3,6 @@ module T = Common_types
 module Config = Common_config
 module Thread = Lwt
 
-(** State-inner modules *)
-module Operation : sig
-  (** Type of Operation *)
-  type t
-
-  (** JS binding type of operation *)
-  class type js = object
-    method confirming : bool Js.t Js.readonly_prop
-    method executing : bool Js.t Js.readonly_prop
-    method next : M.Operation.t Js.opt Js.readonly_prop
-  end
-
-  (** Get next operation *)
-  val next : t -> M.Operation.t option
-
-  (** request operation *)
-  val request : t -> M.Operation.t -> t
-
-  (** confirm requested operation *)
-  val confirm : t -> t
-
-  (** cancel current requested operation *)
-  val cancel : t -> t
-
-  (** Update execution status as execute *)
-  val execute : t -> t
-
-  (** Update execution status as finish *)
-  val finish : t -> t
-
-  (** Get empty operation *)
-  val empty : t
-
-  (*+ Convert type to Js binding *)
-  val to_js : t -> js Js.t
-
-  (*+ Convert Js binding to type *)
-  val of_js : js Js.t -> t
-end = struct
-  type t = {
-    next: M.Operation.t option;
-    confirming: bool;
-    executing: bool;
-  }
-
-  class type js = object
-    method next: M.Operation.t Js.opt Js.readonly_prop
-    method confirming: bool Js.t Js.readonly_prop
-    method executing: bool Js.t Js.readonly_prop
-  end
-
-  let next t = t.next
-  let request t op = {next = Some op; executing = false; confirming = true}
-  let confirm t =
-    match t.next with
-    | None -> {t with confirming = false; executing = false}
-    | Some _ -> {t with confirming = false}
-  let cancel t = {executing = false; confirming = false; next = None}
-  let execute t = {t with executing = true}
-  let finish t = {t with executing = false; next = None}
-
-  let empty = {
-    next = None;
-    confirming = false;
-    executing = false;
-  }
-
-  let to_js : t -> js Js.t = fun t -> object%js
-    val next = Js.Opt.option t.next
-    val confirming = Js.bool t.confirming
-    val executing = Js.bool t.executing
-  end
-
-  let of_js : js Js.t -> t = fun js -> {
-      next = Js.Opt.to_option js##.next;
-      confirming = Js.to_bool js##.confirming;
-      executing = Js.to_bool js##.executing
-    }
-end
-
 module Dialog_state = struct
   type t =
     | Open of T.dialog_type | Close [@@deriving variants]
@@ -104,6 +24,62 @@ module Dialog_state = struct
     | Some typ -> Open typ
 end
 
+module Interaction_state : sig
+  type t
+
+  class type js = object
+    method requestedTask: T.Task_request.js Js.opt Js.readonly_prop
+    method interacting: bool Js.t Js.readonly_prop
+    method executing: bool Js.t Js.readonly_prop
+  end
+
+  val empty : t
+
+  val accept_task: t -> T.Task_request.t -> t
+  val requested_task: t -> T.Task_request.t option
+  val execute: t -> t
+  val interacting: t -> bool
+  val executing: t -> bool
+  val finish: t -> t
+
+  val to_js: t -> js Js.t
+  val of_js: js Js.t -> t
+
+end = struct
+  type t = {
+    requested_task: T.Task_request.t option;
+    interacting : bool;
+    executing : bool;
+  }
+
+  class type js = object
+    method requestedTask: T.Task_request.js Js.opt Js.readonly_prop
+    method interacting: bool Js.t Js.readonly_prop
+    method executing: bool Js.t Js.readonly_prop
+  end
+
+  let empty = {requested_task = None; interacting = false; executing = false}
+
+  let accept_task t task = {requested_task = Some task; interacting = true; executing = false}
+  let requested_task {requested_task;_} = requested_task
+  let interacting {interacting;_} = interacting
+  let executing {executing;_} = executing
+  let execute t = {t with interacting = false;executing = true}
+  let finish t = {requested_task = None;interacting = false;executing = false}
+
+  let to_js t = object%js
+    val requestedTask = Js.Opt.option t.requested_task
+    val interacting = Js.bool t.interacting
+    val executing = Js.bool t.executing
+  end
+
+  let of_js (js:js Js.t) = {
+    requested_task = Js.Opt.to_option js##.requestedTask;
+    interacting = Js.to_bool js##.interacting;
+    executing = Js.to_bool js##.executing;
+  }
+end
+
 (* All state of this application *)
 type t = {
   active_pane: T.Pane_location.t;
@@ -114,7 +90,7 @@ type t = {
   config: Config.t;
   operation_log: T.Operation_log.t;
   dialog_state: Dialog_state.t;
-  operation: Operation.t
+  interaction_state: Interaction_state.t;
 }
 
 class type js = object
@@ -127,7 +103,7 @@ class type js = object
   method operationLog: T.Operation_log.js Js.t Js.readonly_prop
 
   method dialogState: Dialog_state.js Js.t Js.readonly_prop
-  method operation: Operation.js Js.t Js.readonly_prop
+  method interactionState: Interaction_state.js Js.t Js.readonly_prop
 end
 
 let empty =
@@ -142,7 +118,7 @@ let empty =
     operation_log = T.Operation_log.empty;
 
     dialog_state = Dialog_state.Close;
-    operation = Operation.empty;
+    interaction_state = Interaction_state.empty;
   }
 
 let to_js : t -> js Js.t = fun t -> object%js
@@ -154,7 +130,7 @@ let to_js : t -> js Js.t = fun t -> object%js
   val config = Config.to_js t.config
   val operationLog = T.Operation_log.to_js t.operation_log
   val dialogState = Dialog_state.to_js t.dialog_state
-  val operation = Operation.to_js t.operation
+  val interactionState = Interaction_state.to_js t.interaction_state
 end
 
 let of_js : js Js.t -> t = fun t ->
@@ -167,7 +143,7 @@ let of_js : js Js.t -> t = fun t ->
     config = Config.of_js t##.config;
     operation_log = T.Operation_log.of_js t##.operationLog;
     dialog_state = Dialog_state.of_js t##.dialogState;
-    operation = Operation.of_js t##.operation
+    interaction_state = Interaction_state.of_js t##.interactionState;
   }
 
 (* Utility functions *)

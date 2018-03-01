@@ -9,32 +9,8 @@ let to_message state = function
   | Leave_directory -> C.Message.leave_directory
   | Enter_directory -> C.Message.enter_directory
   | Change_active_pane -> C.Message.change_active_pane
-  | Copy -> let pane = C.State.active_pane state in
-    let inactive_pane = C.State.inactive_pane state in
-    let file = C.State.Pane.pointed_file pane |> C.Types.File_stat.to_js in
-    let module P = C.Message_payload in
-    let module Pane = C.Types.Pane in
-
-    C.Message.request_operation @@ C.Message.Operation.Copy P.Request_copy_file.({
-        src = file;
-        dest_dir = Js.string inactive_pane.Pane.directory;
-        same_name_behavior = Overwrite
-      })
-  | Delete -> let pane = C.State.active_pane state in
-    let file = C.State.Pane.pointed_file pane |> C.Types.File_stat.to_js in
-    let module P = C.Message_payload in
-    C.Message.request_operation @@ C.Message.Operation.Delete P.Request_delete_file.({
-        file;
-      })
-  | Move -> let pane = C.State.active_pane state in
-    let inactive_pane = C.State.inactive_pane state in
-    let file = C.State.Pane.pointed_file pane |> C.Types.File_stat.to_js in
-    let module P = C.Message_payload in
-    let module Pane = C.Types.Pane in
-
-    C.Message.request_operation @@ C.Message.Operation.Move P.Request_move_file.({
-        src = file;
-        dest_dir = Js.string inactive_pane.Pane.directory;
-        same_name_behavior = Overwrite
-      })
+  | Copy -> C.Message.request_task `Task_copy
+  | Delete -> C.Message.request_task `Task_delete
+  | Move -> C.Message.request_task `Task_move
+  | Rename -> C.Message.request_task `Task_rename
   | Quit -> C.Message.quit_application

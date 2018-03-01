@@ -7,6 +7,7 @@ module Component = R.Component.Make_stateful (struct
       method dispatch: Key_dispatcher.t Js.readonly_prop
       method title: Js.js_string Js.t Js.readonly_prop
       method content: Js.js_string Js.t Js.readonly_prop
+      method onComplete: (unit -> C.Types.User_action.t) Js.readonly_prop
     end
   end)(struct
     class type t = object
@@ -68,9 +69,15 @@ let key_handler ~dispatch ~this ev =
   let module M = C.Message in
   match key with
   | _ when key = enter_key ->
-    Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.confirm_operation this##.state##.confirmed)
+    if this##.state##.confirmed then
+      let action = this##.props##.onComplete () |> C.Types.User_action.to_js in
+      Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.finish_user_action action)
+    else
+      let message = M.finish_user_action @@ C.Types.User_action.(to_js Cancel) in
+      Key_dispatcher.dispatch ~dispatcher:dispatch ~message
   | _ when key = esc ->
-    Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.confirm_operation false);
+    let message = M.finish_user_action @@ C.Types.User_action.(to_js Cancel) in
+    Key_dispatcher.dispatch ~dispatcher:dispatch ~message
   | _ when key = tab ->
     this##setState (object%js
       val confirmed = not this##.state##.confirmed

@@ -34,26 +34,26 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
   let move_file src dest =
     let fs = Fs.resolve () in
-    let src = Js.to_string src##.filename in
+    let src = src.T.File_stat.filename in
     let filename = Filename.basename src in
     let dest = N.Path.resolve [dest; filename] in
     let module Fs = N.Fs.Make(struct let instance = fs end) in
     match Fs.renameSync src dest with
-    | Ok _ -> Lwt.return @@ M.execute_operation_response (Ok ())
-    | Error _ -> Lwt.return @@ M.execute_operation_response @@ T.Operation_result.of_error ""
+    | Ok _ -> Lwt.return @@ M.execute_task_response @@ T.Task_result.to_js (Ok T.Task_result.Payload_move)
+    | Error _ -> Lwt.return @@ M.execute_task_response @@ T.Task_result.(to_js @@ of_error "")
 
   let delete_file file =
     let fs = Fs.resolve () in
-    let file = Js.to_string file##.filename in
+    let file = file.T.File_stat.filename in
     let module Fs = N.Fs.Make(struct let instance = fs end) in
     let open Minimal_monadic_caml.Result.Infix in
     match Fs.unlinkSync file with
-    | Ok _ -> Lwt.return @@ M.execute_operation_response (Ok ())
-    | Error _ -> Lwt.return @@ M.execute_operation_response @@ T.Operation_result.of_error ""
+    | Ok _ -> Lwt.return @@ M.execute_task_response T.Task_result.(to_js (Ok Payload_delete))
+    | Error _ -> Lwt.return @@ M.execute_task_response @@ T.Task_result.(to_js @@ of_error "")
 
   let copy_file src dest =
     let fs = Fs.resolve () in
-    let src = Js.to_string src##.filename in
+    let src = src.T.File_stat.filename in
     let filename = Filename.basename src in
     let dest = N.Path.resolve [dest; filename] in
     let module Fs = N.Fs.Make(struct
@@ -62,12 +62,12 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     let open Lwt.Infix in
     Fs.copy_file ~src ~dest () >>= (fun ret ->
         match ret with
-        | Ok _ -> Lwt.return @@ M.execute_operation_response (Ok ())
+        | Ok _ -> Lwt.return @@ M.execute_task_response T.Task_result.(to_js @@ Ok Payload_copy)
         | Error err -> begin
             match err with
             | `FsCopyError err ->
               let error = Js.to_string err##toString in
-              Lwt.return @@ M.execute_operation_response @@ T.Operation_result.of_error error
+              Lwt.return @@ M.execute_task_response @@ T.Task_result.(to_js @@ of_error error)
           end
       )
 
@@ -97,7 +97,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
         match err with
         | File_list.Not_directory f ->
           let module M = Sxfiler_common.Message in
-          Lwt.return @@ M.update_pane_response @@ T.Operation_result.of_error f
+          Lwt.return @@ M.update_pane_response @@ Error T.Operation_log.(Entry.to_js @@ Entry.make ~log_type:Error f)
         | _ -> raise Unhandled_promise
       )
 
@@ -154,37 +154,46 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     (t, message)
 
   let move_to_another t = (S.swap_active_pane t, None)
-  let request_operation t op =
-    ({t with S.operation = S.Operation.request t.S.operation op}, None)
+  let request_task t task =
+    let dialog_type = match task with
+      | `Task_copy | `Task_delete | `Task_move -> T.Dialog_confirmation task
+      | `Task_rename -> T.Dialog_rename
+    in
+    let t = {t with S.interaction_state = S.Interaction_state.accept_task t.S.interaction_state task;
+                    dialog_state = S.Dialog_state.Open dialog_type} in
+    (t, None)
 
-  let confirm_operation t confirmed =
-    if confirmed then begin
-      let next = S.(Operation.next t.operation) in
-      let t = {t with S.operation = S.Operation.confirm t.S.operation} in
-      match next with
-      | None -> (t, None)
-      | Some op -> (t, Some (Lwt.return @@ M.execute_operation_request op))
-    end else ({t with S.operation = S.Operation.cancel t.S.operation}, None)
+  let finish_user_action t action =
+    match action with
+    | T.User_action.Confirm task -> begin
+        (t, Some (Lwt.return @@ M.execute_task_request task))
+      end
+    | Cancel -> ({t with S.interaction_state = S.Interaction_state.finish t.S.interaction_state}, None)
 
-  let execute_operation t = function
-      | M.Operation.Copy payload -> begin
-          let module R = C.Message_payload.Request_copy_file in
-          let src = payload.R.src
-          and dest = Js.to_string payload.R.dest_dir in
-          ({t with S.operation = S.Operation.execute t.S.operation}, Some (copy_file src dest))
+  let execute_task t = function
+      | T.Task.Copy -> begin
+          let active_pane = S.active_pane t
+          and inactive_pane = S.inactive_pane t in
+          let src = S.Pane.pointed_file active_pane in
+          let dest = inactive_pane.T.Pane.directory in
+          ({t with S.interaction_state = S.Interaction_state.execute t.S.interaction_state},
+           Some (copy_file src dest))
         end
-      | M.Operation.Delete payload -> begin
-          let module R = C.Message_payload.Request_delete_file in
-          let file = payload.R.file in
-          ({t with S.operation = S.Operation.execute t.S.operation}, Some (delete_file file))
+      | T.Task.Delete -> begin
+          let active_pane = S.active_pane t in
+          let file = S.Pane.pointed_file active_pane in
+          ({t with S.interaction_state = S.Interaction_state.execute t.S.interaction_state},
+           Some (delete_file file))
         end
-      | M.Operation.Move payload -> begin
-          let module R = C.Message_payload.Request_move_file in
-          let src = payload.R.src
-          and dest = Js.to_string payload.R.dest_dir in
-          ({t with S.operation = S.Operation.execute t.S.operation}, Some (move_file src dest))
+      | T.Task.Move -> begin
+          let active_pane = S.active_pane t
+          and inactive_pane = S.inactive_pane t in
+          let src = S.Pane.pointed_file active_pane in
+          let dest = inactive_pane.T.Pane.directory in
+          ({t with S.interaction_state = S.Interaction_state.execute t.S.interaction_state},
+           Some (move_file src dest))
         end
-      | M.Operation.Rename payload -> failwith "not implement"
+      | T.Task.Rename _ -> failwith "not implement"
 
   let request_refresh_panes t = (t, Some (refresh_panes t.S.left_pane t.S.right_pane))
   let finish_refresh_panes t = function
@@ -193,12 +202,12 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
         and right_pane = T.Pane.of_js right_pane in
         ({t with S.left_pane; right_pane}, None)
       end
-    | Error err ->
-      let entry = err.T.Operation_result.message in
+    | Error entry ->
       ({t with S.operation_log = T.Operation_log.add_entry t.S.operation_log ~entry}, None)
 
-  let finish_operation t ret =
-    ({t with S.operation = S.Operation.finish t.S.operation}, Some (Lwt.return M.refresh_panes_request))
+  let finish_task t ret =
+    ({t with S.interaction_state = S.Interaction_state.finish t.S.interaction_state},
+     Some (Lwt.return M.refresh_panes_request))
 
   let react t = function
     | M.Update_pane_request (pane, path, loc) -> update_pane_request t pane path loc
@@ -211,8 +220,8 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     | M.Enter_directory -> enter_directory t
     | M.Quit_application -> ({t with S.terminated = true}, None)
     | M.Change_active_pane -> move_to_another t
-    | M.Request_operation op -> request_operation t op
-    | M.Confirm_operation confirmed -> confirm_operation t confirmed
-    | M.Execute_operation_request op -> execute_operation t op
-    | M.Execute_operation_response ret -> finish_operation t ret
+    | M.Request_task task -> request_task t task
+    | M.Finish_user_action action -> finish_user_action t @@ T.User_action.of_js action
+    | M.Execute_task_request op -> execute_task t @@ T.Task.of_js op
+    | M.Execute_task_response ret -> finish_task t ret
 end

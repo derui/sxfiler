@@ -1,8 +1,6 @@
 module FT = Jsoo_node.Fs_types
 
 type current_cursor = int
-type dialog_type =
-  | Dialog_confirmation
 
 module File_stat = struct
   type t = {
@@ -209,20 +207,130 @@ module Operation_log = struct
 
 end
 
-module Operation_result = struct
-  type recovery_strategy =
-    | Rs_retry
-    | Rs_ignore
+module Task = struct
+  type t =
+    | Copy
+    | Delete
+    | Move
+    | Rename of string
 
-  type error = {
+  type _js = [
+      `Copy
+    | `Delete
+    | `Move
+    | `Rename of Js.js_string Js.t
+  ]
+  class type js = object
+    method _type: _js Js.readonly_prop
+  end
+
+  let to_js t =
+    let v = match t with
+      | Copy -> `Copy
+      | Delete -> `Delete
+      | Move -> `Move
+      | Rename s -> `Rename (Js.string s)
+    in
+    object%js
+      val _type = v
+    end
+
+  let of_js js =
+    match js##._type with
+    | `Copy -> Copy
+    | `Delete -> Delete
+    | `Move -> Move
+    | `Rename s -> Rename (Js.to_string s)
+
+end
+
+module Task_request = struct
+  type t = [
+    | `Task_copy
+    | `Task_delete
+    | `Task_move
+    | `Task_rename
+  ]
+
+  type js = t
+end
+
+module User_action = struct
+  type t =
+    | Confirm of Task.js Js.t
+    | Cancel
+
+  class type js = object
+    method _type: t Js.readonly_prop
+  end
+
+  let to_js : t -> js Js.t = fun t -> object%js
+    val _type = t
+  end
+
+  let of_js : js Js.t -> t = fun js -> js##._type
+end
+
+module Task_result = struct
+  module Error = struct
+    type recovery_strategy =
+      | Rs_retry
+      | Rs_ignore
+
+    type t = {
       message: Operation_log.Entry.t;
       recovery_strategy: recovery_strategy;
     }
-  type 'a t = ('a, error) result
+
+    class type js = object
+      method message: Operation_log.Entry.js Js.t Js.readonly_prop
+      method recoveryStrategy: recovery_strategy Js.readonly_prop
+    end
+
+    let to_js : t -> js Js.t = fun t -> object%js
+      val message = Operation_log.Entry.to_js t.message
+      val recoveryStrategy = t.recovery_strategy
+    end
+
+    let of_js : js Js.t -> t = fun js -> {
+        message = Operation_log.Entry.of_js js##.message;
+        recovery_strategy = js##.recoveryStrategy;
+      }
+  end
+
+  type payload =
+    | Payload_copy
+    | Payload_delete
+    | Payload_move
+    | Payload_rename
+
+  type t = (payload, Error.t) result
+
+  class type js = object
+    method payload: payload Js.optdef Js.readonly_prop
+    method error: Error.js Js.t Js.optdef Js.readonly_prop
+  end
+
+  let to_js : t -> js Js.t = fun t -> object%js
+    val payload = match t with
+      | Ok payload -> Js.Optdef.return payload
+      | _ -> Js.Optdef.empty
+    val error = match t with
+      | Error e -> Js.Optdef.return @@ Error.to_js e
+      | _ -> Js.Optdef.empty
+  end
+
+  let of_js: js Js.t -> t = fun js ->
+    match Js.Optdef.to_option js##.payload with
+    | Some v -> Ok v
+    | None -> begin match Js.Optdef.to_option js##.error with
+        | Some v -> Error (Error.of_js v)
+        | None -> failwith "Unknown Task_result"
+      end
 
   (** Make error with error message *)
-  let of_error ?(recovery_strategy=Rs_ignore) message = Error {
-      message = Operation_log.Entry.make ~log_type:Operation_log.Error message;
+  let of_error ?(recovery_strategy=Error.Rs_ignore) message = Error {
+      Error.message = Operation_log.Entry.make ~log_type:Operation_log.Error message;
       recovery_strategy;
     }
 end
@@ -241,3 +349,7 @@ module Pane_location = struct
     | v when v = Variants.to_name `Right -> `Right
     | _ -> failwith "Unknown type"
 end
+
+type dialog_type =
+  | Dialog_confirmation of Task_request.t
+  | Dialog_rename

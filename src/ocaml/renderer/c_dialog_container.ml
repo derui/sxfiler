@@ -10,28 +10,37 @@ module Component = R.Component.Make_stateless (struct
   end)
 
 let make_dialog ~props = function
-  | M.Operation.Copy _ -> R.element ~key:"dialog" ~props:(object%js
-                            val state = props##.state
-                            val dispatch = props##.dispatch
-                            val title = Js.string "Confirm copy file"
-                            val content = Js.string "Can filer copy file?"
-                          end) C_confirmation_dialog.component
-  | M.Operation.Delete _ -> R.element ~key:"dialog" ~props:(object%js
-                              val state = props##.state
-                              val dispatch = props##.dispatch
-                              val title = Js.string "Confirm delete file"
-                              val content = Js.string "Can delete file?"
-                            end) C_confirmation_dialog.component
-  | M.Operation.Move _ -> R.element ~key:"dialog" ~props:(object%js
-                            val state = props##.state
-                            val dispatch = props##.dispatch
-                            val title = Js.string "Confirm move file"
-                            val content = Js.string "Can move file?"
-                          end) C_confirmation_dialog.component
+  | C.Types.Dialog_confirmation task -> begin
+      let module T = C.Types in
+      match task with
+      | `Task_copy -> R.element ~key:"dialog" ~props:(object%js
+                        val state = props##.state
+                        val dispatch = props##.dispatch
+                        val title = Js.string "Confirm copy file"
+                        val content = Js.string "Can filer copy file?"
+                        val onComplete = fun () -> T.User_action.Confirm (T.Task.(to_js Copy))
+                      end) C_confirmation_dialog.component
+      | `Task_delete -> R.element ~key:"dialog" ~props:(object%js
+                          val state = props##.state
+                          val dispatch = props##.dispatch
+                          val title = Js.string "Confirm delete file"
+                          val content = Js.string "Can delete file?"
+                          val onComplete = fun () -> T.User_action.Confirm (T.Task.(to_js Delete))
+                        end) C_confirmation_dialog.component
+      | `Task_move -> R.element ~key:"dialog" ~props:(object%js
+                        val state = props##.state
+                        val dispatch = props##.dispatch
+                        val title = Js.string "Confirm move file"
+                        val content = Js.string "Can move file?"
+                        val onComplete = fun () -> T.User_action.Confirm (T.Task.(to_js Move))
+                      end) C_confirmation_dialog.component
+      | _ -> R.empty ()
+    end
+  | C.Types.Dialog_rename -> failwith "not implement"
 
 let component = Component.make (fun props ->
     let state = props##.state in
-    match C.State.(Operation.next state.operation) with
-    | None -> R.empty ()
-    | Some typ -> make_dialog ~props:props typ
+    match C.State.(state.dialog_state) with
+    | C.State.Dialog_state.Close -> R.empty ()
+    | C.State.Dialog_state.Open typ -> make_dialog ~props:props typ
   )

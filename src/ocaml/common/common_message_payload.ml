@@ -1,6 +1,12 @@
 (** This module provides payloads for message *)
 module T = Common_types
 
+module Request_rename = struct
+  type t = {
+    target: T.File_stat.js Js.t;
+  }
+end
+
 module Request_copy_file = struct
   type same_name_behavior =
     | Overwrite
