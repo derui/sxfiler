@@ -1,6 +1,6 @@
 module C = Sxfiler_common
 module T = C.Types
-module R = Reactjscaml
+module R = Jsoo_reactjs
 
 module Log_type = struct
   module Component = R.Component.Make_stateless (struct
@@ -43,7 +43,7 @@ let component = Component.make (fun props ->
     R.Dom.of_tag `div
       ~props:R.Core.Element_spec.({empty with class_name})
       ~children:[|
-        R.element ~key:"logType" ~props:(object%js
+        R.create_element ~key:"logType" ~props:(object%js
           val logType = entry.E.log_type
         end) Log_type.component;
         R.text entry.E.content;

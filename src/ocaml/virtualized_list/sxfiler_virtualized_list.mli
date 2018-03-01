@@ -2,7 +2,7 @@
    Providing stateful list virtualization.
 *)
 
-module R = Reactjscaml
+module R = Jsoo_reactjs
 
 (** The virtualized list type to calculate something of virtualized list *)
 type 'a t

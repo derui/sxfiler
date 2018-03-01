@@ -1,7 +1,7 @@
 
 module C = Sxfiler_common
 module T = C.Types
-module R = Reactjscaml
+module R = Jsoo_reactjs
 
 module Component = R.Component.Make_stateless (struct
     class type t = object
@@ -13,7 +13,7 @@ let component = Component.make (fun props ->
     let state = props##.state in
     let module P = T.Pane in
     let create_pane_element key pane selected =
-      R.element ~key ~props:(object%js
+      R.create_element ~key ~props:(object%js
         val pane = pane
         val selected = selected
       end) C_file_list_pane.component
@@ -25,7 +25,7 @@ let component = Component.make (fun props ->
     let children = [|
       left_pane;
       right_pane;
-      R.element ~key:"operations" ~props:(object%js
+      R.create_element ~key:"operations" ~props:(object%js
         val operationLog = state.C.State.operation_log
       end) C_operation_log_pane.component
     |]

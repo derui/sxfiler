@@ -1,4 +1,4 @@
-module R = Reactjscaml
+module R = Jsoo_reactjs
 
 type 'a t = {
   all_items: 'a array;

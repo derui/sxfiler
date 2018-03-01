@@ -1,5 +1,5 @@
 module K = Sxfiler_common.Key_map
-module E = Reactjscaml.Event
+module E = Jsoo_reactjs.Event
 
 type t = Sxfiler_common.Message.t -> unit
 
@@ -11,10 +11,10 @@ let make ipc =
 let dispatch ~dispatcher ~message = dispatcher message
 
 let dispatch_key: t -> state:Sxfiler_common.State.t ->
-  ev:Reactjscaml.Event.Keyboard_event.t ->
+  ev:Jsoo_reactjs.Event.Keyboard_event.t ->
   key_map:K.t -> unit = fun dispatcher ~state ~ev ~key_map ->
   let module E = Sxfiler_common.Event in
-  let module KE = Reactjscaml.Event.Keyboard_event in
+  let module KE = Jsoo_reactjs.Event.Keyboard_event in
   match KE.to_event_type ev with
   | KE.Unknown | KE.KeyPress | KE.KeyUp -> ()
   | _ -> begin

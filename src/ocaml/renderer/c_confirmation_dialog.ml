@@ -1,5 +1,5 @@
 module C = Sxfiler_common
-module R = Reactjscaml
+module R = Jsoo_reactjs
 
 module Component = R.Component.Make_stateful (struct
     class type t = object
@@ -94,7 +94,7 @@ let component = Component.make {
     should_component_update = Some (fun this _ _ -> true);
     render = (fun this ->
         let props = this##.props in
-        R.element C_dialog_base.component ~props:(object%js
+        R.create_element C_dialog_base.component ~props:(object%js
           val title = props##.title
           val _open = Js.bool true
           val keyHandler = Js.Optdef.return (key_handler ~dispatch:props##.dispatch ~this);
@@ -104,17 +104,17 @@ let component = Component.make {
                 empty with class_name = Some (Classnames.(return "sf-ConfirmDialog" |> to_string));
               })
             ~children:[|
-              R.element ~key:"content" ~props:(object%js
+              R.create_element ~key:"content" ~props:(object%js
                 val content = props##.content
               end) Content.component;
 
               button_container ~key:"button_container" ~children:[|
-                R.element ~key:"yes" ~props:(object%js
+                R.create_element ~key:"yes" ~props:(object%js
                   val text = Js.string "Yes"
                   val selected = Js.bool this##.state##.confirmed
                 end) Button.component;
 
-                R.element ~key:"no" ~props:(object%js
+                R.create_element ~key:"no" ~props:(object%js
                   val text = Js.string "No"
                   val selected = Js.bool @@ not this##.state##.confirmed
                 end) Button.component;

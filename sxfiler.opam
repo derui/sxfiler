@@ -21,9 +21,9 @@ depends: [
   "ppx_deriving_yojson" { >= "3.1"}
   "yojson" { >= "1.4.0"}
   "mocha_of_ocaml" {test}
-  "reactjscaml"
   "ocaml-flux-frp"
   "jsoo_node"
+  "jsoo_reactjs"
   "minimal-monadic-caml"
   "snap-shot-it_of_ocaml" {test}
 ]

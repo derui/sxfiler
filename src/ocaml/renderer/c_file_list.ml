@@ -1,7 +1,7 @@
 module VL = Sxfiler_virtualized_list
 module C = Sxfiler_common
 module T = C.Types
-module R = Reactjscaml
+module R = Jsoo_reactjs
 
 let item_height = 18
 let key_of_filelist = "currentNode"
@@ -51,7 +51,7 @@ let component = Component.make R.Core.Component_spec.({
         and start_position = props##.cursor_pos - VL.start_position_of_window vl in
         let children = Array.mapi (fun index item ->
             let module F = C.Types.File_stat in
-            R.element ~key:item.F.id ~props:(object%js
+            R.create_element ~key:item.F.id ~props:(object%js
               val item = item
               val selected = start_position = index
             end) C_file_item.component

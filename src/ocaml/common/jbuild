@@ -4,7 +4,7 @@
  ((name sxfiler_common)
   (public_name sxfiler.common)
   (libraries (js_of_ocaml lwt unix
-              reactjscaml sxfiler_kbd
+              jsoo_reactjs sxfiler_kbd
               jsoo_node minimal-monadic-caml
               ppx_deriving_yojson.runtime))
   (preprocess (pps (js_of_ocaml-ppx ppx_variants_conv ppx_deriving_yojson)))))

@@ -1,5 +1,5 @@
 module C = Sxfiler_common
-module R = Reactjscaml
+module R = Jsoo_reactjs
 
 module Component = R.Component.Make_stateless (struct
     class type t = object

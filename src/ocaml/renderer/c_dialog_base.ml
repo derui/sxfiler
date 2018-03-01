@@ -1,5 +1,5 @@
 module C = Sxfiler_common
-module R = Reactjscaml
+module R = Jsoo_reactjs
 module T = C.Types
 
 let overlay ~key =

@@ -4,6 +4,6 @@
  ((name sxfiler_renderer)
   (public_name sxfiler.renderer)
   (libraries (js_of_ocaml js_of_ocaml.weak
-              reactjscaml ocaml-flux-frp
+              jsoo_reactjs ocaml-flux-frp
               sxfiler.virtualized_list sxfiler.common))
   (preprocess (pps (js_of_ocaml-ppx ppx_variants_conv)))))

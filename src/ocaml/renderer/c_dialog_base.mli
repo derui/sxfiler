@@ -1,4 +1,4 @@
-module R = Reactjscaml
+module R = Jsoo_reactjs
 module Component : sig
   type props =
     < _open : bool Js.t Js.readonly_prop;

@@ -1,6 +1,6 @@
 open Sxfiler_renderer
 module C = Sxfiler_common
-module R = Reactjscaml
+module R = Jsoo_reactjs
 
 let container_id = "top-entry"
 
@@ -32,7 +32,7 @@ let () =
 
   C.Event.IPC.(on ~target:Listener.update ~f:handle electron##.ipcRenderer);
 
-  let element = R.element ~props:(object%js
+  let element = R.create_element ~props:(object%js
       val dispatch = dispatcher
       val state = C.State.empty
       method subscribe = (fun f -> Publisher.subscribe f publisher)

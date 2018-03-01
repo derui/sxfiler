@@ -1,13 +1,13 @@
 open Mocha_of_ocaml
 open Snap_shot_it_of_ocaml
-module R = Reactjscaml
+module R = Jsoo_reactjs
 module S = Sxfiler_renderer
 
 let suite () =
   "File name component" >::: [
     "should who filename normally" >:: (fun () ->
         let module C = S.C_file_name in
-        let e = R.element ~props:(object%js
+        let e = R.create_element ~props:(object%js
             val fileName = Js.string "sample.txt"
             val isDirectory = Js.bool false
             val isSymbolicLink = Js.bool false
@@ -21,7 +21,7 @@ let suite () =
       );
     "should make another color if item is directory" >:: (fun () ->
         let module C = S.C_file_name in
-        let e = R.element ~props:(object%js
+        let e = R.create_element ~props:(object%js
             val fileName = Js.string "sample"
             val isDirectory = Js.bool true
             val isSymbolicLink = Js.bool false
@@ -35,7 +35,7 @@ let suite () =
       );
     "should make another color if item is symbolic link" >:: (fun () ->
         let module C = S.C_file_name in
-        let e = R.element ~props:(object%js
+        let e = R.create_element ~props:(object%js
             val fileName = Js.string "sample.txt"
             val isDirectory = Js.bool false
             val isSymbolicLink = Js.bool true

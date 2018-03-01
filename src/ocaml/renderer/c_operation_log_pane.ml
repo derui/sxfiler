@@ -1,7 +1,7 @@
 
 module C = Sxfiler_common
 module T = C.Types
-module R = Reactjscaml
+module R = Jsoo_reactjs
 
 module Component = R.Component.Make_stateless (struct
     class type t = object
@@ -13,7 +13,7 @@ let component = Component.make (fun props ->
     let entries = (props##.operationLog).T.Operation_log.entries in
     let class_name = Some Classnames.(let open Infix in return "fp-OperationLogPane" |> to_string) in
     let children = List.mapi (fun index entry ->
-        R.element ~key:(string_of_int index) ~props:(object%js
+        R.create_element ~key:(string_of_int index) ~props:(object%js
           val entry = entry
         end) C_operation_log_entry.component
       ) entries |> Array.of_list in

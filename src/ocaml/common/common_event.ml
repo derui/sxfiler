@@ -7,7 +7,7 @@ module S = Common_state
 module IPC = struct
 
   module Core = struct
-    type event_type = Reactjscaml.Event.Keyboard_event.event_type
+    type event_type = Jsoo_reactjs.Event.Keyboard_event.event_type
     type t =
       | Update of S.js Js.t
       | Action of Mes.t

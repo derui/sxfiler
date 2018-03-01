@@ -1,5 +1,5 @@
 module C = Sxfiler_common
-module R = Reactjscaml
+module R = Jsoo_reactjs
 
 module Component = R.Component.Make_stateful (struct
     class type t = object
@@ -37,8 +37,8 @@ let component = Component.make {
               empty with class_name = Some (Classnames.(return "sf-Main" |> to_string));
             })
           ~children:[|
-            R.element ~key:"key-container" ~props:children_props C_key_container.component;
-            R.element ~key:"dialog-container" ~props:children_props C_dialog_container.component;
+            R.create_element ~key:"key-container" ~props:children_props C_key_container.component;
+            R.create_element ~key:"dialog-container" ~props:children_props C_dialog_container.component;
           |]
       )
 

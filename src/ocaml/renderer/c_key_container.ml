@@ -1,5 +1,5 @@
 module C = Sxfiler_common
-module R = Reactjscaml
+module R = Jsoo_reactjs
 
 module Component = R.Component.Make_stateful (struct
     class type t = object
@@ -57,7 +57,7 @@ let component = Component.make {
               on_key_down = Some (key_handler ~dispatch:props##.dispatch ~state:(props##.state));
               others = other_props props##.state;
             })
-          ~children:[| R.element ~key:"file-list" ~props:(object%js
+          ~children:[| R.create_element ~key:"file-list" ~props:(object%js
                          val state = props##.state
                        end) C_pane_layout.component |]
       )
