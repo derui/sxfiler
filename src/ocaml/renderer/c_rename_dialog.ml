@@ -1,28 +1,12 @@
 module C = Sxfiler_common
 module R = Jsoo_reactjs
 
-module Original_name = struct
-  module C = R.Component.Make_stateless(struct
-      class type t = object
-        method name: Js.js_string Js.t Js.readonly_prop
-      end
-    end)
-
-  let component = C.make (fun props ->
-      R.Dom.of_tag `div ~props:R.Core.Element_spec.({
-          empty with
-          class_name = Some Classnames.(return "dialog-RenameDialog_OriginalName" |> to_string)
-        })
-        ~children:[|
-          R.text @@ Js.to_string props##.name
-        |]
-    )
-end
-
 module Input = struct
   module C = R.Component.Make_stateless(struct
       class type t = object
         method text: Js.js_string Js.t Js.readonly_prop
+        method onKeyDown: (R.Event.Keyboard_event.t -> unit) Js.readonly_prop
+        method onInput: (R.Event.Input_event.t -> unit) Js.readonly_prop
       end
     end)
 
@@ -32,30 +16,20 @@ module Input = struct
           class_name = Some Classnames.(return "dialog-RenameDialog_InputContainer" |> to_string)
         })
         ~children:[|
+          R.Dom.of_tag `span ~props:R.Element_spec.({
+              empty with class_name = Some "dialog_RenameDialog_InputLabel"
+            })
+            ~children:[| R.text "Name:" |];
           R.Dom.of_tag `input ~props:R.Core.Element_spec.({
-              empty with class_name = Some "dialog-RenameDialog_Input"
+              empty with class_name = Some "dialog-RenameDialog_Input";
+                         on_key_down = Some props##.onKeyDown;
+                         on_input = Some props##.onInput;
+                         default_value = Some (Js.to_string props##.text);
+                         others = Some (object%js
+                           val tabIndex = "1"
+                         end)
             })
         |]
-    )
-end
-
-module Button = struct
-  module C = R.Component.Make_stateless(struct
-      class type t = object
-        method text: Js.js_string Js.t Js.readonly_prop
-        method selected: bool Js.t Js.readonly_prop
-      end
-    end)
-
-  let component = C.make (fun props ->
-      let selected = Js.to_bool props##.selected in
-      R.Dom.of_tag `div ~key:"yes" ~props:R.Core.Element_spec.({
-          empty with class_name = Some (Classnames.(
-          let open Infix in return "dialog-RenameDialog_Button"
-                            <|> ("dialog-RenameDialog_Button-selected", selected)
-                            |> to_string))
-        })
-        ~children:[|R.text @@ Js.to_string props##.text|];
     )
 end
 
@@ -66,7 +40,13 @@ let text_container ~key ~children =
     })
     ~children
 
-let key_handler ~dispatch ~this ev = failwith ""
+let key_handler ~dispatch ~this ev = ()
+
+let input_handler ~dispatch ~this ev =
+  let value = ev##.target##getAttribute (Js.string "value") in
+  this##setState (object%js
+    val filename = Js.Opt.get value (fun () -> Js.string "")
+  end)
 
 module Component = R.Component.Make_stateful
     (struct
@@ -85,8 +65,11 @@ module Component = R.Component.Make_stateful
 let component = Component.make {
     R.Core.Component_spec.empty with
     initialize = Some (fun this props ->
+        let module T = C.Types.File_stat in
+        let selected_file = C.State.(active_pane props##.state |> Pane.pointed_file) in
+        let original = selected_file.T.filename in
         this##.state := object%js
-          val filename = Js.string ""
+          val filename = Js.string original
         end
       );
     should_component_update = Some (fun this new_props state ->
@@ -95,25 +78,20 @@ let component = Component.make {
       );
     render = (fun this ->
         let props = this##.props in
-        let module T = C.Types.File_stat in
-        let selected_file = C.State.(active_pane props##.state |> Pane.pointed_file) in
-        let original = selected_file.T.filename in
         R.create_element C_dialog_base.component ~props:(object%js
           val title = Js.string "Rename object"
           val _open = Js.bool true
-          val keyHandler = Js.Optdef.return (key_handler ~dispatch:props##.dispatch ~this);
+          val keyHandler = Js.Optdef.empty
         end) ~children:[|
           R.Dom.of_tag `div
             ~props:R.Core.Element_spec.({
                 empty with class_name = Some (Classnames.(return "dialog-RenameDialog" |> to_string));
               })
             ~children:[|
-              R.create_element ~key:"original" ~props:(object%js
-                val name = Js.string original
-              end) Original_name.component;
-
               R.create_element ~key:"input" ~props:(object%js
                 val text = this##.state##.filename
+                val onKeyDown = key_handler ~dispatch:props##.dispatch ~this
+                val onInput = input_handler ~dispatch:props##.dispatch ~this
               end) Input.component;
 
               text_container ~key:"text_container" ~children:[|

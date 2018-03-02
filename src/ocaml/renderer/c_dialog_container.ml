@@ -36,7 +36,11 @@ let make_dialog ~props = function
                       end) C_confirmation_dialog.component
       | _ -> R.empty ()
     end
-  | C.Types.Dialog_rename -> failwith "not implement"
+  | C.Types.Dialog_rename -> R.create_element ~key:"dialog" ~props:(object%js
+                               val state = props##.state
+                               val dispatch = props##.dispatch
+                               val onComplete = (fun () -> failwith "")
+                             end) C_rename_dialog.component
 
 let component = Component.make (fun props ->
     let state = props##.state in
