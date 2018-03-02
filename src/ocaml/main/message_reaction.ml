@@ -121,7 +121,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       let pane = S.active_pane t in
       let module P = T.Pane in
       let file_count = List.length pane.P.file_list - 1 in
-      S.update_pane t {
+      S.update_pane t ~loc:t.S.active_pane ~pane:{
         pane with P.cursor_pos = max 0 @@ min file_count (v + pane.P.cursor_pos)
       } in
     (t, None)

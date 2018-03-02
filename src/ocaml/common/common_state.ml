@@ -171,8 +171,8 @@ let active_pane t =
 let inactive_pane t =
   if is_left_active t then t.right_pane else t.left_pane
 
-let update_pane t pane =
+let update_pane t ~loc ~pane =
   {t with
-   left_pane = if T.Pane.equal pane t.left_pane then pane else t.left_pane;
-   right_pane = if T.Pane.equal pane t.right_pane then pane else t.right_pane;
+   left_pane = if loc = T.Pane_location.left then pane else t.left_pane;
+   right_pane = if loc = T.Pane_location.right then pane else t.right_pane;
   }
