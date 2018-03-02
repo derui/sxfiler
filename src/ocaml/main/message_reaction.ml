@@ -153,7 +153,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     in
     (t, message)
 
-  let move_to_another t = (S.swap_active_pane t, None)
+  let change_active_pane t = (S.swap_active_pane t, None)
   let request_task t task =
     let dialog_type = match task with
       | `Task_copy | `Task_delete | `Task_move -> T.Dialog_confirmation task
@@ -219,7 +219,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     | M.Leave_directory -> leave_directory t
     | M.Enter_directory -> enter_directory t
     | M.Quit_application -> ({t with S.terminated = true}, None)
-    | M.Change_active_pane -> move_to_another t
+    | M.Change_active_pane -> change_active_pane t
     | M.Request_task task -> request_task t task
     | M.Finish_user_action action -> finish_user_action t @@ T.User_action.of_js action
     | M.Execute_task_request op -> execute_task t @@ T.Task.of_js op
