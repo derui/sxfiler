@@ -30,22 +30,22 @@ let get_file_stats ~fs path =
           let names = Array.map (fun v -> Path.join [path; v]) names |> Array.to_list in
           let linked_to filename stat =
             if Js.to_bool stat##.isSymbolicLink then begin
-                match Fs.readlinkSync filename with
-                | Ok link_path -> Some link_path
-                | _ -> None
-              end
+              match Fs.readlinkSync filename with
+              | Ok link_path -> Some link_path
+              | _ -> None
+            end
             else None
           in
           let get_file_stat filename =
-              match Fs.lstatSync filename with
-              | Ok stat -> begin
-                  let stat = Fs.stat_to_obj stat in
-                  let link_path = linked_to filename stat in
-                  let directory = Path.dirname filename in
-                  let filename = Path.basename filename in
-                  Some (T.File_stat.make ~filename ~stat ~link_path ~directory)
-                end
-              | Error _ -> None
+            match Fs.lstatSync filename with
+            | Ok stat -> begin
+                let stat = Fs.stat_to_obj stat in
+                let link_path = linked_to filename stat in
+                let directory = Path.dirname filename in
+                let filename = Path.basename filename in
+                Some (T.File_stat.make ~filename ~stat ~link_path ~directory)
+              end
+            | Error _ -> None
           in
           let names = List.map get_file_stat names
                       |> List.filter Sxfiler_common.Util.Option.is_some

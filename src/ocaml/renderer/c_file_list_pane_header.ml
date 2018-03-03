@@ -11,13 +11,14 @@ module Component = R.Component.Make_stateless (struct
 
 let component = Component.make (fun props ->
     let directory = Js.to_string props##.directory in
+    let class_name =
+      let open Classnames in
+      let open Infix in
+      return "fp-FileListPane_Header"
+      <|> ("fp-FileListPane_Header-selected", props##.selected)
+      |> to_string
+    in
     R.Dom.of_tag `header
-      ~props:R.(element_spec
-          ~class_name:Classnames.(
-                      let open Infix in
-                      return "fp-FileListPane_Header"
-                      <|> ("fp-FileListPane_Header-selected", props##.selected)
-                      |> to_string)
-          ())
+      ~props:R.(element_spec ~class_name ())
       ~children:[|R.text directory|]
   )
