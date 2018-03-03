@@ -31,9 +31,6 @@ let container ~key ~children = R.Dom.of_tag `div ~key ~props:R.(element_spec
   ) ~children
 
 let key_handler ~this ev =
-  ev##preventDefault;
-  ev##stopPropagation;
-
   match Js.Optdef.to_option this##.props##.keyHandler with
   | None -> ()
   | Some handler -> handler ev

@@ -32,6 +32,17 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
   module Fs = Fs
   module S = C.State
 
+  let rename_file src new_name =
+    let module Fs = N.Fs.Make(struct let instance = Fs.resolve () end) in
+    let src' = N.Path.join [src.T.File_stat.directory;src.T.File_stat.filename] in
+    let new_name = N.Path.join [src.T.File_stat.directory; new_name] in
+
+    if new_name = src' then
+      Lwt.return @@ M.execute_task_response @@ T.Task_result.(to_js (Ok Payload_rename))
+    else match Fs.renameSync src' new_name with
+      | Ok _ -> Lwt.return @@ M.execute_task_response @@ T.Task_result.(to_js (Ok Payload_rename))
+      | Error _ -> Lwt.return @@ M.execute_task_response @@ T.Task_result.(to_js @@ of_error "")
+
   let move_file src dest =
     let fs = Fs.resolve () in
     let src = src.T.File_stat.filename in
@@ -176,13 +187,15 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
           and inactive_pane = S.inactive_pane t in
           let src = S.Pane.pointed_file active_pane in
           let dest = inactive_pane.T.Pane.directory in
-          ({t with S.interaction_state = S.Interaction_state.execute t.S.interaction_state},
+          ({t with S.interaction_state = S.Interaction_state.execute t.S.interaction_state;
+                   dialog_state = S.Dialog_state.close},
            Some (copy_file src dest))
         end
       | T.Task.Delete -> begin
           let active_pane = S.active_pane t in
           let file = S.Pane.pointed_file active_pane in
-          ({t with S.interaction_state = S.Interaction_state.execute t.S.interaction_state},
+          ({t with S.interaction_state = S.Interaction_state.execute t.S.interaction_state;
+                   dialog_state = S.Dialog_state.close},
            Some (delete_file file))
         end
       | T.Task.Move -> begin
@@ -190,10 +203,16 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
           and inactive_pane = S.inactive_pane t in
           let src = S.Pane.pointed_file active_pane in
           let dest = inactive_pane.T.Pane.directory in
-          ({t with S.interaction_state = S.Interaction_state.execute t.S.interaction_state},
+          ({t with S.interaction_state = S.Interaction_state.execute t.S.interaction_state;
+                   dialog_state = S.Dialog_state.close},
            Some (move_file src dest))
         end
-      | T.Task.Rename _ -> failwith "not implement"
+      | T.Task.Rename new_name -> begin
+          let src = S.active_pane t |> S.Pane.pointed_file in
+          ({t with S.interaction_state = S.Interaction_state.execute t.S.interaction_state;
+                   dialog_state = S.Dialog_state.close},
+           Some (rename_file src new_name))
+        end
 
   let request_refresh_panes t = (t, Some (refresh_panes t.S.left_pane t.S.right_pane))
   let finish_refresh_panes t = function

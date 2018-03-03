@@ -12,19 +12,18 @@ let dispatch ~dispatcher ~message = dispatcher message
 
 let dispatch_key: t -> state:Sxfiler_common.State.t ->
   ev:Jsoo_reactjs.Event.Keyboard_event.t ->
-  key_map:K.t -> unit = fun dispatcher ~state ~ev ~key_map ->
+  key_map:K.t -> bool = fun dispatcher ~state ~ev ~key_map ->
   let module E = Sxfiler_common.Event in
   let module KE = Jsoo_reactjs.Event.Keyboard_event in
   match KE.to_event_type ev with
-  | KE.Unknown | KE.KeyPress | KE.KeyUp -> ()
+  | KE.Unknown | KE.KeyPress | KE.KeyUp -> false
   | _ -> begin
       let key = Util.keyboard_event_to_key ev in
 
       let open Minimal_monadic_caml.Option.Infix in
-      K.dispatch ~key_map ~key >|= (fun action ->
+      let result = K.dispatch ~key_map ~key >|= (fun action ->
           let message = Action_mapper.to_message state action in
           dispatcher message
-        )
-      |> ignore
-
+        ) >|= (fun () -> true)in
+      Sxfiler_common.Util.Option.get ~default:false result
     end
