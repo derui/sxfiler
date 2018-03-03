@@ -1,34 +1,34 @@
 @import "base/*";
 
 .dialog-RenameDialog {
-    display: flex;
-    flex-direction: column;
-    background-color: $sol_base02;
-    color: $sol_base2;
+  display: flex;
+  flex-direction: column;
+  background-color: $sol_base02;
+  color: $sol_base2;
 
-    padding: 1em;
-    font-size: $baseFontSize;
+  padding: 1em;
+  font-size: $baseFontSize;
 }
 
 .dialog-RenameDialog_InputContainer {
-    display: flex;
-    flex: 0 0 auto;
-    padding: 0.5em;
-    padding-top: 0;
+  display: flex;
+  flex: 0 0 auto;
+  padding: 0.5em;
+  padding-top: 0;
 }
 
 .dialog-RenameDialog_Input {
-    flex: 1 1 auto;
-    width: $baseFontSize * 30;
+  flex: 1 1 auto;
+  width: $baseFontSize * 30;
 }
 
 .dialog-RenameDialog_InputLabel {
-    flex: 1 1 auto;
+  flex: 1 1 auto;
 }
 
 .dialog-RenameDialog_TextContainer {
-    flex: 1 1 auto;
+  flex: 1 1 auto;
 
-    padding: 0.5em;
-    padding-bottom: 0;
+  padding: 0.5em;
+  padding-bottom: 0;
 }
