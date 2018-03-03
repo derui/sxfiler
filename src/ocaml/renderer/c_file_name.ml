@@ -22,7 +22,7 @@ let get_classname props =
                   <|> (symlink_modifier, Js.to_bool props##.isSymbolicLink))
 
 let component = Component.make (fun props ->
-    let name = Js.to_string props##.fileName |> Filename.basename in
+    let name = Js.to_string props##.fileName in
     R.Dom.of_tag `span
       ~props:R.Core.Element_spec.({
           empty with class_name = Some (get_classname props)

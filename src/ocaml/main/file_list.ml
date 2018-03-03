@@ -17,42 +17,40 @@ let get_file_stats ~fs path =
   in
 
   current
-  >>= (fun stat ->
-      match stat with
+  >>= (function
       | Ok stat -> begin
-          if not (Js.to_bool stat##isDirectory) then
-            Lwt.fail (Not_directory path)
-          else
+          if Js.to_bool stat##isDirectory then
             Lwt.return @@ Fs.readdirSync path
+          else
+            Lwt.fail (Not_directory path)
         end
-      | Error e -> Lwt.fail e
-    )
+      | Error e -> Lwt.fail e)
   >>= (function
       | Ok names -> begin
           let names = Array.map (fun v -> Path.join [path; v]) names |> Array.to_list in
-          let names = List.map (fun filename ->
+          let linked_to filename stat =
+            if Js.to_bool stat##.isSymbolicLink then begin
+                match Fs.readlinkSync filename with
+                | Ok link_path -> Some link_path
+                | _ -> None
+              end
+            else None
+          in
+          let get_file_stat filename =
               match Fs.lstatSync filename with
               | Ok stat -> begin
                   let stat = Fs.stat_to_obj stat in
-                  let link_path = match (stat##.isSymbolicLink |> Js.to_bool) with
-                    | false -> None
-                    | true -> begin
-                        match Fs.readlinkSync filename with
-                        | Ok link_path -> Some link_path
-                        | _ -> None
-                      end
-                  in
-                  Some (T.File_stat.make ~filename ~stat ~link_path)
+                  let link_path = linked_to filename stat in
+                  let directory = Path.dirname filename in
+                  let filename = Path.basename filename in
+                  Some (T.File_stat.make ~filename ~stat ~link_path ~directory)
                 end
               | Error _ -> None
-            ) names
-                      |> List.filter (function
-                          | Some _ -> true
-                          | None -> false
-                        )
+          in
+          let names = List.map get_file_stat names
+                      |> List.filter Sxfiler_common.Util.Option.is_some
                       |> List.map (Sxfiler_common.Util.Option.get_exn)
           in
           Lwt.return names
         end
-      | Error e -> Lwt.fail e
-    )
+      | Error e -> Lwt.fail e)

@@ -6,6 +6,7 @@ module File_stat = struct
   type t = {
     id: string;
     filename: string;
+    directory: string;
     link_path: string option;
     stat: FT.stat_obj Js.t;
   }
@@ -13,16 +14,18 @@ module File_stat = struct
   class type js = object
     method id: Js.js_string Js.t Js.readonly_prop
     method filename: Js.js_string Js.t Js.readonly_prop
+    method directory: Js.js_string Js.t Js.readonly_prop
     method stat: FT.stat_obj Js.t Js.readonly_prop
     method link_path: Js.js_string Js.t Js.optdef Js.readonly_prop
   end
 
   let equal v1 v2 = v1.id = v2.id
 
-  let make ~filename ~link_path ~stat =
-    let digest = Digest.string filename |> Digest.to_hex in
+  let make ~filename ~directory ~link_path ~stat =
+    let digest = Digest.string (directory ^ filename) |> Digest.to_hex in
     {
       id = digest;
+      directory;
       filename;
       link_path;
       stat
@@ -31,6 +34,7 @@ module File_stat = struct
   let to_js t = object%js
     val id = Js.string t.id
     val filename = Js.string t.filename
+    val directory = Js.string t.directory
     val stat = t.stat
     val link_path = let link_path = Js.Optdef.option t.link_path  in
       Js.Optdef.map link_path Js.string
@@ -38,6 +42,7 @@ module File_stat = struct
 
   let of_js js = {
     id = Js.to_string js##.id;
+    directory = Js.to_string js##.directory;
     filename = Js.to_string js##.filename;
     stat = js##.stat;
     link_path = Js.Optdef.map (js##.link_path) Js.to_string |> Js.Optdef.to_option;

@@ -3,6 +3,12 @@
 module Option = struct
   exception None_of_object
 
+  let is_some = function
+    | Some _ -> true
+    | None -> false
+
+  let is_none v = not @@ is_some v
+
   let get ~default = function
     | Some v -> v
     | None -> default

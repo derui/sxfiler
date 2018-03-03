@@ -7,7 +7,7 @@ module N = Jsoo_node
 exception Unhandled_promise
 
 module type Fs = sig
-  val resolve: unit -> N.Fs_types.t Js.t
+  val resolve: unit -> N.Module_types.fs Js.t
 end
 
 module type S = sig

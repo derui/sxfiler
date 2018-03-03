@@ -8,7 +8,7 @@ exception No_main_window
 type t = {
   mutable main_window: FFI.BrowserWindow.t Js.t option;
   ipc: FFI.ipc Js.t;
-  fs: N.Fs_types.t Js.t;
+  fs: N.Module_types.fs Js.t;
   runner: Flux_runner.t;
 }
 
