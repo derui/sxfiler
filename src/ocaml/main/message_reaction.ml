@@ -156,7 +156,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       List.nth_opt pane.P.file_list pane.P.cursor_pos
       >>= fun item ->
       if item.T.File_stat.stat##.isDirectory |> Js.to_bool then begin
-        let target_dir = item.T.File_stat.filename in
+        let target_dir = N.Path.join [item.T.File_stat.directory;item.T.File_stat.filename] in
         Some (M.update_pane_request (T.Pane.to_js pane, Js.string target_dir,
                                      T.Pane_location.to_js t.S.active_pane) |> Lwt.return)
       end else
