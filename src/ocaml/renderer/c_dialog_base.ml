@@ -3,11 +3,8 @@ module R = Jsoo_reactjs
 module T = C.Types
 
 let overlay ~key =
-  let class_name = Classnames.(return "sf-DialogBase_Overlay" |> to_string) in
   R.Dom.of_tag `div ~key
-    ~props:R.Core.Element_spec.({
-        empty with class_name = Some class_name;
-      })
+    ~props:(R.element_spec ~class_name:"sf-DialogBase_Overlay" ())
 
 module Component = R.Component.Make_stateful (struct
     class type t = object
@@ -21,17 +18,17 @@ module Component = R.Component.Make_stateful (struct
     end
   end)
 
-let header ~key ~title = R.Dom.of_tag `div ~key ~props:R.Core.Element_spec.({
-    empty with class_name = Some (Classnames.(return "sf-DialogBase_Header" |> to_string))
-  }) ~children:[|R.text title|]
+let header ~key ~title = R.Dom.of_tag `div ~key ~props:R.(element_spec
+    ~class_name:"sf-DialogBase_Header" ()
+  ) ~children:[|R.text title|]
 
-let body ~key ~children = R.Dom.of_tag `div ~key ~props:R.Core.Element_spec.({
-    empty with class_name = Some (Classnames.(return "sf-DialogBase_Body" |> to_string))
-  }) ~children
+let body ~key ~children = R.Dom.of_tag `div ~key ~props:R.(element_spec
+    ~class_name:"sf-DialogBase_Body" ()
+  ) ~children
 
-let container ~key ~children = R.Dom.of_tag `div ~key ~props:R.Core.Element_spec.({
-    empty with class_name = Some (Classnames.(return "sf-DialogBase_ContentContainer" |> to_string))
-  }) ~children
+let container ~key ~children = R.Dom.of_tag `div ~key ~props:R.(element_spec
+    ~class_name:"sf-DialogBase_ContentContainer" ()
+  ) ~children
 
 let key_handler ~this ev =
   ev##preventDefault;
@@ -42,38 +39,38 @@ let key_handler ~this ev =
   | Some handler -> handler ev
 
 let container_key = "container"
-let component = Component.make {
-    R.Core.Component_spec.empty with
-    initialize = Some (fun this props ->
+let component = Component.make
+    R.(component_spec
+    ~constructor:(fun this props ->
         this##.nodes := Jstable.create ();
         this##.state := object%js
           val opened = Js.to_bool props##._open
         end
-      );
-    component_will_receive_props = Some (fun this new_props ->
+      )
+    ~component_will_receive_props:(fun this new_props ->
         this##setState (object%js
           val opened = Js.to_bool new_props##._open
         end)
-      );
-    should_component_update = Some (fun this _ _ -> true);
-    component_did_mount = Some (fun this ->
+      )
+    ~should_component_update:(fun this _ _ -> true)
+    ~component_did_mount:(fun this ->
         match R.Ref_table.find this##.nodes ~key:container_key with
         | None -> ()
         | Some e -> e##focus
-      );
-    component_will_unmount = Some (fun this -> R.Ref_table.remove this##.nodes ~key:container_key);
-    render = (fun this ->
+      )
+    ~component_will_unmount:(fun this -> R.Ref_table.remove this##.nodes ~key:container_key)
+    (fun this ->
         if not this##.state##.opened then R.empty ()
         else
           R.Dom.of_tag `div
             ~_ref:(fun e -> R.Ref_table.add this##.nodes ~key:container_key ~value:e)
-            ~props:R.Core.Element_spec.({
-                empty with class_name = Some (Classnames.(return "sf-DialogBase" |> to_string));
-                           on_key_down = Some (key_handler ~this);
-                           others = Some (object%js
-                               val tabIndex = "0"
-                             end)
-              })
+            ~props:R.(element_spec ()
+                ~class_name:"sf-DialogBase"
+                ~on_key_down:(key_handler ~this)
+                ~others:(object%js
+                  val tabIndex = "0"
+                end)
+              )
             ~children:[|
               overlay ~key:"overlay";
               container ~key:"container" ~children:[|
@@ -82,4 +79,4 @@ let component = Component.make {
               |]
             |]
       )
-  }
+  )

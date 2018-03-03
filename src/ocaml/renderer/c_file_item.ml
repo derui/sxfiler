@@ -9,24 +9,24 @@ module Component = R.Component.Make_stateful (struct
   end)
     (struct type t = unit end)
 
-let component = Component.make {
-    R.Core.Component_spec.empty with
-    should_component_update = Some (fun this new_props state ->
+let component = Component.make
+    R.(component_spec
+    ~should_component_update:(fun this new_props state ->
         let module F = C.Types.File_stat in
         let should_update = (not @@ F.equal this##.props##.item new_props##.item) ||
                             (this##.props##.selected <> new_props##.selected) in
         should_update
-      );
-    render = (fun this ->
+      )
+    (fun this ->
         let props = this##.props in
         let stat = props##.item in
-        let cls = let module C = Classnames in
+        let class_name = let module C = Classnames in
           let open C.Infix in
           C.(return "fp-FileItem" <|> ("is-selected", props##.selected) |> to_string)
         in
         let module T = C.Types.File_stat in
         R.Dom.of_tag `li
-          ~props:R.Core.Element_spec.({empty with class_name = Some cls})
+          ~props:R.(element_spec ~class_name ())
           ~children:[|
             R.create_element ~key:"mode" ~props:(object%js val mode = stat.T.stat##.mode end) C_file_mode.component;
             R.create_element ~key:"timestamp" ~props:(object%js val timestamp = stat.T.stat##.mtime end) C_file_timestamp.component;
@@ -38,5 +38,4 @@ let component = Component.make {
             end) C_file_name.component;
           |]
       )
-
-  }
+  )

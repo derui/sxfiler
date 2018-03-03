@@ -70,9 +70,7 @@ let component = Component.make (fun props ->
     let mode = Js.float_of_number props##.mode in
     let mode = int_of_float mode in
     R.Dom.of_tag `span
-      ~props:R.Core.Element_spec.({
-          empty with class_name = Some (Classnames.(return "fp-FileItem_FileMode" |> to_string))
-        })
+      ~props:R.(element_spec ~class_name:"fp-FileItem_FileMode" ())
       ~children:[|
         R.text @@ Mode_converter.(of_mode_bits mode |> to_string)
       |]

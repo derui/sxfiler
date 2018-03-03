@@ -21,8 +21,6 @@ let component = Component.make (fun props ->
     let date = new%js Js.date_fromTimeValue timestamp in
     let date = format_date date in
     R.Dom.of_tag `span
-      ~props:R.Core.Element_spec.({
-          empty with class_name = Some (Classnames.(return "fp-FileItem_Timestamp" |> to_string))
-        })
+      ~props:R.(element_spec ~class_name:"fp-FileItem_Timestamp" ())
       ~children:[| R.text date |]
   )

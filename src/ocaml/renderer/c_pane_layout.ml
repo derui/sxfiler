@@ -30,9 +30,5 @@ let component = Component.make (fun props ->
       end) C_operation_log_pane.component
     |]
     in
-    R.Dom.of_tag `div
-      ~props:R.Core.Element_spec.({
-          empty with class_name = Some (Classnames.(return "fp-PaneLayout" |> to_string))
-        })
-      ~children
+    R.Dom.of_tag `div ~props:R.(element_spec ~class_name:"fp-PaneLayout" ()) ~children
   )

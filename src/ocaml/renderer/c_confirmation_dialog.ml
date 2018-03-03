@@ -24,9 +24,7 @@ module Content = struct
     end)
 
   let component = C.make (fun props ->
-      R.Dom.of_tag `div ~key:"content" ~props:R.Core.Element_spec.({
-          empty with class_name = Some (Classnames.(return "sf-ConfirmDialog_Content" |> to_string))
-        })
+      R.Dom.of_tag `div ~key:"content" ~props:R.(element_spec ~class_name:"sf-ConfirmDialog_Content" ())
         ~children:[|R.text @@ Js.to_string props##.content|];
     )
 end
@@ -41,21 +39,18 @@ module Button = struct
 
   let component = C.make (fun props ->
       let selected = Js.to_bool props##.selected in
-      R.Dom.of_tag `div ~key:"yes" ~props:R.Core.Element_spec.({
-          empty with class_name = Some (Classnames.(
-          let open Infix in return "sf-ConfirmDialog_Button"
-                            <|> ("sf-ConfirmDialog_Button-Selected", selected)
-                            |> to_string))
-        })
+      R.Dom.of_tag `div ~key:"yes" ~props:R.(element_spec ()
+          ~class_name:(Classnames.(
+              let open Infix in return "sf-ConfirmDialog_Button"
+                                <|> ("sf-ConfirmDialog_Button-Selected", selected)
+                                |> to_string))
+        )
         ~children:[|R.text @@ Js.to_string props##.text|];
     )
 end
 
 let button_container ~key ~children =
-  R.Dom.of_tag `div ~key ~props:R.Core.Element_spec.({
-      empty with class_name = Some (Classnames.(
-      let open Infix in return "sf-ConfirmDialog_ButtonContainer" |> to_string))
-    })
+  R.Dom.of_tag `div ~key ~props:R.(element_spec ~class_name:"sf-ConfirmDialog_ButtonContainer" ())
     ~children
 
 let esc = Sxfiler_kbd.(to_keyseq {empty with key = "Escape"})
@@ -84,15 +79,15 @@ let key_handler ~dispatch ~this ev =
     end)
   | _ -> ()
 
-let component = Component.make {
-    R.Core.Component_spec.empty with
-    initialize = Some (fun this props ->
+let component = Component.make
+    R.(component_spec
+    ~constructor:(fun this props ->
         this##.state := object%js
           val confirmed = true
         end
-      );
-    should_component_update = Some (fun this _ _ -> true);
-    render = (fun this ->
+      )
+    ~should_component_update:(fun this _ _ -> true)
+    (fun this ->
         let props = this##.props in
         R.create_element C_dialog_base.component ~props:(object%js
           val title = props##.title
@@ -100,9 +95,7 @@ let component = Component.make {
           val keyHandler = Js.Optdef.return (key_handler ~dispatch:props##.dispatch ~this);
         end) ~children:[|
           R.Dom.of_tag `div
-            ~props:R.Core.Element_spec.({
-                empty with class_name = Some (Classnames.(return "sf-ConfirmDialog" |> to_string));
-              })
+            ~props:R.(element_spec ~class_name:"sf-ConfirmDialog" ())
             ~children:[|
               R.create_element ~key:"content" ~props:(object%js
                 val content = props##.content
@@ -123,4 +116,4 @@ let component = Component.make {
             |]
         |]
       )
-  }
+  )

@@ -31,35 +31,32 @@ let other_props state =
   else None
 
 let container_key = "filePaneContainer"
-let component = Component.make {
-    R.Core.Component_spec.empty with
-    initialize = Some (fun this props ->
+let component = Component.make R.(component_spec
+    ~constructor:(fun this props ->
         this##.nodes := Jstable.create ();
         this##.state := object%js
           val active = true
         end
-      );
-    component_did_update = Some (fun this _ _ ->
+      )
+    ~component_did_update:(fun this _ _ ->
         match R.Ref_table.find this##.nodes ~key:container_key with
         | Some e -> if is_active (this##.props##.state) then e##focus else ()
         | None -> ()
-      );
-    component_will_receive_props = Some (fun this new_props ->
+      )
+    ~component_will_receive_props:(fun this new_props ->
         this##setState (object%js val active = is_active new_props##.state end)
-      );
-    render = (fun this ->
+      )
+    (fun this ->
         let props = this##.props in
         R.Dom.of_tag `div
           ~_ref:(fun e -> R.Ref_table.add this##.nodes ~key:container_key ~value:e)
-          ~props:R.Core.Element_spec.({
-              empty with
-              class_name = Some (Classnames.(return "sf-KeyContainer" |> to_string));
-              on_key_down = Some (key_handler ~dispatch:props##.dispatch ~state:(props##.state));
-              others = other_props props##.state;
-            })
+          ~props:R.(element_spec ()
+              ~class_name:"sf-KeyContainer"
+              ~on_key_down:(key_handler ~dispatch:props##.dispatch ~state:(props##.state))
+              ?others:(other_props props##.state)
+            )
           ~children:[| R.create_element ~key:"file-list" ~props:(object%js
                          val state = props##.state
                        end) C_pane_layout.component |]
       )
-
-  }
+  )

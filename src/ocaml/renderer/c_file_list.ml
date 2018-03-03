@@ -17,15 +17,14 @@ module Component = R.Component.Make_stateful (struct
     end
   end)
 
-let component = Component.make R.Core.Component_spec.({
-    empty with
-    initialize = Some (fun this props ->
+let component = Component.make R.(component_spec
+    ~constructor:(fun this props ->
         this##.state := object%js
           val virtualized_list = VL.make ~item_height ()
         end;
         this##.nodes := Jstable.create ();
-      );
-    component_did_mount = Some (fun this ->
+      )
+    ~component_did_mount:(fun this ->
         let vl = this##.state##.virtualized_list in
         match R.Ref_table.find ~key:key_of_filelist this##.nodes with
         | None -> ()
@@ -36,15 +35,15 @@ let component = Component.make R.Core.Component_spec.({
                                      |> VL.recalculate_visible_window this##.props##.cursor_pos
             end)
           end;
-      );
-    component_will_receive_props = Some (fun this props ->
+      )
+    ~component_will_receive_props:(fun this props ->
         let items = Array.of_list props##.items in
         this##setState (object%js
           val virtualized_list = VL.update_all_items items this##.state##.virtualized_list
                                  |> VL.recalculate_visible_window props##.cursor_pos
         end)
-      );
-    render = (fun this ->
+      )
+    (fun this ->
         let props = this##.props in
         let vl = this##.state##.virtualized_list in
         let items = VL.get_items_in_window vl
@@ -58,9 +57,7 @@ let component = Component.make R.Core.Component_spec.({
           ) items
         in
         R.Dom.of_tag `ul ~_ref:(fun e -> R.Ref_table.add ~key:key_of_filelist ~value:e this##.nodes)
-          ~props:R.Core.Element_spec.({
-              empty with class_name = Some (Classnames.(return "fp-FileList" |> to_string))
-            })
+          ~props:R.(element_spec ~class_name:"fp-FileList" ())
           ~children
       )
-  })
+  )
