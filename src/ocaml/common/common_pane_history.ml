@@ -19,6 +19,10 @@ module History = struct
     timestamp = Int64.zero;
   }
 
+  let make ~directory ~cursor_pos =
+    let timestamp = Unix.time () |> Int64.of_float in
+    {directory; cursor_pos; timestamp}
+
   let to_js t = object%js
     val directory = Js.string t.directory
     val cursorPos = Js.number_of_float @@ float_of_int t.cursor_pos
@@ -47,18 +51,26 @@ let make () = {
   max_storeable_count = 100;
 }
 
+let table_values table =
+  let keys = Jstable.keys table in
+  List.map (fun k -> (k, Jstable.find table k)) keys
+  |> List.map (fun (k, v) -> (k, Js.Optdef.to_option v))
+  (* All keys are contained table, so no problem get forcely with them *)
+  |> List.map (fun (k, v) -> (k, Common_util.Option.get_exn v))
+
+let clone_table table =
+  let new_table = Jstable.create () in
+  table_values table |> List.iter (fun (k, v) -> Jstable.add new_table k v);
+  new_table
+
 (** Remove oldest history in table. *)
 let remove_oldest_history ?(count=1) table =
   let module H = History in
-  let keys = Jstable.keys table in
-  let values = List.map (Jstable.find table) keys
-               |> List.map (Js.Optdef.to_option)
-               (* All keys are contained table, so no problem get forcely with them *)
-               |> List.map (Common_util.Option.get_exn) in
-  let sorted = List.sort (fun a1 a2 -> Int64.compare a1.H.timestamp a2.H.timestamp) values in
+  let values = table_values table in
+  let sorted = List.sort (fun (_, a1) (_, a2) -> Int64.compare a1.H.timestamp a2.H.timestamp) values in
   let remove_target = match List.rev sorted with
     | [] -> None
-    | hd :: _ -> Some hd
+    | hd :: _ -> Some (snd hd)
   in
   match remove_target with
   | Some v -> Jstable.remove table (Js.string v.directory)
@@ -69,15 +81,18 @@ let add_history ~history t =
   let module H = History in
   let keys = Jstable.keys t.history_map in
   let key = Js.string history.H.directory in
+  let new_table = clone_table t.history_map in
 
-  match Jstable.find t.history_map key |> Js.Optdef.to_option with
-  | Some _ -> Jstable.add t.history_map key history
+  begin match Jstable.find new_table key |> Js.Optdef.to_option with
+  | Some _ -> Jstable.add new_table key history
   | None -> begin
       if List.length keys + 1 > t.max_storeable_count then
-        remove_oldest_history t.history_map
+        remove_oldest_history new_table
       else ();
-      Jstable.add t.history_map key history
+      Jstable.add new_table key history
     end
+  end;
+  {t with history_map = new_table}
 
 let to_js t =
   let js_map = Jstable.create () in
