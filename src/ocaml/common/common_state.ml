@@ -1,5 +1,6 @@
 module M = Common_message
 module T = Common_types
+module PH = Common_pane_history
 module Config = Common_config
 module Thread = Lwt
 
@@ -85,6 +86,8 @@ type t = {
   active_pane: T.Pane_location.t;
   left_pane: T.Pane.t;
   right_pane: T.Pane.t;
+  left_pane_history: PH.t;
+  right_pane_history: PH.t;
   waiting: bool;
   terminated: bool;
   config: Config.t;
@@ -97,6 +100,8 @@ class type js = object
   method activePane: T.Pane_location.js Js.t Js.readonly_prop
   method leftPane: T.Pane.js Js.t Js.readonly_prop
   method rightPane: T.Pane.js Js.t Js.readonly_prop
+  method leftPaneHistory: PH.js Js.t Js.readonly_prop
+  method rightPaneHistory: PH.js Js.t Js.readonly_prop
   method waiting: bool Js.t Js.readonly_prop
   method terminated: bool Js.t Js.readonly_prop
   method config: Config.js Js.t Js.readonly_prop
@@ -112,6 +117,8 @@ let empty =
     active_pane = `Left;
     left_pane = pane ();
     right_pane = pane ();
+    left_pane_history = PH.make ();
+    right_pane_history = PH.make ();
     waiting = false;
     terminated = false;
     config = Config.empty;
@@ -125,6 +132,8 @@ let to_js : t -> js Js.t = fun t -> object%js
   val activePane = T.Pane_location.to_js t.active_pane
   val leftPane = T.Pane.to_js t.left_pane
   val rightPane = T.Pane.to_js t.right_pane
+  val leftPaneHistory = PH.to_js t.left_pane_history
+  val rightPaneHistory = PH.to_js t.right_pane_history
   val waiting = Js.bool t.waiting
   val terminated = Js.bool t.terminated
   val config = Config.to_js t.config
@@ -138,6 +147,8 @@ let of_js : js Js.t -> t = fun t ->
     active_pane = T.Pane_location.of_js t##.activePane;
     left_pane = T.Pane.of_js t##.leftPane;
     right_pane = T.Pane.of_js t##.rightPane;
+    left_pane_history = PH.of_js t##.leftPaneHistory;
+    right_pane_history = PH.of_js t##.rightPaneHistory;
     waiting = Js.to_bool t##.waiting;
     terminated = Js.to_bool t##.terminated;
     config = Config.of_js t##.config;

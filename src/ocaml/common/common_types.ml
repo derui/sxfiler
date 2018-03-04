@@ -1,6 +1,6 @@
 module FT = Jsoo_node.Fs_types
 
-type current_cursor = int
+type cursor_pos = int
 
 module File_stat = struct
   type t = {
@@ -49,89 +49,38 @@ module File_stat = struct
   }
 end
 
-module Directory_histories : sig
-  type directory = string
-  type history = directory
-  type t
-
-  class type js = object
-    method histories: Js.js_string Js.t Js.js_array Js.t Js.readonly_prop
-  end
-
-  val make: ?histories:history list -> unit -> t
-
-  val to_js : t -> js Js.t
-  val of_js : js Js.t -> t
-
-  val add_history : t -> history:history -> t
-  val to_list : t -> history list
-
-end = struct
-  type directory = string
-  type history = directory
-  type t = history list
-
-  class type js = object
-    method histories: Js.js_string Js.t Js.js_array Js.t Js.readonly_prop
-  end
-
-  let make ?(histories=[]) () = histories
-
-  let to_js : t -> js Js.t = fun t -> object%js
-    val histories = Js.array @@ Array.of_list @@ List.map Js.string t
-  end
-
-  let of_js : js Js.t -> t = fun js ->
-    List.map Js.to_string @@ Array.to_list @@ Js.to_array js##.histories
-
-  let add_history t ~history =
-    let t = List.filter ((<>) history) t in
-    history :: t
-
-  let to_list t = t
-end
-
 module Pane = struct
   type t = {
     directory: string;
     file_list: File_stat.t list;
-    cursor_pos: current_cursor;
-    histories: Directory_histories.t;
+    cursor_pos: cursor_pos;
   }
 
   class type js = object
     method directory: Js.js_string Js.t Js.readonly_prop
     method fileList: File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
     method cursorPos : Js.number Js.t Js.readonly_prop
-    method histories: Directory_histories.js Js.t Js.readonly_prop
   end
 
   let equal = (=)
 
   let make ?(file_list=[]) ?(cursor_pos=0) ?histories ~directory () =
-    let histories = match histories with
-      | None -> Directory_histories.make ()
-      | Some v -> v
-    in
     {
       directory;
       file_list;
       cursor_pos;
-      histories;
     }
 
   let to_js : t -> js Js.t = fun t -> object%js
     val fileList = List.map File_stat.to_js t.file_list |> Array.of_list |> Js.array
     val directory = Js.string t.directory
     val cursorPos = Js.number_of_float @@ float_of_int t.cursor_pos
-    val histories = Directory_histories.to_js t.histories
   end
 
   let of_js : js Js.t -> t = fun js -> {
       directory = Js.to_string js##.directory;
       file_list = Js.to_array js##.fileList |> Array.map File_stat.of_js |> Array.to_list;
       cursor_pos = int_of_float @@ Js.float_of_number js##.cursorPos;
-      histories = Directory_histories.of_js js##.histories;
     }
 end
 

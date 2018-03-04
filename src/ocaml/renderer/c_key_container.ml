@@ -16,8 +16,7 @@ let key_handler ~dispatch ~state ev =
   let key_map = state.C.State.config.C.Config.key_maps.C.Config.file_list in
   let dispatched = Key_dispatcher.dispatch_key dispatch ~state ~ev ~key_map in
   if dispatched then begin
-    ev##preventDefault;
-    ev##stopPropagation
+    ev##preventDefault; ev##stopPropagation
   end else ()
 
 let is_active state =
