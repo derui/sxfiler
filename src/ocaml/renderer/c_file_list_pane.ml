@@ -12,20 +12,19 @@ module Component = R.Component.Make_stateless (struct
 
 let component = Component.make (fun props ->
     let pane = props##.pane in
+    let header = R.create_element ~key:"header" ~props:(object%js
+        val directory = Js.string pane.T.Pane.directory
+        val selected = props##.selected
+      end) C_file_list_pane_header.component
+    and content = R.Dom.of_tag `div ~key:"content"
+        ~props:R.(element_spec ~class_name:"fp-FileListPane_Content" ())
+        ~children:[|
+          R.create_element ~key:"file-list" ~props:(object%js
+            val items = pane.T.Pane.file_list
+            val cursorPos = pane.T.Pane.cursor_pos
+          end) C_file_list.component
+        |] in
     R.Dom.of_tag `div
       ~props:R.(element_spec ~class_name:"fp-FileListPane"  ())
-      ~children:[|
-        R.create_element ~key:"header" ~props:(object%js
-          val directory = Js.string pane.T.Pane.directory
-          val selected = props##.selected
-        end) C_file_list_pane_header.component;
-        R.Dom.of_tag `div ~key:"content"
-          ~props:R.(element_spec ~class_name:"fp-FileListPane_Content" ())
-          ~children:[|
-            R.create_element ~key:"file-list" ~props:(object%js
-              val items = pane.T.Pane.file_list
-              val cursorPos = pane.T.Pane.cursor_pos
-            end) C_file_list.component
-          |]
-      |]
+      ~children:[| header; content; |]
   )
