@@ -171,10 +171,18 @@ end
 let is_left_active t = t.active_pane = `Left
 let is_right_active t = t.active_pane = `Right
 let swap_active_pane t =
-  {t with active_pane =
-            match t.active_pane with
-            | `Left -> `Right
-            | `Right -> `Left
+  {t with active_pane = match t.active_pane with
+       | `Left -> `Right
+       | `Right -> `Left
+  }
+
+let active_pane_history t =
+  if is_left_active t then t.left_pane_history else t.right_pane_history
+
+let update_pane_history t ~loc ~history =
+  {t with
+   left_pane_history = if loc = T.Pane_location.left then history else t.left_pane_history;
+   right_pane_history = if loc = T.Pane_location.right then history else t.right_pane_history;
   }
 
 let active_pane t =

@@ -119,10 +119,20 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
   let update_pane_response t ret = match ret with
     | Ok (pane, loc) -> begin
+        let module PH = Sxfiler_common.Pane_history in
+        let module O = Sxfiler_common.Util.Option in
+        let module P = T.Pane in
         let pane = T.Pane.of_js pane in
-        match T.Pane_location.of_js loc with
-        | `Left -> ({t with S.waiting = false; left_pane = pane}, None)
-        | `Right -> ({t with S.waiting = false; right_pane = pane}, None)
+        let loc = T.Pane_location.of_js loc in
+        let current_pane = S.active_pane t in
+        let active_history = S.active_pane_history t in
+        let history = PH.History.make ~directory:current_pane.T.Pane.directory
+            ~cursor_pos:current_pane.T.Pane.cursor_pos in
+        let history = PH.add_history ~history active_history in
+        let t = S.update_pane_history t ~loc:t.S.active_pane ~history in
+        let t = S.update_pane t ~loc ~pane in
+        ({t with S.waiting = false}, None)
+
       end
     | Error _ -> failwith "error"
 
@@ -139,10 +149,10 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
   let leave_directory t =
     let module O = Sxfiler_common.Util.Option in
+    let module P = T.Pane in
+    let pane = S.active_pane t in
+    let next_dir = Filename.dirname pane.P.directory in
     let message =
-      let pane = S.active_pane t in
-      let module P = T.Pane in
-      let next_dir = Filename.dirname pane.P.directory in
       Some (M.update_pane_request (T.Pane.to_js pane, Js.string next_dir, T.Pane_location.to_js t.S.active_pane) |> Lwt.return)
     in
     (t, message)
