@@ -64,7 +64,7 @@ let clone_table table =
   new_table
 
 (** Remove oldest history in table. *)
-let remove_oldest_history ?(count=1) table =
+let remove_oldest_history table =
   let module H = History in
   let values = table_values table in
   let sorted = List.sort (fun (_, a1) (_, a2) -> Int64.compare a1.H.timestamp a2.H.timestamp) values in
@@ -117,7 +117,6 @@ let of_js js =
     history_map;
     max_storeable_count = Js.float_of_number js##.maxStoreableCount |> int_of_float;
   }
-
 
 (** Restore some pane informations from history  *)
 let restore_pane_info ~pane t =

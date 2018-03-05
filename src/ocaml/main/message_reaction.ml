@@ -248,6 +248,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
         ({t with S.left_pane; right_pane}, None)
       end
     | Error entry ->
+      let entry = T.Operation_log.Entry.of_js entry in
       ({t with S.operation_log = T.Operation_log.add_entry t.S.operation_log ~entry}, None)
 
   let finish_task t ret =

@@ -144,7 +144,7 @@ module Operation_log = struct
     let entries = List.rev t.entries in
     let entries = if List.length entries > t.max_entry_count then List.tl entries |> List.rev
       else List.rev entries in
-    {t with entries}
+    {t with entries = List.rev @@ (entry :: entries)}
 
   let add_entry_with_content ?(log_type=Info) t content =
     add_entry ~entry:(Entry.make ~log_type content) t

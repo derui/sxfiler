@@ -46,12 +46,8 @@ let lexer_table = [
   (Some "S-", Shift);
 ]
 
-let meta_prefix = ("M-", Meta)
-let ctrl_prefix = ("C-", Ctrl)
-let shift_prefix = ("S-", Shift)
-
 let match_lexer_table seq =
-  let result = List.find_opt (fun (token, typ) ->
+  let result = List.find_opt (fun (token, _) ->
       match token with
       | Some tok -> tok = seq
       | None -> false
@@ -115,13 +111,6 @@ let to_keyseq t =
   and shift = if t.shift then "S-" else ""
   and ctrl = if t.ctrl then "C-" else "" in
   meta ^ shift ^ ctrl ^ t.key
-
-module Export = struct
-  class type _t = object
-    method kbd: Js.js_string Js.t -> js Js.t Js.opt Js.meth
-  end
-  type t = _t Js.t
-end
 
 let () =
   Js.export_all (object%js
