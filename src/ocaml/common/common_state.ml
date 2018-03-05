@@ -179,6 +179,11 @@ let swap_active_pane t =
 let active_pane_history t =
   if is_left_active t then t.left_pane_history else t.right_pane_history
 
+let pane_history t ~loc =
+  match loc with
+  | `Left -> t.left_pane_history
+  | `Right -> t.right_pane_history
+
 let update_pane_history t ~loc ~history =
   {t with
    left_pane_history = if loc = T.Pane_location.left then history else t.left_pane_history;

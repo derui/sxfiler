@@ -117,3 +117,13 @@ let of_js js =
     history_map;
     max_storeable_count = Js.float_of_number js##.maxStoreableCount |> int_of_float;
   }
+
+
+(** Restore some pane informations from history  *)
+let restore_pane_info ~pane t =
+  let module P = Common_types.Pane in
+  let key = Js.string pane.P.directory in
+  match Jstable.find t.history_map key |> Js.Optdef.to_option with
+  | Some h -> P.make ~file_list:pane.P.file_list ~cursor_pos:h.History.cursor_pos
+                ~directory:pane.P.directory ()
+  | None -> P.make ~file_list:pane.P.file_list ~directory:pane.P.directory ()

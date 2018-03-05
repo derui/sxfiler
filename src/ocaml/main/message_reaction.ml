@@ -16,17 +16,18 @@ module type S = sig
   val react: C.State.t -> M.t -> (C.State.t * M.t Lwt.t option)
 end
 
-let refresh_pane ?dir ~fs pane =
+let refresh_pane_file_list ?dir ~fs pane =
   let open Lwt.Infix in
   let directory = match dir with
     | Some dir -> N.Path.resolve [dir]
     | None -> N.Path.resolve [pane.T.Pane.directory] in
   File_list.get_file_stats ~fs directory
   >>= (fun file_list ->
-      let cursor_pos = if directory <> pane.T.Pane.directory then None
-        else Some pane.T.Pane.cursor_pos in
-      Lwt.return @@ T.Pane.make ?cursor_pos ~file_list ~directory ()
-    )
+      Lwt.return @@ T.Pane.make ~file_list ~cursor_pos:pane.T.Pane.cursor_pos ~directory ())
+
+let restore_pane_info_from_history ~history pane =
+  let module PH = C.Pane_history in
+  PH.restore_pane_info ~pane history
 
 module Make(Fs:Fs) : S with module Fs = Fs = struct
   module Fs = Fs
@@ -83,23 +84,27 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       )
 
   (* refresh all panes *)
-  let refresh_panes left right =
+  let refresh_panes (left, left_history) (right, right_history) =
     let fs = Fs.resolve () in
     let left_wait, left_waker = Lwt.wait ()
     and right_wait, right_waker = Lwt.wait () in
 
     let open Lwt.Infix in
-    let refresh_pane' waker pane = refresh_pane ~fs pane >|= Lwt.wakeup waker in
+    let module PH = C.Pane_history in
+    let refresh_pane' waker history pane = refresh_pane_file_list ~fs pane
+      >>= Lwt.wrap1 @@ restore_pane_info_from_history ~history
+      >>= Lwt.wrap1 @@ Lwt.wakeup waker in
 
-    Lwt.async (fun () -> refresh_pane' left_waker left <&> refresh_pane' right_waker right);
+    Lwt.async (fun () -> refresh_pane' left_waker left_history left <&> refresh_pane' right_waker right_history right);
     left_wait >>= fun left -> right_wait >>= fun right ->
     Lwt.return @@ M.refresh_panes_response (Ok (T.Pane.to_js left, T.Pane.to_js right))
 
-  let update_pane ~loc ~pane ~path =
+  let update_pane ~loc ~pane ~path ~history =
     let fs = Fs.resolve () in
 
     let open Lwt.Infix in
-    let lwt = refresh_pane ~dir:path ~fs pane
+    let lwt = refresh_pane_file_list ~dir:path ~fs pane
+      >>= Lwt.wrap1 @@ restore_pane_info_from_history ~history
       >>= fun pane -> Lwt.return @@ M.update_pane_response (Ok (T.Pane.to_js pane, loc))
     in
 
@@ -113,9 +118,13 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       )
 
   let update_pane_request t pane path loc =
+    let module PH = C.Pane_history in
     let pane = T.Pane.of_js pane
-    and path = Js.to_string path in
-    ({t with S.waiting = true}, Some (update_pane ~pane ~path ~loc))
+    and path = Js.to_string path
+    and loc' = T.Pane_location.of_js loc in
+    let history = S.pane_history ~loc:loc' t in
+    let open Lwt.Infix in
+    ({t with S.waiting = true}, Some (update_pane ~pane ~history ~path ~loc))
 
   let update_pane_response t ret = match ret with
     | Ok (pane, loc) -> begin
@@ -224,7 +233,14 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
          Some (rename_file src new_name))
       end
 
-  let request_refresh_panes t = (t, Some (refresh_panes t.S.left_pane t.S.right_pane))
+  let request_refresh_panes t =
+    let module PH = C.Pane_history in
+    let left_history = S.pane_history ~loc:T.Pane_location.left t
+    and right_history = S.pane_history ~loc:T.Pane_location.right t in
+    let left = t.S.left_pane
+    and right = t.S.right_pane in
+    (t, Some (refresh_panes (left, left_history) (right, right_history)))
+
   let finish_refresh_panes t = function
     | Ok (left_pane, right_pane) -> begin
         let left_pane = T.Pane.of_js left_pane
