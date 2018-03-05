@@ -64,7 +64,7 @@ module Pane = struct
 
   let equal = (=)
 
-  let make ?(file_list=[]) ?(cursor_pos=0) ?histories ~directory () =
+  let make ?(file_list=[]) ?(cursor_pos=0) ~directory () =
     {
       directory;
       file_list;
