@@ -3,7 +3,7 @@ const { buildOCamlTest } = require('./build-ocaml-test.js');
 const { spawn } = require('child_process');
 
 function testWithMocha(bundled) {
-  spawn('mocha', [bundled], { stdio: 'inherit' });
+  spawn('mocha', bundled, { stdio: 'inherit' });
 }
 
 function testWithKarma() {
@@ -32,7 +32,7 @@ if (require.main === module) {
       '_build/default/test/renderer/test_sxfiler_renderer.bc.js',
     ];
 
-    bundledTests.forEach(testWithMocha);
+    testWithMocha(bundledTests);
     testWithKarma();
   })();
 }
