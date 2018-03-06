@@ -16,7 +16,6 @@ module.exports = {
 
   target: function(compiler) {
     compiler.apply(
-      new webpack.JsonpTemplatePlugin(output),
       new FunctionModulePlugin(output)
     )
   },

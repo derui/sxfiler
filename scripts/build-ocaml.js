@@ -11,8 +11,11 @@ const defaultOptions = {
 function bundleRenderer(options) {
   let cmdOptions = ['--cache', '--config', 'webpack.main.config.js'];
 
+  cmdOptions.push('--mode');
   if (options.production) {
-    cmdOptions.push('-p');
+    cmdOptions.push('production');
+  } else {
+    cmdOptions.push('development');
   }
 
   execFileSync('webpack', cmdOptions, { stdio: 'inherit' });

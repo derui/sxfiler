@@ -8,8 +8,11 @@ const defaultOptions = {
 function bundleDll(options = defaultOptions) {
   let cmdOptions = ['--config', 'webpack.dll.config.js'];
 
+  cmdOptions.push('--mode');
   if (options.production) {
-    cmdOptions.push('-p');
+    cmdOptions.push('production');
+  } else {
+    cmdOptions.push('development');
   }
   execFileSync('webpack', cmdOptions, { stdio: 'inherit' });
 
