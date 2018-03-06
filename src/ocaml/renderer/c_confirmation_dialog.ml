@@ -70,16 +70,16 @@ let key_handler ~dispatch ~this ev =
       let message =
         if this##.state##.confirmed then
           let action = this##.props##.onComplete () |> C.Types.User_action.to_js in
-          M.finish_user_action action
+          M.close_dialog action
         else
-          M.finish_user_action @@ C.Types.User_action.(to_js Cancel)
+          M.close_dialog @@ C.Types.User_action.(to_js Cancel)
       in
       Key_dispatcher.dispatch ~dispatcher:dispatch ~message
     end
   | _ when key = esc -> begin
       stop_default_behavior ev;
 
-      let message = M.finish_user_action @@ C.Types.User_action.(to_js Cancel) in
+      let message = M.close_dialog @@ C.Types.User_action.(to_js Cancel) in
       Key_dispatcher.dispatch ~dispatcher:dispatch ~message
     end
   | _ when key = tab -> begin

@@ -33,56 +33,6 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
   module Fs = Fs
   module S = C.State
 
-  let rename_file src new_name =
-    let module Fs = N.Fs.Make(struct let instance = Fs.resolve () end) in
-    let src' = N.Path.join [src.T.File_stat.directory;src.T.File_stat.filename] in
-    let new_name = N.Path.join [src.T.File_stat.directory; new_name] in
-
-    if new_name = src' then
-      Lwt.return @@ M.execute_task_response @@ T.Task_result.(to_js (Ok Payload_rename))
-    else match Fs.renameSync src' new_name with
-      | Ok _ -> Lwt.return @@ M.execute_task_response @@ T.Task_result.(to_js (Ok Payload_rename))
-      | Error _ -> Lwt.return @@ M.execute_task_response @@ T.Task_result.(to_js @@ of_error "")
-
-  let move_file src dest =
-    let fs = Fs.resolve () in
-    let src = src.T.File_stat.filename in
-    let filename = Filename.basename src in
-    let dest = N.Path.resolve [dest; filename] in
-    let module Fs = N.Fs.Make(struct let instance = fs end) in
-    match Fs.renameSync src dest with
-    | Ok _ -> Lwt.return @@ M.execute_task_response @@ T.Task_result.to_js (Ok T.Task_result.Payload_move)
-    | Error _ -> Lwt.return @@ M.execute_task_response @@ T.Task_result.(to_js @@ of_error "")
-
-  let delete_file file =
-    let fs = Fs.resolve () in
-    let file = file.T.File_stat.filename in
-    let module Fs = N.Fs.Make(struct let instance = fs end) in
-    let open Minimal_monadic_caml.Result.Infix in
-    match Fs.unlinkSync file with
-    | Ok _ -> Lwt.return @@ M.execute_task_response T.Task_result.(to_js (Ok Payload_delete))
-    | Error _ -> Lwt.return @@ M.execute_task_response @@ T.Task_result.(to_js @@ of_error "")
-
-  let copy_file src dest =
-    let fs = Fs.resolve () in
-    let src = src.T.File_stat.filename in
-    let filename = Filename.basename src in
-    let dest = N.Path.resolve [dest; filename] in
-    let module Fs = N.Fs.Make(struct
-        let instance = fs
-      end) in
-    let open Lwt.Infix in
-    Fs.copy_file ~src ~dest () >>= (fun ret ->
-        match ret with
-        | Ok _ -> Lwt.return @@ M.execute_task_response T.Task_result.(to_js @@ Ok Payload_copy)
-        | Error err -> begin
-            match err with
-            | `FsCopyError err ->
-              let error = Js.to_string err##toString in
-              Lwt.return @@ M.execute_task_response @@ T.Task_result.(to_js @@ of_error error)
-          end
-      )
-
   (* refresh all panes *)
   let refresh_panes (left, left_history) (right, right_history) =
     let fs = Fs.resolve () in
@@ -184,54 +134,27 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     (t, message)
 
   let change_active_pane t = (S.swap_active_pane t, None)
-  let request_task t task =
-    let dialog_type = match task with
-      | `Task_copy | `Task_delete | `Task_move -> T.Dialog_confirmation task
-      | `Task_rename -> T.Dialog_rename
-    in
-    let t = {t with S.interaction_state = S.Interaction_state.accept_task t.S.interaction_state task;
-                    dialog_state = S.Dialog_state.Open dialog_type} in
+  let open_dialog t dialog_type =
+    let t = {t with S.dialog_state = S.Dialog_state.Open dialog_type} in
     (t, None)
 
-  let finish_user_action t action =
+  let close_dialog t action =
+    let t = {t with S.dialog_state = S.Dialog_state.Close} in
     match action with
     | T.User_action.Confirm task -> begin
         (t, Some (Lwt.return @@ M.execute_task_request task))
       end
-    | Cancel -> ({t with S.interaction_state = S.Interaction_state.finish t.S.interaction_state}, None)
+    | Cancel -> ({t with S.task_state = S.Task_state.finish t.S.task_state}, None)
 
-  let execute_task t = function
-    | T.Task.Copy -> begin
-        let active_pane = S.active_pane t
-        and inactive_pane = S.inactive_pane t in
-        let src = S.Pane.pointed_file active_pane in
-        let dest = inactive_pane.T.Pane.directory in
-        ({t with S.interaction_state = S.Interaction_state.execute t.S.interaction_state;
-                 dialog_state = S.Dialog_state.close},
-         Some (copy_file src dest))
-      end
-    | T.Task.Delete -> begin
-        let active_pane = S.active_pane t in
-        let file = S.Pane.pointed_file active_pane in
-        ({t with S.interaction_state = S.Interaction_state.execute t.S.interaction_state;
-                 dialog_state = S.Dialog_state.close},
-         Some (delete_file file))
-      end
-    | T.Task.Move -> begin
-        let active_pane = S.active_pane t
-        and inactive_pane = S.inactive_pane t in
-        let src = S.Pane.pointed_file active_pane in
-        let dest = inactive_pane.T.Pane.directory in
-        ({t with S.interaction_state = S.Interaction_state.execute t.S.interaction_state;
-                 dialog_state = S.Dialog_state.close},
-         Some (move_file src dest))
-      end
-    | T.Task.Rename new_name -> begin
-        let src = S.active_pane t |> S.Pane.pointed_file in
-        ({t with S.interaction_state = S.Interaction_state.execute t.S.interaction_state;
-                 dialog_state = S.Dialog_state.close},
-         Some (rename_file src new_name))
-      end
+  let execute_task t req =
+    let module Instance = struct
+      let instance = Fs.resolve ()
+    end in
+    let module Task = (val Predefined_tasks.of_request {Predefined_tasks.fs = (module Instance)} req) in
+    let executed = Task.Task.execute Task.instance t in
+    ({t with S.task_state = S.Task_state.accept_task t.S.task_state req;
+             dialog_state = S.Dialog_state.close},
+     Some Lwt.Infix.(executed >|= T.Task_result.to_js >|= M.execute_task_response))
 
   let request_refresh_panes t =
     let module PH = C.Pane_history in
@@ -252,7 +175,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       ({t with S.operation_log = T.Operation_log.add_entry t.S.operation_log ~entry}, None)
 
   let finish_task t ret =
-    ({t with S.interaction_state = S.Interaction_state.finish t.S.interaction_state},
+    ({t with S.task_state = S.Task_state.finish t.S.task_state},
      Some (Lwt.return M.refresh_panes_request))
 
   let react t = function
@@ -266,8 +189,8 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     | M.Enter_directory -> enter_directory t
     | M.Quit_application -> ({t with S.terminated = true}, None)
     | M.Change_active_pane -> change_active_pane t
-    | M.Request_task task -> request_task t task
-    | M.Finish_user_action action -> finish_user_action t @@ T.User_action.of_js action
-    | M.Execute_task_request op -> execute_task t @@ T.Task.of_js op
+    | M.Open_dialog state -> open_dialog t state
+    | M.Close_dialog action -> close_dialog t @@ T.User_action.of_js action
+    | M.Execute_task_request op -> execute_task t @@ T.Task_request.of_js op
     | M.Execute_task_response ret -> finish_task t ret
 end

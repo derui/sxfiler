@@ -21,8 +21,8 @@ type t =
   | Leave_directory
   | Enter_directory
   | Change_active_pane
-  | Request_task of T.Task_request.js
-  | Execute_task_request of T.Task.js Js.t
+  | Open_dialog of T.dialog_type
+  | Close_dialog of T.User_action.js Js.t
+  | Execute_task_request of T.Task_request.js Js.t
   | Execute_task_response of T.Task_result.js Js.t
-  | Finish_user_action of T.User_action.js Js.t
 [@@deriving variants]

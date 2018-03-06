@@ -7,7 +7,7 @@ module Input = struct
         method text: Js.js_string Js.t Js.readonly_prop
         method onRef: (Dom_html.element Js.t -> unit) Js.readonly_prop
         method onCancel: (unit -> unit) Js.readonly_prop
-        method onSubmit: (string -> unit) Js.readonly_prop
+        method onSubmit: (Js.js_string Js.t -> unit) Js.readonly_prop
       end
     end)(struct
       class type t = object
@@ -30,7 +30,7 @@ module Input = struct
 
     let key = Util.keyboard_event_to_key ev |> Js.to_string in
     match key with
-    | _ when key = enter_key -> this##.props##.onSubmit @@ Js.to_string this##.state##.value
+    | _ when key = enter_key -> this##.props##.onSubmit this##.state##.value
     | _ when key = esc -> this##.props##.onCancel ()
     | _ -> ()
 
@@ -81,14 +81,14 @@ module Component = R.Component.Make_stateful
 
 let handle_cancel ~dispatch () =
   let module M = C.Message in
-  let message = M.finish_user_action @@ C.Types.User_action.(to_js Cancel) in
+  let message = M.close_dialog @@ C.Types.User_action.(to_js Cancel) in
   Key_dispatcher.dispatch ~dispatcher:dispatch ~message
 
 let handle_submit ~dispatch v =
   let module M = C.Message in
-  let task = C.Types.Task.(to_js @@ Rename v) in
+  let task = C.Types.Task_request.(to_js @@ Rename v) in
   let action =  C.Types.(User_action.to_js @@ User_action.Confirm task) in
-  Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.finish_user_action action)
+  Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.close_dialog action)
 
 let component = Component.make
     R.(component_spec

@@ -13,26 +13,26 @@ let make_dialog ~props = function
   | C.Types.Dialog_confirmation task -> begin
       let module T = C.Types in
       match task with
-      | `Task_copy -> R.create_element ~key:"dialog" ~props:(object%js
+      | `Copy -> R.create_element ~key:"dialog" ~props:(object%js
                         val state = props##.state
                         val dispatch = props##.dispatch
                         val title = Js.string "Confirm copy file"
                         val content = Js.string "Can filer copy file?"
-                        val onComplete = fun () -> T.User_action.Confirm (T.Task.(to_js Copy))
+                        val onComplete = fun () -> T.User_action.Confirm (T.Task_request.(to_js Copy))
                       end) C_confirmation_dialog.component
-      | `Task_delete -> R.create_element ~key:"dialog" ~props:(object%js
+      | `Delete -> R.create_element ~key:"dialog" ~props:(object%js
                           val state = props##.state
                           val dispatch = props##.dispatch
                           val title = Js.string "Confirm delete file"
                           val content = Js.string "Can delete file?"
-                          val onComplete = fun () -> T.User_action.Confirm (T.Task.(to_js Delete))
+                          val onComplete = fun () -> T.User_action.Confirm (T.Task_request.(to_js Delete))
                         end) C_confirmation_dialog.component
-      | `Task_move -> R.create_element ~key:"dialog" ~props:(object%js
+      | `Move -> R.create_element ~key:"dialog" ~props:(object%js
                         val state = props##.state
                         val dispatch = props##.dispatch
                         val title = Js.string "Confirm move file"
                         val content = Js.string "Can move file?"
-                        val onComplete = fun () -> T.User_action.Confirm (T.Task.(to_js Move))
+                        val onComplete = fun () -> T.User_action.Confirm (T.Task_request.(to_js Move))
                       end) C_confirmation_dialog.component
       | _ -> R.empty ()
     end

@@ -25,12 +25,11 @@ module Dialog_state = struct
     | Some typ -> Open typ
 end
 
-module Interaction_state : sig
+module Task_state : sig
   type t
 
   class type js = object
-    method requestedTask: T.Task_request.js Js.opt Js.readonly_prop
-    method interacting: bool Js.t Js.readonly_prop
+    method requestedTask: T.Task_request.js Js.t Js.opt Js.readonly_prop
     method executing: bool Js.t Js.readonly_prop
   end
 
@@ -38,8 +37,6 @@ module Interaction_state : sig
 
   val accept_task: t -> T.Task_request.t -> t
   val requested_task: t -> T.Task_request.t option
-  val execute: t -> t
-  val interacting: t -> bool
   val executing: t -> bool
   val finish: t -> t
 
@@ -49,34 +46,28 @@ module Interaction_state : sig
 end = struct
   type t = {
     requested_task: T.Task_request.t option;
-    interacting : bool;
     executing : bool;
   }
 
   class type js = object
-    method requestedTask: T.Task_request.js Js.opt Js.readonly_prop
-    method interacting: bool Js.t Js.readonly_prop
+    method requestedTask: T.Task_request.js Js.t Js.opt Js.readonly_prop
     method executing: bool Js.t Js.readonly_prop
   end
 
-  let empty = {requested_task = None; interacting = false; executing = false}
+  let empty = {requested_task = None; executing = false}
 
-  let accept_task t task = {requested_task = Some task; interacting = true; executing = false}
+  let accept_task t task = {requested_task = Some task; executing = true}
   let requested_task {requested_task;_} = requested_task
-  let interacting {interacting;_} = interacting
   let executing {executing;_} = executing
-  let execute t = {t with interacting = false;executing = true}
-  let finish t = {requested_task = None;interacting = false;executing = false}
+  let finish t = {requested_task = None;executing = false}
 
   let to_js t = object%js
-    val requestedTask = Js.Opt.option t.requested_task
-    val interacting = Js.bool t.interacting
+    val requestedTask = Js.Opt.map (Js.Opt.option t.requested_task) T.Task_request.to_js
     val executing = Js.bool t.executing
   end
 
   let of_js (js:js Js.t) = {
-    requested_task = Js.Opt.to_option js##.requestedTask;
-    interacting = Js.to_bool js##.interacting;
+    requested_task = Js.Opt.to_option @@ Js.Opt.map js##.requestedTask T.Task_request.of_js;
     executing = Js.to_bool js##.executing;
   }
 end
@@ -93,7 +84,7 @@ type t = {
   config: Config.t;
   operation_log: T.Operation_log.t;
   dialog_state: Dialog_state.t;
-  interaction_state: Interaction_state.t;
+  task_state: Task_state.t;
 }
 
 class type js = object
@@ -108,7 +99,7 @@ class type js = object
   method operationLog: T.Operation_log.js Js.t Js.readonly_prop
 
   method dialogState: Dialog_state.js Js.t Js.readonly_prop
-  method interactionState: Interaction_state.js Js.t Js.readonly_prop
+  method taskState: Task_state.js Js.t Js.readonly_prop
 end
 
 let empty =
@@ -125,7 +116,7 @@ let empty =
     operation_log = T.Operation_log.empty;
 
     dialog_state = Dialog_state.Close;
-    interaction_state = Interaction_state.empty;
+    task_state = Task_state.empty;
   }
 
 let to_js : t -> js Js.t = fun t -> object%js
@@ -139,7 +130,7 @@ let to_js : t -> js Js.t = fun t -> object%js
   val config = Config.to_js t.config
   val operationLog = T.Operation_log.to_js t.operation_log
   val dialogState = Dialog_state.to_js t.dialog_state
-  val interactionState = Interaction_state.to_js t.interaction_state
+  val taskState = Task_state.to_js t.task_state
 end
 
 let of_js : js Js.t -> t = fun t ->
@@ -154,7 +145,7 @@ let of_js : js Js.t -> t = fun t ->
     config = Config.of_js t##.config;
     operation_log = T.Operation_log.of_js t##.operationLog;
     dialog_state = Dialog_state.of_js t##.dialogState;
-    interaction_state = Interaction_state.of_js t##.interactionState;
+    task_state = Task_state.of_js t##.taskState;
   }
 
 (* Utility functions *)

@@ -161,57 +161,34 @@ module Operation_log = struct
 
 end
 
-module Task = struct
+type task_tag = [
+  | `Copy
+  | `Delete
+  | `Move
+  | `Rename
+]
+
+module Task_request = struct
   type t =
     | Copy
     | Delete
     | Move
-    | Rename of string
+    | Rename of Js.js_string Js.t
 
-  type _js = [
-      `Copy
-    | `Delete
-    | `Move
-    | `Rename of Js.js_string Js.t
-  ]
   class type js = object
-    method _type: _js Js.readonly_prop
+    method _type: t Js.readonly_prop
   end
 
-  let to_js t =
-    let v = match t with
-      | Copy -> `Copy
-      | Delete -> `Delete
-      | Move -> `Move
-      | Rename s -> `Rename (Js.string s)
-    in
-    object%js
-      val _type = v
-    end
+  let to_js t = object%js
+    val _type = t
+  end
 
-  let of_js js =
-    match js##._type with
-    | `Copy -> Copy
-    | `Delete -> Delete
-    | `Move -> Move
-    | `Rename s -> Rename (Js.to_string s)
-
-end
-
-module Task_request = struct
-  type t = [
-    | `Task_copy
-    | `Task_delete
-    | `Task_move
-    | `Task_rename
-  ]
-
-  type js = t
+  let of_js js = js##._type
 end
 
 module User_action = struct
   type t =
-    | Confirm of Task.js Js.t
+    | Confirm of Task_request.js Js.t
     | Cancel
 
   class type js = object
@@ -305,5 +282,6 @@ module Pane_location = struct
 end
 
 type dialog_type =
-  | Dialog_confirmation of Task_request.t
+  | Dialog_confirmation of task_tag
   | Dialog_rename
+[@@deriving variants]
