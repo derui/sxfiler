@@ -41,7 +41,7 @@ module Input = struct
         ~props:R.(element_spec ~class_name:"dialog-RenameDialog_InputContainer" ())
         ~children:[|
           R.Dom.of_tag `span ~key:"label"
-            ~props:R.(element_spec ~class_name:"dialog_RenameDialog_InputLabel" ())
+            ~props:R.(element_spec ~class_name:"dialog-RenameDialog_InputLabel" ())
             ~children:[| R.text "Name:" |];
           R.Dom.of_tag `input ~key:"input"
             ~_ref:props##.onRef
