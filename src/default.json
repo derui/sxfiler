@@ -10,6 +10,7 @@
       "c": ["Copy"],
       "m": ["Move"],
       "r": ["Rename"],
+      "o": ["Jump"],
       "Tab": ["Change_active_pane"]
     }
   }
