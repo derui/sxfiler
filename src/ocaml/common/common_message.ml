@@ -1,8 +1,6 @@
 (** This module provides types for message that is used as action on flux architecture *)
 module T = Common_types
 
-module P = Common_message_payload
-
 (** The type of message. This allows to pass to Javascript native functions all variant.
 
     We define message naming convention:
