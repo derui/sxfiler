@@ -87,44 +87,44 @@ let handle_submit ~dispatch v =
   let module M = C.Message in
   Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.jump_directory v)
 
-let component = Component.make
-    R.(component_spec
-         ~constructor:(fun this props -> this##.nodes := Jstable.create ();)
-         ~component_did_mount:(fun this ->
-             match R.Ref_table.find ~key:"input" this##.nodes with
-             | Some e -> e##focus
-             | None -> ()
-           )
-         ~component_did_update:(fun this _ _ ->
-             match R.Ref_table.find ~key:"input" this##.nodes with
-             | Some e -> e##focus
-             | None -> ()
-           )
-         ~component_will_unmount:(fun this ->
-             R.Ref_table.remove ~key:"input" this##.nodes
-           )
-         (fun this ->
-            let props = this##.props in
+let component =
+  let render this =
+    let props = this##.props in
 
-            R.create_element C_dialog_base.component ~props:(object%js
-              val title = Js.string "Rename object"
-              val _open = Js.bool true
-              val keyHandler = Js.Optdef.empty
-            end) ~children:[|
-              R.Dom.of_tag `div
-                ~props:R.(element_spec ~class_name:"dialog-JumpDialog" ())
-                ~children:[|
-                  R.create_element ~key:"input" ~props:(object%js
-                    val onRef = (fun e -> R.Ref_table.add ~key:"input" ~value:e this##.nodes)
-                    val onCancel = handle_cancel ~dispatch:props##.dispatch
-                    val onSubmit = handle_submit ~dispatch:props##.dispatch
-                  end) Input.component;
+    R.create_element C_dialog_base.component ~props:(object%js
+      val _open = Js.bool true
+      val keyHandler = Js.Optdef.empty
+    end) ~children:[|
+      R.Dom.of_tag `div
+        ~props:R.(element_spec ~class_name:"dialog-JumpDialog" ())
+        ~children:[|
+          R.create_element ~key:"input" ~props:(object%js
+            val onRef = (fun e -> R.Ref_table.add ~key:"input" ~value:e this##.nodes)
+            val onCancel = handle_cancel ~dispatch:props##.dispatch
+            val onSubmit = handle_submit ~dispatch:props##.dispatch
+          end) Input.component;
 
-                  text_container ~key:"text_container" ~children:[|
-                    R.text "Enter: execute; Esc: cancel"
-                  |]
+          text_container ~key:"text_container" ~children:[|
+            R.text "Enter: execute; Esc: cancel"
+          |]
 
-                |]
-            |]
-         )
-      )
+        |]
+    |]
+  in
+  Component.make R.(component_spec
+                      ~constructor:(fun this props -> this##.nodes := Jstable.create ();)
+                      ~component_did_mount:(fun this ->
+                          match R.Ref_table.find ~key:"input" this##.nodes with
+                          | Some e -> e##focus
+                          | None -> ()
+                        )
+                      ~component_did_update:(fun this _ _ ->
+                          match R.Ref_table.find ~key:"input" this##.nodes with
+                          | Some e -> e##focus
+                          | None -> ()
+                        )
+                      ~component_will_unmount:(fun this ->
+                          R.Ref_table.remove ~key:"input" this##.nodes
+                        )
+                      render
+                   )

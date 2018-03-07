@@ -67,6 +67,13 @@ let text_container ~key ~children =
   let class_name = Classnames.(return "dialog-RenameDialog_TextContainer" |> to_string) in
   R.Dom.of_tag `div ~key ~props:R.(element_spec ~class_name ()) ~children
 
+let header ~key ~title =
+  R.Dom.of_tag `div ~key
+    ~props:R.(element_spec ~class_name:"dialog-RenameDialog_Header" ())
+    ~children:[|R.text title|]
+
+let body ~key ~children =
+  R.Dom.of_tag `div ~key ~props:R.(element_spec ~class_name:"dialog-RenameDialog_Body" ()) ~children
 
 module Component = R.Component.Make_stateful
     (struct
@@ -90,48 +97,52 @@ let handle_submit ~dispatch v =
   let action =  C.Types.(User_action.to_js @@ User_action.Confirm task) in
   Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.close_dialog action)
 
-let component = Component.make
-    R.(component_spec
-         ~constructor:(fun this props -> this##.nodes := Jstable.create ();)
-         ~component_did_mount:(fun this ->
-             match R.Ref_table.find ~key:"input" this##.nodes with
-             | Some e -> e##focus
-             | None -> ()
-           )
-         ~component_did_update:(fun this _ _ ->
-             match R.Ref_table.find ~key:"input" this##.nodes with
-             | Some e -> e##focus
-             | None -> ()
-           )
-         ~component_will_unmount:(fun this ->
-             R.Ref_table.remove ~key:"input" this##.nodes
-           )
-         (fun this ->
-            let props = this##.props in
-            let module T = C.Types.File_stat in
-            let selected_file = C.State.(active_pane props##.state |> Pane.pointed_file) in
-            let original = selected_file.T.filename in
+let component =
+  let render this =
+    let props = this##.props in
+    let module T = C.Types.File_stat in
+    let selected_file = C.State.(active_pane props##.state |> Pane.pointed_file) in
+    let original = selected_file.T.filename in
 
-            R.create_element C_dialog_base.component ~props:(object%js
-              val title = Js.string "Rename object"
-              val _open = Js.bool true
-              val keyHandler = Js.Optdef.empty
-            end) ~children:[|
-              R.Dom.of_tag `div
-                ~props:R.(element_spec ~class_name:"dialog-RenameDialog" ())
-                ~children:[|
-                  R.create_element ~key:"input" ~props:(object%js
-                    val text = Js.string original
-                    val onRef = (fun e -> R.Ref_table.add ~key:"input" ~value:e this##.nodes)
-                    val onCancel = handle_cancel ~dispatch:props##.dispatch
-                    val onSubmit = handle_submit ~dispatch:props##.dispatch
-                  end) Input.component;
+    R.create_element C_dialog_base.component ~props:(object%js
+      val _open = Js.bool true
+      val keyHandler = Js.Optdef.empty
+    end) ~children:[|
+      R.Dom.of_tag `div
+        ~props:R.(element_spec ~class_name:"dialog-RenameDialog" ())
+        ~children:[|
+          header ~key:"header" ~title:"Rename object";
+          body ~key:"body" ~children:[|
+            R.create_element ~key:"input" ~props:(object%js
+              val text = Js.string original
+              val onRef = (fun e -> R.Ref_table.add ~key:"input" ~value:e this##.nodes)
+              val onCancel = handle_cancel ~dispatch:props##.dispatch
+              val onSubmit = handle_submit ~dispatch:props##.dispatch
+            end) Input.component;
 
-                  text_container ~key:"text_container" ~children:[|
-                    R.text "Enter: execute; Esc: cancel"
-                  |]
-
-                |]
+            text_container ~key:"text_container" ~children:[|
+              R.text "Enter: execute; Esc: cancel"
             |]
-         )
-      )
+          |]
+        |]
+    |]
+  in
+
+  Component.make R.(
+      component_spec
+        ~constructor:(fun this props -> this##.nodes := Jstable.create ();)
+        ~component_did_mount:(fun this ->
+            match R.Ref_table.find ~key:"input" this##.nodes with
+            | Some e -> e##focus
+            | None -> ()
+          )
+        ~component_did_update:(fun this _ _ ->
+            match R.Ref_table.find ~key:"input" this##.nodes with
+            | Some e -> e##focus
+            | None -> ()
+          )
+        ~component_will_unmount:(fun this ->
+            R.Ref_table.remove ~key:"input" this##.nodes
+          )
+        render
+    )

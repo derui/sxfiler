@@ -41,17 +41,3 @@
   /* border and shadows */
   @include base-box-shadow;
 }
-
-.sf-DialogBase_Header {
-  border: 1px solid white;
-  background-color: $sol_base3;
-  color: $sol_base02;
-
-  padding: $smallSpace 0;
-  font-size: $baseFontSize;
-}
-
-.sf-DialogBase_Body {
-  border: 1px solid white;
-  border-top: none;
-}

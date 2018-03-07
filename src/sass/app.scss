@@ -1,6 +1,10 @@
 @import "base/*.scss";
 @import "namespaces/**/*.scss";
 
+html {
+  font-size: 13.5px;
+}
+
 html,
 body {
   width: 100%;

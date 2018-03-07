@@ -1,11 +1,6 @@
 @import "base/*";
-@import "./_dialog";
 
-.dialog-RenameDialog_Header {
-    @include layout-dialog-header;
-}
-
-.dialog-RenameDialog_Body {
+.dialog-JumpDialog {
   display: flex;
   flex-direction: column;
   background-color: $sol_base02;
@@ -15,27 +10,23 @@
   font-size: $baseFontSize;
 }
 
-.dialog-RenameDialog {
-    @include layout-dialog-base;
-}
-
-.dialog-RenameDialog_InputContainer {
+.dialog-JumpDialog_InputContainer {
   display: flex;
   flex: 0 0 auto;
   padding: 0.5em;
   padding-top: 0;
 }
 
-.dialog-RenameDialog_Input {
+.dialog-JumpDialog_Input {
   flex: 1 1 auto;
   width: $baseFontSize * 30;
 }
 
-.dialog-RenameDialog_InputLabel {
+.dialog-JumpDialog_InputLabel {
   flex: 1 1 auto;
 }
 
-.dialog-RenameDialog_TextContainer {
+.dialog-JumpDialog_TextContainer {
   flex: 1 1 auto;
 
   padding: 0.5em;

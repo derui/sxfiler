@@ -7,14 +7,6 @@ let overlay ~key =
   R.Dom.of_tag `div ~key
     ~props:(R.element_spec ~class_name:"sf-DialogBase_Overlay" ())
 
-let header ~key ~title =
-  R.Dom.of_tag `div ~key
-    ~props:R.(element_spec ~class_name:"sf-DialogBase_Header" ())
-    ~children:[|R.text title|]
-
-let body ~key ~children =
-  R.Dom.of_tag `div ~key ~props:R.(element_spec ~class_name:"sf-DialogBase_Body" ()) ~children
-
 let container ~key ~children =
   R.Dom.of_tag `div ~key ~props:R.(element_spec ~class_name:"sf-DialogBase_ContentContainer" ()) ~children
 
@@ -26,7 +18,6 @@ let key_handler ~this ev =
 module Component = R.Component.Make_stateful (struct
     class type t = object
       method _open: bool Js.t Js.readonly_prop
-      method title: Js.js_string Js.t Js.readonly_prop
       method keyHandler: (R.Event.Keyboard_event.t -> unit) Js.optdef Js.readonly_prop
     end
   end)(struct
@@ -49,10 +40,7 @@ let component =
                     end))
         ~children:[|
           overlay ~key:"overlay";
-          container ~key:"container" ~children:[|
-            header ~key:"header" ~title:(Js.to_string this##.props##.title);
-            body ~key:"body" ~children:(Js.to_array this##.props_defined##.children)
-          |]
+          container ~key:"container" ~children:Js.(to_array this##.props_defined##.children);
         |]
   in
   Component.make
