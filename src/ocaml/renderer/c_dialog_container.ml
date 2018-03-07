@@ -40,6 +40,10 @@ let make_dialog ~props = function
                                val state = props##.state
                                val dispatch = props##.dispatch
                              end) C_rename_dialog.component
+  | C.Types.Dialog_jump -> R.create_element ~key:"dialog" ~props:(object%js
+                             val state = props##.state
+                             val dispatch = props##.dispatch
+                           end) C_jump_dialog.component
 
 let component = Component.make (fun props ->
     let state = props##.state in

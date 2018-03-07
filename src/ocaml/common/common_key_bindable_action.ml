@@ -8,5 +8,6 @@ type t =
   | Move
   | Delete
   | Rename
+  | Jump
   | Quit
 [@@deriving yojson]

@@ -18,6 +18,7 @@ type t =
   | Select_prev_item of int
   | Leave_directory
   | Enter_directory
+  | Jump_directory of Js.js_string Js.t
   | Change_active_pane
   | Open_dialog of T.dialog_type
   | Close_dialog of T.User_action.js Js.t

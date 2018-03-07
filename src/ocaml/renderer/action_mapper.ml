@@ -9,6 +9,7 @@ let to_message state = function
   | Leave_directory -> C.Message.leave_directory
   | Enter_directory -> C.Message.enter_directory
   | Change_active_pane -> C.Message.change_active_pane
+  | Jump -> C.Message.open_dialog @@ C.Types.dialog_jump
   | Copy -> C.Message.open_dialog @@ C.Types.dialog_confirmation `Copy
   | Move -> C.Message.open_dialog @@ C.Types.dialog_confirmation `Move
   | Rename -> C.Message.open_dialog @@ C.Types.dialog_rename

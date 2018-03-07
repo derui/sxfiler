@@ -133,6 +133,16 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     in
     (t, message)
 
+  let jump_directory t path =
+    let path = N.Path.resolve [path] in
+    let message =
+      let pane = S.active_pane t in
+      let module P = T.Pane in
+      Some (M.update_pane_request (T.Pane.to_js pane, Js.string path,
+                                   T.Pane_location.to_js t.S.active_pane) |> Lwt.return)
+    in
+    ({t with S.dialog_state = S.Dialog_state.Close}, message)
+
   let change_active_pane t = (S.swap_active_pane t, None)
   let open_dialog t dialog_type =
     let t = {t with S.dialog_state = S.Dialog_state.Open dialog_type} in
@@ -187,6 +197,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     | M.Select_prev_item v -> move_cursor t (-1 * abs v)
     | M.Leave_directory -> leave_directory t
     | M.Enter_directory -> enter_directory t
+    | M.Jump_directory s -> jump_directory t @@ Js.to_string s
     | M.Quit_application -> ({t with S.terminated = true}, None)
     | M.Change_active_pane -> change_active_pane t
     | M.Open_dialog state -> open_dialog t state

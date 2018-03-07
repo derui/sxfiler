@@ -284,4 +284,5 @@ end
 type dialog_type =
   | Dialog_confirmation of task_tag
   | Dialog_rename
+  | Dialog_jump
 [@@deriving variants]
