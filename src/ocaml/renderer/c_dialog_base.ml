@@ -7,8 +7,16 @@ let overlay ~key =
   R.Dom.of_tag `div ~key
     ~props:(R.element_spec ~class_name:"sf-DialogBase_Overlay" ())
 
-let container ~key ~children =
-  R.Dom.of_tag `div ~key ~props:R.(element_spec ~class_name:"sf-DialogBase_ContentContainer" ()) ~children
+let container ~key ~h_center ~v_center ~children =
+  let class_name = Classnames.(
+      let open Infix in
+      return "sf-DialogBase_ContentContainer"
+      <|> ("sf-DialogBase_ContentContainer-horizontalCenter", h_center)
+      <|> ("sf-DialogBase_ContentContainer-verticalCenter", v_center)
+      |> to_string
+    )
+  in
+  R.Dom.of_tag `div ~key ~props:R.(element_spec ~class_name ()) ~children
 
 let key_handler ~this ev =
   match Js.Optdef.to_option this##.props##.keyHandler with
@@ -18,6 +26,8 @@ let key_handler ~this ev =
 module Component = R.Component.Make_stateful (struct
     class type t = object
       method _open: bool Js.t Js.readonly_prop
+      method horizontalCenter : bool Js.t Js.readonly_prop
+      method verticalCenter : bool Js.t Js.readonly_prop
       method keyHandler: (R.Event.Keyboard_event.t -> unit) Js.optdef Js.readonly_prop
     end
   end)(struct
@@ -40,7 +50,10 @@ let component =
                     end))
         ~children:[|
           overlay ~key:"overlay";
-          container ~key:"container" ~children:Js.(to_array this##.props_defined##.children);
+          container ~key:"container"
+            ~h_center:Js.(to_bool this##.props##.horizontalCenter)
+            ~v_center:Js.(to_bool this##.props##.verticalCenter)
+            ~children:Js.(to_array this##.props_defined##.children);
         |]
   in
   Component.make

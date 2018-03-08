@@ -130,6 +130,8 @@ let component =
 
     R.create_element C_dialog_base.component ~props:(object%js
       val _open = Js.bool true
+      val horizontalCenter = Js.bool true
+      val verticalCenter = Js.bool true
       val keyHandler = Js.Optdef.return (key_handler ~dispatch:props##.dispatch ~this);
     end) ~children in
   Component.make

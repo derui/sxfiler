@@ -11,9 +11,6 @@
 
   display: grid;
 
-  justify-content: center;
-  align-content: center;
-
   z-index: 1;
 }
 
@@ -33,11 +30,20 @@
 }
 
 .sf-DialogBase_ContentContainer {
+    position: relative;
   display: grid;
-  grid-template-rows: max-content min-content;
+  grid-template-rows: max-content;
 
   z-index: 2;
 
   /* border and shadows */
   @include base-box-shadow;
+
+  &.sf-DialogBase_ContentContainer-horizontalCenter {
+      justify-content: center;
+  }
+
+  &.sf-DialogBase_ContentContainer-verticalCenter {
+      align-content: center;
+  }
 }
