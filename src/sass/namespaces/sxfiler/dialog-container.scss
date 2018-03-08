@@ -36,9 +36,6 @@
 
   z-index: 2;
 
-  /* border and shadows */
-  @include base-box-shadow;
-
   &.sf-DialogBase_ContentContainer-horizontalCenter {
       justify-content: center;
   }
