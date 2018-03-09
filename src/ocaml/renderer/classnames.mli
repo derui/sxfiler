@@ -11,4 +11,5 @@ val to_string : t -> string
 
 module Infix : sig
   val (<|>) : t -> condition -> t
+  val (<+>) : class_name -> condition -> t
 end

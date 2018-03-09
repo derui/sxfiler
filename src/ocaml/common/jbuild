@@ -6,5 +6,6 @@
   (libraries (js_of_ocaml lwt unix
               jsoo_reactjs sxfiler_kbd
               jsoo_node minimal-monadic-caml
+              sxfiler.completer
               ppx_deriving_yojson.runtime))
   (preprocess (pps (js_of_ocaml-ppx ppx_variants_conv ppx_deriving_yojson)))))

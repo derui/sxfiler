@@ -29,6 +29,22 @@ let restore_pane_info_from_history ~history pane =
   let module PH = C.Pane_history in
   PH.restore_pane_info ~pane history
 
+let refresh_candidates ~fs path =
+  let open Lwt.Infix in
+  Lwt.catch
+    (fun () ->
+       File_list.get_file_stats ~fs path
+       >>= Lwt.wrap1 (fun file_list ->
+           let file_list' = List.map T.File_stat.to_js file_list |> Array.of_list |> Js.array in
+           M.refresh_candidates_response @@ Ok file_list'))
+    (function
+      | File_list.Not_directory s ->
+        Lwt.return @@
+        M.refresh_candidates_response @@
+        Error T.Operation_log.(Entry.to_js @@ Entry.make ~log_type:Error s)
+      | _ -> failwith "Unknown error"
+    )
+
 module Make(Fs:Fs) : S with module Fs = Fs = struct
   module Fs = Fs
   module S = C.State
@@ -188,6 +204,35 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     ({t with S.task_state = S.Task_state.finish t.S.task_state},
      Some (Lwt.return M.refresh_panes_request))
 
+
+  let select_completion t = function
+    | `Next -> ({t with S.file_completion_state = S.File_completion.select_next t.S.file_completion_state}, None)
+    | `Prev -> ({t with S.file_completion_state = S.File_completion.select_prev t.S.file_completion_state}, None)
+
+  let request_refresh_candidates t path =
+    let path' = Js.to_string path in
+    (t, Some (refresh_candidates ~fs:(Fs.resolve ()) path'))
+
+  let finish_refresh_candidates t = function
+    | Ok candidates ->
+      let candidates = Js.to_array candidates |> Array.map T.File_stat.of_js in
+      ({t with S.file_completion_state = S.File_completion.(refresh ~candidates t.S.file_completion_state)}, None)
+    | Error entry ->
+      let entry = T.Operation_log.Entry.of_js entry in
+      ({t with S.operation_log = T.Operation_log.add_entry t.S.operation_log ~entry}, None)
+
+  let complete_from_candidates t ~match_type ~input =
+    let input' = Js.to_string input in
+    let module Stringify = struct
+      type t = T.File_stat.t
+      let to_string v = v.T.File_stat.filename
+    end in
+    let candidates = Array.to_list t.S.file_completion_state.S.File_completion.items in
+    let items = Sxfiler_completer.Completer.complete ~input:input' ~match_type ~candidates ~stringify:(module Stringify) in
+    let items = Array.of_list items in
+    ({t with S.file_completion_state = S.File_completion.(complete ~items t.S.file_completion_state)}, None)
+
+
   let react t = function
     | M.Update_pane_request (pane, path, loc) -> update_pane_request t pane path loc
     | M.Update_pane_response ret -> update_pane_response t ret
@@ -204,4 +249,9 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     | M.Close_dialog action -> close_dialog t @@ T.User_action.of_js action
     | M.Execute_task_request op -> execute_task t @@ T.Task_request.of_js op
     | M.Execute_task_response ret -> finish_task t ret
+    | M.Select_next_completion -> select_completion t `Next
+    | M.Select_prev_completion -> select_completion t `Prev
+    | M.Refresh_candidates_request s -> request_refresh_candidates t s
+    | M.Refresh_candidates_response v -> finish_refresh_candidates t v
+    | M.Complete_from_candidates (match_type, input) -> complete_from_candidates t ~input ~match_type
 end

@@ -87,9 +87,33 @@ let handle_submit ~dispatch v =
   let module M = C.Message in
   Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.jump_directory v)
 
+(* Get completion list element *)
+let completion_list ~key ~completion_state =
+  let items = completion_state.C.State.File_completion.items
+  and selected = completion_state.C.State.File_completion.cursor_pos in
+  let item_renderer item selected =
+    let class_name = "dialog-JumpDialogCompleter_Item" in
+    R.Dom.of_tag `div ~props:(R.element_spec ~class_name ()) ~children:[|
+      R.Dom.of_tag `span ~props:(R.element_spec
+                                   ~key:"text"
+                                   ~class_name:"dialog-JumpDialogCompleter_ItemText" ())
+        ~children:[|R.text item.C.Types.File_stat.filename|];
+      R.Dom.of_tag `span ~props:(R.element_spec
+                                   ~key:"description"
+                                   ~class_name:"dialog-JumpDialogCompleter_ItemDescription" ())
+        ~children:[|R.text item.C.Types.File_stat.directory|]
+    |]
+  in
+  R.create_element ~key ~props:(object%js
+    val items = items
+    val selectedIndex = selected
+    val itemRenderer = item_renderer
+  end) C_file_completion_list.component
+
 let component =
   let render this =
     let props = this##.props in
+    let state = props##.state in
 
     R.create_element C_dialog_base.component ~props:(object%js
       val _open = Js.bool true
@@ -108,25 +132,25 @@ let component =
 
           text_container ~key:"text_container" ~children:[|
             R.text "Enter: execute; Esc: cancel"
-          |]
+          |];
 
+          completion_list ~key:"completion_list" ~completion_state:C.State.(state.file_completion_state)
         |]
     |]
   in
-  Component.make R.(component_spec
-                      ~constructor:(fun this props -> this##.nodes := Jstable.create ();)
-                      ~component_did_mount:(fun this ->
-                          match R.Ref_table.find ~key:"input" this##.nodes with
-                          | Some e -> e##focus
-                          | None -> ()
-                        )
-                      ~component_did_update:(fun this _ _ ->
-                          match R.Ref_table.find ~key:"input" this##.nodes with
-                          | Some e -> e##focus
-                          | None -> ()
-                        )
-                      ~component_will_unmount:(fun this ->
-                          R.Ref_table.remove ~key:"input" this##.nodes
-                        )
-                      render
-                   )
+  Component.make @@ R.component_spec
+    ~constructor:(fun this props -> this##.nodes := Jstable.create ();)
+    ~component_did_mount:(fun this ->
+        match R.Ref_table.find ~key:"input" this##.nodes with
+        | Some e -> e##focus
+        | None -> ()
+      )
+    ~component_did_update:(fun this _ _ ->
+        match R.Ref_table.find ~key:"input" this##.nodes with
+        | Some e -> e##focus
+        | None -> ()
+      )
+    ~component_will_unmount:(fun this ->
+        R.Ref_table.remove ~key:"input" this##.nodes
+      )
+    render

@@ -72,6 +72,51 @@ end = struct
   }
 end
 
+module File_completion = struct
+  type t = {
+    cursor_pos: T.cursor_pos;
+    items: T.File_stat.t array;
+    candidates: T.File_stat.t array;
+    completing: bool;
+  }
+
+  class type js = object
+    method cursorPos: int Js.readonly_prop
+    method items: T.File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
+    method candidates: T.File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
+    method completing: bool Js.t Js.readonly_prop
+  end
+
+  let empty = {
+    cursor_pos = 0;
+    items = [||];
+    candidates = [||];
+    completing = false;
+  }
+
+  let select_next t = {t with cursor_pos = min (Array.length t.items) (succ t.cursor_pos)}
+  let select_prev t = {t with cursor_pos = max 0 (pred t.cursor_pos)}
+
+  let refresh t ~candidates = {t with candidates;items = [||];cursor_pos = 0}
+  let complete t ~items = {t with items}
+  let start_completion t = {t with completing = true}
+  let finish_completion t = {t with completing = false}
+
+  let to_js : t -> js Js.t = fun t -> object%js
+    val cursorPos = t.cursor_pos
+    val items = Array.map T.File_stat.to_js t.items |> Js.array
+    val candidates = Array.map T.File_stat.to_js t.candidates |> Js.array
+    val completing = Js.bool t.completing
+  end
+
+  let of_js : js Js.t -> t = fun js -> {
+    cursor_pos = js##.cursorPos;
+    items = Js.to_array js##.items |> Array.map T.File_stat.of_js;
+    candidates = Js.to_array js##.candidates |> Array.map T.File_stat.of_js;
+    completing = Js.to_bool js##.completing;
+  }
+end
+
 (* All state of this application *)
 type t = {
   active_pane: T.Pane_location.t;
@@ -85,6 +130,8 @@ type t = {
   operation_log: T.Operation_log.t;
   dialog_state: Dialog_state.t;
   task_state: Task_state.t;
+
+  file_completion_state: File_completion.t;
 }
 
 class type js = object
@@ -100,6 +147,7 @@ class type js = object
 
   method dialogState: Dialog_state.js Js.t Js.readonly_prop
   method taskState: Task_state.js Js.t Js.readonly_prop
+  method fileCompletionState: File_completion.js Js.t Js.readonly_prop
 end
 
 let empty =
@@ -117,6 +165,7 @@ let empty =
 
     dialog_state = Dialog_state.Close;
     task_state = Task_state.empty;
+    file_completion_state = File_completion.empty;
   }
 
 let to_js : t -> js Js.t = fun t -> object%js
@@ -131,6 +180,7 @@ let to_js : t -> js Js.t = fun t -> object%js
   val operationLog = T.Operation_log.to_js t.operation_log
   val dialogState = Dialog_state.to_js t.dialog_state
   val taskState = Task_state.to_js t.task_state
+  val fileCompletionState = File_completion.to_js t.file_completion_state
 end
 
 let of_js : js Js.t -> t = fun t ->
@@ -146,6 +196,7 @@ let of_js : js Js.t -> t = fun t ->
     operation_log = T.Operation_log.of_js t##.operationLog;
     dialog_state = Dialog_state.of_js t##.dialogState;
     task_state = Task_state.of_js t##.taskState;
+    file_completion_state = File_completion.of_js t##.fileCompletionState;
   }
 
 (* Utility functions *)

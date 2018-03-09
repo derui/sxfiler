@@ -12,4 +12,5 @@ let join list (cls, condition) = if condition then cls :: list else list
 
 module Infix = struct
   let (<|>) = join
+  let (<+>) v = (<|>) @@ return v
 end
