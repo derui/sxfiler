@@ -30,10 +30,18 @@ let restore_pane_info_from_history ~history pane =
   PH.restore_pane_info ~pane history
 
 let refresh_candidates ~fs path =
+  let dirname = N.Path.dirname path
+  and basename = N.Path.basename path in
+  let module Fs = N.Fs.Make(struct let instance = fs end) in
+  let directory =
+    if Fs.existsSync @@ N.Path.join [dirname;basename] then
+      N.Path.join [dirname;basename]
+    else dirname in
   let open Lwt.Infix in
+
   Lwt.catch
     (fun () ->
-       File_list.get_file_stats ~fs path
+       File_list.get_file_stats ~fs directory
        >>= Lwt.wrap1 (fun file_list ->
            let file_list' = List.map T.File_stat.to_js file_list |> Array.of_list |> Js.array in
            M.refresh_candidates_response @@ Ok file_list'))
@@ -223,14 +231,15 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
   let complete_from_candidates t ~match_type ~input =
     let input' = Js.to_string input in
+    let basename = N.Path.basename input' in
     let module Stringify = struct
       type t = T.File_stat.t
       let to_string v = v.T.File_stat.filename
     end in
     let candidates = Array.to_list t.S.file_completion_state.S.File_completion.items in
-    let items = Sxfiler_completer.Completer.complete ~input:input' ~match_type ~candidates ~stringify:(module Stringify) in
+    let items = Sxfiler_completer.Completer.complete ~input:basename ~match_type ~candidates ~stringify:(module Stringify) in
     let items = Array.of_list items in
-    ({t with S.file_completion_state = S.File_completion.(complete ~items t.S.file_completion_state)}, None)
+    ({t with S.file_completion_state = S.File_completion.(complete ~input:input' ~items t.S.file_completion_state)}, None)
 
 
   let react t = function

@@ -5,6 +5,7 @@ module Input = struct
   module C = R.Component.Make_stateful(struct
       class type t = object
         method onRef: (Dom_html.element Js.t -> unit) Js.readonly_prop
+        method onInput: (Js.js_string Js.t -> unit) Js.readonly_prop
         method onCancel: (unit -> unit) Js.readonly_prop
         method onSubmit: (Js.js_string Js.t -> unit) Js.readonly_prop
       end
@@ -20,7 +21,8 @@ module Input = struct
       let value = e##.value in
       this##setState (object%js
         val value = value
-      end)
+      end);
+      this##.props##.onInput value
     | _ -> ()
 
   let esc = Sxfiler_kbd.(to_keyseq {empty with key = "Escape"})
@@ -87,21 +89,26 @@ let handle_submit ~dispatch v =
   let module M = C.Message in
   Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.jump_directory v)
 
+let handle_input ~dispatch path =
+  let module M = C.Message in
+  Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.refresh_candidates_request path)
+
 (* Get completion list element *)
 let completion_list ~key ~completion_state =
   let items = completion_state.C.State.File_completion.items
   and selected = completion_state.C.State.File_completion.cursor_pos in
+  Firebug.console##log items;
   let item_renderer item selected =
     let class_name = "dialog-JumpDialogCompleter_Item" in
     R.Dom.of_tag `div ~props:(R.element_spec ~class_name ()) ~children:[|
       R.Dom.of_tag `span ~props:(R.element_spec
-                                   ~key:"text"
-                                   ~class_name:"dialog-JumpDialogCompleter_ItemText" ())
-        ~children:[|R.text item.C.Types.File_stat.filename|];
-      R.Dom.of_tag `span ~props:(R.element_spec
                                    ~key:"description"
-                                   ~class_name:"dialog-JumpDialogCompleter_ItemDescription" ())
-        ~children:[|R.text item.C.Types.File_stat.directory|]
+                                   ~class_name:"dialog-JumpDialogCompleter_ItemDirectory" ())
+        ~children:[|R.text item.C.Types.File_stat.directory|];
+      R.Dom.of_tag `span ~props:(R.element_spec
+                                   ~key:"text"
+                                   ~class_name:"dialog-JumpDialogCompleter_ItemName" ())
+        ~children:[|R.text item.C.Types.File_stat.filename|];
     |]
   in
   R.create_element ~key ~props:(object%js
@@ -126,6 +133,7 @@ let component =
         ~children:[|
           R.create_element ~key:"input" ~props:(object%js
             val onRef = (fun e -> R.Ref_table.add ~key:"input" ~value:e this##.nodes)
+            val onInput = handle_input ~dispatch:props##.dispatch
             val onCancel = handle_cancel ~dispatch:props##.dispatch
             val onSubmit = handle_submit ~dispatch:props##.dispatch
           end) Input.component;

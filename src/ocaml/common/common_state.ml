@@ -78,6 +78,7 @@ module File_completion = struct
     items: T.File_stat.t array;
     candidates: T.File_stat.t array;
     completing: bool;
+    prev_input: string;
   }
 
   class type js = object
@@ -85,6 +86,7 @@ module File_completion = struct
     method items: T.File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
     method candidates: T.File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
     method completing: bool Js.t Js.readonly_prop
+    method prevInput: Js.js_string Js.t Js.readonly_prop
   end
 
   let empty = {
@@ -92,13 +94,14 @@ module File_completion = struct
     items = [||];
     candidates = [||];
     completing = false;
+    prev_input = "";
   }
 
   let select_next t = {t with cursor_pos = min (Array.length t.items) (succ t.cursor_pos)}
   let select_prev t = {t with cursor_pos = max 0 (pred t.cursor_pos)}
 
-  let refresh t ~candidates = {t with candidates;items = [||];cursor_pos = 0}
-  let complete t ~items = {t with items}
+  let refresh t ~candidates = {t with candidates;items = candidates;cursor_pos = 0}
+  let complete t ~input ~items = {t with items; prev_input = input}
   let start_completion t = {t with completing = true}
   let finish_completion t = {t with completing = false}
 
@@ -107,6 +110,7 @@ module File_completion = struct
     val items = Array.map T.File_stat.to_js t.items |> Js.array
     val candidates = Array.map T.File_stat.to_js t.candidates |> Js.array
     val completing = Js.bool t.completing
+    val prevInput = Js.string t.prev_input
   end
 
   let of_js : js Js.t -> t = fun js -> {
@@ -114,6 +118,7 @@ module File_completion = struct
     items = Js.to_array js##.items |> Array.map T.File_stat.of_js;
     candidates = Js.to_array js##.candidates |> Array.map T.File_stat.of_js;
     completing = Js.to_bool js##.completing;
+    prev_input = Js.to_string js##.prevInput;
   }
 end
 
