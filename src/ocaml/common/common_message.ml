@@ -25,7 +25,7 @@ type t =
   | Select_prev_completion
   | Complete_from_candidates of Cmp.match_type * Js.js_string Js.t
   | Refresh_candidates_request of Js.js_string Js.t
-  | Refresh_candidates_response of (T.File_stat.js Js.t Js.js_array Js.t, T.Operation_log.Entry.js Js.t) result
+  | Refresh_candidates_response of (Js.js_string Js.t * T.File_stat.js Js.t Js.js_array Js.t, T.Operation_log.Entry.js Js.t) result
   | Open_dialog of T.dialog_type
   | Close_dialog of T.User_action.js Js.t
   | Execute_task_request of T.Task_request.js Js.t
