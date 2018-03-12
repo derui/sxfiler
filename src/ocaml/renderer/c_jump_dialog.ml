@@ -7,7 +7,8 @@ module Input = struct
         method onRef: (Dom_html.element Js.t -> unit) Js.readonly_prop
         method onInput: (Js.js_string Js.t -> unit) Js.readonly_prop
         method onCancel: (unit -> unit) Js.readonly_prop
-        method onSubmit: (Js.js_string Js.t -> unit) Js.readonly_prop
+        method onSubmit: (unit -> unit) Js.readonly_prop
+        method onMoveCursor: ([ `Up | `Down] -> unit) Js.readonly_prop
       end
     end)(struct
       class type t = object
@@ -27,12 +28,16 @@ module Input = struct
 
   let esc = Sxfiler_kbd.(to_keyseq {empty with key = "Escape"})
   let enter_key = Sxfiler_kbd.(to_keyseq {empty with key = "Enter"})
+  let arrow_up = Sxfiler_kbd.(to_keyseq {empty with key = "ArrowUp"})
+  let arrow_down = Sxfiler_kbd.(to_keyseq {empty with key = "ArrowDown"})
   let key_handler ~this ev =
 
     let key = Util.keyboard_event_to_key ev |> Js.to_string in
     match key with
-    | _ when key = enter_key -> this##.props##.onSubmit this##.state##.value
+    | _ when key = enter_key -> this##.props##.onSubmit ()
     | _ when key = esc -> this##.props##.onCancel ()
+    | _ when key = arrow_up -> this##.props##.onMoveCursor `Up
+    | _ when key = arrow_down -> this##.props##.onMoveCursor `Down
     | _ -> ()
 
   let component =
@@ -85,13 +90,23 @@ let handle_cancel ~dispatch () =
   let message = M.close_dialog @@ C.Types.User_action.(to_js Cancel) in
   Key_dispatcher.dispatch ~dispatcher:dispatch ~message
 
-let handle_submit ~dispatch v =
+let handle_submit ~dispatch ~this v =
   let module M = C.Message in
-  Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.jump_directory v)
+  let state = this##.props##.state in
+  let current_selected = C.State.(File_completion.selected state.file_completion_state) in
+  Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.jump_location @@ C.Types.File_stat.to_js current_selected)
 
 let handle_input ~dispatch path =
   let module M = C.Message in
   Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.refresh_candidates_request path)
+
+let handle_cursor ~dispatch = function
+  | `Up ->
+    let module M = C.Message in
+    Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.select_prev_completion)
+  | `Down ->
+    let module M = C.Message in
+    Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.select_next_completion)
 
 (* Get completion list element *)
 let completion_list ~key ~completion_state =
@@ -135,7 +150,8 @@ let component =
             val onRef = (fun e -> R.Ref_table.add ~key:"input" ~value:e this##.nodes)
             val onInput = handle_input ~dispatch:props##.dispatch
             val onCancel = handle_cancel ~dispatch:props##.dispatch
-            val onSubmit = handle_submit ~dispatch:props##.dispatch
+            val onSubmit = handle_submit ~dispatch:props##.dispatch ~this
+            val onMoveCursor = handle_cursor ~dispatch:props##.dispatch
           end) Input.component;
 
           text_container ~key:"text_container" ~children:[|

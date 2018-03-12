@@ -157,7 +157,8 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     in
     (t, message)
 
-  let jump_directory t path =
+  let jump_location t f =
+    let path = N.Path.join [f.T.File_stat.directory;f.T.File_stat.filename] in
     let path = N.Path.resolve [path] in
     let message =
       let pane = S.active_pane t in
@@ -255,7 +256,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     | M.Select_prev_item v -> move_cursor t (-1 * abs v)
     | M.Leave_directory -> leave_directory t
     | M.Enter_directory -> enter_directory t
-    | M.Jump_directory s -> jump_directory t @@ Js.to_string s
+    | M.Jump_location s -> jump_location t @@ T.File_stat.of_js s
     | M.Quit_application -> ({t with S.terminated = true}, None)
     | M.Change_active_pane -> change_active_pane t
     | M.Open_dialog state -> open_dialog t state

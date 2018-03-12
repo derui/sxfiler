@@ -19,7 +19,7 @@ type t =
   | Select_prev_item of int
   | Leave_directory
   | Enter_directory
-  | Jump_directory of Js.js_string Js.t
+  | Jump_location of T.File_stat.js Js.t
   | Change_active_pane
   | Select_next_completion
   | Select_prev_completion

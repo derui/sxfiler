@@ -105,6 +105,10 @@ module File_completion = struct
   let start_completion t = {t with completing = true}
   let finish_completion t = {t with completing = false}
 
+  let selected t =
+    let cursor_pos = min ((Array.length t.items) - 1) @@ max 0 t.cursor_pos in
+    Array.get t.items cursor_pos
+
   let to_js : t -> js Js.t = fun t -> object%js
     val cursorPos = t.cursor_pos
     val items = Array.map T.File_stat.to_js t.items |> Js.array

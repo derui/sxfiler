@@ -41,8 +41,9 @@ let get_file_stats ~fs path =
   Lwt_js.yield ()
   >>= Lwt.wrap1 (fun () -> Fs.statSync path)
   >>= (function
-       | Ok stat when Js.to_bool stat##isDirectory -> Lwt.return @@ Fs.readdirSync path
-       | Ok stat when Js.to_bool stat##isDirectory |> not -> Lwt.fail (Not_directory path)
+      | Ok stat ->
+        if Js.to_bool stat##isDirectory then Lwt.return @@ Fs.readdirSync path
+        else Lwt.fail (Not_directory path)
        | Error e -> Lwt.fail e)
   >>= (function
        | Ok names -> Lwt.return @@ filename_to_stats names
