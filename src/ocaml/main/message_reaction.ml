@@ -44,14 +44,14 @@ let refresh_candidates ~fs path =
     (fun () ->
        File_list.get_file_stats ~fs directory
        >>= Lwt.wrap1 (fun file_list ->
-               let file_list' = List.map T.File_stat.to_js file_list |> Array.of_list |> Js.array in
-               M.refresh_candidates_response @@ Ok (Js.string path, file_list')))
+           let file_list' = List.map T.File_stat.to_js file_list |> Array.of_list |> Js.array in
+           M.refresh_candidates_response @@ Ok (Js.string path, file_list')))
     (function
-     | File_list.Not_directory s ->
+      | File_list.Not_directory s ->
         Lwt.return @@
-          M.refresh_candidates_response @@
-            Error T.Operation_log.(Entry.to_js @@ Entry.make ~log_type:Error s)
-     | _ -> failwith "Unknown error"
+        M.refresh_candidates_response @@
+        Error T.Operation_log.(Entry.to_js @@ Entry.make ~log_type:Error s)
+      | _ -> failwith "Unknown error"
     )
 
 module Make(Fs:Fs) : S with module Fs = Fs = struct
@@ -67,28 +67,28 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     let open Lwt.Infix in
     let module PH = C.Pane_history in
     let refresh_pane' waker history pane = refresh_pane_file_list ~fs pane
-                                           >>= Lwt.wrap1 @@ restore_pane_info_from_history ~history
-                                           >>= Lwt.wrap1 @@ Lwt.wakeup waker in
+      >>= Lwt.wrap1 @@ restore_pane_info_from_history ~history
+      >>= Lwt.wrap1 @@ Lwt.wakeup waker in
 
     Lwt.async (fun () -> refresh_pane' left_waker left_history left <&> refresh_pane' right_waker right_history right);
     left_wait >>= fun left -> right_wait >>= fun right ->
-                              Lwt.return @@ M.refresh_panes_response (Ok (T.Pane.to_js left, T.Pane.to_js right))
+    Lwt.return @@ M.refresh_panes_response (Ok (T.Pane.to_js left, T.Pane.to_js right))
 
   let update_pane ~loc ~pane ~path ~history =
     let fs = Fs.resolve () in
 
     let open Lwt.Infix in
     let lwt = refresh_pane_file_list ~dir:path ~fs pane
-              >>= Lwt.wrap1 @@ restore_pane_info_from_history ~history
-              >>= fun pane -> Lwt.return @@ M.update_pane_response (Ok (T.Pane.to_js pane, loc))
+      >>= Lwt.wrap1 @@ restore_pane_info_from_history ~history
+      >>= fun pane -> Lwt.return @@ M.update_pane_response (Ok (T.Pane.to_js pane, loc))
     in
 
     Lwt.catch (fun () -> lwt) (fun err ->
         Firebug.console##log err;
         match err with
         | File_list.Not_directory f ->
-           let module M = Sxfiler_common.Message in
-           Lwt.return @@ M.update_pane_response @@ Error T.Operation_log.(Entry.to_js @@ Entry.make ~log_type:Error f)
+          let module M = Sxfiler_common.Message in
+          Lwt.return @@ M.update_pane_response @@ Error T.Operation_log.(Entry.to_js @@ Entry.make ~log_type:Error f)
         | _ -> raise Unhandled_promise
       )
 
@@ -111,7 +111,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
         let current_pane = S.active_pane t in
         let active_history = S.active_pane_history t in
         let history = PH.History.make ~directory:current_pane.T.Pane.directory
-                        ~selected_item:current_pane.T.Pane.selected_item in
+            ~selected_item:current_pane.T.Pane.selected_item in
         let history = PH.add_history ~history active_history in
         let t = S.update_pane_history t ~loc:t.S.active_pane ~history in
         let t = S.update_pane t ~loc ~pane in
@@ -126,8 +126,8 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       let pane = S.active_pane t in
       let module P = T.Pane in
       S.update_pane t ~loc:t.S.active_pane ~pane:{
-          pane with P.selected_item = Some v
-        } in
+        pane with P.selected_item = Some v
+      } in
     (t, None)
 
   let leave_directory t =

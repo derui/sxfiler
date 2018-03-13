@@ -14,26 +14,26 @@ let make_dialog ~props = function
       let module T = C.Types in
       match task with
       | `Copy -> R.create_element ~key:"dialog" ~props:(object%js
-                        val state = props##.state
-                        val dispatch = props##.dispatch
-                        val title = Js.string "Confirm copy file"
-                        val content = Js.string "Can filer copy file?"
-                        val onComplete = fun () -> T.User_action.Confirm (T.Task_request.(to_js Copy))
-                      end) C_confirmation_dialog.component
+                   val state = props##.state
+                   val dispatch = props##.dispatch
+                   val title = Js.string "Confirm copy file"
+                   val content = Js.string "Can filer copy file?"
+                   val onComplete = fun () -> T.User_action.Confirm (T.Task_request.(to_js Copy))
+                 end) C_confirmation_dialog.component
       | `Delete -> R.create_element ~key:"dialog" ~props:(object%js
-                          val state = props##.state
-                          val dispatch = props##.dispatch
-                          val title = Js.string "Confirm delete file"
-                          val content = Js.string "Can delete file?"
-                          val onComplete = fun () -> T.User_action.Confirm (T.Task_request.(to_js Delete))
-                        end) C_confirmation_dialog.component
+                     val state = props##.state
+                     val dispatch = props##.dispatch
+                     val title = Js.string "Confirm delete file"
+                     val content = Js.string "Can delete file?"
+                     val onComplete = fun () -> T.User_action.Confirm (T.Task_request.(to_js Delete))
+                   end) C_confirmation_dialog.component
       | `Move -> R.create_element ~key:"dialog" ~props:(object%js
-                        val state = props##.state
-                        val dispatch = props##.dispatch
-                        val title = Js.string "Confirm move file"
-                        val content = Js.string "Can move file?"
-                        val onComplete = fun () -> T.User_action.Confirm (T.Task_request.(to_js Move))
-                      end) C_confirmation_dialog.component
+                   val state = props##.state
+                   val dispatch = props##.dispatch
+                   val title = Js.string "Confirm move file"
+                   val content = Js.string "Can move file?"
+                   val onComplete = fun () -> T.User_action.Confirm (T.Task_request.(to_js Move))
+                 end) C_confirmation_dialog.component
       | _ -> R.empty ()
     end
   | C.Types.Dialog_rename -> R.create_element ~key:"dialog" ~props:(object%js

@@ -30,17 +30,17 @@
 }
 
 .sf-DialogBase_ContentContainer {
-    position: relative;
+  position: relative;
   display: grid;
   grid-template-rows: max-content;
 
   z-index: 2;
 
   &.sf-DialogBase_ContentContainer-horizontalCenter {
-      justify-content: center;
+    justify-content: center;
   }
 
   &.sf-DialogBase_ContentContainer-verticalCenter {
-      align-content: center;
+    align-content: center;
   }
 }

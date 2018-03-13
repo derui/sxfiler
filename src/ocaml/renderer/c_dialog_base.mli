@@ -5,7 +5,7 @@ module Component : sig
       horizontalCenter : bool Js.t Js.readonly_prop;
       verticalCenter : bool Js.t Js.readonly_prop;
       keyHandler : (R.Event.Keyboard_event.t -> unit) Js.optdef Js.readonly_prop;
-      >
+    >
   type state = < opened : bool Js.readonly_prop >
   type spec = (props, state) R.Core.Component_spec.t
   val make :

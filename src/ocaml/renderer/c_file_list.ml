@@ -18,6 +18,10 @@ module Component = R.Component.Make_stateful (struct
   end)
 
 let component =
+  let item_to_pos items = function
+    | None -> 0
+    | Some item -> Util.find_item_index ~equal:T.File_stat.equal ~v:item items
+  in
   let spec = R.component_spec
       ~constructor:(fun this props ->
           this##.state := object%js
@@ -29,10 +33,7 @@ let component =
           let open Minimal_monadic_caml.Option.Infix in
           let ret = R.Ref_table.find ~key:key_of_filelist this##.nodes
             >|= fun e ->
-            let item = this##.props##.selectedItem in
-            let pos = match item with
-              | None -> 0
-              | Some item -> Util.find_item_index ~equal:T.File_stat.equal ~v:item this##.props##.items in
+            let pos = item_to_pos this##.props##.items this##.props##.selectedItem in
             this##setState (object%js
               val virtualizedList = VL.update_list_height e##.clientHeight vl
                                     |> VL.update_all_items this##.props##.items
@@ -42,10 +43,7 @@ let component =
       ~component_will_receive_props:(fun this props ->
           let items = props##.items in
           let open Minimal_monadic_caml.Option.Infix in
-          let pos = match this##.props##.selectedItem with
-            | None -> 0
-            | Some item -> Util.find_item_index ~equal:T.File_stat.equal ~v:item items
-          in
+          let pos = item_to_pos items this##.props##.selectedItem in
           this##setState (object%js
             val virtualizedList = VL.update_all_items items this##.state##.virtualizedList
                                   |> VL.recalculate_visible_window pos
@@ -56,10 +54,7 @@ let component =
     let props = this##.props in
     let vl = this##.state##.virtualizedList in
     let items = VL.get_items_in_window vl in
-    let start_position = match props##.selectedItem with
-      | None -> 0
-      | Some v -> Util.find_item_index ~equal:T.File_stat.equal ~v items
-    in
+    let start_position = item_to_pos items props##.selectedItem in
     let children = Array.mapi (fun index item ->
         let module F = C.Types.File_stat in
         R.create_element ~key:item.F.id ~props:(object%js

@@ -9,17 +9,17 @@ exception Not_directory of string
  *
  * Caution, this method needs the fs module of execution environment, such as fs on node or
  * original-fs on electron.
- *)
+*)
 let get_file_stats ~fs path =
   let open Lwt.Infix in
   let filename_to_stats names =
     let names = Array.map (fun v -> Path.join [path; v]) names |> Array.to_list in
     let linked_to filename stat =
       if Js.to_bool stat##.isSymbolicLink then begin
-          match Fs.readlinkSync filename with
-          | Ok link_path -> Some link_path
-          | _ -> None
-        end
+        match Fs.readlinkSync filename with
+        | Ok link_path -> Some link_path
+        | _ -> None
+      end
       else None
     in
     let get_file_stat filename =
@@ -44,7 +44,7 @@ let get_file_stats ~fs path =
       | Ok stat ->
         if Js.to_bool stat##isDirectory then Lwt.return @@ Fs.readdirSync path
         else Lwt.fail (Not_directory path)
-       | Error e -> Lwt.fail e)
+      | Error e -> Lwt.fail e)
   >>= (function
-       | Ok names -> Lwt.return @@ filename_to_stats names
-       | Error e -> Lwt.fail e)
+      | Ok names -> Lwt.return @@ filename_to_stats names
+      | Error e -> Lwt.fail e)

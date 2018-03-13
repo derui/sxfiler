@@ -86,13 +86,13 @@ let add_history ~history t =
   let new_table = clone_table t.history_map in
 
   begin match Jstable.find new_table key |> Js.Optdef.to_option with
-  | Some _ -> Jstable.add new_table key history
-  | None -> begin
-      if List.length keys + 1 > t.max_storeable_count then
-        remove_oldest_history new_table
-      else ();
-      Jstable.add new_table key history
-    end
+    | Some _ -> Jstable.add new_table key history
+    | None -> begin
+        if List.length keys + 1 > t.max_storeable_count then
+          remove_oldest_history new_table
+        else ();
+        Jstable.add new_table key history
+      end
   end;
   {t with history_map = new_table}
 

@@ -1,7 +1,13 @@
 const { execFileSync } = require('child_process');
 
 function bundleTest() {
-  let options = ['--mode', 'development', '--cache', '--config', 'webpack.test.config.js'];
+  let options = [
+    '--mode',
+    'development',
+    '--cache',
+    '--config',
+    'webpack.test.config.js',
+  ];
 
   execFileSync('webpack', options, { stdio: 'inherit' });
 }
