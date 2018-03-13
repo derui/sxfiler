@@ -8,8 +8,8 @@ let key_of_filelist = "currentNode"
 
 module Component = R.Component.Make_stateful (struct
     class type t = object
-      method items: T.File_stat.t list Js.readonly_prop
-      method cursorPos: T.cursor_pos Js.readonly_prop
+      method items: T.File_stat.t array Js.readonly_prop
+      method selectedItem: T.File_stat.t option Js.readonly_prop
     end
   end)(struct
     class type t = object
@@ -26,27 +26,40 @@ let component =
           this##.nodes := Jstable.create ())
       ~component_did_mount:(fun this ->
           let vl = this##.state##.virtualizedList in
-          match R.Ref_table.find ~key:key_of_filelist this##.nodes with
-          | None -> ()
-          | Some e -> begin
-              this##setState (object%js
-                val virtualizedList = VL.update_list_height e##.clientHeight vl
-                                       |> VL.update_all_items (Array.of_list this##.props##.items)
-                                       |> VL.recalculate_visible_window this##.props##.cursorPos
-              end)
+          let open Minimal_monadic_caml.Option.Infix in
+          let ret = R.Ref_table.find ~key:key_of_filelist this##.nodes
+            >|= fun e ->
+            let item = this##.props##.selectedItem in
+            let pos = match item with
+              | None -> 0
+              | Some item -> Util.find_item_index ~equal:T.File_stat.equal ~v:item this##.props##.items in
+            this##setState (object%js
+              val virtualizedList = VL.update_list_height e##.clientHeight vl
+                                    |> VL.update_all_items this##.props##.items
+                                    |> VL.recalculate_visible_window pos
             end)
+          in ignore ret)
       ~component_will_receive_props:(fun this props ->
-          let items = Array.of_list props##.items in
+          let items = props##.items in
+          let open Minimal_monadic_caml.Option.Infix in
+          let pos = match this##.props##.selectedItem with
+            | None -> 0
+            | Some item -> Util.find_item_index ~equal:T.File_stat.equal ~v:item items
+          in
           this##setState (object%js
             val virtualizedList = VL.update_all_items items this##.state##.virtualizedList
-                                   |> VL.recalculate_visible_window props##.cursorPos
-          end))
+                                  |> VL.recalculate_visible_window pos
+          end)
+        )
   in
   let render this =
     let props = this##.props in
     let vl = this##.state##.virtualizedList in
-    let items = VL.get_items_in_window vl
-    and start_position = props##.cursorPos - VL.start_position_of_window vl in
+    let items = VL.get_items_in_window vl in
+    let start_position = match props##.selectedItem with
+      | None -> 0
+      | Some v -> Util.find_item_index ~equal:T.File_stat.equal ~v items
+    in
     let children = Array.mapi (fun index item ->
         let module F = C.Types.File_stat in
         R.create_element ~key:item.F.id ~props:(object%js

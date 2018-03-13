@@ -1,6 +1,10 @@
 module FT = Jsoo_node.Fs_types
 
 type cursor_pos = int
+type sort_type =
+  | Sort_name
+  | Sort_size
+  | Sort_date
 
 module File_stat = struct
   type t = {
@@ -52,35 +56,35 @@ end
 module Pane = struct
   type t = {
     directory: string;
-    file_list: File_stat.t list;
-    cursor_pos: cursor_pos;
+    file_list: File_stat.t array;
+    selected_item: File_stat.t option;
   }
 
   class type js = object
     method directory: Js.js_string Js.t Js.readonly_prop
     method fileList: File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
-    method cursorPos : Js.number Js.t Js.readonly_prop
+    method selectedItem: File_stat.js Js.t Js.opt Js.readonly_prop
   end
 
   let equal = (=)
 
-  let make ?(file_list=[]) ?(cursor_pos=0) ~directory () =
+  let make ?(file_list=[||]) ?selected_item ~directory () =
     {
       directory;
       file_list;
-      cursor_pos;
+      selected_item;
     }
 
   let to_js : t -> js Js.t = fun t -> object%js
-    val fileList = List.map File_stat.to_js t.file_list |> Array.of_list |> Js.array
+    val fileList = Array.map File_stat.to_js t.file_list |> Js.array
     val directory = Js.string t.directory
-    val cursorPos = Js.number_of_float @@ float_of_int t.cursor_pos
+    val selectedItem = Js.Opt.map (Js.Opt.option t.selected_item) File_stat.to_js
   end
 
   let of_js : js Js.t -> t = fun js -> {
       directory = Js.to_string js##.directory;
-      file_list = Js.to_array js##.fileList |> Array.map File_stat.of_js |> Array.to_list;
-      cursor_pos = int_of_float @@ Js.float_of_number js##.cursorPos;
+      file_list = Js.to_array js##.fileList |> Array.map File_stat.of_js;
+      selected_item = Js.Opt.map js##.selectedItem File_stat.of_js |> Js.Opt.to_option;
     }
 end
 

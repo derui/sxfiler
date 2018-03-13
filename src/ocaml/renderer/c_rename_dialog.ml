@@ -101,33 +101,38 @@ let component =
   let render this =
     let props = this##.props in
     let module T = C.Types.File_stat in
-    let selected_file = C.State.(active_pane props##.state |> Pane.pointed_file) in
-    let original = selected_file.T.filename in
+    let pane = C.State.(active_pane props##.state) in
+    let selected_file = pane.C.Types.Pane.selected_item in
+    match selected_file with
+    | None -> R.empty ()
+    | Some selected_file -> begin
+        let original = selected_file.T.filename in
 
-    R.create_element C_dialog_base.component ~props:(object%js
-      val _open = Js.bool true
-      val horizontalCenter = Js.bool true
-      val verticalCenter = Js.bool false
-      val keyHandler = Js.Optdef.empty
-    end) ~children:[|
-      R.Dom.of_tag `div
-        ~props:R.(element_spec ~class_name:"dialog-RenameDialog" ())
-        ~children:[|
-          header ~key:"header" ~title:"Rename object";
-          body ~key:"body" ~children:[|
-            R.create_element ~key:"input" ~props:(object%js
-              val text = Js.string original
-              val onRef = (fun e -> R.Ref_table.add ~key:"input" ~value:e this##.nodes)
-              val onCancel = handle_cancel ~dispatch:props##.dispatch
-              val onSubmit = handle_submit ~dispatch:props##.dispatch
-            end) Input.component;
+        R.create_element C_dialog_base.component ~props:(object%js
+          val _open = Js.bool true
+          val horizontalCenter = Js.bool true
+          val verticalCenter = Js.bool false
+          val keyHandler = Js.Optdef.empty
+        end) ~children:[|
+          R.Dom.of_tag `div
+            ~props:R.(element_spec ~class_name:"dialog-RenameDialog" ())
+            ~children:[|
+              header ~key:"header" ~title:"Rename object";
+              body ~key:"body" ~children:[|
+                R.create_element ~key:"input" ~props:(object%js
+                  val text = Js.string original
+                  val onRef = (fun e -> R.Ref_table.add ~key:"input" ~value:e this##.nodes)
+                  val onCancel = handle_cancel ~dispatch:props##.dispatch
+                  val onSubmit = handle_submit ~dispatch:props##.dispatch
+                end) Input.component;
 
-            text_container ~key:"text_container" ~children:[|
-              R.text "Enter: execute; Esc: cancel"
+                text_container ~key:"text_container" ~children:[|
+                  R.text "Enter: execute; Esc: cancel"
+                |]
+              |]
             |]
-          |]
         |]
-    |]
+      end
   in
 
   Component.make R.(

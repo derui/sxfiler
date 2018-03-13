@@ -118,12 +118,12 @@ module File_completion = struct
   end
 
   let of_js : js Js.t -> t = fun js -> {
-    cursor_pos = js##.cursorPos;
-    items = Js.to_array js##.items |> Array.map T.File_stat.of_js;
-    candidates = Js.to_array js##.candidates |> Array.map T.File_stat.of_js;
-    completing = Js.to_bool js##.completing;
-    prev_input = Js.to_string js##.prevInput;
-  }
+      cursor_pos = js##.cursorPos;
+      items = Js.to_array js##.items |> Array.map T.File_stat.of_js;
+      candidates = Js.to_array js##.candidates |> Array.map T.File_stat.of_js;
+      completing = Js.to_bool js##.completing;
+      prev_input = Js.to_string js##.prevInput;
+    }
 end
 
 (* All state of this application *)
@@ -212,11 +212,11 @@ let of_js : js Js.t -> t = fun t ->
 
 module Pane = struct
   (** Get file stats currently selected in [pane] *)
-  let pointed_file pane =
+  let selected_files pane =
     let module P = T.Pane in
-    let pos = pane.P.cursor_pos
-    and files = Array.of_list pane.P.file_list in
-    files.(pos)
+    let open Minimal_monadic_caml.Option.Infix in
+    let items = pane.P.selected_item >>= fun v -> Some [v] in
+    Common_util.Option.get ~default:[] items
 end
 
 let is_left_active t = t.active_pane = `Left

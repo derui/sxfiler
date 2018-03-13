@@ -21,7 +21,7 @@ let component = Component.make (fun props ->
         ~children:[|
           R.create_element ~key:"file-list" ~props:(object%js
             val items = pane.T.Pane.file_list
-            val cursorPos = pane.T.Pane.cursor_pos
+            val selectedItem = pane.T.Pane.selected_item
           end) C_file_list.component
         |] in
     R.Dom.of_tag `div

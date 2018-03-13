@@ -23,7 +23,8 @@ let refresh_pane_file_list ?dir ~fs pane =
     | None -> N.Path.resolve [pane.T.Pane.directory] in
   File_list.get_file_stats ~fs directory
   >>= (fun file_list ->
-      Lwt.return @@ T.Pane.make ~file_list ~cursor_pos:pane.T.Pane.cursor_pos ~directory ())
+      let file_list = Array.of_list file_list in
+      Lwt.return @@ T.Pane.make ~file_list ?selected_item:pane.T.Pane.selected_item ~directory ())
 
 let restore_pane_info_from_history ~history pane =
   let module PH = C.Pane_history in
@@ -110,7 +111,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
         let current_pane = S.active_pane t in
         let active_history = S.active_pane_history t in
         let history = PH.History.make ~directory:current_pane.T.Pane.directory
-                        ~cursor_pos:current_pane.T.Pane.cursor_pos in
+                        ~selected_item:current_pane.T.Pane.selected_item in
         let history = PH.add_history ~history active_history in
         let t = S.update_pane_history t ~loc:t.S.active_pane ~history in
         let t = S.update_pane t ~loc ~pane in
@@ -119,14 +120,13 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       end
     | Error _ -> failwith "error"
 
-  let move_cursor t v =
+  let select_item t v =
     let module O = Sxfiler_common.Util.Option in
     let t =
       let pane = S.active_pane t in
       let module P = T.Pane in
-      let file_count = List.length pane.P.file_list - 1 in
       S.update_pane t ~loc:t.S.active_pane ~pane:{
-          pane with P.cursor_pos = max 0 @@ min file_count (v + pane.P.cursor_pos)
+          pane with P.selected_item = Some v
         } in
     (t, None)
 
@@ -146,13 +146,12 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     let message =
       let pane = S.active_pane t in
       let module P = T.Pane in
-      List.nth_opt pane.P.file_list pane.P.cursor_pos
-      >>= fun item ->
+      pane.P.selected_item >>= fun item ->
       if item.T.File_stat.stat##.isDirectory |> Js.to_bool then begin
-          let target_dir = N.Path.join [item.T.File_stat.directory;item.T.File_stat.filename] in
-          Some (M.update_pane_request (T.Pane.to_js pane, Js.string target_dir,
-                                       T.Pane_location.to_js t.S.active_pane) |> Lwt.return)
-        end else
+        let target_dir = N.Path.join [item.T.File_stat.directory;item.T.File_stat.filename] in
+        Some (M.update_pane_request (T.Pane.to_js pane, Js.string target_dir,
+                                     T.Pane_location.to_js t.S.active_pane) |> Lwt.return)
+      end else
         None
     in
     (t, message)
@@ -183,8 +182,8 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
   let execute_task t req =
     let module Instance = struct
-        let instance = Fs.resolve ()
-      end in
+      let instance = Fs.resolve ()
+    end in
     let module Task = (val Predefined_tasks.of_request {Predefined_tasks.fs = (module Instance)} req) in
     let executed = Task.Task.execute Task.instance t in
     ({t with S.task_state = S.Task_state.accept_task t.S.task_state req;
@@ -206,8 +205,8 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
         ({t with S.left_pane; right_pane}, None)
       end
     | Error entry ->
-       let entry = T.Operation_log.Entry.of_js entry in
-       ({t with S.operation_log = T.Operation_log.add_entry t.S.operation_log ~entry}, None)
+      let entry = T.Operation_log.Entry.of_js entry in
+      ({t with S.operation_log = T.Operation_log.add_entry t.S.operation_log ~entry}, None)
 
   let finish_task t ret =
     ({t with S.task_state = S.Task_state.finish t.S.task_state},
@@ -224,36 +223,35 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
   let finish_refresh_candidates t = function
     | Ok (path, candidates) ->
-       let candidates = Js.to_array candidates |> Array.map T.File_stat.of_js in
-       ({t with S.file_completion_state = S.File_completion.(refresh ~candidates t.S.file_completion_state)},
-        Some (Lwt.return @@ M.complete_from_candidates M.Cmp.Forward_exact_match path))
+      let candidates = Js.to_array candidates |> Array.map T.File_stat.of_js in
+      ({t with S.file_completion_state = S.File_completion.(refresh ~candidates t.S.file_completion_state)},
+       Some (Lwt.return @@ M.complete_from_candidates M.Cmp.Forward_exact_match path))
     | Error entry ->
-       let entry = T.Operation_log.Entry.of_js entry in
-       ({t with S.operation_log = T.Operation_log.add_entry t.S.operation_log ~entry;
-                file_completion_state = S.File_completion.(refresh ~candidates:[||] t.S.file_completion_state)}, None)
+      let entry = T.Operation_log.Entry.of_js entry in
+      ({t with S.operation_log = T.Operation_log.add_entry t.S.operation_log ~entry;
+               file_completion_state = S.File_completion.(refresh ~candidates:[||] t.S.file_completion_state)}, None)
 
   let complete_from_candidates t ~match_type ~input =
     if input##.length = 0 then
       (t, None)
     else begin
-        let input' = Js.to_string input in
-        let module Stringify = struct
-            type t = T.File_stat.t
-            let to_string v = N.Path.join [v.T.File_stat.directory;v.T.File_stat.filename]
-          end in
-        let candidates = Array.to_list t.S.file_completion_state.S.File_completion.items in
-        let items = Sxfiler_completer.Completer.complete ~input:input' ~match_type ~candidates ~stringify:(module Stringify) in
-        let items = Array.of_list items in
-        ({t with S.file_completion_state = S.File_completion.(complete ~input:input' ~items t.S.file_completion_state)}, None)
-      end
+      let input' = Js.to_string input in
+      let module Stringify = struct
+        type t = T.File_stat.t
+        let to_string v = N.Path.join [v.T.File_stat.directory;v.T.File_stat.filename]
+      end in
+      let candidates = Array.to_list t.S.file_completion_state.S.File_completion.items in
+      let items = Sxfiler_completer.Completer.complete ~input:input' ~match_type ~candidates ~stringify:(module Stringify) in
+      let items = Array.of_list items in
+      ({t with S.file_completion_state = S.File_completion.(complete ~input:input' ~items t.S.file_completion_state)}, None)
+    end
 
   let react t = function
     | M.Update_pane_request (pane, path, loc) -> update_pane_request t pane path loc
     | M.Update_pane_response ret -> update_pane_response t ret
     | M.Refresh_panes_request -> request_refresh_panes t
     | M.Refresh_panes_response payload -> finish_refresh_panes t payload
-    | M.Select_next_item v -> move_cursor t @@ abs v
-    | M.Select_prev_item v -> move_cursor t (-1 * abs v)
+    | M.Select_item v -> select_item t @@ T.File_stat.of_js v
     | M.Leave_directory -> leave_directory t
     | M.Enter_directory -> enter_directory t
     | M.Jump_location s -> jump_location t @@ T.File_stat.of_js s

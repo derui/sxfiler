@@ -12,3 +12,12 @@ let keyboard_event_to_key v =
 let get_focus_target = function
   | C.State.Dialog_state.Open _ -> Types.Focus_dialog
   | C.State.Dialog_state.Close -> Types.Focus_file_pane
+
+let find_item_index ?(equal=(=)) ~v array =
+  let rec find ary v ind =
+    if Array.length ary <= ind then 0
+    else if equal v ary.(ind) then ind
+    else find ary v (succ ind)
+  in
+
+  find array v 0
