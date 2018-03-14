@@ -37,11 +37,11 @@ let get_file_stats ~fs path =
       let open Minimal_monadic_caml.Result.Infix in
       Fs.lstatSync filename
       >>= fun stat ->
-          let stat = Fs.stat_to_obj stat in
-          let link_path = linked_to filename stat in
-          let directory = Path.dirname filename in
-          let filename = Path.basename filename in
-          Ok (T.File_stat.make ~filename ~stat ~link_path ~directory)
+      let stat = Fs.stat_to_obj stat in
+      let link_path = linked_to filename stat in
+      let directory = Path.dirname filename in
+      let filename = Path.basename filename in
+      Ok (T.File_stat.make ~filename ~stat ~link_path ~directory)
     in
     List.map get_file_stat names
   in

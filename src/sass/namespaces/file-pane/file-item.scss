@@ -3,8 +3,7 @@
 .fp-FileItem {
   display: flex;
 
-  padding: $nanoSpace;
-  justify-content: center;
+  align-self: center;
   list-style: none;
 
   color: $sol_base0;
@@ -12,10 +11,17 @@
   white-space: nowrap;
 
   font-size: 1rem;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+  line-height: 1.25em;
 }
 
-.fp-FileItem.is-selected {
+.fp-FileItem.fp-FileItem-selected {
   background-color: $sol_base02;
+}
+
+.fp-FileItem.fp-FileItem-focused {
+  border-bottom: 1px solid $sol_red;
 }
 
 .fp-FileItem_FileName {

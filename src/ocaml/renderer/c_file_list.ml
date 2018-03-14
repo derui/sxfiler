@@ -10,6 +10,7 @@ module Component = R.Component.Make_stateful (struct
     class type t = object
       method items: T.File_stat.t array Js.readonly_prop
       method selectedItem: T.File_stat.t option Js.readonly_prop
+      method focused: bool Js.readonly_prop
     end
   end)(struct
     class type t = object
@@ -60,6 +61,7 @@ let component =
         R.create_element ~key:item.F.id ~props:(object%js
           val item = item
           val selected = start_position = index
+          val focused = props##.focused
         end) C_file_item.component
       ) items
     in

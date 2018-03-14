@@ -1,9 +1,10 @@
 @import "base/*";
+@import "./_variable";
 
 .fp-FileList {
   position: absolute;
   display: grid;
-  grid-template-rows: repeat(auto-fill, 1em + ($nanoSpace * 2));
+  grid-template-rows: repeat(auto-fill, $fp-FileItemHeight);
   height: 100%;
   width: 100%;
   overflow: scroll;
