@@ -3,8 +3,6 @@ module FFI = Sxfiler_common.Ffi
 module M = Modules
 module N = Jsoo_node
 
-exception No_main_window
-
 type t = {
   mutable main_window: FFI.BrowserWindow.t Js.t option;
   ipc: FFI.ipc Js.t;
@@ -28,7 +26,7 @@ let on_ready t _ =
   let file_path = N.Path.join [Js.to_string N.__dirname;"index.html"] in
 
   match t.main_window with
-  | None -> raise No_main_window
+  | None -> raise Errors.(to_error `Sxfiler_no_main_window)
   | Some window -> begin
       window##loadURL Js.(string ("file://" ^ file_path));
       window##focusOnWebView ()

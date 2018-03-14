@@ -4,8 +4,6 @@ module E = C.Event
 module M = C.Message
 module N = Jsoo_node
 
-exception Unhandled_promise
-
 module type Fs = sig
   val resolve: unit -> N.Module_types.fs Js.t
 end
@@ -22,9 +20,12 @@ let refresh_pane_file_list ?dir ~fs pane =
     | Some dir -> N.Path.resolve [dir]
     | None -> N.Path.resolve [pane.T.Pane.directory] in
   File_list.get_file_stats ~fs directory
-  >>= (fun file_list ->
-      let file_list = Array.of_list file_list in
-      Lwt.return @@ T.Pane.make ~file_list ?selected_item:pane.T.Pane.selected_item ~directory ())
+  >>= (function
+      | Ok file_list -> begin
+          let file_list = Array.of_list file_list in
+          Lwt.return @@ T.Pane.make ~file_list ?selected_item:pane.T.Pane.selected_item ~directory ()
+        end
+      | Error e -> Lwt.fail @@ Errors.to_error @@ `Sxfiler_node_error e)
 
 let restore_pane_info_from_history ~history pane =
   let module PH = C.Pane_history in
@@ -40,19 +41,13 @@ let refresh_candidates ~fs path =
     else dirname in
   let open Lwt.Infix in
 
-  Lwt.catch
-    (fun () ->
-       File_list.get_file_stats ~fs directory
-       >>= Lwt.wrap1 (fun file_list ->
-           let file_list' = List.map T.File_stat.to_js file_list |> Array.of_list |> Js.array in
-           M.refresh_candidates_response @@ Ok (Js.string path, file_list')))
-    (function
-      | File_list.Not_directory s ->
-        Lwt.return @@
-        M.refresh_candidates_response @@
-        Error T.Operation_log.(Entry.to_js @@ Entry.make ~log_type:Error s)
-      | _ -> failwith "Unknown error"
-    )
+  File_list.get_file_stats ~fs directory
+  >>= (function
+      | Ok file_list ->
+        let file_list' = List.map T.File_stat.to_js file_list |> Array.of_list |> Js.array in
+        Lwt.return @@ M.refresh_candidates_response @@ Ok (Js.string path, file_list')
+      | Error e ->
+        Lwt.fail @@ Errors.to_error @@ `Sxfiler_node_error e)
 
 module Make(Fs:Fs) : S with module Fs = Fs = struct
   module Fs = Fs
@@ -78,18 +73,14 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     let fs = Fs.resolve () in
 
     let open Lwt.Infix in
-    let lwt = refresh_pane_file_list ~dir:path ~fs pane
+    let lwt () = refresh_pane_file_list ~dir:path ~fs pane
       >>= Lwt.wrap1 @@ restore_pane_info_from_history ~history
       >>= fun pane -> Lwt.return @@ M.update_pane_response (Ok (T.Pane.to_js pane, loc))
     in
 
-    Lwt.catch (fun () -> lwt) (fun err ->
-        Firebug.console##log err;
-        match err with
-        | File_list.Not_directory f ->
-          let module M = Sxfiler_common.Message in
-          Lwt.return @@ M.update_pane_response @@ Error T.Operation_log.(Entry.to_js @@ Entry.make ~log_type:Error f)
-        | _ -> raise Unhandled_promise
+    Lwt.catch lwt (fun err ->
+        let module M = Sxfiler_common.Message in
+        Lwt.return @@ M.update_pane_response @@ Error T.Operation_log.(Entry.to_js @@ Entry.make ~log_type:Error "error happend")
       )
 
   let update_pane_request t pane path loc =
