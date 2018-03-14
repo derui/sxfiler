@@ -9,7 +9,5 @@ val join : t -> condition -> t
 
 val to_string : t -> string
 
-module Infix : sig
-  val (<|>) : t -> condition -> t
-  val (<+>) : class_name -> condition -> t
-end
+(** Shortcut operator of [join] *)
+val (<|>) : t -> condition -> t

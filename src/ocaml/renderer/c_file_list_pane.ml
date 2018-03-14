@@ -16,16 +16,18 @@ let component = Component.make (fun props ->
         val directory = Js.string pane.T.Pane.directory
         val selected = props##.selected
       end) C_file_list_pane_header.component
-    and content = R.Dom.of_tag `div ~key:"content"
-        ~props:R.(element_spec ~class_name:"fp-FileListPane_Content" ())
-        ~children:[|
+    and content =
+      let props = R.element_spec ~class_name:"fp-FileListPane_Content" ()
+      and children = [|
           R.create_element ~key:"file-list" ~props:(object%js
             val items = pane.T.Pane.file_list
             val selectedItem = pane.T.Pane.selected_item
             val focused = props##.selected
           end) C_file_list.component
-        |] in
-    R.Dom.of_tag `div
-      ~props:R.(element_spec ~class_name:"fp-FileListPane"  ())
-      ~children:[| header; content; |]
+        |]
+      in
+      R.Dom.of_tag `div ~key:"content" ~props ~children
+    in
+    let props = R.element_spec ~class_name:"fp-FileListPane" () in
+    R.Dom.of_tag `div ~props ~children:[| header; content; |]
   )

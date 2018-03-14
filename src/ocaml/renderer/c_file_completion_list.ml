@@ -11,9 +11,11 @@ module Component = R.Component.Make_stateless (struct
 
 let item_container ~key ~body ~selected =
   let class_name = let open Classnames in
-    let open Infix in
-    "sf-CompletionList_ItemContainer" <+> ("sf-CompletionList_ItemContainer-selected", selected)
-    |> to_string in
+    empty
+    <|> ("sf-CompletionList_ItemContainer", true)
+    <|> ("sf-CompletionList_ItemContainer-selected", selected)
+    |> to_string
+  in
   R.Dom.of_tag `li
     ~props:(R.element_spec ~key ~class_name ())
     ~children:[|body|]

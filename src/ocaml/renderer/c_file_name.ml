@@ -14,12 +14,11 @@ let directory_modifier = base_selector ^ "-Directory"
 let symlink_modifier = base_selector ^ "-Symlink"
 
 let get_classname props =
-  let module C = Classnames in
-  let open C.Infix in
-  C.to_string @@ (C.empty
-                  <|> (base_selector, true)
-                  <|> (directory_modifier, Js.to_bool props##.isDirectory)
-                  <|> (symlink_modifier, Js.to_bool props##.isSymbolicLink))
+  let open Classnames in
+  to_string @@ (empty
+                <|> (base_selector, true)
+                <|> (directory_modifier, Js.to_bool props##.isDirectory)
+                <|> (symlink_modifier, Js.to_bool props##.isSymbolicLink))
 
 let component = Component.make (fun props ->
     let name = Js.to_string props##.fileName in

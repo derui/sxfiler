@@ -48,8 +48,8 @@ module Button = struct
   let component = C.make (fun props ->
       let selected = Js.to_bool props##.selected in
       let class_name = Classnames.(
-          let open Infix in
-          return "dialog-ConfirmDialog_Button"
+          empty
+          <|> ("dialog-ConfirmDialog_Button", true)
           <|> ("dialog-ConfirmDialog_Button-Selected", selected)
           |> to_string) in
       R.Dom.of_tag `div ~key:"yes" ~props:R.(element_spec ~class_name ())

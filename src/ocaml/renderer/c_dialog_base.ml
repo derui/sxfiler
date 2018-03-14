@@ -9,8 +9,8 @@ let overlay ~key =
 
 let container ~key ~h_center ~v_center ~children =
   let class_name = Classnames.(
-      let open Infix in
-      return "sf-DialogBase_ContentContainer"
+      empty
+      <|> ("sf-DialogBase_ContentContainer", true)
       <|> ("sf-DialogBase_ContentContainer-horizontalCenter", h_center)
       <|> ("sf-DialogBase_ContentContainer-verticalCenter", v_center)
       |> to_string

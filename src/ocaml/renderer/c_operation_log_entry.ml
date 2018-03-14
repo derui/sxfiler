@@ -18,11 +18,12 @@ module Log_type = struct
     | _ -> false
 
   let component = Component.make (fun props ->
-      let class_name = Classnames.(let open Infix in
-                                   return "fp-OperationLogEntry_LogType"
-                                   <|> ( "fp-OperationLogEntry_LogType-Error", is_error props##.logType)
-                                   |> to_string) in
-
+      let class_name = Classnames.(
+          empty
+          <|> ("fp-OperationLogEntry_LogType", true)
+          <|> ( "fp-OperationLogEntry_LogType-Error", is_error props##.logType)
+          |> to_string)
+      in
       R.Dom.of_tag `span
         ~props:R.(element_spec ~class_name ())
         ~children:[| R.text @@ string_of_log_type props##.logType |]
@@ -36,9 +37,9 @@ module Component = R.Component.Make_stateless (struct
   end)
 
 let component = Component.make (fun props ->
-    let entry = props##.entry in
     let module E = T.Operation_log.Entry in
-    let class_name = Classnames.(let open Infix in return "fp-OperationLogEntry" |> to_string) in
+    let entry = props##.entry in
+    let class_name = "fp-OperationLogEntry" in
 
     R.Dom.of_tag `div
       ~props:R.(element_spec ~class_name ())

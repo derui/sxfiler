@@ -14,12 +14,13 @@ let component =
   let render this =
     let props = this##.props in
     let stat = props##.item in
-    let class_name = let module C = Classnames in
-      let open C.Infix in
-      ("fp-FileItem"
-       <+> ("fp-FileItem-selected", props##.selected)
-       <|> ("fp-FileItem-focused", props##.focused && props##.selected))
-      |> C.to_string
+    let class_name =
+      let module C = Classnames in
+      let v = C.(empty
+                 <|> ("fp-FileItem", true)
+                 <|> ("fp-FileItem-selected", props##.selected)
+                 <|> ("fp-FileItem-focused", props##.focused && props##.selected))
+      in C.to_string v
     in
     let module T = C.Types.File_stat in
     let file_mode = R.create_element ~key:"mode" ~props:(object%js

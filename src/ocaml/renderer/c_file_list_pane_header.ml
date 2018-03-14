@@ -13,10 +13,9 @@ let component = Component.make (fun props ->
     let directory = Js.to_string props##.directory in
     let class_name =
       let open Classnames in
-      let open Infix in
-      return "fp-FileListPane_Header"
-      <|> ("fp-FileListPane_Header-selected", props##.selected)
-      |> to_string
+      to_string @@ (empty
+                    <|> ("fp-FileListPane_Header", true)
+                    <|> ("fp-FileListPane_Header-selected", props##.selected))
     in
     R.Dom.of_tag `header
       ~props:R.(element_spec ~class_name ())
