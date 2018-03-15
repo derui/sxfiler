@@ -7,7 +7,7 @@ let select_item state direction =
   let module F = C.Types.File_stat in
   let module P = C.Types.Pane in
   let pane = C.State.active_pane state in
-  let ind = match pane.P.selected_item with
+  let ind = match pane.P.focused_item with
     | None -> 0
     | Some item -> Util.find_item_index ~equal:F.equal ~v:item pane.P.file_list
   in

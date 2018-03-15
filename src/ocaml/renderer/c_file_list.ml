@@ -9,7 +9,7 @@ let key_of_filelist = "currentNode"
 module Component = R.Component.Make_stateful (struct
     class type t = object
       method items: T.File_stat.t array Js.readonly_prop
-      method selectedItem: T.File_stat.t option Js.readonly_prop
+      method focusedItem: T.File_stat.t option Js.readonly_prop
       method focused: bool Js.readonly_prop
     end
   end)(struct
@@ -34,7 +34,7 @@ let component =
           let open Minimal_monadic_caml.Option.Infix in
           ignore (
             R.Ref_table.find ~key:key_of_filelist this##.nodes >|=
-            fun e -> let pos = item_to_pos this##.props##.items this##.props##.selectedItem in
+            fun e -> let pos = item_to_pos this##.props##.items this##.props##.focusedItem in
             this##setState (object%js
               val virtualizedList = VL.update_list_height e##.clientHeight vl
                                     |> VL.update_all_items this##.props##.items
@@ -44,7 +44,7 @@ let component =
       ~component_will_receive_props:(fun this props ->
           let open Minimal_monadic_caml.Option.Infix in
           let items = props##.items in
-          let pos = item_to_pos items this##.props##.selectedItem in
+          let pos = item_to_pos items this##.props##.focusedItem in
           this##setState (object%js
             val virtualizedList = VL.update_all_items items this##.state##.virtualizedList
                                   |> VL.recalculate_visible_window pos
@@ -55,7 +55,7 @@ let component =
     let props = this##.props in
     let vl = this##.state##.virtualizedList in
     let items = VL.get_items_in_window vl in
-    let start_position = item_to_pos items props##.selectedItem in
+    let start_position = item_to_pos items props##.focusedItem in
     let children = Array.mapi (fun index item ->
         let module F = C.Types.File_stat in
         R.create_element ~key:item.F.id ~props:(object%js

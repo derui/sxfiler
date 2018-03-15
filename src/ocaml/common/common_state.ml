@@ -211,11 +211,17 @@ let of_js : js Js.t -> t = fun t ->
 (* Utility functions *)
 
 module Pane = struct
-  (** Get file stats currently selected in [pane] *)
+  (** Get file stats currently selected in [pane].
+      This function return list that contains focused item if no marked item,
+      or else marked items
+  *)
   let selected_files pane =
     let module P = T.Pane in
     let open Minimal_monadic_caml.Option.Infix in
-    let items = pane.P.selected_item >>= fun v -> Some [v] in
+    let items = match pane.P.marked_items with
+      | [] -> pane.P.focused_item >>= fun v -> Some [v]
+      | _ as items -> Some items
+    in
     Common_util.Option.get ~default:[] items
 end
 

@@ -5,35 +5,35 @@ module T = Common_types
 module History = struct
   type t = {
     directory: string;
-    selected_item: T.File_stat.t option;
+    focused_item: T.File_stat.t option;
     timestamp: int64;
   }
 
   class type js = object
     method directory: Js.js_string Js.t Js.readonly_prop
-    method selectedItem: T.File_stat.js Js.t Js.opt Js.readonly_prop
+    method focusedItem: T.File_stat.js Js.t Js.opt Js.readonly_prop
     method timestamp: float Js.readonly_prop
   end
 
   let empty = {
     directory = "";
-    selected_item = None;
+    focused_item = None;
     timestamp = Int64.zero;
   }
 
-  let make ~directory ~selected_item =
+  let make ~directory ~focused_item =
     let timestamp = Unix.time () |> Int64.of_float in
-    {directory; selected_item; timestamp}
+    {directory; focused_item; timestamp}
 
   let to_js t = object%js
     val directory = Js.string t.directory
-    val selectedItem = Js.Opt.map (Js.Opt.option t.selected_item) T.File_stat.to_js
+    val focusedItem = Js.Opt.map (Js.Opt.option t.focused_item) T.File_stat.to_js
     val timestamp = Int64.to_float t.timestamp
   end
 
   let of_js js = {
     directory = Js.to_string js##.directory;
-    selected_item = Js.Opt.map js##.selectedItem T.File_stat.of_js |> Js.Opt.to_option;
+    focused_item = Js.Opt.map js##.focusedItem T.File_stat.of_js |> Js.Opt.to_option;
     timestamp = Int64.of_float js##.timestamp;
   }
 end
@@ -125,6 +125,6 @@ let restore_pane_info ~pane t =
   let module P = Common_types.Pane in
   let key = Js.string pane.P.directory in
   match Jstable.find t.history_map key |> Js.Optdef.to_option with
-  | Some h -> P.make ~file_list:pane.P.file_list ?selected_item:h.History.selected_item
+  | Some h -> P.make ~file_list:pane.P.file_list ?focused_item:h.History.focused_item
                 ~directory:pane.P.directory ()
   | None -> P.make ~file_list:pane.P.file_list ~directory:pane.P.directory ()

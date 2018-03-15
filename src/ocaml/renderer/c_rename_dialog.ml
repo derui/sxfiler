@@ -102,7 +102,7 @@ let component =
     let props = this##.props in
     let module T = C.Types.File_stat in
     let pane = C.State.(active_pane props##.state) in
-    let selected_file = pane.C.Types.Pane.selected_item in
+    let selected_file = pane.C.Types.Pane.focused_item in
     match selected_file with
     | None -> R.empty ()
     | Some selected_file -> begin

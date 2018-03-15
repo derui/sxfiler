@@ -23,7 +23,9 @@ let refresh_pane_file_list ?dir ~fs pane =
   >>= (function
       | Ok file_list -> begin
           let file_list = Array.of_list file_list in
-          Lwt.return @@ T.Pane.make ~file_list ?selected_item:pane.T.Pane.selected_item ~directory ()
+          Lwt.return @@ T.Pane.make ~file_list ?focused_item:pane.T.Pane.focused_item
+            ~marked_items:pane.T.Pane.marked_items
+            ~directory ()
         end
       | Error e -> Lwt.fail @@ Errors.to_error @@ `Sxfiler_node_error e)
 
@@ -102,7 +104,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
         let current_pane = S.active_pane t in
         let active_history = S.active_pane_history t in
         let history = PH.History.make ~directory:current_pane.T.Pane.directory
-            ~selected_item:current_pane.T.Pane.selected_item in
+            ~focused_item:current_pane.T.Pane.focused_item in
         let history = PH.add_history ~history active_history in
         let t = S.update_pane_history t ~loc:t.S.active_pane ~history in
         let t = S.update_pane t ~loc ~pane in
@@ -117,7 +119,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       let pane = S.active_pane t in
       let module P = T.Pane in
       S.update_pane t ~loc:t.S.active_pane ~pane:{
-        pane with P.selected_item = Some v
+        pane with P.focused_item = Some v
       } in
     (t, None)
 
@@ -137,7 +139,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     let message =
       let pane = S.active_pane t in
       let module P = T.Pane in
-      pane.P.selected_item >>= fun item ->
+      pane.P.focused_item >>= fun item ->
       if item.T.File_stat.stat##.isDirectory |> Js.to_bool then begin
         let target_dir = N.Path.join [item.T.File_stat.directory;item.T.File_stat.filename] in
         Some (M.update_pane_request (T.Pane.to_js pane, Js.string target_dir,
