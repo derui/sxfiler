@@ -239,6 +239,13 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       ({t with S.file_completion_state = S.File_completion.(complete ~input:input' ~items t.S.file_completion_state)}, None)
     end
 
+  let toggle_mark t v =
+    let module S = C.State in
+    let pane = S.active_pane t in
+    let pane = T.Pane.toggle_mark ~item:v pane in
+
+    (S.update_pane ~pane t, None)
+
   let react t = function
     | M.Update_pane_request (pane, path, loc) -> update_pane_request t pane path loc
     | M.Update_pane_response ret -> update_pane_response t ret
@@ -259,4 +266,5 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     | M.Refresh_candidates_request s -> request_refresh_candidates t s
     | M.Refresh_candidates_response v -> finish_refresh_candidates t v
     | M.Complete_from_candidates (match_type, input) -> complete_from_candidates t ~input ~match_type
+    | M.Toggle_mark v -> toggle_mark t @@ T.File_stat.of_js v
 end

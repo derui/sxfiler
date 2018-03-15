@@ -220,7 +220,7 @@ module Pane = struct
     let open Minimal_monadic_caml.Option.Infix in
     let items = match pane.P.marked_items with
       | [] -> pane.P.focused_item >>= fun v -> Some [v]
-      | _ as items -> Some items
+      | _ as items -> Some (List.map snd items)
     in
     Common_util.Option.get ~default:[] items
 end
@@ -252,8 +252,12 @@ let active_pane t =
 let inactive_pane t =
   if is_left_active t then t.right_pane else t.left_pane
 
-let update_pane t ~loc ~pane =
+let update_pane ?loc ~pane t =
+  let loc' = match loc with
+    | None -> t.active_pane
+    | Some loc -> loc
+  in
   {t with
-   left_pane = if loc = T.Pane_location.left then pane else t.left_pane;
-   right_pane = if loc = T.Pane_location.right then pane else t.right_pane;
+   left_pane = if loc' = T.Pane_location.left then pane else t.left_pane;
+   right_pane = if loc' = T.Pane_location.right then pane else t.right_pane;
   }

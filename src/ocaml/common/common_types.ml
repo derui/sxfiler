@@ -7,8 +7,9 @@ type sort_type =
   | Sort_date
 
 module File_stat = struct
+  type id = string
   type t = {
-    id: string;
+    id: id;
     filename: string;
     directory: string;
     link_path: string option;
@@ -58,7 +59,7 @@ module Pane = struct
     directory: string;
     file_list: File_stat.t array;
     focused_item: File_stat.t option;
-    marked_items: File_stat.t list;
+    marked_items: (File_stat.id * File_stat.t) list;
   }
 
   class type js = object
@@ -78,18 +79,29 @@ module Pane = struct
       marked_items;
     }
 
-  let to_js : t -> js Js.t = fun t -> object%js
-    val fileList = Array.map File_stat.to_js t.file_list |> Js.array
-    val directory = Js.string t.directory
-    val focusedItem = Js.Opt.map (Js.Opt.option t.focused_item) File_stat.to_js
-    val markedItems = Js.array @@ Array.of_list @@ List.map File_stat.to_js t.marked_items
-  end
+  let toggle_mark ~item pane =
+    let id = item.File_stat.id  in
+    if List.mem_assoc id pane.marked_items then
+      {pane with marked_items = List.remove_assoc id pane.marked_items}
+    else
+      {pane with marked_items = (id, item) :: pane.marked_items}
 
-  let of_js : js Js.t -> t = fun js -> {
+  let to_js : t -> js Js.t = fun t ->
+    let file_stat_to_js (_, v) = File_stat.to_js v in
+    object%js
+      val fileList = Array.map File_stat.to_js t.file_list |> Js.array
+      val directory = Js.string t.directory
+      val focusedItem = Js.Opt.map (Js.Opt.option t.focused_item) File_stat.to_js
+      val markedItems = Js.array @@ Array.of_list @@ List.map file_stat_to_js t.marked_items
+    end
+
+  let of_js : js Js.t -> t = fun js ->
+    let file_stat_of_js v = let v' = File_stat.of_js v in File_stat.(v'.id, v') in
+    {
       directory = Js.to_string js##.directory;
       file_list = Js.to_array js##.fileList |> Array.map File_stat.of_js;
       focused_item = Js.Opt.map js##.focusedItem File_stat.of_js |> Js.Opt.to_option;
-      marked_items = Js.to_array js##.markedItems |> Array.map File_stat.of_js |> Array.to_list;
+      marked_items = Js.to_array js##.markedItems |> Array.map file_stat_of_js |> Array.to_list;
     }
 end
 
