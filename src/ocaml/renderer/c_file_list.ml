@@ -18,6 +18,8 @@ module Component = R.Component.Make_stateful (struct
     end
   end)
 
+let is_item_marked items item = Array.exists T.File_stat.(equal item) items
+
 let component =
   let item_to_pos items = function
     | None -> 0
@@ -62,6 +64,7 @@ let component =
           val item = item
           val selected = start_position = index
           val focused = props##.focused
+          val marked = is_item_marked props##.items item
         end) C_file_item.component
       ) items
     in

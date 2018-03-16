@@ -10,4 +10,5 @@ type t =
   | Rename
   | Jump
   | Quit
+  | Toggle_mark
 [@@deriving yojson]

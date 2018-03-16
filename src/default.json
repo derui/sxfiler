@@ -11,7 +11,8 @@
       "m": ["Move"],
       "r": ["Rename"],
       "o": ["Jump"],
-      "Tab": ["Change_active_pane"]
+      "Tab": ["Change_active_pane"],
+      "Space": ["Toggle_mark"]
     }
   }
 }

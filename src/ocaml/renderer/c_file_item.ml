@@ -6,6 +6,7 @@ module Component = R.Component.Make_stateful (struct
       method item: C.Types.File_stat.t Js.readonly_prop
       method selected: bool Js.readonly_prop
       method focused: bool Js.readonly_prop
+      method marked: bool Js.readonly_prop
     end
   end)
     (struct type t = unit end)
@@ -19,7 +20,8 @@ let component =
       let v = C.(empty
                  <|> ("fp-FileItem", true)
                  <|> ("fp-FileItem-selected", props##.selected)
-                 <|> ("fp-FileItem-focused", props##.focused && props##.selected))
+                 <|> ("fp-FileItem-focused", props##.focused && props##.selected)
+                 <|> ("fp-FileItem-marked", props##.marked))
       in C.to_string v
     in
     let module T = C.Types.File_stat in
