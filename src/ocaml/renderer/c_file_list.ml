@@ -9,6 +9,7 @@ let key_of_filelist = "currentNode"
 module Component = R.Component.Make_stateful (struct
     class type t = object
       method items: T.File_stat.t array Js.readonly_prop
+      method markedItems: T.File_stat.t array Js.readonly_prop
       method focusedItem: T.File_stat.t option Js.readonly_prop
       method focused: bool Js.readonly_prop
     end
@@ -64,7 +65,7 @@ let component =
           val item = item
           val selected = start_position = index
           val focused = props##.focused
-          val marked = is_item_marked props##.items item
+          val marked = is_item_marked props##.markedItems item
         end) C_file_item.component
       ) items
     in
