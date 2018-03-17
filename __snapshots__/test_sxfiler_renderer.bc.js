@@ -143,7 +143,7 @@ exports['File name component should make another color if item is directory 1'] 
   "key": null,
   "ref": null,
   "props": {
-    "className": "fp-FileItem_FileName fp-FileItem_FileName-Directory",
+    "className": "fp-FileItem_FileName fp-FileItem_FileName-directory",
     "children": [
       "sample"
     ]
@@ -157,7 +157,21 @@ exports['File name component should make another color if item is symbolic link 
   "key": null,
   "ref": null,
   "props": {
-    "className": "fp-FileItem_FileName fp-FileItem_FileName-Symlink",
+    "className": "fp-FileItem_FileName fp-FileItem_FileName-symlink",
+    "children": [
+      "sample.txt"
+    ]
+  },
+  "_owner": null,
+  "_store": {}
+}
+
+exports['File name component should make another color if item have mark 1'] = {
+  "type": "span",
+  "key": null,
+  "ref": null,
+  "props": {
+    "className": "fp-FileItem_FileName fp-FileItem_FileName-symlink fp-FileItem_FileName-marked",
     "children": [
       "sample.txt"
     ]
