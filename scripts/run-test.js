@@ -31,6 +31,7 @@ if (require.main === module) {
       '_build/default/test/kbd/test_sxfiler_kbd.bc.js',
       '_build/default/test/renderer/test_sxfiler_renderer.bc.js',
       '_build/default/test/completer/test_sxfiler_completer.bc.js',
+      '_build/default/test/main/test_sxfiler_main.bc.js',
     ];
 
     testWithMocha(bundledTests);

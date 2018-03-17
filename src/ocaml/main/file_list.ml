@@ -2,9 +2,10 @@ module T = Sxfiler_common.Types
 module Path = Jsoo_node.Path
 module Fs = Jsoo_node.Fs
 
-let assert_directory path =
+let assert_directory ~fs path =
+  let module Fs = (val fs: Jsoo_node.Fs_intf.S) in
   let open Minimal_monadic_caml.Result.Infix in
-  match (Fs.statSync path >>= fun stat -> Ok stat##isDirectory) with
+  match (Fs.lstatSync path >>= fun stat -> Ok stat##isDirectory) with
   | Ok v -> ()
   | Error `JsooSystemError e -> begin
       let module E = Jsoo_node.Errors.System_error in
@@ -20,7 +21,8 @@ let assert_directory path =
  * original-fs on electron.
 *)
 let get_file_stats ~fs path =
-  assert_directory path;
+  let module Fs = Fs.Make(struct let instance = fs end) in
+  assert_directory ~fs:(module Fs) path;
 
   let open Lwt.Infix in
   let filename_to_stats names =
@@ -62,3 +64,48 @@ let get_file_stats ~fs path =
       in
       list_to_result [] stats
     )
+
+
+module Test = struct
+  open Mocha_of_ocaml
+
+  let suite () =
+    "Test for assertion for directory" >::: [
+      "should be return unit if the path is directory" >:: (fun () ->
+          let ret = assert_directory ~fs:(module Fs) "_builds" in
+          assert_ok (ret = ())
+        );
+
+      "should be return unit if the path does not exists" >:: (fun () ->
+          let ret = assert_directory ~fs:(module Fs) "not_found" in
+          assert_ok (ret = ())
+        );
+
+      "should be return unit if the path is not directory" >:: (fun () ->
+          let ret = assert_directory ~fs:(module Fs) "package.json" in
+          assert_ok (ret = ())
+        );
+      "should raise exception if error returned from fs module" >:: (fun () ->
+          let module Dummy = struct
+            include Fs
+            let lstatSync: string -> (Jsoo_node.Fs_types.stat Js.t, Jsoo_node.Errors.t) result = fun _ ->
+              let module E = Jsoo_node.Errors.System_error in
+              Error Jsoo_node.Errors.(`JsooSystemError (object%js
+                                        val mutable message = Js.string ""
+                                        val mutable name = Js.string ""
+                                        val mutable stack = Js.Optdef.empty
+
+                                        method toString = Js.string ""
+                                        val errno = 0
+                                        val code = Js.string "EEXIST"
+                                        val syscall = Js.string ""
+                                        val path = Js.Optdef.empty
+                                      end))
+          end in
+          try
+            assert_directory ~fs:(module Dummy: Jsoo_node.Fs_intf.S) "tmp" |> ignore;
+            assert_fail "Not raised exception"
+          with Errors.Sxfiler_error `Sxfiler_not_directory s -> assert_ok (s = "tmp")
+        )
+    ]
+end
