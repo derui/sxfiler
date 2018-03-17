@@ -20,8 +20,7 @@ let component =
       let v = C.(empty
                  <|> ("fp-FileItem", true)
                  <|> ("fp-FileItem-selected", props##.selected)
-                 <|> ("fp-FileItem-focused", props##.focused && props##.selected)
-                 <|> ("fp-FileItem-marked", props##.marked))
+                 <|> ("fp-FileItem-focused", props##.focused && props##.selected))
       in C.to_string v
     in
     let module T = C.Types.File_stat in
@@ -38,6 +37,7 @@ let component =
         val fileName = Js.string stat.T.filename
         val isDirectory = stat.T.stat##.isDirectory
         val isSymbolicLink = stat.T.stat##.isSymbolicLink
+        val marked = props##.marked
       end) C_file_name.component
     in
     R.Dom.of_tag `li

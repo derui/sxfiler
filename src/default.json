@@ -12,7 +12,7 @@
       "r": ["Rename"],
       "o": ["Jump"],
       "Tab": ["Change_active_pane"],
-      " ": ["Toggle_mark"]
+      "Space": ["Toggle_mark"]
     }
   }
 }
