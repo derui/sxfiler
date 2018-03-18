@@ -47,7 +47,7 @@ let component =
       ~component_will_receive_props:(fun this props ->
           let open Minimal_monadic_caml.Option.Infix in
           let items = props##.items in
-          let pos = item_to_pos items this##.props##.focusedItem in
+          let pos = item_to_pos items props##.focusedItem in
           this##setState (object%js
             val virtualizedList = VL.update_all_items items this##.state##.virtualizedList
                                   |> VL.recalculate_visible_window pos
