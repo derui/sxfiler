@@ -28,17 +28,17 @@
   padding: 0;
   font-weight: bold;
 
-&.fp-FileItem_FileName-directory {
-  color: $sol_yellow;
-}
+  &.fp-FileItem_FileName-directory {
+    color: $sol_yellow;
+  }
 
-&.fp-FileItem_FileName-symlink {
-  color: $sol_orange;
-}
+  &.fp-FileItem_FileName-symlink {
+    color: $sol_orange;
+  }
 
-&.fp-FileItem_FileName-marked {
+  &.fp-FileItem_FileName-marked {
     color: $sol_red;
-}
+  }
 }
 
 .fp-FileItem_FileSize {

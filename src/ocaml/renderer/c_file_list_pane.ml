@@ -20,13 +20,13 @@ let component = Component.make (fun props ->
     and content =
       let props = R.element_spec ~class_name:"fp-FileListPane_Content" ()
       and children = [|
-          R.create_element ~key:"file-list" ~props:(object%js
-            val items = pane.T.Pane.file_list
-            val markedItems = marked_items'
-            val focusedItem = pane.T.Pane.focused_item
-            val focused = props##.selected
-          end) C_file_list.component
-        |]
+        R.create_element ~key:"file-list" ~props:(object%js
+          val items = pane.T.Pane.file_list
+          val markedItems = marked_items'
+          val focusedItem = pane.T.Pane.focused_item
+          val focused = props##.selected
+        end) C_file_list.component
+      |]
       in
       R.Dom.of_tag `div ~key:"content" ~props ~children
     in
