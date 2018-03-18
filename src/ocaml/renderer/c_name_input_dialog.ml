@@ -38,15 +38,15 @@ module Input = struct
     let render this =
       let props = this##.props in
       R.Dom.of_tag `div
-        ~props:R.(element_spec ~class_name:"dialog-RenameDialog_InputContainer" ())
+        ~props:R.(element_spec ~class_name:"dialog-NameInputDialog_InputContainer" ())
         ~children:[|
           R.Dom.of_tag `span ~key:"label"
-            ~props:R.(element_spec ~class_name:"dialog-RenameDialog_InputLabel" ())
+            ~props:R.(element_spec ~class_name:"dialog-NameInputDialog_InputLabel" ())
             ~children:[| R.text "Name:" |];
           R.Dom.of_tag `input ~key:"input"
             ~_ref:props##.onRef
             ~props:R.(element_spec ()
-                        ~class_name:"dialog-RenameDialog_Input"
+                        ~class_name:"dialog-NameInputDialog_Input"
                         ~on_key_down:(key_handler ~this)
                         ~on_change:(input_handler ~this)
                         ~default_value:(Js.to_string this##.state##.value)
@@ -64,22 +64,24 @@ module Input = struct
 end
 
 let text_container ~key ~children =
-  let class_name = Classnames.(return "dialog-RenameDialog_TextContainer" |> to_string) in
+  let class_name = Classnames.(return "dialog-NameInputDialog_TextContainer" |> to_string) in
   R.Dom.of_tag `div ~key ~props:R.(element_spec ~class_name ()) ~children
 
 let header ~key ~title =
   R.Dom.of_tag `div ~key
-    ~props:R.(element_spec ~class_name:"dialog-RenameDialog_Header" ())
+    ~props:R.(element_spec ~class_name:"dialog-NameInputDialog_Header" ())
     ~children:[|R.text title|]
 
 let body ~key ~children =
-  R.Dom.of_tag `div ~key ~props:R.(element_spec ~class_name:"dialog-RenameDialog_Body" ()) ~children
+  R.Dom.of_tag `div ~key ~props:R.(element_spec ~class_name:"dialog-NameInputDialog_Body" ()) ~children
 
 module Component = R.Component.Make_stateful
     (struct
       class type t = object
         method dispatch : Key_dispatcher.t Js.readonly_prop
         method state : C.State.t Js.readonly_prop
+        method title: Js.js_string Js.t Js.readonly_prop
+        method onExecute: (Js.js_string Js.t -> C.Types.Task_request.js Js.t) Js.readonly_prop
       end
     end)
     (struct
@@ -91,9 +93,9 @@ let handle_cancel ~dispatch () =
   let message = M.close_dialog @@ C.Types.User_action.(to_js Cancel) in
   Key_dispatcher.dispatch ~dispatcher:dispatch ~message
 
-let handle_submit ~dispatch v =
+let handle_submit ~this ~dispatch v =
   let module M = C.Message in
-  let task = C.Types.Task_request.(to_js @@ Rename v) in
+  let task = this##.props##.onExecute v in
   let action =  C.Types.(User_action.to_js @@ User_action.Confirm task) in
   Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.close_dialog action)
 
@@ -115,15 +117,15 @@ let component =
           val keyHandler = Js.Optdef.empty
         end) ~children:[|
           R.Dom.of_tag `div
-            ~props:R.(element_spec ~class_name:"dialog-RenameDialog" ())
+            ~props:R.(element_spec ~class_name:"dialog-NameInputDialog" ())
             ~children:[|
-              header ~key:"header" ~title:"Rename object";
+              header ~key:"header" ~title:Js.(to_string props##.title);
               body ~key:"body" ~children:[|
                 R.create_element ~key:"input" ~props:(object%js
                   val text = Js.string original
                   val onRef = (fun e -> R.Ref_table.add ~key:"input" ~value:e this##.nodes)
                   val onCancel = handle_cancel ~dispatch:props##.dispatch
-                  val onSubmit = handle_submit ~dispatch:props##.dispatch
+                  val onSubmit = handle_submit ~this ~dispatch:props##.dispatch
                 end) Input.component;
 
                 text_container ~key:"text_container" ~children:[|

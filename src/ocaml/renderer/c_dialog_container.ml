@@ -36,10 +36,22 @@ let make_dialog ~props = function
                  end) C_confirmation_dialog.component
       | _ -> R.empty ()
     end
-  | C.Types.Dialog_rename -> R.create_element ~key:"dialog" ~props:(object%js
-                               val state = props##.state
-                               val dispatch = props##.dispatch
-                             end) C_rename_dialog.component
+  | C.Types.Dialog_name_input task -> begin
+      match task with
+      | `Rename -> R.create_element ~key:"dialog" ~props:(object%js
+                     val title = Js.string "Rename object"
+                     val state = props##.state
+                     val dispatch = props##.dispatch
+                     val onExecute = fun v -> C.Types.Task_request.(to_js @@ Rename v)
+                   end) C_name_input_dialog.component
+      | `Mkdir -> R.create_element ~key:"dialog" ~props:(object%js
+                    val title = Js.string "Make directory"
+                    val state = props##.state
+                    val dispatch = props##.dispatch
+                    val onExecute = fun v -> C.Types.Task_request.(to_js @@ Mkdir v)
+                  end) C_name_input_dialog.component
+      | _ -> R.empty ()
+    end
   | C.Types.Dialog_jump -> R.create_element ~key:"dialog" ~props:(object%js
                              val state = props##.state
                              val dispatch = props##.dispatch

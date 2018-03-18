@@ -13,7 +13,8 @@
       "o": ["Jump"],
       "Enter": ["Enter_directory"],
       "Tab": ["Change_active_pane"],
-      "Space": ["Toggle_mark"]
+      "Space": ["Toggle_mark"],
+      "+": ["Make_dir"]
     }
   }
 }

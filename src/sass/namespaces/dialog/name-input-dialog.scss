@@ -1,13 +1,13 @@
 @import "base/*";
 @import "./_dialog";
 
-$renameDialogTopPosition: 7em;
+$NameInputDialogTopPosition: 7em;
 
-.dialog-RenameDialog_Header {
+.dialog-NameInputDialog_Header {
   @include layout-dialog-header;
 }
 
-.dialog-RenameDialog_Body {
+.dialog-NameInputDialog_Body {
   display: flex;
   flex-direction: column;
   background-color: $sol_base02;
@@ -17,15 +17,15 @@ $renameDialogTopPosition: 7em;
   font-size: $baseFontSize;
 }
 
-.dialog-RenameDialog {
+.dialog-NameInputDialog {
   @include layout-dialog-base;
   @include base-box-shadow;
 
   position: relative;
-  top: $renameDialogTopPosition;
+  top: $NameInputDialogTopPosition;
 }
 
-.dialog-RenameDialog_InputContainer {
+.dialog-NameInputDialog_InputContainer {
   display: flex;
   flex: 0 0 auto;
   padding: $smallSpace;
@@ -34,17 +34,17 @@ $renameDialogTopPosition: 7em;
   align-items: center;
 }
 
-.dialog-RenameDialog_Input {
+.dialog-NameInputDialog_Input {
   flex: 1 1 auto;
   width: $baseFontSize * 30;
 }
 
-.dialog-RenameDialog_InputLabel {
+.dialog-NameInputDialog_InputLabel {
   flex: 1 1 auto;
   margin-right: $smallSpace;
 }
 
-.dialog-RenameDialog_TextContainer {
+.dialog-NameInputDialog_TextContainer {
   flex: 1 1 auto;
 
   padding: $smallSpace;

@@ -187,6 +187,7 @@ type task_tag = [
   | `Delete
   | `Move
   | `Rename
+  | `Mkdir
 ]
 
 module Task_request = struct
@@ -195,6 +196,7 @@ module Task_request = struct
     | Delete
     | Move
     | Rename of Js.js_string Js.t
+    | Mkdir of Js.js_string Js.t
 
   class type js = object
     method _type: t Js.readonly_prop
@@ -255,6 +257,7 @@ module Task_result = struct
     | Payload_delete
     | Payload_move
     | Payload_rename
+    | Payload_mkdir
 
   type t = (payload, Error.t) result
 
@@ -304,6 +307,6 @@ end
 
 type dialog_type =
   | Dialog_confirmation of task_tag
-  | Dialog_rename
+  | Dialog_name_input of task_tag
   | Dialog_jump
 [@@deriving variants]

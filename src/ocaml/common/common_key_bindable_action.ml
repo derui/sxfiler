@@ -11,4 +11,5 @@ type t =
   | Jump
   | Quit
   | Toggle_mark
+  | Make_dir
 [@@deriving yojson]

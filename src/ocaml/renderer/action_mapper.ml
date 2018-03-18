@@ -37,7 +37,8 @@ let to_message state = function
   | Jump -> some @@ C.Message.open_dialog @@ C.Types.dialog_jump
   | Copy -> some @@ C.Message.open_dialog @@ C.Types.dialog_confirmation `Copy
   | Move -> some @@ C.Message.open_dialog @@ C.Types.dialog_confirmation `Move
-  | Rename -> some @@ C.Message.open_dialog @@ C.Types.dialog_rename
+  | Rename -> some @@ C.Message.open_dialog @@ C.Types.dialog_name_input `Rename
   | Delete -> some @@ C.Message.open_dialog @@ C.Types.dialog_confirmation `Delete
   | Quit -> some @@ C.Message.quit_application
   | Toggle_mark -> toggle_mark state
+  | Make_dir -> some @@ C.Message.open_dialog @@ C.Types.dialog_name_input `Mkdir

@@ -99,6 +99,26 @@ module Rename = struct
 
 end
 
+module Mkdir = struct
+  type t = {
+    fs: (module N.Fs_intf.Instance);
+    dir_name: string;
+  }
+
+  let execute {fs;dir_name} state =
+    let pane = S.active_pane state in
+    let pane_dir = pane.T.Pane.directory in
+
+    let module Fs = N.Fs.Make(val fs) in
+    let dir_name = N.Path.join [pane_dir; dir_name] in
+
+    let open Minimal_monadic_caml.Result.Infix in
+    match Fs.mkdirSync dir_name with
+    | Ok () -> Lwt.return @@ T.Task_result.(Ok Payload_mkdir)
+    | Error `JsooSystemError e ->
+      Lwt.return @@ T.Task_result.(of_error @@ Js.to_string e##.message)
+end
+
 type env = {
   fs: (module N.Fs_intf.Instance);
 }
@@ -122,3 +142,7 @@ let of_request: env -> T.Task_request.t -> (module C.Task_intf.Task_instance) = 
                   module Task = Rename
                   let instance = {Rename.fs = env.fs; new_name = Js.to_string s}
                 end: I.Task_instance)
+  | Mkdir d -> (module struct
+                 module Task = Mkdir
+                 let instance = {Mkdir.fs = env.fs; dir_name = Js.to_string d}
+               end: I.Task_instance)

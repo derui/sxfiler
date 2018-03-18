@@ -112,7 +112,6 @@ let handle_cursor ~dispatch = function
 let completion_list ~key ~completion_state =
   let items = completion_state.C.State.File_completion.items
   and selected = completion_state.C.State.File_completion.cursor_pos in
-  Firebug.console##log items;
   let item_renderer item selected =
     let class_name = "dialog-JumpDialogCompleter_Item" in
     R.Dom.of_tag `div ~props:(R.element_spec ~class_name ()) ~children:[|
