@@ -12,7 +12,7 @@ let alphabetical_keys =
 let () =
   "Sxfiler kbd macro" >::: [
     "should convert between Javascript object and kbd type" >:: (fun _ ->
-        let k = {K.shift = false; ctrl = true; meta = false; key = "k"} in
+        let k = {K.ctrl = true; meta = false; key = "k"} in
         let js = K.to_js k in
         let json : K.js Js.t = Js._JSON##stringify js |> fun s -> Js._JSON##parse s in
         let conv_k = K.of_js json in
@@ -20,24 +20,24 @@ let () =
         assert_ok (k = conv_k);
       );
     "should convert kbd type to string" >:: (fun _ ->
-        let k = {K.shift = true; ctrl = true; meta = false; key = "k"} in
+        let k = {K.ctrl = true; meta = false; key = "k"} in
         let js = K.to_keyseq k in
 
-        assert_ok (js = "S-C-k");
+        assert_ok (js = "C-k");
       );
     "should not equal key sequence and converted key sequence" >:: (fun _ ->
-        let k = {K.shift = true; ctrl = true; meta = false; key = "k"} in
+        let k = {K.ctrl = true; meta = false; key = "k"} in
         let seq = K.to_keyseq k in
-        let seq_from_string = match K.of_keyseq "C-S-k" with
+        let seq_from_string = match K.of_keyseq "C-k" with
           | Some k -> K.to_keyseq k
           | None -> ""
         in
 
         let open Infix in
-        assert_ok (seq = seq_from_string) <|> assert_neq seq_from_string "C-S-k";
+        assert_ok (seq = seq_from_string) <|> assert_neq seq_from_string "C-k";
       );
     "should be able to convert special key name" >:: (fun _ ->
-        let k = {K.shift = false; ctrl = true; meta = false; key = "Tab"} in
+        let k = {K.ctrl = true; meta = false; key = "Tab"} in
         let js = K.to_js k in
         let json : K.js Js.t = Js._JSON##stringify js |> fun s -> Js._JSON##parse s in
         let conv_k = K.of_js json in
@@ -65,16 +65,6 @@ let () =
 
       );
 
-    "should parse shift key as modifier" >:: (fun _ ->
-        let parameter_list = Array.init (String.length alphabetical_keys) id in
-
-        assert_ok (Array.for_all (fun c ->
-            let k = String.get alphabetical_keys c |> String.make 1 in
-            let t = K.of_keyseq ("S-" ^ k) in
-            t = Some {K.empty with key = k; shift = true}
-          ) parameter_list)
-      );
-
     "should parse control key as modifier" >:: (fun _ ->
         let parameter_list = Array.init (String.length alphabetical_keys) id in
 
@@ -86,33 +76,21 @@ let () =
       );
 
     "should return None only prefix" >:: (fun _ ->
-        let parameter = ["M-";"C-";"S-"] in
+        let parameter = ["M-";"C-"] in
         assert_ok @@ List.for_all (fun p -> let t = K.of_keyseq p in t = None) parameter
       );
 
     "should be able to contain multi prefix" >:: (fun _ ->
         let has_meta k = k.K.meta
-        and has_ctrl k = k.K.ctrl
-        and has_shift k = k.K.shift in
+        and has_ctrl k = k.K.ctrl in
         let ( >>> ) v k = (fst v ^ fst k, fun key -> snd v key && snd k key) in
         let meta = ("M-", has_meta)
-        and ctrl = ("C-", has_ctrl)
-        and shift = ("S-", has_shift) in
+        and ctrl = ("C-", has_ctrl) in
 
         let prefix_patterns = [
-          meta; ctrl; shift;
-          meta >>> shift;
+          meta; ctrl;
           meta >>> ctrl;
-          shift >>> meta;
-          shift >>> ctrl;
           ctrl >>> meta;
-          ctrl >>> shift;
-          meta >>> ctrl >>> shift;
-          meta >>> shift >>> ctrl;
-          ctrl >>> meta >>> shift;
-          ctrl >>> shift >>> meta;
-          shift >>> meta >>> ctrl;
-          shift >>> ctrl >>> meta;
         ] in
         let parameter_list = Array.init (String.length alphabetical_keys) id |> Array.to_list in
 

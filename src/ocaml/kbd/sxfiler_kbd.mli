@@ -6,21 +6,19 @@
    {[
      const {kbd} = require('sxfiler_kbd.bc.js');
      let obj = kbd('C-x');
-       console.log(obj); // => {key: "x", ctrl: true, shift: false, meta: false}
+       console.log(obj); // => {key: "x", ctrl: true, meta: false}
    ]}
 *)
 
 
 (** A type represent key combination from string that like Emacs's [kbd] macro. *)
 type t = {
-  shift : bool;
   ctrl : bool;
   meta : bool;
   key : string;
 }
 
 class type js = object
-  method shift: bool Js.t Js.readonly_prop
   method ctrl: bool Js.t Js.readonly_prop
   method meta: bool Js.t Js.readonly_prop
   method key: Js.js_string Js.t Js.readonly_prop
@@ -36,7 +34,7 @@ val of_keyseq: string -> t option
     results are not equals.
 
     Specification of key sequence that result of this function is below.
-    - sequence of meta-key should be Meta(M-),Shift(S-),Ctrl(C-)
+    - sequence of meta-key should be Meta(M-),Ctrl(C-)
     - and add key
 *)
 val to_keyseq: t -> string
