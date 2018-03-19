@@ -1,6 +1,6 @@
 @import "base/*";
 
-$jumpDialogTopPosition: 7em;
+$historyDialogTopPosition: 7em;
 
 .dialog-FileCompletionDialog {
   /* box-shadow */
@@ -15,7 +15,7 @@ $jumpDialogTopPosition: 7em;
   font-family: monospace;
 
   position: relative;
-  top: $jumpDialogTopPosition;
+  top: $historyDialogTopPosition;
 
   border: 1px solid $sol_base00;
 
@@ -46,25 +46,4 @@ $jumpDialogTopPosition: 7em;
 
   margin-top: $smallSpace;
   text-align: right;
-}
-
-// completion list item
-
-.dialog-FileCompletionDialogCompleter_Item {
-  display: flex;
-  flex-direction: row;
-}
-
-.dialog-FileCompletionDialogCompleter_ItemName {
-  flex: 1 1 auto;
-  text-align: left;
-}
-
-.dialog-FileCompletionDialogCompleter_ItemDirectory {
-  display: inline-block;
-  flex: 0 0 auto;
-  font-size: 0.75rem;
-
-  margin-top: $nanoSpace;
-  margin-right: $smallSpace;
 }

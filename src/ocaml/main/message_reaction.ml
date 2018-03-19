@@ -149,8 +149,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     in
     (t, message)
 
-  let jump_location t f =
-    let path = N.Path.join [f.T.File_stat.directory;f.T.File_stat.filename] in
+  let jump_location t path =
     let path = N.Path.resolve [path] in
     let message =
       let pane = S.active_pane t in
@@ -207,8 +206,8 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
 
   let select_completion t = function
-    | `Next -> ({t with S.file_completion_state = S.File_completion.select_next t.S.file_completion_state}, None)
-    | `Prev -> ({t with S.file_completion_state = S.File_completion.select_prev t.S.file_completion_state}, None)
+    | `Next -> ({t with S.file_completion_state = S.File_completion_state.select_next t.S.file_completion_state}, None)
+    | `Prev -> ({t with S.file_completion_state = S.File_completion_state.select_prev t.S.file_completion_state}, None)
 
   let request_refresh_candidates t path =
     let path' = Js.to_string path in
@@ -217,12 +216,12 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
   let finish_refresh_candidates t = function
     | Ok (path, candidates) ->
       let candidates = Js.to_array candidates |> Array.map T.File_stat.of_js in
-      ({t with S.file_completion_state = S.File_completion.(refresh ~candidates t.S.file_completion_state)},
+      ({t with S.file_completion_state = S.File_completion_state.(refresh ~candidates t.S.file_completion_state)},
        Some (Lwt.return @@ M.complete_from_candidates M.Cmp.Forward_exact_match path))
     | Error entry ->
       let entry = T.Operation_log.Entry.of_js entry in
       ({t with S.operation_log = T.Operation_log.add_entry t.S.operation_log ~entry;
-               file_completion_state = S.File_completion.(refresh ~candidates:[||] t.S.file_completion_state)}, None)
+               file_completion_state = S.File_completion_state.(refresh ~candidates:[||] t.S.file_completion_state)}, None)
 
   let complete_from_candidates t ~match_type ~input =
     if input##.length = 0 then
@@ -233,10 +232,10 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
         type t = T.File_stat.t
         let to_string v = N.Path.join [v.T.File_stat.directory;v.T.File_stat.filename]
       end in
-      let candidates = Array.to_list t.S.file_completion_state.S.File_completion.items in
+      let candidates = Array.to_list t.S.file_completion_state.S.File_completion_state.items in
       let items = Sxfiler_completer.Completer.complete ~input:input' ~match_type ~candidates ~stringify:(module Stringify) in
       let items = Array.of_list items in
-      ({t with S.file_completion_state = S.File_completion.(complete ~input:input' ~items t.S.file_completion_state)}, None)
+      ({t with S.file_completion_state = S.File_completion_state.(complete ~input:input' ~items t.S.file_completion_state)}, None)
     end
 
   let toggle_mark t v =
@@ -246,6 +245,15 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
     (S.update_pane ~pane t, None)
 
+  let open_history t =
+    let module S = C.State in
+    let module H = C.Pane_history in
+    let history = S.active_pane_history t in
+    let candidates = C.Pane_history.sorted_history history in
+    ({t with S.history_completion_state =
+               S.History_completion_state.(refresh ~candidates t.S.history_completion_state)},
+     Some (Lwt.return @@ M.open_dialog T.dialog_history))
+
   let react t = function
     | M.Update_pane_request (pane, path, loc) -> update_pane_request t pane path loc
     | M.Update_pane_response ret -> update_pane_response t ret
@@ -254,7 +262,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     | M.Select_item v -> select_item t @@ T.File_stat.of_js v
     | M.Leave_directory -> leave_directory t
     | M.Enter_directory -> enter_directory t
-    | M.Jump_location s -> jump_location t @@ T.File_stat.of_js s
+    | M.Jump_location s -> jump_location t @@ Js.to_string s
     | M.Quit_application -> ({t with S.terminated = true}, None)
     | M.Change_active_pane -> change_active_pane t
     | M.Open_dialog state -> open_dialog t state
@@ -267,4 +275,5 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     | M.Refresh_candidates_response v -> finish_refresh_candidates t v
     | M.Complete_from_candidates (match_type, input) -> complete_from_candidates t ~input ~match_type
     | M.Toggle_mark v -> toggle_mark t @@ T.File_stat.of_js v
+    | M.Open_history -> open_history t
 end

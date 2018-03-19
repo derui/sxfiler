@@ -13,43 +13,41 @@ module Component = R.Component.Make_stateful
     end)
 
 let handle_execute ~dispatch ~this () =
+  let module H = C.Pane_history.History in
   let module M = C.Message in
   let state = this##.props##.state in
-  let current_selected = C.State.(File_completion_state.selected state.file_completion_state) in
-  let directory = current_selected.C.Types.File_stat.directory in
+  let current_selected = C.State.(History_completion_state.selected state.history_completion_state) in
+  let directory = current_selected.H.directory in
   M.jump_location @@ Js.string directory
 
 (* Get completion list element *)
 let item_renderer item selected =
-  let class_name = "dialog-JumpDialogCompleter_Item" in
+  let module H = C.Pane_history.History in
+  let class_name = "dialog-HistoryDialogCompleter_Item" in
   R.Dom.of_tag `div ~props:(R.element_spec ~class_name ()) ~children:[|
     R.Dom.of_tag `span ~props:(R.element_spec
                                  ~key:"description"
-                                 ~class_name:"dialog-JumpDialogCompleter_ItemDirectory" ())
-      ~children:[|R.text item.C.Types.File_stat.directory|];
-    R.Dom.of_tag `span ~props:(R.element_spec
-                                 ~key:"text"
-                                 ~class_name:"dialog-JumpDialogCompleter_ItemName" ())
-      ~children:[|R.text item.C.Types.File_stat.filename|];
+                                 ~class_name:"dialog-HistoryDialogCompleter_ItemLabel" ())
+      ~children:[|R.text @@ item.H.directory|]
   |]
 
-module File_completion_list = C_completion_list.Make(struct
-    type t = C.Types.File_stat.t
+module History_completion_list = C_completion_list.Make(struct
+    type t = C.Pane_history.History.t
 
-    let to_id v = v.C.Types.File_stat.id
+    let to_id v = v.C.Pane_history.History.timestamp |> Int64.to_string
   end)
 
 (* Get completion list element *)
 let completion_list_renderer ~this key =
   let state = this##.props##.state in
-  let completion_state = C.State.(state.file_completion_state) in
-  let items = completion_state.C.State.File_completion_state.items
-  and selected = completion_state.C.State.File_completion_state.cursor_pos in
+  let completion_state = C.State.(state.history_completion_state) in
+  let items = completion_state.C.State.History_completion_state.items
+  and selected = completion_state.C.State.History_completion_state.cursor_pos in
   R.create_element ~key ~props:(object%js
     val items = items
     val selectedIndex = selected
     val itemRenderer = item_renderer
-  end) File_completion_list.component
+  end) History_completion_list.component
 
 let render this =
   let props = this##.props in
@@ -57,7 +55,7 @@ let render this =
   R.create_element C_file_completion_dialog.component ~props:(object%js
     val dispatch = props##.dispatch
     val state = props##.state
-    val title = Js.string "Jump to location"
+    val title = Js.string "Back to history"
     val onExecute = handle_execute ~dispatch:props##.dispatch ~this
     val completionListRenderer = completion_list_renderer ~this
   end)

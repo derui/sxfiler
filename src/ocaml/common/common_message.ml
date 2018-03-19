@@ -19,10 +19,11 @@ type t =
   | Toggle_mark of T.File_stat.js Js.t
   | Leave_directory
   | Enter_directory
-  | Jump_location of T.File_stat.js Js.t
+  | Jump_location of Js.js_string Js.t
   | Change_active_pane
   | Select_next_completion
   | Select_prev_completion
+  | Open_history
   | Complete_from_candidates of Cmp.match_type * Js.js_string Js.t
   | Refresh_candidates_request of Js.js_string Js.t
   | Refresh_candidates_response of (Js.js_string Js.t * T.File_stat.js Js.t Js.js_array Js.t, T.Operation_log.Entry.js Js.t) result

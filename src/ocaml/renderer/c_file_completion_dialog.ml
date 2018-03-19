@@ -80,8 +80,8 @@ module Component = R.Component.Make_stateful
         method dispatch : Key_dispatcher.t Js.readonly_prop
         method state : C.State.t Js.readonly_prop
         method title: Js.js_string Js.t Js.readonly_prop
-        method onExecute: (C.Types.File_stat.t -> C.Message.t) Js.readonly_prop
-
+        method onExecute: (unit -> C.Message.t) Js.readonly_prop
+        method completionListRenderer: (string -> R.React.element Js.t) Js.readonly_prop
       end
     end)
     (struct
@@ -94,10 +94,7 @@ let handle_cancel ~dispatch () =
   Key_dispatcher.dispatch ~dispatcher:dispatch ~message
 
 let handle_submit ~dispatch ~this v =
-  let module M = C.Message in
-  let state = this##.props##.state in
-  let current_selected = C.State.(File_completion.selected state.file_completion_state) in
-  let message = this##.props##.onExecute current_selected in
+  let message = this##.props##.onExecute () in
   Key_dispatcher.dispatch ~dispatcher:dispatch ~message
 
 let handle_input ~dispatch path =
@@ -112,40 +109,17 @@ let handle_cursor ~dispatch = function
     let module M = C.Message in
     Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.select_next_completion)
 
-(* Get completion list element *)
-let completion_list ~key ~completion_state =
-  let items = completion_state.C.State.File_completion.items
-  and selected = completion_state.C.State.File_completion.cursor_pos in
-  let item_renderer item selected =
-    let class_name = "dialog-FileCompletionDialogCompleter_Item" in
-    R.Dom.of_tag `div ~props:(R.element_spec ~class_name ()) ~children:[|
-      R.Dom.of_tag `span ~props:(R.element_spec
-                                   ~key:"description"
-                                   ~class_name:"dialog-FileCompletionDialogCompleter_ItemDirectory" ())
-        ~children:[|R.text item.C.Types.File_stat.directory|];
-      R.Dom.of_tag `span ~props:(R.element_spec
-                                   ~key:"text"
-                                   ~class_name:"dialog-FileCompletionDialogCompleter_ItemName" ())
-        ~children:[|R.text item.C.Types.File_stat.filename|];
-    |]
-  in
-  R.create_element ~key ~props:(object%js
-    val items = items
-    val selectedIndex = selected
-    val itemRenderer = item_renderer
-  end) C_file_completion_list.component
-
 let component =
   let render this =
     let props = this##.props in
-    let state = props##.state in
-
-    R.create_element C_dialog_base.component ~props:(object%js
+    let props' = object%js
       val _open = Js.bool true
       val horizontalCenter = Js.bool true
       val verticalCenter = Js.bool false
       val keyHandler = Js.Optdef.empty
-    end) ~children:[|
+    end in
+
+    R.create_element C_dialog_base.component ~props:props' ~children:[|
       R.Dom.of_tag `div
         ~props:R.(element_spec ~class_name:"dialog-FileCompletionDialog" ())
         ~children:[|
@@ -161,7 +135,7 @@ let component =
             R.text "Enter: execute; Esc: cancel"
           |];
 
-          completion_list ~key:"completion_list" ~completion_state:C.State.(state.file_completion_state)
+          props##.completionListRenderer "completion_list";
         |]
     |]
   in

@@ -4,6 +4,8 @@ module PH = Common_pane_history
 module Config = Common_config
 module Thread = Lwt
 
+open Common_intf
+
 module Dialog_state = struct
   type t =
     | Open of T.dialog_type | Close [@@deriving variants]
@@ -72,19 +74,21 @@ end = struct
   }
 end
 
-module File_completion = struct
+module Make_comp_state(I:Completion_item):
+  Completion_state with type item := I.t
+                    and type item_js := I.js = struct
   type t = {
     cursor_pos: T.cursor_pos;
-    items: T.File_stat.t array;
-    candidates: T.File_stat.t array;
+    items: I.t array;
+    candidates: I.t array;
     completing: bool;
     prev_input: string;
   }
 
   class type js = object
     method cursorPos: int Js.readonly_prop
-    method items: T.File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
-    method candidates: T.File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
+    method items: I.js Js.t Js.js_array Js.t Js.readonly_prop
+    method candidates: I.js Js.t Js.js_array Js.t Js.readonly_prop
     method completing: bool Js.t Js.readonly_prop
     method prevInput: Js.js_string Js.t Js.readonly_prop
   end
@@ -111,20 +115,23 @@ module File_completion = struct
 
   let to_js : t -> js Js.t = fun t -> object%js
     val cursorPos = t.cursor_pos
-    val items = Array.map T.File_stat.to_js t.items |> Js.array
-    val candidates = Array.map T.File_stat.to_js t.candidates |> Js.array
+    val items = Array.map I.to_js t.items |> Js.array
+    val candidates = Array.map I.to_js t.candidates |> Js.array
     val completing = Js.bool t.completing
     val prevInput = Js.string t.prev_input
   end
 
   let of_js : js Js.t -> t = fun js -> {
       cursor_pos = js##.cursorPos;
-      items = Js.to_array js##.items |> Array.map T.File_stat.of_js;
-      candidates = Js.to_array js##.candidates |> Array.map T.File_stat.of_js;
+      items = Js.to_array js##.items |> Array.map I.of_js;
+      candidates = Js.to_array js##.candidates |> Array.map I.of_js;
       completing = Js.to_bool js##.completing;
       prev_input = Js.to_string js##.prevInput;
     }
 end
+
+module File_completion_state = Make_comp_state(T.File_stat)
+module History_completion_state = Make_comp_state(Common_pane_history.History)
 
 (* All state of this application *)
 type t = {
@@ -140,7 +147,8 @@ type t = {
   dialog_state: Dialog_state.t;
   task_state: Task_state.t;
 
-  file_completion_state: File_completion.t;
+  file_completion_state: File_completion_state.t;
+  history_completion_state: History_completion_state.t;
 }
 
 class type js = object
@@ -156,7 +164,8 @@ class type js = object
 
   method dialogState: Dialog_state.js Js.t Js.readonly_prop
   method taskState: Task_state.js Js.t Js.readonly_prop
-  method fileCompletionState: File_completion.js Js.t Js.readonly_prop
+  method fileCompletionState: File_completion_state.js Js.t Js.readonly_prop
+  method historyCompletionState: History_completion_state.js Js.t Js.readonly_prop
 end
 
 let empty =
@@ -174,7 +183,8 @@ let empty =
 
     dialog_state = Dialog_state.Close;
     task_state = Task_state.empty;
-    file_completion_state = File_completion.empty;
+    file_completion_state = File_completion_state.empty;
+    history_completion_state = History_completion_state.empty;
   }
 
 let to_js : t -> js Js.t = fun t -> object%js
@@ -189,7 +199,8 @@ let to_js : t -> js Js.t = fun t -> object%js
   val operationLog = T.Operation_log.to_js t.operation_log
   val dialogState = Dialog_state.to_js t.dialog_state
   val taskState = Task_state.to_js t.task_state
-  val fileCompletionState = File_completion.to_js t.file_completion_state
+  val fileCompletionState = File_completion_state.to_js t.file_completion_state
+  val historyCompletionState = History_completion_state.to_js t.history_completion_state
 end
 
 let of_js : js Js.t -> t = fun t ->
@@ -205,7 +216,8 @@ let of_js : js Js.t -> t = fun t ->
     operation_log = T.Operation_log.of_js t##.operationLog;
     dialog_state = Dialog_state.of_js t##.dialogState;
     task_state = Task_state.of_js t##.taskState;
-    file_completion_state = File_completion.of_js t##.fileCompletionState;
+    file_completion_state = File_completion_state.of_js t##.fileCompletionState;
+    history_completion_state = History_completion_state.of_js t##.historyCompletionState;
   }
 
 (* Utility functions *)

@@ -12,4 +12,5 @@ type t =
   | Quit
   | Toggle_mark
   | Make_dir
+  | History
 [@@deriving yojson]
