@@ -1,0 +1,70 @@
+@import "base/*";
+
+$jumpDialogTopPosition: 7em;
+
+.dialog-FileCompletionDialog {
+  /* box-shadow */
+  @include base-box-shadow;
+
+  display: flex;
+  flex-direction: column;
+  background-color: $sol_base02;
+  color: $sol_base2;
+
+  padding: $smallSpace;
+  font-family: monospace;
+
+  position: relative;
+  top: $jumpDialogTopPosition;
+
+  border: 1px solid $sol_base00;
+
+  border-radius: $smallSpace;
+}
+
+.dialog-FileCompletionDialog_InputContainer {
+  display: flex;
+  flex: 0 0 auto;
+
+  align-items: center;
+}
+
+.dialog-FileCompletionDialog_Input {
+  flex: 1 1 auto;
+  width: $baseFontSize * 30;
+
+  font-size: 1.5rem;
+}
+
+.dialog-FileCompletionDialog_InputLabel {
+  flex: 1 1 auto;
+  margin-right: $smallSpace;
+}
+
+.dialog-FileCompletionDialog_TextContainer {
+  flex: 1 1 auto;
+
+  margin-top: $smallSpace;
+  text-align: right;
+}
+
+// completion list item
+
+.dialog-FileCompletionDialogCompleter_Item {
+  display: flex;
+  flex-direction: row;
+}
+
+.dialog-FileCompletionDialogCompleter_ItemName {
+  flex: 1 1 auto;
+  text-align: left;
+}
+
+.dialog-FileCompletionDialogCompleter_ItemDirectory {
+  display: inline-block;
+  flex: 0 0 auto;
+  font-size: 0.75rem;
+
+  margin-top: $nanoSpace;
+  margin-right: $smallSpace;
+}
