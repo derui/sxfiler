@@ -90,17 +90,7 @@ module Test = struct
             include Fs
             let lstatSync: string -> (Jsoo_node.Fs_types.stat Js.t, Jsoo_node.Errors.t) result = fun _ ->
               let module E = Jsoo_node.Errors.System_error in
-              Error Jsoo_node.Errors.(`JsooSystemError (object%js
-                                        val mutable message = Js.string ""
-                                        val mutable name = Js.string ""
-                                        val mutable stack = Js.Optdef.empty
-
-                                        method toString = Js.string ""
-                                        val errno = 0
-                                        val code = Js.string "EEXIST"
-                                        val syscall = Js.string ""
-                                        val path = Js.Optdef.empty
-                                      end))
+              Error Jsoo_node.Errors.(`JsooSystemError System_error.(make ~code:EEXIST "message"))
           end in
           try
             assert_directory ~fs:(module Dummy: Jsoo_node.Fs_intf.S) "tmp" |> ignore;
