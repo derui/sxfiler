@@ -104,7 +104,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
         let current_pane = S.active_pane t in
         let active_history = S.active_pane_history t in
         let history = PH.History.make ~directory:current_pane.T.Pane.directory
-            ~focused_item:current_pane.T.Pane.focused_item in
+            ~focused_item:current_pane.T.Pane.focused_item () in
         let history = PH.add_history ~history active_history in
         let t = S.update_pane_history t ~loc:t.S.active_pane ~history in
         let t = S.update_pane t ~loc ~pane in

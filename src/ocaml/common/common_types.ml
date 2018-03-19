@@ -309,4 +309,5 @@ type dialog_type =
   | Dialog_confirmation of task_tag
   | Dialog_name_input of task_tag
   | Dialog_jump
+  | Dialog_history
 [@@deriving variants]

@@ -15,14 +15,11 @@ module History = struct
     method timestamp: float Js.readonly_prop
   end
 
-  let empty = {
-    directory = "";
-    focused_item = None;
-    timestamp = Int64.zero;
-  }
-
-  let make ~directory ~focused_item =
-    let timestamp = Unix.time () |> Int64.of_float in
+  let make ?timestamp ~directory ~focused_item () =
+    let timestamp = match timestamp with
+      | None -> Unix.time () |> Int64.of_float
+      | Some timestamp -> timestamp
+    in
     {directory; focused_item; timestamp}
 
   let to_js t = object%js
@@ -128,3 +125,38 @@ let restore_pane_info ~pane t =
   | Some h -> P.make ~file_list:pane.P.file_list ?focused_item:h.History.focused_item
                 ~directory:pane.P.directory ()
   | None -> P.make ~file_list:pane.P.file_list ~directory:pane.P.directory ()
+
+(** Get histories of [t] that are sorted by timestamp descendant *)
+let sorted_history t =
+  let module H = History in
+  let values = table_values t.history_map in
+  List.sort (fun (_, a1) (_, a2) -> Int64.compare a1.H.timestamp a2.H.timestamp) values
+  |> List.rev
+  |> List.map snd
+  |> Array.of_list
+
+module Test = struct
+  let suite () =
+    let open Mocha_of_ocaml in
+    "Pane history" >::: [
+      "can get histories sorted by timestamp descendant" >:: (fun () ->
+          let module H = History in
+          let histories = make () in
+          let histories = List.fold_left (fun t v -> add_history ~history:v t)
+              histories [
+              H.make ~directory:"dir1" ~timestamp:1L ~focused_item:None ();
+              H.make ~directory:"dir2" ~timestamp:2L ~focused_item:None ();
+              H.make ~directory:"dir3" ~timestamp:4L ~focused_item:None ();
+              H.make ~directory:"dir4" ~timestamp:3L ~focused_item:None ();
+            ] in
+          let sorted = sorted_history histories in
+          let expected = [|
+            H.make ~directory:"dir3" ~timestamp:4L ~focused_item:None ();
+            H.make ~directory:"dir4" ~timestamp:3L ~focused_item:None ();
+            H.make ~directory:"dir2" ~timestamp:2L ~focused_item:None ();
+            H.make ~directory:"dir1" ~timestamp:1L ~focused_item:None ();
+          |] in
+          assert_ok (sorted = expected)
+        )
+    ]
+end
