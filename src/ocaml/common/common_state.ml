@@ -101,7 +101,7 @@ module Make_comp_state(I:Completion_item):
     prev_input = "";
   }
 
-  let select_next t = {t with cursor_pos = min (Array.length t.items) (succ t.cursor_pos)}
+  let select_next t = {t with cursor_pos = min (Array.length t.items - 1) (succ t.cursor_pos)}
   let select_prev t = {t with cursor_pos = max 0 (pred t.cursor_pos)}
 
   let refresh t ~candidates = {t with candidates;items = candidates;cursor_pos = 0}
@@ -147,6 +147,8 @@ type t = {
   dialog_state: Dialog_state.t;
   task_state: Task_state.t;
 
+  completing: T.completion_type option;
+
   file_completion_state: File_completion_state.t;
   history_completion_state: History_completion_state.t;
 }
@@ -161,9 +163,9 @@ class type js = object
   method terminated: bool Js.t Js.readonly_prop
   method config: Config.js Js.t Js.readonly_prop
   method operationLog: T.Operation_log.js Js.t Js.readonly_prop
-
   method dialogState: Dialog_state.js Js.t Js.readonly_prop
   method taskState: Task_state.js Js.t Js.readonly_prop
+  method completing: T.completion_type Js.opt Js.readonly_prop
   method fileCompletionState: File_completion_state.js Js.t Js.readonly_prop
   method historyCompletionState: History_completion_state.js Js.t Js.readonly_prop
 end
@@ -183,6 +185,7 @@ let empty =
 
     dialog_state = Dialog_state.Close;
     task_state = Task_state.empty;
+    completing = None;
     file_completion_state = File_completion_state.empty;
     history_completion_state = History_completion_state.empty;
   }
@@ -199,6 +202,7 @@ let to_js : t -> js Js.t = fun t -> object%js
   val operationLog = T.Operation_log.to_js t.operation_log
   val dialogState = Dialog_state.to_js t.dialog_state
   val taskState = Task_state.to_js t.task_state
+  val completing = Js.Opt.option t.completing
   val fileCompletionState = File_completion_state.to_js t.file_completion_state
   val historyCompletionState = History_completion_state.to_js t.history_completion_state
 end
@@ -216,6 +220,7 @@ let of_js : js Js.t -> t = fun t ->
     operation_log = T.Operation_log.of_js t##.operationLog;
     dialog_state = Dialog_state.of_js t##.dialogState;
     task_state = Task_state.of_js t##.taskState;
+    completing = Js.Opt.to_option t##.completing;
     file_completion_state = File_completion_state.of_js t##.fileCompletionState;
     history_completion_state = History_completion_state.of_js t##.historyCompletionState;
   }
@@ -273,3 +278,7 @@ let update_pane ?loc ~pane t =
    left_pane = if loc' = T.Pane_location.left then pane else t.left_pane;
    right_pane = if loc' = T.Pane_location.right then pane else t.right_pane;
   }
+
+let is_completing {completing;_} = match completing with
+  | None -> false
+  | Some _ -> true

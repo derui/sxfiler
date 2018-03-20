@@ -14,7 +14,8 @@
       "Enter": ["Enter_directory"],
       "Tab": ["Change_active_pane"],
       "Space": ["Toggle_mark"],
-      "+": ["Make_dir"]
+      "+": ["Make_dir"],
+      "H": ["History"]
     }
   }
 }

@@ -311,3 +311,8 @@ type dialog_type =
   | Dialog_jump
   | Dialog_history
 [@@deriving variants]
+
+type completion_type =
+  | Comp_history
+  | Comp_file
+[@@deriving variants]

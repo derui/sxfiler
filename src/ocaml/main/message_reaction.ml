@@ -205,9 +205,22 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
      Some (Lwt.return M.refresh_panes_request))
 
 
-  let select_completion t = function
-    | `Next -> ({t with S.file_completion_state = S.File_completion_state.select_next t.S.file_completion_state}, None)
-    | `Prev -> ({t with S.file_completion_state = S.File_completion_state.select_prev t.S.file_completion_state}, None)
+  let select_completion t direction =
+    let module F = S.File_completion_state in
+    let module H = S.History_completion_state in
+    match direction with
+    | `Next -> begin
+        match t.S.completing with
+        | None -> (t, None)
+        | Some T.Comp_file -> ({t with S.file_completion_state = F.select_next t.S.file_completion_state}, None)
+        | Some T.Comp_history -> ({t with S.history_completion_state = H.select_next t.S.history_completion_state}, None)
+      end
+    | `Prev -> begin
+        match t.S.completing with
+        | None -> (t, None)
+        | Some T.Comp_file -> ({t with S.file_completion_state = F.select_prev t.S.file_completion_state}, None)
+        | Some T.Comp_history -> ({t with S.history_completion_state = H.select_prev t.S.history_completion_state}, None)
+      end
 
   let request_refresh_candidates t path =
     let path' = Js.to_string path in
@@ -216,12 +229,17 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
   let finish_refresh_candidates t = function
     | Ok (path, candidates) ->
       let candidates = Js.to_array candidates |> Array.map T.File_stat.of_js in
-      ({t with S.file_completion_state = S.File_completion_state.(refresh ~candidates t.S.file_completion_state)},
+      let state = S.File_completion_state.(refresh ~candidates t.S.file_completion_state) in
+      ({t with S.completing = Some T.Comp_file;
+               file_completion_state = state},
        Some (Lwt.return @@ M.complete_from_candidates M.Cmp.Forward_exact_match path))
     | Error entry ->
       let entry = T.Operation_log.Entry.of_js entry in
+      let state = S.File_completion_state.(refresh ~candidates:[||] t.S.file_completion_state) in
       ({t with S.operation_log = T.Operation_log.add_entry t.S.operation_log ~entry;
-               file_completion_state = S.File_completion_state.(refresh ~candidates:[||] t.S.file_completion_state)}, None)
+               completing = None;
+               file_completion_state = state},
+       None)
 
   let complete_from_candidates t ~match_type ~input =
     if input##.length = 0 then
@@ -235,7 +253,8 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       let candidates = Array.to_list t.S.file_completion_state.S.File_completion_state.items in
       let items = Sxfiler_completer.Completer.complete ~input:input' ~match_type ~candidates ~stringify:(module Stringify) in
       let items = Array.of_list items in
-      ({t with S.file_completion_state = S.File_completion_state.(complete ~input:input' ~items t.S.file_completion_state)}, None)
+      let state = S.File_completion_state.(complete ~input:input' ~items t.S.file_completion_state) in
+      ({t with S.completing = Some T.Comp_file; file_completion_state = state}, None)
     end
 
   let toggle_mark t v =
@@ -250,7 +269,9 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     let module H = C.Pane_history in
     let history = S.active_pane_history t in
     let candidates = C.Pane_history.sorted_history history in
-    ({t with S.history_completion_state =
+    ({t with
+      S.completing = Some T.Comp_history;
+      history_completion_state =
                S.History_completion_state.(refresh ~candidates t.S.history_completion_state)},
      Some (Lwt.return @@ M.open_dialog T.dialog_history))
 
