@@ -7,12 +7,12 @@ let require module_ : 'a Js.t =
   let module_ = Js.string module_ in
   Js.Unsafe.(fun_call require [|inject module_|])
 
-let fs : N.Module_types.fs Js.t = require "fs"
-let original_fs : N.Module_types.fs Js.t = require "original-fs"
+let fs () : N.Module_types.fs Js.t = require "fs"
+let original_fs () : N.Module_types.fs Js.t = require "original-fs"
 
-let electron = require "electron"
+let electron () = require "electron"
 
-let crash_reporter : FFI.Crash_reporter.t Js.t =
+let crash_reporter () : FFI.Crash_reporter.t Js.t =
   Js.Unsafe.get electron "crashReporter"
 
 let browser_window: FFI.BrowserWindow.option Js.t -> FFI.BrowserWindow.t Js.t = fun option ->

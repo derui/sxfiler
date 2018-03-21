@@ -1,6 +1,6 @@
 module M = Modules
 module Reaction = Message_reaction.Make(struct
-    let resolve () = M.fs
+    let resolve = M.fs
   end)
 
 module C = Sxfiler_common
