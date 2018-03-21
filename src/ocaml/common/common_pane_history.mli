@@ -4,18 +4,22 @@ module History :
 sig
   type t = {
     directory : string;
-    focused_item : T.File_stat.t option;
+    focused_item : T.File_id.t option;
     timestamp : int64;
   }
+
+  val t_of_sexp : Sexplib.Sexp.t -> t
+  val sexp_of_t : t -> Sexplib.Sexp.t
+
   class type js = object
     method directory : Js.js_string Js.t Js.readonly_prop
-    method focusedItem : T.File_stat.js Js.t Js.opt Js.readonly_prop
+    method focusedItem : T.File_id.js Js.t Js.opt Js.readonly_prop
     method timestamp : float Js.readonly_prop
   end
 
   val make :
     ?timestamp:int64 ->
-    directory:string -> focused_item:T.File_stat.t option -> unit -> t
+    directory:string -> focused_item:T.File_id.t option -> unit -> t
 
   val to_js : t -> js Js.t
   val of_js : js Js.t -> t

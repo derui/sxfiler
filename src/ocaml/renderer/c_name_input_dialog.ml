@@ -104,11 +104,15 @@ let component =
     let props = this##.props in
     let module T = C.Types.File_stat in
     let pane = C.State.(active_pane props##.state) in
-    let selected_file = pane.C.Types.Pane.focused_item in
-    match selected_file with
+    let focused_item =
+      let open Minimal_monadic_caml.Option.Infix in
+      let module P = C.Types.Pane in
+      pane.P.focused_item >>= fun id -> P.find_item ~id pane
+    in
+    match focused_item with
     | None -> R.empty ()
-    | Some selected_file -> begin
-        let original = selected_file.T.filename in
+    | Some focused_item -> begin
+        let original = focused_item.T.filename in
 
         R.create_element C_dialog_base.component ~props:(object%js
           val _open = Js.bool true

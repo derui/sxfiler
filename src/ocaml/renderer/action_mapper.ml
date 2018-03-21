@@ -9,9 +9,11 @@ let select_item state direction =
   let module F = C.Types.File_stat in
   let module P = C.Types.Pane in
   let pane = C.State.active_pane state in
+  let id_list = Array.map (fun v -> v.F.id) pane.P.file_list in
   let ind = match pane.P.focused_item with
     | None -> 0
-    | Some item -> Util.find_item_index ~equal:F.equal ~v:item pane.P.file_list
+    | Some item ->
+      Util.find_item_index ~v:item id_list
   in
 
   let target_item = match direction with
@@ -19,11 +21,11 @@ let select_item state direction =
     | `Prev -> max 0 (pred ind)
   in
 
-  C.Message.select_item @@ F.to_js pane.P.file_list.(target_item)
+  C.Message.select_item @@ C.Types.File_id.to_js id_list.(target_item)
 
 let toggle_mark state =
   let module P = C.Types.Pane in
-  let module F = C.Types.File_stat in
+  let module F = C.Types.File_id in
   let pane = C.State.active_pane state in
   let open Minimal_monadic_caml.Option.Infix in
   pane.P.focused_item >>= fun item -> some @@ C.Message.toggle_mark @@ F.to_js item

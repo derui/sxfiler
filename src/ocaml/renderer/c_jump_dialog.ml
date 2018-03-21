@@ -36,7 +36,7 @@ let item_renderer item selected =
 module File_completion_list = C_completion_list.Make(struct
     type t = C.Types.File_stat.t
 
-    let to_id v = v.C.Types.File_stat.id
+    let to_id v = C.Types.(File_id.to_string v.File_stat.id)
   end)
 
 (* Get completion list element *)

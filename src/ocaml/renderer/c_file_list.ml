@@ -10,7 +10,7 @@ module Component = R.Component.Make_stateful (struct
     class type t = object
       method items: T.File_stat.t array Js.readonly_prop
       method markedItems: T.File_stat.t array Js.readonly_prop
-      method focusedItem: T.File_stat.t option Js.readonly_prop
+      method focusedItem: T.File_id.t option Js.readonly_prop
       method focused: bool Js.readonly_prop
     end
   end)(struct
@@ -24,7 +24,9 @@ let is_item_marked items item = Array.exists T.File_stat.(equal item) items
 let component =
   let item_to_pos items = function
     | None -> 0
-    | Some item -> Util.find_item_index ~equal:T.File_stat.equal ~v:item items
+    | Some item ->
+      let items' = Array.map (fun v -> v.T.File_stat.id) items in
+      Util.find_item_index ~v:item items'
   in
   let spec = R.component_spec
       ~constructor:(fun this props ->
@@ -61,7 +63,7 @@ let component =
     let start_position = item_to_pos items props##.focusedItem in
     let children = Array.mapi (fun index item ->
         let module F = C.Types.File_stat in
-        R.create_element ~key:item.F.id ~props:(object%js
+        R.create_element ~key:(C.Types.File_id.to_string item.F.id) ~props:(object%js
           val item = item
           val selected = start_position = index
           val focused = props##.focused

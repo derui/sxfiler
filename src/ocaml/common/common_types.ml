@@ -6,10 +6,30 @@ type sort_type =
   | Sort_size
   | Sort_date
 
+module File_id : sig
+  type t [@@deriving sexp]
+  type js
+
+  val make: abspath:string -> t
+  val equal : t -> t -> bool
+  val to_js : t -> js Js.t
+  val of_js : js Js.t -> t
+  val to_string: t -> string
+end = struct
+  open Sexplib.Std
+  type t = string [@@deriving sexp]
+  type js = Js.js_string
+
+  let make ~abspath = Digest.string abspath |> Digest.to_hex
+  let equal = (=)
+  let to_js = Js.string
+  let of_js = Js.to_string
+  let to_string v = v
+end
+
 module File_stat = struct
-  type id = string
   type t = {
-    id: id;
+    id: File_id.t;
     filename: string;
     directory: string;
     link_path: string option;
@@ -17,7 +37,7 @@ module File_stat = struct
   }
 
   class type js = object
-    method id: Js.js_string Js.t Js.readonly_prop
+    method id: File_id.js Js.t Js.readonly_prop
     method filename: Js.js_string Js.t Js.readonly_prop
     method directory: Js.js_string Js.t Js.readonly_prop
     method stat: FT.stat_obj Js.t Js.readonly_prop
@@ -27,9 +47,8 @@ module File_stat = struct
   let equal v1 v2 = v1.id = v2.id
 
   let make ~filename ~directory ~link_path ~stat =
-    let digest = Digest.string (directory ^ filename) |> Digest.to_hex in
     {
-      id = digest;
+      id = File_id.make ~abspath:(directory ^ filename);
       directory;
       filename;
       link_path;
@@ -37,7 +56,7 @@ module File_stat = struct
     }
 
   let to_js t = object%js
-    val id = Js.string t.id
+    val id = File_id.to_js t.id
     val filename = Js.string t.filename
     val directory = Js.string t.directory
     val stat = t.stat
@@ -46,7 +65,7 @@ module File_stat = struct
   end
 
   let of_js js = {
-    id = Js.to_string js##.id;
+    id = File_id.of_js js##.id;
     directory = Js.to_string js##.directory;
     filename = Js.to_string js##.filename;
     stat = js##.stat;
@@ -58,14 +77,14 @@ module Pane = struct
   type t = {
     directory: string;
     file_list: File_stat.t array;
-    focused_item: File_stat.t option;
-    marked_items: (File_stat.id * File_stat.t) list;
+    focused_item: File_id.t option;
+    marked_items: (File_id.t * File_stat.t) list;
   }
 
   class type js = object
     method directory: Js.js_string Js.t Js.readonly_prop
     method fileList: File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
-    method focusedItem: File_stat.js Js.t Js.opt Js.readonly_prop
+    method focusedItem: File_id.js Js.t Js.opt Js.readonly_prop
     method markedItems: File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
   end
 
@@ -79,19 +98,12 @@ module Pane = struct
       marked_items;
     }
 
-  let toggle_mark ~item pane =
-    let id = item.File_stat.id  in
-    if List.mem_assoc id pane.marked_items then
-      {pane with marked_items = List.remove_assoc id pane.marked_items}
-    else
-      {pane with marked_items = (id, item) :: pane.marked_items}
-
   let to_js : t -> js Js.t = fun t ->
     let file_stat_to_js (_, v) = File_stat.to_js v in
     object%js
       val fileList = Array.map File_stat.to_js t.file_list |> Js.array
       val directory = Js.string t.directory
-      val focusedItem = Js.Opt.map (Js.Opt.option t.focused_item) File_stat.to_js
+      val focusedItem = Js.Opt.map (Js.Opt.option t.focused_item) File_id.to_js
       val markedItems = Js.array @@ Array.of_list @@ List.map file_stat_to_js t.marked_items
     end
 
@@ -100,9 +112,20 @@ module Pane = struct
     {
       directory = Js.to_string js##.directory;
       file_list = Js.to_array js##.fileList |> Array.map File_stat.of_js;
-      focused_item = Js.Opt.map js##.focusedItem File_stat.of_js |> Js.Opt.to_option;
+      focused_item = Js.Opt.map js##.focusedItem File_id.of_js |> Js.Opt.to_option;
       marked_items = Js.to_array js##.markedItems |> Array.map file_stat_of_js |> Array.to_list;
     }
+
+  let find_item ~id pane =
+    List.find_opt (fun s -> id = s.File_stat.id) @@ Array.to_list pane.file_list
+
+  let toggle_mark ~id pane =
+    if List.mem_assoc id pane.marked_items then
+      {pane with marked_items = List.remove_assoc id pane.marked_items}
+    else
+      match find_item ~id pane with
+      | None -> pane
+      | Some item -> {pane with marked_items = (id, item) :: pane.marked_items}
 end
 
 module Operation_log = struct

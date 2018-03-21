@@ -139,7 +139,8 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     let message =
       let pane = S.active_pane t in
       let module P = T.Pane in
-      pane.P.focused_item >>= fun item ->
+      pane.P.focused_item >>= fun id -> P.find_item ~id pane
+      >>= fun item ->
       if item.T.File_stat.stat##.isDirectory |> Js.to_bool then begin
         let target_dir = N.Path.join [item.T.File_stat.directory;item.T.File_stat.filename] in
         Some (M.update_pane_request (T.Pane.to_js pane, Js.string target_dir,
@@ -260,7 +261,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
   let toggle_mark t v =
     let module S = C.State in
     let pane = S.active_pane t in
-    let pane = T.Pane.toggle_mark ~item:v pane in
+    let pane = T.Pane.toggle_mark ~id:v pane in
 
     (S.update_pane ~pane t, None)
 
@@ -280,7 +281,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     | M.Update_pane_response ret -> update_pane_response t ret
     | M.Refresh_panes_request -> request_refresh_panes t
     | M.Refresh_panes_response payload -> finish_refresh_panes t payload
-    | M.Select_item v -> select_item t @@ T.File_stat.of_js v
+    | M.Select_item v -> select_item t @@ T.File_id.of_js v
     | M.Leave_directory -> leave_directory t
     | M.Enter_directory -> enter_directory t
     | M.Jump_location s -> jump_location t @@ Js.to_string s
@@ -295,6 +296,6 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     | M.Refresh_candidates_request s -> request_refresh_candidates t s
     | M.Refresh_candidates_response v -> finish_refresh_candidates t v
     | M.Complete_from_candidates (match_type, input) -> complete_from_candidates t ~input ~match_type
-    | M.Toggle_mark v -> toggle_mark t @@ T.File_stat.of_js v
+    | M.Toggle_mark v -> toggle_mark t @@ T.File_id.of_js v
     | M.Open_history -> open_history t
 end

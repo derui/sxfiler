@@ -8,4 +8,4 @@
               minimal-monadic-caml
               sxfiler_kbd sxfiler_common sxfiler.completer jsoo_node))
   (js_of_ocaml ((flags ("--pretty"))))
-  (preprocess (pps (js_of_ocaml-ppx ppx_deriving_yojson)))))
+  (preprocess (pps (js_of_ocaml-ppx ppx_deriving_yojson ppx_sexp_conv)))))

@@ -9,4 +9,7 @@
               sxfiler.completer
               mocha_of_ocaml
               ppx_deriving_yojson.runtime))
-  (preprocess (pps (js_of_ocaml-ppx ppx_variants_conv ppx_deriving_yojson)))))
+  (preprocess (pps (js_of_ocaml-ppx
+                    ppx_variants_conv
+                    ppx_deriving_yojson
+                    ppx_sexp_conv)))))

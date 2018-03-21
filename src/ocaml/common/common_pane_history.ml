@@ -3,15 +3,16 @@
 module T = Common_types
 
 module History = struct
+  open Sexplib.Std
   type t = {
     directory: string;
-    focused_item: T.File_stat.t option;
+    focused_item: T.File_id.t option;
     timestamp: int64;
-  }
+  } [@@deriving sexp]
 
   class type js = object
     method directory: Js.js_string Js.t Js.readonly_prop
-    method focusedItem: T.File_stat.js Js.t Js.opt Js.readonly_prop
+    method focusedItem: T.File_id.js Js.t Js.opt Js.readonly_prop
     method timestamp: float Js.readonly_prop
   end
 
@@ -24,13 +25,13 @@ module History = struct
 
   let to_js t = object%js
     val directory = Js.string t.directory
-    val focusedItem = Js.Opt.map (Js.Opt.option t.focused_item) T.File_stat.to_js
+    val focusedItem = Js.Opt.map (Js.Opt.option t.focused_item) T.File_id.to_js
     val timestamp = Int64.to_float t.timestamp
   end
 
   let of_js js = {
     directory = Js.to_string js##.directory;
-    focused_item = Js.Opt.map js##.focusedItem T.File_stat.of_js |> Js.Opt.to_option;
+    focused_item = Js.Opt.map js##.focusedItem T.File_id.of_js |> Js.Opt.to_option;
     timestamp = Int64.of_float js##.timestamp;
   }
 end
