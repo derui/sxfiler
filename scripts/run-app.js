@@ -2,6 +2,7 @@ require('./pre-package.js');
 
 const { buildCssWithWatch, buildCss } = require('./build-css.js');
 const { buildOCamlWithWatch, buildOCaml } = require('./build-ocaml.js');
+const { bundleDll } = require('./build-dll.js');
 
 const { spawn } = require('child_process');
 
@@ -22,6 +23,7 @@ module.exports = runApp;
 
 if (require.main === module) {
   (function() {
+    bundleDll();
     buildCss();
     buildOCaml();
 
