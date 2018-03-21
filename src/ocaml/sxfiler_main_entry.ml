@@ -24,20 +24,23 @@ let subscription ipc t =
 let make_initial_pane = T.Pane.make ~directory:"." ()
 
 let () =
-  M.crash_reporter##start (Js.Optdef.return @@ object%js
+  let crash_reporter = M.crash_reporter () in
+  crash_reporter##start (Js.Optdef.return @@ object%js
                              val companyName = Js.string "sxfiler" |> Js.Optdef.return
                              val submitURL = Js.string ""
                              val uploadToServer = Js.Optdef.return @@ Js.bool false
                              val crashesDirectory = Js.Optdef.empty
                            end);
-  let app : FFI.electron_app Js.t = M.electron##.app in
+  let electron = M.electron () in
+  let app : FFI.electron_app Js.t = electron##.app in
   Arg.parse_argv argv options ignore "Sxfiler";
 
   let config = C.load Js.(to_string app##getAppPath) !option_config in
   let initial_state = Sxfiler_common.State.{empty with config} in
   let runner = Flux_runner.run ~initial_state () in
-  let ipc = M.electron##.ipcMain in
-  let window_binder = Window_binder.make ~ipc ~fs:(M.original_fs) ~runner in
+  let ipc = electron##.ipcMain in
+  let original_fs = M.original_fs () in
+  let window_binder = Window_binder.make ~ipc ~fs:original_fs ~runner in
   Ipc_handler.bind window_binder;
 
   let module Subscription = struct
