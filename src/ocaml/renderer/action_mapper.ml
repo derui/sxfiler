@@ -44,4 +44,4 @@ let to_message state = function
   | Quit -> some @@ C.Message.quit_application
   | Toggle_mark -> toggle_mark state
   | Make_dir -> some @@ C.Message.open_dialog @@ C.Types.dialog_name_input `Mkdir
-  | History -> some @@ C.Message.Open_history
+  | History -> some @@ C.Message.open_dialog @@ C.Types.dialog_history

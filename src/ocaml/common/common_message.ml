@@ -23,7 +23,6 @@ type t =
   | Change_active_pane
   | Select_next_completion
   | Select_prev_completion
-  | Open_history
   | Complete_from_candidates of Cmp.match_type * Js.js_string Js.t
   | Refresh_candidates_request of Js.js_string Js.t
   | Refresh_candidates_response of (Js.js_string Js.t * T.File_stat.js Js.t Js.js_array Js.t, T.Operation_log.Entry.js Js.t) result

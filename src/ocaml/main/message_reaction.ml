@@ -161,9 +161,24 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     ({t with S.dialog_state = S.Dialog_state.Close}, message)
 
   let change_active_pane t = (S.swap_active_pane t, None)
+
   let open_dialog t dialog_type =
-    let t = {t with S.dialog_state = S.Dialog_state.Open dialog_type} in
-    (t, None)
+    let t' = {t with S.dialog_state = S.Dialog_state.Open dialog_type} in
+    match dialog_type with
+    | C.Types.Dialog_jump -> ({t' with S.completing = Some T.Comp_file}, None)
+    | Dialog_history -> begin
+        let module S = C.State in
+        let module H = C.Pane_history in
+        let history = S.active_pane_history t in
+        let candidates = C.Pane_history.sorted_history history in
+        ({t' with
+          S.completing = Some T.Comp_history;
+          history_completion_state =
+            S.History_completion_state.(refresh ~candidates t.S.history_completion_state)},
+         None)
+      end
+    | _ -> (t', None)
+
 
   let close_dialog t action =
     let t = {t with S.dialog_state = S.Dialog_state.Close} in
@@ -223,9 +238,28 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
         | Some T.Comp_history -> ({t with S.history_completion_state = H.select_prev t.S.history_completion_state}, None)
       end
 
+  let complete_from_history t ~match_type ~input =
+    let module T = C.Pane_history.History in
+    let module Stringify = struct
+      type t = T.t
+      let to_string v = v.T.directory
+    end in
+    let module H = C.Pane_history in
+    let history = S.active_pane_history t in
+    let candidates = Array.to_list @@ C.Pane_history.sorted_history history in
+    let items = Sxfiler_completer.Completer.complete ~input ~match_type ~candidates ~stringify:(module Stringify) in
+    let items = Array.of_list items in
+    let state = S.History_completion_state.(complete ~input ~items t.S.history_completion_state) in
+    ({t with S.completing = Some C.Types.Comp_history; history_completion_state = state}, None)
+
   let request_refresh_candidates t path =
     let path' = Js.to_string path in
-    (t, Some (refresh_candidates ~fs:(Fs.resolve ()) path'))
+    match t.S.completing with
+    | None -> (t, None)
+    | Some T.Comp_file -> (t, Some (refresh_candidates ~fs:(Fs.resolve ()) path'))
+    | Some T.Comp_history ->
+      let module Cmp = Sxfiler_completer in
+      complete_from_history t ~match_type:Cmp.Completer.Partial_match ~input:path'
 
   let finish_refresh_candidates t = function
     | Ok (path, candidates) ->
@@ -265,17 +299,6 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
     (S.update_pane ~pane t, None)
 
-  let open_history t =
-    let module S = C.State in
-    let module H = C.Pane_history in
-    let history = S.active_pane_history t in
-    let candidates = C.Pane_history.sorted_history history in
-    ({t with
-      S.completing = Some T.Comp_history;
-      history_completion_state =
-               S.History_completion_state.(refresh ~candidates t.S.history_completion_state)},
-     Some (Lwt.return @@ M.open_dialog T.dialog_history))
-
   let react t = function
     | M.Update_pane_request (pane, path, loc) -> update_pane_request t pane path loc
     | M.Update_pane_response ret -> update_pane_response t ret
@@ -297,5 +320,4 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     | M.Refresh_candidates_response v -> finish_refresh_candidates t v
     | M.Complete_from_candidates (match_type, input) -> complete_from_candidates t ~input ~match_type
     | M.Toggle_mark v -> toggle_mark t @@ T.File_id.of_js v
-    | M.Open_history -> open_history t
 end
