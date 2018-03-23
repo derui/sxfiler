@@ -6,6 +6,8 @@ module T = Sxfiler_common.Types
 
 module C = Config_loader
 
+module U = User_data
+
 let dirname : Js.js_string Js.t option = Js.Unsafe.global##.__dirname
 
 let argv =
@@ -21,7 +23,36 @@ let subscription ipc t =
   let module S = Sxfiler_common.State in
   Lwt.return @@ E.IPC.(send ~channel:(update (S.to_js t)) ~ipc)
 
-let make_initial_pane = T.Pane.make ~directory:"." ()
+let default_pane () =
+  let directory = Jsoo_node.Path.resolve ["."] in
+  T.Pane.make ~directory ()
+
+let restore_state_from_user_data ~state ~user_data =
+  let module PH = Sxfiler_common.Pane_history in
+  let left_pane_history = user_data.U.left_pane_history
+  and right_pane_history = user_data.U.right_pane_history in
+  let restore_pane = function
+    | [] -> default_pane ()
+    | hist :: _ -> T.Pane.make ?focused_item:hist.PH.History.focused_item
+                     ~directory:hist.PH.History.directory ()
+  in
+  let left_pane =  restore_pane left_pane_history
+  and right_pane =  restore_pane right_pane_history in
+
+  let restore_history histories =
+    let history = PH.make () in
+    List.fold_left (fun history v -> PH.add_history ~history:v history) history histories
+  in
+  Sxfiler_common.State.({
+      state with
+      left_pane; right_pane;
+      left_pane_history = restore_history left_pane_history;
+      right_pane_history = restore_history right_pane_history;
+    })
+
+let quit_application state app =
+  U.save @@ U.of_state state;
+  app##quit ()
 
 let () =
   let crash_reporter = M.crash_reporter () in
@@ -36,7 +67,12 @@ let () =
   Arg.parse_argv argv options ignore "Sxfiler";
 
   let config = C.load Js.(to_string app##getAppPath) !option_config in
-  let initial_state = Sxfiler_common.State.{empty with config} in
+  let user_data = U.load () in
+  let initial_state = Sxfiler_common.State.{empty with config;
+                                                       left_pane = default_pane ();
+                                                       right_pane = default_pane ();
+                                           } in
+  let initial_state = restore_state_from_user_data ~state:initial_state ~user_data in
   let runner = Flux_runner.run ~initial_state () in
   let ipc = electron##.ipcMain in
   let original_fs = M.original_fs () in
@@ -49,7 +85,7 @@ let () =
       | None -> Lwt.return_unit
       | Some w -> begin
           let module S = Sxfiler_common.State in
-          if t.S.terminated then app##quit () |> Lwt.return
+          if t.S.terminated then quit_application t app |> Lwt.return
           else subscription w##.webContents_ipc t
         end
   end in

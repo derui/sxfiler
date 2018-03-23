@@ -13,15 +13,15 @@ let empty = {
   right_pane_history = [];
 }
 
-let user_data_path () =
+let default_path () =
   let electron = M.electron () in
   Js.to_string @@ electron##.app##getPath (Js.string "userData")
 
 let history_path () =
   let module N = Jsoo_node in
-  N.Path.join [user_data_path (); "history"]
+  N.Path.join [default_path (); "history"]
 
-let load_user_data ?path () =
+let load ?path () =
   let history_path = match path with
     | Some path -> path
     | None -> history_path () in
@@ -43,7 +43,15 @@ let load_user_data ?path () =
         end
     end
 
-let save_user_data ?path data =
+let of_state state =
+  let module S = C.State in
+  let module PH = C.Pane_history in
+  {
+    left_pane_history = PH.sorted_history state.S.left_pane_history |> Array.to_list;
+    right_pane_history = PH.sorted_history state.S.right_pane_history |> Array.to_list;
+  }
+
+let save ?path data =
   let history_path = match path with
     | Some path -> path
     | None -> history_path () in
@@ -74,8 +82,8 @@ module Test = struct
           } in
 
           let path = Jsoo_node.Path.(join [path;"data"]) in
-          save_user_data ~path data;
-          let loaded = load_user_data ~path () in
+          save ~path data;
+          let loaded = load ~path () in
           assert_ok (data = loaded)
         );
       "should return empty data if file not found" >:: (fun () ->
@@ -83,7 +91,7 @@ module Test = struct
           let module T = C.Types.File_id in
 
           let path = Jsoo_node.Path.(join [path;"data"]) in
-          let loaded = load_user_data ~path () in
+          let loaded = load ~path () in
           assert_ok (empty = loaded)
         );
     ]
