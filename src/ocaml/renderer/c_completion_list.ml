@@ -19,7 +19,7 @@ module type S = sig
 
   module Component : R.Component.Stateless with type props = props
 
-  val component : (props, unit) R.React.component
+  val component : (props, unit, unit) R.React.component
 end
 
 module Make(T:Type) : S with type item := T.t = struct

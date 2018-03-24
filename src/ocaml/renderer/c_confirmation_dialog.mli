@@ -9,8 +9,8 @@ module Component : sig
       state : C.State.t Js.readonly_prop;
       title : Js.js_string Js.t Js.readonly_prop >
   type state = < confirmed : bool Js.readonly_prop >
-  type spec = (props, state) R.Core.Component_spec.t
-  val make : spec -> (props, state) R.Core.React.component
+  type spec = (props, state, unit) R.Core.Component_spec.t
+  val make : spec -> (props, state, unit) R.Core.React.component
 end
 
-val component : (Component.props, Component.state) R.Core.React.component
+val component : (Component.props, Component.state, unit) R.Core.React.component

@@ -7,9 +7,8 @@ module Component : sig
       keyHandler : (R.Event.Keyboard_event.t -> unit) Js.optdef Js.readonly_prop;
     >
   type state = < opened : bool Js.readonly_prop >
-  type spec = (props, state) R.Core.Component_spec.t
-  val make :
-    spec -> (props, state) R.Core.React.component
+  type spec = (props, state, unit) R.Core.Component_spec.t
+  val make : spec -> (props, state, unit) R.Core.React.component
 end
 
-val component : (Component.props, Component.state) R.Core.React.component
+val component : (Component.props, Component.state, unit) R.Core.React.component
