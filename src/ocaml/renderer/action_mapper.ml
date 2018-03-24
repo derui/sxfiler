@@ -17,7 +17,7 @@ let select_item state direction =
   in
 
   let target_item = match direction with
-    | `Next -> min (Array.length pane.P.file_list) (succ ind)
+    | `Next -> min (Array.length pane.P.file_list - 1) (succ ind)
     | `Prev -> max 0 (pred ind)
   in
 
