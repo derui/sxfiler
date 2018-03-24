@@ -20,7 +20,7 @@ end = struct
   type t = string [@@deriving sexp]
   type js = Js.js_string
 
-  let make ~abspath = Digest.string abspath |> Digest.to_hex
+  let make ~abspath = abspath
   let equal = (=)
   let to_js = Js.string
   let of_js = Js.to_string
