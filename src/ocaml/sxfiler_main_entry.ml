@@ -57,11 +57,11 @@ let quit_application state app =
 let () =
   let crash_reporter = M.crash_reporter () in
   crash_reporter##start (Js.Optdef.return @@ object%js
-                             val companyName = Js.string "sxfiler" |> Js.Optdef.return
-                             val submitURL = Js.string ""
-                             val uploadToServer = Js.Optdef.return @@ Js.bool false
-                             val crashesDirectory = Js.Optdef.empty
-                           end);
+                           val companyName = Js.string "sxfiler" |> Js.Optdef.return
+                           val submitURL = Js.string ""
+                           val uploadToServer = Js.Optdef.return @@ Js.bool false
+                           val crashesDirectory = Js.Optdef.empty
+                         end);
   let electron = M.electron () in
   let app : FFI.electron_app Js.t = electron##.app in
   Arg.parse_argv argv options ignore "Sxfiler";

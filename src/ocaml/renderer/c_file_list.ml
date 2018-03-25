@@ -76,10 +76,10 @@ let component =
           val getParentSize = (fun () ->
               let open Minimal_monadic_caml.Option.Infix in
               let size = R.Ref_table.find ~key:key_of_filelist this##.nodes >|= (fun e ->
-                let rect = e##getBoundingClientRect in
-                let height = int_of_float @@ rect##.bottom -. rect##.top
-                and width = int_of_float @@ rect##.right -. rect##.left in
-                C_resize_sensor.({height;width}))
+                  let rect = e##getBoundingClientRect in
+                  let height = int_of_float @@ rect##.bottom -. rect##.top
+                  and width = int_of_float @@ rect##.right -. rect##.left in
+                  C_resize_sensor.({height;width}))
               in
               C.Util.Option.get ~default:C_resize_sensor.({height = 0;width = 0}) size)
           val onResized = (fun size ->
