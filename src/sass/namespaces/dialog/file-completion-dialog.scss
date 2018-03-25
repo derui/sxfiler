@@ -20,6 +20,9 @@ $historyDialogTopPosition: 7em;
   border: 1px solid $sol_base00;
 
   border-radius: $smallSpace;
+
+  margin: 0 auto 0;
+  max-width: 75%;
 }
 
 .dialog-FileCompletionDialog_InputContainer {
