@@ -37,18 +37,22 @@ let calc_visible_window t visible_count cursor_position =
   else if cursor_position > prev_end then begin
     let diff = abs (cursor_position - prev_end) in
     let start = prev_start + diff in
-
-    if start + visible_count <= all_item_count then (start, visible_count)
-    else (start - ((start + visible_count) - all_item_count), visible_count)
+    (start, visible_count)
   end
   else (prev_start, visible_count)
+
+let correct_visible_window all_item_count (start, count) =
+  if start + count <= all_item_count then (start, count)
+  else (start - ((start + count) - all_item_count), count)
 
 let recalculate_visible_window cursor_position t =
   let visible_count = calc_viewable_item_count t.list_height t.item_height in
   let visible_window = calc_visible_window t visible_count cursor_position in
+  let visible_window = correct_visible_window (Array.length t.all_items) visible_window in
   {t with visible_window = visible_window}
 
-let get_items_in_window t = let window_start, window_size = t.visible_window in
+let get_items_in_window t =
+  let window_start, window_size = t.visible_window in
   Array.sub t.all_items window_start window_size
 
 let start_position_of_window {visible_window;_} = fst visible_window

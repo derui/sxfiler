@@ -110,4 +110,19 @@ let () =
         <|> assert_strict_eq [|1;2|] @@ L.get_items_in_window step_one
         <|> assert_strict_eq [|3;4|] @@ L.get_items_in_window step_two
       );
+    "should correct visible size if only visible size change" >:: (fun () ->
+        prepare ();
+        let all_items = Array.init 10 succ in
+        let lst = L.make ~item_height:10 ()
+                  |> L.update_all_items all_items
+                  |> L.update_list_height 40
+                  |> L.recalculate_visible_window 7
+        in
+        let next = L.update_list_height 80 lst
+                 |> L.recalculate_visible_window 7 in
+        let open Infix in
+        (assert_strict_eq [|7;8;9;10|] @@ L.get_items_in_window lst)
+        <|> (assert_strict_eq [|3;4;5;6;7;8;9;10|] @@ L.get_items_in_window next)
+      );
+
   ]
