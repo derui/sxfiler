@@ -71,6 +71,26 @@ let component =
         end) C_file_item.component
       ) items
     in
+    let resize_sensor = R.create_element ~key:"resize-sensor"
+        ~props:(object%js
+          val getParentSize = (fun () ->
+              let open Minimal_monadic_caml.Option.Infix in
+              let size = R.Ref_table.find ~key:key_of_filelist this##.nodes >|= (fun e ->
+                let rect = e##getBoundingClientRect in
+                let height = int_of_float @@ rect##.bottom -. rect##.top
+                and width = int_of_float @@ rect##.right -. rect##.left in
+                C_resize_sensor.({height;width}))
+              in
+              C.Util.Option.get ~default:C_resize_sensor.({height = 0;width = 0}) size)
+          val onResized = (fun size ->
+              let height = size.C_resize_sensor.height in
+              Firebug.console##log size;
+              this##setState (object%js
+                val virtualizedList = VL.update_list_height height vl
+              end))
+        end) C_resize_sensor.component
+    in
+    let children = Array.concat [children;[|resize_sensor|]] in
     let _ref e = R.Ref_table.add ~key:key_of_filelist ~value:e this##.nodes in
     let props = R.(element_spec ~class_name:"fp-FileList" ()) in
     R.Dom.of_tag `ul ~_ref ~props ~children

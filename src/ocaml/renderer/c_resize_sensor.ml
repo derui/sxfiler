@@ -43,25 +43,23 @@ end
 (* the component to detect shrinking *)
 let shrink ~on_scroll ~nodes =
   let props = R.element_spec ()
-      ~key:"shrink"
       ~on_scroll
       ~others:(object%js
         val style = style
       end)
   in
   let children = [|
-    R.Dom.of_tag `div ~props:(R.element_spec ()
-                                ~key:"shrinkChild" ~others:(object%js
-                                val style = shrink_child_style
-                              end))
+    R.Dom.of_tag `div ~key:"shrinkChild" ~props:(R.element_spec ()
+                                                   ~others:(object%js
+                                                     val style = shrink_child_style
+                                                   end))
   |] in
-  R.Dom.of_tag `div ~props ~children
+  R.Dom.of_tag `div ~key:"shrink" ~props ~children
     ~_ref:(fun e -> R.Ref_table.add nodes ~key:shrink_key ~value:e)
 
 (* the component to detect expanding *)
 let expand ~on_scroll ~nodes =
   let props = R.element_spec ()
-      ~key:"shrink"
       ~on_scroll
       ~others:(object%js
         val style = style
@@ -69,12 +67,13 @@ let expand ~on_scroll ~nodes =
   in
   let children = [|
     R.Dom.of_tag `div
+      ~key:"expandChild"
       ~_ref:(fun e -> R.Ref_table.add nodes ~key:expand_child_key ~value:e)
-      ~props:(R.element_spec () ~key:"expandChild" ~others:(object%js
+      ~props:(R.element_spec () ~others:(object%js
                 val style = expand_child_style
               end))
   |] in
-  R.Dom.of_tag `div ~props ~children
+  R.Dom.of_tag `div ~key:"expand" ~props ~children
     ~_ref:(fun e -> R.Ref_table.add nodes ~key:expand_key ~value:e)
 
 
@@ -101,7 +100,10 @@ module Component = R.Component.Make_stateful_custom (struct
 
 let component =
   let render this =
-    let spec = R.element_spec () ~class_name:"global-ResizeSensor" in
+    let spec = R.element_spec () ~class_name:"global-ResizeSensor"
+        ~others:(object%js
+          val style = style
+        end)in
     let on_scroll = this##.custom##.onScroll in
     R.Dom.of_tag `div
       ~props:spec
@@ -110,27 +112,27 @@ let component =
         shrink ~on_scroll ~nodes:this##.nodes;
       |]
   in
+  let reset_sensor_elements this =
+    let shrink = R.Ref_table.find this##.nodes ~key:shrink_key
+    and expand = R.Ref_table.find this##.nodes ~key:expand_key
+    and expand_child = R.Ref_table.find this##.nodes ~key:expand_child_key in
+    match (shrink, expand, expand_child) with
+    | (Some shrink, Some expand, Some expand_child) -> begin
+        shrink##.scrollLeft := 1000000;
+        shrink##.scrollTop := 1000000;
+
+        expand##.scrollLeft := 1000000;
+        expand##.scrollTop := 1000000;
+
+        expand_child##.style##.width := Js.string "1000000px";
+        expand_child##.style##.height := Js.string "1000000px"
+      end
+    | _ -> ()
+  in
+
   let spec = R.component_spec
       ~constructor:(fun this props ->
           this##.nodes := Jstable.create ();
-
-          let reset_sensor_elements () =
-            let shrink = R.Ref_table.find this##.nodes ~key:shrink_key
-            and expand = R.Ref_table.find this##.nodes ~key:expand_key
-            and expand_child = R.Ref_table.find this##.nodes ~key:expand_child_key in
-            match (shrink, expand, expand_child) with
-            | (Some shrink, Some expand, Some expand_child) -> begin
-                shrink##.scrollLeft := 1000000;
-                shrink##.scrollTop := 1000000;
-
-                expand##.scrollLeft := 1000000;
-                expand##.scrollTop := 1000000;
-
-                expand_child##.style##.width := Js.string "1000000px";
-                expand_child##.style##.height := Js.string "1000000px"
-              end
-            | _ -> ()
-          in
 
           this##.custom := object%js
             val mutable dirty = Js.bool true
@@ -162,11 +164,12 @@ let component =
                   | (false, None) | (true, Some _) | (false, Some _) -> ()
                 end;
 
-                reset_sensor_elements ()
+                reset_sensor_elements this
               )
             val mutable rafId = Js.Opt.empty
           end
         )
+      ~component_did_mount:reset_sensor_elements
       render
   in
   Component.make spec
