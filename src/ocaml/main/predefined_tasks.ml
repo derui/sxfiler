@@ -119,6 +119,25 @@ module Mkdir = struct
       Lwt.return @@ T.Task_result.(of_error @@ Js.to_string e##.message)
 end
 
+module Change_permission = struct
+  type t = {
+    fs: (module N.Fs_intf.Instance);
+    permission: int;
+  }
+
+  let execute {fs;permission} state =
+    let sources = S.active_pane state |> S.Pane.selected_files in
+
+    Lwt_list.fold_left_s (fun _ src ->
+        let module Fs = N.Fs.Make(val fs) in
+        let path = N.Path.join [src.T.File_stat.directory;src.T.File_stat.filename] in
+
+        match Fs.chmodSync path permission with
+        | Ok () -> Lwt.return @@ T.Task_result.(Ok Payload_change_permission)
+        | Error `JsooSystemError e -> Lwt.return @@ T.Task_result.(of_error @@ Js.to_string e##.message)
+      ) T.Task_result.(Ok Payload_rename) sources
+end
+
 type env = {
   fs: (module N.Fs_intf.Instance);
 }
@@ -146,3 +165,8 @@ let of_request: env -> T.Task_request.t -> (module C.Task_intf.Task_instance) = 
                  module Task = Mkdir
                  let instance = {Mkdir.fs = env.fs; dir_name = Js.to_string d}
                end: I.Task_instance)
+  | Change_permission permission ->
+    (module struct
+      module Task = Change_permission
+      let instance = {Change_permission.fs = env.fs; permission}
+    end: I.Task_instance)

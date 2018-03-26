@@ -45,3 +45,4 @@ let to_message state = function
   | Toggle_mark -> toggle_mark state
   | Make_dir -> some @@ C.Message.open_dialog @@ C.Types.dialog_name_input `Mkdir
   | History -> some @@ C.Message.open_dialog @@ C.Types.dialog_history
+  | Change_permission -> some @@ C.Message.open_dialog @@ C.Types.dialog_change_permission

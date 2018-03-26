@@ -211,6 +211,7 @@ type task_tag = [
   | `Move
   | `Rename
   | `Mkdir
+  | `Change_permission
 ]
 
 module Task_request = struct
@@ -220,6 +221,7 @@ module Task_request = struct
     | Move
     | Rename of Js.js_string Js.t
     | Mkdir of Js.js_string Js.t
+    | Change_permission of int
 
   class type js = object
     method _type: t Js.readonly_prop
@@ -281,6 +283,7 @@ module Task_result = struct
     | Payload_move
     | Payload_rename
     | Payload_mkdir
+    | Payload_change_permission
 
   type t = (payload, Error.t) result
 
@@ -333,6 +336,7 @@ type dialog_type =
   | Dialog_name_input of task_tag
   | Dialog_jump
   | Dialog_history
+  | Dialog_change_permission
 [@@deriving variants]
 
 type completion_type =

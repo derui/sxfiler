@@ -60,6 +60,10 @@ let make_dialog ~props = function
                                 val state = props##.state
                                 val dispatch = props##.dispatch
                               end) C_history_dialog.component
+  | C.Types.Dialog_change_permission -> R.create_element ~key:"dialog" ~props:(object%js
+                                          val state = props##.state
+                                          val dispatch = props##.dispatch
+                                        end) C_history_dialog.component
 
 let component = Component.make (fun props ->
     let state = props##.state in
