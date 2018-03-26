@@ -8,6 +8,7 @@
               jsoo_node minimal-monadic-caml
               sxfiler.completer
               mocha_of_ocaml
+              sexplib
               ppx_deriving_yojson.runtime))
   (preprocess (pps (js_of_ocaml-ppx
                     ppx_variants_conv
