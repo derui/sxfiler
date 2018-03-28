@@ -101,6 +101,12 @@ let make_permission state =
   and others = state##.others in
   (owner * 0o100) + (group * 0o10) + others
 
+let split_permission mode =
+  let owner = mode land 0o700
+  and group = mode land 0o70
+  and others = mode land 0o7 in
+  (owner, group, others)
+
 let handle_submit ~dispatch v =
   let module M = C.Message in
   let module T = C.Types in
@@ -199,12 +205,28 @@ let component =
   Component.make R.(
       component_spec
         ~constructor:(fun this props ->
+            let module T = C.Types.File_stat in
+            let pane = C.State.(active_pane props##.state) in
+            let open Minimal_monadic_caml.Option.Infix in
+            let focused_item =
+              let module P = C.Types.Pane in
+              pane.P.focused_item >>= fun id -> P.find_item ~id pane
+            in
             this##.state := object%js
               val currentRane = Owner
               val owner = 0
               val group = 0
               val others = 0
-            end
+            end;
+
+            focused_item >>= (fun item ->
+                let owner, group, others = split_permission
+                  @@ int_of_float
+                  @@ Js.float_of_number item.T.stat##.mode
+                in
+                Some (this##.state := make_state ~owner ~group ~others this##.state)
+              )
+          |> ignore
           )
         render
     )
