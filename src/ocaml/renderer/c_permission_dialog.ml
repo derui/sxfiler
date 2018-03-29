@@ -17,26 +17,35 @@ module Permission_view = struct
     end)
 
   let perm_cell text allowed =
-    R.Dom.of_tag `td
+    R.Dom.of_tag `td ~key:text
       ~children:[|
         R.Dom.of_tag `span
           ~props:(R.element_spec ~class_name:"dialog-PermissionDialog_PermissionCell" ())
           ~children:[|
             R.Dom.of_tag `span
+              ~key:"name"
               ~props:(R.element_spec ~class_name:"dialog-PermissionDialog_PermissionName" ())
               ~children:[|R.text text|];
-            R.Dom.of_tag `input ~props:(R.element_spec () ~others:(object%js
-                                          val _type = "checkbox"
-                                          val value = allowed
-                                        end))
+            R.Dom.of_tag `input ~key:"checkbox"
+              ~props:(R.element_spec () ~others:(object%js
+                        val _type = "checkbox"
+                        val checked = allowed
+                      end))
           |]
       |]
 
-  let rane_to_row perm =
+  let rane_to_row perm current =
     let read = (perm land 0o4) <> 0
     and write = (perm land 0o2) <> 0
     and exec = (perm land 0o1) <> 0 in
-    R.Dom.of_tag `tr ~children:[|
+    let class_name =
+      let open Classnames in
+      return "dialog-PermissionDialog_PermissionRow"
+      <|> ("dialog-PermissionDialog_PermissionRow-selected", current)
+      |> to_string
+    in
+
+    R.Dom.of_tag `tr ~props:(R.element_spec ~class_name ()) ~children:[|
       perm_cell "Read" read;
       perm_cell "Write" write;
       perm_cell "eXec" exec;
@@ -46,9 +55,9 @@ module Permission_view = struct
       R.Dom.of_tag `table ~props:(R.element_spec ~class_name:"dialog-PermissionDialog_PermissionViewer" ())
         ~children:[|
           R.Dom.of_tag `tbody ~children:[|
-            rane_to_row props##.owner;
-            rane_to_row props##.group;
-            rane_to_row props##.others;
+            rane_to_row props##.owner (props##.currentRane = Owner);
+            rane_to_row props##.group (props##.currentRane = Group);
+            rane_to_row props##.others (props##.currentRane = Others);
           |]
         |]
     )
@@ -102,8 +111,8 @@ let make_permission state =
   (owner * 0o100) + (group * 0o10) + others
 
 let split_permission mode =
-  let owner = mode land 0o700
-  and group = mode land 0o70
+  let owner = (mode land 0o700) / 0o100
+  and group = (mode land 0o70) / 0o10
   and others = mode land 0o7 in
   (owner, group, others)
 
@@ -133,8 +142,8 @@ let prev_rane = function
   | Others -> Group
 
 let update_rane this = function
-  | `Up -> this##setState (make_state ~currentRane:(next_rane this##.state##.currentRane) this##.state)
-  | `Down -> this##setState (make_state ~currentRane:(prev_rane this##.state##.currentRane) this##.state)
+  | `Up -> this##setState (make_state ~currentRane:(prev_rane this##.state##.currentRane) this##.state)
+  | `Down -> this##setState (make_state ~currentRane:(next_rane this##.state##.currentRane) this##.state)
 
 let toggle_permission this perm =
   let current_rane = this##.state##.currentRane in
@@ -226,7 +235,7 @@ let component =
                 in
                 Some (this##.state := make_state ~owner ~group ~others this##.state)
               )
-          |> ignore
+            |> ignore
           )
         render
     )

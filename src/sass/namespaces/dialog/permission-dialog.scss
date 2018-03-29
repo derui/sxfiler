@@ -25,6 +25,24 @@ $PermissionDialogTopPosition: 7em;
   top: $PermissionDialogTopPosition;
 }
 
+.dialog-PermissionDialog_PermissionViewer {
+  border-collapse: collapse;
+
+  font-size: 1rem;
+}
+
+.dialog-PermissionDialog_PermissionCell {
+  padding: $smallSpace;
+}
+
+.dialog-PermissionDialog_PermissionRow {
+
+  &.dialog-PermissionDialog_PermissionRow-selected {
+    background-color: $sol_blue;
+    color: $sol_base3
+  }
+}
+
 .dialog-PermissionDialog_TextContainer {
   flex: 1 1 auto;
 

@@ -84,7 +84,6 @@ let component =
               C.Util.Option.get ~default:C_resize_sensor.({height = 0;width = 0}) size)
           val onResized = (fun size ->
               let height = size.C_resize_sensor.height in
-              Firebug.console##log size;
               this##setState (object%js
                 val virtualizedList = VL.update_list_height height vl
               end))
