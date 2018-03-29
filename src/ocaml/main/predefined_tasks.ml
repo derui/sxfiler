@@ -47,7 +47,7 @@ module Delete = struct
     Lwt_list.fold_left_s (fun _ file ->
         let file = file.T.File_stat.filename in
         let module Fs = N.Fs.Make(val fs) in
-        match Fs.unlinkSync file with
+        match Fs.remove_sync file with
         | Ok () -> Lwt.return @@ T.Task_result.(Ok Payload_delete)
         | Error `JsooSystemError e -> Lwt.return @@ T.Task_result.(of_error @@ Js.to_string e##.message)
       ) T.Task_result.(Ok Payload_delete) files

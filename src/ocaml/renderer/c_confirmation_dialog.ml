@@ -50,7 +50,7 @@ module Button = struct
       let class_name = Classnames.(
           empty
           <|> ("dialog-ConfirmDialog_Button", true)
-          <|> ("dialog-ConfirmDialog_Button-Selected", selected)
+          <|> ("dialog-ConfirmDialog_Button-selected", selected)
           |> to_string) in
       R.Dom.of_tag `div ~key:"yes" ~props:R.(element_spec ~class_name ())
         ~children:[|R.text @@ Js.to_string props##.text|];
