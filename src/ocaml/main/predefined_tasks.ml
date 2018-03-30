@@ -3,6 +3,7 @@ module C = Sxfiler_common
 module S = C.State
 module T = C.Types
 
+(** Task to copy files to other pane *)
 module Copy = struct
   type t = {
     fs: (module N.Fs_intf.Instance);
@@ -35,6 +36,7 @@ module Copy = struct
       ) T.Task_result.(Ok Payload_copy) sources
 end
 
+(** Task to delete objects that are marked *)
 module Delete = struct
   type t = {
     fs: (module N.Fs_intf.Instance);
@@ -53,6 +55,7 @@ module Delete = struct
       ) T.Task_result.(Ok Payload_delete) files
 end
 
+(** Task to move objects that are marked to other pane. *)
 module Move = struct
   type t = {
     fs: (module N.Fs_intf.Instance);
@@ -76,6 +79,7 @@ module Move = struct
 
 end
 
+(** Task to rename object currently selected *)
 module Rename = struct
   type t = {
     fs: (module N.Fs_intf.Instance);
@@ -83,22 +87,27 @@ module Rename = struct
   }
 
   let execute {fs;new_name} state =
-    let sources = S.active_pane state |> S.Pane.selected_files in
+    let module P = C.Types.Pane in
+    let pane = S.active_pane state in
+    let source = pane.P.focused_item in
 
-    Lwt_list.fold_left_s (fun _ src ->
-        let module Fs = N.Fs.Make(val fs) in
-        let src' = N.Path.join [src.T.File_stat.directory;src.T.File_stat.filename] in
-        let new_name = N.Path.join [src.T.File_stat.directory; new_name] in
-
-        if new_name = src' then
-          Lwt.return @@ T.Task_result.(Ok Payload_rename)
-        else match Fs.renameSync src' new_name with
-          | Ok () -> Lwt.return @@ T.Task_result.(Ok Payload_rename)
-          | Error `JsooSystemError e -> Lwt.return @@ T.Task_result.(of_error @@ Js.to_string e##.message)
-      ) T.Task_result.(Ok Payload_rename) sources
+    let open Minimal_monadic_caml.Option.Infix in
+    let item = source >>= fun id -> P.find_item ~id pane in
+    match item with
+    | None -> Lwt.return @@ T.Task_result.(of_error "Not found current focused object")
+    | Some src ->
+      let module Fs = N.Fs.Make(val fs) in
+      let src' = N.Path.join [src.T.File_stat.directory;src.T.File_stat.filename] in
+      let new_name = N.Path.join [src.T.File_stat.directory; new_name] in
+      if new_name = src' then
+        Lwt.return @@ T.Task_result.(Ok Payload_rename)
+      else match Fs.renameSync src' new_name with
+        | Ok () -> Lwt.return @@ T.Task_result.(Ok Payload_rename)
+        | Error `JsooSystemError e -> Lwt.return @@ T.Task_result.(of_error @@ Js.to_string e##.message)
 
 end
 
+(** Task to make directory that user specified *)
 module Mkdir = struct
   type t = {
     fs: (module N.Fs_intf.Instance);
@@ -119,6 +128,7 @@ module Mkdir = struct
       Lwt.return @@ T.Task_result.(of_error @@ Js.to_string e##.message)
 end
 
+(** Task to change permission of objects that are marked by user*)
 module Change_permission = struct
   type t = {
     fs: (module N.Fs_intf.Instance);
