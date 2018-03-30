@@ -128,11 +128,15 @@ let restore_pane_info ~pane t =
   | None -> P.make ~file_list:pane.P.file_list ~directory:pane.P.directory ()
 
 (** Get histories of [t] that are sorted by timestamp descendant *)
-let sorted_history t =
+let sorted_history ?(order=`Desc) t =
   let module H = History in
   let values = table_values t.history_map in
+  let sorter lst = match order with
+    | `Desc -> List.rev lst
+    | `Asc -> lst
+  in
   List.sort (fun (_, a1) (_, a2) -> Int64.compare a1.H.timestamp a2.H.timestamp) values
-  |> List.rev
+  |> sorter
   |> List.map snd
   |> Array.of_list
 

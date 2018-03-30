@@ -2,6 +2,7 @@ module Cm = Sxfiler_common
 module Core = Sxfiler_common.Config
 module N = Jsoo_node
 
+(** The module that defines json compatible configuration. *)
 module Json_conf = struct
   type key_maps = {
     file_list: Yojson.Safe.json;
@@ -66,6 +67,9 @@ let load_from_file app_dir path =
     | Ok v -> Json_conf.to_config v
     | Error err -> Firebug.console##error err; raise Not_found
 
+(** Load configuration file from application directory. The [file] does not exists,
+    do fallback default configuration automatically.
+*)
 let load app_dir path =
   try
     load_from_file app_dir path

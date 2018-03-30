@@ -10,6 +10,7 @@ type t = {
   runner: Flux_runner.t;
 }
 
+(** The handler for onReady event occured from electron's app module. *)
 let on_ready t _ =
   let main_window = M.browser_window @@ object%js
       val height = 600

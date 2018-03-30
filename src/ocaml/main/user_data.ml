@@ -21,6 +21,7 @@ let history_path () =
   let module N = Jsoo_node in
   N.Path.join [default_path (); "history"]
 
+(** Load user data from [path]. If [path] does not specified, use default path defined in [default_path]. *)
 let load ?path () =
   let history_path = match path with
     | Some path -> path
@@ -51,6 +52,9 @@ let of_state state =
     right_pane_history = PH.sorted_history state.S.right_pane_history |> Array.to_list;
   }
 
+(** Store user data [data] to [path]. If [path] does not specified, use default path
+    defined in [default_path].
+*)
 let save ?path data =
   let history_path = match path with
     | Some path -> path

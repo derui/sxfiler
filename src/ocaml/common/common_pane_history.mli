@@ -32,16 +32,24 @@ class type js = object
   method maxStoreableCount : Js.number Js.t Js.readonly_prop
 end
 
+(** Make the history. *)
 val make : unit -> t
+
+(** Convert OCaml to Js *)
 val to_js : t -> js Js.t
+
+(** Convert Js to OCaml *)
 val of_js : js Js.t -> t
 
+(** Add a history and return new instance. *)
 val add_history : history:History.t -> t -> t
 
+(** Get the new pane from history related original of it. *)
 val restore_pane_info : pane:Common_types.Pane.t ->
   t -> Common_types.Pane.t
 
-val sorted_history : t -> History.t array
+(** Get histories sorted by timestamp. *)
+val sorted_history : ?order:[`Asc | `Desc] -> t -> History.t array
 
 module Test : sig
   val suite : unit -> unit

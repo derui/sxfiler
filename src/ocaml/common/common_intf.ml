@@ -1,5 +1,6 @@
 module T = Common_types
 
+(** The module type defines interface of item what to apply completion *)
 module type Completion_item = sig
   type t
   type js
@@ -8,6 +9,7 @@ module type Completion_item = sig
   val of_js : js Js.t -> t
 end
 
+(** The module type for completion state in this application for some type. *)
 module type Completion_state = sig
   type item
   type item_js
