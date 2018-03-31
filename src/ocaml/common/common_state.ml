@@ -234,11 +234,13 @@ module Pane = struct
   *)
   let selected_files pane =
     let module P = T.Pane in
-    let open Minimal_monadic_caml.Option.Infix in
+    let open Minimal_monadic_caml.Option in
+    let open Infix in
+    let file_list' = Array.to_list pane.P.file_list in
     let items = match pane.P.marked_items with
       | [] -> pane.P.focused_item
-        >>= fun v -> List.find_opt (fun s -> (=) v s.T.File_stat.id) @@ Array.to_list pane.P.file_list
-        >>= fun v -> Some [v]
+        >>= fun (v, _) -> List.find_opt (fun s -> v = s.T.File_stat.id) file_list'
+        >>= lift @@ fun v -> [v]
       | _ as items -> Some (List.map snd items)
     in
     Common_util.Option.get ~default:[] items

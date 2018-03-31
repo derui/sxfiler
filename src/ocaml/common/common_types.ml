@@ -41,7 +41,7 @@ module File_stat = struct
     method filename: Js.js_string Js.t Js.readonly_prop
     method directory: Js.js_string Js.t Js.readonly_prop
     method stat: FT.stat_obj Js.t Js.readonly_prop
-    method link_path: Js.js_string Js.t Js.optdef Js.readonly_prop
+    method linkPath: Js.js_string Js.t Js.optdef Js.readonly_prop
   end
 
   let equal v1 v2 = v1.id = v2.id
@@ -60,7 +60,7 @@ module File_stat = struct
     val filename = Js.string t.filename
     val directory = Js.string t.directory
     val stat = t.stat
-    val link_path = let link_path = Js.Optdef.option t.link_path  in
+    val linkPath = let link_path = Js.Optdef.option t.link_path  in
       Js.Optdef.map link_path Js.string
   end
 
@@ -69,22 +69,23 @@ module File_stat = struct
     directory = Js.to_string js##.directory;
     filename = Js.to_string js##.filename;
     stat = js##.stat;
-    link_path = Js.Optdef.map (js##.link_path) Js.to_string |> Js.Optdef.to_option;
+    link_path = Js.Optdef.map (js##.linkPath) Js.to_string |> Js.Optdef.to_option;
   }
 end
 
 module Pane = struct
+  type index = int
   type t = {
     directory: string;
     file_list: File_stat.t array;
-    focused_item: File_id.t option;
+    focused_item: (File_id.t * index) option;
     marked_items: (File_id.t * File_stat.t) list;
   }
 
   class type js = object
     method directory: Js.js_string Js.t Js.readonly_prop
     method fileList: File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
-    method focusedItem: File_id.js Js.t Js.opt Js.readonly_prop
+    method focusedItem: (File_id.js Js.t * index) Js.opt Js.readonly_prop
     method markedItems: File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
   end
 
@@ -99,25 +100,34 @@ module Pane = struct
     }
 
   let to_js : t -> js Js.t = fun t ->
-    let file_stat_to_js (_, v) = File_stat.to_js v in
     object%js
       val fileList = Array.map File_stat.to_js t.file_list |> Js.array
       val directory = Js.string t.directory
-      val focusedItem = Js.Opt.map (Js.Opt.option t.focused_item) File_id.to_js
-      val markedItems = Js.array @@ Array.of_list @@ List.map file_stat_to_js t.marked_items
+      val focusedItem = Js.Opt.map (Js.Opt.option t.focused_item)
+        @@ fun (id, ind) -> (File_id.to_js id, ind)
+      val markedItems = Js.array @@ Array.of_list @@ List.map (fun v -> File_stat.to_js @@ snd v) t.marked_items
     end
 
   let of_js : js Js.t -> t = fun js ->
     let file_stat_of_js v = let v' = File_stat.of_js v in File_stat.(v'.id, v') in
+    let focused_item_of_js (id, ind) = (File_id.of_js id, ind) in
     {
       directory = Js.to_string js##.directory;
       file_list = Js.to_array js##.fileList |> Array.map File_stat.of_js;
-      focused_item = Js.Opt.map js##.focusedItem File_id.of_js |> Js.Opt.to_option;
+      focused_item = Js.Opt.map js##.focusedItem focused_item_of_js |> Js.Opt.to_option;
       marked_items = Js.to_array js##.markedItems |> Array.map file_stat_of_js |> Array.to_list;
     }
 
   let find_item ~id pane =
     List.find_opt (fun s -> id = s.File_stat.id) @@ Array.to_list pane.file_list
+
+  let index_item ~id pane =
+    let rec find ary v ind =
+      if Array.length ary <= ind then 0
+      else if v = ary.(ind).File_stat.id then ind
+      else find ary v (succ ind)
+    in
+    find pane.file_list id 0
 
   let toggle_mark ~id pane =
     if List.mem_assoc id pane.marked_items then
@@ -130,7 +140,6 @@ end
 
 module Operation_log = struct
   type log_type = Info | Error
-
 
   module Entry = struct
     type t = {

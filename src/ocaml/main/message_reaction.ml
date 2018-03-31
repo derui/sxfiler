@@ -119,7 +119,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       let pane = S.active_pane t in
       let module P = T.Pane in
       S.update_pane t ~loc:t.S.active_pane ~pane:{
-        pane with P.focused_item = Some v
+        pane with P.focused_item = Some (v, P.index_item ~id:v pane)
       } in
     (t, None)
 
@@ -135,11 +135,12 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
   let enter_directory t =
     let module O = Sxfiler_common.Util.Option in
-    let open Minimal_monadic_caml.Option.Infix in
+    let open Minimal_monadic_caml.Option in
+    let open Infix in
     let message =
       let pane = S.active_pane t in
       let module P = T.Pane in
-      pane.P.focused_item >>= fun id -> P.find_item ~id pane
+      pane.P.focused_item >>= lift fst >>= fun id -> P.find_item ~id pane
       >>= fun item ->
       if item.T.File_stat.stat##.isDirectory |> Js.to_bool then begin
         let target_dir = N.Path.join [item.T.File_stat.directory;item.T.File_stat.filename] in

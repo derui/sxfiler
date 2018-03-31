@@ -2,8 +2,6 @@
    Providing stateful list virtualization.
 *)
 
-module R = Jsoo_reactjs
-
 (** The virtualized list type to calculate something of virtualized list *)
 type 'a t
 
@@ -24,9 +22,6 @@ val recalculate_visible_window : int -> 'a t -> 'a t
 
 (** get items in current visible window *)
 val get_items_in_window : 'a t -> 'a array
-
-(** Get start position of window. *)
-val start_position_of_window: 'a t -> int
 
 (** Get the percentage by visible item in all items *)
 val percentage_by_visible: 'a t -> float

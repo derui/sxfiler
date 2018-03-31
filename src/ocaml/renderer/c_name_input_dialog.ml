@@ -107,7 +107,7 @@ let component =
     let focused_item =
       let open Minimal_monadic_caml.Option.Infix in
       let module P = C.Types.Pane in
-      pane.P.focused_item >>= fun id -> P.find_item ~id pane
+      pane.P.focused_item >>= fun (id, _) -> P.find_item ~id pane
     in
     match focused_item with
     | None -> R.empty ()

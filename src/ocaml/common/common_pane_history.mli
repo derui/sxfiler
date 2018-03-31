@@ -4,7 +4,7 @@ module History :
 sig
   type t = {
     directory : string;
-    focused_item : T.File_id.t option;
+    focused_item : (T.File_id.t * int) option;
     timestamp : int64;
   }
 
@@ -13,13 +13,13 @@ sig
 
   class type js = object
     method directory : Js.js_string Js.t Js.readonly_prop
-    method focusedItem : T.File_id.js Js.t Js.opt Js.readonly_prop
+    method focusedItem : (T.File_id.js Js.t * int) Js.opt Js.readonly_prop
     method timestamp : float Js.readonly_prop
   end
 
   val make :
     ?timestamp:int64 ->
-    directory:string -> focused_item:T.File_id.t option -> unit -> t
+    directory:string -> focused_item:(T.File_id.t * int) option -> unit -> t
 
   val to_js : t -> js Js.t
   val of_js : js Js.t -> t

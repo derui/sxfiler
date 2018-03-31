@@ -82,7 +82,7 @@ module Test = struct
           let module T = C.Types.File_id in
           let data = {
             left_pane_history = [P.make ~directory:"test" ~focused_item:None ()];
-            right_pane_history = [P.make ~directory:"tmp" ~focused_item:(Some (T.make "tmp/file")) ()];
+            right_pane_history = [P.make ~directory:"tmp" ~focused_item:(Some (T.make "tmp/file", 0)) ()];
           } in
 
           let path = Jsoo_node.Path.(join [path;"data"]) in

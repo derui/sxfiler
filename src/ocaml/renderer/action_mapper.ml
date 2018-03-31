@@ -12,8 +12,7 @@ let select_item state direction =
   let id_list = Array.map (fun v -> v.F.id) pane.P.file_list in
   let ind = match pane.P.focused_item with
     | None -> 0
-    | Some item ->
-      Util.find_item_index ~v:item id_list
+    | Some (_, ind) -> ind
   in
 
   let target_item = match direction with
@@ -27,8 +26,9 @@ let toggle_mark state =
   let module P = C.Types.Pane in
   let module F = C.Types.File_id in
   let pane = C.State.active_pane state in
-  let open Minimal_monadic_caml.Option.Infix in
-  pane.P.focused_item >>= fun item -> some @@ C.Message.toggle_mark @@ F.to_js item
+  let open Minimal_monadic_caml.Option in
+  let open Infix in
+  pane.P.focused_item >>= lift @@ fun (id, _) -> C.Message.toggle_mark @@ F.to_js id
 
 let to_message state = function
   | C.Key_bindable_action.Next_item -> some @@ select_item state `Next

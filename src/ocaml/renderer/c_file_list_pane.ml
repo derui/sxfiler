@@ -12,7 +12,6 @@ module Component = R.Component.Make_stateless (struct
 
 let component = Component.make (fun props ->
     let pane = props##.pane in
-    let marked_items' = List.map snd pane.T.Pane.marked_items |> Array.of_list in
     let header = R.create_element ~key:"header" ~props:(object%js
         val directory = Js.string pane.T.Pane.directory
         val selected = props##.selected
@@ -21,9 +20,7 @@ let component = Component.make (fun props ->
       let props = R.element_spec ~class_name:"fp-FileListPane_Content" ()
       and children = [|
         R.create_element ~key:"file-list" ~props:(object%js
-          val items = pane.T.Pane.file_list
-          val markedItems = marked_items'
-          val focusedItem = pane.T.Pane.focused_item
+          val pane = pane
           val focused = props##.selected
         end) C_file_list.component
       |]

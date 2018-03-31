@@ -178,7 +178,7 @@ let component =
     let focused_item =
       let open Minimal_monadic_caml.Option.Infix in
       let module P = C.Types.Pane in
-      pane.P.focused_item >>= fun id -> P.find_item ~id pane
+      pane.P.focused_item >>= fun (id, _) -> P.find_item ~id pane
     in
     match focused_item with
     | None -> R.empty ()
@@ -215,12 +215,10 @@ let component =
       component_spec
         ~constructor:(fun this props ->
             let module T = C.Types.File_stat in
+            let module Pane = C.Types.Pane in
             let pane = C.State.(active_pane props##.state) in
-            let open Minimal_monadic_caml.Option.Infix in
-            let focused_item =
-              let module P = C.Types.Pane in
-              pane.P.focused_item >>= fun id -> P.find_item ~id pane
-            in
+            let open Minimal_monadic_caml.Option in
+            let open Infix in
             this##.state := object%js
               val currentRane = Owner
               val owner = 0
@@ -228,12 +226,14 @@ let component =
               val others = 0
             end;
 
-            focused_item >>= (fun item ->
-                let owner, group, others = split_permission
-                  @@ int_of_float
-                  @@ Js.float_of_number item.T.stat##.mode
+            pane.Pane.focused_item
+            >>= (fun (id, _) -> Pane.find_item ~id pane)
+            >>= lift (fun item ->
+                let owner, group, others = Js.float_of_number item.T.stat##.mode
+                                           |> int_of_float
+                                           |> split_permission
                 in
-                Some (this##.state := make_state ~owner ~group ~others this##.state)
+                this##.state := make_state ~owner ~group ~others this##.state
               )
             |> ignore
           )

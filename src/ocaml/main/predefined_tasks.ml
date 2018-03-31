@@ -92,7 +92,7 @@ module Rename = struct
     let source = pane.P.focused_item in
 
     let open Minimal_monadic_caml.Option.Infix in
-    let item = source >>= fun id -> P.find_item ~id pane in
+    let item = source >>= fun (id, _) -> P.find_item ~id pane in
     match item with
     | None -> Lwt.return @@ T.Task_result.(of_error "Not found current focused object")
     | Some src ->
