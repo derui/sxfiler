@@ -162,6 +162,25 @@ module Test = struct
             H.make ~directory:"dir1" ~timestamp:1L ~focused_item:None ();
           |] in
           assert_ok (sorted = expected)
-        )
+        );
+      "can get histories sorted by timestamp asc" >:: (fun () ->
+          let module H = History in
+          let histories = make () in
+          let histories = List.fold_left (fun t v -> add_history ~history:v t)
+              histories [
+              H.make ~directory:"dir1" ~timestamp:1L ~focused_item:None ();
+              H.make ~directory:"dir2" ~timestamp:2L ~focused_item:None ();
+              H.make ~directory:"dir3" ~timestamp:4L ~focused_item:None ();
+              H.make ~directory:"dir4" ~timestamp:3L ~focused_item:None ();
+            ] in
+          let sorted = sorted_history ~order:`Asc histories in
+          let expected = [|
+            H.make ~directory:"dir1" ~timestamp:1L ~focused_item:None ();
+            H.make ~directory:"dir2" ~timestamp:2L ~focused_item:None ();
+            H.make ~directory:"dir4" ~timestamp:3L ~focused_item:None ();
+            H.make ~directory:"dir3" ~timestamp:4L ~focused_item:None ();
+          |] in
+          assert_ok (sorted = expected)
+        );
     ]
 end
