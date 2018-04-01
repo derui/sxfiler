@@ -15,7 +15,8 @@ type t =
   | Refresh_panes_request
   | Refresh_panes_response of (T.Pane.js Js.t * T.Pane.js Js.t, T.Operation_log.Entry.js Js.t) result
   | Quit_application
-  | Select_item of T.File_id.js Js.t
+  | Select_next_item
+  | Select_prev_item
   | Toggle_mark of T.File_id.js Js.t
   | Leave_directory
   | Enter_directory

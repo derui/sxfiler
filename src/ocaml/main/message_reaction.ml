@@ -113,13 +113,23 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       end
     | Error _ -> failwith "error"
 
-  let select_item t v =
+  let select_item t direction =
     let module O = Sxfiler_common.Util.Option in
+    let module P = T.Pane in
+    let module F = T.File_stat in
     let t =
       let pane = S.active_pane t in
-      let module P = T.Pane in
+      let open Minimal_monadic_caml.Option in
+      let open Infix in
+      let next_item = pane.P.focused_item >>= lift (fun (_, index) ->
+        match direction with
+        | `Next -> min (Array.length pane.P.file_list) (succ index)
+        | `Prev -> max 0 (pred index)
+        )
+          >>= fun next -> Some (pane.P.file_list.(next).F.id, next)
+      in
       S.update_pane t ~loc:t.S.active_pane ~pane:{
-        pane with P.focused_item = Some (v, P.index_item ~id:v pane)
+        pane with P.focused_item = next_item
       } in
     (t, None)
 
@@ -305,7 +315,8 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     | M.Update_pane_response ret -> update_pane_response t ret
     | M.Refresh_panes_request -> request_refresh_panes t
     | M.Refresh_panes_response payload -> finish_refresh_panes t payload
-    | M.Select_item v -> select_item t @@ T.File_id.of_js v
+    | M.Select_next_item -> select_item t `Next
+    | M.Select_prev_item -> select_item t `Prev
     | M.Leave_directory -> leave_directory t
     | M.Enter_directory -> enter_directory t
     | M.Jump_location s -> jump_location t @@ Js.to_string s

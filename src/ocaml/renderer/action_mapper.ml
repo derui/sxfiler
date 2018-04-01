@@ -5,23 +5,6 @@ type message = C.Message.t
 
 let some v = Some v
 
-let select_item state direction =
-  let module F = C.Types.File_stat in
-  let module P = C.Types.Pane in
-  let pane = C.State.active_pane state in
-  let id_list = Array.map (fun v -> v.F.id) pane.P.file_list in
-  let ind = match pane.P.focused_item with
-    | None -> 0
-    | Some (_, ind) -> ind
-  in
-
-  let target_item = match direction with
-    | `Next -> min (Array.length pane.P.file_list - 1) (succ ind)
-    | `Prev -> max 0 (pred ind)
-  in
-
-  C.Message.select_item @@ C.Types.File_id.to_js id_list.(target_item)
-
 let toggle_mark state =
   let module P = C.Types.Pane in
   let module F = C.Types.File_id in
@@ -31,8 +14,8 @@ let toggle_mark state =
   pane.P.focused_item >>= lift @@ fun (id, _) -> C.Message.toggle_mark @@ F.to_js id
 
 let to_message state = function
-  | C.Key_bindable_action.Next_item -> some @@ select_item state `Next
-  | Prev_item -> some @@ select_item state `Prev
+  | C.Key_bindable_action.Next_item -> some @@ C.Message.select_next_item
+  | Prev_item -> some @@ C.Message.select_prev_item
   | Leave_directory -> some C.Message.leave_directory
   | Enter_directory -> some C.Message.enter_directory
   | Change_active_pane -> some C.Message.change_active_pane
