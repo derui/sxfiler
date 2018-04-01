@@ -6,13 +6,13 @@ module History = struct
   open Sexplib.Std
   type t = {
     directory: string;
-    focused_item: (T.File_id.t * int) option;
+    focused_item: T.File_id.t;
     timestamp: int64;
   } [@@deriving sexp]
 
   class type js = object
     method directory: Js.js_string Js.t Js.readonly_prop
-    method focusedItem: (T.File_id.js Js.t * int) Js.opt Js.readonly_prop
+    method focusedItem: T.File_id.js Js.t Js.readonly_prop
     method timestamp: float Js.readonly_prop
   end
 
@@ -25,18 +25,16 @@ module History = struct
 
   let to_js t = object%js
     val directory = Js.string t.directory
-    val focusedItem = Js.Opt.map (Js.Opt.option t.focused_item)
-      @@ fun (id, ind) -> (T.File_id.to_js id, ind)
+    val focusedItem = T.File_id.to_js t.focused_item
     val timestamp = Int64.to_float t.timestamp
   end
 
   let of_js js =
-    let focused_item_of_js (id, ind) = (T.File_id.of_js id, ind) in
     {
-    directory = Js.to_string js##.directory;
-    focused_item = Js.Opt.map js##.focusedItem focused_item_of_js |> Js.Opt.to_option;
-    timestamp = Int64.of_float js##.timestamp;
-  }
+      directory = Js.to_string js##.directory;
+      focused_item = T.File_id.of_js js##.focusedItem;
+      timestamp = Int64.of_float js##.timestamp;
+    }
 end
 
 type t = {
@@ -126,7 +124,8 @@ let restore_pane_info ~pane t =
   let module P = Common_types.Pane in
   let key = Js.string pane.P.directory in
   match Jstable.find t.history_map key |> Js.Optdef.to_option with
-  | Some h -> P.make ~file_list:pane.P.file_list ?focused_item:h.History.focused_item
+  | Some h ->
+    P.make ~file_list:pane.P.file_list ~focused_item:h.History.focused_item
                 ~directory:pane.P.directory ()
   | None -> P.make ~file_list:pane.P.file_list ~directory:pane.P.directory ()
 
@@ -152,17 +151,17 @@ module Test = struct
           let histories = make () in
           let histories = List.fold_left (fun t v -> add_history ~history:v t)
               histories [
-              H.make ~directory:"dir1" ~timestamp:1L ~focused_item:None ();
-              H.make ~directory:"dir2" ~timestamp:2L ~focused_item:None ();
-              H.make ~directory:"dir3" ~timestamp:4L ~focused_item:None ();
-              H.make ~directory:"dir4" ~timestamp:3L ~focused_item:None ();
+              H.make ~directory:"dir1" ~timestamp:1L ~focused_item:T.File_id.empty ();
+              H.make ~directory:"dir2" ~timestamp:2L ~focused_item:T.File_id.empty ();
+              H.make ~directory:"dir3" ~timestamp:4L ~focused_item:T.File_id.empty ();
+              H.make ~directory:"dir4" ~timestamp:3L ~focused_item:T.File_id.empty ();
             ] in
           let sorted = sorted_history histories in
           let expected = [|
-            H.make ~directory:"dir3" ~timestamp:4L ~focused_item:None ();
-            H.make ~directory:"dir4" ~timestamp:3L ~focused_item:None ();
-            H.make ~directory:"dir2" ~timestamp:2L ~focused_item:None ();
-            H.make ~directory:"dir1" ~timestamp:1L ~focused_item:None ();
+            H.make ~directory:"dir3" ~timestamp:4L ~focused_item:T.File_id.empty ();
+            H.make ~directory:"dir4" ~timestamp:3L ~focused_item:T.File_id.empty ();
+            H.make ~directory:"dir2" ~timestamp:2L ~focused_item:T.File_id.empty ();
+            H.make ~directory:"dir1" ~timestamp:1L ~focused_item:T.File_id.empty ();
           |] in
           assert_ok (sorted = expected)
         );
@@ -171,17 +170,17 @@ module Test = struct
           let histories = make () in
           let histories = List.fold_left (fun t v -> add_history ~history:v t)
               histories [
-              H.make ~directory:"dir1" ~timestamp:1L ~focused_item:None ();
-              H.make ~directory:"dir2" ~timestamp:2L ~focused_item:None ();
-              H.make ~directory:"dir3" ~timestamp:4L ~focused_item:None ();
-              H.make ~directory:"dir4" ~timestamp:3L ~focused_item:None ();
+              H.make ~directory:"dir1" ~timestamp:1L ~focused_item:T.File_id.empty ();
+              H.make ~directory:"dir2" ~timestamp:2L ~focused_item:T.File_id.empty ();
+              H.make ~directory:"dir3" ~timestamp:4L ~focused_item:T.File_id.empty ();
+              H.make ~directory:"dir4" ~timestamp:3L ~focused_item:T.File_id.empty ();
             ] in
           let sorted = sorted_history ~order:`Asc histories in
           let expected = [|
-            H.make ~directory:"dir1" ~timestamp:1L ~focused_item:None ();
-            H.make ~directory:"dir2" ~timestamp:2L ~focused_item:None ();
-            H.make ~directory:"dir4" ~timestamp:3L ~focused_item:None ();
-            H.make ~directory:"dir3" ~timestamp:4L ~focused_item:None ();
+            H.make ~directory:"dir1" ~timestamp:1L ~focused_item:T.File_id.empty ();
+            H.make ~directory:"dir2" ~timestamp:2L ~focused_item:T.File_id.empty ();
+            H.make ~directory:"dir4" ~timestamp:3L ~focused_item:T.File_id.empty ();
+            H.make ~directory:"dir3" ~timestamp:4L ~focused_item:T.File_id.empty ();
           |] in
           assert_ok (sorted = expected)
         );

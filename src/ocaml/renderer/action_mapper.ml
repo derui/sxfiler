@@ -9,9 +9,9 @@ let toggle_mark state =
   let module P = C.Types.Pane in
   let module F = C.Types.File_id in
   let pane = C.State.active_pane state in
-  let open Minimal_monadic_caml.Option in
-  let open Infix in
-  pane.P.focused_item >>= lift @@ fun (id, _) -> C.Message.toggle_mark @@ F.to_js id
+  let module Option = Minimal_monadic_caml.Option in
+  let open Option.Infix in
+  Some (C.Message.toggle_mark @@ F.to_js pane.P.focused_item)
 
 let to_message state = function
   | C.Key_bindable_action.Next_item -> some @@ C.Message.select_next_item

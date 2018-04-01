@@ -176,9 +176,8 @@ let component =
     let module T = C.Types.File_stat in
     let pane = C.State.(active_pane props##.state) in
     let focused_item =
-      let open Minimal_monadic_caml.Option.Infix in
       let module P = C.Types.Pane in
-      pane.P.focused_item >>= fun (id, _) -> P.find_item ~id pane
+      P.find_item ~id:pane.P.focused_item pane
     in
     match focused_item with
     | None -> R.empty ()
@@ -226,8 +225,7 @@ let component =
               val others = 0
             end;
 
-            pane.Pane.focused_item
-            >>= (fun (id, _) -> Pane.find_item ~id pane)
+            Pane.find_item ~id:pane.Pane.focused_item pane
             >>= lift (fun item ->
                 let owner, group, others = Js.float_of_number item.T.stat##.mode
                                            |> int_of_float

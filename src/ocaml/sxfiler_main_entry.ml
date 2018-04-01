@@ -33,7 +33,7 @@ let restore_state_from_user_data ~state ~user_data =
   and right_pane_history = user_data.U.right_pane_history in
   let restore_pane = function
     | [] -> default_pane ()
-    | hist :: _ -> T.Pane.make ?focused_item:hist.PH.History.focused_item
+    | hist :: _ -> T.Pane.make ~focused_item:hist.PH.History.focused_item
                      ~directory:hist.PH.History.directory ()
   in
   let left_pane =  restore_pane left_pane_history

@@ -22,11 +22,7 @@ let is_item_marked pane item =
   List.map snd pane.P.marked_items |> List.exists T.File_stat.(equal item)
 
 let component =
-  let current_focused_pos pane =
-    match pane.P.focused_item with
-    | None -> 0
-    | Some (_, ind) -> ind
-  in
+  let current_focused_pos pane = P.index_item ~id:pane.P.focused_item pane in
   let spec = R.component_spec
       ~constructor:(fun this props ->
           this##.state := object%js
@@ -61,11 +57,12 @@ let component =
     let vl = this##.state##.virtualizedList in
     let items = VL.get_items_in_window vl in
     let start_position = current_focused_pos pane in
+    Firebug.console##log start_position;
     let children = Array.mapi (fun index item ->
         let module F = C.Types.File_stat in
         R.create_element ~key:(C.Types.File_id.to_string item.F.id) ~props:(object%js
           val item = item
-          val selected = start_position = index
+          val selected = item.F.id = pane.P.focused_item
           val focused = this##.props##.focused
           val marked = is_item_marked pane item
         end) C_file_item.component

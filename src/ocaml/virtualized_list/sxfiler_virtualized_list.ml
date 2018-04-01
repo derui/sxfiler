@@ -42,7 +42,7 @@ let calc_visible_window t visible_count cursor_position =
   else (prev_start, visible_count)
 
 let correct_visible_window all_item_count (start, count) =
-  if start + count <= all_item_count then (start, count)
+  if start + count < all_item_count then (start, count)
   else (start - ((start + count) - all_item_count), count)
 
 let recalculate_visible_window cursor_position t =

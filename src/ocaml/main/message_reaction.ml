@@ -22,8 +22,9 @@ let refresh_pane_file_list ?dir ~fs pane =
   File_list.get_file_stats ~fs directory
   >>= (function
       | Ok file_list -> begin
+          let module F = T.File_stat in
           let file_list = Array.of_list file_list in
-          Lwt.return @@ T.Pane.make ~file_list ?focused_item:pane.T.Pane.focused_item
+          Lwt.return @@ T.Pane.make ~file_list ~focused_item:pane.T.Pane.focused_item
             ~marked_items:pane.T.Pane.marked_items
             ~directory ()
         end
@@ -119,17 +120,14 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     let module F = T.File_stat in
     let t =
       let pane = S.active_pane t in
-      let open Minimal_monadic_caml.Option in
-      let open Infix in
-      let next_item = pane.P.focused_item >>= lift (fun (_, index) ->
-        match direction with
+      let index = P.index_item ~id:pane.P.focused_item pane in
+      let index' = match direction with
         | `Next -> min (Array.length pane.P.file_list) (succ index)
         | `Prev -> max 0 (pred index)
-        )
-          >>= fun next -> Some (pane.P.file_list.(next).F.id, next)
       in
+      let focused_item = pane.P.file_list.(index').F.id in
       S.update_pane t ~loc:t.S.active_pane ~pane:{
-        pane with P.focused_item = next_item
+        pane with P.focused_item
       } in
     (t, None)
 
@@ -150,7 +148,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     let message =
       let pane = S.active_pane t in
       let module P = T.Pane in
-      pane.P.focused_item >>= lift fst >>= fun id -> P.find_item ~id pane
+      P.find_item ~id:pane.P.focused_item  pane
       >>= fun item ->
       if item.T.File_stat.stat##.isDirectory |> Js.to_bool then begin
         let target_dir = N.Path.join [item.T.File_stat.directory;item.T.File_stat.filename] in

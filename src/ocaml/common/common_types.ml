@@ -10,6 +10,7 @@ module File_id : sig
   type t [@@deriving sexp]
   type js
 
+  val empty : t
   val make: abspath:string -> t
   val equal : t -> t -> bool
   val to_js : t -> js Js.t
@@ -20,6 +21,7 @@ end = struct
   type t = string [@@deriving sexp]
   type js = Js.js_string
 
+  let empty = ""
   let make ~abspath = abspath
   let equal = (=)
   let to_js = Js.string
@@ -78,20 +80,24 @@ module Pane = struct
   type t = {
     directory: string;
     file_list: File_stat.t array;
-    focused_item: (File_id.t * index) option;
+    focused_item: File_id.t;
     marked_items: (File_id.t * File_stat.t) list;
   }
 
   class type js = object
     method directory: Js.js_string Js.t Js.readonly_prop
     method fileList: File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
-    method focusedItem: (File_id.js Js.t * index) Js.opt Js.readonly_prop
+    method focusedItem: File_id.js Js.t Js.readonly_prop
     method markedItems: File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
   end
 
   let equal = (=)
 
   let make ?(file_list=[||]) ?focused_item ?(marked_items=[]) ~directory () =
+    let focused_item = match focused_item with
+      | None -> if Array.length file_list > 0 then file_list.(0).File_stat.id else File_id.empty
+      | Some v -> v
+    in
     {
       directory;
       file_list;
@@ -103,18 +109,16 @@ module Pane = struct
     object%js
       val fileList = Array.map File_stat.to_js t.file_list |> Js.array
       val directory = Js.string t.directory
-      val focusedItem = Js.Opt.map (Js.Opt.option t.focused_item)
-        @@ fun (id, ind) -> (File_id.to_js id, ind)
+      val focusedItem = File_id.to_js t.focused_item
       val markedItems = Js.array @@ Array.of_list @@ List.map (fun v -> File_stat.to_js @@ snd v) t.marked_items
     end
 
   let of_js : js Js.t -> t = fun js ->
     let file_stat_of_js v = let v' = File_stat.of_js v in File_stat.(v'.id, v') in
-    let focused_item_of_js (id, ind) = (File_id.of_js id, ind) in
     {
       directory = Js.to_string js##.directory;
       file_list = Js.to_array js##.fileList |> Array.map File_stat.of_js;
-      focused_item = Js.Opt.map js##.focusedItem focused_item_of_js |> Js.Opt.to_option;
+      focused_item = File_id.of_js js##.focusedItem;
       marked_items = Js.to_array js##.markedItems |> Array.map file_stat_of_js |> Array.to_list;
     }
 
