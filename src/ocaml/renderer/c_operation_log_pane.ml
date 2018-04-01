@@ -19,7 +19,7 @@ let component = Component.make (fun props ->
     R.Dom.of_tag `div
       ~props:R.(element_spec ~class_name:"fp-OperationLogPane" ())
       ~children:[|
-        R.Dom.of_tag `div ~props:R.(element_spec ~class_name:"fp-OperationLogPane_ScrollContainer" ())
+        R.Dom.of_tag `div ~key:"scroller" ~props:R.(element_spec ~class_name:"fp-OperationLogPane_ScrollContainer" ())
           ~children
       |]
   )
