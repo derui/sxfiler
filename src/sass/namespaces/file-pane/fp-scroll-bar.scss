@@ -1,0 +1,25 @@
+@import "base/*";
+
+.fp-ScrollBar {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  top: 0;
+
+  width: 6px;
+
+  background-color: transparent;
+
+  padding: 4px;
+}
+
+.fp-ScrollBar_VisibleWindow {
+  position: relative;
+  display: inline-block;
+  top: 0;
+  height: 100%;
+  width: 100%;
+
+  border-radius: 4px;
+  background-color: $sol_base01;
+}

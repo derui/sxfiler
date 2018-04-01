@@ -71,6 +71,14 @@ let component =
         end) C_file_item.component
       ) items
     in
+    let scroll_bar =
+      let start, size = VL.percentage_by_visible this##.state##.virtualizedList in
+      R.create_element ~key:"scroll-bar"
+        ~props:(object%js
+          val start = start
+          val windowSize = size
+        end) C_scroll_bar.component
+    in
     let resize_sensor = R.create_element ~key:"resize-sensor"
         ~props:(object%js
           val getParentSize = (fun () ->
@@ -89,7 +97,7 @@ let component =
               end))
         end) C_resize_sensor.component
     in
-    let children = Array.concat [children;[|resize_sensor|]] in
+    let children = Array.concat [children;[|resize_sensor;scroll_bar|]] in
     let _ref e = R.Ref_table.add ~key:key_of_filelist ~value:e this##.nodes in
     let props = R.(element_spec ~class_name:"fp-FileList" ()) in
     R.Dom.of_tag `ul ~_ref ~props ~children

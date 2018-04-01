@@ -57,8 +57,13 @@ let get_items_in_window t =
 
 let start_position_of_window {visible_window;_} = fst visible_window
 
+(** Get values as percentage that first is start position, second is visible size. *)
 let percentage_by_visible t =
-  let _, size = t.visible_window in
+  let start, size = t.visible_window in
   let size = float_of_int size
   and size_of_all = float_of_int @@ Array.length t.all_items in
-  size /. size_of_all
+  let size' = size /. size_of_all in
+
+  let start' = float_of_int start in
+  let start' = start' /. size_of_all in
+  (start', size')
