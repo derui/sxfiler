@@ -122,7 +122,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       let pane = S.active_pane t in
       let index = P.index_item ~id:pane.P.focused_item pane in
       let index' = match direction with
-        | `Next -> min (Array.length pane.P.file_list) (succ index)
+        | `Next -> min (pred @@ Array.length pane.P.file_list) (succ index)
         | `Prev -> max 0 (pred index)
       in
       let focused_item = pane.P.file_list.(index').F.id in
