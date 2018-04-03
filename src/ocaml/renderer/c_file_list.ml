@@ -56,8 +56,6 @@ let component =
     let pane = this##.props##.pane in
     let vl = this##.state##.virtualizedList in
     let items = VL.get_items_in_window vl in
-    let start_position = current_focused_pos pane in
-    Firebug.console##log start_position;
     let children = Array.mapi (fun index item ->
         let module F = C.Types.File_stat in
         R.create_element ~key:(C.Types.File_id.to_string item.F.id) ~props:(object%js

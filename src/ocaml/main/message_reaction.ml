@@ -34,21 +34,24 @@ let restore_pane_info_from_history ~history pane =
   let module PH = C.Pane_history in
   PH.restore_pane_info ~pane history
 
-let refresh_candidates ~fs path =
-  let dirname = N.Path.dirname path
-  and basename = N.Path.basename path in
+let refresh_candidates ~fs pane path =
   let module Fs = N.Fs.Make(struct let instance = fs end) in
-  let directory =
-    if Fs.existsSync @@ N.Path.join [dirname;basename] then
-      N.Path.join [dirname;basename]
-    else dirname in
+  let basedir = pane.T.Pane.directory
+  and dirname = N.Path.dirname path
+  and basename = N.Path.basename path in
+
+  let directory, path' =
+    if Fs.existsSync @@ N.Path.resolve [basedir;dirname;basename] then
+      let full_path = N.Path.resolve [basedir;dirname;basename] in
+      (full_path, full_path)
+    else (N.Path.resolve [basedir;dirname], N.Path.resolve [basedir;dirname;basename]) in
   let open Lwt.Infix in
 
   File_list.get_file_stats ~fs directory
   >>= (function
       | Ok file_list ->
         let file_list' = List.map T.File_stat.to_js file_list |> Array.of_list |> Js.array in
-        Lwt.return @@ M.refresh_candidates_response @@ Ok (Js.string path, file_list')
+        Lwt.return @@ M.refresh_candidates_response @@ Ok (Js.string path', file_list')
       | Error e ->
         Lwt.fail @@ Errors.to_error @@ `Sxfiler_node_error e)
 
@@ -263,9 +266,10 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
   let request_refresh_candidates t path =
     let path' = Js.to_string path in
+    let pane = S.active_pane t in
     match t.S.completing with
     | None -> (t, None)
-    | Some T.Comp_file -> (t, Some (refresh_candidates ~fs:(Fs.resolve ()) path'))
+    | Some T.Comp_file -> (t, Some (refresh_candidates ~fs:(Fs.resolve ()) pane path'))
     | Some T.Comp_history ->
       let module Cmp = Sxfiler_completer in
       complete_from_history t ~match_type:Cmp.Completer.Partial_match ~input:path'
@@ -292,7 +296,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
       let input' = Js.to_string input in
       let module Stringify = struct
         type t = T.File_stat.t
-        let to_string v = N.Path.join [v.T.File_stat.directory;v.T.File_stat.filename]
+        let to_string v = N.Path.resolve [v.T.File_stat.directory;v.T.File_stat.filename]
       end in
       let candidates = Array.to_list t.S.file_completion_state.S.File_completion_state.items in
       let items = Sxfiler_completer.Completer.complete ~input:input' ~match_type ~candidates ~stringify:(module Stringify) in

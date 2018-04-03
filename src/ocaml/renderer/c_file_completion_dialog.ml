@@ -120,7 +120,7 @@ let component =
     end in
 
     R.create_element C_dialog_base.component ~props:props' ~children:[|
-      R.Dom.of_tag `div
+      R.Dom.of_tag `div ~key:"container"
         ~props:R.(element_spec ~class_name:"dialog-FileCompletionDialog" ())
         ~children:[|
           R.create_element ~key:"input" ~props:(object%js
