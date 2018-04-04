@@ -45,10 +45,10 @@ module Input = struct
       let props = this##.props in
       R.Dom.of_tag `div
         ~props:R.(element_spec ~class_name:"dialog-FileCompletionDialog_InputContainer" ())
-        ~children:[|
+        ~children:[
           R.Dom.of_tag `span ~key:"label"
             ~props:R.(element_spec ~class_name:"dialog-FileCompletionDialog_InputLabel" ())
-            ~children:[| R.text "Name:" |];
+            ~children:[R.text "Name:"];
           R.Dom.of_tag `input ~key:"input"
             ~_ref:props##.onRef
             ~props:R.(element_spec ()
@@ -59,7 +59,7 @@ module Input = struct
                         ~others:(object%js
                           val tabIndex = "1"
                         end))
-        |]
+        ]
     in
     C.make R.(component_spec
                 ~constructor:(fun this props ->
@@ -119,10 +119,10 @@ let component =
       val keyHandler = Js.Optdef.empty
     end in
 
-    R.create_element C_dialog_base.component ~props:props' ~children:[|
+    R.create_element C_dialog_base.component ~props:props' ~children:[
       R.Dom.of_tag `div ~key:"container"
         ~props:R.(element_spec ~class_name:"dialog-FileCompletionDialog" ())
-        ~children:[|
+        ~children:[
           R.create_element ~key:"input" ~props:(object%js
             val onRef = (fun e -> R.Ref_table.add ~key:"input" ~value:e this##.nodes)
             val onInput = handle_input ~dispatch:props##.dispatch
@@ -131,13 +131,11 @@ let component =
             val onMoveCursor = handle_cursor ~dispatch:props##.dispatch
           end) Input.component;
 
-          text_container ~key:"text_container" ~children:[|
-            R.text "Enter: execute; Esc: cancel"
-          |];
+          text_container ~key:"text_container" ~children:[R.text "Enter: execute; Esc: cancel"];
 
           props##.completionListRenderer "completion_list";
-        |]
-    |]
+        ]
+    ]
   in
   Component.make @@ R.component_spec
     ~constructor:(fun this props -> this##.nodes := Jstable.create ();)

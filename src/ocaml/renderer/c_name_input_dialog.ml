@@ -39,10 +39,10 @@ module Input = struct
       let props = this##.props in
       R.Dom.of_tag `div
         ~props:R.(element_spec ~class_name:"dialog-NameInputDialog_InputContainer" ())
-        ~children:[|
+        ~children:[
           R.Dom.of_tag `span ~key:"label"
             ~props:R.(element_spec ~class_name:"dialog-NameInputDialog_InputLabel" ())
-            ~children:[| R.text "Name:" |];
+            ~children:[R.text "Name:"];
           R.Dom.of_tag `input ~key:"input"
             ~_ref:props##.onRef
             ~props:R.(element_spec ()
@@ -53,7 +53,7 @@ module Input = struct
                         ~others:(object%js
                           val tabIndex = "1"
                         end))
-        |]
+        ]
     in
     C.make R.(component_spec
                 ~constructor:(fun this props ->
@@ -70,7 +70,7 @@ let text_container ~key ~children =
 let header ~key ~title =
   R.Dom.of_tag `div ~key
     ~props:R.(element_spec ~class_name:"dialog-NameInputDialog_Header" ())
-    ~children:[|R.text title|]
+    ~children:[R.text title]
 
 let body ~key ~children =
   R.Dom.of_tag `div ~key ~props:R.(element_spec ~class_name:"dialog-NameInputDialog_Body" ()) ~children
@@ -119,12 +119,12 @@ let component =
           val horizontalCenter = Js.bool true
           val verticalCenter = Js.bool false
           val keyHandler = Js.Optdef.empty
-        end) ~children:[|
+        end) ~children:[
           R.Dom.of_tag `div
             ~props:R.(element_spec ~class_name:"dialog-NameInputDialog" ())
-            ~children:[|
+            ~children:[
               header ~key:"header" ~title:Js.(to_string props##.title);
-              body ~key:"body" ~children:[|
+              body ~key:"body" ~children:[
                 R.create_element ~key:"input" ~props:(object%js
                   val text = Js.string original
                   val onRef = (fun e -> R.Ref_table.add ~key:"input" ~value:e this##.nodes)
@@ -132,12 +132,10 @@ let component =
                   val onSubmit = handle_submit ~this ~dispatch:props##.dispatch
                 end) Input.component;
 
-                text_container ~key:"text_container" ~children:[|
-                  R.text "Enter: execute; Esc: cancel"
-                |]
-              |]
-            |]
-        |]
+                text_container ~key:"text_container" ~children:[R.text "Enter: execute; Esc: cancel"]
+              ]
+            ]
+        ]
       end
   in
 

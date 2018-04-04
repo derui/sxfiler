@@ -25,14 +25,14 @@ module Content = struct
 
   let component = C.make (fun props ->
       R.Dom.of_tag `div ~key:"content" ~props:R.(element_spec ~class_name:"dialog-ConfirmDialog_Content" ())
-        ~children:[|R.text @@ Js.to_string props##.content|];
+        ~children:[R.text @@ Js.to_string props##.content];
     )
 end
 
 let header ~key ~title =
   R.Dom.of_tag `div ~key
     ~props:R.(element_spec ~class_name:"dialog-ConfirmDialog_Header" ())
-    ~children:[|R.text title|]
+    ~children:[R.text title]
 
 let body ~key ~children =
   R.Dom.of_tag `div ~key ~props:R.(element_spec ~class_name:"dialog-ConfirmDialog_Body" ()) ~children
@@ -53,7 +53,7 @@ module Button = struct
           <|> ("dialog-ConfirmDialog_Button-selected", selected)
           |> to_string) in
       R.Dom.of_tag `div ~key:"yes" ~props:R.(element_spec ~class_name ())
-        ~children:[|R.text @@ Js.to_string props##.text|];
+        ~children:[R.text @@ Js.to_string props##.text];
     )
 end
 
@@ -102,18 +102,18 @@ let key_handler ~dispatch ~this ev =
 let component =
   let render this =
     let props = this##.props in
-    let children = [|
+    let children = [
       R.Dom.of_tag `div
         ~props:R.(element_spec ~class_name:"dialog-ConfirmDialog" ())
-        ~children:[|
+        ~children:[
           header ~key:"header" ~title:Js.(to_string this##.props##.title);
 
-          body ~key:"body" ~children:[|
+          body ~key:"body" ~children:[
             R.create_element ~key:"content" ~props:(object%js
               val content = props##.content
             end) Content.component;
 
-            button_container ~key:"button_container" ~children:[|
+            button_container ~key:"button_container" ~children:[
               R.create_element ~key:"yes" ~props:(object%js
                 val text = Js.string "Yes"
                 val selected = Js.bool this##.state##.confirmed
@@ -123,10 +123,10 @@ let component =
                 val text = Js.string "No"
                 val selected = Js.bool @@ not this##.state##.confirmed
               end) Button.component;
-            |]
-          |]
-        |]
-    |] in
+            ]
+          ]
+        ]
+    ] in
 
     R.create_element C_dialog_base.component ~props:(object%js
       val _open = Js.bool true

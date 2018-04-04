@@ -48,12 +48,12 @@ let shrink ~on_scroll ~nodes =
         val style = style
       end)
   in
-  let children = [|
+  let children = [
     R.Dom.of_tag `div ~key:"shrinkChild" ~props:(R.element_spec ()
                                                    ~others:(object%js
                                                      val style = shrink_child_style
                                                    end))
-  |] in
+  ] in
   R.Dom.of_tag `div ~key:"shrink" ~props ~children
     ~_ref:(fun e -> R.Ref_table.add nodes ~key:shrink_key ~value:e)
 
@@ -65,14 +65,14 @@ let expand ~on_scroll ~nodes =
         val style = style
       end)
   in
-  let children = [|
+  let children = [
     R.Dom.of_tag `div
       ~key:"expandChild"
       ~_ref:(fun e -> R.Ref_table.add nodes ~key:expand_child_key ~value:e)
       ~props:(R.element_spec () ~others:(object%js
                 val style = expand_child_style
               end))
-  |] in
+  ] in
   R.Dom.of_tag `div ~key:"expand" ~props ~children
     ~_ref:(fun e -> R.Ref_table.add nodes ~key:expand_key ~value:e)
 
@@ -107,10 +107,10 @@ let component =
     let on_scroll = this##.custom##.onScroll in
     R.Dom.of_tag `div
       ~props:spec
-      ~children:[|
+      ~children:[
         expand ~on_scroll ~nodes:this##.nodes;
         shrink ~on_scroll ~nodes:this##.nodes;
-      |]
+      ]
   in
   let reset_sensor_elements this =
     let shrink = R.Ref_table.find this##.nodes ~key:shrink_key

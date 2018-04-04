@@ -24,12 +24,12 @@ let handle_execute ~dispatch ~this () =
 let item_renderer item selected =
   let module H = C.Pane_history.History in
   let class_name = "dialog-HistoryDialogCompleter_Item" in
-  R.Dom.of_tag `div ~props:(R.element_spec ~class_name ()) ~children:[|
+  R.Dom.of_tag `div ~props:(R.element_spec ~class_name ()) ~children:[
     R.Dom.of_tag `span ~props:(R.element_spec
                                  ~key:"description"
                                  ~class_name:"dialog-HistoryDialogCompleter_ItemLabel" ())
-      ~children:[|R.text @@ item.H.directory|]
-  |]
+      ~children:[R.text @@ item.H.directory]
+  ]
 
 module History_completion_list = C_completion_list.Make(struct
     type t = C.Pane_history.History.t

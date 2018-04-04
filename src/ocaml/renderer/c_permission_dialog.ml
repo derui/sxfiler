@@ -18,21 +18,21 @@ module Permission_view = struct
 
   let perm_cell text allowed =
     R.Dom.of_tag `td ~key:text
-      ~children:[|
+      ~children:[
         R.Dom.of_tag `span
           ~props:(R.element_spec ~class_name:"dialog-PermissionDialog_PermissionCell" ())
-          ~children:[|
+          ~children:[
             R.Dom.of_tag `span
               ~key:"name"
               ~props:(R.element_spec ~class_name:"dialog-PermissionDialog_PermissionName" ())
-              ~children:[|R.text text|];
+              ~children:[R.text text];
             R.Dom.of_tag `input ~key:"checkbox"
               ~props:(R.element_spec () ~others:(object%js
                         val _type = "checkbox"
                         val checked = allowed
                       end))
-          |]
-      |]
+          ]
+      ]
 
   let rane_to_row perm current =
     let read = (perm land 0o4) <> 0
@@ -45,21 +45,21 @@ module Permission_view = struct
       |> to_string
     in
 
-    R.Dom.of_tag `tr ~props:(R.element_spec ~class_name ()) ~children:[|
+    R.Dom.of_tag `tr ~props:(R.element_spec ~class_name ()) ~children:[
       perm_cell "Read" read;
       perm_cell "Write" write;
       perm_cell "eXec" exec;
-    |]
+    ]
 
   let component = Component.make (fun props ->
       R.Dom.of_tag `table ~props:(R.element_spec ~class_name:"dialog-PermissionDialog_PermissionViewer" ())
-        ~children:[|
-          R.Dom.of_tag `tbody ~children:[|
+        ~children:[
+          R.Dom.of_tag `tbody ~children:[
             rane_to_row props##.owner (props##.currentRane = Owner);
             rane_to_row props##.group (props##.currentRane = Group);
             rane_to_row props##.others (props##.currentRane = Others);
-          |]
-        |]
+          ]
+        ]
     )
 end
 
@@ -70,7 +70,7 @@ let text_container ~key ~children =
 let header ~key ~title =
   R.Dom.of_tag `div ~key
     ~props:R.(element_spec ~class_name:"dialog-PermissionDialog_Header" ())
-    ~children:[|R.text title|]
+    ~children:[R.text title]
 
 let body ~key ~children =
   R.Dom.of_tag `div ~key ~props:R.(element_spec ~class_name:"dialog-PermissionDialog_Body" ()) ~children
@@ -188,12 +188,12 @@ let component =
           val horizontalCenter = Js.bool true
           val verticalCenter = Js.bool false
           val keyHandler = Js.Optdef.return @@ key_handler ~this
-        end) ~children:[|
+        end) ~children:[
           R.Dom.of_tag `div
             ~props:R.(element_spec ~class_name:"dialog-PermissionDialog" ())
-            ~children:[|
+            ~children:[
               header ~key:"header" ~title:"Edit permission of file";
-              body ~key:"body" ~children:[|
+              body ~key:"body" ~children:[
                 R.create_element ~key:"input" ~props:(object%js
                   val currentRane = this##.state##.currentRane
                   val owner = this##.state##.owner
@@ -201,12 +201,12 @@ let component =
                   val others = this##.state##.others
                 end) Permission_view.component;
 
-                text_container ~key:"text_container" ~children:[|
+                text_container ~key:"text_container" ~children:[
                   R.text "Enter: execute; Esc: cancel"
-                |]
-              |]
-            |]
-        |]
+                ]
+              ]
+            ]
+        ]
       end
   in
 

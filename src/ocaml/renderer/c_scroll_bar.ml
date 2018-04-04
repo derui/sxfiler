@@ -23,7 +23,5 @@ let visible_window key start size =
 let component = Component.make (fun props ->
     R.Dom.of_tag `div
       ~props:R.(element_spec ~class_name:"fp-ScrollBar" ())
-      ~children:[|
-        visible_window "bar" props##.start props##.windowSize
-      |]
+      ~children:[visible_window "bar" props##.start props##.windowSize]
   )

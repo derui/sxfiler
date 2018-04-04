@@ -15,11 +15,8 @@ let component = Component.make (fun props ->
         R.create_element ~key:(string_of_int index) ~props:(object%js
           val entry = entry
         end) C_operation_log_entry.component
-      ) entries |> Array.of_list in
+      ) entries in
     R.Dom.of_tag `div
       ~props:R.(element_spec ~class_name:"fp-OperationLogPane" ())
-      ~children:[|
-        R.Dom.of_tag `div ~key:"scroller" ~props:R.(element_spec ~class_name:"fp-OperationLogPane_ScrollContainer" ())
-          ~children
-      |]
+      ~children:[R.Dom.of_tag `div ~props:R.(element_spec ~class_name:"fp-OperationLogPane_ScrollContainer" ()) ~children]
   )

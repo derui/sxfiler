@@ -42,7 +42,7 @@ let component =
     in
     R.Dom.of_tag `li
       ~props:R.(element_spec ~class_name ())
-      ~children:[|file_mode; timestamp; file_size; file_name|]
+      ~children:[file_mode; timestamp; file_size; file_name]
   in
   let spec = R.component_spec
       ~should_component_update:(fun this new_props state -> this##.props <> new_props)

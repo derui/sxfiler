@@ -18,15 +18,15 @@ let component = Component.make (fun props ->
       end) C_file_list_pane_header.component
     and content =
       let props = R.element_spec ~class_name:"fp-FileListPane_Content" ()
-      and children = [|
+      and children = [
         R.create_element ~key:"file-list" ~props:(object%js
           val pane = pane
           val focused = props##.selected
         end) C_file_list.component
-      |]
+      ]
       in
       R.Dom.of_tag `div ~key:"content" ~props ~children
     in
     let props = R.element_spec ~class_name:"fp-FileListPane" () in
-    R.Dom.of_tag `div ~props ~children:[| header; content; |]
+    R.Dom.of_tag `div ~props ~children:[header; content]
   )

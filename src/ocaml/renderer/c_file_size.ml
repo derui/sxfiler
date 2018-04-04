@@ -64,7 +64,7 @@ let component = Component.make (fun props ->
     let size = Js.float_of_number props##.size in
     R.Dom.of_tag `span
       ~props:R.(element_spec ~class_name:"fp-FileItem_FileSize" ())
-      ~children:[|
+      ~children:[
         File_size.of_size size |> File_size.to_string |> R.text
-      |]
+      ]
   )

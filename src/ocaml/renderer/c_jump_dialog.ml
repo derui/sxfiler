@@ -22,16 +22,16 @@ let handle_execute ~dispatch ~this () =
 (* Get completion list element *)
 let item_renderer item selected =
   let class_name = "dialog-JumpDialogCompleter_Item" in
-  R.Dom.of_tag `div ~props:(R.element_spec ~class_name ()) ~children:[|
+  R.Dom.of_tag `div ~props:(R.element_spec ~class_name ()) ~children:[
     R.Dom.of_tag `span ~props:(R.element_spec
                                  ~key:"description"
                                  ~class_name:"dialog-JumpDialogCompleter_ItemDirectory" ())
-      ~children:[|R.text item.C.Types.File_stat.directory|];
+      ~children:[R.text item.C.Types.File_stat.directory];
     R.Dom.of_tag `span ~props:(R.element_spec
                                  ~key:"text"
                                  ~class_name:"dialog-JumpDialogCompleter_ItemName" ())
-      ~children:[|R.text item.C.Types.File_stat.filename|];
-  |]
+      ~children:[R.text item.C.Types.File_stat.filename];
+  ]
 
 module File_completion_list = C_completion_list.Make(struct
     type t = C.Types.File_stat.t

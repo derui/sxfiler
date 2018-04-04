@@ -48,13 +48,13 @@ let component =
                     ~others:(object%js
                       val tabIndex = "0"
                     end))
-        ~children:[|
+        ~children:[
           overlay ~key:"overlay";
           container ~key:"container"
             ~h_center:Js.(to_bool this##.props##.horizontalCenter)
             ~v_center:Js.(to_bool this##.props##.verticalCenter)
-            ~children:Js.(to_array this##.props_defined##.children);
-        |]
+            ~children:Js.(to_array this##.props_defined##.children |> Array.to_list);
+        ]
   in
   Component.make
     R.(component_spec

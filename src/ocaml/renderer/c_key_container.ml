@@ -58,11 +58,11 @@ let component =
          R.Dom.of_tag `div
            ~_ref:(fun e -> R.Ref_table.add this##.nodes ~key:container_key ~value:e)
            ~props:spec
-           ~children:[|
+           ~children:[
              R.create_element ~key:"file-list" ~props:(object%js
                val state = props##.state
              end) C_pane_layout.component
-           |]
+           ]
       )
   in
   Component.make spec

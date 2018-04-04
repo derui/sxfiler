@@ -42,23 +42,23 @@ module Make(T:Type) : S with type item := T.t = struct
     in
     R.Dom.of_tag `li
       ~props:(R.element_spec ~key ~class_name ())
-      ~children:[|body|]
+      ~children:[body]
 
   let list_container ~renderer ~items ~selected =
     let children = Array.mapi (fun ind item ->
         let selected = ind = selected in
         let key = T.to_id item in
         item_container ~key ~selected ~body:(renderer item selected)
-      ) items in
+      ) items |> Array.to_list in
     R.Dom.of_tag `ul ~props:(R.element_spec ~key:"item_list"
                                ~class_name:"sf-CompletionList_ListContainer" ()) ~children
 
   let component = Component.make (fun props ->
       let class_name = "sf-CompletionList" in
-      R.Dom.of_tag `div ~props:(R.element_spec ~class_name ()) ~children:[|
+      R.Dom.of_tag `div ~props:(R.element_spec ~class_name ()) ~children:[
         list_container ~renderer:props##.itemRenderer
           ~items:props##.items
           ~selected:props##.selectedIndex
-      |]
+      ]
     )
 end

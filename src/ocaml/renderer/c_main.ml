@@ -34,9 +34,9 @@ let component = Component.make
             end in
             R.Dom.of_tag `div
               ~props:R.(element_spec ~class_name:"sf-Main" ())
-              ~children:[|
+              ~children:[
                 R.create_element ~key:"key-container" ~props:children_props C_key_container.component;
                 R.create_element ~key:"dialog-container" ~props:children_props C_dialog_container.component;
-              |]
+              ]
          )
       )

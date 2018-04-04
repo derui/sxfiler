@@ -64,7 +64,7 @@ let component =
           val focused = this##.props##.focused
           val marked = is_item_marked pane item
         end) C_file_item.component
-      ) items
+      ) items |> Array.to_list
     in
     let scroll_bar =
       let start, size = VL.percentage_by_visible this##.state##.virtualizedList in
@@ -92,7 +92,7 @@ let component =
               end))
         end) C_resize_sensor.component
     in
-    let children = Array.concat [children;[|resize_sensor;scroll_bar|]] in
+    let children = List.concat [children;[resize_sensor;scroll_bar]] in
     let _ref e = R.Ref_table.add ~key:key_of_filelist ~value:e this##.nodes in
     let props = R.(element_spec ~class_name:"fp-FileList" ()) in
     R.Dom.of_tag `ul ~_ref ~props ~children

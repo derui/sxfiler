@@ -22,5 +22,5 @@ let component = Component.make (fun props ->
     let date = format_date date in
     R.Dom.of_tag `span
       ~props:R.(element_spec ~class_name:"fp-FileItem_Timestamp" ())
-      ~children:[| R.text date |]
+      ~children:[R.text date]
   )

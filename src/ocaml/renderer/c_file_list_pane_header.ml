@@ -19,5 +19,5 @@ let component = Component.make (fun props ->
     in
     R.Dom.of_tag `header
       ~props:R.(element_spec ~class_name ())
-      ~children:[|R.text directory|]
+      ~children:[R.text directory]
   )

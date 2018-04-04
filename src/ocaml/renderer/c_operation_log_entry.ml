@@ -26,7 +26,7 @@ module Log_type = struct
       in
       R.Dom.of_tag `span
         ~props:R.(element_spec ~class_name ())
-        ~children:[| R.text @@ string_of_log_type props##.logType |]
+        ~children:[R.text @@ string_of_log_type props##.logType]
     )
 end
 
@@ -43,10 +43,10 @@ let component = Component.make (fun props ->
 
     R.Dom.of_tag `div
       ~props:R.(element_spec ~class_name ())
-      ~children:[|
+      ~children:[
         R.create_element ~key:"logType" ~props:(object%js
           val logType = entry.E.log_type
         end) Log_type.component;
         R.text entry.E.content;
-      |]
+      ]
   )
