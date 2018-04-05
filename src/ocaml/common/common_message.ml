@@ -20,7 +20,7 @@ type t =
   | Toggle_mark of T.File_id.js Js.t
   | Leave_directory
   | Enter_directory
-  | Jump_location of Js.js_string Js.t
+  | Jump_location of Js.js_string Js.t Js.js_array Js.t
   | Change_active_pane
   | Select_next_completion
   | Select_prev_completion

@@ -162,8 +162,9 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     in
     (t, message)
 
-  let jump_location t path =
-    let path = N.Path.resolve [path] in
+  let jump_location t paths =
+    let paths = Array.to_list paths in
+    let path = N.Path.resolve paths in
     let message =
       let pane = S.active_pane t in
       let module P = T.Pane in
@@ -321,7 +322,7 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     | M.Select_prev_item -> select_item t `Prev
     | M.Leave_directory -> leave_directory t
     | M.Enter_directory -> enter_directory t
-    | M.Jump_location s -> jump_location t @@ Js.to_string s
+    | M.Jump_location s -> jump_location t @@ Array.map Js.to_string @@ Js.to_array s
     | M.Quit_application -> ({t with S.terminated = true}, None)
     | M.Change_active_pane -> change_active_pane t
     | M.Open_dialog state -> open_dialog t state

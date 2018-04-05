@@ -14,10 +14,11 @@ module Component = R.Component.Make_stateful
 
 let handle_execute ~dispatch ~this () =
   let module M = C.Message in
+  let module F = C.Types.File_stat in
   let state = this##.props##.state in
   let current_selected = C.State.(File_completion_state.selected state.file_completion_state) in
-  let directory = current_selected.C.Types.File_stat.directory in
-  M.jump_location @@ Js.string directory
+  let paths = [|current_selected.F.directory;current_selected.F.filename|] in
+  M.jump_location @@ (Array.map Js.string paths |> Js.array)
 
 (* Get completion list element *)
 let item_renderer item selected =

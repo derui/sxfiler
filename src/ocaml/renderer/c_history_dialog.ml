@@ -18,7 +18,7 @@ let handle_execute ~dispatch ~this () =
   let state = this##.props##.state in
   let current_selected = C.State.(History_completion_state.selected state.history_completion_state) in
   let directory = current_selected.H.directory in
-  M.jump_location @@ Js.string directory
+  M.jump_location @@ Js.array [|Js.string directory|]
 
 (* Get completion list element *)
 let item_renderer item selected =
