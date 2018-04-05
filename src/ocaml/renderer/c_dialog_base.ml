@@ -53,7 +53,7 @@ let component =
           container ~key:"container"
             ~h_center:Js.(to_bool this##.props##.horizontalCenter)
             ~v_center:Js.(to_bool this##.props##.verticalCenter)
-            ~children:Js.(to_array this##.props_defined##.children |> Array.to_list);
+            ~children:[R.Children.(to_element this##.props_defined##.children)];
         ]
   in
   Component.make
