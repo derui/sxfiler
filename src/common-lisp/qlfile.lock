@@ -1,0 +1,16 @@
+("quicklisp" .
+ (:class qlot.source.ql:source-ql-all
+  :initargs (:project-name "quicklisp" :%version :latest)
+  :version "2018-03-28"))
+("clack" .
+ (:class qlot.source.git:source-git
+  :initargs (:project-name "clack" :remote-url "https://github.com/fukamachi/clack.git")
+  :version "git-5e2f5ef08d69cc9e958b24092a1db47b29e55aff"
+  :remote-url "https://github.com/fukamachi/clack.git"
+  :ref "5e2f5ef08d69cc9e958b24092a1db47b29e55aff"))
+("websocket-driver" .
+ (:class qlot.source.git:source-git
+  :initargs (:project-name "websocket-driver" :remote-url "https://github.com/fukamachi/websocket-driver.git")
+  :version "git-b8ef6863f6226f0673d38d8fb95da1cef482ea40"
+  :remote-url "https://github.com/fukamachi/websocket-driver.git"
+  :ref "b8ef6863f6226f0673d38d8fb95da1cef482ea40"))
