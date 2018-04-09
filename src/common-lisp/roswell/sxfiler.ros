@@ -5,13 +5,14 @@ exec ros -Q -- $0 "$@"
 |#
 (progn ;;init forms
   (ros:ensure-asdf)
-  ;;#+quicklisp (ql:quickload '() :silent t)
-  )
+  (ql:quickload '(:clack :websocket-driver) :silent t)
+  (asdf:load-system "sxfiler"))
 
 (defpackage :ros.script.commonlisp.3732218566
-  (:use :cl))
+  (:use :common-lisp :clack :sxfiler/core))
 (in-package :ros.script.commonlisp.3732218566)
 
 (defun main (&rest argv)
-  (declare (ignorable argv)))
+  (declare (ignorable argv))
+  (defvar *handler* (clack:clackup #'sxfiler/core:main)))
 ;;; vim: set ft=lisp lisp:
