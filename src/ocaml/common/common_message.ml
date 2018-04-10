@@ -31,4 +31,5 @@ type t =
   | Close_dialog of T.User_action.js Js.t
   | Execute_task_request of T.Task_request.js Js.t
   | Execute_task_response of T.Task_result.js Js.t
+  | Toggle_bookmark of T.File_id.js Js.t
 [@@deriving variants]

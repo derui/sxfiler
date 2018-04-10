@@ -27,6 +27,28 @@ module Dialog_state = struct
     | Some typ -> Open typ
 end
 
+module Bookmarks = struct
+  type t = string list
+
+  class type js = object
+    method data: Js.js_string Js.t Js.js_array Js.t Js.readonly_prop
+  end
+
+  let empty = []
+  let toggle state file =
+    if List.exists ((=) file) state
+    then state
+    else file :: state
+
+  let to_js t = object%js
+    val data = List.map Js.string t |> Array.of_list |> Js.array
+  end
+
+  let of_js js =
+    Js.to_array js##.data |> Array.to_list |> List.map Js.to_string
+
+end
+
 module Task_state : sig
   type t
 
@@ -146,6 +168,7 @@ type t = {
   operation_log: T.Operation_log.t;
   dialog_state: Dialog_state.t;
   task_state: Task_state.t;
+  bookmarks: Bookmarks.t;
 
   completing: T.completion_type option;
 
@@ -166,6 +189,7 @@ class type js = object
   method dialogState: Dialog_state.js Js.t Js.readonly_prop
   method taskState: Task_state.js Js.t Js.readonly_prop
   method completing: T.completion_type Js.opt Js.readonly_prop
+  method bookmarks: Bookmarks.js Js.t Js.readonly_prop
   method fileCompletionState: File_completion_state.js Js.t Js.readonly_prop
   method historyCompletionState: History_completion_state.js Js.t Js.readonly_prop
 end
@@ -185,6 +209,7 @@ let empty =
 
     dialog_state = Dialog_state.Close;
     task_state = Task_state.empty;
+    bookmarks = Bookmarks.empty;
     completing = None;
     file_completion_state = File_completion_state.empty;
     history_completion_state = History_completion_state.empty;
@@ -203,6 +228,7 @@ let to_js : t -> js Js.t = fun t -> object%js
   val dialogState = Dialog_state.to_js t.dialog_state
   val taskState = Task_state.to_js t.task_state
   val completing = Js.Opt.option t.completing
+  val bookmarks = Bookmarks.to_js t.bookmarks
   val fileCompletionState = File_completion_state.to_js t.file_completion_state
   val historyCompletionState = History_completion_state.to_js t.history_completion_state
 end
@@ -221,6 +247,7 @@ let of_js : js Js.t -> t = fun t ->
     dialog_state = Dialog_state.of_js t##.dialogState;
     task_state = Task_state.of_js t##.taskState;
     completing = Js.Opt.to_option t##.completing;
+    bookmarks = Bookmarks.of_js t##.bookmarks;
     file_completion_state = File_completion_state.of_js t##.fileCompletionState;
     history_completion_state = History_completion_state.of_js t##.historyCompletionState;
   }

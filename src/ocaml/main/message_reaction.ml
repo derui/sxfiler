@@ -313,6 +313,17 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
 
     (S.update_pane ~pane t, None)
 
+  let toggle_bookmark t v =
+    let module S = C.State in
+    let pane = S.active_pane t in
+    match T.Pane.find_item ~id:v pane with
+    | None -> (t, None)
+    | Some v ->
+      let path =  N.Path.resolve [v.T.File_stat.directory; v.T.File_stat.filename] in
+      let bookmarks = S.Bookmarks.toggle t.S.bookmarks path in
+
+    ({t with S.bookmarks = bookmarks}, None)
+
   let react t = function
     | M.Update_pane_request (pane, path, loc) -> update_pane_request t pane path loc
     | M.Update_pane_response ret -> update_pane_response t ret
@@ -335,4 +346,5 @@ module Make(Fs:Fs) : S with module Fs = Fs = struct
     | M.Refresh_candidates_response v -> finish_refresh_candidates t v
     | M.Complete_from_candidates (match_type, input) -> complete_from_candidates t ~input ~match_type
     | M.Toggle_mark v -> toggle_mark t @@ T.File_id.of_js v
+    | M.Toggle_bookmark v -> toggle_bookmark t @@ T.File_id.of_js v
 end

@@ -14,4 +14,5 @@ type t =
   | Make_dir
   | History
   | Change_permission
+  | Toggle_bookmark
 [@@deriving yojson]

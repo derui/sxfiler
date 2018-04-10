@@ -13,6 +13,14 @@ let toggle_mark state =
   let open Option.Infix in
   Some (C.Message.toggle_mark @@ F.to_js pane.P.focused_item)
 
+let toggle_bookmark state =
+  let module P = C.Types.Pane in
+  let module F = C.Types.File_id in
+  let pane = C.State.active_pane state in
+  let module Option = Minimal_monadic_caml.Option in
+  let open Option.Infix in
+  Some (C.Message.toggle_bookmark @@ F.to_js pane.P.focused_item)
+
 let to_message state = function
   | C.Key_bindable_action.Next_item -> some @@ C.Message.select_next_item
   | Prev_item -> some @@ C.Message.select_prev_item
@@ -29,3 +37,4 @@ let to_message state = function
   | Make_dir -> some @@ C.Message.open_dialog @@ C.Types.dialog_name_input `Mkdir
   | History -> some @@ C.Message.open_dialog @@ C.Types.dialog_history
   | Change_permission -> some @@ C.Message.open_dialog @@ C.Types.dialog_change_permission
+  | Toggle_bookmark -> toggle_bookmark state
