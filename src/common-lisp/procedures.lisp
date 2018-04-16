@@ -1,4 +1,4 @@
-;;; main.lisp
+;;; Define procedures of JSON-RPC
 (in-package :cl-user)
 (defpackage #:sxfiler/procedures
   (:use #:cl #:jsonrpc)
