@@ -1,2 +1,4 @@
 git clack https://github.com/fukamachi/clack.git
 git jsonrpc https://github.com/fukamachi/jsonrpc.git
+ql rove :latest
+ql yason :latest

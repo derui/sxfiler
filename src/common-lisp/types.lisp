@@ -1,9 +1,10 @@
 ;;; Define structures and types
 (in-package :cl-user)
 (defpackage #:sxfiler/types
-  (:use #:cl #:jsonrpc)
+  (:use #:cl)
   (:import-from #:yason)
-  (:export #:make-pane))
+  (:export #:make-pane
+           #:make-file-stat))
 (in-package #:sxfiler/types)
 
 ;; pane: contains all state of pane without visual information

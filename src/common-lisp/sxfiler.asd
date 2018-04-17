@@ -1,10 +1,10 @@
 ;;; sxfiler.asd
-(defsystem :sxfiler
+(asdf:defsystem :sxfiler
   ;; システム定義のスタイルをpackage-inferred-systemにする
   :class :package-inferred-system
-  :defsystem-depends-on (:asdf-package-system)
   :description "Implementation of sxfiler main server on CommonLisp"
   :version "0.1"
   :author "derui"
   :license "MIT"
-  :depends-on (:sxfiler/procedures))
+  :depends-on (:sxfiler/procedures)
+  :in-order-to ((asdf:test-op (asdf:test-op "sxfiler-test"))))
