@@ -1,5 +1,5 @@
 
-(asdf:defsystem :sxfiler-test
+(asdf:defsystem "sxfiler/t"
   ;; システム定義のスタイルをpackage-inferred-systemにする
   :class :package-inferred-system
   :description "Test for sxfiler main server"
@@ -7,5 +7,5 @@
   :author "derui"
   :license "MIT"
   :depends-on (:rove
-               :sxfiler/t/types)
-  :perform (asdf:test-op (o c) (uiop:symbol-call :rove '#:run c)))
+               "sxfiler/t/types")
+  :perform (asdf:test-op (o c) (uiop:symbol-call :rove ':run c)))

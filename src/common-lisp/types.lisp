@@ -12,7 +12,7 @@
 (defstruct pane
   (directory "" :type string)
   (file-list (list) :type list)
-  (focused-item (cons 'empty "") :type list)
+  (focused-item "" :type (or null string))
   (marked-item (list) :type list))
 
 ;; encoder for pane. The pane will encode json as below
@@ -31,10 +31,12 @@
       (yason:with-object-element ("fileList")
         (yason:with-array ()
           (mapcar #'yason:encode-array-element (pane-file-list object))))
-      (yason:with-object-element ("focusedItem")
-        (yason:with-array ()
-          (pane-focused-item object)))
-      (yason:with-object-element ("markedItem")
+      (yason:encode-object-element "focusedItem"
+                                   (let ((v (pane-focused-item object)))
+                                     (cond
+                                       ((null v) nil)
+                                       (t v))))
+      (yason:with-object-element ("markedItems")
         (yason:with-array ()
           (mapcar #'yason:encode-array-element (pane-marked-item object)))))))
 
