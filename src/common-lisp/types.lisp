@@ -101,7 +101,7 @@
                                        digest)))
                    (apply #'concatenate 'string str-list))))
           (make-file-stat
-           :id (make-id (file-namestring path))
+           :id (make-id (namestring path))
            :filename (file-namestring path)
            :directory (directory-namestring path)
            :uid (cdr (assoc :uid stats))
