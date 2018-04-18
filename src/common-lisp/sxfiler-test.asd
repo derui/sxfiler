@@ -1,5 +1,5 @@
 
-(asdf:defsystem "sxfiler/t"
+(asdf:defsystem :sxfiler-test
   ;; システム定義のスタイルをpackage-inferred-systemにする
   :class :package-inferred-system
   :description "Test for sxfiler main server"

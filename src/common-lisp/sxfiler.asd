@@ -7,4 +7,4 @@
   :author "derui"
   :license "MIT"
   :depends-on (:sxfiler/procedures)
-  :in-order-to ((asdf:test-op (asdf:test-op "sxfiler-test"))))
+  :in-order-to ((asdf:test-op (asdf:test-op :sxfiler-test))))
