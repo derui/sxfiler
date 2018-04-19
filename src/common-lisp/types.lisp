@@ -5,9 +5,11 @@
   (:import-from #:yason)
   (:import-from #:uiop)
   (:import-from #:ironclad)
-  (:export #:make-pane
+  (:export #:pane
+           #:make-pane
 
            ;; file stat
+           #:file-stat
            #:get-file-stat
            #:file-stat-directory-p
            #:file-stat-file-p
