@@ -6,5 +6,10 @@
   :version "0.1"
   :author "derui"
   :license "MIT"
-  :depends-on (:sxfiler/main)
+  :depends-on (:jsonrpc
+               :ironclad
+               :yason
+               :uiop
+               :cl-syntax
+               :sxfiler/src/main)
   :in-order-to ((asdf:test-op (asdf:test-op :sxfiler-test))))

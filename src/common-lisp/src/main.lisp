@@ -2,7 +2,6 @@
 (defpackage #:sxfiler
   (:nicknames #:sxfiler/main)
   (:use #:cl
-        #:sxfiler/procedures)
-  (:export
-   #:expose-procedures))
+        #:sxfiler/src/procedures)
+  (:export #:expose-procedures))
 (in-package #:sxfiler)

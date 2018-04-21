@@ -1,8 +1,9 @@
 ;;; Define struct for single-source-of-truth state.
 (in-package #:cl-user)
-(defpackage #:sxfiler/state
+(defpackage #:sxfiler/src/state
   (:use #:cl)
-  (:import-from #:sxfiler/types)
+  (:nicknames #:sxfiler/state)
+  (:import-from #:sxfiler/src/types/pane)
   (:import-from #:yason)
   (:export #:state
            #:state-active-pane
@@ -11,15 +12,15 @@
 
            ;; macro to access root state with parallel
            #:with-root-state))
-(in-package #:sxfiler/state)
+(in-package #:sxfiler/src/state)
 
 (defstruct state
   "The state that is root of the all state of sxfiler.
 The struct of root contains many status below.
 "
   (active-pane :left :type symbol)
-  (left-pane (sxfiler/types:make-pane) :type sxfiler/types:pane)
-  (right-pane (sxfiler/types:make-pane) :type sxfiler/types:pane))
+  (left-pane (sxfiler/src/types/pane:make-pane) :type sxfiler/src/types/pane:pane)
+  (right-pane (sxfiler/src/types/pane:make-pane) :type sxfiler/src/types/pane:pane))
 
 (defmethod yason:encode ((object state) &optional stream)
   (yason:with-output (stream)

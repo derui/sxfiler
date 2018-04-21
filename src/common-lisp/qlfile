@@ -3,3 +3,4 @@ git jsonrpc https://github.com/fukamachi/jsonrpc.git
 ql rove :latest
 ql yason :latest
 ql ironclad :latest
+ql cl-syntax :latest

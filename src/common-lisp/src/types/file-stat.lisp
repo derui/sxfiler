@@ -1,53 +1,26 @@
 ;;; Define structures and types
 (in-package :cl-user)
-(defpackage #:sxfiler/types
+(defpackage #:sxfiler/src/types/file-stat
+  (:nicknames #:sxfiler/types/file-stat)
   (:use #:cl)
-  (:import-from #:yason)
-  (:import-from #:uiop)
-  (:import-from #:ironclad)
-  (:export #:pane
-           #:make-pane
-
-           ;; file stat
-           #:file-stat
-           #:get-file-stat
+  (:export #:file-stat
+           #:file-stat-id
+           #:file-stat-filename
+           #:file-stat-directory
+           #:file-stat-link-path
+           #:file-stat-mode
+           #:file-stat-uid
+           #:file-stat-gid
+           #:file-stat-atime
+           #:file-stat-ctime
+           #:file-stat-mtime
+           #:file-stat-size
            #:file-stat-directory-p
            #:file-stat-file-p
-           #:file-stat-symlink-p))
-(in-package #:sxfiler/types)
+           #:file-stat-symlink-p
 
-;; pane: contains all state of pane without visual information
-
-(defstruct pane
-  (directory "" :type string)
-  (file-list (list) :type list)
-  (focused-item "" :type (or null string))
-  (marked-item (list) :type list))
-
-;; encoder for pane. The pane will encode json as below
-#|
-{
-"directory": ``(pane-directory pane)'',
-"fileList": array of file-list and encoded file stat,
-"focusedItem": [empty, ""] or [focused, focused item id],
-"markedItem": array of marked-item, marked-item will contain file id
-}
-|#
-(defmethod yason:encode ((object pane) &optional stream)
-  (yason:with-output (stream)
-    (yason:with-object ()
-      (yason:encode-object-element "directory" (pane-directory object))
-      (yason:with-object-element ("fileList")
-        (yason:with-array ()
-          (mapcar #'yason:encode-array-element (pane-file-list object))))
-      (yason:encode-object-element "focusedItem"
-                                   (let ((v (pane-focused-item object)))
-                                     (cond
-                                       ((null v) nil)
-                                       (t v))))
-      (yason:with-object-element ("markedItems")
-        (yason:with-array ()
-          (mapcar #'yason:encode-array-element (pane-marked-item object)))))))
+           #:get-file-stat))
+(in-package #:sxfiler/src/types/file-stat)
 
 ;; stat of file.
 (defstruct file-stat
