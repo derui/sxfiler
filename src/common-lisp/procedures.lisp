@@ -2,8 +2,19 @@
 (in-package :cl-user)
 (defpackage #:sxfiler/procedures
   (:use #:cl #:jsonrpc)
-  (:export #:expose-procedures))  ; 今回作成する関数(まだない)をパッケージ外部に公開
+  (:import-from #:sxfiler/types)
+  (:import-from #:sxfiler/state
+                #:with-root-state)
+  (:export #:expose-procedures))
+
 (in-package #:sxfiler/procedures)
 
+(defun get-all-state (state)
+  "Return whole state that is copied from original"
+  (copy-structure state))
+
 (defun expose-procedures (server)
-  (jsonrpc:expose server "sum" (lambda (args) (reduce #'+ args))))
+  (jsonrpc:expose server "get-all-state" (lambda (args)
+                                           (declare (ignorable args))
+                                           (with-root-state state
+                                             (get-all-state state)))))

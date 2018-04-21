@@ -3,15 +3,17 @@
 (defpackage #:sxfiler/state
   (:use #:cl)
   (:import-from #:sxfiler/types)
-  (:export #:root-state
-           #:make-root-state
+  (:import-from #:yason)
+  (:export #:state
+           #:state-active-pane
+           #:state-left-pane
+           #:state-right-pane
 
-           #:*root-state*
-           ;; updater for root state.
-           #:update-root-state))
+           ;; macro to access root state with parallel
+           #:with-root-state))
 (in-package #:sxfiler/state)
 
-(defstruct root-state
+(defstruct state
   "The state that is root of the all state of sxfiler.
 The struct of root contains many status below.
 "
@@ -19,13 +21,20 @@ The struct of root contains many status below.
   (left-pane (sxfiler/types:make-pane) :type sxfiler/types:pane)
   (right-pane (sxfiler/types:make-pane) :type sxfiler/types:pane))
 
-(defparameter *root-state* (make-root-state))
+(defmethod yason:encode ((object state) &optional stream)
+  (yason:with-output (stream)
+    (yason:with-object ()
+      (yason:encode-object-element "activePane" (string-downcase
+                                                 (symbol-name (state-active-pane object))))
+      (yason:encode-object-element "leftPane" (state-left-pane object))
+      (yason:encode-object-element "rightPane" (state-right-pane object)))))
+
+(defparameter *root-state* (make-state))
 
 (defparameter *root-state-lock* (sb-thread:make-mutex))
 
-(defmacro update-root-state (accessor &body body)
-  "macro to update root state atomically.
-All of manipulations for root state must use this all time.
-"
+(defmacro with-root-state (var &body body)
   `(sb-thread:with-mutex (*root-state-lock*)
-     (setf (funcall ,accessor *root-state*) (progn ,@body))))
+     (let ((,var *root-state*))
+       (progn
+         ,@body))))

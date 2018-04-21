@@ -3,18 +3,26 @@
 #|
 exec ros -Q -- $0 "$@"
 |#
-(progn ;;init forms
-  (ros:ensure-asdf)
-  (ql:quickload '(:jsonrpc) :silent t)
-  (asdf:load-system "sxfiler"))
+(ros:ensure-asdf)
+(when (probe-file #p"../bundle-libs/bundle.lisp")
+  (ros:include "../bundle-libs/bundle.lisp"))
+(asdf:load-asd (truename  "./sxfiler.asd"))
+(ql:quickload '(:sxfiler
+                :sb-cltl2 ; without TRUENAME error to find this module
+                )
+              :silent t)
+(ql:register-local-projects)
 
 (defpackage :ros.script.commonlisp.3732218566
-  (:use #:cl :jsonrpc :sxfiler/procedures))
+  (:use #:cl #:jsonrpc))
 (in-package :ros.script.commonlisp.3732218566)
+
+(defvar *server*)
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (defvar *server* (jsonrpc:make-server))
+  (setf *server* (jsonrpc:make-server))
 
+  (sxfiler/main:expose-procedures *server*)
   (jsonrpc:server-listen *server* :port 50879 :mode :websocket))
 ;;; vim: set ft=lisp lisp:
