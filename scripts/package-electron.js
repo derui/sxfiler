@@ -2,6 +2,7 @@ require('./pre-package.js');
 
 const { buildCss } = require('./build-css.js');
 const { buildOCaml } = require('./build-ocaml.js');
+const { buildCommonLisp } = require('./build-cl.js');
 
 function getPlatforms() {
   const args = process.argv.slice(2);
@@ -17,6 +18,7 @@ const { execFileSync } = require('child_process');
 
 buildCss();
 buildOCaml();
+buildCommonLisp();
 
 const platforms = getPlatforms();
 

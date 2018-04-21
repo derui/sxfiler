@@ -26,12 +26,6 @@ function buildOCaml(options = defaultOptions) {
     execFileSync('jbuilder', ['build', '@js'], { stdio: 'inherit' });
 
     bundleRenderer(options);
-
-    execFileSync(
-      'cpx',
-      [`./_build/default/src/ocaml/sxfiler_main_entry.bc.js`, './dist'],
-      { stdio: 'inherit' }
-    );
   } catch (e) {
     if (!options.ignoreError) {
       throw e;
