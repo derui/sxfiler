@@ -36,10 +36,9 @@ $PermissionDialogTopPosition: 7em;
 }
 
 .dialog-PermissionDialog_PermissionRow {
-
   &.dialog-PermissionDialog_PermissionRow-selected {
     background-color: $sol_blue;
-    color: $sol_base3
+    color: $sol_base3;
   }
 }
 
