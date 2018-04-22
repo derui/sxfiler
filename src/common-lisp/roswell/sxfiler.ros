@@ -3,18 +3,20 @@
 #|
 exec ros -Q -- $0 "$@"
 |#
-(ros:ensure-asdf)
-(when (probe-file #p"../bundle-libs/bundle.lisp")
-  (ros:include "../bundle-libs/bundle.lisp"))
-(asdf:load-asd (truename  "./sxfiler.asd"))
-(ql:quickload '(:sxfiler
-                :sb-cltl2 ; without TRUENAME error to find this module
-                )
-              :silent t)
-(ql:register-local-projects)
+
+;; init form
+(progn
+  (ros:ensure-asdf)
+  (asdf:load-asd (truename  "./sxfiler.asd"))
+  (ql:quickload '(:sxfiler
+                  ;; without error when load dynamically
+                  :jsonrpc/transport/websocket
+                  ;; without TRUENAME error to find this module
+                  :sb-cltl2)
+                :silent t))
 
 (defpackage :ros.script.commonlisp.3732218566
-  (:use #:cl #:jsonrpc))
+  (:use #:cl))
 (in-package :ros.script.commonlisp.3732218566)
 
 (defvar *server*)
