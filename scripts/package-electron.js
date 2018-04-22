@@ -1,4 +1,4 @@
-require('./pre-package.js');
+const {copyFiles} = require('./pre-package.js');
 
 const { buildCss } = require('./build-css.js');
 const { buildOCaml } = require('./build-ocaml.js');
@@ -16,6 +16,7 @@ function getPlatforms() {
 
 const { execFileSync } = require('child_process');
 
+copyFiles(true);
 buildCss();
 buildOCaml();
 buildCommonLisp();
