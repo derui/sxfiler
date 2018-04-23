@@ -3,6 +3,7 @@ module C = Sxfiler_common
 module R = Jsoo_reactjs
 
 let container_id = "top-entry"
+let target_port = 50879
 
 module Publisher = struct
   type subscriber = C.State.t -> unit
@@ -19,11 +20,15 @@ module Publisher = struct
   let publish t v = List.iter (fun f -> f v) t.subscribers
 end
 
+let connect_ws url = new%js WebSockets.webSocket (Js.string url)
+
 let () =
   let electron = Modules.electron in
   let container = Dom_html.getElementById container_id in
   let dispatcher = Key_dispatcher.make electron##.ipcRenderer in
   let publisher = Publisher.make () in
+
+  let websocket = connect_ws (Printf.sprintf "ws://localhost:%d" target_port) in
 
   let handle _ = function
     | C.Event.IPC.Update t -> C.State.of_js t |> Publisher.publish publisher
