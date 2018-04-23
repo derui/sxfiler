@@ -14,7 +14,7 @@
   (copy-structure state))
 
 (defun expose-procedures (server)
-  (jsonrpc:expose server "get-all-state" (lambda (args)
-                                           (declare (ignorable args))
-                                           (with-root-state state
-                                             (get-all-state state)))))
+  (jsonrpc:expose server "all-state" (lambda (args)
+                                       (declare (ignorable args))
+                                       (with-root-state state
+                                         (get-all-state state)))))
