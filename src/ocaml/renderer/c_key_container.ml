@@ -4,7 +4,7 @@ module R = Jsoo_reactjs
 module Component = R.Component.Make_stateful (struct
     class type t = object
       method state: C.State.t Js.readonly_prop
-      method dispatch: Key_dispatcher.t Js.readonly_prop
+      method dispatch: Dispatcher.t Js.readonly_prop
     end
   end)(struct
     class type t = object
@@ -14,7 +14,7 @@ module Component = R.Component.Make_stateful (struct
 
 let key_handler ~dispatch ~state ev =
   let key_map = state.C.State.config.C.Config.key_maps.C.Config.file_list in
-  let dispatched = Key_dispatcher.dispatch_key dispatch ~state ~ev ~key_map in
+  let dispatched = Key_handler.handle_key_event dispatch ~state ~ev ~key_map in
   if dispatched then begin
     ev##preventDefault; ev##stopPropagation
   end else ()

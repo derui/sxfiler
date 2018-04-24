@@ -78,7 +78,7 @@ let body ~key ~children =
 module Component = R.Component.Make_stateful
     (struct
       class type t = object
-        method dispatch : Key_dispatcher.t Js.readonly_prop
+        method dispatch : Dispatcher.t Js.readonly_prop
         method state : C.State.t Js.readonly_prop
         method title: Js.js_string Js.t Js.readonly_prop
         method onExecute: (Js.js_string Js.t -> C.Types.Task_request.js Js.t) Js.readonly_prop
@@ -91,13 +91,13 @@ module Component = R.Component.Make_stateful
 let handle_cancel ~dispatch () =
   let module M = C.Message in
   let message = M.close_dialog @@ C.Types.User_action.(to_js Cancel) in
-  Key_dispatcher.dispatch ~dispatcher:dispatch ~message
+  Dispatcher.dispatch ~dispatcher:dispatch message
 
 let handle_submit ~this ~dispatch v =
   let module M = C.Message in
   let task = this##.props##.onExecute v in
   let action =  C.Types.(User_action.to_js @@ User_action.Confirm task) in
-  Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.close_dialog action)
+  Dispatcher.dispatch ~dispatcher:dispatch (M.close_dialog action)
 
 let component =
   let render this =

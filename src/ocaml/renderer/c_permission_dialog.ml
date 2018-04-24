@@ -78,7 +78,7 @@ let body ~key ~children =
 module Component = R.Component.Make_stateful
     (struct
       class type t = object
-        method dispatch : Key_dispatcher.t Js.readonly_prop
+        method dispatch : Dispatcher.t Js.readonly_prop
         method state : C.State.t Js.readonly_prop
       end
     end)
@@ -102,7 +102,7 @@ let make_state ?currentRane ?owner ?group ?others current =
 let handle_cancel ~dispatch =
   let module M = C.Message in
   let message = M.close_dialog @@ C.Types.User_action.(to_js Cancel) in
-  Key_dispatcher.dispatch ~dispatcher:dispatch ~message
+  Dispatcher.dispatch ~dispatcher:dispatch message
 
 let make_permission state =
   let owner = state##.owner
@@ -121,7 +121,7 @@ let handle_submit ~dispatch v =
   let module T = C.Types in
   let task = T.Task_request.(to_js @@ Change_permission (make_permission v)) in
   let action =  T.(User_action.to_js @@ User_action.Confirm task) in
-  Key_dispatcher.dispatch ~dispatcher:dispatch ~message:(M.close_dialog action)
+  Dispatcher.dispatch ~dispatcher:dispatch (M.close_dialog action)
 
 let esc = Sxfiler_kbd.(to_keyseq {empty with key = "Escape"})
 let enter_key = Sxfiler_kbd.(to_keyseq {empty with key = "Enter"})

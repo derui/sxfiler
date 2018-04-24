@@ -1,16 +1,8 @@
+module C_= Sxfiler_common
 module K = Sxfiler_common.Key_map
 module E = Jsoo_reactjs.Event
 
-type t = Sxfiler_common.Message.t -> unit
-
-let make ipc =
-  fun channel ->
-    let module E = Sxfiler_common.Event in
-    E.IPC.send ~channel:(E.IPC.action channel) ~ipc
-
-let dispatch ~dispatcher ~message = dispatcher message
-
-let dispatch_key: t -> state:Sxfiler_common.State.t ->
+let handle_key_event: Dispatcher.t -> state:Sxfiler_common.State.t ->
   ev:Jsoo_reactjs.Event.Keyboard_event.t ->
   key_map:K.t -> bool = fun dispatcher ~state ~ev ~key_map ->
   let module E = Sxfiler_common.Event in

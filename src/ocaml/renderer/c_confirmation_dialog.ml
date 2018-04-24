@@ -4,7 +4,7 @@ module R = Jsoo_reactjs
 module Component = R.Component.Make_stateful (struct
     class type t = object
       method state: C.State.t Js.readonly_prop
-      method dispatch: Key_dispatcher.t Js.readonly_prop
+      method dispatch: Dispatcher.t Js.readonly_prop
       method title: Js.js_string Js.t Js.readonly_prop
       method content: Js.js_string Js.t Js.readonly_prop
       method onComplete: (unit -> C.Types.User_action.t) Js.readonly_prop
@@ -82,13 +82,13 @@ let key_handler ~dispatch ~this ev =
         else
           M.close_dialog @@ C.Types.User_action.(to_js Cancel)
       in
-      Key_dispatcher.dispatch ~dispatcher:dispatch ~message
+      Dispatcher.dispatch ~dispatcher:dispatch message
     end
   | _ when key = esc -> begin
       stop_default_behavior ev;
 
       let message = M.close_dialog @@ C.Types.User_action.(to_js Cancel) in
-      Key_dispatcher.dispatch ~dispatcher:dispatch ~message
+      Dispatcher.dispatch ~dispatcher:dispatch message
     end
   | _ when key = tab -> begin
       stop_default_behavior ev;

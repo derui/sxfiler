@@ -5,7 +5,7 @@ module M = C.Message
 module Component = R.Component.Make_stateless (struct
     class type t = object
       method state: C.State.t Js.readonly_prop
-      method dispatch: Key_dispatcher.t Js.readonly_prop
+      method dispatch: Dispatcher.t Js.readonly_prop
     end
   end)
 

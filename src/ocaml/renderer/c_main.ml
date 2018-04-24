@@ -4,7 +4,7 @@ module R = Jsoo_reactjs
 module Component = R.Component.Make_stateful (struct
     class type t = object
       method state: C.State.t Js.readonly_prop
-      method dispatch: Key_dispatcher.t Js.readonly_prop
+      method dispatch: Dispatcher.t Js.readonly_prop
       method subscribe: (C.State.t -> unit) -> unit Js.meth
     end
   end)(struct
