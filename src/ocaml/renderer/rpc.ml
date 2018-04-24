@@ -52,3 +52,30 @@ let make ws =
       Thread.return ()
 
   end : Rpc)
+
+(* Call api as request with definition and parameter *)
+let request
+    (type p)
+    (module Rpc: Rpc)
+    (module Api: Api.Api_base with type params = p)
+    (store: Store.t)
+    (param: p option)
+  =
+  let module C = R.Client in
+  let req, handler = C.make_request (module Api) param (function
+      | Ok r -> Store.update store r
+      | Error _ -> ())
+  in
+
+  Rpc.call_api ?handler req
+
+(* Call api as notification with definition and parameter *)
+let notification (type p)
+    (module Rpc: Rpc)
+    (module Api: Api.Api_base with type params = p)
+    (store: Store.t)
+    (param: p option)
+  =
+  let module C = R.Client in
+  let req, handler = C.make_notification (module Api) param in
+  Rpc.call_api ?handler req

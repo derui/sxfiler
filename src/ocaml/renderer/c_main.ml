@@ -3,9 +3,8 @@ module R = Jsoo_reactjs
 
 module Component = R.Component.Make_stateful (struct
     class type t = object
-      method state: C.State.t Js.readonly_prop
+      method store: Store.t Js.readonly_prop
       method dispatch: Dispatcher.t Js.readonly_prop
-      method subscribe: (C.State.t -> unit) -> unit Js.meth
     end
   end)(struct
     class type t = object
@@ -16,13 +15,15 @@ module Component = R.Component.Make_stateful (struct
 let component = Component.make
     R.(component_spec
          ~constructor:(fun this props ->
-             this##.props##subscribe (fun state ->
+             let store = this##.props##.store in
+             Store.subscribe store (fun state ->
                  this##setState (object%js
                    val state = state
-                 end));
+                 end)
+               );
 
              this##.state := object%js
-               val state = this##.props##.state
+               val state = store.Store.state
              end
            )
          ~should_component_update:(fun this _ _ -> true)
