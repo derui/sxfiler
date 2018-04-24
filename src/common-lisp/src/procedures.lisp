@@ -9,12 +9,12 @@
 
 (in-package #:sxfiler/procedures)
 
-(defun get-all-state (state)
+(defun get-current-state (state)
   "Return whole state that is copied from original"
   (copy-structure state))
 
 (defun expose-procedures (server)
-  (jsonrpc:expose server "all-state" (lambda (args)
-                                       (declare (ignorable args))
-                                       (with-root-state state
-                                         (get-all-state state)))))
+  (jsonrpc:expose server "/current-state" (lambda (args)
+                                            (declare (ignorable args))
+                                            (with-root-state state
+                                              (get-current-state state)))))
