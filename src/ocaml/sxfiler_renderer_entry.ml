@@ -15,6 +15,10 @@ let () =
   let store = Store.make () in
 
   let dispatcher = Dispatcher.make store rpc in
+  websocket##.onopen := Dom.handler (fun _ ->
+      Rpc.request rpc (module Api.Current_state) store (Some ()) |> Lwt.ignore_result;
+      Js._true
+    );
 
   let element = R.create_element ~props:(object%js
       val dispatch = dispatcher
