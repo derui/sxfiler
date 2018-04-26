@@ -14,7 +14,9 @@
            #:state-right-pane
 
            ;; macro to access root state with parallel
-           #:with-root-state))
+           #:with-root-state
+
+           #:swap-pane-location))
 (in-package #:sxfiler/state)
 
 (defstruct state
@@ -33,7 +35,9 @@ The struct of root contains many status below.
       (yason:encode-object-element "activePane" (string-downcase
                                                  (symbol-name (state-active-pane object))))
       (yason:encode-object-element "leftPane" (state-left-pane object))
-      (yason:encode-object-element "rightPane" (state-right-pane object)))))
+      (yason:encode-object-element "rightPane" (state-right-pane object))
+      (yason:encode-object-element "leftPaneHistory" (state-left-pane-history object))
+      (yason:encode-object-element "rightPaneHistory" (state-right-pane-history object)))))
 
 (defparameter *root-state* (make-state))
 
@@ -44,3 +48,11 @@ The struct of root contains many status below.
      (let ((,var *root-state*))
        (progn
          ,@body))))
+
+;; State mutation functions
+(defun swap-pane-location (pane)
+  (declare (type symbol pane))
+  (case pane
+    (:left :right)
+    (:right :left)
+    (t :left)))

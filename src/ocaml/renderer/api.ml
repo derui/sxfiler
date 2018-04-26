@@ -9,7 +9,7 @@ module Current_state : Api_base with type params = unit
   type result = S.t
   type params = unit
 
-  let name = "/current-state"
+  let name = "/getCurrentState"
   let params_to_json _ = None
   let result_of_json result =
     let json = Yojson.Basic.to_string result |> Js.string in
