@@ -1,10 +1,9 @@
 ;;; Define structures and types
 (in-package :cl-user)
-(defpackage #:sxfiler/src/types/pane
+(defpackage #:sxfiler/types/pane
   (:nicknames #:sxfiler/types/pane)
   (:use #:cl)
-  (:import-from #:yason)
-  (:import-from #:sxfiler/src/types/file-stat)
+  (:import-from #:sxfiler/types/file-stat :get-file-stat)
   (:export #:pane
            #:make-pane
            #:pane-directory
@@ -13,7 +12,7 @@
            #:pane-marked-item
 
            #:renew-file-list))
-(in-package #:sxfiler/src/types/pane)
+(in-package #:sxfiler/types/pane)
 
 ;; pane: contains all state of pane without visual information
 
@@ -55,7 +54,7 @@ Return nil if directory do not found or is not directory"
 
   (if (and (uiop:probe-file* directory :truename t)
            (uiop:directory-exists-p directory))
-      (mapcar #'sxfiler/types/file-stat:get-file-stat (uiop:directory-files directory))
+      (mapcar #'get-file-stat (uiop:directory-files directory))
       '()))
 
 (defun renew-file-list (obj)

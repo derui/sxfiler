@@ -1,9 +1,9 @@
 ;;; Define struct for single-source-of-truth state.
 (in-package #:cl-user)
-(defpackage #:sxfiler/src/util
+(defpackage #:sxfiler/util
   (:use #:cl)
   (:export #:add-nickname))
-(in-package #:sxfiler/src/util)
+(in-package #:sxfiler/util)
 
 (defun add-nickname (package nickname)
   "Add new nickname to package"

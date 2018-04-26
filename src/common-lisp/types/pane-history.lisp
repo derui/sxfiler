@@ -1,16 +1,17 @@
 ;;; Define structures and types
 (in-package :cl-user)
-(defpackage #:sxfiler/src/types/pane-history
-  (:nicknames #:sxfiler/types/pane-history)
+(defpackage #:sxfiler/types/pane-history
   (:use #:cl)
-  (:import-from #:yason)
   (:export #:pane-history
            #:make-pane-history
+
+           #:push-record
+           #:sort-history-by-timestamp
            ))
-(in-package #:sxfiler/src/types/pane-history)
+(in-package #:sxfiler/types/pane-history)
 
 ;; Item of history.
-(defstruct history-item
+(defstruct record
   (directory "" :type string)
   (focused-item "" :type (or null string))
   (timestamp (get-universal-time) :type (unsigned-byte 64)))
@@ -39,12 +40,12 @@ Notice Common Lisp's universal time has only second resolution, do not have mill
       (declare (ignore tz))
       (format nil "~d-~2,'0d-~2,'0dT~2,'0d:~2,'0d:~2,'0d.000Z" year month date hour minute second))))
 
-(defmethod yason:encode ((object history-item) &optional stream)
+(defmethod yason:encode ((object record) &optional stream)
   (yason:with-output (stream)
     (yason:with-object ()
-      (yason:encode-object-element "directory" (history-item-directory object))
-      (yason:encode-object-element "focusedItem" (history-item-focused-item object))
-      (let ((utc (format-utc-timestring (history-item-timestamp object))))
+      (yason:encode-object-element "directory" (record-directory object))
+      (yason:encode-object-element "focusedItem" (record-focused-item object))
+      (let ((utc (format-utc-timestring (record-timestamp object))))
         (yason:encode-object-element "timestamp" utc)))))
 
 ;; Histories of pane
@@ -57,3 +58,30 @@ Notice Common Lisp's universal time has only second resolution, do not have mill
     (yason:with-object ()
       (yason:encode-object-element "records" (pane-history-records object))
       (yason:encode-object-element "maxRecords" (pane-history-max-records object)))))
+
+;; History mutations
+(defun push-record (obj record)
+  "Push a `record' tto head of records in`obj', or remove records having same place of `record' and add it to head of history.
+This function will immutable, so return new structure of pane-history.
+ "
+  (declare (type pane-history obj))
+  (flet ((same-place-p (v) (equal (record-directory v) (record-directory record))))
+    (let ((new-records (cons record (remove-if #'same-place-p (pane-history-records obj)))))
+
+      (make-pane-history :records new-records
+                         :max-records (pane-history-max-records obj)))))
+
+(defun sort-history-by-timestamp (obj &key (direction :asc))
+  "Get a new pane-history obj sorted records with `timestamp' with `predicate'"
+  (declare (type pane-history obj))
+  (check-type direction symbol)
+  (let ((records (copy-list (pane-history-records obj)))
+        (predicate (case direction
+                     (:asc #'<)
+                     (:desc #'>)
+                     (t #'<))))
+    (make-pane-history :records (sort records (lambda (a b)
+                                                (funcall predicate
+                                                         (record-timestamp a)
+                                                         (record-timestamp b))))
+                       :max-records (pane-history-max-records obj))))

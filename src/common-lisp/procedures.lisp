@@ -1,9 +1,8 @@
 ;;; Define procedures of JSON-RPC
 (in-package :cl-user)
-(defpackage #:sxfiler/src/procedures
-  (:nicknames #:sxfiler/procedures)
+(defpackage #:sxfiler/procedures
   (:use #:cl)
-  (:import-from #:sxfiler/src/state
+  (:import-from #:sxfiler/state
                 #:with-root-state)
   (:export #:expose-procedures))
 

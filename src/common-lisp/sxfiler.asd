@@ -11,5 +11,5 @@
                :yason
                :uiop
                :cl-syntax
-               :sxfiler/src/main)
+               :sxfiler/main)
   :in-order-to ((asdf:test-op (asdf:test-op :sxfiler-test))))

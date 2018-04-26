@@ -1,7 +1,6 @@
 ;;; Define structures and types
 (in-package :cl-user)
-(defpackage #:sxfiler/src/types/file-stat
-  (:nicknames #:sxfiler/types/file-stat)
+(defpackage #:sxfiler/types/file-stat
   (:use #:cl)
   (:export #:file-stat
            #:file-stat-id
@@ -20,7 +19,7 @@
            #:file-stat-symlink-p
 
            #:get-file-stat))
-(in-package #:sxfiler/src/types/file-stat)
+(in-package #:sxfiler/types/file-stat)
 
 ;; stat of file.
 (defstruct file-stat
