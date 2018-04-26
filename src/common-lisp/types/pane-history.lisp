@@ -66,7 +66,10 @@ This function will immutable, so return new structure of pane-history.
  "
   (declare (type pane-history obj))
   (flet ((same-place-p (v) (equal (record-directory v) (record-directory record))))
-    (let ((new-records (cons record (remove-if #'same-place-p (pane-history-records obj)))))
+    (let* ((new-records (cons record (remove-if #'same-place-p (pane-history-records obj))))
+           (new-records (if (< (pane-history-max-records obj) (length new-records))
+                            (reverse (cdr (reverse new-records)))
+                            new-records)))
 
       (make-pane-history :records new-records
                          :max-records (pane-history-max-records obj)))))

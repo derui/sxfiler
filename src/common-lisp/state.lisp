@@ -2,7 +2,9 @@
 (in-package #:cl-user)
 (defpackage #:sxfiler/state
   (:use #:cl)
-  (:import-from #:yason)
+  (:import-from #:sxfiler/types/pane-history
+                #:make-pane-history
+                #:pane-history)
   (:import-from #:sxfiler/types/pane
                 #:make-pane
                 #:pane)
@@ -21,7 +23,9 @@ The struct of root contains many status below.
 "
   (active-pane :left :type symbol)
   (left-pane (make-pane) :type pane)
-  (right-pane (make-pane) :type pane))
+  (right-pane (make-pane) :type pane)
+  (left-pane-history (make-pane-history) :type pane-history)
+  (right-pane-history (make-pane-history) :type pane-history))
 
 (defmethod yason:encode ((object state) &optional stream)
   (yason:with-output (stream)
