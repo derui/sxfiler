@@ -4,3 +4,4 @@ ql rove :latest
 ql yason :latest
 ql ironclad :latest
 ql cl-syntax :latest
+ql cl-ppcre :latest

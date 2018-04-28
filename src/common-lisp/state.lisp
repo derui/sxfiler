@@ -8,6 +8,9 @@
   (:import-from #:sxfiler/types/pane
                 #:make-pane
                 #:pane)
+  (:import-from #:sxfiler/types/dialog-state
+                #:make-dialog-state
+                #:dialog-state)
   (:export #:state
            #:state-active-pane
            #:state-left-pane
@@ -27,7 +30,8 @@ The struct of root contains many status below.
   (left-pane (make-pane) :type pane)
   (right-pane (make-pane) :type pane)
   (left-pane-history (make-pane-history) :type pane-history)
-  (right-pane-history (make-pane-history) :type pane-history))
+  (right-pane-history (make-pane-history) :type pane-history)
+  (dialog-state (make-dialog-state) :type dialog-state))
 
 (defmethod yason:encode ((object state) &optional stream)
   (yason:with-output (stream)
@@ -37,7 +41,8 @@ The struct of root contains many status below.
       (yason:encode-object-element "leftPane" (state-left-pane object))
       (yason:encode-object-element "rightPane" (state-right-pane object))
       (yason:encode-object-element "leftPaneHistory" (state-left-pane-history object))
-      (yason:encode-object-element "rightPaneHistory" (state-right-pane-history object)))))
+      (yason:encode-object-element "rightPaneHistory" (state-right-pane-history object))
+      (yason:encode-object-element "dialogState" (state-dialog-state object)))))
 
 (defparameter *root-state* (make-state))
 

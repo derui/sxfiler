@@ -11,5 +11,6 @@
                :yason
                :uiop
                :cl-syntax
+               :cl-ppcre
                :sxfiler/main)
   :in-order-to ((asdf:test-op (asdf:test-op :sxfiler-test))))
