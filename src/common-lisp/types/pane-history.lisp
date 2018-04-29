@@ -4,6 +4,10 @@
   (:use #:cl)
   (:export #:pane-history
            #:make-pane-history
+           #:pane-history-records
+           #:record-directory
+           #:record-focused-item
+           #:record-timestamp
 
            #:push-record
            #:sort-history-by-timestamp

@@ -11,10 +11,17 @@
   (:import-from #:sxfiler/types/dialog-state
                 #:make-dialog-state
                 #:dialog-state)
+  (:import-from #:sxfiler/completer
+                #:completer
+                #:make-completer)
   (:export #:state
            #:state-active-pane
            #:state-left-pane
            #:state-right-pane
+           #:state-left-pane-history
+           #:state-right-pane-history
+           #:state-file-completion-state
+           #:state-history-completion-state
 
            ;; macro to access root state with parallel
            #:with-root-state
@@ -31,7 +38,11 @@ The struct of root contains many status below.
   (right-pane (make-pane) :type pane)
   (left-pane-history (make-pane-history) :type pane-history)
   (right-pane-history (make-pane-history) :type pane-history)
-  (dialog-state (make-dialog-state) :type dialog-state))
+  (dialog-state (make-dialog-state) :type dialog-state)
+  (file-completion-state (make-completer :matcher (sxfiler/completer:get-matcher :partial))
+                         :type completer)
+  (history-completion-state (make-completer :matcher (sxfiler/completer:get-matcher :partial))
+                            :type completer))
 
 (defmethod yason:encode ((object state) &optional stream)
   (yason:with-output (stream)
@@ -42,7 +53,10 @@ The struct of root contains many status below.
       (yason:encode-object-element "rightPane" (state-right-pane object))
       (yason:encode-object-element "leftPaneHistory" (state-left-pane-history object))
       (yason:encode-object-element "rightPaneHistory" (state-right-pane-history object))
-      (yason:encode-object-element "dialogState" (state-dialog-state object)))))
+      (yason:encode-object-element "dialogState" (state-dialog-state object))
+      (yason:encode-object-element "fileCompletionState" (state-file-completion-state object))
+      (yason:encode-object-element "historyCompletionState"
+                                   (state-history-completion-state object)))))
 
 (defparameter *root-state* (make-state))
 
@@ -56,7 +70,8 @@ The struct of root contains many status below.
 
 ;; State mutation functions
 (defun swap-pane-location (pane)
-  (declare (type symbol pane))
+  "Get swapped location given location."
+  (check-type pane pane)
   (case pane
     (:left :right)
     (:right :left)
