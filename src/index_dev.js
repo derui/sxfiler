@@ -1,7 +1,6 @@
 const electron = require('electron');
 const crashReporter = electron.crashReporter;
 const path = require('path');
-const { spawn } = require('child_process');
 
 if (require.main !== module) {
   process.exit(1);
@@ -27,7 +26,4 @@ app.on('ready', () => {
   browserWindow.focusOnWebView();
 });
 
-app.on('window-all-closed', () => {
-  server.kill();
-  app.quit();
-});
+app.on('window-all-closed', () => app.quit());
