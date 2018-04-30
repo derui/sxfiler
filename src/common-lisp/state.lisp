@@ -38,11 +38,7 @@ The struct of root contains many status below.
   (right-pane (make-pane) :type pane)
   (left-pane-history (make-pane-history) :type pane-history)
   (right-pane-history (make-pane-history) :type pane-history)
-  (dialog-state (make-dialog-state) :type dialog-state)
-  (file-completion-state (make-completer :matcher (sxfiler/completer:get-matcher :partial))
-                         :type completer)
-  (history-completion-state (make-completer :matcher (sxfiler/completer:get-matcher :partial))
-                            :type completer))
+  (dialog-state (make-dialog-state) :type dialog-state))
 
 (defmethod yason:encode ((object state) &optional stream)
   (yason:with-output (stream)
@@ -53,10 +49,7 @@ The struct of root contains many status below.
       (yason:encode-object-element "rightPane" (state-right-pane object))
       (yason:encode-object-element "leftPaneHistory" (state-left-pane-history object))
       (yason:encode-object-element "rightPaneHistory" (state-right-pane-history object))
-      (yason:encode-object-element "dialogState" (state-dialog-state object))
-      (yason:encode-object-element "fileCompletionState" (state-file-completion-state object))
-      (yason:encode-object-element "historyCompletionState"
-                                   (state-history-completion-state object)))))
+      (yason:encode-object-element "dialogState" (state-dialog-state object)))))
 
 (defparameter *root-state* (make-state))
 
