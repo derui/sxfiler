@@ -19,7 +19,7 @@
 (defstruct pane
   (directory "" :type string)
   (file-list (list) :type list)
-  (focused-item "" :type (or null string))
+  (focused-item nil :type (or null sxfiler/types/file-stat:file-stat))
   (marked-item (list) :type list))
 
 ;; encoder for pane. The pane will encode json as below
@@ -59,6 +59,8 @@ Return nil if directory do not found or is not directory"
 
 (defun renew-file-list (obj)
   "Get file-list renewaled pane object."
+  (check-type obj pane)
+
   (if (and obj (pane-p obj))
       (let ((copied-pane (copy-structure obj))
             (dir (pane-directory obj)))

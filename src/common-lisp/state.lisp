@@ -22,11 +22,15 @@
            #:state-right-pane-history
            #:state-file-completion-state
            #:state-history-completion-state
+           #:state-dialog-state
 
            ;; macro to access root state with parallel
            #:with-root-state
 
-           #:swap-pane-location))
+           #:swap-pane-location
+           #:panes-of-state
+           #:set-active-pane
+           #:set-inactive-pane))
 (in-package #:sxfiler/state)
 
 (defstruct state
@@ -69,3 +73,37 @@ The struct of root contains many status below.
     (:left :right)
     (:right :left)
     (t :left)))
+
+(defun set-inactive-pane (state pane)
+  "Set PANE to inactive pane of STATE. This function has side effect to given STATE."
+  (check-type state state)
+  (check-type pane pane)
+
+  (ecase (state-active-pane state)
+    (:left (setf (state-right-pane state) pane))
+    (:right (setf (state-left-pane state) pane)))
+  state)
+
+(defun set-active-pane (state pane)
+  "Set PANE to active pane of STATE. This function has side effect to given STATE."
+  (check-type state state)
+  (check-type pane pane)
+
+  (ecase (state-active-pane state)
+    (:left (setf (state-left-pane state) pane))
+    (:right (setf (state-right-pane state) pane)))
+  state)
+
+(defun panes-of-state (state)
+  "Get panes of active and inactive as multiple-values.
+Order of values returned from this function is below.
+active-pane, inactive-pane
+"
+  (check-type state state)
+  (let ((active-pane (ecase (state-active-pane state)
+                       (:left (state-left-pane state))
+                       (:right (state-right-pane state))))
+        (inactive-pane (ecase (state-active-pane state)
+                         (:left (state-right-pane state))
+                         (:right (state-left-pane state)))))
+    (values active-pane inactive-pane)))

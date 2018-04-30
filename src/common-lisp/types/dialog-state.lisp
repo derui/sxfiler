@@ -59,7 +59,7 @@
   (:report (lambda (condition stream)
              (format stream "Unknown dialog type ~A" (unknown-type-error-kind condition)))))
 
-(defun validate-dialog-kind (kind)
+(defun ensure-dialog-kind (kind)
   "Validate kind of dialog that are defined dialog"
   (check-type kind symbol)
   (or (eql kind :confirmation)
@@ -74,7 +74,7 @@
   (check-type obj dialog-state)
   (check-type type symbol)
   (check-type behavior sxfiler/types/dialog-behavior:dialog-behavior)
-  (validate-dialog-kind type)
+  (ensure-dialog-kind type)
 
   (make-dialog-state :opened t
                      :type type

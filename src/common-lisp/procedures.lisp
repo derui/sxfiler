@@ -18,6 +18,7 @@
     (copy-structure state)))
 
 (defun expose-procedures (server)
+  (sxfiler/procedures/file-op:expose server)
   (jsonrpc:expose server "/getCurrentState" (lambda (args)
                                               (declare (ignorable args))
                                               (with-root-state state

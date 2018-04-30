@@ -18,6 +18,8 @@
            #:file-stat-file-p
            #:file-stat-symlink-p
 
+           #:file-stat-equal
+
            #:get-file-stat))
 (in-package #:sxfiler/types/file-stat)
 
@@ -34,6 +36,15 @@
   (ctime 0 :type (unsigned-byte 64))
   (mtime 0 :type (unsigned-byte 64))
   (size 0 :type (unsigned-byte 64)))
+
+(defun file-stat-equal (p1 p2)
+  "Return same or not between P1 and P2.
+Only compare file id. Ignore any other properties in file-stat such as
+size of item, atime, ctime, and mtime.
+"
+  (check-type p1 file-stat)
+  (check-type p2 file-stat)
+  (string= (file-stat-id p1) (file-stat-id p2)))
 
 (defun file-stat-directory-p (obj)
   (let ((mode (file-stat-mode obj)))
