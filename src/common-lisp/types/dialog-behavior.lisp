@@ -11,9 +11,10 @@
 
 ;; Base structure for behavior of dialog
 ;; Include this structure if add new dialog.
-(defstruct dialog-behavior)
+(defstruct dialog-behavior
+  (name "" :type string))
 
-(defmethod behave-with-operation (behavior operation)
+(defmethod behave-with-operation (behavior operation &rest args)
   "Dispatch OPERAITON to BEHAVIOR. Must return multi-value below.
   - close dialog or not
   - new behavior
@@ -28,4 +29,5 @@
 
 (defmethod yason:encode ((object dialog-behavior) &optional stream)
   (yason:with-output (stream)
-    (yason:with-object ())))
+    (yason:with-object ()
+      (yason:encode-object-element "name" (dialog-behavior-name object)))))

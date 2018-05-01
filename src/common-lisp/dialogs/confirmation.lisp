@@ -13,16 +13,16 @@
 ;; structure of confirmation dialog.
 ;; HANDLE is a function when confirmed dialog, and should return t or nil
 ;; as dialog still opening or closing
-(defstruct (confirmation-behavior (:include dialog-behavior))
+(defstruct (confirmation-behavior (:include dialog-behavior (name "confirmation")))
   (handle nil :type (or nil function)))
 
-(defmethod behave-with-operation ((behavior confirmation-behavior) operation)
+(defmethod behave-with-operation ((behavior confirmation-behavior) operation &rest args)
   (check-type operation string)
 
   (cond
     ((and (string= "confirm" operation)
           (functionp (confirmation-behavior-handle behavior)))
-     (values (funcall (confirmation-behavior-handle behavior))
+     (values (apply (confirmation-behavior-handle behavior) args)
              behavior))
     ((string= "cancel" operation)
      (values nil behavior))
