@@ -57,14 +57,15 @@ Return nil if directory do not found or is not directory"
       (mapcar #'get-file-stat (uiop:directory-files directory))
       '()))
 
-(defun renew-file-list (obj)
+(defun renew-file-list (obj &key (directory nil))
   "Get file-list renewaled pane object."
   (check-type obj pane)
 
-  (if (and obj (pane-p obj))
-      (let ((copied-pane (copy-structure obj))
-            (dir (pane-directory obj)))
-        (setf (pane-file-list copied-pane) (files-in-directory dir))
-        (setf (pane-marked-item copied-pane) (copy-list (pane-marked-item obj)))
-        copied-pane)
-      obj))
+  (let ((copied-pane (copy-structure obj))
+        (dir (if directory directory (pane-directory obj))))
+    (when (uiop:probe-file* dir :truename t)
+      (setf (pane-directory copied-pane) (namestring (uiop:probe-file* dir :truename t))))
+
+    (setf (pane-file-list copied-pane) (files-in-directory dir))
+    (setf (pane-marked-item copied-pane) (copy-list (pane-marked-item obj)))
+    copied-pane))

@@ -11,17 +11,12 @@
   (:import-from #:sxfiler/types/dialog-state
                 #:make-dialog-state
                 #:dialog-state)
-  (:import-from #:sxfiler/completer
-                #:completer
-                #:make-completer)
   (:export #:state
            #:state-active-pane
            #:state-left-pane
            #:state-right-pane
            #:state-left-pane-history
            #:state-right-pane-history
-           #:state-file-completion-state
-           #:state-history-completion-state
            #:state-dialog-state
 
            ;; macro to access root state with parallel
@@ -47,8 +42,8 @@ The struct of root contains many status below.
 (defmethod yason:encode ((object state) &optional stream)
   (yason:with-output (stream)
     (yason:with-object ()
-      (yason:encode-object-element "activePane" (string-downcase
-                                                 (symbol-name (state-active-pane object))))
+      (yason:encode-object-element "activePane"
+                                   (format nil "~(~A~)" (symbol-name (state-active-pane object))))
       (yason:encode-object-element "leftPane" (state-left-pane object))
       (yason:encode-object-element "rightPane" (state-right-pane object))
       (yason:encode-object-element "leftPaneHistory" (state-left-pane-history object))
@@ -73,14 +68,14 @@ The struct of root contains many status below.
 ;; State mutation functions
 (defun swap-pane-location (pane)
   "Get swapped location given location."
-  (check-type pane pane)
-  (case pane
+  (check-type pane symbol)
+  (ecase pane
     (:left :right)
-    (:right :left)
-    (t :left)))
+    (:right :left)))
 
 (defun set-inactive-pane (state pane)
-  "Set PANE to inactive pane of STATE. This function has side effect to given STATE."
+  "Set PANE to inactive pane of STATE, and return modified STATE.
+ This function has side effect to given STATE."
   (check-type state state)
   (check-type pane pane)
 
@@ -90,7 +85,8 @@ The struct of root contains many status below.
   state)
 
 (defun set-active-pane (state pane)
-  "Set PANE to active pane of STATE. This function has side effect to given STATE."
+  "Set PANE to active pane of STATE, and return modified STATE.
+This function has side effect to given STATE."
   (check-type state state)
   (check-type pane pane)
 
