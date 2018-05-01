@@ -59,11 +59,16 @@ The struct of root contains many status below.
 
 (defparameter *root-state-lock* (sb-thread:make-mutex))
 
-(defmacro with-root-state (var &body body)
-  `(sb-thread:with-mutex (*root-state-lock*)
-     (let ((,var *root-state*))
-       (progn
-         ,@body))))
+(defmacro with-root-state ((var) &body body)
+  `(if (and (sb-thread:holding-mutex-p *root-state-lock*)
+            (eql sb-thread:*current-thread* (sb-thread:mutex-owner *root-state-lock*)))
+       (let ((,var *root-state*))
+         (progn
+           ,@body))
+       (sb-thread:with-mutex (*root-state-lock*)
+         (let ((,var *root-state*))
+           (progn
+             ,@body)))))
 
 ;; State mutation functions
 (defun swap-pane-location (pane)
