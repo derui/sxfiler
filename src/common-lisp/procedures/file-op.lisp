@@ -10,6 +10,9 @@
   (:import-from #:sxfiler/types/dialog-behavior)
   (:import-from #:sxfiler/types/pane
                 #:renew-file-list)
+  (:import-from #:sxfiler/types/dialog-state)
+  (:import-from #:sxfiler/dialogs/confirmation
+                #:make-confirmation-behavior)
   (:import-from #:sxfiler/types/file-stat
                 #:file-stat-equal
                 #:file-stat-id)
@@ -61,9 +64,24 @@ This function has side effect."
     (copy-file-to-another-pane active-pane inactive-pane)
     (sxfiler/state:set-inactive-pane state (renew-file-list inactive-pane))))
 
+(defun open-confirm-dialog (state)
+  "Open dialog to ask confirmation to copy file.
+User must call '/dialog/confirmation' method after this.
+"
+  (flet ((handle ()
+           (with-root-state (state)
+             (copy-file-from-active-to-inactive state))))
+    (setf (sxfiler/state:state-dialog-state state)
+          (sxfiler/types/dialog-state:open-dialog (sxfiler/state:state-dialog-state state)
+                                                  (make-confirmation-behavior :handle handle)))))
+
 (defun expose (server)
   "expose functions for file-related operations to JSON-RPC"
-  (jsonrpc:expose server "/file/copyFile" (lambda (args)
-                                            (declare (ignorable args))
-                                            (with-root-state state
-                                              (copy-file-from-active-to-inactive state)))))
+  (jsonrpc:expose server "/file/copyFile"
+                  (lambda (args)
+                    (check-type args hash-table)
+                    (let ((force-copy (gethash "force" args)))
+                      (with-root-state (state)
+                        (if force-copy
+                            (copy-file-from-active-to-inactive state)
+                            (open-confirm-dialog state)))))))
