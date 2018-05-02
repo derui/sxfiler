@@ -38,7 +38,7 @@
        :reader not-found-file-id-error-id))
   (:documentation "Raise when not found any file ID")
   (:report (lambda (condition stream)
-             (format stream "Not found File ID: ~A" (not-found-file-id-error-id condition))))))
+             (format stream "Not found File ID: ~A" (not-found-file-id-error-id condition)))))
 
 ;; Primitive functions are used with pathname.
 (defun copy-file (src dest)
@@ -56,18 +56,6 @@ This function has side effect."
   (check-type dest pathname)
 
   (uiop:rename-file-overwriting-target src dest))
-
-(defun delete-file (file)
-  "simple delete a FILE. this function has side effect"
-  (check-type file pathname)
-
-  (uiop:delete-file-if-exists file))
-
-(defun delete-directory-tree (directory &key validate-to-delete)
-  "simple delete a tree of directory. This function has side effect"
-  (check-type directory pathname)
-
-  (uiop:delete-directory-tree directory :validate validate-to-delete))
 
 ;; functions are related current focusing item.
 (defun copy-file-to-another-pane (src-pane dest-pane)
@@ -106,8 +94,8 @@ This function has side effect."
       (let ((filename (sxfiler/types/file-stat:file-stat-filename focused-item))
             (dirname (sxfiler/types/file-stat:file-stat-directory focused-item)))
         (if (sxfiler/types/file-stat:file-stat-directory-p focused-item)
-            (delete-directory-tree (uiop:merge-pathnames* "" dirname))
-            (delete-file (uiop:merge-pathnames* filename dir)))))))
+            (uiop:delete-directory-tree (uiop:merge-pathnames* "" dirname) :validate t)
+            (uiop:delete-file-if-exists (uiop:merge-pathnames* filename dir)))))))
 
 ;; functions are related state. These functions should use from API
 (defun copy-file-from-active-to-inactive (state)
