@@ -80,8 +80,21 @@ do nothing.
     (let ((new-pane (renew-file-list active-pane)))
       (sxfiler/state:set-active-pane state new-pane))))
 
+(defun sync-to-inactive-pane (state)
+  "Sync inactive pane and active pane to point same directory."
+  (check-type state sxfiler/state:state)
+
+  (multiple-value-bind (active-pane inactive-pane) (panes-of-state state)
+    (let ((new-pane (renew-file-list active-pane :directory (pane-directory inactive-pane))))
+      (sxfiler/state:set-active-pane state new-pane))))
+
 (defun expose (server)
   (check-type server jsonrpc:server)
+
+  (jsonrpc:expose server "/pane/syncPane" (lambda (args)
+                                            (declare (ignorable args))
+                                            (with-root-state (state)
+                                              (sync-to-inactive-pane state))))
 
   (jsonrpc:expose server "/pane/upDirectory" (lambda (args)
                                                (declare (ignorable args))
@@ -92,10 +105,12 @@ do nothing.
                                               (declare (ignorable args))
                                               (with-root-state (state)
                                                 (reload-active-pane state))))
+
   (jsonrpc:expose server "/pane/enterDirectory" (lambda (args)
                                                   (declare (ignorable args))
                                                   (with-root-state (state)
                                                     (enter-directory state))))
+
   (jsonrpc:expose server "/pane/swapActivePane" (lambda (args)
                                                   (declare (ignorable args))
                                                   (with-root-state (state)
