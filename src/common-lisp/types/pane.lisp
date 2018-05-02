@@ -11,7 +11,8 @@
            #:pane-focused-item
            #:pane-marked-item
 
-           #:renew-file-list))
+           #:renew-file-list
+           #:toggle-mark))
 (in-package #:sxfiler/types/pane)
 
 ;; pane: contains all state of pane without visual information
@@ -71,3 +72,19 @@ Return nil if directory do not found or is not directory"
     (setf (pane-file-list copied-pane) (files-in-directory dir))
     (setf (pane-marked-item copied-pane) (copy-list (pane-marked-item obj)))
     copied-pane))
+
+(defun toggle-mark (pane id)
+  "Toggle mark of PANE specified item by ID."
+  (check-type pane pane)
+  (check-type id string)
+
+  (let ((file-list (pane-file-list pane))
+        (copied (copy-structure pane)))
+    (if (member-if (lambda (v) (string= id (sxfiler/types/file-stat:file-stat-id v)))
+                   file-list)
+        (progn
+          (setf (pane-marked-item copied) (if (member id (pane-marked-item copied) :test #'string=)
+                                              (remove id (pane-marked-item copied) :test #'string=)
+                                              (cons id (pane-marked-item copied))))
+          copied)
+        copied)))

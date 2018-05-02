@@ -88,8 +88,23 @@ do nothing.
     (let ((new-pane (renew-file-list active-pane :directory (pane-directory inactive-pane))))
       (sxfiler/state:set-active-pane state new-pane))))
 
+(defun toggle-mark-on-active-pane (state id)
+  "Mark an item contained in active pane"
+  (check-type state sxfiler/state:state)
+  (check-type id string)
+
+  (multiple-value-bind (active-pane inactive-pane) (panes-of-state state)
+    (declare (ignorable inactive-pane))
+    (let ((new-pane (sxfiler/types/pane:toggle-mark active-pane id)))
+      (sxfiler/state:set-active-pane state new-pane))))
+
 (defun expose (server)
   (check-type server jsonrpc:server)
+
+  (jsonrpc:expose server "/pane/toggleMark" (lambda (args)
+                                              (declare (type list args))
+                                              (with-root-state (state)
+                                                (toggle-mark-on-active-pane state (first args)))))
 
   (jsonrpc:expose server "/pane/syncPane" (lambda (args)
                                             (declare (ignorable args))
