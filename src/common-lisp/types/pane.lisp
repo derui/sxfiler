@@ -54,7 +54,9 @@ Return nil if directory do not found or is not directory"
 
   (if (and (uiop:probe-file* directory :truename t)
            (uiop:directory-exists-p directory))
-      (mapcar #'get-file-stat (uiop:directory-files directory))
+      (concatenate 'list
+                   (mapcar #'get-file-stat (uiop:directory-files directory))
+                   (mapcar #'get-file-stat (uiop:subdirectories directory)))
       '()))
 
 (defun renew-file-list (obj &key (directory nil))
