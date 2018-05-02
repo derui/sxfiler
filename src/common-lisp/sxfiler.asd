@@ -12,5 +12,6 @@
                :uiop
                :cl-syntax
                :cl-ppcre
+               :alexandria
                :sxfiler/main)
   :in-order-to ((asdf:test-op (asdf:test-op :sxfiler-test))))

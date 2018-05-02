@@ -5,3 +5,4 @@ ql yason :latest
 ql ironclad :latest
 ql cl-syntax :latest
 ql cl-ppcre :latest
+ql alexandria :latest
