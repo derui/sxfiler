@@ -100,7 +100,7 @@ This function has side effect."
   (multiple-value-bind (active-pane inactive-pane) (panes-of-state state)
     (declare (ignorable inactive-pane))
     (delete-focused-item active-pane)
-    (sxfiler/state:set-active-pane state (renew-file-list active-pane))))
+    (sxfiler/state:update-active-pane state (renew-file-list active-pane))))
 
 (defun expose (server)
   "expose functions for file-related operations to JSON-RPC"

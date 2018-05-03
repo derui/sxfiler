@@ -20,8 +20,8 @@
 
            #:swap-pane-location
            #:panes-of-state
-           #:set-active-pane
-           #:set-inactive-pane))
+           #:update-active-pane
+           #:update-inactive-pane))
 (in-package #:sxfiler/state)
 
 (defstruct state
@@ -67,7 +67,7 @@ The struct of root contains many status below.
     (:left :right)
     (:right :left)))
 
-(defun set-inactive-pane (state pane)
+(defun update-inactive-pane (state pane)
   "Set PANE to inactive pane of STATE, and return modified STATE.
  This function has side effect to given STATE."
   (check-type state state)
@@ -78,7 +78,7 @@ The struct of root contains many status below.
     (:right (setf (state-left-pane state) pane)))
   state)
 
-(defun set-active-pane (state pane)
+(defun update-active-pane (state pane)
   "Set PANE to active pane of STATE, and return modified STATE.
 This function has side effect to given STATE."
   (check-type state state)

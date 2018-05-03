@@ -50,7 +50,7 @@ do nothing.
   (multiple-value-bind (active-pane inactive-pane) (panes-of-state state)
     (declare (ignorable inactive-pane))
     (let ((new-pane (enter-focused-directory active-pane)))
-      (sxfiler/state:set-active-pane state new-pane))))
+      (sxfiler/state:update-active-pane state new-pane))))
 
 (defun up-directory (pane)
   "Up directory structure of PANE."
@@ -65,7 +65,7 @@ do nothing.
   (multiple-value-bind (active-pane inactive-pane) (panes-of-state state)
     (declare (ignorable inactive-pane))
     (let ((new-pane (up-directory active-pane)))
-      (sxfiler/state:set-active-pane state new-pane))))
+      (sxfiler/state:update-active-pane state new-pane))))
 
 (defun reload-active-pane (state)
   "Reload file list of active pane"
@@ -73,14 +73,14 @@ do nothing.
   (multiple-value-bind (active-pane inactive-pane) (panes-of-state state)
     (declare (ignorable inactive-pane))
     (let ((new-pane (renew-file-list active-pane)))
-      (sxfiler/state:set-active-pane state new-pane))))
+      (sxfiler/state:update-active-pane state new-pane))))
 
 (defun sync-to-inactive-pane (state)
   "Sync inactive pane and active pane to point same directory."
   (check-type state sxfiler/state:state)
   (multiple-value-bind (active-pane inactive-pane) (panes-of-state state)
     (let ((new-pane (renew-file-list active-pane :directory (pane-directory inactive-pane))))
-      (sxfiler/state:set-active-pane state new-pane))))
+      (sxfiler/state:update-active-pane state new-pane))))
 
 (defun toggle-mark-on-active-pane (state id)
   "Mark an item contained in active pane"
@@ -89,7 +89,7 @@ do nothing.
   (multiple-value-bind (active-pane inactive-pane) (panes-of-state state)
     (declare (ignorable inactive-pane))
     (let ((new-pane (sxfiler/types/pane:toggle-mark active-pane id)))
-      (sxfiler/state:set-active-pane state new-pane))))
+      (sxfiler/state:update-active-pane state new-pane))))
 
 (defun focus-item-on-active-pane (state id)
   "Focus an item specified with ID on active pane of STATE."
@@ -99,7 +99,7 @@ do nothing.
     (declare (ignorable inactive-pane))
     (let ((item (find-if #'(lambda (v) (string= (sxfiler/types/file-stat:file-stat-id v) id))
                          (sxfiler/types/pane:pane-file-list active-pane))))
-      (sxfiler/state:set-active-pane state (sxfiler/types/pane:focus-item active-pane item)))))
+      (sxfiler/state:update-active-pane state (sxfiler/types/pane:focus-item active-pane item)))))
 
 (defun expose (server)
   (check-type server jsonrpc:server)
