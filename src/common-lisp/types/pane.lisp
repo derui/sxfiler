@@ -3,7 +3,12 @@
 (defpackage #:sxfiler/types/pane
   (:nicknames #:sxfiler/types/pane)
   (:use #:cl)
-  (:import-from #:sxfiler/types/file-stat :get-file-stat)
+  (:import-from #:sxfiler/types/file-stat
+                #:file-stat-id
+                #:file-stat-equal
+                #:get-file-stat)
+  (:import-from #:alexandria
+                #:if-let)
   (:export #:pane
            #:make-pane
            #:pane-directory
@@ -12,7 +17,9 @@
            #:pane-marked-item
 
            #:renew-file-list
-           #:toggle-mark))
+           #:toggle-mark
+           #:find-focused-item
+           #:focus-item))
 (in-package #:sxfiler/types/pane)
 
 ;; pane: contains all state of pane without visual information
@@ -20,7 +27,7 @@
 (defstruct pane
   (directory "" :type string)
   (file-list (list) :type list)
-  (focused-item nil :type (or null sxfiler/types/file-stat:file-stat))
+  (focused-item nil :type (or null string))
   (marked-item (list) :type list))
 
 ;; encoder for pane. The pane will encode json as below
@@ -52,7 +59,6 @@
 (defun files-in-directory (directory)
   "Get list of file stat in the `directory'.
 Return nil if directory do not found or is not directory"
-
   (if (and (uiop:probe-file* directory :truename t)
            (uiop:directory-exists-p directory))
       (concatenate 'list
@@ -63,7 +69,6 @@ Return nil if directory do not found or is not directory"
 (defun renew-file-list (obj &key (directory nil))
   "Get file-list renewaled pane object."
   (check-type obj pane)
-
   (let ((copied-pane (copy-structure obj))
         (dir (if directory directory (pane-directory obj))))
     (when (uiop:probe-file* dir :truename t)
@@ -77,7 +82,6 @@ Return nil if directory do not found or is not directory"
   "Toggle mark of PANE specified item by ID."
   (check-type pane pane)
   (check-type id string)
-
   (let ((file-list (pane-file-list pane))
         (copied (copy-structure pane)))
     (if (member-if (lambda (v) (string= id (sxfiler/types/file-stat:file-stat-id v)))
@@ -88,3 +92,22 @@ Return nil if directory do not found or is not directory"
                                               (cons id (pane-marked-item copied))))
           copied)
         copied)))
+
+(defun find-focused-item (pane)
+  "Find focused item from file-list of PANE."
+  (check-type pane pane)
+  (let ((focused (pane-focused-item pane)))
+    (find-if #'(lambda (v) (string= (file-stat-id v) focused))
+             (pane-file-list pane))))
+
+(defun focus-item (pane item)
+  "Focus ITEM if file list of PANE contains it.
+This function returns new pane structure if found ITEM."
+  (check-type pane pane)
+  (check-type item sxfiler/types/file-stat:file-stat)
+  (if-let ((item (find-if #'(lambda (v) (file-stat-equal v item))
+                          (pane-file-list pane))))
+    (let ((pane (copy-structure pane)))
+      (setf (pane-focused-item pane) (file-stat-id item))
+      pane)
+    pane))
