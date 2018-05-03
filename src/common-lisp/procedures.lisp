@@ -5,7 +5,6 @@
   (:import-from #:sxfiler/state
                 #:with-root-state)
   (:import-from #:sxfiler/procedures/file-op)
-  (:import-from #:sxfiler/procedures/dialog-op)
   (:import-from #:sxfiler/procedures/pane-op)
   (:export #:expose-procedures))
 
@@ -22,7 +21,6 @@
 
 (defun expose-procedures (server)
   (sxfiler/procedures/file-op:expose server)
-  (sxfiler/procedures/dialog-op:expose server)
   (sxfiler/procedures/pane-op:expose server)
   (jsonrpc:expose server "/getCurrentState" (lambda (args)
                                               (declare (ignorable args))

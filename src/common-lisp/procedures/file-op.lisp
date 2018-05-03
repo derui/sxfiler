@@ -7,13 +7,9 @@
                 #:state-left-pane
                 #:state-right-pane
                 #:panes-of-state)
-  (:import-from #:sxfiler/types/dialog-behavior)
   (:import-from #:sxfiler/types/pane
                 #:pane-directory
                 #:renew-file-list)
-  (:import-from #:sxfiler/types/dialog-state)
-  (:import-from #:sxfiler/dialogs/confirmation
-                #:make-confirmation-behavior)
   (:import-from #:sxfiler/types/file-stat
                 #:file-stat-equal
                 #:file-stat-id)
@@ -106,17 +102,6 @@ This function has side effect."
     (delete-focused-item active-pane)
     (sxfiler/state:set-active-pane state (renew-file-list active-pane))))
 
-;; utility to open some dialog.
-(defun open-confirm-dialog (state handle)
-  "Open dialog to ask confirmation to copy file.
-User must call '/dialog/confirmation' method after this.
-"
-  (check-type state sxfiler/state:state)
-  (check-type handle function)
-  (setf (sxfiler/state:state-dialog-state state)
-        (sxfiler/types/dialog-state:open-dialog (sxfiler/state:state-dialog-state state)
-                                                (make-confirmation-behavior :handle handle))))
-
 (defun expose (server)
   "expose functions for file-related operations to JSON-RPC"
   (jsonrpc:expose server "/file/delete"
@@ -124,28 +109,16 @@ User must call '/dialog/confirmation' method after this.
                       (check-type args hash-table)
                       (let ((force-delete (gethash "force" args)))
                         (with-root-state (state)
-                          (if force-delete
-                              (delete-focused-item-from-active state)
-                              (open-confirm-dialog state #'(lambda ()
-                                                             (with-root-state (state)
-                                                               (delete-focused-item-from-active state)))))))))
+                          (delete-focused-item-from-active state)))))
   (jsonrpc:expose server "/file/move"
                   #'(lambda (args)
                       (check-type args hash-table)
                       (let ((force-move (gethash "force" args)))
                         (with-root-state (state)
-                          (if force-move
-                              (move-file-from-active-to-inactive state)
-                              (open-confirm-dialog state #'(lambda ()
-                                                             (with-root-state (state)
-                                                               (move-file-from-active-to-inactive state)))))))))
+                          (move-file-from-active-to-inactive state)))))
   (jsonrpc:expose server "/file/copy"
                   #'(lambda (args)
                       (check-type args hash-table)
                       (let ((force-copy (gethash "force" args)))
                         (with-root-state (state)
-                          (if force-copy
-                              (copy-file-from-active-to-inactive state)
-                              (open-confirm-dialog state #'(lambda ()
-                                                             (with-root-state (state)
-                                                               (copy-file-from-active-to-inactive state))))))))))
+                          (copy-file-from-active-to-inactive state))))))
