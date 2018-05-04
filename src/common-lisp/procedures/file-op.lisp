@@ -85,14 +85,14 @@ This function has side effect."
   (check-type state sxfiler/state:state)
   (multiple-value-bind (active-pane inactive-pane) (panes-of-state state)
     (copy-file-to-another-pane active-pane inactive-pane)
-    (sxfiler/state:set-inactive-pane state (renew-file-list inactive-pane))))
+    (sxfiler/state:update-inactive-pane state (renew-file-list inactive-pane))))
 
 (defun move-file-from-active-to-inactive (state)
   "Move file focising on active pane in state to inactive pane in state."
   (check-type state sxfiler/state:state)
   (multiple-value-bind (active-pane inactive-pane) (panes-of-state state)
     (move-file-to-another-pane active-pane inactive-pane)
-    (sxfiler/state:set-inactive-pane state (renew-file-list inactive-pane))))
+    (sxfiler/state:update-inactive-pane state (renew-file-list inactive-pane))))
 
 (defun delete-focused-item-from-active (state)
   "Delete focusing item on active pane in state."
