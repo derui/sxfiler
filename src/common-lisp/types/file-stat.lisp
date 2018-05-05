@@ -28,7 +28,7 @@
   (id "" :type string)
   (filename "" :type string)
   (directory "" :type string)
-  (link-path "" :type string)
+  (link-path "" :type (or null string))
   (mode 0 :type (unsigned-byte 32))
   (uid 0 :type (unsigned-byte 16))
   (gid 0 :type (unsigned-byte 16))
@@ -46,56 +46,62 @@ size of item, atime, ctime, and mtime.
   (check-type p2 file-stat)
   (string= (file-stat-id p1) (file-stat-id p2)))
 
+(defun mode-directory-p (mode)
+  (< 0 (logand mode #o040000)))
+
+(defun mode-symlink-p (mode)
+  (< 0 (logand mode #o120000)))
+
+(defun mode-file-p (mode)
+  (< 0 (logand mode #o100000)))
+
 (defun file-stat-directory-p (obj)
-  (let ((mode (file-stat-mode obj)))
-    (< 0 (logand mode #o040000))))
+  (mode-directory-p (file-stat-mode obj)))
 
 (defun file-stat-symlink-p (obj)
-  (let ((mode (file-stat-mode obj)))
-    (< 0 (logand mode #o120000))))
+  (mode-symlink-p (file-stat-mode obj)))
 
 (defun file-stat-file-p (obj)
-  (let ((mode (file-stat-mode obj)))
-    (< 0 (logand mode #o100000))))
+  (mode-file-p (file-stat-mode obj)))
 
 ;; function to probe file stat.
-(defun unix-stat-to-assoc (stat-list)
-  `((:dev . ,(nth 1 stat-list))
-    (:ino . ,(nth 2 stat-list))
-    (:mode . ,(nth 3 stat-list))
-    (:nlink . ,(nth 4 stat-list))
-    (:uid . ,(nth 5 stat-list))
-    (:gid . ,(nth 6 stat-list))
-    (:rdev . ,(nth 7 stat-list))
-    (:size . ,(nth 8 stat-list))
-    (:atime . ,(nth 9 stat-list))
-    (:mtime . ,(nth 10 stat-list))
-    (:ctime . ,(nth 11 stat-list))
-    (:blksize . ,(nth 12 stat-list))
-    (:blocks . ,(nth 13 stat-list))))
-
 (defun get-file-stat (path)
-  (let ((path (uiop:probe-file* path :truename t)))
+  (let* ((path (uiop:probe-file* path)))
     (when path
-      (let* ((stats (multiple-value-list (sb-unix:unix-lstat (namestring path))))
-             (stats (unix-stat-to-assoc stats)))
+      (multiple-value-bind (result dev ino mode nlink uid gid rdev size atime mtime ctime blksize blocks)
+          (sb-unix:unix-lstat (namestring path))
+        (declare (ignorable result))
+        (declare (ignorable rdev))
+        (declare (ignorable dev))
+        (declare (ignorable ino))
+        (declare (ignorable nlink))
+        (declare (ignorable blksize))
+        (declare (ignorable blocks))
         (flet ((make-id (name)
                  (let* ((digest (ironclad:digest-sequence :sha1 (sb-ext:string-to-octets name)))
-                        (str-list (map 'list (lambda (v)
-                                               (format nil "~2,,,'0@a" (write-to-string v :base 16)))
+                        (str-list (map 'list
+                                       (lambda (v)
+                                         (format nil "~2,,,'0@a" (write-to-string v :base 16)))
                                        digest)))
-                   (apply #'concatenate 'string str-list))))
+                   (apply #'concatenate 'string str-list)))
+               (get-original-if-link (path)
+                 (when (mode-symlink-p mode)
+                   (multiple-value-bind (path err)
+                       (sb-unix:unix-readlink (namestring path))
+                     (declare (ignorable err))
+                     path))))
           (make-file-stat
            :id (make-id (namestring path))
            :filename (file-namestring path)
            :directory (directory-namestring path)
-           :uid (cdr (assoc :uid stats))
-           :gid (cdr (assoc :gid stats))
-           :mode (cdr (assoc :mode stats))
-           :atime (cdr (assoc :atime stats))
-           :mtime (cdr (assoc :mtime stats))
-           :ctime (cdr (assoc :ctime stats))
-           :size (cdr (assoc :size stats))))))))
+           :link-path (get-original-if-link path)
+           :uid uid
+           :gid gid
+           :mode mode
+           :atime atime
+           :mtime mtime
+           :ctime ctime
+           :size size))))))
 
 (defun enc-stat (obj key-funcs)
   (dolist (key-func key-funcs)
@@ -107,6 +113,7 @@ size of item, atime, ctime, and mtime.
       (enc-stat object '(("id" . file-stat-id)
                          ("filename" . file-stat-filename)
                          ("directory" . file-stat-directory)
+                         ("linkPath" . file-stat-link-path)
                          ("uid" . file-stat-uid)
                          ("gid" . file-stat-gid)
                          ("mode" . file-stat-mode)

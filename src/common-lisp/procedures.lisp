@@ -14,20 +14,23 @@
   "Return whole state that is copied from original"
   (copy-structure state))
 
+;; pane operations
 (defun swap-active-pane (state)
+  "swap active pane of state."
+  (check-type state sxfiler/state:state)
   (let ((pane-loc (sxfiler/state:swap-pane-location (sxfiler/state:state-active-pane state))))
     (setf (sxfiler/state:state-active-pane state) pane-loc)
-    (copy-structure state)))
+    state))
 
 (defun expose-procedures (server)
   (sxfiler/procedures/file-op:expose server)
   (sxfiler/procedures/pane-op:expose server)
-  (jsonrpc:expose server "/getCurrentState" (lambda (args)
-                                              (declare (ignorable args))
-                                              (with-root-state (state)
-                                                (get-current-state state))))
-
-  (jsonrpc:expose server "/swapActivePane" (lambda (args)
+  (jsonrpc:expose server "getCurrentState" (lambda (args)
                                              (declare (ignorable args))
                                              (with-root-state (state)
-                                               (swap-active-pane state)))))
+                                               (get-current-state state))))
+
+  (jsonrpc:expose server "swapActivePane" (lambda (args)
+                                            (declare (ignorable args))
+                                            (with-root-state (state)
+                                              (swap-active-pane state)))))

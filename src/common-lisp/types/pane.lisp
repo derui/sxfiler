@@ -35,7 +35,7 @@
 {
 "directory": ``(pane-directory pane)'',
 "fileList": array of file-list and encoded file stat,
-"focusedItem": [empty, ""] or [focused, focused item id],
+"focusedItem": ID of file-stat if item focusing
 "markedItem": array of marked-item, marked-item will contain file id
 }
 |#

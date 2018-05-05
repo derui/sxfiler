@@ -104,19 +104,19 @@ This function has side effect."
 
 (defun expose (server)
   "expose functions for file-related operations to JSON-RPC"
-  (jsonrpc:expose server "/file/delete"
+  (jsonrpc:expose server "file/delete"
                   #'(lambda (args)
                       (check-type args hash-table)
                       (let ((force-delete (gethash "force" args)))
                         (with-root-state (state)
                           (delete-focused-item-from-active state)))))
-  (jsonrpc:expose server "/file/move"
+  (jsonrpc:expose server "file/move"
                   #'(lambda (args)
                       (check-type args hash-table)
                       (let ((force-move (gethash "force" args)))
                         (with-root-state (state)
                           (move-file-from-active-to-inactive state)))))
-  (jsonrpc:expose server "/file/copy"
+  (jsonrpc:expose server "file/copy"
                   #'(lambda (args)
                       (check-type args hash-table)
                       (let ((force-copy (gethash "force" args)))
