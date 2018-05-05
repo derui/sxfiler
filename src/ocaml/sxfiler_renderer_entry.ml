@@ -16,7 +16,9 @@ let () =
 
   let dispatcher = Dispatcher.make store rpc in
   websocket##.onopen := Dom.handler (fun _ ->
-      Rpc.request rpc (module Api.Current_state) store (Some ()) |> Lwt.ignore_result;
+      Rpc.request rpc (module Api.Root.Get_current_state) (fun state ->
+          Store.update store state
+        ) (Some ()) |> Lwt.ignore_result;
       Js._true
     );
 

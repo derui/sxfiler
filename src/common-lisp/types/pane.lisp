@@ -25,6 +25,7 @@
 ;; pane: contains all state of pane without visual information
 
 (defstruct pane
+  (location :left :type (member :left :right))
   (directory "" :type string)
   (file-list (list) :type list)
   (focused-item nil :type (or null string))
@@ -42,6 +43,8 @@
 (defmethod yason:encode ((object pane) &optional stream)
   (yason:with-output (stream)
     (yason:with-object ()
+      (yason:encode-object-element "location"
+                                   (format nil "~(~A~)" (pane-location object)))
       (yason:encode-object-element "directory" (pane-directory object))
       (yason:with-object-element ("fileList")
         (yason:with-array ()

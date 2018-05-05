@@ -80,34 +80,49 @@ module Component = R.Component.Make_stateful
         method dispatch : Dispatcher.t Js.readonly_prop
         method state : C.State.t Js.readonly_prop
         method title: Js.js_string Js.t Js.readonly_prop
-        method onExecute: (unit -> C.Message.t) Js.readonly_prop
-        method completionListRenderer: (string -> R.React.element Js.t) Js.readonly_prop
+        method onExecute: (string option -> C.Message.t option) Js.readonly_prop
+        method completionListRenderer: (string -> int -> R.React.element Js.t) Js.readonly_prop
       end
     end)
     (struct
-      type t = unit
+      class type t = object
+        method cursor : int Js.readonly_prop
+      end
     end)
 
 let handle_cancel ~dispatch () =
   let module M = C.Message in
-  let message = M.close_dialog @@ C.Types.User_action.(to_js Cancel) in
-  Dispatcher.dispatch ~dispatcher:dispatch message
+  Dispatcher.dispatch ~dispatcher:dispatch M.Close_dialog
 
 let handle_submit ~dispatch ~this v =
-  let message = this##.props##.onExecute () in
-  Dispatcher.dispatch ~dispatcher:dispatch message
+  let module M = C.Message in
+  let state = this##.props##.state in
+  let items = C.(state.State.completer_state.Completer_state.matched_items) in
+  let selected =
+    if Array.length items = 0 then None
+    else Some items.(this##.state##.cursor)
+  in
+  let message = this##.props##.onExecute selected in
+  match message with
+  | None -> ()
+  | Some message -> Dispatcher.dispatch ~dispatcher:dispatch (M.Close_dialog_with_action message)
 
 let handle_input ~dispatch path =
   let module M = C.Message in
-  Dispatcher.dispatch ~dispatcher:dispatch (M.refresh_candidates_request path)
+  let path = Js.to_string path in
+  Dispatcher.dispatch ~dispatcher:dispatch (M.Refresh_candidates_request path)
 
-let handle_cursor ~dispatch = function
+let handle_cursor ~this = function
   | `Up ->
-    let module M = C.Message in
-    Dispatcher.dispatch ~dispatcher:dispatch (M.select_prev_completion)
+    this##setState (object%js
+      val cursor = max 0 (pred this##.state##.cursor)
+    end)
   | `Down ->
-    let module M = C.Message in
-    Dispatcher.dispatch ~dispatcher:dispatch (M.select_next_completion)
+    let state = this##.props##.state in
+    let items = C.(state.State.completer_state.Completer_state.matched_items) in
+    this##setState (object%js
+      val cursor = min (Array.length items) (succ this##.state##.cursor)
+    end)
 
 let component =
   let render this =
@@ -128,17 +143,21 @@ let component =
             val onInput = handle_input ~dispatch:props##.dispatch
             val onCancel = handle_cancel ~dispatch:props##.dispatch
             val onSubmit = handle_submit ~dispatch:props##.dispatch ~this
-            val onMoveCursor = handle_cursor ~dispatch:props##.dispatch
+            val onMoveCursor = handle_cursor ~this
           end) Input.component;
 
           text_container ~key:"text_container" ~children:[R.text "Enter: execute; Esc: cancel"];
 
-          props##.completionListRenderer "completion_list";
+          props##.completionListRenderer "completion_list" this##.state##.cursor;
         ]
     ]
   in
   Component.make @@ R.component_spec
-    ~constructor:(fun this props -> this##.nodes := Jstable.create ();)
+    ~constructor:(fun this props ->
+        this##.state := object%js
+          val cursor = 0
+        end;
+        this##.nodes := Jstable.create ();)
     ~component_did_mount:(fun this ->
         match R.Ref_table.find ~key:"input" this##.nodes with
         | Some e -> e##focus

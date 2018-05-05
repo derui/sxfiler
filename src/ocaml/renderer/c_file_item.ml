@@ -25,18 +25,18 @@ let component =
     in
     let module T = C.Types.File_stat in
     let file_mode = R.create_element ~key:"mode" ~props:(object%js
-        val mode = stat.T.stat##.mode
+        val mode = stat.T.mode
       end) C_file_mode.component
     and timestamp = R.create_element ~key:"timestamp" ~props:(object%js
-        val timestamp = stat.T.stat##.mtime
+        val timestamp = stat.T.mtime |> Int64.to_float
       end) C_file_timestamp.component
     and file_size = R.create_element ~key:"size" ~props:(object%js
-        val size = stat.T.stat##.size
+        val size = stat.T.size
       end) C_file_size.component
     and file_name = R.create_element ~key:"name" ~props:(object%js
         val fileName = Js.string stat.T.filename
-        val isDirectory = stat.T.stat##.isDirectory
-        val isSymbolicLink = stat.T.stat##.isSymbolicLink
+        val isDirectory = stat.T.is_directory
+        val isSymbolicLink = stat.T.is_symlink
         val marked = props##.marked
       end) C_file_name.component
     in

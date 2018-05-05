@@ -4,7 +4,8 @@
   (:use #:cl)
   (:import-from #:sxfiler/state
                 #:with-root-state
-                #:panes-of-state)
+                #:state-active-pane
+                #:state-inactive-pane)
   (:import-from #:sxfiler/types/pane
                 #:pane
                 #:pane-focused-item
@@ -39,10 +40,10 @@ This function do not mutate PANE, then returns new pane if focused directory.
 do nothing.
  "
   (check-type state sxfiler/state:state)
-  (multiple-value-bind (active-pane inactive-pane) (panes-of-state state)
-    (declare (ignorable inactive-pane))
+  (let ((active-pane (state-active-pane state)))
     (let ((new-pane (enter-focused-directory active-pane)))
-      (sxfiler/state:update-active-pane state new-pane))))
+      (setf (update-active-pane state) new-pane)
+      state)))
 
 (defun up-directory (pane)
   "Up directory structure of PANE."
@@ -54,44 +55,46 @@ do nothing.
 (defun up-directory-of-active-pane (state)
   "Up directory from current directory of active pane."
   (check-type state sxfiler/state:state)
-  (multiple-value-bind (active-pane inactive-pane) (panes-of-state state)
-    (declare (ignorable inactive-pane))
+  (let ((active-pane (pane-active-pane state)))
     (let ((new-pane (up-directory active-pane)))
-      (sxfiler/state:update-active-pane state new-pane))))
+      (setf (state-active-pane state) new-pane)
+      state)))
 
 (defun reload-active-pane (state)
   "Reload file list of active pane"
   (check-type state sxfiler/state:state)
-  (multiple-value-bind (active-pane inactive-pane) (panes-of-state state)
-    (declare (ignorable inactive-pane))
+  (let ((active-pane (state-active-pane state)))
     (let ((new-pane (renew-file-list active-pane)))
-      (sxfiler/state:update-active-pane state new-pane))))
+      (setf (state-active-pane state) new-pane)
+      state)))
 
 (defun sync-to-inactive-pane (state)
   "Sync inactive pane and active pane to point same directory."
   (check-type state sxfiler/state:state)
-  (multiple-value-bind (active-pane inactive-pane) (panes-of-state state)
+  (let ((active-pane (state-active-pane state))
+        (inactive-pane (state-inactive-pane state)))
     (let ((new-pane (renew-file-list active-pane :directory (pane-directory inactive-pane))))
-      (sxfiler/state:update-active-pane state new-pane))))
+      (setf (state-active-pane state) new-pane)
+      state)))
 
 (defun toggle-mark-on-active-pane (state id)
   "Mark an item contained in active pane"
   (check-type state sxfiler/state:state)
   (check-type id string)
-  (multiple-value-bind (active-pane inactive-pane) (panes-of-state state)
-    (declare (ignorable inactive-pane))
+  (let ((active-pane (state-active-pane state)))
     (let ((new-pane (sxfiler/types/pane:toggle-mark active-pane id)))
-      (sxfiler/state:update-active-pane state new-pane))))
+      (setf (state-active-pane state) new-pane)
+      state)))
 
 (defun focus-item-on-active-pane (state id)
   "Focus an item specified with ID on active pane of STATE."
   (check-type state sxfiler/state:state)
   (check-type id string)
-  (multiple-value-bind (active-pane inactive-pane) (panes-of-state state)
-    (declare (ignorable inactive-pane))
+  (let ((active-pane (state-active-pane state)))
     (let ((item (find-if #'(lambda (v) (string= (sxfiler/types/file-stat:file-stat-id v) id))
                          (sxfiler/types/pane:pane-file-list active-pane))))
-      (sxfiler/state:update-active-pane state (sxfiler/types/pane:focus-item active-pane item)))))
+      (setf (state-active-pane state) (sxfiler/types/pane:focus-item active-pane item))
+      state)))
 
 (defun expose (server)
   (check-type server jsonrpc:server)

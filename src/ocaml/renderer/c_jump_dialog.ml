@@ -12,13 +12,11 @@ module Component = R.Component.Make_stateful
       type t = unit
     end)
 
-let handle_execute ~dispatch ~this () =
+let handle_execute ~dispatch ~this selected =
   let module M = C.Message in
-  let module F = C.Types.File_stat in
-  let state = this##.props##.state in
-  let current_selected = C.State.(File_completion_state.selected state.file_completion_state) in
-  let paths = [|current_selected.F.directory;current_selected.F.filename|] in
-  M.jump_location @@ (Array.map Js.string paths |> Js.array)
+  match selected with
+  | None -> None
+  | Some selected -> Some (M.Jump_directory selected)
 
 (* Get completion list element *)
 let item_renderer item selected =
@@ -27,25 +25,20 @@ let item_renderer item selected =
     R.Dom.of_tag `span ~props:(R.element_spec
                                  ~key:"description"
                                  ~class_name:"dialog-JumpDialogCompleter_ItemDirectory" ())
-      ~children:[R.text item.C.Types.File_stat.directory];
-    R.Dom.of_tag `span ~props:(R.element_spec
-                                 ~key:"text"
-                                 ~class_name:"dialog-JumpDialogCompleter_ItemName" ())
-      ~children:[R.text item.C.Types.File_stat.filename];
+      ~children:[R.text item];
   ]
 
 module File_completion_list = C_completion_list.Make(struct
-    type t = C.Types.File_stat.t
+    type t = string
 
-    let to_id v = C.Types.(File_id.to_string v.File_stat.id)
+    let to_id v = v
   end)
 
 (* Get completion list element *)
-let completion_list_renderer ~this key =
+let completion_list_renderer ~this key selected =
   let state = this##.props##.state in
-  let completion_state = C.State.(state.file_completion_state) in
-  let items = completion_state.C.State.File_completion_state.items
-  and selected = completion_state.C.State.File_completion_state.cursor_pos in
+  let completion_state = C.State.(state.completer_state) in
+  let items = completion_state.C.Completer_state.matched_items in
   R.create_element ~key ~props:(object%js
     val items = items
     val selectedIndex = selected

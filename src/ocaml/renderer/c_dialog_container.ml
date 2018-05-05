@@ -10,60 +10,37 @@ module Component = R.Component.Make_stateless (struct
   end)
 
 let make_dialog ~props = function
-  | C.Types.Dialog_confirmation task -> begin
+  | C.Types.Dialog_type.Confirmation data -> begin
       let module T = C.Types in
-      match task with
-      | `Copy -> R.create_element ~key:"dialog" ~props:(object%js
-                   val state = props##.state
-                   val dispatch = props##.dispatch
-                   val title = Js.string "Confirm copy file"
-                   val content = Js.string "Can filer copy file?"
-                   val onComplete = fun () -> T.User_action.Confirm (T.Task_request.(to_js Copy))
-                 end) C_confirmation_dialog.component
-      | `Delete -> R.create_element ~key:"dialog" ~props:(object%js
-                     val state = props##.state
-                     val dispatch = props##.dispatch
-                     val title = Js.string "Confirm delete file"
-                     val content = Js.string "Can delete file?"
-                     val onComplete = fun () -> T.User_action.Confirm (T.Task_request.(to_js Delete))
-                   end) C_confirmation_dialog.component
-      | `Move -> R.create_element ~key:"dialog" ~props:(object%js
-                   val state = props##.state
-                   val dispatch = props##.dispatch
-                   val title = Js.string "Confirm move file"
-                   val content = Js.string "Can move file?"
-                   val onComplete = fun () -> T.User_action.Confirm (T.Task_request.(to_js Move))
-                 end) C_confirmation_dialog.component
-      | _ -> R.empty ()
+      R.create_element ~key:"dialog" ~props:(object%js
+        val state = props##.state
+        val dispatch = props##.dispatch
+        val title = Js.string data.title
+        val content = Js.string data.content
+        val onComplete = data.on_complete
+      end) C_confirmation_dialog.component
     end
-  | C.Types.Dialog_name_input task -> begin
-      match task with
-      | `Rename -> R.create_element ~key:"dialog" ~props:(object%js
-                     val title = Js.string "Rename object"
-                     val state = props##.state
-                     val dispatch = props##.dispatch
-                     val onExecute = fun v -> C.Types.Task_request.(to_js @@ Rename v)
-                   end) C_name_input_dialog.component
-      | `Mkdir -> R.create_element ~key:"dialog" ~props:(object%js
-                    val title = Js.string "Make directory"
-                    val state = props##.state
-                    val dispatch = props##.dispatch
-                    val onExecute = fun v -> C.Types.Task_request.(to_js @@ Mkdir v)
-                  end) C_name_input_dialog.component
-      | _ -> R.empty ()
+  | C.Types.Dialog_type.Name_input data -> begin
+      let module T = C.Types in
+      R.create_element ~key:"dialog" ~props:(object%js
+        val title = Js.string data.title
+        val state = props##.state
+        val dispatch = props##.dispatch
+        val onExecute = data.on_execute
+      end) C_name_input_dialog.component
     end
-  | C.Types.Dialog_jump -> R.create_element ~key:"dialog" ~props:(object%js
+  | C.Types.Dialog_type.Jump -> R.create_element ~key:"dialog" ~props:(object%js
                              val state = props##.state
                              val dispatch = props##.dispatch
                            end) C_jump_dialog.component
-  | C.Types.Dialog_history -> R.create_element ~key:"dialog" ~props:(object%js
-                                val state = props##.state
-                                val dispatch = props##.dispatch
-                              end) C_history_dialog.component
-  | C.Types.Dialog_change_permission -> R.create_element ~key:"dialog" ~props:(object%js
-                                          val state = props##.state
-                                          val dispatch = props##.dispatch
-                                        end) C_permission_dialog.component
+  | C.Types.Dialog_type.History -> R.create_element ~key:"dialog" ~props:(object%js
+                                     val state = props##.state
+                                     val dispatch = props##.dispatch
+                                   end) C_history_dialog.component
+  | C.Types.Dialog_type.Change_permission -> R.create_element ~key:"dialog" ~props:(object%js
+                                               val state = props##.state
+                                               val dispatch = props##.dispatch
+                                             end) C_permission_dialog.component
 
 let component = Component.make (fun props ->
     let state = props##.state in

@@ -19,10 +19,12 @@ module Component = R.Component.Make_stateful (struct
   end)
 
 let is_item_marked pane item =
-  List.map snd pane.P.marked_items |> List.exists T.File_stat.(equal item)
+  List.mem item.T.File_stat.id pane.P.marked_items
 
 let component =
-  let current_focused_pos pane = P.index_item ~id:pane.P.focused_item pane in
+  let current_focused_pos pane =
+    let open Minimal_monadic_caml.Option.Infix in
+    pane.P.focused_item >|= fun id -> P.index_item ~id pane in
   let spec = R.component_spec
       ~constructor:(fun this props ->
           this##.state := object%js
@@ -35,7 +37,8 @@ let component =
           let open Minimal_monadic_caml.Option.Infix in
           ignore (
             R.Ref_table.find ~key:key_of_filelist this##.nodes >|=
-            fun e -> let pos = current_focused_pos pane in
+            fun e -> current_focused_pos pane >|=
+            fun pos ->
             this##setState (object%js
               val virtualizedList = VL.update_list_height e##.clientHeight vl
                                     |> VL.update_all_items pane.P.file_list
@@ -45,11 +48,13 @@ let component =
       ~component_will_receive_props:(fun this props ->
           let pane = props##.pane in
           let open Minimal_monadic_caml.Option.Infix in
-          let pos = current_focused_pos pane in
-          this##setState (object%js
-            val virtualizedList = VL.update_all_items pane.P.file_list this##.state##.virtualizedList
-                                  |> VL.recalculate_visible_window pos
-          end)
+          ignore (
+            current_focused_pos pane >|= fun pos ->
+            this##setState (object%js
+              val virtualizedList = VL.update_all_items pane.P.file_list this##.state##.virtualizedList
+                                    |> VL.recalculate_visible_window pos
+            end)
+          )
         )
   in
   let render this =
@@ -58,9 +63,9 @@ let component =
     let items = VL.get_items_in_window vl in
     let children = Array.mapi (fun index item ->
         let module F = C.Types.File_stat in
-        R.create_element ~key:(C.Types.File_id.to_string item.F.id) ~props:(object%js
+        R.create_element ~key:item.F.id ~props:(object%js
           val item = item
-          val selected = item.F.id = pane.P.focused_item
+          val selected = P.is_focused ~id:item.F.id pane
           val focused = this##.props##.focused
           val marked = is_item_marked pane item
         end) C_file_item.component

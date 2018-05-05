@@ -56,14 +56,15 @@ let make ws =
 (* Call api as request with definition and parameter *)
 let request
     (type p)
+    (type r)
     (module Rpc: Rpc)
-    (module Api: Api.Api_base with type params = p)
-    (store: Store.t)
+    (module Api: Api.Api_def with type params = p and type result = r)
+    (handler: r -> unit)
     (param: p option)
   =
   let module C = R.Client in
   let req, handler = C.make_request (module Api) param (function
-      | Ok r -> Store.update store r
+      | Ok r -> handler r
       | Error _ -> ())
   in
 
@@ -72,8 +73,7 @@ let request
 (* Call api as notification with definition and parameter *)
 let notification (type p)
     (module Rpc: Rpc)
-    (module Api: Api.Api_base with type params = p)
-    (store: Store.t)
+    (module Api: Api.Api_def with type params = p)
     (param: p option)
   =
   let module C = R.Client in

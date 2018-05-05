@@ -1,8 +1,0 @@
-(jbuild_version 1)
-
-(library
- ((name sxfiler_completer)
-  (public_name sxfiler.completer)
-  (libraries (js_of_ocaml))
-  (js_of_ocaml ((flags :standard)))
-  (preprocess (pps (js_of_ocaml-ppx)))))

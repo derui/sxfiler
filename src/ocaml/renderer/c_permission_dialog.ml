@@ -101,8 +101,7 @@ let make_state ?currentRane ?owner ?group ?others current =
 
 let handle_cancel ~dispatch =
   let module M = C.Message in
-  let message = M.close_dialog @@ C.Types.User_action.(to_js Cancel) in
-  Dispatcher.dispatch ~dispatcher:dispatch message
+  Dispatcher.dispatch ~dispatcher:dispatch M.Close_dialog
 
 let make_permission state =
   let owner = state##.owner
@@ -119,9 +118,8 @@ let split_permission mode =
 let handle_submit ~dispatch v =
   let module M = C.Message in
   let module T = C.Types in
-  let task = T.Task_request.(to_js @@ Change_permission (make_permission v)) in
-  let action =  T.(User_action.to_js @@ User_action.Confirm task) in
-  Dispatcher.dispatch ~dispatcher:dispatch (M.close_dialog action)
+  let action = M.Change_permission (make_permission v) in
+  Dispatcher.dispatch ~dispatcher:dispatch (M.Close_dialog_with_action action)
 
 let esc = Sxfiler_kbd.(to_keyseq {empty with key = "Escape"})
 let enter_key = Sxfiler_kbd.(to_keyseq {empty with key = "Enter"})
@@ -173,11 +171,13 @@ let key_handler ~this ev =
 let component =
   let render this =
     let props = this##.props in
+    let state = props##.state in
     let module T = C.Types.File_stat in
-    let pane = C.State.(active_pane props##.state) in
+    let pane = C.(Server_state.active_pane state.State.server_state) in
     let focused_item =
       let module P = C.Types.Pane in
-      P.find_item ~id:pane.P.focused_item pane
+      let open Minimal_monadic_caml.Option.Infix in
+      pane.P.focused_item >>= fun id -> P.find_item ~id pane
     in
     match focused_item with
     | None -> R.empty ()
@@ -215,7 +215,8 @@ let component =
         ~constructor:(fun this props ->
             let module T = C.Types.File_stat in
             let module Pane = C.Types.Pane in
-            let pane = C.State.(active_pane props##.state) in
+            let state = props##.state in
+            let pane = C.(Server_state.active_pane state.State.server_state) in
             let open Minimal_monadic_caml.Option in
             let open Infix in
             this##.state := object%js
@@ -225,12 +226,10 @@ let component =
               val others = 0
             end;
 
-            Pane.find_item ~id:pane.Pane.focused_item pane
+            pane.Pane.focused_item
+            >>= (fun id -> Pane.find_item ~id pane)
             >>= lift (fun item ->
-                let owner, group, others = Js.float_of_number item.T.stat##.mode
-                                           |> int_of_float
-                                           |> split_permission
-                in
+                let owner, group, others = split_permission (Int32.to_int item.T.mode) in
                 this##.state := make_state ~owner ~group ~others this##.state
               )
             |> ignore

@@ -9,8 +9,8 @@
            #:update-candidates
 
            #:complete
-           #:prev-matched
-           #:next-matched))
+           #:select-prev-matched
+           #:select-next-matched))
 (in-package #:sxfiler/completer)
 
 (defstruct matcher)
@@ -65,7 +65,7 @@ If KIND has other symbol defined above, raise error with `unknown-matcher-error'
   (check-type kind symbol)
   (cond ((eql kind :forward-exact) (make-forward-exact-matcher))
         ((eql kind :partial) (make-partial-matcher))
-        (t (error (make-condition 'unknown-matcher :kind kind)))))
+        (t (error (make-condition 'unknown-matcher-error :kind kind)))))
 
 ;; Completer structure. This has matcher type, candidates, and cursor position
 ;; current selected.
@@ -127,12 +127,12 @@ If INPUT is empty string, return COMPLETER.
     (setf (completer-cursor cloned) updated-cursor-pos)
     cloned))
 
-(defun next-matched (completer)
+(defun select-next-matched (completer)
   "Move cursor of COMPLETER to next matched."
   (check-type completer completer)
   (update-cursor-pos completer (lambda (len cursor) (min (max 0 (1- len)) (1+ cursor)))))
 
-(defun prev-matched (completer)
+(defun select-prev-matched (completer)
   "Move cursor of COMPLETER to next matched."
   (check-type completer completer)
   (update-cursor-pos completer (lambda (len cursor)

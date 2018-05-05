@@ -5,7 +5,6 @@ module E = Jsoo_reactjs.Event
 let handle_key_event: Dispatcher.t -> state:Sxfiler_common.State.t ->
   ev:Jsoo_reactjs.Event.Keyboard_event.t ->
   key_map:K.t -> bool = fun dispatcher ~state ~ev ~key_map ->
-  let module E = Sxfiler_common.Event in
   let module KE = Jsoo_reactjs.Event.Keyboard_event in
   match KE.to_event_type ev with
   | KE.Unknown | KE.KeyPress | KE.KeyUp -> false

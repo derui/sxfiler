@@ -4,9 +4,8 @@
   (:use #:cl)
   (:import-from #:sxfiler/state
                 #:with-root-state
-                #:state-left-pane
-                #:state-right-pane
-                #:panes-of-state)
+                #:state-active-pane
+                #:state-inactive-pane)
   (:import-from #:sxfiler/types/pane
                 #:pane-directory
                 #:renew-file-list)
@@ -83,24 +82,28 @@ This function has side effect."
 (defun copy-file-from-active-to-inactive (state)
   "copy file focusing on active pane of state to inactive pane of state."
   (check-type state sxfiler/state:state)
-  (multiple-value-bind (active-pane inactive-pane) (panes-of-state state)
+  (let ((active-pane (state-active-pane state))
+        (inactive-pane (state-inactive-pane state)))
     (copy-file-to-another-pane active-pane inactive-pane)
-    (sxfiler/state:update-inactive-pane state (renew-file-list inactive-pane))))
+    (setf (state-inactive-pane state) (renew-file-list inactive-pane))
+    state))
 
 (defun move-file-from-active-to-inactive (state)
   "Move file focising on active pane in state to inactive pane in state."
   (check-type state sxfiler/state:state)
-  (multiple-value-bind (active-pane inactive-pane) (panes-of-state state)
+  (let ((active-pane (state-active-pane state))
+        (inactive-pane (state-inactive-pane state)))
     (move-file-to-another-pane active-pane inactive-pane)
-    (sxfiler/state:update-inactive-pane state (renew-file-list inactive-pane))))
+    (setf (state-inactive-pane state) (renew-file-list inactive-pane))
+    state))
 
 (defun delete-focused-item-from-active (state)
   "Delete focusing item on active pane in state."
   (check-type state sxfiler/state:state)
-  (multiple-value-bind (active-pane inactive-pane) (panes-of-state state)
-    (declare (ignorable inactive-pane))
+  (let ((active-pane (state-active-pane state)))
     (delete-focused-item active-pane)
-    (sxfiler/state:update-active-pane state (renew-file-list active-pane))))
+    (setf (state-active-pane state) (renew-file-list active-pane))
+    state))
 
 (defun expose (server)
   "expose functions for file-related operations to JSON-RPC"

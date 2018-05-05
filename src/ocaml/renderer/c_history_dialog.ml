@@ -12,37 +12,32 @@ module Component = R.Component.Make_stateful
       type t = unit
     end)
 
-let handle_execute ~dispatch ~this () =
-  let module H = C.Pane_history.History in
+let handle_execute ~dispatch ~this selected =
   let module M = C.Message in
-  let state = this##.props##.state in
-  let current_selected = C.State.(History_completion_state.selected state.history_completion_state) in
-  let directory = current_selected.H.directory in
-  M.jump_location @@ Js.array [|Js.string directory|]
+  match selected with
+  | None -> None
+  | Some selected -> Some (M.Jump_directory selected)
 
 (* Get completion list element *)
 let item_renderer item selected =
-  let module H = C.Pane_history.History in
   let class_name = "dialog-HistoryDialogCompleter_Item" in
   R.Dom.of_tag `div ~props:(R.element_spec ~class_name ()) ~children:[
     R.Dom.of_tag `span ~props:(R.element_spec
                                  ~key:"description"
                                  ~class_name:"dialog-HistoryDialogCompleter_ItemLabel" ())
-      ~children:[R.text @@ item.H.directory]
+      ~children:[R.text item]
   ]
 
 module History_completion_list = C_completion_list.Make(struct
-    type t = C.Pane_history.History.t
+    type t = string
 
-    let to_id v = v.C.Pane_history.History.timestamp |> Int64.to_string
+    let to_id v = v
   end)
 
 (* Get completion list element *)
-let completion_list_renderer ~this key =
+let completion_list_renderer ~this key selected =
   let state = this##.props##.state in
-  let completion_state = C.State.(state.history_completion_state) in
-  let items = completion_state.C.State.History_completion_state.items
-  and selected = completion_state.C.State.History_completion_state.cursor_pos in
+  let items = C.(state.State.completer_state.Completer_state.matched_items) in
   R.create_element ~key ~props:(object%js
     val items = items
     val selectedIndex = selected

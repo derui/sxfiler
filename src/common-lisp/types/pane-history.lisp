@@ -54,12 +54,15 @@ Notice Common Lisp's universal time has only second resolution, do not have mill
 
 ;; Histories of pane
 (defstruct pane-history
+  (location :left :type (member :left :right))
   (records '() :type list)
   (max-records 100 :type number))
 
 (defmethod yason:encode ((object pane-history) &optional stream)
   (yason:with-output (stream)
     (yason:with-object ()
+      (yason:encode-object-element "location"
+                                   (format nil "~(~A~)" (pane-history-location object)))
       (yason:encode-object-element "records" (pane-history-records object))
       (yason:encode-object-element "maxRecords" (pane-history-max-records object)))))
 

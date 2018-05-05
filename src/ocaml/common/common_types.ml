@@ -6,72 +6,88 @@ type sort_type =
   | Sort_size
   | Sort_date
 
-module File_id : sig
-  type t [@@deriving sexp]
-  type js
-
-  val empty : t
-  val make: abspath:string -> t
-  val equal : t -> t -> bool
-  val to_js : t -> js Js.t
-  val of_js : js Js.t -> t
-  val to_string: t -> string
-end = struct
-  open Sexplib.Std
-  type t = string [@@deriving sexp]
-  type js = Js.js_string
-
-  let empty = ""
-  let make ~abspath = abspath
-  let equal = (=)
-  let to_js = Js.string
-  let of_js = Js.to_string
-  let to_string v = v
-end
+type file_id = string
 
 module File_stat = struct
   type t = {
-    id: File_id.t;
+    id: file_id;
     filename: string;
     directory: string;
     link_path: string option;
-    stat: FT.stat_obj Js.t;
+    mode: int32;
+    uid: int;
+    gid: int;
+    atime: int64;
+    ctime: int64;
+    mtime: int64;
+    size: int64;
+    is_directory: bool;
+    is_file: bool;
+    is_symlink: bool;
   }
 
   class type js = object
-    method id: File_id.js Js.t Js.readonly_prop
+    method id: Js.js_string Js.t Js.readonly_prop
     method filename: Js.js_string Js.t Js.readonly_prop
     method directory: Js.js_string Js.t Js.readonly_prop
-    method stat: FT.stat_obj Js.t Js.readonly_prop
-    method linkPath: Js.js_string Js.t Js.optdef Js.readonly_prop
+    method linkPath: Js.js_string Js.t Js.opt Js.readonly_prop
+    method mode: Js.number Js.t Js.readonly_prop
+    method uid: int Js.readonly_prop
+    method gid: int Js.readonly_prop
+    method atime: int64 Js.readonly_prop
+    method ctime: int64 Js.readonly_prop
+    method mtime: int64 Js.readonly_prop
+    method size: int64 Js.readonly_prop
+    method isDirectory: bool Js.t Js.readonly_prop
+    method isFile: bool Js.t Js.readonly_prop
+    method isSymlink: bool Js.t Js.readonly_prop
   end
 
   let equal v1 v2 = v1.id = v2.id
 
-  let make ~filename ~directory ~link_path ~stat =
+  let make ~id ~filename ~directory ~link_path ~mode
+      ~uid
+      ~gid
+      ~atime
+      ~ctime
+      ~mtime
+      ~size
+      ~is_directory
+      ~is_file
+      ~is_symlink
+    =
     {
-      id = File_id.make ~abspath:(directory ^ filename);
+      id;
       directory;
       filename;
       link_path;
-      stat
+      mode;
+      uid;
+      gid;
+      atime;
+      ctime;
+      mtime;
+      size;
+      is_directory;
+      is_file;
+      is_symlink;
     }
 
-  let to_js t = object%js
-    val id = File_id.to_js t.id
-    val filename = Js.string t.filename
-    val directory = Js.string t.directory
-    val stat = t.stat
-    val linkPath = let link_path = Js.Optdef.option t.link_path  in
-      Js.Optdef.map link_path Js.string
-  end
-
-  let of_js js = {
-    id = File_id.of_js js##.id;
-    directory = Js.to_string js##.directory;
+  let of_js : js Js.t -> t = fun js -> {
+    id = Js.to_string js##.id;
     filename = Js.to_string js##.filename;
-    stat = js##.stat;
-    link_path = Js.Optdef.map (js##.linkPath) Js.to_string |> Js.Optdef.to_option;
+    directory = Js.to_string js##.directory;
+    link_path = Js.Opt.map (js##.linkPath) Js.to_string |> Js.Opt.to_option;
+    mode = Js.float_of_number (js##.mode) |> Int32.of_float;
+    uid = js##.uid;
+    gid = js##.gid;
+    atime = js##.atime;
+    ctime = js##.ctime;
+    mtime = js##.mtime;
+    size = js##.size;
+    is_directory = Js.to_bool js##.isDirectory;
+    is_file = Js.to_bool js##.isFile;
+    is_symlink = Js.to_bool js##.isSymlink;
   }
 end
 
@@ -80,24 +96,20 @@ module Pane = struct
   type t = {
     directory: string;
     file_list: File_stat.t array;
-    focused_item: File_id.t;
-    marked_items: (File_id.t * File_stat.t) list;
+    focused_item: file_id option;
+    marked_items: file_id list;
   }
 
   class type js = object
     method directory: Js.js_string Js.t Js.readonly_prop
     method fileList: File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
-    method focusedItem: File_id.js Js.t Js.readonly_prop
-    method markedItems: File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
+    method focusedItem: Js.js_string Js.t Js.opt Js.readonly_prop
+    method markedItems: Js.js_string Js.t Js.js_array Js.t Js.readonly_prop
   end
 
   let equal = (=)
 
   let make ?(file_list=[||]) ?focused_item ?(marked_items=[]) ~directory () =
-    let focused_item = match focused_item with
-      | None -> if Array.length file_list > 0 then file_list.(0).File_stat.id else File_id.empty
-      | Some v -> v
-    in
     {
       directory;
       file_list;
@@ -105,22 +117,17 @@ module Pane = struct
       marked_items;
     }
 
-  let to_js : t -> js Js.t = fun t ->
-    object%js
-      val fileList = Array.map File_stat.to_js t.file_list |> Js.array
-      val directory = Js.string t.directory
-      val focusedItem = File_id.to_js t.focused_item
-      val markedItems = Js.array @@ Array.of_list @@ List.map (fun v -> File_stat.to_js @@ snd v) t.marked_items
-    end
-
   let of_js : js Js.t -> t = fun js ->
-    let file_stat_of_js v = let v' = File_stat.of_js v in File_stat.(v'.id, v') in
     {
       directory = Js.to_string js##.directory;
       file_list = Js.to_array js##.fileList |> Array.map File_stat.of_js;
-      focused_item = File_id.of_js js##.focusedItem;
-      marked_items = Js.to_array js##.markedItems |> Array.map file_stat_of_js |> Array.to_list;
+      focused_item = Js.Opt.map js##.focusedItem Js.to_string |> Js.Opt.to_option;
+      marked_items = Js.to_array js##.markedItems |> Array.map Js.to_string |> Array.to_list;
     }
+
+  let is_focused ~id pane = match pane.focused_item with
+    | None -> false
+    | Some id' -> id = id'
 
   let find_item ~id pane =
     List.find_opt (fun s -> id = s.File_stat.id) @@ Array.to_list pane.file_list
@@ -133,13 +140,6 @@ module Pane = struct
     in
     find pane.file_list id 0
 
-  let toggle_mark ~id pane =
-    if List.mem_assoc id pane.marked_items then
-      {pane with marked_items = List.remove_assoc id pane.marked_items}
-    else
-      match find_item ~id pane with
-      | None -> pane
-      | Some item -> {pane with marked_items = (id, item) :: pane.marked_items}
 end
 
 module Operation_log = struct
@@ -247,22 +247,6 @@ module Task_request = struct
   let of_js js = js##._type
 end
 
-module User_action = struct
-  type t =
-    | Confirm of Task_request.js Js.t
-    | Cancel
-
-  class type js = object
-    method _type: t Js.readonly_prop
-  end
-
-  let to_js : t -> js Js.t = fun t -> object%js
-    val _type = t
-  end
-
-  let of_js : js Js.t -> t = fun js -> js##._type
-end
-
 module Task_result = struct
   module Error = struct
     type recovery_strategy =
@@ -330,29 +314,28 @@ module Task_result = struct
 end
 
 module Pane_location = struct
-  type t = [`Left | `Right] [@@deriving variants]
+  type t = [`Left | `Right]
   type js = Js.js_string
-
-  let to_js = function
-    | `Left as v -> Js.string @@ Variants.to_name v
-    | `Right as v -> Js.string @@ Variants.to_name v
 
   let of_js js =
     match Js.to_string js with
-    | v when v = Variants.to_name `Left -> `Left
-    | v when v = Variants.to_name `Right -> `Right
+    | v when v = "left" -> `Left
+    | v when v = "right" -> `Right
     | _ -> failwith "Unknown type"
 end
 
-type dialog_type =
-  | Dialog_confirmation of task_tag
-  | Dialog_name_input of task_tag
-  | Dialog_jump
-  | Dialog_history
-  | Dialog_change_permission
-[@@deriving variants]
-
-type completion_type =
-  | Comp_history
-  | Comp_file
-[@@deriving variants]
+module Dialog_type = struct
+  type t =
+    | Confirmation of {
+        title: string;
+        on_complete: unit -> Common_message.t;
+        content: string;
+      }
+    | Name_input of {
+        title: string;
+        on_execute: Js.js_string Js.t -> Common_message.t;
+      }
+    | Jump
+    | History
+    | Change_permission
+end

@@ -4,8 +4,8 @@ module R = Jsoo_reactjs
 module Component = R.Component.Make_stateless (struct
     class type t = object
       method fileName: Js.js_string Js.t Js.readonly_prop
-      method isDirectory: bool Js.t Js.readonly_prop
-      method isSymbolicLink: bool Js.t Js.readonly_prop
+      method isDirectory: bool Js.readonly_prop
+      method isSymbolicLink: bool Js.readonly_prop
       method marked: bool Js.readonly_prop
     end
   end)
@@ -19,8 +19,8 @@ let get_classname props =
   let open Classnames in
   to_string @@ (empty
                 <|> (base_selector, true)
-                <|> (directory_modifier, Js.to_bool props##.isDirectory)
-                <|> (symlink_modifier, Js.to_bool props##.isSymbolicLink)
+                <|> (directory_modifier, props##.isDirectory)
+                <|> (symlink_modifier, props##.isSymbolicLink)
                 <|> (marked_modifier, props##.marked))
 
 let component = Component.make (fun props ->

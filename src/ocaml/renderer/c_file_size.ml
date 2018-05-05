@@ -3,7 +3,7 @@ module R = Jsoo_reactjs
 
 module Component = R.Component.Make_stateless (struct
     class type t = object
-      method size: Js.number Js.t Js.readonly_prop
+      method size: int64 Js.readonly_prop
     end
   end)
 
@@ -19,7 +19,7 @@ module File_size = struct
   type t = {
     size_unit: size_unit;
     aligned_size: float;
-    original: float;
+    original: int64;
   }
 
   let next_unit = function
@@ -39,15 +39,15 @@ module File_size = struct
     | Unknown -> "-"
 
   let of_size size =
-    let rec calc_unit size current =
-      if 0.0 <= size && size < 1000.0 then (current, size)
+    let rec calc_unit size current decimal =
+      if Int64.(zero <= size) && Int64.(size < 1024L) then (current, Int64.to_float size)
       else begin
         match next_unit current with
-        | None -> (current, size)
-        | Some next_unit -> calc_unit (size /. 1024.0) next_unit
+        | None -> (current, (Int64.to_float size) +. decimal)
+        | Some next_unit -> calc_unit Int64.(div size 1024L) next_unit (Int64.(rem size 1024L |> to_float) /. 1024.0)
       end
     in
-    let size_unit, aligned_size = calc_unit size Byte in
+    let size_unit, aligned_size = calc_unit size Byte 0.0 in
     {
       size_unit;
       aligned_size;
@@ -61,7 +61,7 @@ module File_size = struct
 end
 
 let component = Component.make (fun props ->
-    let size = Js.float_of_number props##.size in
+    let size = props##.size in
     R.Dom.of_tag `span
       ~props:R.(element_spec ~class_name:"fp-FileItem_FileSize" ())
       ~children:[

@@ -81,7 +81,7 @@ module Component = R.Component.Make_stateful
         method dispatch : Dispatcher.t Js.readonly_prop
         method state : C.State.t Js.readonly_prop
         method title: Js.js_string Js.t Js.readonly_prop
-        method onExecute: (Js.js_string Js.t -> C.Types.Task_request.js Js.t) Js.readonly_prop
+        method onExecute: (Js.js_string Js.t -> C.Message.t) Js.readonly_prop
       end
     end)
     (struct
@@ -90,24 +90,24 @@ module Component = R.Component.Make_stateful
 
 let handle_cancel ~dispatch () =
   let module M = C.Message in
-  let message = M.close_dialog @@ C.Types.User_action.(to_js Cancel) in
-  Dispatcher.dispatch ~dispatcher:dispatch message
+  Dispatcher.dispatch ~dispatcher:dispatch M.Close_dialog
 
 let handle_submit ~this ~dispatch v =
   let module M = C.Message in
   let task = this##.props##.onExecute v in
-  let action =  C.Types.(User_action.to_js @@ User_action.Confirm task) in
-  Dispatcher.dispatch ~dispatcher:dispatch (M.close_dialog action)
+  Dispatcher.dispatch ~dispatcher:dispatch (M.Close_dialog_with_action task)
 
 let component =
   let render this =
+    let state = this##.props##.state in
+    let state' = state.C.State.server_state in
     let props = this##.props in
     let module T = C.Types.File_stat in
-    let pane = C.State.(active_pane props##.state) in
+    let pane = C.Server_state.(active_pane state') in
     let focused_item =
       let open Minimal_monadic_caml.Option.Infix in
       let module P = C.Types.Pane in
-      P.find_item ~id:pane.P.focused_item  pane
+      pane.P.focused_item >>= fun id -> P.find_item ~id pane
     in
     match focused_item with
     | None -> R.empty ()

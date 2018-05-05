@@ -7,7 +7,7 @@ module Component = R.Component.Make_stateful (struct
       method dispatch: Dispatcher.t Js.readonly_prop
       method title: Js.js_string Js.t Js.readonly_prop
       method content: Js.js_string Js.t Js.readonly_prop
-      method onComplete: (unit -> C.Types.User_action.t) Js.readonly_prop
+      method onComplete: (unit -> C.Message.t) Js.readonly_prop
     end
   end)(struct
     class type t = object
@@ -77,18 +77,15 @@ let key_handler ~dispatch ~this ev =
 
       let message =
         if this##.state##.confirmed then
-          let action = this##.props##.onComplete () |> C.Types.User_action.to_js in
-          M.close_dialog action
+          M.Close_dialog_with_action (this##.props##.onComplete ())
         else
-          M.close_dialog @@ C.Types.User_action.(to_js Cancel)
+          M.Close_dialog
       in
       Dispatcher.dispatch ~dispatcher:dispatch message
     end
   | _ when key = esc -> begin
       stop_default_behavior ev;
-
-      let message = M.close_dialog @@ C.Types.User_action.(to_js Cancel) in
-      Dispatcher.dispatch ~dispatcher:dispatch message
+      Dispatcher.dispatch ~dispatcher:dispatch M.Close_dialog
     end
   | _ when key = tab -> begin
       stop_default_behavior ev;
