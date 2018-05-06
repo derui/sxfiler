@@ -23,6 +23,9 @@ exec ros -Q -- $0 "$@"
 
 (defun main (&rest argv)
   (declare (ignorable argv))
+  (when (uiop:file-exists-p (uiop:merge-pathnames* "config.json" (uiop:getcwd)))
+    (with-open-file (stream (uiop:merge-pathnames* "config.json" (uiop:getcwd)))
+      (sxfiler/config:load-from-stream stream)))
   (setf *server* (jsonrpc:make-server))
 
   (sxfiler/main:expose-procedures *server*)
