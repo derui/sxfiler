@@ -1,7 +1,7 @@
 ("quicklisp" .
  (:class qlot.source.ql:source-ql-all
   :initargs (:project-name "quicklisp" :%version :latest)
-  :version "2018-03-28"))
+  :version "2018-04-30"))
 ("clack" .
  (:class qlot.source.git:source-git
   :initargs (:project-name "clack" :remote-url "https://github.com/fukamachi/clack.git")
@@ -17,23 +17,23 @@
 ("rove" .
  (:class qlot.source.ql:source-ql
   :initargs (:project-name "rove" :%version :latest)
-  :version "ql-2018-03-28"))
+  :version "ql-2018-04-30"))
 ("yason" .
  (:class qlot.source.ql:source-ql
   :initargs (:project-name "yason" :%version :latest)
-  :version "ql-2018-03-28"))
+  :version "ql-2018-04-30"))
 ("ironclad" .
  (:class qlot.source.ql:source-ql
   :initargs (:project-name "ironclad" :%version :latest)
-  :version "ql-2018-03-28"))
+  :version "ql-2018-04-30"))
 ("cl-syntax" .
  (:class qlot.source.ql:source-ql
   :initargs (:project-name "cl-syntax" :%version :latest)
-  :version "ql-2018-03-28"))
+  :version "ql-2018-04-30"))
 ("cl-ppcre" .
  (:class qlot.source.ql:source-ql
   :initargs (:project-name "cl-ppcre" :%version :latest)
-  :version "ql-2018-03-28"))
+  :version "ql-2018-04-30"))
 ("alexandria" .
  (:class qlot.source.ql:source-ql
   :initargs (:project-name "alexandria" :%version :latest)
