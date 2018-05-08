@@ -32,7 +32,7 @@ module Input = struct
   let arrow_down = Sxfiler_kbd.(to_keyseq {empty with key = "ArrowDown"})
   let key_handler ~this ev =
 
-    let key = Util.keyboard_event_to_key ev |> Js.to_string in
+    let key = Util.keyboard_event_to_key ev in
     match key with
     | _ when key = enter_key -> this##.props##.onSubmit ()
     | _ when key = esc -> this##.props##.onCancel ()

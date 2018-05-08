@@ -157,7 +157,7 @@ let toggle_permission this perm =
 
 let key_handler ~this ev =
 
-  let key = Util.keyboard_event_to_key ev |> Js.to_string in
+  let key = Util.keyboard_event_to_key ev in
   match key with
   | _ when key = enter_key -> handle_submit ~dispatch:this##.props##.dispatch this##.state
   | _ when key = esc -> handle_cancel ~dispatch:this##.props##.dispatch

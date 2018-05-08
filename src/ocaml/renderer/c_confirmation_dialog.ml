@@ -69,7 +69,7 @@ let key_handler ~dispatch ~this ev =
     ev##preventDefault;
     ev##stopPropagation
   in
-  let key = Util.keyboard_event_to_key ev |> Js.to_string in
+  let key = Util.keyboard_event_to_key ev in
   let module M = C.Message in
   match key with
   | _ when key = enter_key -> begin

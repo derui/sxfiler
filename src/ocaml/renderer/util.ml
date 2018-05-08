@@ -6,7 +6,7 @@ let special_key_mapping = function
 
 let keyboard_event_to_key v =
   let module K = Sxfiler_kbd in
-  Js.string @@ K.to_keyseq {
+  K.to_keyseq {
     K.key = special_key_mapping @@ Js.to_string v##.key;
     meta = Js.to_bool v##.altKey;
     ctrl = Js.to_bool v##.ctrlKey;

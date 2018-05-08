@@ -28,7 +28,7 @@ module Input = struct
   let enter_key = Sxfiler_kbd.(to_keyseq {empty with key = "Enter"})
   let key_handler ~this ev =
 
-    let key = Util.keyboard_event_to_key ev |> Js.to_string in
+    let key = Util.keyboard_event_to_key ev in
     match key with
     | _ when key = enter_key -> this##.props##.onSubmit this##.state##.value
     | _ when key = esc -> this##.props##.onCancel ()

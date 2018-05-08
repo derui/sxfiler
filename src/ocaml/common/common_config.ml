@@ -1,25 +1,34 @@
 module Key_map = Common_key_map
-type key_maps = {
-  file_list: Key_map.t;
-}
+
+module Key_maps = struct
+  type t = {
+    file_list: Key_map.t;
+  }
+
+  class type js = object
+    method fileList: Key_map.js Js.readonly_prop
+  end
+
+  let empty = {
+    file_list = Key_map.empty;
+  }
+
+  let of_js : js Js.t -> t = fun js -> {
+      file_list = Key_map.of_js js##.fileList;
+    }
+end
 
 type t = {
-  key_maps: key_maps;
+  key_maps: Key_maps.t;
 }
 
 class type js = object
-  method keyMapFileList: Key_map.t Js.readonly_prop
+  method keyMaps: Key_maps.js Js.t Js.readonly_prop
 end
 
 let empty = {
-  key_maps = {
-    file_list = Key_map.empty;
-  }
+  key_maps = Key_maps.empty;
 }
-
-let to_js t = object%js
-  val keyMapFileList = t.key_maps.file_list
-end
 
 let of_js js = {
   key_maps = {
