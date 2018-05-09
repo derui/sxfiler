@@ -6,7 +6,7 @@ module Key_maps = struct
   }
 
   class type js = object
-    method fileList: Key_map.js Js.readonly_prop
+    method fileList: Key_map.js Js.t Js.readonly_prop
   end
 
   let empty = {
