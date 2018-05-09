@@ -81,11 +81,13 @@ let key_handler ~dispatch ~this ev =
         else
           M.Close_dialog
       in
-      Dispatcher.dispatch ~dispatcher:dispatch message
+      let action = Action_creator.create_from_message message in
+      Dispatcher.dispatch ~dispatcher:dispatch action
     end
   | _ when key = esc -> begin
       stop_default_behavior ev;
-      Dispatcher.dispatch ~dispatcher:dispatch M.Close_dialog
+      let action = Action_creator.create_from_message M.Close_dialog in
+      Dispatcher.dispatch ~dispatcher:dispatch action
     end
   | _ when key = tab -> begin
       stop_default_behavior ev;

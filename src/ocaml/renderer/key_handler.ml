@@ -12,9 +12,8 @@ let handle_key_event: Dispatcher.t -> state:Sxfiler_common.State.t ->
       let key = Util.keyboard_event_to_key ev in
 
       let open Minimal_monadic_caml.Option.Infix in
-      let result = K.dispatch ~key_map ~key
-        >>= (fun action -> Action_mapper.to_message state action)
-        >>= (fun message -> Some (dispatcher message))
+      let result = K.find ~key_map ~key
+        >>= (fun action -> Some (Dispatcher.dispatch ~dispatcher @@ Action_creator.create action))
         >|= (fun () -> true)in
       Sxfiler_common.Util.Option.get ~default:false result
     end

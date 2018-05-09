@@ -92,7 +92,7 @@ module Component = R.Component.Make_stateful
 
 let handle_cancel ~dispatch () =
   let module M = C.Message in
-  Dispatcher.dispatch ~dispatcher:dispatch M.Close_dialog
+  Dispatcher.dispatch ~dispatcher:dispatch @@ Action_creator.create_from_message M.Close_dialog
 
 let handle_submit ~dispatch ~this v =
   let module M = C.Message in
@@ -105,12 +105,15 @@ let handle_submit ~dispatch ~this v =
   let message = this##.props##.onExecute selected in
   match message with
   | None -> ()
-  | Some message -> Dispatcher.dispatch ~dispatcher:dispatch (M.Close_dialog_with_action message)
+  | Some message ->
+    let action = Action_creator.create_from_message (M.Close_dialog_with_action message) in
+    Dispatcher.dispatch ~dispatcher:dispatch action
 
 let handle_input ~dispatch path =
   let module M = C.Message in
   let path = Js.to_string path in
-  Dispatcher.dispatch ~dispatcher:dispatch (M.Refresh_candidates_request path)
+  let action = Action_creator.create_from_message (M.Refresh_candidates_request path) in
+  Dispatcher.dispatch ~dispatcher:dispatch action
 
 let handle_cursor ~this = function
   | `Up ->

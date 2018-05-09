@@ -90,12 +90,14 @@ module Component = R.Component.Make_stateful
 
 let handle_cancel ~dispatch () =
   let module M = C.Message in
-  Dispatcher.dispatch ~dispatcher:dispatch M.Close_dialog
+  Dispatcher.dispatch ~dispatcher:dispatch
+    @@ Action_creator.create_from_message M.Close_dialog
 
 let handle_submit ~this ~dispatch v =
   let module M = C.Message in
   let task = this##.props##.onExecute v in
-  Dispatcher.dispatch ~dispatcher:dispatch (M.Close_dialog_with_action task)
+  Dispatcher.dispatch ~dispatcher:dispatch
+    @@ Action_creator.create_from_message (M.Close_dialog_with_action task)
 
 let component =
   let render this =

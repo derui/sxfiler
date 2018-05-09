@@ -101,7 +101,7 @@ let make_state ?currentRane ?owner ?group ?others current =
 
 let handle_cancel ~dispatch =
   let module M = C.Message in
-  Dispatcher.dispatch ~dispatcher:dispatch M.Close_dialog
+  Dispatcher.dispatch ~dispatcher:dispatch @@ Action_creator.create_from_message M.Close_dialog
 
 let make_permission state =
   let owner = state##.owner
@@ -119,7 +119,8 @@ let handle_submit ~dispatch v =
   let module M = C.Message in
   let module T = C.Types in
   let action = M.Change_permission (make_permission v) in
-  Dispatcher.dispatch ~dispatcher:dispatch (M.Close_dialog_with_action action)
+  Dispatcher.dispatch ~dispatcher:dispatch
+    @@ Action_creator.create_from_message @@ M.Close_dialog_with_action action
 
 let esc = Sxfiler_kbd.(to_keyseq {empty with key = "Escape"})
 let enter_key = Sxfiler_kbd.(to_keyseq {empty with key = "Enter"})
