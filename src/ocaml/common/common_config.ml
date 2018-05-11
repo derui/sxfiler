@@ -31,7 +31,5 @@ let empty = {
 }
 
 let of_js js = {
-  key_maps = {
-    file_list = js##.keyMapFileList;
-  }
+  key_maps = Key_maps.of_js js##.keyMaps
 }
