@@ -19,7 +19,7 @@
            #:renew-file-list
            #:toggle-mark
            #:find-focused-item
-           #:focus-item))
+           #:move-focus))
 (in-package #:sxfiler/types/pane)
 
 ;; pane: contains all state of pane without visual information
@@ -76,7 +76,6 @@ Return nil if directory do not found or is not directory"
         (dir (if directory directory (pane-directory obj))))
     (when (uiop:probe-file* dir :truename t)
       (setf (pane-directory copied-pane) (namestring (uiop:probe-file* dir :truename t))))
-
     (setf (pane-file-list copied-pane) (files-in-directory dir))
     (setf (pane-marked-item copied-pane) (copy-list (pane-marked-item obj)))
     copied-pane))
@@ -87,7 +86,7 @@ Return nil if directory do not found or is not directory"
   (check-type id string)
   (let ((file-list (pane-file-list pane))
         (copied (copy-structure pane)))
-    (if (member-if (lambda (v) (string= id (sxfiler/types/file-stat:file-stat-id v)))
+    (if (member-if #'(lambda (v) (string= id (file-stat-id v)))
                    file-list)
         (progn
           (setf (pane-marked-item copied) (if (member id (pane-marked-item copied) :test #'string=)
@@ -103,14 +102,21 @@ Return nil if directory do not found or is not directory"
     (find-if #'(lambda (v) (string= (file-stat-id v) focused))
              (pane-file-list pane))))
 
-(defun focus-item (pane item)
-  "Focus ITEM if file list of PANE contains it.
-This function returns new pane structure if found ITEM."
+(defun move-focus (pane amount)
+  "Move focus on file list of PANE with AMOUNT. If AMOUNT is negative,
+move focus backword, or move it forward if AMOUNT is positive.
+
+Return new `pane' structure focusd item updated.
+ "
   (check-type pane pane)
-  (check-type item sxfiler/types/file-stat:file-stat)
-  (if-let ((item (find-if #'(lambda (v) (file-stat-equal v item))
-                          (pane-file-list pane))))
-    (let ((pane (copy-structure pane)))
-      (setf (pane-focused-item pane) (file-stat-id item))
-      pane)
-    pane))
+  (check-type amount integer)
+  (let ((focused (pane-focused-item pane))
+        (file-list (pane-file-list pane)))
+    (alexandria:if-let ((pos (position-if #'(lambda (v) (string= (file-stat-id v) focused))
+                                          file-list)))
+      (let ((next-pos (max 0 (min (1- (length file-list)) (+ pos amount)))))
+        (let ((item (elt file-list next-pos))
+              (new-pane (copy-structure pane)))
+          (setf (pane-focused-item new-pane) (file-stat-id item))
+          new-pane))
+      pane)))
