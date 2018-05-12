@@ -134,7 +134,7 @@ module Pane = struct
 
   let index_item ~id pane =
     let rec find ary v ind =
-      if Array.length ary <= ind then 0
+      if Array.length ary <= ind then -1
       else if v = ary.(ind).File_stat.id then ind
       else find ary v (succ ind)
     in

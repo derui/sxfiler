@@ -71,36 +71,22 @@ module Pane = struct
     let parsed : S.js Js.t = Js._JSON##parse json in
     S.of_js parsed
 
-  module Focus : Api_def with type params = C.Types.file_id
-                          and type result = S.t
+  module Move_focus : Api_def with type params = int
+                               and type result = S.t
   = struct
     type result = S.t
-    type params = C.Types.file_id
+    type params = int
 
-    let name = "pane/focus"
-    let params_to_json id =
-      match id with
+    let name = "pane/moveFocus"
+    let params_to_json amount =
+      match amount with
       | None -> None
-      | Some id -> Some (`List ([`String id]))
-    let result_of_json = result_to_state
-  end
-
-  module Toggle_mark : Api_def with type params = C.Types.file_id
-                          and type result = S.t
-  = struct
-    type result = S.t
-    type params = C.Types.file_id
-
-    let name = "pane/toggleMark"
-    let params_to_json id =
-      match id with
-      | None -> None
-      | Some id -> Some (`List ([`String id]))
+      | Some amount -> Some (`List ([`Int amount]))
     let result_of_json = result_to_state
   end
 
   module Sync_pane: Api_def with type params = unit
-                          and type result = S.t
+                             and type result = S.t
   = struct
     type result = S.t
     type params = unit
