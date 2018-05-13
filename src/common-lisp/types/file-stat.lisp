@@ -66,7 +66,7 @@ size of item, atime, ctime, and mtime.
 
 ;; function to probe file stat.
 (defun get-file-stat (path)
-  (let* ((path (uiop:probe-file* path)))
+  (let* ((path (uiop:probe-file* path :truename t)))
     (when path
       (multiple-value-bind (result dev ino mode nlink uid gid rdev size atime mtime ctime blksize blocks)
           (sb-unix:unix-lstat (namestring path))
@@ -111,7 +111,7 @@ size of item, atime, ctime, and mtime.
   (yason:with-output (stream)
     (yason:with-object ()
       (enc-stat object '(("id" . file-stat-id)
-                         ("filename" . file-stat-filename)
+                         ("fileName" . file-stat-filename)
                          ("directory" . file-stat-directory)
                          ("linkPath" . file-stat-link-path)
                          ("uid" . file-stat-uid)
