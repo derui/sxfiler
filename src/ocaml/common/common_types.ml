@@ -9,6 +9,9 @@ type sort_type =
 type file_id = string
 
 module File_stat = struct
+  (** Type of stat of file. Note: The value of *time (atime, ctime, mtime) fields has time value
+      in term of milliseconds, not seconds.
+  *)
   type t = {
     id: file_id;
     filename: string;
@@ -28,16 +31,16 @@ module File_stat = struct
 
   class type js = object
     method id: Js.js_string Js.t Js.readonly_prop
-    method filename: Js.js_string Js.t Js.readonly_prop
+    method fileName: Js.js_string Js.t Js.readonly_prop
     method directory: Js.js_string Js.t Js.readonly_prop
     method linkPath: Js.js_string Js.t Js.opt Js.readonly_prop
     method mode: Js.number Js.t Js.readonly_prop
     method uid: int Js.readonly_prop
     method gid: int Js.readonly_prop
-    method atime: int64 Js.readonly_prop
-    method ctime: int64 Js.readonly_prop
-    method mtime: int64 Js.readonly_prop
-    method size: int64 Js.readonly_prop
+    method atime: float Js.readonly_prop
+    method ctime: float Js.readonly_prop
+    method mtime: float Js.readonly_prop
+    method size: float Js.readonly_prop
     method isDirectory: bool Js.t Js.readonly_prop
     method isFile: bool Js.t Js.readonly_prop
     method isSymlink: bool Js.t Js.readonly_prop
@@ -75,25 +78,37 @@ module File_stat = struct
 
   let of_js : js Js.t -> t = fun js -> {
     id = Js.to_string js##.id;
-    filename = Js.to_string js##.filename;
+    filename = Js.to_string js##.fileName;
     directory = Js.to_string js##.directory;
     link_path = Js.Opt.map (js##.linkPath) Js.to_string |> Js.Opt.to_option;
     mode = Js.float_of_number (js##.mode) |> Int32.of_float;
     uid = js##.uid;
     gid = js##.gid;
-    atime = js##.atime;
-    ctime = js##.ctime;
-    mtime = js##.mtime;
-    size = js##.size;
+    atime = Int64.of_float (js##.atime *. 1000.0);
+    ctime = Int64.of_float (js##.ctime *. 1000.0);
+    mtime = Int64.of_float (js##.mtime *. 1000.0);
+    size = Int64.of_float js##.size;
     is_directory = Js.to_bool js##.isDirectory;
     is_file = Js.to_bool js##.isFile;
     is_symlink = Js.to_bool js##.isSymlink;
   }
 end
 
+module Pane_location = struct
+  type t = [`Left | `Right]
+  type js = Js.js_string
+
+  let of_js js =
+    match Js.to_string js with
+    | v when v = "left" -> `Left
+    | v when v = "right" -> `Right
+    | _ -> failwith "Unknown type"
+end
+
 module Pane = struct
   type index = int
   type t = {
+    location: Pane_location.t;
     directory: string;
     file_list: File_stat.t array;
     focused_item: file_id option;
@@ -101,16 +116,18 @@ module Pane = struct
   }
 
   class type js = object
+    method location: Pane_location.js Js.t Js.readonly_prop
     method directory: Js.js_string Js.t Js.readonly_prop
-    method fileList: File_stat.js Js.t Js.js_array Js.t Js.readonly_prop
+    method fileList: File_stat.js Js.t Js.js_array Js.t Js.opt Js.readonly_prop
     method focusedItem: Js.js_string Js.t Js.opt Js.readonly_prop
-    method markedItems: Js.js_string Js.t Js.js_array Js.t Js.readonly_prop
+    method markedItems: Js.js_string Js.t Js.js_array Js.t Js.opt Js.readonly_prop
   end
 
   let equal = (=)
 
   let make ?(file_list=[||]) ?focused_item ?(marked_items=[]) ~directory () =
     {
+      location = `Left;
       directory;
       file_list;
       focused_item;
@@ -118,11 +135,18 @@ module Pane = struct
     }
 
   let of_js : js Js.t -> t = fun js ->
+    let list_to_array list conv =
+      let list = Js.Opt.to_option list in
+      match list with
+      | None -> [||]
+      | Some list -> Js.to_array list |> Array.map conv
+    in
     {
+      location = Pane_location.of_js js##.location;
       directory = Js.to_string js##.directory;
-      file_list = Js.to_array js##.fileList |> Array.map File_stat.of_js;
+      file_list = list_to_array js##.fileList File_stat.of_js;
       focused_item = Js.Opt.map js##.focusedItem Js.to_string |> Js.Opt.to_option;
-      marked_items = Js.to_array js##.markedItems |> Array.map Js.to_string |> Array.to_list;
+      marked_items = list_to_array js##.markedItems Js.to_string |> Array.to_list;
     }
 
   let is_focused ~id pane = match pane.focused_item with
@@ -245,17 +269,6 @@ module Task_request = struct
   end
 
   let of_js js = js##._type
-end
-
-module Pane_location = struct
-  type t = [`Left | `Right]
-  type js = Js.js_string
-
-  let of_js js =
-    match Js.to_string js with
-    | v when v = "left" -> `Left
-    | v when v = "right" -> `Right
-    | _ -> failwith "Unknown type"
 end
 
 module Dialog_type = struct

@@ -64,6 +64,7 @@ let component =
     let children = Array.mapi (fun index item ->
         let module F = C.Types.File_stat in
         R.create_element ~key:item.F.id ~props:(object%js
+          val baseDirectory = Js.string pane.P.directory
           val item = item
           val selected = P.is_focused ~id:item.F.id pane
           val focused = this##.props##.focused

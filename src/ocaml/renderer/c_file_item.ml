@@ -3,6 +3,7 @@ module R = Jsoo_reactjs
 
 module Component = R.Component.Make_stateful (struct
     class type t = object
+      method baseDirectory: Js.js_string Js.t Js.readonly_prop
       method item: C.Types.File_stat.t Js.readonly_prop
       method selected: bool Js.readonly_prop
       method focused: bool Js.readonly_prop
@@ -34,7 +35,9 @@ let component =
         val size = stat.T.size
       end) C_file_size.component
     and file_name = R.create_element ~key:"name" ~props:(object%js
+        val baseDirectory = props##.baseDirectory
         val fileName = Js.string stat.T.filename
+        val directory = Js.string stat.T.directory
         val isDirectory = stat.T.is_directory
         val isSymbolicLink = stat.T.is_symlink
         val marked = props##.marked

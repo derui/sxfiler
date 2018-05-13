@@ -174,7 +174,7 @@ let component =
     let props = this##.props in
     let state = props##.state in
     let module T = C.Types.File_stat in
-    let pane = C.(Server_state.active_pane state.State.server_state) in
+    let pane = C.(state.State.server_state.Server_state.active_pane) in
     let focused_item =
       let module P = C.Types.Pane in
       let open Minimal_monadic_caml.Option.Infix in
@@ -217,7 +217,7 @@ let component =
             let module T = C.Types.File_stat in
             let module Pane = C.Types.Pane in
             let state = props##.state in
-            let pane = C.(Server_state.active_pane state.State.server_state) in
+            let pane = C.(state.State.server_state.Server_state.active_pane) in
             let open Minimal_monadic_caml.Option in
             let open Infix in
             this##.state := object%js

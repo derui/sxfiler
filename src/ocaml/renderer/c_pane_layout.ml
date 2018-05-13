@@ -23,8 +23,8 @@ let component = Component.make (fun props ->
       end) C_file_list_pane.component
     in
     let state' = state.C.State.server_state in
-    let left_pane = state'.C.Server_state.left_pane
-    and right_pane = state'.C.Server_state.right_pane in
+    let left_pane = C.Server_state.pane ~loc:`Left state'
+    and right_pane = C.Server_state.pane ~loc:`Right state' in
     let left_pane = create_pane_element "left" left_pane @@ C.Server_state.is_left_active state'
     and right_pane = create_pane_element "right" right_pane @@ C.Server_state.is_right_active state' in
     let children = [
