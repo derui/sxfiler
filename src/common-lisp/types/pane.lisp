@@ -6,6 +6,8 @@
   (:import-from #:sxfiler/types/file-stat
                 #:file-stat-id
                 #:file-stat-equal
+                #:file-stat-directory
+                #:file-stat-filename
                 #:get-file-stat)
   (:import-from #:alexandria
                 #:if-let)
@@ -26,6 +28,8 @@
 
 (defstruct pane
   (location :left :type (member :left :right))
+  (sort-mode :name :type (member :name :date))
+  (sort-order :asc :type (member :asc :desc))
   (directory "" :type string)
   (file-list (list) :type list)
   (focused-item nil :type (or null string))
@@ -69,6 +73,27 @@ Return nil if directory do not found or is not directory"
                    (mapcar #'get-file-stat (uiop:subdirectories directory)))
       '()))
 
+(defun sort-file-list (file-list &key (mode :name) (order :asc))
+  "Sort the file list by MODE. This function does not mutate original FILE-LIST"
+  (check-type file-list list)
+  (check-type mode (member :name :date))
+  (check-type order (member :asc :desc))
+
+  (let ((copied-list (copy-list file-list))
+        (key (ecase mode
+               (:name #'(lambda (v)
+                          (namestring (uiop:subpathname* (sxfiler/types/file-stat:file-stat-directory v)
+                                                         (sxfiler/types/file-stat:file-stat-filename v)))))
+               (:date #'sxfiler/types/file-stat:file-stat-mtime)))
+        (orderp (ecase order
+                  (:asc (ecase mode
+                          (:name #'string<)
+                          (:date #'<)))
+                  (:desc (ecase mode
+                           (:name #'string>)
+                           (:date #'>))))))
+    (sort copied-list orderp :key key)))
+
 (defun renew-file-list (obj &key (directory nil))
   "Get file-list renewaled pane object."
   (check-type obj pane)
@@ -76,8 +101,14 @@ Return nil if directory do not found or is not directory"
         (dir (if directory directory (pane-directory obj))))
     (when (uiop:probe-file* dir :truename t)
       (setf (pane-directory copied-pane) (namestring (uiop:probe-file* dir :truename t))))
-    (setf (pane-file-list copied-pane) (files-in-directory dir))
+    (setf (pane-file-list copied-pane)
+          (sort-file-list (files-in-directory dir)
+                          :mode (pane-sort-mode copied-pane)
+                          :order (pane-sort-order copied-pane)))
     (setf (pane-marked-item copied-pane) (copy-list (pane-marked-item obj)))
+    (setf (pane-focused-item copied-pane)
+          (when (first (pane-file-list copied-pane))
+            (file-stat-id (first (pane-file-list copied-pane)))))
     copied-pane))
 
 (defun toggle-mark (pane id)
@@ -112,8 +143,8 @@ Return new `pane' structure focusd item updated.
   (check-type amount integer)
   (let ((focused (pane-focused-item pane))
         (file-list (pane-file-list pane)))
-    (alexandria:if-let ((pos (position-if #'(lambda (v) (string= (file-stat-id v) focused))
-                                          file-list)))
+    (if-let ((pos (position-if #'(lambda (v) (string= (file-stat-id v) focused))
+                               file-list)))
       (let ((next-pos (max 0 (min (1- (length file-list)) (+ pos amount)))))
         (let ((item (elt file-list next-pos))
               (new-pane (copy-structure pane)))
