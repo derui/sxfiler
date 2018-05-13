@@ -94,6 +94,15 @@ do nothing.
     (setf (state-active-pane state) (sxfiler/types/pane:move-focus active-pane amount))
     state))
 
+(defun jump-directory-on-active-pane (state directory)
+  "Jump to directory of active pane"
+  (check-type state sxfiler/state:state)
+  (check-type directory string)
+  (let ((active-pane (state-active-pane state)))
+    (setf (state-active-pane state) (sxfiler/types/pane:renew-file-list active-pane
+                                                                        :directory directory))
+    state))
+
 (defun expose (server)
   (check-type server jsonrpc:server)
   (jsonrpc:expose server "pane/moveFocus" #'(lambda (args)
@@ -119,4 +128,8 @@ do nothing.
   (jsonrpc:expose server "pane/enterDirectory" #'(lambda (args)
                                                    (declare (ignorable args))
                                                    (with-root-state (state)
-                                                     (enter-directory state)))))
+                                                     (enter-directory state))))
+  (jsonrpc:expose server "pane/jump" #'(lambda (args)
+                                         (declare (type list args))
+                                         (with-root-state (state)
+                                           (jump-directory-on-active-pane state (first args))))))
