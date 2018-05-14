@@ -20,6 +20,11 @@ let () =
           let root = store.Store.state in
           Store.update store {root with C.State.server_state}
         ) (Some ()) |> Lwt.ignore_result;
+
+      Rpc.request rpc (module Api.Config.Current) (fun config ->
+          let root = store.Store.state in
+          Store.update store {root with C.State.config}
+        ) (Some ()) |> Lwt.ignore_result;
       Js._true
     );
 

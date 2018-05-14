@@ -15,7 +15,7 @@ module Component = R.Component.Make_stateful (struct
 let key_handler ~dispatch ~state ev =
   let config = state.C.State.config in
   let key_map = C.Config.(config.key_maps.Key_maps.file_list) in
-  let dispatched = Key_handler.handle_key_event dispatch ~state ~ev ~key_map in
+  let dispatched = Key_handler.handle_key_event dispatch ~ev ~key_map in
   if dispatched then begin
     ev##preventDefault; ev##stopPropagation
   end else ()
