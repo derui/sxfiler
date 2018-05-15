@@ -51,7 +51,7 @@ let action_of_string module_name action =
   | _ -> Thrid_party (module_name, action)
 
 let of_string action =
-  let has_splitter = String.index action ':' <> -1 in
+  let has_splitter = String.index_opt action ':' <> None in
   if has_splitter then begin
     let module_name = String.split_on_char ':' action in
     match module_name with
