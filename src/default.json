@@ -1,22 +1,22 @@
 {
   "key_map": {
     "file_list": {
-      "j": ["Next_item"],
-      "k": ["Prev_item"],
-      "h": ["Leave_directory"],
-      "l": ["Enter_directory"],
-      "q": ["Quit"],
-      "d": ["Delete"],
-      "c": ["Copy"],
-      "m": ["Move"],
-      "r": ["Rename"],
-      "o": ["Jump"],
-      "Enter": ["Enter_directory"],
-      "Tab": ["Change_active_pane"],
-      "Space": ["Toggle_mark"],
-      "+": ["Make_dir"],
-      "H": ["History"],
-      "M": ["Change_permission"]
+      "j": "next_item",
+      "k": "prev_item",
+      "h": "leave_directory",
+      "l": "enter_directory",
+      "q": "quit",
+      "d": "delete",
+      "c": "copy",
+      "m": "move",
+      "r": "rename",
+      "o": "jump",
+      "Enter": "enter_directory",
+      "Tab": "change_active_pane",
+      "Space": "toggle_mark",
+      "+": "make_dir",
+      "H": "history",
+      "M": "change_permission"
     }
   }
 }

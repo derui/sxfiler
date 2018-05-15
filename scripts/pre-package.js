@@ -1,4 +1,5 @@
 const { execFileSync } = require('child_process');
+const fs = require('fs');
 
 
 function copyFiles(production) {
@@ -14,11 +15,13 @@ function copyFiles(production) {
 
   execFileSync('cpx', [`./src/{${files}}`, './dist'], { stdio: 'inherit' });
 
+  let indexName = 'index_dev.js';
   if (production) {
-    execFileSync('cpx', ['./src/index_prod.js', './dist/index.js'], {stdio: 'inherit'});
-  } else {
-    execFileSync('cpx', ['./src/index_dev.js', './dist/index.js'], {stdio: 'inherit'});
+    indexName = 'index_prod.js';
   }
+
+  execFileSync('cpx', [`./src/${indexName}`, './dist'], {stdio: 'inherit'});
+  fs.renameSync(`./dist/${indexName}`, "./dist/index.js");
 }
 
 module.exports.copyFiles = copyFiles;
