@@ -22,11 +22,13 @@
        (<= 2 (length (alexandria:plist-alist key-def)))))
 
 (defun extract-config-components (form)
+  "Take a alist that contains each components in FORM."
   (check-type form list)
   (let ((key-maps (cdr (assoc :key-maps (cdr form)))))
     (list :key-maps key-maps)))
 
 (defun parse-key-map (key-maps pane-type)
+  "Read a key map bound PANE-TYPE in KEY-MAPS."
   (check-type key-maps list)
   (check-type pane-type symbol)
   (if (not (null key-maps))
@@ -42,6 +44,7 @@
       (make-hash-table)))
 
 (defun parse-key-maps (key-maps)
+  "Make key maps from KEY-MAPS."
   (when (and key-maps
              (not (null key-maps)))
     (let ((file-list-map (parse-key-map key-maps :file-list)))
