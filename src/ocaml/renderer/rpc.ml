@@ -1,6 +1,7 @@
 (* Provides RPC interface via WebSocket *)
 
-module R = Jsonrpc_ocaml
+module Rpc = Jsonrpc_ocaml.Rpc_intf
+module R = Jsonrpc_ocaml_jsoo
 
 type t = {
   ws: WebSockets.webSocket Js.t;
@@ -9,14 +10,16 @@ type t = {
   id_handler_map: (R.Response.t -> unit) Jstable.t
 }
 
-module type Rpc = R.Client.Rpc with module Thread := Lwt
+module type Rpc = Rpc.S with module Thread := Lwt
+                         and module Response := R.Response
+                         and module Request := R.Request
 
 let make ws =
   let id_handler_map = Jstable.create () in
   (* apply message handler to given websocket *)
   let message_handler = Dom.handler (fun message ->
       let open Minimal_monadic_caml.Option.Infix in
-      let response = R.Response.of_json (Yojson.Basic.from_string @@ Js.to_string message##.data) in
+      let response = R.Response.of_json (Js._JSON##parse message##.data) in
       let _ = match response with
         | Ok res -> begin
             res.R.Response.id >>= (fun id ->
@@ -39,17 +42,15 @@ let make ws =
   let t = {ws; message_handler; id_handler_map} in
 
   (module struct
-    module Thread = Lwt
-
     let call_api ?handler req =
       let _ = match (req.R.Request.id, handler) with
         | (Some id, Some handler) -> Jstable.add t.id_handler_map (Js.string @@ Int64.to_string id) handler
         | (None, _) | (_, None) -> ()
       in
 
-      let json = R.Request.to_json req |> Yojson.Basic.to_string |> Js.string in
+      let json = Js._JSON##stringify (R.Request.to_json req) in
       t.ws##send json;
-      Thread.return ()
+      Lwt.return ()
 
   end : Rpc)
 

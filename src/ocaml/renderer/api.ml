@@ -1,13 +1,13 @@
 module C = Sxfiler_common
 module S = Sxfiler_common.Server_state
-module type Api_def = Jsonrpc_ocaml.Client.Api_def
+module type Api_def = Jsonrpc_ocaml_jsoo.Client.Api_def
 
 (** Root level APIs *)
 module Root = struct
-  let result_to_state result =
-    let json = Yojson.Basic.to_string result |> Js.string in
-    let parsed : S.js Js.t = Js._JSON##parse json in
-    S.of_js parsed
+  (* It is very unsafe to convert from js object having unknown type to State object, but
+     unsave conversions takes only this place.
+  *)
+  let result_to_state js = S.of_js @@ Js.Unsafe.coerce js
 
   (** Get current state *)
   module Get_current_state : Api_def with type params = unit
@@ -15,6 +15,7 @@ module Root = struct
   = struct
     type result = S.t
     type params = unit
+    type json = < > Js.t
 
     let name = "getCurrentState"
     let params_to_json _ = None
@@ -27,6 +28,7 @@ module Root = struct
   = struct
     type result = S.t
     type params = unit
+    type json = < > Js.t
 
     let name = "swapActivePane"
     let params_to_json _ = None
@@ -36,16 +38,14 @@ end
 
 (** APIs for config  *)
 module Config = struct
-  let result_to_config result =
-    let json = Yojson.Basic.to_string result |> Js.string in
-    let parsed : C.Config.js Js.t = Js._JSON##parse json in
-    C.Config.of_js parsed
+  let result_to_config result = C.Config.of_js @@ Js.Unsafe.coerce result
 
   module Current : Api_def with type params = unit
                             and type result = C.Config.t
   = struct
     type result = C.Config.t
     type params = unit
+    type json = < > Js.t
 
     let name = "config/current"
     let params_to_json _ = None
@@ -57,6 +57,7 @@ module Config = struct
   = struct
     type result = C.Config.t
     type params = unit
+    type json = < > Js.t
 
     let name = "config/load"
     let params_to_json _ = None
@@ -66,22 +67,20 @@ end
 
 (** APIs for config  *)
 module Pane = struct
-  let result_to_state result =
-    let json = Yojson.Basic.to_string result |> Js.string in
-    let parsed : S.js Js.t = Js._JSON##parse json in
-    S.of_js parsed
+  let result_to_state result = S.of_js @@ Js.Unsafe.coerce result
 
   module Move_focus : Api_def with type params = int
                                and type result = S.t
   = struct
     type result = S.t
     type params = int
+    type json = < > Js.t
 
     let name = "pane/moveFocus"
     let params_to_json amount =
       match amount with
       | None -> None
-      | Some amount -> Some (`List ([`Int amount]))
+      | Some amount -> Some (Js.Unsafe.coerce @@ Js.array [|amount|])
     let result_of_json = result_to_state
   end
 
@@ -90,6 +89,7 @@ module Pane = struct
   = struct
     type result = S.t
     type params = unit
+    type json = < > Js.t
 
     let name = "pane/toggleMark"
     let params_to_json _ = None
@@ -101,6 +101,7 @@ module Pane = struct
   = struct
     type result = S.t
     type params = unit
+    type json = < > Js.t
 
     let name = "pane/upDirectory"
     let params_to_json _ = None
@@ -112,6 +113,7 @@ module Pane = struct
   = struct
     type result = S.t
     type params = unit
+    type json = < > Js.t
 
     let name = "pane/reload"
     let params_to_json _ = None
@@ -123,6 +125,7 @@ module Pane = struct
   = struct
     type result = S.t
     type params = unit
+    type json = < > Js.t
 
     let name = "pane/enterDirectory"
     let params_to_json _ = None
