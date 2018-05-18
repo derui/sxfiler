@@ -6,6 +6,7 @@
            #:make-key-maps
            #:config
            #:make-config
+           #:config-key-maps
            #:load-from-stream))
 (in-package #:sxfiler/config)
 
@@ -28,15 +29,3 @@ and value of key is name of function.
   (yason:with-output (stream)
     (yason:with-object ()
       (yason:encode-object-element "keyMaps" (config-key-maps object)))))
-
-(defun load-from-stream (stream)
-  "Load configuration structure from stream."
-  (check-type stream stream)
-
-  (let ((parsed (yason:parse stream))
-        (config (make-config)))
-    (setf (key-maps-file-list (config-key-maps config))
-          (or (gethash "file_list" (or (gethash "key_map" parsed)
-                                       (make-hash-table)))
-              (make-hash-table)))
-    config))
