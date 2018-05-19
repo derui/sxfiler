@@ -24,7 +24,7 @@
   :author "derui"
   :license "MIT"
   :depends-on (:rove
-               :sxfiler/t/parse-config
+               :sxfiler/t/config
                :sxfiler/t/types/pane)
   :perform (asdf:test-op (o c)
                          (uiop:symbol-call :rove '#:run c)))

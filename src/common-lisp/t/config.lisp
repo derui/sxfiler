@@ -1,7 +1,7 @@
 (in-package #:cl-user)
-(defpackage #:sxfiler/t/parse-config
-  (:use #:cl #:rove #:sxfiler/parse-config #:sxfiler/config))
-(in-package #:sxfiler/t/parse-config)
+(defpackage #:sxfiler/t/config
+  (:use #:cl #:rove #:sxfiler/config))
+(in-package #:sxfiler/t/config)
 
 (defun config-json-equal (config1 config2)
   (let ((actual (make-string-output-stream))
