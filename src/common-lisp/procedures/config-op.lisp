@@ -32,6 +32,5 @@
   (jsonrpc:expose server "config/load" #'(lambda (args)
                                            (declare (ignorable args))
                                            (with-config (config)
-                                             (with-open-file (stream "default.json")
-                                               (setf *config* (sxfiler/config:load-from-stream stream))
-                                               *config*)))))
+                                             (setf *config* (sxfiler/config:load-from-file "default-config.lisp"))
+                                             *config*))))
