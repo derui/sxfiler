@@ -16,6 +16,17 @@ let move_focus ~amount ctx =
   >>= fun () -> waiter
   >>= fun server_state -> Lwt.return {ctx.state with C.State.server_state}
 
+let enter_directory ctx =
+  let open Context in
+  let waiter, waker = Lwt.wait () in
+  let open Lwt.Infix in
+  Rpc.request
+    ctx.rpc
+    (module Api.Pane.Enter_directory)
+    (Lwt.wakeup waker) None
+  >>= fun () -> waiter
+  >>= fun server_state -> Lwt.return {ctx.state with C.State.server_state}
+
 (** Create action that is executable with renderer context *)
 let create = function
   | C.Callable_action.Core action -> begin
@@ -27,6 +38,7 @@ let create = function
                                               }
       | Next_item -> fun ctx -> move_focus ~amount:1 ctx
       | Prev_item -> fun ctx -> move_focus ~amount:(-1) ctx
+      | Core.Enter_directory -> fun ctx -> enter_directory ctx
       | Unknown action -> fun ctx -> Lwt.fail_with @@ Printf.sprintf "Unknown action for core module: %s" action
       | _ -> failwith "not implemented yet"
     end
