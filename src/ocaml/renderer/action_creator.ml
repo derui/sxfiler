@@ -5,6 +5,7 @@ type message = M.t
 type key_action = C.Callable_action.t
 type action = Context.t -> C.State.t Lwt.t
 
+(** action implementation to move cursor to next/prev *)
 let move_focus ~amount ctx =
   let open Context in
   let waiter, waker = Lwt.wait () in
@@ -16,6 +17,7 @@ let move_focus ~amount ctx =
   >>= fun () -> waiter
   >>= fun server_state -> Lwt.return {ctx.state with C.State.server_state}
 
+(** action implementation to enter into focusing directory *)
 let enter_directory ctx =
   let open Context in
   let waiter, waker = Lwt.wait () in
@@ -23,6 +25,18 @@ let enter_directory ctx =
   Rpc.request
     ctx.rpc
     (module Api.Pane.Enter_directory)
+    (Lwt.wakeup waker) None
+  >>= fun () -> waiter
+  >>= fun server_state -> Lwt.return {ctx.state with C.State.server_state}
+
+(** action implementation to leave from current directory *)
+let leave_directory ctx =
+  let open Context in
+  let waiter, waker = Lwt.wait () in
+  let open Lwt.Infix in
+  Rpc.request
+    ctx.rpc
+    (module Api.Pane.Up_directory)
     (Lwt.wakeup waker) None
   >>= fun () -> waiter
   >>= fun server_state -> Lwt.return {ctx.state with C.State.server_state}
@@ -38,7 +52,8 @@ let create = function
                                               }
       | Next_item -> fun ctx -> move_focus ~amount:1 ctx
       | Prev_item -> fun ctx -> move_focus ~amount:(-1) ctx
-      | Core.Enter_directory -> fun ctx -> enter_directory ctx
+      | Enter_directory -> fun ctx -> enter_directory ctx
+      | Leave_directory -> fun ctx -> leave_directory ctx
       | Unknown action -> fun ctx -> Lwt.fail_with @@ Printf.sprintf "Unknown action for core module: %s" action
       | _ -> failwith "not implemented yet"
     end
