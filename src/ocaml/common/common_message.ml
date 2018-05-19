@@ -5,4 +5,5 @@ type t =
   | Refresh_candidates_request of string
   | Change_permission of int
   | Jump_directory of string
+  | Copy_files
 [@@derivng variants]

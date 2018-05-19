@@ -132,3 +132,21 @@ module Pane = struct
     let result_of_json = result_to_state
   end
 end
+
+(** APIs for file operation  *)
+module File = struct
+  let result_to_state result = S.of_js @@ Js.Unsafe.coerce result
+
+  module Copy : Api_def with type params = unit
+                         and type result = S.t
+  = struct
+    type result = S.t
+    type params = unit
+    type json = < > Js.t
+
+    let name = "file/copy"
+    let params_to_json _ = None
+    let result_of_json = result_to_state
+  end
+
+end
