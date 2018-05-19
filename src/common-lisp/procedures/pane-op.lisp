@@ -42,7 +42,7 @@ do nothing.
   (check-type state sxfiler/state:state)
   (let ((active-pane (state-active-pane state)))
     (let ((new-pane (enter-focused-directory active-pane)))
-      (setf (update-active-pane state) new-pane)
+      (setf (state-active-pane state) new-pane)
       state)))
 
 (defun up-directory (pane)
@@ -55,7 +55,7 @@ do nothing.
 (defun up-directory-of-active-pane (state)
   "Up directory from current directory of active pane."
   (check-type state sxfiler/state:state)
-  (let ((active-pane (pane-active-pane state)))
+  (let ((active-pane (state-active-pane state)))
     (let ((new-pane (up-directory active-pane)))
       (setf (state-active-pane state) new-pane)
       state)))
