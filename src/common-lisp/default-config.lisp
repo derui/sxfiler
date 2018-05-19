@@ -3,7 +3,7 @@
   (:file-list
    ((:key "j" :command "next_item")
     (:key "k" :command "prev_item")
-    (:key "l" :command "leave_directory")
+    (:key "h" :command "leave_directory")
     (:key "q" :command "quit")
     (:key "d" :command "delete")
     (:key "c" :command "copy")
