@@ -21,7 +21,7 @@ let () =
           Store.update store {root with C.State.server_state}
         ) (Some ()) |> Lwt.ignore_result;
 
-      Rpc.request rpc (module Api.Config.Current) (fun config ->
+      Rpc.request rpc (module Api.Config.Load) (fun config ->
           let root = store.Store.state in
           Store.update store {root with C.State.config}
         ) (Some ()) |> Lwt.ignore_result;
