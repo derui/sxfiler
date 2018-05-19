@@ -3,7 +3,8 @@
 (defpackage #:sxfiler/parse-config
   (:use #:cl)
   (:import-from #:sxfiler/config)
-  (:export #:parse-config-form))
+  (:export #:parse-config-form
+           #:load-from-file))
 (in-package #:sxfiler/parse-config)
 
 (defun key-map-p (form)
@@ -61,3 +62,9 @@
       (when key-maps
         (setf (sxfiler/config:config-key-maps config) key-maps))
       config)))
+
+(defun load-from-file (file)
+  "Read and parse configuration from FILE."
+  (check-type file string)
+  (let ((form (uiop:read-file-form file)))
+    (parse-config-form form)))
