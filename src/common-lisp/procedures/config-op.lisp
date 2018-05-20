@@ -3,7 +3,9 @@
 (defpackage #:sxfiler/procedures/config-op
   (:use #:cl)
   (:import-from #:sxfiler/config)
-  (:export #:expose))
+  (:export #:expose
+
+           #:*config*))
 (in-package #:sxfiler/procedures/config-op)
 
 (defparameter *config* (sxfiler/config:make-config)

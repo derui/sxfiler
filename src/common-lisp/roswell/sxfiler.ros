@@ -25,6 +25,7 @@ exec ros -Q -- $0 "$@"
   (declare (ignorable argv))
   (setf *server* (jsonrpc:make-server))
 
+  (sxfiler/main:load-default-config)
   (sxfiler/main:expose-procedures *server*)
   (jsonrpc:server-listen *server* :port 50879 :mode :websocket))
 ;;; vim: set ft=lisp lisp:
