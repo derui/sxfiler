@@ -13,6 +13,7 @@
                :cl-syntax
                :cl-ppcre
                :alexandria
+               :marshal
                :sxfiler/main)
   :in-order-to ((asdf:test-op (asdf:test-op :sxfiler/t))))
 

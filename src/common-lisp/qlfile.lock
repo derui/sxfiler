@@ -38,3 +38,7 @@
  (:class qlot.source.ql:source-ql
   :initargs (:project-name "alexandria" :%version :latest)
   :version "ql-2018-04-30"))
+("cl-marshal" .
+ (:class qlot.source.ql:source-ql
+  :initargs (:project-name "cl-marshal" :%version :latest)
+  :version "ql-2018-04-30"))
