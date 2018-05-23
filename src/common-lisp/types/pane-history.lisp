@@ -6,6 +6,7 @@
   (:export #:pane-history
            #:make-pane-history
            #:pane-history-records
+           #:pane-history-location
            #:record-directory
            #:record-focused-item
            #:record-timestamp

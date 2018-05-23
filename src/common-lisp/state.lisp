@@ -9,6 +9,7 @@
                 #:make-pane
                 #:pane)
   (:export #:state
+           #:make-state
            #:state-active-pane
            #:state-inactive-pane
            #:state-active-pane-history
