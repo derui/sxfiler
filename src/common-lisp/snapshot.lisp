@@ -13,7 +13,8 @@
                 #:state-inactive-pane
                 #:state-active-pane-history
                 #:state-inactive-pane-history)
-  )
+  (:export #:save-snapshot
+           #:restore-snapshot))
 (in-package #:sxfiler/snapshot)
 
 ;; Snapshot is subset of state structure each type
