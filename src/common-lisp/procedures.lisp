@@ -20,9 +20,4 @@
   (jsonrpc:expose server "getCurrentState" (lambda (args)
                                              (declare (ignorable args))
                                              (with-root-state (state)
-                                               state)))
-
-  (jsonrpc:expose server "swapActivePane" (lambda (args)
-                                            (declare (ignorable args))
-                                            (with-root-state (state)
-                                              (sxfiler/state:swap-pane-location state)))))
+                                               state))))

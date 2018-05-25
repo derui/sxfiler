@@ -52,12 +52,3 @@ The struct of root contains many status below.
          (let ((,var *root-state*))
            (progn
              ,@body)))))
-
-;; State mutation functions
-(defun swap-pane-location (state)
-  "Get swapped location given location."
-  (check-type state state)
-  (make-state :active-pane (state-inactive-pane state)
-              :inactive-pane (state-active-pane state)
-              :active-pane-history (state-inactive-pane-history state)
-              :inactive-pane-history (state-active-pane-history state)))

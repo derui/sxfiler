@@ -9,7 +9,8 @@
                 #:with-root-state
                 #:state-active-pane
                 #:state-active-pane-history
-                #:state-inactive-pane)
+                #:state-inactive-pane
+                #:state-inactive-pane-history)
   (:import-from #:sxfiler/types/pane
                 #:pane
                 #:pane-focused-item
@@ -121,6 +122,19 @@ do nothing.
                                                                         :directory directory))
     (update-history state active-pane (state-active-pane state))))
 
+(defun swap-active-pane (state)
+  "Swap active/inactive pane in STATE."
+  (check-type state sxfiler/state:state)
+  (let ((active-pane (state-active-pane state))
+        (inactive-pane (state-inactive-pane state))
+        (active-pane-history (state-active-pane-history state))
+        (inactive-pane-history (state-inactive-pane-history state)))
+    (setf (state-active-pane state) inactive-pane)
+    (setf (state-inactive-pane state) active-pane)
+    (setf (state-active-pane-history state) inactive-pane-history)
+    (setf (state-inactive-pane-history state) active-pane-history)
+    state))
+
 (defun expose (server)
   (check-type server jsonrpc:server)
   (jsonrpc:expose server "pane/moveFocus" #'(lambda (args)
@@ -150,4 +164,8 @@ do nothing.
   (jsonrpc:expose server "pane/jump" #'(lambda (args)
                                          (declare (type list args))
                                          (with-root-state (state)
-                                           (jump-directory-on-active-pane state (first args))))))
+                                           (jump-directory-on-active-pane state (first args)))))
+  (jsonrpc:expose server "pane/swapActive" #'(lambda (args)
+                                               (declare (ignorable args))
+                                               (with-root-state (state)
+                                                 (swap-active-pane state)))))
