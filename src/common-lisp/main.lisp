@@ -25,7 +25,7 @@
   "Restore snapshot if it is exists."
   (ensure-directories-exist +snapshot-directory+ :mode #o755)
   (when (uiop:probe-file* +snapshot-file-path+)
-    (with-open-file (stream snapshot-path)
+    (with-open-file (stream +snapshot-file-path+)
       (let ((restored-state (sxfiler/snapshot:restore-snapshot stream)))
         (sxfiler/state:with-root-state (state)
           (setf state restored-state))))))
