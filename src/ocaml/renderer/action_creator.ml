@@ -72,6 +72,17 @@ let quit_application ctx =
   >>= fun () -> ipc##send Js.(string "quit") () |> Lwt.return
   >>= fun () -> Lwt.return ctx.state
 
+let change_active_pane ctx =
+  let open Context in
+  let open Lwt.Infix in
+  let waiter, waker = Lwt.wait () in
+  Rpc.request
+    ctx.rpc
+    (module Api.Pane.Swap_active)
+    (Lwt.wakeup waker) None
+  >>= fun () -> waiter
+  >>= fun server_state -> Lwt.return {ctx.state with C.State.server_state}
+
 (** Create action that is executable with renderer context *)
 let create = function
   | C.Callable_action.Core action -> begin
@@ -87,6 +98,7 @@ let create = function
       | Leave_directory -> fun ctx -> leave_directory ctx
       | Copy -> fun ctx -> open_confirmation_for_copy ctx
       | Quit -> fun ctx -> quit_application ctx
+      | Change_active_pane -> fun ctx -> change_active_pane ctx
       | Unknown action -> fun ctx -> Lwt.fail_with @@ Printf.sprintf "Unknown action for core module: %s" action
       | _ -> failwith "not implemented yet"
     end

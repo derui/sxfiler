@@ -131,6 +131,18 @@ module Pane = struct
     let params_to_json _ = None
     let result_of_json = result_to_state
   end
+
+  module Swap_active: Api_def with type params = unit
+                               and type result = S.t
+  = struct
+    type result = S.t
+    type params = unit
+    type json = < > Js.t
+
+    let name = "pane/swapActive"
+    let params_to_json _ = None
+    let result_of_json = result_to_state
+  end
 end
 
 (** APIs for file operation  *)
