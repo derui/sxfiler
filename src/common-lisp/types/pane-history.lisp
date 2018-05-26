@@ -10,10 +10,10 @@
            #:record-directory
            #:record-focused-item
            #:record-timestamp
+           #:pane->record
 
            #:push-record
-           #:sort-history-by-timestamp
-           ))
+           #:sort-history-by-timestamp))
 (in-package #:sxfiler/types/pane-history)
 
 ;; Item of history.

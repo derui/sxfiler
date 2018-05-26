@@ -5,7 +5,6 @@
   (:import-from #:sxfiler/types/pane
                 #:pane-location)
   (:import-from #:sxfiler/types/pane-history
-                #:pane-history
                 #:pane-history-records
                 #:pane-history-location)
   (:import-from #:sxfiler/state
@@ -31,8 +30,8 @@
 data to take with side effects.
 "
   (active-pane-location :left :type (member :left :right))
-  (left-pane-history nil :type pane-history)
-  (right-pane-history nil :type pane-history))
+  (left-pane-history nil :type sxfiler/types/pane-history:pane-history)
+  (right-pane-history nil :type sxfiler/types/pane-history:pane-history))
 
 (defun choice-by-location (wished-location value-of-active value-of-inactive)
   (let ((active-location (pane-history-location value-of-active)))
@@ -55,7 +54,7 @@ data to take with side effects.
 
 (defun restore-pane-from-latest-history (history)
   (let ((latest-history (first (pane-history-records history)))
-        (location (sxfiler/types/pane-history:pane-history-location history)))
+        (location (pane-history-location history)))
     (if (not (null latest-history))
         (let ((pane (sxfiler/types/pane:make-pane :location location
                                                   :directory (sxfiler/types/pane-history:record-directory latest-history))))
