@@ -18,7 +18,7 @@
            ;; macro to access root state with parallel
            #:with-root-state
 
-           #:swap-pane-location))
+           #:initialize-pane-if-empty))
 (in-package #:sxfiler/state)
 
 (defstruct state
@@ -52,3 +52,15 @@ The struct of root contains many status below.
          (let ((,var *root-state*))
            (progn
              ,@body)))))
+
+(defun initialize-pane-if-empty (directory)
+  "Initialize panes of *ROOT-STATE* if pane's directory is empty."
+  (check-type directory string)
+  (flet ((initialize-pane (pane)
+           (sxfiler/types/pane:renew-file-list pane :directory directory)))
+    (let ((active-pane (state-active-pane *root-state*))
+          (inactive-pane (state-inactive-pane *root-state*)))
+      (when (string= "" (sxfiler/types/pane:pane-directory active-pane))
+        (setf (state-active-pane *root-state*) (initialize-pane active-pane)))
+      (when (string= "" (sxfiler/types/pane:pane-directory inactive-pane))
+        (setf (state-inactive-pane *root-state*) (initialize-pane inactive-pane))))))

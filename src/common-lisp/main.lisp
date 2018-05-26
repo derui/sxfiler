@@ -11,7 +11,8 @@
                 #:+snapshot-file-path+)
   (:export #:expose-procedures
            #:load-default-config
-           #:restore-latest-snapshot))
+           #:restore-latest-snapshot
+           #:initialize-state))
 (in-package #:sxfiler)
 
 (defun load-default-config (&optional (config "default-config.lisp"))
@@ -29,3 +30,7 @@
       (let ((restored-state (sxfiler/snapshot:restore-snapshot stream)))
         (sxfiler/state:with-root-state (state)
           (setf state restored-state))))))
+
+(defun initialize-state ()
+  "Initialize root state before start server."
+  (sxfiler/state:initialize-pane-if-empty (namestring (user-homedir-pathname))))
