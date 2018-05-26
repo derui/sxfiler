@@ -37,3 +37,8 @@ app.on('window-all-closed', () => {
   server.kill();
   app.quit();
 });
+
+electron.ipcMain.on('quit', () => {
+  server.kill();
+  app.quit();
+});

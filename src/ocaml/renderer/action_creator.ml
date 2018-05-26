@@ -57,6 +57,13 @@ let open_confirmation_for_copy ctx =
   in
   Lwt.return {ctx.Context.state with dialog_state}
 
+(** Send quit event to main process *)
+let quit_application ctx =
+  let electron = Modules.electron in
+  let ipc = electron##.ipcRenderer in
+  ipc##send Js.(string "quit") () |> ignore;
+  Lwt.return ctx.Context.state
+
 (** Create action that is executable with renderer context *)
 let create = function
   | C.Callable_action.Core action -> begin
@@ -71,6 +78,7 @@ let create = function
       | Enter_directory -> fun ctx -> enter_directory ctx
       | Leave_directory -> fun ctx -> leave_directory ctx
       | Copy -> fun ctx -> open_confirmation_for_copy ctx
+      | Quit -> fun ctx -> quit_application ctx
       | Unknown action -> fun ctx -> Lwt.fail_with @@ Printf.sprintf "Unknown action for core module: %s" action
       | _ -> failwith "not implemented yet"
     end

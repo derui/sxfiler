@@ -27,3 +27,5 @@ app.on('ready', () => {
 });
 
 app.on('window-all-closed', () => app.quit());
+
+electron.ipcMain.on('quit', () => app.quit());
