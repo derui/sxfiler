@@ -13,9 +13,16 @@
                 #:state-inactive-pane
                 #:state-active-pane-history
                 #:state-inactive-pane-history)
-  (:export #:save-snapshot
+  (:export #:+snapshot-directory+
+           #:+snapshot-file-path+
+           #:save-snapshot
            #:restore-snapshot))
 (in-package #:sxfiler/snapshot)
+
+(defvar +snapshot-directory+ (uiop:merge-pathnames* "sxfiler/" (uiop:xdg-config-home))
+  "The directory from to save and restore snapshot.")
+(defvar +snapshot-file-path+ (uiop:merge-pathnames* "snapshot.dat" +snapshot-directory+)
+  "The file path for snapshot.")
 
 ;; Snapshot is subset of state structure each type
 
