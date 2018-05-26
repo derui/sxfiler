@@ -20,14 +20,14 @@
 (defun pane->candidates (pane)
   "Convert pane to candidates used for completer."
   (check-type pane pane)
-  (mapcar (lambda (stat)
-            (let ((path (uiop:merge-pathnames* (file-stat-filename stat)
-                                               (file-stat-directory stat))))
-              (cons (namestring path) stat)))
+  (mapcar #'(lambda (stat)
+              (let ((path (uiop:merge-pathnames* (file-stat-filename stat)
+                                                 (file-stat-directory stat))))
+                (cons (namestring path) stat)))
           (pane-file-list pane)))
 
 (defun history->candidates (history)
   "Convert HISTORY to candidates used for completer."
   (check-type history pane-history)
-  (mapcar (lambda (record) (cons (record-directory record) record))
+  (mapcar #'(lambda (record) (cons (record-directory record) record))
           (sort-history-by-timestamp (pane-history-records history))))

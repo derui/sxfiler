@@ -14,5 +14,6 @@
   (check-type package package)
   (check-type nickname (or symbol string))
   (rename-package package (package-name package)
-                  (adjoin nickname (package-nicknames package)
+                  (adjoin nickname
+                          (package-nicknames package)
                           :test #'string=)))
