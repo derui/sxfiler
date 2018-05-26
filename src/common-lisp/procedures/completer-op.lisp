@@ -69,33 +69,46 @@ Active pane will be used for SOURCE.
 
 (defun expose (server)
   "Expose functions to JSON-RPC server"
+
+  ;; Initialize the completer
+  ;;   param: only accepts array, and contains one of "file-list" or "history"
+  ;;   response: initialized completer
   (jsonrpc:expose server
                   "completer/initialize"
-                  (lambda (args)
-                    (check-type args list)
-                    (unless (<= 1 (length args))
-                      (error (make-condition 'jsonrpc:jsonrpc-invalid-params
-                                             :message "Must contain least one element")))
-                    (with-root-state (state)
-                      (setf *completer* (initialize *completer* state (first args))))))
+                  #'(lambda (args)
+                      (check-type args list)
+                      (unless (<= 1 (length args))
+                        (error (make-condition 'jsonrpc:jsonrpc-invalid-params
+                                               :message "Must contain least one element")))
+                      (with-root-state (state)
+                        (setf *completer* (initialize *completer* state (first args))))))
+  ;; Complete from candidates with given string.
+  ;;   param: only accepts array contained only one element as string to match
+  ;;   response: updated completer
   (jsonrpc:expose server
                   "completer/match"
-                  (lambda (args)
-                    (check-type args list)
-                    (unless (<= 1 (length args))
-                      (error (make-condition 'jsonrpc:jsonrpc-invalid-params
-                                             :message "Must contain least one element")))
-                    (with-lock ()
-                      (setf *completer* (complete *completer* (first args))))))
+                  #'(lambda (args)
+                      (check-type args list)
+                      (unless (<= 1 (length args))
+                        (error (make-condition 'jsonrpc:jsonrpc-invalid-params
+                                               :message "Must contain least one element")))
+                      (with-lock ()
+                        (setf *completer* (complete *completer* (first args))))))
+  ;; Select next candidate in matched candidates by last called 'completer/match'.
+  ;;   param: ignore always
+  ;;   response: updated completer
   (jsonrpc:expose server
                   "completer/selectNextMatched"
-                  (lambda (args)
-                    (declare (ignorable args))
-                    (with-lock ()
-                      (setf *completer* (select-next-matched *completer*)))))
+                  #'(lambda (args)
+                      (declare (ignorable args))
+                      (with-lock ()
+                        (setf *completer* (select-next-matched *completer*)))))
+  ;; Select previous candidate in matched candidates by last called 'completer/match'.
+  ;;   param: ignore always
+  ;;   response: updated completer
   (jsonrpc:expose server
                   "completer/selectPrevMatched"
-                  (lambda (args)
-                    (declare (ignorable args))
-                    (with-lock ()
-                      (setf *completer* (select-prev-matched *completer*))))))
+                  #'(lambda (args)
+                      (declare (ignorable args))
+                      (with-lock ()
+                        (setf *completer* (select-prev-matched *completer*))))))
