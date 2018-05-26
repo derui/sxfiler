@@ -23,16 +23,16 @@ module Root = struct
   end
 
   (** Mapping pane/swapActivePane *)
-  module Swap_active_pane : Api_def with type params = unit
-                                     and type result = S.t
+  module Take_snapshot : Api_def with type params = unit
+                                     and type result = unit
   = struct
-    type result = S.t
+    type result = unit
     type params = unit
     type json = < > Js.t
 
-    let name = "swapActivePane"
+    let name = "takeSnapshot"
     let params_to_json _ = None
-    let result_of_json = result_to_state
+    let result_of_json _ = ()
   end
 end
 

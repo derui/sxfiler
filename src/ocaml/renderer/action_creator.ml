@@ -59,10 +59,18 @@ let open_confirmation_for_copy ctx =
 
 (** Send quit event to main process *)
 let quit_application ctx =
+  let open Context in
   let electron = Modules.electron in
   let ipc = electron##.ipcRenderer in
-  ipc##send Js.(string "quit") () |> ignore;
-  Lwt.return ctx.Context.state
+  let open Lwt.Infix in
+  let waiter, waker = Lwt.wait () in
+  Rpc.request
+    ctx.rpc
+    (module Api.Root.Take_snapshot)
+    (Lwt.wakeup waker) None
+  >>= fun () -> waiter
+  >>= fun () -> ipc##send Js.(string "quit") () |> Lwt.return
+  >>= fun () -> Lwt.return ctx.state
 
 (** Create action that is executable with renderer context *)
 let create = function
