@@ -53,7 +53,8 @@ let recalculate_visible_window cursor_position t =
 
 let get_items_in_window t =
   let window_start, window_size = t.visible_window in
-  Array.sub t.all_items window_start window_size
+  if Array.length t.all_items = 0 then [||]
+  else Array.sub t.all_items window_start window_size
 
 let start_position_of_window {visible_window;_} = fst visible_window
 

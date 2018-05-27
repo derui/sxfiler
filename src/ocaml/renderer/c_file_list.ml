@@ -49,10 +49,13 @@ let component =
           let pane = props##.pane in
           let open Minimal_monadic_caml.Option.Infix in
           ignore (
-            current_focused_pos pane >|= fun pos ->
+            let vl = VL.update_all_items pane.P.file_list this##.state##.virtualizedList in
+            let vl = match current_focused_pos pane with
+              | None -> vl
+              | Some pos -> VL.recalculate_visible_window pos vl
+            in
             this##setState (object%js
-              val virtualizedList = VL.update_all_items pane.P.file_list this##.state##.virtualizedList
-                                    |> VL.recalculate_visible_window pos
+              val virtualizedList = vl
             end)
           )
         )
