@@ -83,15 +83,27 @@ let change_active_pane ctx =
   >>= fun () -> waiter
   >>= fun server_state -> Lwt.return {ctx.state with C.State.server_state}
 
+let open_jump ctx =
+  let open Context in
+  let open Lwt.Infix in
+  let waiter, waker = Lwt.wait () in
+  Rpc.request
+    ctx.rpc
+    (module Api.Completer.Initialize)
+    (Lwt.wakeup waker) (Some `File_list)
+  >>= fun () -> waiter
+  >>= fun completer_state -> Lwt.return {
+    ctx.state with C.State.completer_state;
+                   dialog_state = let module D = C.State.Dialog_state in
+                     D.Open C.Types.Dialog_type.Jump
+  }
+
 (** Create action that is executable with renderer context *)
 let create = function
   | C.Callable_action.Core action -> begin
       let module Core = C.Callable_action.Core in
       match action with
-      | Core.Jump -> fun ctx -> Lwt.return @@ {ctx.Context.state with
-                                               dialog_state = let module D = C.State.Dialog_state in
-                                                 D.Open C.Types.Dialog_type.Jump
-                                              }
+      | Core.Jump -> fun ctx -> open_jump ctx
       | Next_item -> fun ctx -> move_focus ~amount:1 ctx
       | Prev_item -> fun ctx -> move_focus ~amount:(-1) ctx
       | Enter_directory -> fun ctx -> enter_directory ctx
@@ -116,6 +128,28 @@ let copy ctx =
   >>= fun () -> waiter
   >>= fun server_state -> Lwt.return {ctx.state with C.State.server_state}
 
+let jump ctx path =
+  let open Context in
+  let waiter, waker = Lwt.wait () in
+  let open Lwt.Infix in
+  Rpc.request
+    ctx.rpc
+    (module Api.Pane.Jump)
+    (Lwt.wakeup waker) (Some path)
+  >>= fun () -> waiter
+  >>= fun server_state -> Lwt.return {ctx.state with C.State.server_state}
+
+let refresh_candidates ctx text =
+  let open Context in
+  let open Lwt.Infix in
+  let waiter, waker = Lwt.wait () in
+  Rpc.request
+    ctx.rpc
+    (module Api.Completer.Match)
+    (Lwt.wakeup waker) (Some text)
+  >>= fun () -> waiter
+  >>= fun completer_state -> Lwt.return {ctx.state with C.State.completer_state}
+
 let rec create_from_message = function
   | M.Close_dialog -> fun ctx -> Lwt.return {ctx.Context.state with
                                              dialog_state = C.State.Dialog_state.Close}
@@ -128,4 +162,6 @@ let rec create_from_message = function
         >>= action
     end
   | M.Copy_files -> fun ctx -> copy ctx
+  | M.Jump_directory path -> fun ctx -> jump ctx path
+  | M.Refresh_candidates_request string -> fun ctx -> refresh_candidates ctx string
   | _ -> failwith "not implemented yet"

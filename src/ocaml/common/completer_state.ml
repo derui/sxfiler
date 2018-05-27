@@ -10,7 +10,7 @@ type t = {
 }
 
 class type js = object
-  method matchedItems: Js.js_string Js.t Js.js_array Js.t Js.readonly_prop
+  method matchedItems: Js.js_string Js.t Js.js_array Js.t Js.opt Js.readonly_prop
 end
 
 (** Get empty completer state *)
@@ -19,6 +19,10 @@ let empty = {
 }
 
 let of_js : js Js.t -> t = fun js ->
+  let matched_items = js##.matchedItems in
   {
-    matched_items = Js.array_map Js.to_string js##.matchedItems |> Js.to_array;
+    matched_items =
+      match Js.Opt.map matched_items (Js.array_map Js.to_string) |> Js.Opt.to_option with
+      | None -> [||]
+      | Some ary -> Js.to_array ary
   }
