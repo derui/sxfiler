@@ -5,6 +5,7 @@
   (:import-from #:sxfiler/config)
   (:export #:expose
 
+           #:load-config
            #:*config*))
 (in-package #:sxfiler/procedures/config-op)
 
@@ -25,6 +26,14 @@
            (progn
              ,@body)))))
 
+(defun load-config (&optional (config "default-config.lisp"))
+  (let* ((current-dir (uiop:getcwd))
+         (default-config-path (uiop:merge-pathnames* config current-dir)))
+    (if (uiop:probe-file* default-config-path)
+        (setf *config*
+              (sxfiler/config:load-from-file (namestring default-config-path)))
+        *config*)))
+
 (defun expose (server)
   (check-type server jsonrpc:server)
   (jsonrpc:expose server "config/current" #'(lambda (args)
@@ -34,5 +43,5 @@
   (jsonrpc:expose server "config/load" #'(lambda (args)
                                            (declare (ignorable args))
                                            (with-config (config)
-                                             (setf *config* (sxfiler/config:load-from-file "default-config.lisp"))
+                                             (load-config)
                                              *config*))))

@@ -15,12 +15,9 @@
            #:initialize-state))
 (in-package #:sxfiler)
 
-(defun load-default-config (&optional (config "default-config.lisp"))
+(defun load-default-config ()
   "Load default configuration."
-  (let* ((current-dir (uiop:getcwd))
-         (default-config-path (uiop:merge-pathnames* config current-dir)))
-    (setf sxfiler/procedures/config-op:*config*
-          (sxfiler/config:load-from-file (namestring default-config-path)))))
+  (sxfiler/procedures/config-op:load-config))
 
 (defun restore-latest-snapshot ()
   "Restore snapshot if it is exists."
