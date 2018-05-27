@@ -82,8 +82,8 @@ Return nil if directory do not found or is not directory"
   (let ((copied-list (copy-list file-list))
         (key (ecase mode
                (:name #'(lambda (v)
-                          (namestring (uiop:subpathname* (sxfiler/types/file-stat:file-stat-directory v)
-                                                         (sxfiler/types/file-stat:file-stat-filename v)))))
+                          (uiop:native-namestring (uiop:subpathname* (sxfiler/types/file-stat:file-stat-directory v)
+                                                                     (sxfiler/types/file-stat:file-stat-filename v)))))
                (:date #'sxfiler/types/file-stat:file-stat-mtime)))
         (orderp (ecase order
                   (:asc (ecase mode
@@ -100,7 +100,7 @@ Return nil if directory do not found or is not directory"
   (let ((copied-pane (copy-structure obj))
         (dir (if directory directory (pane-directory obj))))
     (when (uiop:probe-file* dir :truename t)
-      (setf (pane-directory copied-pane) (namestring (uiop:probe-file* dir :truename t))))
+      (setf (pane-directory copied-pane) (uiop:native-namestring (uiop:probe-file* dir :truename t))))
     (setf (pane-file-list copied-pane)
           (sort-file-list (files-in-directory dir)
                           :mode (pane-sort-mode copied-pane)

@@ -66,7 +66,8 @@ size of item, atime, ctime, and mtime.
 
 ;; function to probe file stat.
 (defun get-file-stat (path)
-  (let* ((path (uiop:probe-file* path :truename t)))
+  (let* ((path (pathname                ; this combination to clear escape in path
+                (uiop:native-namestring (uiop:probe-file* path :truename t)))))
     (when path
       (multiple-value-bind (result dev ino mode nlink uid gid rdev size atime mtime ctime blksize blocks)
           (sb-unix:unix-lstat (namestring path))
