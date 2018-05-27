@@ -98,12 +98,28 @@ let open_jump ctx =
                      D.Open C.Types.Dialog_type.Jump
   }
 
+let open_history ctx =
+  let open Context in
+  let open Lwt.Infix in
+  let waiter, waker = Lwt.wait () in
+  Rpc.request
+    ctx.rpc
+    (module Api.Completer.Initialize)
+    (Lwt.wakeup waker) (Some `History)
+  >>= fun () -> waiter
+  >>= fun completer_state -> Lwt.return {
+    ctx.state with C.State.completer_state;
+                   dialog_state = let module D = C.State.Dialog_state in
+                     D.Open C.Types.Dialog_type.History
+  }
+
 (** Create action that is executable with renderer context *)
 let create = function
   | C.Callable_action.Core action -> begin
       let module Core = C.Callable_action.Core in
       match action with
       | Core.Jump -> fun ctx -> open_jump ctx
+      | Core.History -> fun ctx -> open_history ctx
       | Next_item -> fun ctx -> move_focus ~amount:1 ctx
       | Prev_item -> fun ctx -> move_focus ~amount:(-1) ctx
       | Enter_directory -> fun ctx -> enter_directory ctx
