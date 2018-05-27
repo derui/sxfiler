@@ -99,7 +99,8 @@ Returning completer has same matcher of COMPLETER.
   (check-type completer completer)
   (check-type candidates list)
   (make-completer :matcher (completer-matcher completer)
-                  :candidates candidates))
+                  :candidates candidates
+                  :matched-items (coerce candidates 'vector)))
 
 (defun complete (completer input)
   "Search INPUT in candidates of COMPLETER, and return result searching.
@@ -108,7 +109,9 @@ If INPUT is empty string, return COMPLETER.
   (check-type completer completer)
   (check-type input string)
   (if (string= "" input)
-      completer
+      (let ((cloned (copy-completer completer)))
+        (setf (completer-matched-items cloned) (coerce (completer-candidates cloned) 'vector))
+        cloned)
       (let* ((cloned (copy-completer completer))
              (matcher (completer-matcher completer))
              (candidates (completer-candidates completer))
