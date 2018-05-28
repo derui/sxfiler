@@ -17,6 +17,7 @@
 
            ;; macro to access root state with parallel
            #:with-root-state
+           #:update-root-state
 
            #:initialize-pane-if-empty))
 (in-package #:sxfiler/state)
@@ -41,6 +42,15 @@ The struct of root contains many status below.
 (defparameter *root-state* (make-state))
 
 (defparameter *root-state-lock* (sb-thread:make-mutex))
+
+(defun update-root-state (state)
+  "Update root state with mutex."
+  (check-type state state)
+  (if (and (sb-thread:holding-mutex-p *root-state-lock*)
+           (eql sb-thread:*current-thread* (sb-thread:mutex-owner *root-state-lock*)))
+      (setf *root-state* state)
+      (sb-thread:with-mutex (*root-state-lock*)
+        (setf *root-state* state))))
 
 (defmacro with-root-state ((var) &body body)
   `(if (and (sb-thread:holding-mutex-p *root-state-lock*)
