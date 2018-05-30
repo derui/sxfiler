@@ -21,7 +21,8 @@
            #:renew-file-list
            #:toggle-mark
            #:find-focused-item
-           #:move-focus))
+           #:move-focus
+           #:make-directory))
 (in-package #:sxfiler/types/pane)
 
 ;; pane: contains all state of pane without visual information
@@ -151,3 +152,14 @@ Return new `pane' structure focusd item updated.
           (setf (pane-focused-item new-pane) (file-stat-id item))
           new-pane))
       pane)))
+
+(defun make-directory (pane name)
+  "Make the directory with the NAME if not exists. Always return applied RENEW-FILE-LIST
+to PANE.
+"
+  (check-type pane pane)
+  (check-type name string)
+  (let ((dirname (uiop:ensure-directory-pathname (uiop:merge-pathnames* name (pane-directory pane)))))
+    (unless (uiop:probe-file* dirname)
+      (ensure-directories-exist dirname :mode #o755))
+    (renew-file-list pane)))

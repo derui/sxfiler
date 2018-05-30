@@ -105,6 +105,13 @@ This function has side effect."
     (setf (state-active-pane state) (renew-file-list active-pane))
     state))
 
+(defun make-directory-on-active (state name)
+  "Make directory on active pane."
+  (check-type state sxfiler/state:state)
+  (let ((active-pane (state-active-pane state)))
+    (setf (state-active-pane state) (sxfiler/types/pane:make-directory active-pane name))
+    state))
+
 (defun expose (server)
   "expose functions for file-related operations to JSON-RPC"
   (jsonrpc:expose server "file/delete"
@@ -124,4 +131,10 @@ This function has side effect."
                       (check-type args hash-table)
                       (let ((force-copy (gethash "force" args)))
                         (with-root-state (state)
-                          (copy-file-from-active-to-inactive state))))))
+                          (copy-file-from-active-to-inactive state)))))
+  (jsonrpc:expose server "file/makeDirectory"
+                  #'(lambda (args)
+                      (check-type args hash-table)
+                      (let ((directory-name (gethash "name" args)))
+                        (with-root-state (state)
+                          (make-directory-on-active state directory-name))))))
