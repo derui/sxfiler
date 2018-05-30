@@ -6,4 +6,5 @@ type t =
   | Change_permission of int
   | Jump_directory of string
   | Copy_files
+  | Make_directory of string
 [@@derivng variants]

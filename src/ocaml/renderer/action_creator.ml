@@ -113,6 +113,14 @@ let open_history ctx =
                      D.Open C.Types.Dialog_type.History
   }
 
+let open_make_directory ctx =
+  let open Context in
+  Lwt.return {ctx.state with C.State.dialog_state = let module D = C.State.Dialog_state in
+                    D.Open (C.Types.Dialog_type.Name_input {
+                      title = "Input the name of directory to create";
+                      on_execute = fun str -> M.Make_directory Js.(to_string str);
+                    })}
+
 (** Create action that is executable with renderer context *)
 let create = function
   | C.Callable_action.Core action -> begin
@@ -127,6 +135,7 @@ let create = function
       | Copy -> fun ctx -> open_confirmation_for_copy ctx
       | Quit -> fun ctx -> quit_application ctx
       | Change_active_pane -> fun ctx -> change_active_pane ctx
+      | Core.Make_dir -> fun ctx -> open_make_directory ctx
       | Unknown action -> fun ctx -> Lwt.fail_with @@ Printf.sprintf "Unknown action for core module: %s" action
       | _ -> failwith "not implemented yet"
     end
