@@ -21,6 +21,25 @@ module Core = struct
 
   let module_name = "core"
 
+  let to_string = function
+    | Next_item -> "next_item"
+    | Prev_item -> "prev_item"
+    | Leave_directory -> "leave_directory"
+    | Enter_directory -> "enter_directory"
+    | Change_active_pane -> "change_active_pane"
+    | Copy -> "copy"
+    | Move -> "move"
+    | Delete -> "delete"
+    | Rename -> "rename"
+    | Jump -> "jump"
+    | Quit -> "quit"
+    | Toggle_mark -> "toggle_mark"
+    | Make_dir -> "make_dir"
+    | History -> "history"
+    | Change_permission -> "change_permission"
+    | Toggle_bookmark -> "toggle_bookmark"
+    | Unknown v -> v
+
   let of_string = function
     | "next_item" -> Next_item
     | "prev_item" -> Prev_item
@@ -60,3 +79,7 @@ let of_string action =
   end
   else
     action_of_string Core.module_name action
+
+let to_string = function
+  | Core v -> Core.module_name ^ ":" ^ Core.to_string v
+  | Thrid_party (name, action) -> name ^ ":" ^ action
