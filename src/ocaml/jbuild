@@ -10,10 +10,3 @@
   (libraries (sxfiler.renderer))
   (js_of_ocaml ((flags ("--pretty"))))
   (preprocess (pps (js_of_ocaml-ppx ppx_variants_conv)))))
-
-; (executable
-;  ((name sxfiler_main_entry)
-;   (modules sxfiler_main_entry)
-;   (libraries (sxfiler.main))
-;   (js_of_ocaml ((flags ("--pretty"))))
-;   (preprocess (pps (js_of_ocaml-ppx ppx_variants_conv)))))
