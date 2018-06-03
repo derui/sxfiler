@@ -1,0 +1,12 @@
+(jbuild_version 1)
+
+(executable
+ ((name main)
+  (public_name sxfiler_server)
+  (package sxfiler)
+  (libraries (lwt websocket websocket-lwt.cohttp cohttp-lwt-unix conduit-lwt-unix
+              sexplib
+              jsonrpc-ocaml.yojson
+              sxfiler.common
+  ))
+  (preprocess (pps (lwt_ppx)))))

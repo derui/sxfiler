@@ -20,12 +20,16 @@ depends: [
   "ppx_variants_conv" { >= "v0.9.0"}
   "ppx_deriving_yojson" { >= "3.1"}
   "ppx_sexp_conv" { >= "v0.10.0"}
-  "yojson" { >= "1.4.0"}
   "mocha_of_ocaml" {test}
   "ocaml-flux-frp"
   "jsoo_node"
   "jsoo_reactjs"
   "minimal-monadic-caml"
   "snap-shot-it_of_ocaml" {test}
+  "lwt" {<= "4.0.0"}
+  "lwt_ppx" {build}
+  "cohttp-lwt-unix"
+  "websocket-lwt"
+  "conduit-lwt-unix"
 ]
 available: ["ocaml" >= "4.05.0"]
