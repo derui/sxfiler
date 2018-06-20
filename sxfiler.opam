@@ -31,5 +31,6 @@ depends: [
   "cohttp-lwt-unix"
   "websocket-lwt"
   "conduit-lwt-unix"
+  "ocaml-re" { >= "1.7.3"}
 ]
 available: ["ocaml" >= "4.05.0"]
