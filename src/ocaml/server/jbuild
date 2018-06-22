@@ -4,8 +4,7 @@
  ((name main)
   (public_name sxfiler_server)
   (package sxfiler)
-  (libraries (lwt websocket websocket-lwt.cohttp cohttp-lwt-unix conduit-lwt-unix
-              sexplib
+  (libraries (lwt websocket websocket-lwt.cohttp
               jsonrpc-ocaml.yojson
               sxfiler.common
   ))
