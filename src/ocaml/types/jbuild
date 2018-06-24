@@ -1,0 +1,7 @@
+(jbuild_version 1)
+
+(library
+ ((name sxfiler_types)
+  (public_name sxfiler.types)
+  (libraries (minimal-monadic-caml))
+))

@@ -1,0 +1,6 @@
+(jbuild_version 1)
+
+(library
+ ((name sxfiler_types_yojson)
+  (public_name sxfiler.types.yojson)
+  (libraries (sxfiler.types yojson))))
