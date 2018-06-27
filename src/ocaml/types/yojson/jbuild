@@ -3,4 +3,5 @@
 (library
  ((name sxfiler_types_yojson)
   (public_name sxfiler.types.yojson)
-  (libraries (sxfiler.types yojson))))
+  (libraries (sxfiler.types yojson ppx_deriving_yojson.runtime))
+  (preprocess (pps (ppx_deriving_yojson)))))
