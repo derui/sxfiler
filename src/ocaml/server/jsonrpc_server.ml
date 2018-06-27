@@ -7,9 +7,10 @@ type t = {
   res_writer: J.Response.t option -> unit;
   frame_stream: W.Frame.t Lwt_stream.t;
   frame_writer: W.Frame.t option -> unit;
+  migemo: Migemocaml.Migemo.t;
 }
 
-let make () =
+let make ~migemo =
   let method_handler = J.Server.make () in
   let res_stream, res_writer = Lwt_stream.create () in
   let frame_stream, frame_writer = Lwt_stream.create () in
@@ -19,6 +20,7 @@ let make () =
     res_writer;
     frame_stream;
     frame_writer;
+    migemo;
   }
 
 let default_request_handler f writer =
@@ -39,7 +41,7 @@ let request_handler t frame_output_fn =
           let json = Yojson.Basic.from_string f.Frame.content in
           match J.Request.of_json json with
           | Error _ ->
-            Lwt.return @@ t.res_writer @@ Some (J.Response.{
+            Lwt.return @@ t.res_writer @@ Some J.Response.{
               result = None;
               id = None;
               error = Some J.Error.{
@@ -47,12 +49,10 @@ let request_handler t frame_output_fn =
                   message = J.Types.Error_code.(to_message Parse_error);
                   data = None;
                 }
-            })
-          | Ok req -> begin
-              match J.Server.handle_request ~request:req t.method_handler with
-              | None -> Lwt.return_unit
-              | Some res -> Lwt.return @@ t.res_writer @@ Some res
-            end
+            }
+          | Ok req ->
+            let%lwt res =  J.Server.handle_request ~request:req t.method_handler in
+            Lwt.return @@ t.res_writer @@ Some res
         end
       | _ -> default_request_handler f frame_output_fn
     ) t.frame_stream

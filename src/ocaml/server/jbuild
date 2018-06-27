@@ -7,5 +7,7 @@
   (libraries (lwt websocket websocket-lwt.cohttp
               jsonrpc-ocaml.yojson
               sxfiler.common
+              sxfiler.types.yojson
+              sxfiler.server.completion
   ))
   (preprocess (pps (lwt_ppx)))))
