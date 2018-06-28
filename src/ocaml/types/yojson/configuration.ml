@@ -15,7 +15,7 @@ module Key_maps = struct
 
   let of_yojson : Yojson.Safe.json -> t = fun json ->
     match Js.of_yojson json with
-    | Error _ -> Printf.eprintf "TODO parse error"; empty
+    | Error _ -> Printf.eprintf "TODO parse error"; default
     | Ok js -> {
         file_list = Key_map.of_yojson js.file_list;
       }
@@ -46,7 +46,7 @@ module Viewer = struct
 
   let of_yojson : Yojson.Safe.json -> t = fun json ->
     match Js.of_yojson json with
-    | Error _ -> failwith "TODO parse error"
+    | Error _ -> Printf.eprintf "TODO parse error"; default
     | Ok js ->
       let module T = Sxfiler_types.Types in
       {
@@ -76,7 +76,7 @@ module Server = struct
 
   let of_yojson : Yojson.Safe.json -> t = fun json ->
     match Js.of_yojson json with
-    | Error _ -> failwith "TODO: handle parse error"
+    | Error _ -> Printf.eprintf "TODO: handling parse error"; default
     | Ok js ->
       let module T = Sxfiler_types.Types in
       {
@@ -99,7 +99,7 @@ let to_yojson : t -> Yojson.Safe.json = fun t ->
 
 let of_yojson : Yojson.Safe.json -> t = fun js ->
   match Js.of_yojson js with
-  | Error _ -> failwith "TODO: handle parse error"
+  | Error _ -> Printf.eprintf "TODO: handling parse error"; default
   | Ok js -> {
       server = Server.of_yojson js.Js.server;
       viewer = Viewer.of_yojson js.Js.viewer;

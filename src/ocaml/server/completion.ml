@@ -14,8 +14,8 @@ return candidates that are completed with input.
  *)
 let read param = failwith "not implemented yet"
 
-let initialize server =
-  state := Some (Sxfiler_server_completion.Completer.make ~migemo:server.Jsonrpc_server.migemo)
+let initialize migemo =
+  state := Some (Sxfiler_server_completion.Completer.make ~migemo)
 
 let expose server =
   let module S = Jsonrpc_ocaml_yojson.Server in

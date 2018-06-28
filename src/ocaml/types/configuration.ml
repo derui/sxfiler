@@ -4,7 +4,7 @@ module Key_maps = struct
     file_list: Key_map.t;
   }
 
-  let empty = {
+  let default = {
     file_list = Key_map.empty;
   }
 end
@@ -19,12 +19,12 @@ module Viewer = struct
     key_maps: Key_maps.t;
   }
 
-  let make ~current_stack_name
-      ~stack_layout
-      ~key_maps =
-    {
-      current_stack_name; stack_layout; key_maps
-    }
+  (** [default] will store all default configurations for Viewer configuration *)
+  let default = {
+    current_stack_name = "";
+    stack_layout = Types.Layout.Side_by_side;
+    key_maps = Key_maps.default;
+  }
 
 end
 
@@ -36,11 +36,18 @@ module Server = struct
     sort_order: Types.Sort_type.t;
   }
 
-  let make ~sort_order = {sort_order}
+  let default = {
+    sort_order = Types.Sort_type.Name;
+  }
 end
 
 (** Total configuration *)
 type t = {
   viewer: Viewer.t;
   server: Server.t;
+}
+
+let default = {
+  viewer = Viewer.default;
+  server = Server.default;
 }

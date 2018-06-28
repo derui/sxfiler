@@ -7,10 +7,9 @@ type t = {
   res_writer: J.Response.t option -> unit;
   frame_stream: W.Frame.t Lwt_stream.t;
   frame_writer: W.Frame.t option -> unit;
-  migemo: Migemocaml.Migemo.t;
 }
 
-let make ~migemo =
+let make () =
   let method_handler = J.Server.make () in
   let res_stream, res_writer = Lwt_stream.create () in
   let frame_stream, frame_writer = Lwt_stream.create () in
@@ -20,7 +19,6 @@ let make ~migemo =
     res_writer;
     frame_stream;
     frame_writer;
-    migemo;
   }
 
 let default_request_handler f writer =
