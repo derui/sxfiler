@@ -1,3 +1,4 @@
+(* [Key_map] module should be able to convert between json and ocaml.  *)
 include Sxfiler_types.Key_map
 
 let to_js : t -> Yojson.Safe.json = fun t ->

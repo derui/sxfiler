@@ -1,4 +1,4 @@
-(** [Key_maps] defines key mappings that are used in each view. *)
+(* [Configuration] module should be able to convert between json and ocaml.  *)
 open Sxfiler_types.Configuration
 
 module Key_maps = struct
@@ -6,7 +6,7 @@ module Key_maps = struct
 
   module Js = struct
     type t = {
-      file_list: Yojson.Safe.json;
+      file_list: Yojson.Safe.json [@key "fileList"];
     } [@@deriving yojson]
   end
 
@@ -29,9 +29,9 @@ module Viewer = struct
 
   module Js = struct
     type t = {
-      current_stack_name:string;
-      stack_layout:string;
-      key_maps:Yojson.Safe.json;
+      current_stack_name:string [@key "currentStackName"];
+      stack_layout:string [@key "stackLayout"];
+      key_maps:Yojson.Safe.json [@key "keyMaps"];
     } [@@deriving yojson]
   end
 
@@ -64,7 +64,7 @@ module Server = struct
 
   module Js = struct
     type t = {
-      sort_order:string;
+      sort_order:string [@key "sortOrder"];
     } [@@deriving yojson]
   end
 
