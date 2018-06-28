@@ -36,7 +36,7 @@ let request_handler t frame_output_fn =
   Lwt_stream.iter_s (fun f ->
       match f.Frame.opcode with
       | Frame.Opcode.Text -> begin
-          let json = Yojson.Basic.from_string f.Frame.content in
+          let json = Yojson.Safe.from_string f.Frame.content in
           match J.Request.of_json json with
           | Error _ ->
             Lwt.return @@ t.res_writer @@ Some J.Response.{
@@ -60,7 +60,7 @@ let serve_forever t frame_output_fn =
   Lwt.join [
     Lwt_stream.iter_s (fun res ->
         let json = J.Response.to_json res in
-        let content = Yojson.Basic.to_string json in
+        let content = Yojson.Safe.to_string json in
         Lwt.wrap1 frame_output_fn @@ Some (W.Frame.create ~opcode:W.Frame.Opcode.Text ~content ())
       )
       t.res_stream;
