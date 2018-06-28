@@ -41,7 +41,6 @@ end
 
 (** Total configuration *)
 type t = {
-  key_maps: Key_maps.t;
-  viewer_config: Viewer.t;
-  server_config: Server.t;
+  viewer: Viewer.t;
+  server: Server.t;
 }

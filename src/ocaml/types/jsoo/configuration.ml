@@ -44,3 +44,14 @@ module Server = struct
       sort_order = Js.to_string js##.sortOrder |> Sxfiler_types.Types.Sort_type.of_string;
     }
 end
+
+class type js = object
+  method viewer: Viewer.js Js.t Js.readonly_prop
+  method server: Server.js Js.t Js.readonly_prop
+end
+
+let of_js : js Js.t -> t = fun js ->
+  {
+    viewer = Viewer.of_js js##.viewer;
+    server = Server.of_js js##.server;
+  }

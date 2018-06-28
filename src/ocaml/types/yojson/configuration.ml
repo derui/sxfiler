@@ -84,9 +84,23 @@ module Server = struct
       }
 end
 
+module Js = struct
+  type t = {
+    server: Yojson.Safe.json;
+    viewer: Yojson.Safe.json;
+  } [@@deriving yojson]
+end
+
 let to_yojson : t -> Yojson.Safe.json = fun t ->
-  `Assoc [
-    ("keyMaps", Key_maps.to_yojson t.key_maps);
-    ("viewerConfig", Viewer.to_yojson t.viewer_config);
-    ("serverConfig", Server.to_yojson t.server_config);
-  ]
+  Js.to_yojson Js.{
+      viewer = Viewer.to_yojson t.viewer;
+      server = Server.to_yojson t.server;
+    }
+
+let of_yojson : Yojson.Safe.json -> t = fun js ->
+  match Js.of_yojson js with
+  | Error _ -> failwith "TODO: handle parse error"
+  | Ok js -> {
+      server = Server.of_yojson js.Js.server;
+      viewer = Viewer.of_yojson js.Js.viewer;
+    }
