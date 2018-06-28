@@ -34,6 +34,7 @@ let load_migemo dict_dir =
 
 let handler
     (dict_dir : string)
+    (configuration: Sxfiler_types.Configuration.t)
     (conn : Conduit_lwt_unix.flow * Cohttp.Connection.t)
     (req  : Cohttp_lwt_unix.Request.t)
     (body : Cohttp_lwt.Body.t) =
@@ -58,7 +59,7 @@ let handler
       ~body:(Sexplib.Sexp.to_string_hum (Cohttp.Request.sexp_of_t req))
       ()
 
-let start_server host port dict_dir () =
+let start_server host port dict_dir config () =
   let conn_closed (ch,_) =
     Printf.eprintf "[SERV] connection %s closed\n%!"
       (Sexplib.Sexp.to_string_hum (Conduit_lwt_unix.sexp_of_flow ch))
@@ -66,15 +67,27 @@ let start_server host port dict_dir () =
   let%lwt () = Lwt_io.eprintf "[SERV] Listening for HTTP on port %d\n%!" port in
   Cohttp_lwt_unix.Server.create
     ~mode:(`TCP (`Port port))
-    (Cohttp_lwt_unix.Server.make ~callback:(handler dict_dir) ~conn_closed ())
+    (Cohttp_lwt_unix.Server.make ~callback:(handler dict_dir config) ~conn_closed ())
 
-let load_configuration ~server ~viewer ~keymap =
-  let server = Yojson.Basic.from_file server
-  and viewer = Yojson.Basic.from_file viewer
-  and keymap = Yojson.Basic.from_file keymap in
-  ()
+(** Load configuration from specified file *)
+let load_configuration config =
+  let module Y = Sxfiler_types_yojson.Configuration in
+  let config = Yojson.Safe.from_file config in
+  Y.of_yojson config
 
 (* main routine. *)
 let () =
+
+  let dict_dir = ref "" in
+  let config = ref "config.json"
+  and key_maps = ref "keymaps.json" in
+  let arg_specs = [
+    ("-d", Arg.String (fun v -> dict_dir := v), "Directory of migemo dictionary");
+    ("--config", Arg.String (fun v -> config := v), "File path for server configuration");
+    ("--keymaps", Arg.String (fun v -> key_maps := v), "File path for key maps");
+  ] in
+  Arg.parse arg_specs ignore "";
+
   let port = 50879 in
-  Lwt_main.run (start_server "localhost" port "" ())
+  let config = load_configuration !config in
+  Lwt_main.run (start_server "localhost" port !dict_dir config ())
