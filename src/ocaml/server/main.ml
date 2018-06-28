@@ -30,6 +30,9 @@ let handler
       ~body:(Sexplib.Sexp.to_string_hum (Cohttp.Request.sexp_of_t req))
       ()
 
+let initialize_modules ~migemo =
+  Comp.initialize migemo
+
 let start_server host port ~config ~keymaps ~migemo =
   let conn_closed (ch,_) =
     Printf.eprintf "[SERV] connection %s closed\n%!"
@@ -108,4 +111,6 @@ let () =
   let config = get_config load_configuration !config ~default:C.default in
   let keymaps = get_config load_keymaps !key_maps ~default:C.Key_maps.default in
   let migemo = load_migemo !dict_dir in
+
+  initialize_modules migemo;
   Lwt_main.run (start_server "localhost" port ~migemo ~config ~keymaps)
