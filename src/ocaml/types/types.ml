@@ -24,6 +24,7 @@ end
 
 type file_id = string
 
+(** {!Layout} defines type to preset of layout *)
 module Layout = struct
   type t = Side_by_side
 
@@ -33,4 +34,23 @@ module Layout = struct
   let of_string = function
     | "Side_by_side" -> Side_by_side
     | _ -> failwith "Unknown constructor for Layout"
+end
+
+(** {!Source_type} defines type of source for completion.  *)
+module Source_type = struct
+  type t =
+    | File
+    | Directory_tree
+    | History
+
+  let to_string = function
+    | File -> "File"
+    | Directory_tree -> "Directory_tree"
+    | History -> "History"
+
+  let of_string = function
+    | "File" -> File
+    | "Directory_tree" -> Directory_tree
+    | "History" -> History
+    | _ -> failwith "Unknown constructor for Source_type"
 end
