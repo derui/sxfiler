@@ -38,3 +38,10 @@ module Server = struct
 
   let make ~sort_order = {sort_order}
 end
+
+(** Total configuration *)
+type t = {
+  key_maps: Key_maps.t;
+  viewer_config: Viewer.t;
+  server_config: Server.t;
+}

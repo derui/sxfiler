@@ -10,14 +10,14 @@ module Key_maps = struct
     } [@@deriving yojson]
   end
 
-  let to_js : t -> Yojson.Safe.json = fun t ->
-    Js.to_yojson {Js.file_list = Key_map.to_js t.file_list}
+  let to_yojson : t -> Yojson.Safe.json = fun t ->
+    Js.to_yojson {Js.file_list = Key_map.to_yojson t.file_list}
 
-  let of_js : Yojson.Safe.json -> t = fun json ->
+  let of_yojson : Yojson.Safe.json -> t = fun json ->
     match Js.of_yojson json with
     | Error _ -> Printf.eprintf "TODO parse error"; empty
     | Ok js -> {
-        file_list = Key_map.of_js js.file_list;
+        file_list = Key_map.of_yojson js.file_list;
       }
 end
 
@@ -35,16 +35,16 @@ module Viewer = struct
     } [@@deriving yojson]
   end
 
-  let to_js : t -> Yojson.Basic.json = fun t ->
+  let to_yojson : t -> Yojson.Safe.json = fun t ->
     let module T = Sxfiler_types.Types in
     let js = Js.{
         current_stack_name = t.current_stack_name;
         stack_layout = T.Layout.to_string t.stack_layout;
-        key_maps = Key_maps.to_js t.key_maps;
+        key_maps = Key_maps.to_yojson t.key_maps;
       }
-    in Js.to_yojson js |> Yojson.Safe.to_basic
+    in Js.to_yojson js
 
-  let of_js : Yojson.Safe.json -> t = fun json ->
+  let of_yojson : Yojson.Safe.json -> t = fun json ->
     match Js.of_yojson json with
     | Error _ -> failwith "TODO parse error"
     | Ok js ->
@@ -52,7 +52,7 @@ module Viewer = struct
       {
         current_stack_name = js.Js.current_stack_name;
         stack_layout = T.Layout.of_string js.Js.stack_layout;
-        key_maps = Key_maps.of_js js.key_maps;
+        key_maps = Key_maps.of_yojson js.key_maps;
       }
 end
 
@@ -68,13 +68,13 @@ module Server = struct
     } [@@deriving yojson]
   end
 
-  let to_js : t -> Yojson.Safe.json = fun t ->
+  let to_yojson : t -> Yojson.Safe.json = fun t ->
     let module T = Sxfiler_types.Types in
     `Assoc [
       ("sortOrder", `String (T.Sort_type.to_string t.sort_order))
     ]
 
-  let of_js : Yojson.Safe.json -> t = fun json ->
+  let of_yojson : Yojson.Safe.json -> t = fun json ->
     match Js.of_yojson json with
     | Error _ -> failwith "TODO: handle parse error"
     | Ok js ->
@@ -83,3 +83,10 @@ module Server = struct
         sort_order = T.Sort_type.of_string js.Js.sort_order;
       }
 end
+
+let to_yojson : t -> Yojson.Safe.json = fun t ->
+  `Assoc [
+    ("keyMaps", Key_maps.to_yojson t.key_maps);
+    ("viewerConfig", Viewer.to_yojson t.viewer_config);
+    ("serverConfig", Server.to_yojson t.server_config);
+  ]

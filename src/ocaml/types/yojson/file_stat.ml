@@ -1,9 +1,9 @@
 include Sxfiler_types.File_stat
 
-(** [to_js t] converts OCaml type to Yojson representation.
+(** [to_yojson t] converts OCaml type to Yojson representation.
     Can not use ppx_deriving_yojson because some types can not convert as types wanted.
 *)
-let to_js : t -> Yojson.json = fun t ->
+let to_yojson : t -> Yojson.Safe.json = fun t ->
   `Assoc [
     ("mode", `String (Int32.to_string t.mode));
     ("uid", `Int t.uid);
