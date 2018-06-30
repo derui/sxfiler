@@ -2,6 +2,7 @@ open Lwt
 open Websocket
 open Websocket_cohttp_lwt
 module Comp = Completion
+module T = Task
 
 exception Fail_load_migemo
 

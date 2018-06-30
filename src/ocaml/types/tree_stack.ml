@@ -12,3 +12,7 @@ let push ~data t = data :: t
 let pop = function
   | [] -> None
   | data :: rest -> Some (data, rest)
+
+let pop_ignore = function
+  | [] -> []
+  | _ :: rest -> rest

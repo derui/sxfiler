@@ -6,7 +6,6 @@
   (package sxfiler)
   (libraries (lwt websocket websocket-lwt.cohttp
               jsonrpc-ocaml.yojson
-              sxfiler.common
               sxfiler.types.yojson
               sxfiler.server.completion
               ppx_deriving_yojson.runtime
