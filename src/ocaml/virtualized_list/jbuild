@@ -3,6 +3,7 @@
 (library
  ((name sxfiler_virtualized_list)
   (public_name sxfiler.virtualized_list)
+  (modes (byte))
   (libraries (js_of_ocaml jsoo_reactjs))
   (js_of_ocaml ((flags :standard)))
   (preprocess (pps (js_of_ocaml-ppx)))))

@@ -3,6 +3,7 @@
 (library
  ((name sxfiler_types_jsoo)
   (public_name sxfiler.types.jsoo)
+  (modes (byte))
   (libraries (js_of_ocaml minimal-monadic-caml sxfiler.types sxfiler.kbd jsoo_node))
   (preprocess (pps (js_of_ocaml-ppx)))
 ))

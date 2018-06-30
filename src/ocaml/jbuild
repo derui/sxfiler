@@ -7,6 +7,7 @@
 (executable
  ((name sxfiler_renderer_entry)
   (modules sxfiler_renderer_entry)
+  (modes (byte))
   (libraries (sxfiler.renderer))
   (js_of_ocaml ((flags ("--pretty"))))
   (preprocess (pps (js_of_ocaml-ppx ppx_variants_conv)))))
