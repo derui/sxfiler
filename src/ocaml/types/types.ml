@@ -54,3 +54,12 @@ module Source_type = struct
     | "History" -> History
     | _ -> failwith "Unknown constructor for Source_type"
 end
+
+(** {!Candidate} defines type of result of completion. *)
+module Candidate = struct
+  type 'a t = {
+    start: int ;
+    length: int;
+    value: 'a;
+  }
+end
