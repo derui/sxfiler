@@ -1,7 +1,7 @@
 (** This module will run tasks with task queue.  *)
 
 (** only entry point to add task to task queue in this module. *)
-let task_accepter = Lwt_mvar.create_empty ()
+let task_mailbox = Lwt_mvar.create_empty ()
 
 module Task_state = Map.Make(struct
     type t = Uuidm.t
@@ -14,11 +14,11 @@ let task_state_lock = Lwt_mutex.create ()
 let task_state : unit Task_state.t ref = ref Task_state.empty
 
 (** Forever loop to accept task. Running this function must be in other thread of worker thread. *)
-let rec accept_task () =
+let rec accept_task_loop () =
   let open Lwt in
-  Lwt_mvar.take task_accepter
+  Lwt_mvar.take task_mailbox
   >>= fun task -> Lwt_condition.broadcast task_queue_signal task |> Lwt.return
-  >>= accept_task
+  >>= accept_task_loop
 
 let handle_task_result id result =
   Lwt_mutex.with_lock task_state_lock (fun () ->
@@ -27,7 +27,7 @@ let handle_task_result id result =
     )
 
 (** Forever loop to run task. *)
-let rec run_task () =
+let rec run_task_loop () =
   let open Lwt in
   Lwt_condition.wait ~mutex:task_queue_lock task_queue_signal
   >>= fun task ->
@@ -47,14 +47,17 @@ let rec run_task () =
         );
       Lwt.return_unit
     )
-  >>= run_task
+  >>= run_task_loop
+
+(** [add_task task] add [task] to mailbox of task accepter. *)
+let add_task task = Lwt_mvar.put task_mailbox task
 
 (** [start ()] start asynchronous threads that are task accepter and task worker.
     Use {!Lwt.wakeup} with result of this function.
 *)
 let start () =
-  let accepter = accept_task () in
-  let worker = run_task () in
+  let accepter = accept_task_loop () in
+  let worker = run_task_loop () in
 
   let waiter, wakener = Lwt.task () in
   let open Lwt in
