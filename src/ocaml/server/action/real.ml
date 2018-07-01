@@ -2,6 +2,7 @@
     to access outer of a program.
 *)
 open Action_intf
+open Sxfiler_core
 
 module No_side_effect : No_side_effect = struct
   let take_snapshot ~directory =
@@ -9,6 +10,7 @@ module No_side_effect : No_side_effect = struct
     let items = Sys.readdir directory |> Array.to_list in
     let open Lwt in
     Lwt_list.map_p (fun v -> Lwt.return @@ File_op.get_node directory v) items
+    >>= fun nodes -> Lwt.return @@ List.map Option.get_exn @@ List.filter Option.is_some nodes
     >|= fun nodes -> T.Tree_snapshot.make ~directory ~nodes
 end
 

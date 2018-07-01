@@ -36,7 +36,9 @@ let stat_to_file_stat stat =
 
 let get_node parent path =
   let path = Filename.concat parent path in
-  let stat = Unix.lstat path in
-  let stat = stat_to_file_stat stat in
-  let module T = Sxfiler_types_yojson in
-  T.Node.make ~full_path:path ~parent_directory:parent ~stat ~link_path:None
+  if not @@ Sys.file_exists path then None
+  else
+    let stat = Unix.lstat path in
+    let stat = stat_to_file_stat stat in
+    let module T = Sxfiler_types_yojson in
+    Some (T.Node.make ~full_path:path ~parent_directory:parent ~stat ~link_path:None)

@@ -4,7 +4,10 @@ open Sxfiler_types
 
 type plan = Tree_snapshot.t * Tree_snapshot.t
 
-type task_result = [`Update_stack of string * Tree_stack.data]
+type task_result = [
+  | `Update_stack of string * Tree_stack.data
+  | `Failed of string
+]
 
 type 'a task = ()
 

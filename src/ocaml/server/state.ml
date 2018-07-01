@@ -22,7 +22,7 @@ let root_state = ref empty
 (* The mutex to synchronize between threads. *)
 let mutex : Lwt_mutex.t = Lwt_mutex.create ()
 
-let get_current_state = !root_state
+let get_current_state () = !root_state
 
 let with_lock f =
   let%lwt updated_state = Lwt_mutex.with_lock mutex (fun () -> f !root_state) in
