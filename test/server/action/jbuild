@@ -8,4 +8,4 @@
 (executable
  ((name test_sxfiler_server_action)
   (flags (-safe-string))
-  (libraries (oUnit sxfiler.server.action))))
+  (libraries (alcotest sxfiler.server.action sxfiler.core))))

@@ -8,4 +8,4 @@
 (executable
  ((name test_sxfiler_server_completion)
   (flags (-safe-string))
-  (libraries (oUnit sxfiler.server.completion migemocaml))))
+  (libraries (alcotest sxfiler.server.completion migemocaml))))
