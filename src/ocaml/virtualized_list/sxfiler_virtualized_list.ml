@@ -56,8 +56,6 @@ let get_items_in_window t =
   if Array.length t.all_items = 0 then [||]
   else Array.sub t.all_items window_start window_size
 
-let start_position_of_window {visible_window;_} = fst visible_window
-
 (** Get values as percentage that first is start position, second is visible size. *)
 let percentage_by_visible t =
   let start, size = t.visible_window in
