@@ -2,10 +2,11 @@
 
 (alias
  ((name runtest)
-  (deps (test_sxfiler_server_action.exe))
+  (deps (test_sxfiler_server_action.exe (files_recursively_in data_real/)))
   (action (run ${<}))))
 
 (executable
  ((name test_sxfiler_server_action)
   (flags (-safe-string))
-  (libraries (alcotest sxfiler.server.action sxfiler.core))))
+  (libraries (alcotest alcotest-lwt
+              sxfiler.server.action sxfiler.core))))

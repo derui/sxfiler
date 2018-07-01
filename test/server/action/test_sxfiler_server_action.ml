@@ -6,7 +6,9 @@ let file_operations = [
       Alcotest.(check @@ option @@ of_pp Fmt.nop) "Not found" None (A.File_op.get_node "parent" "not_found")
     );
   "get_node should return node if file found", `Quick, (fun () ->
-      let tempfile = Filename.temp_file "action" "tmp" in
+      Fun.bracket ~setup:(fun () -> Filename.temp_file "action" "tmp")
+        ~teardown:Sys.remove
+      @@ fun tempfile ->
       let oc = open_out tempfile in
       Unix.chmod tempfile 0o666;
       output_string oc "foo";
@@ -34,10 +36,9 @@ let file_operations = [
       Fun.bracket ~setup:(fun () -> linkname)
         ~teardown:(fun linkname -> Sys.remove Filename.(concat (get_temp_dir_name ()) linkname))
       @@ fun linkname ->
-      let tempfile = Filename.temp_file "action" "tmp" in
-      Fun.bracket ~setup:(fun () -> open_out tempfile)
-        ~teardown:close_out
-        (fun oc ->
+      Fun.bracket ~setup:(fun () -> Filename.temp_file "action" "tmp" )
+        ~teardown:Sys.remove
+        (fun tempfile ->
            let dir = Filename.dirname tempfile in
            Unix.symlink tempfile Filename.(concat dir linkname);
 
@@ -75,7 +76,42 @@ let file_operations = [
     );
 ]
 
+let real_test = [
+  Alcotest_lwt.test_case "take_snapshot with empty directory" `Quick (fun switch () ->
+      let tempfile = Filename.temp_file "action" "" in
+      Sys.remove tempfile;
+      Unix.mkdir tempfile 0o755;
+
+      Lwt.finalize (fun () ->
+          let module R = A.Real in
+          let open Lwt in
+          R.No_side_effect.take_snapshot ~directory:tempfile
+          >>= fun snapshot ->
+          let module S = Sxfiler_types.Tree_snapshot in
+          Alcotest.(check string) "directory" tempfile snapshot.S.directory;
+          Alcotest.(check @@ list @@ of_pp Fmt.nop) "nodes" [] snapshot.S.nodes;
+          Lwt.return_unit
+        )
+        (fun () -> Lwt.return @@ Unix.rmdir tempfile)
+    );
+  Alcotest_lwt.test_case "take_snapshot from directory that contains regular files" `Quick (fun switch () ->
+      let module R = A.Real in
+      let open Lwt in
+      let path = "./data_real/file_only" in
+      R.No_side_effect.take_snapshot ~directory:path
+      >>= fun snapshot ->
+      let module S = Sxfiler_types.Tree_snapshot in
+      let module N = Sxfiler_types.Node in
+      Alcotest.(check string) "directory" path snapshot.S.directory;
+      let nodes = List.sort compare @@ List.map (fun v -> v.N.full_path) snapshot.S.nodes in
+      Alcotest.(check @@ list string) "nodes" [Filename.concat path "file1";
+                                               Filename.concat path "file2"] nodes;
+      Lwt.return_unit
+    );
+]
+
 let () =
   Alcotest.run "Sxfiler server actions" [
     "file operations", file_operations;
+    "real actions", real_test;
   ]
