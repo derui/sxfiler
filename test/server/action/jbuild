@@ -1,0 +1,11 @@
+(jbuild_version 1)
+
+(alias
+ ((name runtest)
+  (deps (test_sxfiler_server_action.exe))
+  (action (run ${<}))))
+
+(executable
+ ((name test_sxfiler_server_action)
+  (flags (-safe-string))
+  (libraries (oUnit sxfiler.server.action))))
