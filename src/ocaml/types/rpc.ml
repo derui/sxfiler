@@ -37,3 +37,12 @@ module Completion = struct
     type result = Snapshot_record.t Types.Candidate.t array
   end
 end
+
+module File = struct
+  module Take_snapshot = struct
+    type param = {
+      directory: string;
+      stack_name: string;
+    }
+  end
+end

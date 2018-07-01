@@ -8,6 +8,7 @@
               jsonrpc-ocaml.yojson
               sxfiler.types.yojson
               sxfiler.server.completion
+              sxfiler.server.action
               ppx_deriving_yojson.runtime
   ))
   (preprocess (pps (lwt_ppx ppx_deriving_yojson)))))
