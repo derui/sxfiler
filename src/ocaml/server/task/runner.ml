@@ -59,6 +59,11 @@ let add_task task = Lwt_mvar.put task_mailbox task
 let start get_state =
   let accepter = accept_task_loop () in
   let worker = run_task_loop get_state () in
+  let accepter_waiter, accepter_wakener = Lwt.wait ()
+  and worker_waiter, worker_wakener = Lwt.wait () in
+
+  Lwt.on_cancel accepter @@ Lwt.wakeup accepter_wakener;
+  Lwt.on_cancel worker @@ Lwt.wakeup worker_wakener;
 
   let waiter, wakener = Lwt.task () in
   let open Lwt in
@@ -66,7 +71,8 @@ let start get_state =
     (* Cancel all async threads. *)
     Lwt.cancel accepter;
     Lwt.cancel worker;
-    Lwt.return_unit
+
+    Lwt.join [accepter_waiter;worker_waiter] >>= fun () -> return_unit
   in
   Lwt.async (fun () -> accepter);
   Lwt.async (fun () -> worker);

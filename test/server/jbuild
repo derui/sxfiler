@@ -1,0 +1,14 @@
+(jbuild_version 1)
+
+(alias
+ ((name runtest)
+  (deps (test_sxfiler_server.exe))
+  (action (run ${<}))))
+
+(executable
+ ((name test_sxfiler_server)
+  (flags (-safe-string))
+  (libraries (alcotest alcotest-lwt
+              sxfiler.server.task
+              sxfiler.server.core
+              sxfiler.core))))
