@@ -2,7 +2,7 @@
 
 module T = Sxfiler_types
 
-include Task_intf
+include Sxfiler_server_task.Intf
 
 module File = struct
   module Take_snapshot = struct

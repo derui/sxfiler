@@ -1,6 +1,7 @@
-(** Task_intf defines module type to make task. *)
+(** Intf defines module type to make task. *)
 
 open Sxfiler_types
+module State = Sxfiler_server_core.State
 
 type plan = Tree_snapshot.t * Tree_snapshot.t
 
@@ -19,7 +20,7 @@ module type S = sig
   (** [plan] get result that task applied virtually. If [`No_plan] passed,
       task runner do not run plan and run [apply] immediately.
   *)
-  val plan: [`No_plan
+  val plan: [ `No_plan
             | `Having_plan of (State.t -> params -> (module A.Instance) -> plan Lwt.t)]
 
   (** [apply state] get result of task. All task should return one of type result. *)

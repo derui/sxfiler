@@ -1,0 +1,13 @@
+(jbuild_version 1)
+
+(library
+ ((name sxfiler_server_task)
+  (public_name sxfiler.server.task)
+  (libraries (lwt
+              uuidm
+              sxfiler.core
+              sxfiler.server.core
+              sxfiler.server.action
+              sxfiler.types.yojson
+  ))
+  (preprocess (pps (lwt_ppx)))))

@@ -27,7 +27,7 @@ let handle_task_result id result =
     )
 
 (** Forever loop to run task. *)
-let rec run_task_loop () =
+let rec run_task_loop get_state () =
   let open Lwt in
   Lwt_condition.wait ~mutex:task_queue_lock task_queue_signal
   >>= fun task ->
@@ -36,10 +36,10 @@ let rec run_task_loop () =
 
       task_state := Task_state.add id () !task_state;
 
-      let module Current_task = (val task : Task_intf.Instance) in
+      let module Current_task = (val task : Intf.Instance) in
       Lwt.async (fun () ->
           try%lwt
-            let%lwt state = Lwt.wrap State.get_current_state in
+            let%lwt state = get_state () in
             let%lwt ret = Current_task.Task.apply state Current_task.instance (module Current_task.Action) in
             handle_task_result id ret
           with _ ->
@@ -47,17 +47,18 @@ let rec run_task_loop () =
         );
       Lwt.return_unit
     )
-  >>= run_task_loop
+  >>= run_task_loop get_state
 
 (** [add_task task] add [task] to mailbox of task accepter. *)
 let add_task task = Lwt_mvar.put task_mailbox task
 
-(** [start ()] start asynchronous threads that are task accepter and task worker.
+(** [start get_state] start asynchronous threads that are task accepter and task worker.
+    Passing [get_state] is used with Task to pass current state.
     Use {!Lwt.wakeup} with result of this function.
 *)
-let start () =
+let start get_state =
   let accepter = accept_task_loop () in
-  let worker = run_task_loop () in
+  let worker = run_task_loop get_state () in
 
   let waiter, wakener = Lwt.task () in
   let open Lwt in

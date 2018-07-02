@@ -2,7 +2,7 @@ open Lwt
 open Websocket
 open Websocket_cohttp_lwt
 module Comp = Completion_op
-module T = Task
+module T = Sxfiler_server_task
 
 exception Fail_load_migemo
 
@@ -116,6 +116,6 @@ let () =
   initialize_modules migemo;
 
   (* setup task runner and finalizer *)
-  let stopper_wakener, stopper = Task_runner.start () in
+  let stopper_wakener, stopper = T.Runner.start State.get_current_state in
   Lwt_main.at_exit (fun () -> Lwt.wakeup stopper_wakener (); stopper);
   Lwt_main.run (start_server "localhost" port ~migemo ~config ~keymaps)
