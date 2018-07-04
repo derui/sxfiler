@@ -15,6 +15,6 @@ let get_exn = function
   | Some v -> v
 
 (** [get ~default v] return wrapped value of [v]. If [v] is None, this returns [default]. *)
-let get ~default v = function
+let get ~default = function
   | None -> default
   | Some v -> v
