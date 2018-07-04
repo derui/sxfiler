@@ -1,5 +1,3 @@
-open Sxfiler_core
-
 (** Types of RPC to create procedure handler.
     This interface requires to define result and param always if procedure not required.
  *)

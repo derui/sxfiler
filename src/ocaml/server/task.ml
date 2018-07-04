@@ -15,7 +15,7 @@ module File = struct
       type params = t
 
       let plan = `No_plan
-      let apply state params action =
+      let apply _ params action =
         let module Action = (val action : A.Instance) in
         let open Lwt in
         Action.No_side_effect.take_snapshot ~directory:params.directory
