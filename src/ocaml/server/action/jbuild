@@ -5,6 +5,7 @@
   (public_name sxfiler.server.action)
   (libraries (lwt
               sxfiler.core
+              sxfiler.server.core
               sxfiler.types.yojson
               ppx_deriving_yojson.runtime
               unix
