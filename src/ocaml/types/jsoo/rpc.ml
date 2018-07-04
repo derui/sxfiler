@@ -1,3 +1,4 @@
+module W = Workspace
 open Sxfiler_types.Rpc
 
 module Completion = struct
@@ -70,5 +71,45 @@ module Completion = struct
           length = v##.length;
           value = Snapshot_record.of_js @@ Js.Unsafe.coerce v##.value;
         }) t
+  end
+end
+
+module Workspace = struct
+  module Make_sync = struct
+    include Workspace.Make_sync
+    module Jsoo = struct
+      class type param = object
+        method initialDirectory: Js.js_string Js.t Js.readonly_prop
+        method name: Js.js_string Js.t Js.readonly_prop
+      end
+
+      class type result = object
+        method created: bool Js.t Js.readonly_prop
+      end
+    end
+
+    let param_to_json t = object%js
+      val initialDirectory = Js.string t.initial_directory
+      val name = Js.string t.name
+    end
+
+    let result_of_json : Jsoo.result Js.t -> result = fun js -> {
+      created = Js.to_bool js##.created;
+    }
+  end
+
+  module Get_sync = struct
+    include Workspace.Get_sync
+    module Jsoo = struct
+      class type param = object
+        method name: Js.js_string Js.t Js.readonly_prop
+      end
+    end
+
+    let param_to_json t = object%js
+      val name = Js.string t.name
+    end
+
+    let result_of_json : W.js Js.t -> result = W.of_js
   end
 end

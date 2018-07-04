@@ -46,3 +46,25 @@ module File = struct
     }
   end
 end
+
+module Workspace = struct
+  (** {!Make_sync} module defines interface to make workspace. *)
+  module Make_sync = struct
+    type param = {
+      initial_directory: string;
+      name: string;
+    }
+
+    type result = {
+      created: bool;
+    }
+  end
+
+  module Get_sync = struct
+    type param = {
+      name: string;
+    }
+
+    type result = Workspace.t
+  end
+end

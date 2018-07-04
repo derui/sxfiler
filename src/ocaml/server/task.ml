@@ -8,7 +8,7 @@ module File = struct
   module Take_snapshot = struct
     type t = {
       directory: string;
-      stack_name: string;
+      workspace_name: string;
     }
 
     module Task : S with type params = t = struct
@@ -19,7 +19,9 @@ module File = struct
         let module Action = (val action : A.Instance) in
         let open Lwt in
         Action.No_side_effect.take_snapshot ~directory:params.directory
-        >|= fun snapshot -> `Update_stack (params.stack_name, T.Tree_stack.Snapshot snapshot)
+        >|= fun snapshot -> `Update_workspace (params.workspace_name, snapshot)
     end
+
+    include Task
   end
 end

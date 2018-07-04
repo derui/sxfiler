@@ -7,65 +7,56 @@ let module_prefixes = ["completion"]
 let mutex = Lwt_mutex.create ()
 let state = ref None
 
-module Setup = struct
-  module T = Sxfiler_types_yojson
+module Setup = Procedure_intf.Make(struct
+  module T = Sxfiler_types
+  module Ty = Sxfiler_types_yojson
   include T.Rpc.Completion.Setup
 
-  let handler request =
-    let module Req = Jsonrpc_ocaml_yojson.Request in
-    match request.Req.params with
-    | None -> raise Rpc.Types.(Jsonrpc_error Error_code.Invalid_params)
-    | Some params -> begin match param_of_yojson params with
-        | Error _ -> raise Rpc.Types.(Jsonrpc_error Error_code.Invalid_params)
-        | Ok param -> begin match param.source_type with
-            | T.Types.Source_type.File -> failwith "not implemented yet"
-            | Directory_tree -> failwith "not implemented yet"
-            | History -> failwith "not implemented yet"
-          end
-      end
-end
+  let param_of_json = `Required Ty.Rpc.Completion.Setup.param_of_yojson
+  let result_to_json = `Void
+
+  let handle param =
+    match param.source_type with
+    | T.Types.Source_type.File -> failwith "not implemented yet"
+    | Directory_tree -> failwith "not implemented yet"
+    | History -> failwith "not implemented yet"
+end)
 
 (** [Read_file] module provides to complete current sources with inputted string from parameter, then
     return candidates that are completed with input.
 *)
-module Read_file = struct
-  include Sxfiler_types_yojson.Rpc.Completion.Read_file
+module Read_file = Procedure_intf.Make(struct
+  module T = Sxfiler_types
+  module Ty = Sxfiler_types_yojson
+  include T.Rpc.Completion.Read_file
 
-  let handler request =
-    let module Req = Jsonrpc_ocaml_yojson.Request in
-    match request.Req.params with
-    | None -> raise Rpc.Types.(Jsonrpc_error Error_code.Invalid_params)
-    | Some params -> begin match param_of_yojson params with
-        | Error _ -> raise Rpc.Types.(Jsonrpc_error Error_code.Invalid_params)
-        | Ok input -> failwith "not implemented yet"
-      end
-end
+  let param_of_json = `Required Ty.Rpc.Completion.Read_file.param_of_yojson
+  let result_to_json = `Result Ty.Rpc.Completion.Read_file.result_to_yojson
 
-module Read_directory = struct
-  include Sxfiler_types_yojson.Rpc.Completion.Read_directory
+  let handle param = failwith "not implemented yet"
+end)
 
-  let handler request =
-    let module Req = Jsonrpc_ocaml_yojson.Request in
-    match request.Req.params with
-    | None -> raise Rpc.Types.(Jsonrpc_error Error_code.Invalid_params)
-    | Some params -> begin match param_of_yojson params with
-        | Error _ -> raise Rpc.Types.(Jsonrpc_error Error_code.Invalid_params)
-        | Ok input -> failwith "not implemented yet"
-      end
-end
+module Read_directory = Procedure_intf.Make(struct
+  module T = Sxfiler_types
+  module Ty = Sxfiler_types_yojson
+  include T.Rpc.Completion.Read_directory
 
-module Read_history = struct
-  include Sxfiler_types_yojson.Rpc.Completion.Read_history
+  let param_of_json = `Required Ty.Rpc.Completion.Read_directory.param_of_yojson
+  let result_to_json = `Result Ty.Rpc.Completion.Read_directory.result_to_yojson
 
-  let handler request =
-    let module Req = Jsonrpc_ocaml_yojson.Request in
-    match request.Req.params with
-    | None -> raise Rpc.Types.(Jsonrpc_error Error_code.Invalid_params)
-    | Some params -> begin match param_of_yojson params with
-        | Error _ -> raise Rpc.Types.(Jsonrpc_error Error_code.Invalid_params)
-        | Ok input -> failwith "not implemented yet"
-      end
-end
+  let handle param = failwith "not implemented yet"
+end)
+
+module Read_history = Procedure_intf.Make(struct
+  module T = Sxfiler_types
+  module Ty = Sxfiler_types_yojson
+  include T.Rpc.Completion.Read_history
+
+  let param_of_json = `Required Ty.Rpc.Completion.Read_history.param_of_yojson
+  let result_to_json = `Result Ty.Rpc.Completion.Read_history.result_to_yojson
+
+  let handle param = failwith "not implemented yet"
+end)
 
 let read param = failwith "not implemented yet"
 

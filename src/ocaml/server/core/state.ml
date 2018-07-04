@@ -14,3 +14,5 @@ let empty = {
   configuration = T.Configuration.default;
   workspace_map = Workspace_map.empty;
 }
+
+let find_workspace ~name t = Workspace_map.find_opt name t.workspace_map
