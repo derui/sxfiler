@@ -1,5 +1,4 @@
 (** Workspace_op module defines functions for procedures of workspace. *)
-module Rpc = Jsonrpc_ocaml_yojson
 module Runner = Sxfiler_server_task.Runner
 
 (** prefixes of completion module. *)
@@ -14,7 +13,7 @@ module Make_sync = Procedure_intf.Make(struct
     let result_to_json = `Result Ty.Rpc.Workspace.Make_sync.result_to_yojson
 
     let handle param =
-      let%lwt state = State.get_current_state () in
+      let%lwt state = Global.Root.get () in
       let module S = Sxfiler_server_core.State in
       let%lwt result = match S.find_workspace ~name:param.name state with
         | Some _ -> Lwt.return {created = true}

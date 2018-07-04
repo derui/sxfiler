@@ -1,7 +1,7 @@
 (** Intf defines module type to make task. *)
 
 open Sxfiler_types
-module State = Sxfiler_server_core.State
+module State = Sxfiler_server_core.Root_state
 
 type plan = Tree_snapshot.t * Tree_snapshot.t
 

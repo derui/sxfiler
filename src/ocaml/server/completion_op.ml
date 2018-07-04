@@ -4,9 +4,6 @@ module Rpc = Jsonrpc_ocaml_yojson
 (** prefixes of completion module. *)
 let module_prefixes = ["completion"]
 
-let mutex = Lwt_mutex.create ()
-let state = ref None
-
 module Setup = Procedure_intf.Make(struct
   module T = Sxfiler_types
   module Ty = Sxfiler_types_yojson
@@ -61,7 +58,7 @@ end)
 let read param = failwith "not implemented yet"
 
 let initialize migemo =
-  state := Some (Sxfiler_server_completion.Completer.make ~migemo)
+  Global.Completion.update (Some (Sxfiler_server_completion.Completer.make ~migemo))
 
 let expose server =
   let module S = Jsonrpc_ocaml_yojson.Server in
