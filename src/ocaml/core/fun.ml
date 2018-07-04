@@ -17,3 +17,6 @@ let  bracket ~setup ~teardown f =
       raise e
   end;
   teardown data
+
+(** [flip f x y] get flipped function. *)
+let flip f x y = f y x
