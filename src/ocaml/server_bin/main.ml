@@ -9,6 +9,7 @@ module T = Sxfiler_server_task
 exception Fail_load_migemo
 
 let handler
+    (rpc_conn: Rpc_connection.t)
     (rpc_server : Jsonrpc_server.t)
     (conn : Conduit_lwt_unix.flow * Cohttp.Connection.t)
     (req  : Cohttp_lwt_unix.Request.t)
@@ -21,11 +22,12 @@ let handler
     let%lwt () = Cohttp_lwt.Body.drain_body body in
     let%lwt (resp, body, frames_out_fn) =
       Websocket_cohttp_lwt.upgrade_connection req (fst conn) (fun f ->
-          rpc_server.Jsonrpc_server.frame_writer @@ Some f
+          Rpc_connection.push_input rpc_conn ~frame:(Some f)
         )
     in
     (* serve frame/response handler *)
-    let _ = Jsonrpc_server.serve_forever rpc_server frames_out_fn in
+    let%lwt rpc_conn = Rpc_connection.connect rpc_conn frames_out_fn in
+    let%lwt () = Jsonrpc_server.serve_forever rpc_server rpc_conn in
     Lwt.return (resp, (body :> Cohttp_lwt.Body.t))
   | _ ->
     Cohttp_lwt_unix.Server.respond_string
@@ -43,9 +45,10 @@ let start_server host port ~config ~keymaps ~migemo =
   in
   let%lwt () = Lwt_io.eprintf "[SERV] Listening for HTTP on port %d\n%!" port in
   let rpc_server = Jsonrpc_server.make () in
+  let rpc_conn = Rpc_connection.make () in
   Cohttp_lwt_unix.Server.create
     ~mode:(`TCP (`Port port))
-    (Cohttp_lwt_unix.Server.make ~callback:(handler rpc_server) ~conn_closed ())
+    (Cohttp_lwt_unix.Server.make ~callback:(handler rpc_conn rpc_server) ~conn_closed ())
 
 (* Load migemo from specified directory that contains dictionary and conversions.  *)
 let load_migemo dict_dir =
