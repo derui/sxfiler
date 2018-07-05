@@ -114,9 +114,8 @@ let () =
   let keymaps = get_config load_keymaps !key_maps ~default:C.Key_maps.default in
   let migemo = load_migemo !dict_dir in
 
-  initialize_modules migemo;
-
   (* setup task runner and finalizer *)
   let stopper_wakener, stopper = T.Runner.start Global.Root.get in
   Lwt_main.at_exit (fun () -> Lwt.wakeup stopper_wakener (); stopper);
-  Lwt_main.run (start_server "localhost" port ~migemo ~config ~keymaps)
+  Lwt_main.run (initialize_modules migemo
+                >>= fun () -> start_server "localhost" port ~migemo ~config ~keymaps)

@@ -25,6 +25,7 @@ module type S = sig
   val handler: Jsonrpc_ocaml_yojson.Request.t -> Jsonrpc_ocaml_yojson.Response.t Lwt.t
 end
 
+(** Make a module to be able to handle request and response of JSON-RPC without boilarplate. *)
 module Make(R:Rpc_type) : S with type param := R.param and type result := R.result = struct
 
   let handler req =

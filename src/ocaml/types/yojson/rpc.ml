@@ -2,7 +2,7 @@ module W = Workspace
 open Sxfiler_types.Rpc
 
 module Completion = struct
-  module Setup = struct
+  module Setup_file_sync = struct
     open Completion.Setup_file_sync
 
     module Js = struct
@@ -41,7 +41,7 @@ module Completion = struct
         }) t
   end
 
-  module Read_directory = struct
+  module Read_directory_sync = struct
     open Completion.Read_directory_sync
 
     module Js = Read_common_js
@@ -59,7 +59,7 @@ module Completion = struct
         }) t
   end
 
-  module Read_history = struct
+  module Read_history_sync = struct
     open Completion.Read_history_sync
 
     module Js = Read_common_js

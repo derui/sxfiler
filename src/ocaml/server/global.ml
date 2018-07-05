@@ -1,30 +1,14 @@
-module State = Sxfiler_server_core.Root_state
+module C = Sxfiler_server_core
+module State = C.Root_state
 
-module Root = struct
+module Root = C.Statable.Make(struct
+    type t = State.t
 
-  (** Application global state. Do not use directly. *)
-  let t = ref State.empty
+    let empty () = State.empty
+  end)
 
-  (* The mutex to synchronize between threads. *)
-  let mutex : Lwt_mutex.t = Lwt_mutex.create ()
+module Completion = C.Statable.Make(struct
+    type t = Sxfiler_server_completion.Completer.t option
 
-  let get () = Lwt.return !t
-  let update v = t := v
-
-  let with_lock f = Lwt_mutex.with_lock mutex (fun () -> f !t)
-end
-
-module Completion = struct
-  type t = Sxfiler_server_completion.Completer.t
-
-  (** Application global state. Do not use directly. *)
-  let t : t option ref = ref None
-
-  (* The mutex to synchronize between threads. *)
-  let mutex : Lwt_mutex.t = Lwt_mutex.create ()
-
-  let get () = Lwt.return !t
-  let update v = t := v
-
-  let with_lock f = Lwt_mutex.with_lock mutex (fun () -> f !t)
-end
+    let empty () = None
+  end)
