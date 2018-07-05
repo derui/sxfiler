@@ -5,15 +5,15 @@
 *)
 
 module Completion = struct
-  module Setup = struct
+  module Setup_file_sync = struct
     type param = {
-      source_type : Types.Source_type.t;
+      workspace_name: string
     }
 
     type result = unit
   end
 
-  module Read_file = struct
+  module Read_file_sync = struct
     type param = {
       input: string;
     }
@@ -21,7 +21,7 @@ module Completion = struct
     type result = Node.t Types.Candidate.t array
   end
 
-  module Read_directory = struct
+  module Read_directory_sync = struct
     type param = {
       input: string;
     }
@@ -29,7 +29,7 @@ module Completion = struct
     type result = Directory_tree.t Types.Candidate.t array
   end
 
-  module Read_history = struct
+  module Read_history_sync = struct
     type param = {
       input: string;
     }

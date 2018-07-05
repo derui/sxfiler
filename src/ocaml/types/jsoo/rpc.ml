@@ -2,15 +2,15 @@ module W = Workspace
 open Sxfiler_types.Rpc
 
 module Completion = struct
-  module Setup = struct
-    include Completion.Setup
+  module Setup_file_sync = struct
+    open Completion.Setup_file_sync
 
     class type js_param = object
-      method sourceType: Js.js_string Js.t Js.readonly_prop
+      method workspaceName: Js.js_string Js.t Js.readonly_prop
     end
 
     let param_to_js : param -> js_param Js.t = fun t -> object%js
-      val sourceType = Types.Source_type.to_js t.source_type
+      val workspaceName = Js.string t.workspace_name
     end
   end
 
@@ -22,8 +22,8 @@ module Completion = struct
     type result = Types.Candidate.js Js.t Js.js_array
   end
 
-  module Read_file = struct
-    include Completion.Read_file
+  module Read_file_sync = struct
+    open Completion.Read_file_sync
     module Jsoo = Read_common_js
 
     let param_to_js t = object%js
@@ -39,8 +39,8 @@ module Completion = struct
         }) t
   end
 
-  module Read_directory = struct
-    include Completion.Read_directory
+  module Read_directory_sync = struct
+    open Completion.Read_directory_sync
     module Jsoo = Read_common_js
 
     let param_to_js t = object%js
@@ -56,8 +56,8 @@ module Completion = struct
         }) t
   end
 
-  module Read_history = struct
-    include Completion.Read_history
+  module Read_history_sync = struct
+    open Completion.Read_history_sync
     module Jsoo = Read_common_js
 
     let param_to_js t = object%js
@@ -76,7 +76,7 @@ end
 
 module Workspace = struct
   module Make_sync = struct
-    include Workspace.Make_sync
+    open Workspace.Make_sync
     module Jsoo = struct
       class type param = object
         method initialDirectory: Js.js_string Js.t Js.readonly_prop
@@ -99,7 +99,7 @@ module Workspace = struct
   end
 
   module Get_sync = struct
-    include Workspace.Get_sync
+    open Workspace.Get_sync
     module Jsoo = struct
       class type param = object
         method name: Js.js_string Js.t Js.readonly_prop

@@ -3,17 +3,17 @@ open Sxfiler_types.Rpc
 
 module Completion = struct
   module Setup = struct
-    include Completion.Setup
+    open Completion.Setup_file_sync
 
     module Js = struct
       type param = {
-        source_type: Types.Source_type.t [@key "sourceType"]
+        workspace_name: string [@key "workspaceName"]
       } [@@deriving yojson]
     end
 
     let param_of_yojson js =
       let open Ppx_deriving_yojson_runtime in
-      Js.param_of_yojson js >>= fun js -> Ok {source_type = js.Js.source_type}
+      Js.param_of_yojson js >>= fun js -> Ok {workspace_name = js.Js.workspace_name}
   end
 
   module Read_common_js = struct
@@ -24,8 +24,8 @@ module Completion = struct
     type result = Types.Candidate.js array [@@deriving yojson]
   end
 
-  module Read_file = struct
-    include Completion.Read_file
+  module Read_file_sync = struct
+    open Completion.Read_file_sync
     module Js = Read_common_js
 
     let param_of_yojson js =
@@ -42,7 +42,7 @@ module Completion = struct
   end
 
   module Read_directory = struct
-    include Completion.Read_directory
+    open Completion.Read_directory_sync
 
     module Js = Read_common_js
 
@@ -60,7 +60,7 @@ module Completion = struct
   end
 
   module Read_history = struct
-    include Completion.Read_history
+    open Completion.Read_history_sync
 
     module Js = Read_common_js
 
@@ -80,7 +80,7 @@ end
 
 module Workspace = struct
   module Make_sync = struct
-    include Workspace.Make_sync
+    open Workspace.Make_sync
     module Js = struct
       type param = {
         initial_directory: string [@key "initialDirectory"];
@@ -105,7 +105,7 @@ module Workspace = struct
   end
 
   module Get_sync = struct
-    include Workspace.Get_sync
+    open Workspace.Get_sync
     module Js = struct
       type param = {
         name: string;
