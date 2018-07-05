@@ -1,6 +1,7 @@
 open Lwt
 open Websocket
 open Websocket_cohttp_lwt
+open Sxfiler_server
 module Comp = Completion_op
 module W = Workspace_op
 module T = Sxfiler_server_task

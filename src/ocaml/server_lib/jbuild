@@ -1,0 +1,15 @@
+(jbuild_version 1)
+
+(library
+ ((name sxfiler_server)
+  (public_name sxfiler.server)
+  (libraries (lwt websocket websocket-lwt.cohttp
+              uuidm
+              jsonrpc-ocaml.yojson
+              sxfiler.types.yojson
+              sxfiler.server.completion
+              sxfiler.server.core
+              sxfiler.server.task
+              ppx_deriving_yojson.runtime
+  ))
+  (preprocess (pps (lwt_ppx ppx_deriving_yojson)))))

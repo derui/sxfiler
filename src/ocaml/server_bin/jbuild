@@ -8,9 +8,6 @@
               uuidm
               jsonrpc-ocaml.yojson
               sxfiler.types.yojson
-              sxfiler.server.completion
-              sxfiler.server.action
-              sxfiler.server.task
-              ppx_deriving_yojson.runtime
+              sxfiler.server
   ))
-  (preprocess (pps (lwt_ppx ppx_deriving_yojson)))))
+  (preprocess (pps (lwt_ppx)))))

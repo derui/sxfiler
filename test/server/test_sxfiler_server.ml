@@ -5,7 +5,7 @@ module C = Sxfiler_server_core
 let task_runner = [
   Alcotest_lwt.test_case "run asynchronous loops" `Quick (fun switch () ->
       let module T = Sxfiler_server_task in
-      let get_state () = Lwt.return @@ C.State.empty in
+      let get_state () = Lwt.return @@ C.Root_state.empty in
       let waken, stopper = T.Runner.start get_state in
 
       let open Lwt in
@@ -16,7 +16,7 @@ let task_runner = [
     );
   Alcotest_lwt.test_case "allow to run task immediately" `Quick (fun switch () ->
       let module T = Sxfiler_server_task in
-      let get_state () = Lwt.return @@ C.State.empty in
+      let get_state () = Lwt.return @@ C.Root_state.empty in
       let waken, stopper = T.Runner.start get_state in
       let data = ref 0 in
 
