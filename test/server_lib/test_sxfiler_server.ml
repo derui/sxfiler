@@ -40,7 +40,10 @@ let task_runner = [
     );
 ]
 
+let testcases = [
+  "task runner", task_runner;
+]
+
 let () =
-  Alcotest.run "server functionally" [
-    "task runner", task_runner;
-  ]
+  let tests = testcases @ Task.testcases in
+  Alcotest.run "server functionally" tests

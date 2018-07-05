@@ -1,8 +1,7 @@
 (** This module defines tasks are based on {!Task_intf} *)
 
 module T = Sxfiler_types
-
-include Sxfiler_server_task.Intf
+open Sxfiler_server_task.Intf
 
 module File = struct
   module Take_snapshot = struct

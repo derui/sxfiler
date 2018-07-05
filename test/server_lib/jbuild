@@ -11,4 +11,5 @@
   (libraries (alcotest alcotest-lwt
               sxfiler.server.task
               sxfiler.server.core
+              sxfiler.server
               sxfiler.core))))
