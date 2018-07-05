@@ -1,4 +1,4 @@
-const {copyFiles} = require('./pre-package.js');
+const { copyFiles } = require('./pre-package.js');
 const { buildCssWithWatch, buildCss } = require('./build-css.js');
 const { buildOCamlWithWatch, buildOCaml } = require('./build-ocaml.js');
 const { bundleDll } = require('./build-dll.js');
