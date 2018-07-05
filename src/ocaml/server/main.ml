@@ -117,6 +117,6 @@ let () =
   initialize_modules migemo;
 
   (* setup task runner and finalizer *)
-  let stopper_wakener, stopper = T.Runner.start State.get_current_state in
+  let stopper_wakener, stopper = T.Runner.start Global.Root.get in
   Lwt_main.at_exit (fun () -> Lwt.wakeup stopper_wakener (); stopper);
   Lwt_main.run (start_server "localhost" port ~migemo ~config ~keymaps)

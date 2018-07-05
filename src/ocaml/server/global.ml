@@ -3,7 +3,7 @@ module State = Sxfiler_server_core.Root_state
 module Root = struct
 
   (** Application global state. Do not use directly. *)
-  let t = ref Root_state.empty
+  let t = ref State.empty
 
   (* The mutex to synchronize between threads. *)
   let mutex : Lwt_mutex.t = Lwt_mutex.create ()

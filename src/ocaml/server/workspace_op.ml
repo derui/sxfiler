@@ -14,7 +14,7 @@ module Make_sync = Procedure_intf.Make(struct
 
     let handle param =
       let%lwt state = Global.Root.get () in
-      let module S = Sxfiler_server_core.State in
+      let module S = Sxfiler_server_core.Root_state in
       let%lwt result = match S.find_workspace ~name:param.name state with
         | Some _ -> Lwt.return {created = true}
         | None -> begin
