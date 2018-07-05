@@ -7,7 +7,7 @@ let ident: 'a -> 'a = fun v -> v
 (** [bracket ~setup ~teardown f] get data from [setup] and run [f] with it, and finalize [teardown] always.
     if [f] raise exception, do finalize and re-raise it.
 *)
-let  bracket ~setup ~teardown f =
+let bracket ~setup ~teardown f =
   let data = setup () in
   begin
     try
