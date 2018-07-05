@@ -4,4 +4,4 @@
  ((name sxfiler_core)
   (public_name sxfiler.core)
   (libraries (minimal-monadic-caml))
-))
+  (preprocess (pps (bisect_ppx -conditional)))))

@@ -35,5 +35,6 @@ depends: [
   "uuidm" { >= "0.9.6"}
   "alcotest" {>= "0.8.3" & test}
   "alcotest-lwt" {>= "0.8.0" & test}
+  "bisect_ppx" {>= "1.3.3" & test}
 ]
 available: ["ocaml" >= "4.05.0"]

@@ -12,4 +12,5 @@
               sxfiler.server.task
               sxfiler.server.core
               sxfiler.server
-              sxfiler.core))))
+              sxfiler.core
+  ))))

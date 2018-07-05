@@ -10,4 +10,4 @@
               ppx_deriving_yojson.runtime
               unix
   ))
-  (preprocess (pps (lwt_ppx ppx_deriving_yojson)))))
+  (preprocess (pps (lwt_ppx ppx_deriving_yojson bisect_ppx -conditional)))))
