@@ -1,9 +1,0 @@
-git clack https://github.com/fukamachi/clack.git
-git jsonrpc https://github.com/fukamachi/jsonrpc.git
-ql rove :latest
-ql yason :latest
-ql ironclad :latest
-ql cl-syntax :latest
-ql cl-ppcre :latest
-ql alexandria :latest
-ql cl-marshal :latest
