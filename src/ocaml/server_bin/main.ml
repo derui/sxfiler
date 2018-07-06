@@ -119,7 +119,10 @@ let () =
   let migemo = load_migemo !dict_dir in
 
   (* setup task runner and finalizer *)
-  let stopper_wakener, stopper = T.Runner.start Global.Root.get in
+  let module Handler = Task_handler.Make(struct
+      let unixtime () = Sxfiler_server_core.Time.time_to_int64 @@ Unix.gettimeofday ()
+    end) in
+  let stopper_wakener, stopper = T.Runner.start (module Global.Root) Handler.handle in
   Lwt_main.at_exit (fun () -> Lwt.wakeup stopper_wakener (); stopper);
   Lwt_main.run (initialize_modules migemo
                 >>= fun () -> start_server "localhost" port ~migemo ~config ~keymaps)

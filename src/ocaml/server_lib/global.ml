@@ -1,10 +1,9 @@
 module C = Sxfiler_server_core
-module State = C.Root_state
 
 module Root = C.Statable.Make(struct
-    type t = State.t
+    type t = C.Root_state.t
 
-    let empty () = State.empty
+    let empty () = C.Root_state.empty
   end)
 
 module Completion = C.Statable.Make(struct

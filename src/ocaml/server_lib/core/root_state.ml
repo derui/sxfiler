@@ -16,3 +16,7 @@ let empty = {
 }
 
 let find_workspace ~name t = Workspace_map.find_opt name t.workspace_map
+
+let add_workspace ~name ~ws t = {
+  t with workspace_map = Workspace_map.add name ws t.workspace_map;
+}
