@@ -9,8 +9,10 @@
  ((name test_sxfiler_server)
   (flags (-safe-string))
   (libraries (alcotest alcotest-lwt
+              lwt
               sxfiler.server.task
               sxfiler.server.core
               sxfiler.server
               sxfiler.core
-  ))))
+  ))
+  (preprocess (pps (lwt_ppx)))))

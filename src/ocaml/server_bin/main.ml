@@ -26,7 +26,7 @@ let handler
         )
     in
     (* serve frame/response handler *)
-    let%lwt rpc_conn = Rpc_connection.connect rpc_conn frames_out_fn in
+    let%lwt () = Rpc_connection.connect rpc_conn frames_out_fn in
     let%lwt () = Jsonrpc_server.serve_forever rpc_server rpc_conn in
     Lwt.return (resp, (body :> Cohttp_lwt.Body.t))
   | _ ->

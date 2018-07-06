@@ -2,8 +2,7 @@
     This module defines global connection to be able to use other module to send
     frame.
 *)
-module W = Websocket_cohttp_lwt
-module J = Jsonrpc_ocaml_yojson
+open Rpc_connection_abbrev
 
 (** Type of Rpc_connection. output_writer is created by Websocket_cohttp_lwt.upgrade_connection,
     and do not get stream of it.
@@ -16,13 +15,15 @@ type t = {
 
 let connection : t option ref = ref None
 
-(** [write_output t ~frame] writes a [frame] to peer on websocket connection. *)
+(** [write_output t ~frame] writes a [frame] to peer on websocket connection.
+    This function calls writer given with calling {!connect}.
+*)
 let write_output t ~frame = t.output_writer frame
 
 (** [process_input t ~f] handles input of [t] on websocket connection with [f] *)
 let process_input t ~f = Lwt_stream.iter_s f t.input_stream
 
-(** [read_input t ~frame] writes a [frame] to peer on websocket connection. *)
+(** [push_input t ~frame] writes a [frame] to peer on websocket connection. *)
 let push_input t ~frame = t.input_writer frame
 
 (** [with_conn f] execute [f] if connection already created. If does not exists connection,
@@ -42,22 +43,35 @@ let make () =
     input_writer;
   }
 
-(** [connect t output_writer] connect from websocket to [t] with [output_writer].
+(** [connect output_writer] connect to websocket with [output_writer].
     Connection is saved as global.
 *)
 let connect t output_writer =
+  if Lwt_stream.is_closed t.input_stream then Lwt.return_unit
+  else
+    match !connection with
+    | None ->
+      connection := Some t;
+      t.output_writer <- output_writer;
+      Lwt.return_unit
+    | Some t' ->
+      let open Lwt in
+      t'.input_writer None;
+      Lwt_stream.closed t'.input_stream
+      >>= fun () ->
+      connection := Some t;
+      t.output_writer <- output_writer;
+      Lwt.return_unit
+
+(** [disconnect ()] kills global connection. *)
+let disconnect () =
+  let open Lwt in
   match !connection with
-  | None ->
-    connection := Some t;
-    t.output_writer <- output_writer;
-    Lwt.return t
-  | Some t' ->
-    let open Lwt in
-    Lwt_stream.closed t'.input_stream
-    >>= fun () ->
-    connection := Some t;
-    t.output_writer <- output_writer;
-    Lwt.return t
+  | None -> Lwt.return_unit
+  | Some t ->
+    t.input_writer None;
+    Lwt_stream.closed t.input_stream
+    >>= fun () -> connection := None; Lwt.return_unit
 
 (** [default_input_handler t f] handles frame [f] with default behavior for Websocket. *)
 let default_input_handler t f =

@@ -45,5 +45,5 @@ let testcases = [
 ]
 
 let () =
-  let tests = testcases @ Task.testcases in
+  let tests = testcases @ Task.testcases @ Rpc_connection.testcases in
   Alcotest.run "server functionally" tests
