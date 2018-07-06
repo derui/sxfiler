@@ -84,9 +84,7 @@ let real_test = [
 
       Lwt.finalize (fun () ->
           let module R = A.Real in
-          let open Lwt in
-          R.No_side_effect.take_snapshot ~directory:tempfile
-          >>= fun snapshot ->
+          let%lwt snapshot = R.No_side_effect.take_snapshot ~directory:tempfile in
           let module S = Sxfiler_types.Tree_snapshot in
           Alcotest.(check string) "directory" tempfile snapshot.S.directory;
           Alcotest.(check @@ list @@ of_pp Fmt.nop) "nodes" [] snapshot.S.nodes;
@@ -96,10 +94,8 @@ let real_test = [
     );
   Alcotest_lwt.test_case "take_snapshot from directory that contains regular files" `Quick (fun switch () ->
       let module R = A.Real in
-      let open Lwt in
       let path = "./data_real/file_only" in
-      R.No_side_effect.take_snapshot ~directory:path
-      >>= fun snapshot ->
+      let%lwt snapshot = R.No_side_effect.take_snapshot ~directory:path in
       let module S = Sxfiler_types.Tree_snapshot in
       let module N = Sxfiler_types.Node in
       Alcotest.(check string) "directory" path snapshot.S.directory;

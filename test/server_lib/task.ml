@@ -13,8 +13,7 @@ let take_snapshot = [
       let module A = Sxfiler_server_action in
       let open Lwt in
       let state = C.Root_state.empty in
-      T.File.Take_snapshot.(apply state {directory = "foo"; workspace_name = "test"} (module A.Dummy))
-      >>= fun data ->
+      let%lwt data = T.File.Take_snapshot.(apply state {directory = "foo"; workspace_name = "test"} (module A.Dummy)) in
       let snapshot = Tree_snapshot.make ~directory:"foo" ~nodes:[] in
       Alcotest.(check @@ of_pp @@ Fmt.nop) "get snapshot" (`Update_workspace ("test", snapshot)) data;
       return_unit

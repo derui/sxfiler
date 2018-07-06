@@ -119,7 +119,7 @@ let () =
   let migemo = load_migemo !dict_dir in
 
   (* setup task runner and finalizer *)
-  let module Handler = Task_handler.Make(struct
+  let module Handler = Task_result_handler.Make(struct
       let unixtime () = Sxfiler_server_core.Time.time_to_int64 @@ Unix.gettimeofday ()
     end)(Notifier.Impl) in
   let stopper_wakener, stopper = T.Runner.start (module Global.Root) Handler.handle in

@@ -13,7 +13,7 @@ let task_runner = [
 
       let open Lwt in
       Lwt.wakeup waken ();
-      stopper >>= fun () ->
+      let%lwt () = stopper in
       Alcotest.(check @@ of_pp @@ Fmt.nop) "thread stopped" (Lwt.Return ()) (Lwt.state stopper);
       return_unit
     );
@@ -39,7 +39,7 @@ let task_runner = [
 
       let open Lwt in
       T.Runner.add_task instance >>= fun () ->
-      stopper >>= fun () ->
+      let%lwt () = stopper in
       Alcotest.(check @@ of_pp @@ Fmt.nop) "thread stopped" (Lwt.Return ()) (Lwt.state stopper);
       Alcotest.(check int) "task run" 1 !data;
       return_unit
@@ -51,5 +51,9 @@ let testcases = [
 ]
 
 let () =
-  let tests = testcases @ Task.testcases @ Rpc_connection.testcases in
+  let tests = testcases
+              @ Task.testcases
+              @ Rpc_connection.testcases
+              @ Task_result_handler.testcases
+  in
   Alcotest.run "server functionally" tests

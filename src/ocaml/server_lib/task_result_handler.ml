@@ -1,4 +1,5 @@
 (** Task_handler defines handler of task to apply task result to global state. *)
+open Sxfiler_core
 open Sxfiler_types
 open Sxfiler_server_core
 
@@ -14,31 +15,30 @@ module Make(Clock:Snapshot_record.Clock)
     (Notifier:Notifier.S): S with type state := Root_state.t = struct
 
   let handle s = function
-    | `Update_workspace (name, snapshot) -> begin
+    | `Update_workspace (name', snapshot) -> begin
         let open Lwt in
         let module S = (val s : Statable.S with type state = Root_state.t) in
-        S.with_lock (fun state ->
-            let ws = match Root_state.find_workspace ~name state with
+        let%lwt ws = S.with_lock (fun state ->
+            let ws = match Root_state.find_workspace ~name:name' state with
               | None -> Workspace.make ~current:snapshot ~history:(Snapshot_history.make ())
               | Some ws -> Workspace.replace_current ws ~snapshot ~clock:(module Clock)
             in
-            let state = Root_state.add_workspace ~name ~ws state in
+            let state = Root_state.add_workspace ~name:name' ~ws state in
             S.update state >>= fun () -> return ws
-          )
-        >>= fun ws ->
+          ) in
         let module Wu = Rpc.Rpc_notification.Workspace_update in
         let module Wuy = Sxfiler_types_yojson.Rpc.Rpc_notification.Workspace_update in
         let module Api = (struct
           include Wu
           type json = Yojson.Safe.json
 
-          let params_to_json = function
-            | None -> None
-            | Some params -> Some (Wuy.params_to_yojson params)
+          let params_to_json params =
+            let open Option.Infix in
+            params >|= Wuy.params_to_yojson
 
           let result_of_json _ = ()
         end) in
-        Notifier.notify (module Api) (Some Rpc.Rpc_notification.Workspace_update.{name; workspace = ws})
+        Notifier.notify (module Api) (Some Rpc.Rpc_notification.Workspace_update.{name = name'; workspace = ws})
 
       end
     | `Failed err -> Lwt_io.eprintf "Task error: %s\n" err

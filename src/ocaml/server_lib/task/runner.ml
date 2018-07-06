@@ -30,7 +30,7 @@ let remove_state id result =
     )
 
 (** Forever loop to run task. *)
-let rec run_task_loop s task_handler () =
+let rec run_task_loop s task_result_handler () =
   let open Lwt in
   let module C = Sxfiler_server_core in
   let module S = (val s : C.Statable.S with type state = C.Root_state.t) in
@@ -52,11 +52,11 @@ let rec run_task_loop s task_handler () =
                 with _ ->
                   remove_state id (`Failed "Failed task with unhandled exception")
               in
-              task_handler s result
+              task_result_handler s result
             );
           Lwt.return_unit
         )
-      >>= run_task_loop s task_handler
+      >>= run_task_loop s task_result_handler
     end
 
 (** [add_task task] add [task] to mailbox of task accepter. *)
