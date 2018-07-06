@@ -6,18 +6,18 @@ module Completion = struct
     open Completion.Setup_file_sync
 
     module Js = struct
-      type param = {
+      type params = {
         workspace_name: string [@key "workspaceName"]
       } [@@deriving yojson]
     end
 
-    let param_of_yojson js =
+    let params_of_yojson js =
       let open Ppx_deriving_yojson_runtime in
-      Js.param_of_yojson js >>= fun js -> Ok {workspace_name = js.Js.workspace_name}
+      Js.params_of_yojson js >>= fun js -> Ok {workspace_name = js.Js.workspace_name}
   end
 
   module Read_common_js = struct
-    type param = {
+    type params = {
       input: string;
     } [@@deriving yojson]
 
@@ -28,9 +28,9 @@ module Completion = struct
     open Completion.Read_file_sync
     module Js = Read_common_js
 
-    let param_of_yojson js =
+    let params_of_yojson js =
       let open Ppx_deriving_yojson_runtime in
-      Js.param_of_yojson js >>= fun js -> Ok {input = js.Js.input}
+      Js.params_of_yojson js >>= fun js -> Ok {input = js.Js.input}
 
     let result_to_yojson t =
       let module T = Sxfiler_types.Types in
@@ -46,9 +46,9 @@ module Completion = struct
 
     module Js = Read_common_js
 
-    let param_of_yojson js =
+    let params_of_yojson js =
       let open Ppx_deriving_yojson_runtime in
-      Js.param_of_yojson js >>= fun js -> Ok {input = js.Js.input}
+      Js.params_of_yojson js >>= fun js -> Ok {input = js.Js.input}
 
     let result_to_yojson t =
       let module T = Sxfiler_types.Types in
@@ -64,9 +64,9 @@ module Completion = struct
 
     module Js = Read_common_js
 
-    let param_of_yojson js =
+    let params_of_yojson js =
       let open Ppx_deriving_yojson_runtime in
-      Js.param_of_yojson js >>= fun js -> Ok {input = js.Js.input}
+      Js.params_of_yojson js >>= fun js -> Ok {input = js.Js.input}
 
     let result_to_yojson t =
       let module T = Sxfiler_types.Types in
@@ -82,7 +82,7 @@ module Workspace = struct
   module Make_sync = struct
     open Workspace.Make_sync
     module Js = struct
-      type param = {
+      type params = {
         initial_directory: string [@key "initialDirectory"];
         name: string;
       } [@@deriving yojson]
@@ -92,9 +92,9 @@ module Workspace = struct
       } [@@deriving yojson]
     end
 
-    let param_of_yojson js =
+    let params_of_yojson js =
       let open Ppx_deriving_yojson_runtime in
-      Js.param_of_yojson js >>= fun js -> Ok {
+      Js.params_of_yojson js >>= fun js -> Ok {
         initial_directory = js.Js.initial_directory;
         name = js.Js.name;
       }
@@ -107,15 +107,15 @@ module Workspace = struct
   module Get_sync = struct
     open Workspace.Get_sync
     module Js = struct
-      type param = {
+      type params = {
         name: string;
       } [@@deriving yojson]
 
     end
 
-    let param_of_yojson js =
+    let params_of_yojson js =
       let open Ppx_deriving_yojson_runtime in
-      Js.param_of_yojson js >>= fun js -> Ok {name = js.Js.name;}
+      Js.params_of_yojson js >>= fun js -> Ok {name = js.Js.name;}
 
     let result_to_yojson = W.to_yojson
   end

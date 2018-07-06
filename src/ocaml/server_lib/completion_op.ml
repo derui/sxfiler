@@ -4,9 +4,6 @@ module Rpc = Jsonrpc_ocaml_yojson
 module T = Sxfiler_types
 module Ty = Sxfiler_types_yojson
 
-(** prefixes of completion module. *)
-let module_prefixes = ["completion"]
-
 module File_source = SC.Statable.Make(struct
     type t = T.Node.t list
 
@@ -17,7 +14,7 @@ module Setup_file_sync = Procedure_intf.Make(struct
   include T.Rpc.Completion.Setup_file_sync
   open Ty.Rpc.Completion.Setup_file_sync
 
-  let param_of_json = `Required param_of_yojson
+  let params_of_json = `Required params_of_yojson
   let result_to_json = `Void
 
   let handle param =
@@ -40,7 +37,7 @@ module Read_file_sync = Procedure_intf.Make(struct
   include T.Rpc.Completion.Read_file_sync
   open Ty.Rpc.Completion.Read_file_sync
 
-  let param_of_json = `Required param_of_yojson
+  let params_of_json = `Required params_of_yojson
   let result_to_json = `Result result_to_yojson
 
   let handle param =
@@ -70,7 +67,7 @@ module Read_directory_sync = Procedure_intf.Make(struct
     include T.Rpc.Completion.Read_directory_sync
     open Ty.Rpc.Completion.Read_directory_sync
 
-    let param_of_json = `Required param_of_yojson
+    let params_of_json = `Required params_of_yojson
     let result_to_json = `Result result_to_yojson
 
     let handle param = failwith "not implemented yet"
@@ -80,7 +77,7 @@ module Read_history_sync = Procedure_intf.Make(struct
     include T.Rpc.Completion.Read_history_sync
     open Ty.Rpc.Completion.Read_history_sync
 
-    let param_of_json = `Required param_of_yojson
+    let params_of_json = `Required params_of_yojson
     let result_to_json = `Result result_to_yojson
 
     let handle param = failwith "not implemented yet"
@@ -93,12 +90,13 @@ let initialize migemo =
 
 let expose server =
   let module S = Jsonrpc_ocaml_yojson.Server in
+  let module R = T.Rpc.Completion in
 
   List.fold_left (fun server (name, handler) ->
-      S.expose ~_method:Util.(make_method ~module_prefixes ~name) ~handler server
+      S.expose ~_method:name ~handler server
     ) server [
-    ("setup", Setup_file_sync.handler);
-    ("read/file", Read_file_sync.handler);
-    ("read/directory", Read_directory_sync.handler);
-    ("read/history", Read_history_sync.handler);
+    (R.Setup_file_sync.name, Setup_file_sync.handler);
+    (R.Read_file_sync.name, Read_file_sync.handler);
+    (R.Read_directory_sync.name, Read_directory_sync.handler);
+    (R.Read_history_sync.name, Read_history_sync.handler);
   ]

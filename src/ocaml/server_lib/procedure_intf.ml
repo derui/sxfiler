@@ -2,23 +2,24 @@
     This interface requires to define result and param always if procedure not required.
  *)
 module type Rpc_type = sig
-  type param
+  type params
   type result
 
   (** [param_of_json f] convert json to [param] if it needed. Do not convert param if
       [`Not_required] specified.  *)
-  val param_of_json : [`Required of Yojson.Safe.json -> (param, string) Pervasives.result | `Not_required of param]
+  val params_of_json : [ `Required of Yojson.Safe.json -> (params, string) Pervasives.result
+                       | `Not_required of params]
 
   (** [result_of_json f] convert [result] to json if it needed. Do not return anything if
       [`Void] specified.  *)
   val result_to_json: [`Void | `Result of result -> Yojson.Safe.json]
 
   (** Define handling with [param] and return [result]. *)
-  val handle : param -> result Lwt.t
+  val handle : params -> result Lwt.t
 end
 
 module type S = sig
-  type param
+  type params
   type result
 
   (** Handle around RPC without boring conversions for request and response. *)
@@ -26,13 +27,13 @@ module type S = sig
 end
 
 (** Make a module to be able to handle request and response of JSON-RPC without boilarplate. *)
-module Make(R:Rpc_type) : S with type param := R.param and type result := R.result = struct
+module Make(R:Rpc_type) : S with type params := R.params and type result := R.result = struct
 
   let handler req =
     let module Rpc = Jsonrpc_ocaml_yojson in
     let module Req = Rpc.Request in
     let module Res = Rpc.Response in
-    let%lwt result = match R.param_of_json with
+    let%lwt result = match R.params_of_json with
       | `Not_required param -> R.handle param
       | `Required f -> begin match req.Req.params with
           | None -> raise Rpc.Types.(Jsonrpc_error Error_code.Invalid_params)

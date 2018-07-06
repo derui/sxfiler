@@ -9,13 +9,15 @@ module Completion = struct
       method workspaceName: Js.js_string Js.t Js.readonly_prop
     end
 
-    let param_to_js : param -> js_param Js.t = fun t -> object%js
+    let params_to_json : params -> js_param Js.t = fun t -> object%js
       val workspaceName = Js.string t.workspace_name
     end
+
+    let result_of_json _ = ()
   end
 
   module Read_common_js = struct
-    class type param = object
+    class type params = object
       method input: Js.js_string Js.t Js.readonly_prop
     end
 
@@ -26,7 +28,7 @@ module Completion = struct
     open Completion.Read_file_sync
     module Jsoo = Read_common_js
 
-    let param_to_js t = object%js
+    let params_to_json t = object%js
       val input = Js.string t.input
     end
 
@@ -43,7 +45,7 @@ module Completion = struct
     open Completion.Read_directory_sync
     module Jsoo = Read_common_js
 
-    let param_to_js t = object%js
+    let params_to_json t = object%js
       val input = Js.string t.input
     end
 
@@ -60,7 +62,7 @@ module Completion = struct
     open Completion.Read_history_sync
     module Jsoo = Read_common_js
 
-    let param_to_js t = object%js
+    let params_to_json t = object%js
       val input = Js.string t.input
     end
 
@@ -78,7 +80,7 @@ module Workspace = struct
   module Make_sync = struct
     open Workspace.Make_sync
     module Jsoo = struct
-      class type param = object
+      class type params = object
         method initialDirectory: Js.js_string Js.t Js.readonly_prop
         method name: Js.js_string Js.t Js.readonly_prop
       end
@@ -88,7 +90,7 @@ module Workspace = struct
       end
     end
 
-    let param_to_json t = object%js
+    let params_to_jsonon t = object%js
       val initialDirectory = Js.string t.initial_directory
       val name = Js.string t.name
     end
@@ -101,12 +103,12 @@ module Workspace = struct
   module Get_sync = struct
     open Workspace.Get_sync
     module Jsoo = struct
-      class type param = object
+      class type params = object
         method name: Js.js_string Js.t Js.readonly_prop
       end
     end
 
-    let param_to_json t = object%js
+    let params_to_json t = object%js
       val name = Js.string t.name
     end
 
