@@ -18,3 +18,5 @@ let get_exn = function
 let get ~default = function
   | None -> default
   | Some v -> v
+
+include Minimal_monadic_caml.Option
