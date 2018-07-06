@@ -132,7 +132,7 @@ module Rpc_notification = struct
       } [@@deriving yojson]
     end
 
-    let params_to_yojson t = Js.params_to_yojson Js.{
+    let params_to_yojson : params -> Yojson.Safe.json = fun t -> Js.params_to_yojson Js.{
         name = t.name;
         workspace = t.workspace;
       }

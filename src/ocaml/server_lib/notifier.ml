@@ -7,10 +7,9 @@ module Jy = Jsonrpc_ocaml_yojson
 module type S = sig
 
   (** [notify api_def params] notify notification defined by [api_def]. *)
-  val notify: (module J.Client_intf.Api_def with type json = Jy.Client.json
-                                             and type params = 'b
-                                             and type result = 'c)
-              -> 'b option -> unit Lwt.t
+  val notify: (module Jy.Client.Api_def with type params = 'b
+                                         and type result = 'c)
+    -> 'b option -> unit Lwt.t
 end
 
 module Impl = struct
