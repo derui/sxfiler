@@ -10,10 +10,12 @@ module type S = sig
 end
 
 (** Make handler with {module!Sxfiler_types.Snapshot_record.Clock} abstraction *)
-module Make(Clock:Snapshot_record.Clock) : S with type state := Root_state.t = struct
+module Make(Clock:Snapshot_record.Clock)
+  (Notifier:Notifier.S): S with type state := Root_state.t = struct
 
   let handle state = function
     | `Update_workspace (name, snapshot) -> begin
+        let open Lwt in
         let module S = (val state : Statable.S with type state = Root_state.t) in
         S.with_lock (fun state ->
             let ws = match Root_state.find_workspace ~name state with
@@ -23,6 +25,8 @@ module Make(Clock:Snapshot_record.Clock) : S with type state := Root_state.t = s
             let state = Root_state.add_workspace ~name ~ws state in
             S.update state
           )
+          >>= fun () -> Notifier.notify
+
       end
     | `Failed err -> Lwt_io.eprintf "Task error: %s\n" err
 

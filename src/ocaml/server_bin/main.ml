@@ -121,7 +121,7 @@ let () =
   (* setup task runner and finalizer *)
   let module Handler = Task_handler.Make(struct
       let unixtime () = Sxfiler_server_core.Time.time_to_int64 @@ Unix.gettimeofday ()
-    end) in
+    end)(Notifier.Impl) in
   let stopper_wakener, stopper = T.Runner.start (module Global.Root) Handler.handle in
   Lwt_main.at_exit (fun () -> Lwt.wakeup stopper_wakener (); stopper);
   Lwt_main.run (initialize_modules migemo
