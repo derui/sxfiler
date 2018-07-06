@@ -1,9 +1,9 @@
 module W = Workspace
 open Sxfiler_types.Rpc
 
-module Completion = struct
+module Rpc_ompletion = struct
   module Setup_file_sync = struct
-    open Completion.Setup_file_sync
+    open Rpc_completion.Setup_file_sync
 
     class type js_param = object
       method workspaceName: Js.js_string Js.t Js.readonly_prop
@@ -25,7 +25,7 @@ module Completion = struct
   end
 
   module Read_file_sync = struct
-    open Completion.Read_file_sync
+    open Rpc_completion.Read_file_sync
     module Jsoo = Read_common_js
 
     let params_to_json t = object%js
@@ -42,7 +42,7 @@ module Completion = struct
   end
 
   module Read_directory_sync = struct
-    open Completion.Read_directory_sync
+    open Rpc_completion.Read_directory_sync
     module Jsoo = Read_common_js
 
     let params_to_json t = object%js
@@ -59,7 +59,7 @@ module Completion = struct
   end
 
   module Read_history_sync = struct
-    open Completion.Read_history_sync
+    open Rpc_completion.Read_history_sync
     module Jsoo = Read_common_js
 
     let params_to_json t = object%js
@@ -76,9 +76,9 @@ module Completion = struct
   end
 end
 
-module Workspace = struct
+module Rpc_workspace = struct
   module Make_sync = struct
-    open Workspace.Make_sync
+    open Rpc_workspace.Make_sync
     module Jsoo = struct
       class type params = object
         method initialDirectory: Js.js_string Js.t Js.readonly_prop
@@ -101,7 +101,7 @@ module Workspace = struct
   end
 
   module Get_sync = struct
-    open Workspace.Get_sync
+    open Rpc_workspace.Get_sync
     module Jsoo = struct
       class type params = object
         method name: Js.js_string Js.t Js.readonly_prop
@@ -113,5 +113,21 @@ module Workspace = struct
     end
 
     let result_of_json : W.js Js.t -> result = W.of_js
+  end
+end
+
+module Rpc_notification = struct
+  module Workspace_update = struct
+    open Rpc_notification.Workspace_update
+
+    class type js_params = object
+      method name: Js.js_string Js.t Js.readonly_prop
+      method workspace: Workspace.js Js.t Js.readonly_prop
+    end
+
+    let params_of_json js = {
+      name = Js.to_string js##.name;
+      workspace = Workspace.of_js js##.workspace;
+    }
   end
 end

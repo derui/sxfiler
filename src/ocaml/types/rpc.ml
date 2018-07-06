@@ -7,7 +7,7 @@
     in jsoo/yojson package.
 *)
 
-module Completion = struct
+module Rpc_completion = struct
   module Setup_file_sync = struct
     type params = {
       workspace_name: string
@@ -45,7 +45,7 @@ module Completion = struct
   end
 end
 
-module File = struct
+module Rpc_file = struct
   module Take_snapshot = struct
     type params = {
       directory: string;
@@ -58,7 +58,7 @@ module File = struct
   end
 end
 
-module Workspace = struct
+module Rpc_workspace = struct
   (** {!Make_sync} module defines interface to make workspace. *)
   module Make_sync = struct
     type params = {
@@ -79,5 +79,17 @@ module Workspace = struct
 
     type result = Workspace.t
     let name = "workspace/get/sync"
+  end
+end
+
+module Rpc_notification = struct
+  module Workspace_update = struct
+    type params = {
+      name: string;
+      workspace: Workspace.t;
+    }
+
+    type result = unit
+    let name = "notification/workspace/update"
   end
 end

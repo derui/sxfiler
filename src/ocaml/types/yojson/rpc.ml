@@ -1,9 +1,9 @@
 module W = Workspace
 open Sxfiler_types.Rpc
 
-module Completion = struct
+module Rpc_completion = struct
   module Setup_file_sync = struct
-    open Completion.Setup_file_sync
+    open Rpc_completion.Setup_file_sync
 
     module Js = struct
       type params = {
@@ -25,7 +25,7 @@ module Completion = struct
   end
 
   module Read_file_sync = struct
-    open Completion.Read_file_sync
+    open Rpc_completion.Read_file_sync
     module Js = Read_common_js
 
     let params_of_yojson js =
@@ -42,7 +42,7 @@ module Completion = struct
   end
 
   module Read_directory_sync = struct
-    open Completion.Read_directory_sync
+    open Rpc_completion.Read_directory_sync
 
     module Js = Read_common_js
 
@@ -60,7 +60,7 @@ module Completion = struct
   end
 
   module Read_history_sync = struct
-    open Completion.Read_history_sync
+    open Rpc_completion.Read_history_sync
 
     module Js = Read_common_js
 
@@ -78,9 +78,9 @@ module Completion = struct
   end
 end
 
-module Workspace = struct
+module Rpc_workspace = struct
   module Make_sync = struct
-    open Workspace.Make_sync
+    open Rpc_workspace.Make_sync
     module Js = struct
       type params = {
         initial_directory: string [@key "initialDirectory"];
@@ -105,7 +105,7 @@ module Workspace = struct
   end
 
   module Get_sync = struct
-    open Workspace.Get_sync
+    open Rpc_workspace.Get_sync
     module Js = struct
       type params = {
         name: string;
@@ -118,5 +118,24 @@ module Workspace = struct
       Js.params_of_yojson js >>= fun js -> Ok {name = js.Js.name;}
 
     let result_to_yojson = W.to_yojson
+  end
+end
+
+module Rpc_notification = struct
+  module Workspace_update = struct
+    open Rpc_notification.Workspace_update
+
+    module Js = struct
+      type params = {
+        name: string;
+        workspace: Workspace.t;
+      } [@@deriving yojson]
+    end
+
+    let params_to_yojson t = Js.params_to_yojson Js.{
+        name = t.name;
+        workspace = t.workspace;
+      }
+
   end
 end

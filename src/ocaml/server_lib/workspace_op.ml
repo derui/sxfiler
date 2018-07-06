@@ -4,10 +4,10 @@ module Runner = Sxfiler_server_task.Runner
 module Make_sync = Procedure_intf.Make(struct
     module T = Sxfiler_types
     module Ty = Sxfiler_types_yojson
-    include T.Rpc.Workspace.Make_sync
+    include T.Rpc.Rpc_workspace.Make_sync
 
-    let params_of_json = `Required Ty.Rpc.Workspace.Make_sync.params_of_yojson
-    let result_to_json = `Result Ty.Rpc.Workspace.Make_sync.result_to_yojson
+    let params_of_json = `Required Ty.Rpc.Rpc_workspace.Make_sync.params_of_yojson
+    let result_to_json = `Result Ty.Rpc.Rpc_workspace.Make_sync.result_to_yojson
 
     let handle param =
       let%lwt state = Global.Root.get () in
@@ -31,7 +31,7 @@ module Make_sync = Procedure_intf.Make(struct
 
 let expose server =
   let module S = Jsonrpc_ocaml_yojson.Server in
-  let module R = Sxfiler_types.Rpc.Workspace in
+  let module R = Sxfiler_types.Rpc.Rpc_workspace in
 
   List.fold_left (fun server (name, handler) ->
       S.expose ~_method:name ~handler server

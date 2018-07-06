@@ -11,8 +11,8 @@ module File_source = SC.Statable.Make(struct
   end)
 
 module Setup_file_sync = Procedure_intf.Make(struct
-  include T.Rpc.Completion.Setup_file_sync
-  open Ty.Rpc.Completion.Setup_file_sync
+  include T.Rpc.Rpc_completion.Setup_file_sync
+  open Ty.Rpc.Rpc_completion.Setup_file_sync
 
   let params_of_json = `Required params_of_yojson
   let result_to_json = `Void
@@ -34,8 +34,8 @@ end)
     return candidates that are completed with input.
 *)
 module Read_file_sync = Procedure_intf.Make(struct
-  include T.Rpc.Completion.Read_file_sync
-  open Ty.Rpc.Completion.Read_file_sync
+  include T.Rpc.Rpc_completion.Read_file_sync
+  open Ty.Rpc.Rpc_completion.Read_file_sync
 
   let params_of_json = `Required params_of_yojson
   let result_to_json = `Result result_to_yojson
@@ -64,8 +64,8 @@ module Read_file_sync = Procedure_intf.Make(struct
 end)
 
 module Read_directory_sync = Procedure_intf.Make(struct
-    include T.Rpc.Completion.Read_directory_sync
-    open Ty.Rpc.Completion.Read_directory_sync
+    include T.Rpc.Rpc_completion.Read_directory_sync
+    open Ty.Rpc.Rpc_completion.Read_directory_sync
 
     let params_of_json = `Required params_of_yojson
     let result_to_json = `Result result_to_yojson
@@ -74,8 +74,8 @@ module Read_directory_sync = Procedure_intf.Make(struct
   end)
 
 module Read_history_sync = Procedure_intf.Make(struct
-    include T.Rpc.Completion.Read_history_sync
-    open Ty.Rpc.Completion.Read_history_sync
+    include T.Rpc.Rpc_completion.Read_history_sync
+    open Ty.Rpc.Rpc_completion.Read_history_sync
 
     let params_of_json = `Required params_of_yojson
     let result_to_json = `Result result_to_yojson
@@ -90,7 +90,7 @@ let initialize migemo =
 
 let expose server =
   let module S = Jsonrpc_ocaml_yojson.Server in
-  let module R = T.Rpc.Completion in
+  let module R = T.Rpc.Rpc_completion in
 
   List.fold_left (fun server (name, handler) ->
       S.expose ~_method:name ~handler server
