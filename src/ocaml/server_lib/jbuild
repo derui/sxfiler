@@ -7,6 +7,8 @@
               uuidm
               jsonrpc-ocaml.yojson
               sxfiler.types.yojson
+              sxfiler.rpc
+              sxfiler.rpc.yojson
               sxfiler.server.completion
               sxfiler.server.core
               sxfiler.server.task

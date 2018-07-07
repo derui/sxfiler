@@ -1,8 +1,10 @@
 (** Completion module defines functions for RPC of completion. *)
 module SC = Sxfiler_server_core
-module Rpc = Jsonrpc_ocaml_yojson
+module J = Jsonrpc_ocaml_yojson
 module T = Sxfiler_types
 module Ty = Sxfiler_types_yojson
+module Rpc = Sxfiler_rpc
+module Rpcy = Sxfiler_rpc_yojson
 
 module File_source = SC.Statable.Make(struct
     type t = T.Node.t list
@@ -11,8 +13,8 @@ module File_source = SC.Statable.Make(struct
   end)
 
 module Setup_file_sync = Procedure_intf.Make(struct
-  include T.Rpc.Rpc_completion.Setup_file_sync
-  open Ty.Rpc.Rpc_completion.Setup_file_sync
+  include Rpc.Completion.Setup_file_sync
+  open Rpcy.Completion.Setup_file_sync
 
   let params_of_json = `Required params_of_yojson
   let result_to_json = `Void
@@ -22,7 +24,7 @@ module Setup_file_sync = Procedure_intf.Make(struct
     File_source.with_lock (fun source ->
         let%lwt state = Global.Root.get () in
         let ws = match R.find_workspace state ~name:param.workspace_name with
-          | None -> raise Rpc.Types.(Jsonrpc_error Error_code.Invalid_request)
+          | None -> raise J.Types.(Jsonrpc_error Error_code.Invalid_request)
           | Some ws -> ws
         in
         let nodes = ws.T.Workspace.current.T.Tree_snapshot.nodes in
@@ -34,8 +36,8 @@ end)
     return candidates that are completed with input.
 *)
 module Read_file_sync = Procedure_intf.Make(struct
-  include T.Rpc.Rpc_completion.Read_file_sync
-  open Ty.Rpc.Rpc_completion.Read_file_sync
+  include Rpc.Completion.Read_file_sync
+  open Rpcy.Completion.Read_file_sync
 
   let params_of_json = `Required params_of_yojson
   let result_to_json = `Result result_to_yojson
@@ -44,7 +46,7 @@ module Read_file_sync = Procedure_intf.Make(struct
     let module Comp =  Sxfiler_server_completion.Completer in
     let%lwt completer = Global.Completion.get () in
     match completer with
-    | None -> raise Rpc.Types.(Jsonrpc_error Error_code.Internal_error)
+    | None -> raise J.Types.(Jsonrpc_error Error_code.Internal_error)
     | Some completer ->
       File_source.with_lock (fun collection ->
           let module S = (struct
@@ -64,8 +66,8 @@ module Read_file_sync = Procedure_intf.Make(struct
 end)
 
 module Read_directory_sync = Procedure_intf.Make(struct
-    include T.Rpc.Rpc_completion.Read_directory_sync
-    open Ty.Rpc.Rpc_completion.Read_directory_sync
+    include Rpc.Completion.Read_directory_sync
+    open Rpcy.Completion.Read_directory_sync
 
     let params_of_json = `Required params_of_yojson
     let result_to_json = `Result result_to_yojson
@@ -74,8 +76,8 @@ module Read_directory_sync = Procedure_intf.Make(struct
   end)
 
 module Read_history_sync = Procedure_intf.Make(struct
-    include T.Rpc.Rpc_completion.Read_history_sync
-    open Ty.Rpc.Rpc_completion.Read_history_sync
+    include Rpc.Completion.Read_history_sync
+    open Rpcy.Completion.Read_history_sync
 
     let params_of_json = `Required params_of_yojson
     let result_to_json = `Result result_to_yojson
@@ -90,13 +92,13 @@ let initialize migemo =
 
 let expose server =
   let module S = Jsonrpc_ocaml_yojson.Server in
-  let module R = T.Rpc.Rpc_completion in
+  let module C = Rpc.Completion in
 
   List.fold_left (fun server (name, handler) ->
       S.expose ~_method:name ~handler server
     ) server [
-    (R.Setup_file_sync.name, Setup_file_sync.handler);
-    (R.Read_file_sync.name, Read_file_sync.handler);
-    (R.Read_directory_sync.name, Read_directory_sync.handler);
-    (R.Read_history_sync.name, Read_history_sync.handler);
+    (C.Setup_file_sync.name, Setup_file_sync.handler);
+    (C.Read_file_sync.name, Read_file_sync.handler);
+    (C.Read_directory_sync.name, Read_directory_sync.handler);
+    (C.Read_history_sync.name, Read_history_sync.handler);
   ]

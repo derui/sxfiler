@@ -2,6 +2,8 @@
 open Sxfiler_core
 open Sxfiler_types
 open Sxfiler_server_core
+module Rpc = Sxfiler_rpc
+module Rpcy = Sxfiler_rpc_yojson
 
 module type S = sig
   type state
@@ -26,8 +28,8 @@ module Make(Clock:Snapshot_record.Clock)
             let state = Root_state.add_workspace ~name:name' ~ws state in
             S.update state >>= fun () -> return ws
           ) in
-        let module Wu = Rpc.Rpc_notification.Workspace_update in
-        let module Wuy = Sxfiler_types_yojson.Rpc.Rpc_notification.Workspace_update in
+        let module Wu = Rpc.Notification.Workspace_update in
+        let module Wuy = Rpcy.Notification.Workspace_update in
         let module Api = (struct
           include Wu
           type json = Yojson.Safe.json
@@ -38,7 +40,7 @@ module Make(Clock:Snapshot_record.Clock)
 
           let result_of_json _ = ()
         end) in
-        Notifier.notify (module Api) (Some Rpc.Rpc_notification.Workspace_update.{name = name'; workspace = ws})
+        Notifier.notify (module Api) (Some Wu.{name = name'; workspace = ws})
 
       end
     | `Failed err -> Lwt_io.eprintf "Task error: %s\n" err

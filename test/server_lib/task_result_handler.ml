@@ -3,6 +3,7 @@ open Sxfiler_types
 
 module C = Sxfiler_server_core
 module S = Sxfiler_server
+module Rpcy = Sxfiler_rpc_yojson
 
 let result_handler = [
   Alcotest_lwt.test_case "update workspace when result is Update_workspace" `Quick (fun _ () ->
@@ -60,7 +61,7 @@ let result_handler = [
         match C.Root_state.find_workspace ~name:"test" state with
         | None -> None
         | Some workspace ->
-          Some Ty.Rpc.Rpc_notification.Workspace_update.(params_to_yojson {
+          Some Rpcy.Notification.Workspace_update.(params_to_yojson {
               name = "test";
               workspace;
             }) in
@@ -103,7 +104,7 @@ let result_handler = [
         match C.Root_state.find_workspace ~name:"test" state with
         | None -> None
         | Some workspace ->
-          Some Ty.Rpc.Rpc_notification.Workspace_update.(params_to_yojson {
+          Some Rpcy.Notification.Workspace_update.(params_to_yojson {
               name = "test";
               workspace = expected_ws;
             }) in

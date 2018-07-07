@@ -14,5 +14,6 @@
               sxfiler.server.core
               sxfiler.server
               sxfiler.core
+              sxfiler.rpc.yojson
   ))
   (preprocess (pps (lwt_ppx)))))
