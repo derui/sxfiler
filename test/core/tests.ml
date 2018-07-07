@@ -23,6 +23,9 @@ let option_tests = [
   "get default value", `Quick, (fun () ->
       Alcotest.(check int) "none" 100 @@ Option.get ~default:100 None
     );
+  "get Some with some", `Quick, (fun () ->
+      Alcotest.(check @@ option int) "option" (Some 10) @@ Option.some 10
+    );
 ]
 
 let fun_tests = [

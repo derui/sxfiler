@@ -1,18 +1,21 @@
 (** Workspace_op module defines functions for procedures of workspace. *)
+open Sxfiler_server_core
 module Runner = Sxfiler_server_task.Runner
 module T = Sxfiler_types
 module Ty = Sxfiler_types_yojson
 module Rpc = Sxfiler_rpc
 module Rpcy = Sxfiler_rpc_yojson
+module Act = Sxfiler_server_action
 
-module Make_sync = Procedure_intf.Make(struct
+module Make_sync(Action:Act.Action_intf.Instance)
+  (Root:Statable.S with type state = Root_state.t) = Procedure_intf.Make(struct
     include Rpc.Workspace.Make_sync
 
     let params_of_json = `Required Rpcy.Workspace.Make_sync.params_of_yojson
     let result_to_json = `Result Rpcy.Workspace.Make_sync.result_to_yojson
 
     let handle param =
-      let%lwt state = Global.Root.get () in
+      let%lwt state = Root.get () in
       let module S = Sxfiler_server_core.Root_state in
       let%lwt result = match S.find_workspace ~name:param.name state with
         | Some _ -> Lwt.return {created = true}
@@ -20,10 +23,11 @@ module Make_sync = Procedure_intf.Make(struct
             let module I = Sxfiler_server_task.Intf in
             let module TS = Task.File.Take_snapshot in
             let%lwt _ = Runner.add_task @@ I.make_instance
-                TS.({directory = param.initial_directory;
-                     workspace_name = param.name
-                    })
-                (module Sxfiler_server_action.Real)
+                TS.{
+                  directory = param.initial_directory;
+                  workspace_name = param.name
+                }
+                (module Action)
                 (module TS) in
             Lwt.return {created = false}
           end
@@ -34,6 +38,8 @@ module Make_sync = Procedure_intf.Make(struct
 let expose server =
   let module S = Jsonrpc_ocaml_yojson.Server in
   let module W = Sxfiler_rpc.Workspace in
+
+  let module Make_sync = Make_sync(Act.Real)(Global.Root) in
 
   List.fold_left (fun server (name, handler) ->
       S.expose ~_method:name ~handler server

@@ -23,6 +23,11 @@ module Make_sync = struct
       name = js.Js.name;
     }
 
+  let params_to_yojson : params -> Yojson.Safe.json = fun t -> Js.params_to_yojson Js.{
+      initial_directory = t.initial_directory;
+      name = t.name;
+    }
+
   let result_to_yojson : result -> Yojson.Safe.json = fun t -> Js.result_to_yojson Js.{
       created = t.created
     }

@@ -19,4 +19,7 @@ let get ~default = function
   | None -> default
   | Some v -> v
 
+(** [some v] construct [Some v] as functional way. *)
+let some v = Some v
+
 include Minimal_monadic_caml.Option
