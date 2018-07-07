@@ -1,5 +1,3 @@
-(jbuild_version 1)
-
 (library
  ((name sxfiler_server_task)
   (public_name sxfiler.server.task)
