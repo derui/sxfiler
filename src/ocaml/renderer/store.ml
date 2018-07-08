@@ -1,15 +1,15 @@
 (* Very simple store implementation *)
-module C = Sxfiler_common
+module T = Sxfiler_types
 
-type subscriber = C.State.t -> unit
+type subscriber = State.t -> unit
 type t = {
   mutable subscribers: subscriber list;
-  mutable state: C.State.t;
+  mutable state: State.t;
 }
 
 let make () = {
   subscribers = [];
-  state = C.State.empty;
+  state = State.empty ();
 }
 
 let subscribe t subscriber = t.subscribers <- subscriber :: t.subscribers

@@ -15,7 +15,7 @@ module Make_sync = struct
     end
   end
 
-  let params_to_jsonon t = object%js
+  let params_to_json t = object%js
     val initialDirectory = Js.string t.initial_directory
     val name = Js.string t.name
   end

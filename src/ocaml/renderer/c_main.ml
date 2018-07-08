@@ -1,4 +1,3 @@
-module C = Sxfiler_common
 module R = Jsoo_reactjs
 
 module Component = R.Component.Make_stateful (struct
@@ -8,7 +7,7 @@ module Component = R.Component.Make_stateful (struct
     end
   end)(struct
     class type t = object
-      method state: C.State.t Js.readonly_prop
+      method state: State.t Js.readonly_prop
     end
   end)
 
@@ -37,7 +36,6 @@ let component = Component.make
               ~props:R.(element_spec ~class_name:"sf-Main" ())
               ~children:[
                 R.create_element ~key:"key-container" ~props:children_props C_key_container.component;
-                R.create_element ~key:"dialog-container" ~props:children_props C_dialog_container.component;
               ]
          )
       )

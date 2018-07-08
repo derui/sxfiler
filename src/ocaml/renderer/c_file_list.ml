@@ -1,7 +1,6 @@
+open Sxfiler_core
 module VL = Sxfiler_virtualized_list
-module C = Sxfiler_common
-module T = C.Types
-module P = T.Pane
+module T = Sxfiler_types
 module R = Jsoo_reactjs
 
 let item_height = 18
@@ -9,22 +8,17 @@ let key_of_filelist = "currentNode"
 
 module Component = R.Component.Make_stateful (struct
     class type t = object
-      method pane: T.Pane.t Js.readonly_prop
+      method viewerState: Types.Viewer.File_tree.t Js.readonly_prop
       method focused: bool Js.readonly_prop
     end
   end)(struct
     class type t = object
-      method virtualizedList: T.File_stat.t VL.t Js.readonly_prop
+      method virtualizedList: T.Node.t VL.t Js.readonly_prop
     end
   end)
 
-let is_item_marked pane item =
-  List.mem item.T.File_stat.id pane.P.marked_items
-
 let component =
-  let current_focused_pos pane =
-    let open Minimal_monadic_caml.Option.Infix in
-    pane.P.focused_item >|= fun id -> P.index_item ~id pane in
+  let module Vt = Types.Viewer.File_tree in
   let spec = R.component_spec
       ~constructor:(fun this props ->
           this##.state := object%js
@@ -32,27 +26,25 @@ let component =
           end;
           this##.nodes := Jstable.create ())
       ~component_did_mount:(fun this ->
-          let pane = this##.props##.pane in
+          let vt = this##.props##.viewerState in
           let vl = this##.state##.virtualizedList in
-          let open Minimal_monadic_caml.Option.Infix in
+          let open Option.Infix in
           ignore (
-            R.Ref_table.find ~key:key_of_filelist this##.nodes >|=
-            fun e -> current_focused_pos pane >|=
-            fun pos ->
+            R.Ref_table.find ~key:key_of_filelist this##.nodes >|= fun e ->
+            let pos = vt.Vt.selected_item_index in
             this##setState (object%js
               val virtualizedList = VL.update_list_height e##.clientHeight vl
-                                    |> VL.update_all_items pane.P.file_list
+                                    |> VL.update_all_items Types.(Array.of_list vt.Vt.snapshot.nodes)
                                     |> VL.recalculate_visible_window pos
             end))
         )
       ~component_will_receive_props:(fun this props ->
-          let pane = props##.pane in
+          let vt = this##.props##.viewerState in
           let open Minimal_monadic_caml.Option.Infix in
           ignore (
-            let vl = VL.update_all_items pane.P.file_list this##.state##.virtualizedList in
-            let vl = match current_focused_pos pane with
-              | None -> vl
-              | Some pos -> VL.recalculate_visible_window pos vl
+            let items = Types.(Array.of_list vt.Vt.snapshot.nodes) in
+            let vl = VL.update_all_items items this##.state##.virtualizedList in
+            let vl = VL.recalculate_visible_window vt.Vt.selected_item_index vl
             in
             this##setState (object%js
               val virtualizedList = vl
@@ -61,17 +53,17 @@ let component =
         )
   in
   let render this =
-    let pane = this##.props##.pane in
+    let vt = this##.props##.viewerState in
     let vl = this##.state##.virtualizedList in
+
     let items = VL.get_items_in_window vl in
+
     let children = Array.mapi (fun index item ->
-        let module F = C.Types.File_stat in
-        R.create_element ~key:item.F.id ~props:(object%js
-          val baseDirectory = Js.string pane.P.directory
+        let module N = T.Node in
+        R.create_element ~key:item.N.full_path ~props:(object%js
           val item = item
-          val selected = P.is_focused ~id:item.F.id pane
+          val selected = index = vt.Vt.selected_item_index
           val focused = this##.props##.focused
-          val marked = is_item_marked pane item
         end) C_file_item.component
       ) items |> Array.to_list
     in
@@ -93,7 +85,7 @@ let component =
                   and width = int_of_float @@ rect##.right -. rect##.left in
                   C_resize_sensor.({height;width}))
               in
-              C.Util.Option.get ~default:C_resize_sensor.({height = 0;width = 0}) size)
+              Option.get ~default:C_resize_sensor.({height = 0;width = 0}) size)
           val onResized = (fun size ->
               let height = size.C_resize_sensor.height in
               this##setState (object%js

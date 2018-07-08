@@ -1,14 +1,12 @@
-module C = Sxfiler_common
+module T = Sxfiler_types
 module R = Jsoo_reactjs
 module L = Modules.Lodash
 
 module Component = R.Component.Make_stateful (struct
     class type t = object
-      method baseDirectory: Js.js_string Js.t Js.readonly_prop
-      method item: C.Types.File_stat.t Js.readonly_prop
+      method item: T.Node.t Js.readonly_prop
       method selected: bool Js.readonly_prop
       method focused: bool Js.readonly_prop
-      method marked: bool Js.readonly_prop
     end
   end)
     (struct type t = unit end)
@@ -16,32 +14,29 @@ module Component = R.Component.Make_stateful (struct
 let component =
   let render this =
     let props = this##.props in
-    let stat = props##.item in
-    let class_name =
-      let module C = Classnames in
-      let v = C.(empty
-                 <|> ("fp-FileItem", true)
-                 <|> ("fp-FileItem-selected", props##.selected)
-                 <|> ("fp-FileItem-focused", props##.focused && props##.selected))
-      in C.to_string v
+    let node = props##.item in
+    let stat = node.T.Node.stat in
+    let class_name = Classnames.to_string
+        ["fp-FileItem", true;
+         "fp-FileItem-selected", props##.selected;
+         "fp-FileItem-focused", props##.focused && props##.selected;
+        ]
     in
-    let module T = C.Types.File_stat in
+    let module F = T.File_stat in
     let file_mode = R.create_element ~key:"mode" ~props:(object%js
-        val mode = stat.T.mode
+        val mode = stat.F.mode
       end) C_file_mode.component
     and timestamp = R.create_element ~key:"timestamp" ~props:(object%js
-        val timestamp = stat.T.mtime |> Int64.to_float
+        val timestamp = stat.F.mtime |> Int64.to_float
       end) C_file_timestamp.component
     and file_size = R.create_element ~key:"size" ~props:(object%js
-        val size = stat.T.size
+        val size = stat.F.size
       end) C_file_size.component
     and file_name = R.create_element ~key:"name" ~props:(object%js
-        val baseDirectory = props##.baseDirectory
-        val fileName = Js.string stat.T.filename
-        val directory = Js.string stat.T.directory
-        val isDirectory = stat.T.is_directory
-        val isSymbolicLink = stat.T.is_symlink
-        val marked = props##.marked
+        val parentDirectory = node.T.Node.parent_directory
+        val path = node.T.Node.full_path
+        val isDirectory = stat.F.is_directory
+        val isSymbolicLink = stat.F.is_symlink
       end) C_file_name.component
     in
     R.Dom.of_tag `li

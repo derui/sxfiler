@@ -1,6 +1,5 @@
 (** A component allow detect resize event of parent component. *)
 
-module C = Sxfiler_common
 module R = Jsoo_reactjs
 
 type size = {

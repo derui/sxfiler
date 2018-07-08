@@ -1,4 +1,4 @@
-open Sxfiler_common
+open Sxfiler_types_jsoo
 
 type message = Message.t
 type key_action = Callable_action.t

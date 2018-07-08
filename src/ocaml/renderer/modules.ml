@@ -1,6 +1,4 @@
-module FFI = Sxfiler_common.Ffi
-
-let electron : FFI.electron Js.t = Js.Unsafe.pure_js_expr "require('electron')"
+let electron : Ffi.electron Js.t = Js.Unsafe.pure_js_expr "require('electron')"
 
 module Lodash = struct
   (** wrapper script for lodash.isequal module *)

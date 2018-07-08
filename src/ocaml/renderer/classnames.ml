@@ -1,13 +1,7 @@
 (* support functions to create class name for component *)
 type class_name = string
 type condition = string * bool
-type t = string list
+type t = condition list
 
-let empty = []
-let return v = [v]
-
-let to_string t = String.concat " " @@ List.rev t
-
-let join list (cls, condition) = if condition then cls :: list else list
-
-let (<|>) = join
+let to_string t =
+  String.concat " " @@ List.rev @@ List.map fst @@ List.filter snd t

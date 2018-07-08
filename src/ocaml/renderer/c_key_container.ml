@@ -1,9 +1,9 @@
-module C = Sxfiler_common
+module T = Sxfiler_types
 module R = Jsoo_reactjs
 
 module Component = R.Component.Make_stateful (struct
     class type t = object
-      method state: C.State.t Js.readonly_prop
+      method state: State.t Js.readonly_prop
       method dispatch: Dispatcher.t Js.readonly_prop
     end
   end)(struct
@@ -13,24 +13,18 @@ module Component = R.Component.Make_stateful (struct
   end)
 
 let key_handler ~dispatch ~state ev =
-  let config = state.C.State.config in
-  let key_map = C.Config.(config.key_maps.Key_maps.file_list) in
+  let module C = T.Configuration in
+  let config = state.State.config in
+  let key_map = config.C.viewer.C.Viewer.key_maps.C.Key_maps.file_list in
   let dispatched = Key_handler.handle_key_event dispatch ~ev ~key_map in
   if dispatched then begin
     ev##preventDefault; ev##stopPropagation
   end else ()
 
-let is_active state =
-  let module S = C.State in
-  match Util.get_focus_target state.S.dialog_state with
-  | Types.Focus_file_pane -> true
-  | _ -> false
-
-let other_props state =
-  if is_active state then Some (object%js
-      val tabIndex = "0"
-    end)
-  else None
+let other_props =
+  Some (object%js
+    val tabIndex = "0"
+  end)
 
 let container_key = "filePaneContainer"
 let component =
@@ -43,26 +37,23 @@ let component =
         )
       ~component_did_update:(fun this _ _ ->
           match R.Ref_table.find this##.nodes ~key:container_key with
-          | Some e -> if is_active (this##.props##.state) then e##focus else ()
+          | Some e -> e##focus
           | None -> ()
-        )
-      ~component_will_receive_props:(fun this new_props ->
-          this##setState (object%js val active = is_active new_props##.state end)
         )
       (fun this ->
          let props = this##.props in
          let spec = R.element_spec ()
              ~class_name:"sf-KeyContainer"
              ~on_key_down:(key_handler ~dispatch:props##.dispatch ~state:(props##.state))
-             ?others:(other_props props##.state)
+             ?others:other_props
          in
          R.Dom.of_tag `div
            ~_ref:(fun e -> R.Ref_table.add this##.nodes ~key:container_key ~value:e)
            ~props:spec
            ~children:[
-             R.create_element ~key:"file-list" ~props:(object%js
+             R.create_element ~key:"layout" ~props:(object%js
                val state = props##.state
-             end) C_pane_layout.component
+             end) C_layout.component
            ]
       )
   in

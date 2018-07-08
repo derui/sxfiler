@@ -1,5 +1,5 @@
 (* Provides RPC interface via WebSocket *)
-
+open Sxfiler_core
 module Rpc = Jsonrpc_ocaml.Rpc_intf
 module R = Jsonrpc_ocaml_jsoo
 
@@ -18,7 +18,7 @@ let make ws =
   let id_handler_map = Jstable.create () in
   (* apply message handler to given websocket *)
   let message_handler = Dom.handler (fun message ->
-      let open Minimal_monadic_caml.Option.Infix in
+      let open Option.Infix in
       let response = R.Response.of_json (Js._JSON##parse message##.data) in
       let _ = match response with
         | Ok res -> begin

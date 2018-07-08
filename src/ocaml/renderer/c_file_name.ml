@@ -1,14 +1,11 @@
-module C = Sxfiler_common
 module R = Jsoo_reactjs
 
 module Component = R.Component.Make_stateless (struct
     class type t = object
-      method baseDirectory: Js.js_string Js.t Js.readonly_prop
-      method fileName: Js.js_string Js.t Js.readonly_prop
-      method directory: Js.js_string Js.t Js.readonly_prop
+      method parentDirectory: string Js.readonly_prop
+      method path: string Js.readonly_prop
       method isDirectory: bool Js.readonly_prop
       method isSymbolicLink: bool Js.readonly_prop
-      method marked: bool Js.readonly_prop
     end
   end)
 
@@ -18,20 +15,16 @@ let symlink_modifier = base_selector ^ "-symlink"
 let marked_modifier = base_selector ^ "-marked"
 
 let get_classname props =
-  let open Classnames in
-  to_string @@ (empty
-                <|> (base_selector, true)
-                <|> (directory_modifier, props##.isDirectory)
-                <|> (symlink_modifier, props##.isSymbolicLink)
-                <|> (marked_modifier, props##.marked))
+  Classnames.to_string [
+    base_selector, true;
+    directory_modifier, props##.isDirectory;
+    symlink_modifier, props##.isSymbolicLink;
+  ]
 
 let resolve_name props =
-  if props##.isDirectory then
-    let base_dir = Js.to_string props##.baseDirectory
-    and dir = Js.to_string props##.directory in
-    String.sub dir (String.length base_dir) (String.length dir - String.length base_dir)
-  else
-    Js.to_string props##.fileName
+  let base_dir = props##.parentDirectory
+  and path = props##.path in
+  String.sub path (String.length base_dir) (String.length path - String.length base_dir)
 
 let component = Component.make (fun props ->
     let name = resolve_name props in

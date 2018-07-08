@@ -1,5 +1,4 @@
-module C_= Sxfiler_common
-module K = Sxfiler_common.Key_map
+module K = Sxfiler_types.Key_map
 module E = Jsoo_reactjs.Event
 
 type t = Action_creator.action -> unit

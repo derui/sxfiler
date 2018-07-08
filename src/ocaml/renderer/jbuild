@@ -9,6 +9,8 @@
               jsoo_reactjs
               jsonrpc-ocaml.jsoo
               lwt
+              sxfiler.core
               sxfiler.virtualized_list
-              sxfiler.common))
+              sxfiler.types sxfiler.types.jsoo
+              sxfiler.rpc sxfiler.rpc.jsoo))
   (preprocess (pps (js_of_ocaml-ppx)))))

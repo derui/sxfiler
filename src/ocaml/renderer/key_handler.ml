@@ -1,5 +1,5 @@
-module C_= Sxfiler_common
-module K = Sxfiler_common.Key_map
+open Sxfiler_core
+module K = Sxfiler_types.Key_map
 module E = Jsoo_reactjs.Event
 
 let handle_key_event: Dispatcher.t ->
@@ -11,9 +11,9 @@ let handle_key_event: Dispatcher.t ->
   | _ -> begin
       let key = Util.keyboard_event_to_key ev in
 
-      let open Minimal_monadic_caml.Option.Infix in
-      let result = K.find ~key_map ~key
+      let open Option.Infix in
+      let result = K.find key_map ~key
         >>= (fun action -> Some (Dispatcher.dispatch ~dispatcher @@ Action_creator.create action))
         >|= (fun () -> true)in
-      Sxfiler_common.Util.Option.get ~default:false result
+      Option.get ~default:false result
     end

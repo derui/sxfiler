@@ -1,27 +1,27 @@
 
-module C = Sxfiler_common
-module T = C.Types
+module T = Sxfiler_types
 module R = Jsoo_reactjs
 
 module Component = R.Component.Make_stateless (struct
     class type t = object
-      method pane: T.Pane.t Js.readonly_prop
-      method selected: bool Js.readonly_prop
+      method viewerState: Types.Viewer.File_tree.t Js.readonly_prop
+      method focused: bool Js.readonly_prop
     end
   end)
 
 let component = Component.make (fun props ->
-    let pane = props##.pane in
+    let state = props##.viewerState in
+    let snapshot = state.Types.Viewer.File_tree.snapshot in
     let header = R.create_element ~key:"header" ~props:(object%js
-        val directory = Js.string pane.T.Pane.directory
-        val selected = props##.selected
-      end) C_file_list_pane_header.component
+        val directory = snapshot.T.Tree_snapshot.directory
+        val focused = props##.focused
+      end) C_file_list_viewer_header.component
     and content =
       let props = R.element_spec ~class_name:"fp-FileListPane_Content" ()
       and children = [
         R.create_element ~key:"file-list" ~props:(object%js
-          val pane = pane
-          val focused = props##.selected
+          val viewerState = state
+          val focused = props##.focused
         end) C_file_list.component
       ]
       in

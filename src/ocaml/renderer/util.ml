@@ -1,4 +1,3 @@
-module C = Sxfiler_common
 
 let special_key_mapping = function
   | " " -> "Space"
@@ -12,10 +11,6 @@ let keyboard_event_to_key v =
     ctrl = Js.to_bool v##.ctrlKey;
   }
 
-let get_focus_target = function
-  | C.State.Dialog_state.Open _ -> Types.Focus_dialog
-  | C.State.Dialog_state.Close -> Types.Focus_file_pane
-
 let find_item_index ?(equal=(=)) ~v array =
   let rec find ary v ind =
     if Array.length ary <= ind then 0
@@ -24,3 +19,8 @@ let find_item_index ?(equal=(=)) ~v array =
   in
 
   find array v 0
+
+(* More easy handling for {!Js.Optdef}. *)
+module Optdef = struct
+  let (>>=) a f = Js.Optdef.bind a f
+end
