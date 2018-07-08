@@ -16,12 +16,10 @@ let task_state : unit Task_state.t ref = ref Task_state.empty
 
 (** Forever loop to accept task. Running this function must be in other thread of worker thread. *)
 let rec accept_task_loop () =
-  let open Lwt in
-  Lwt_mvar.take task_mailbox
-  >>= fun task -> Lwt_condition.broadcast task_queue_signal task; Lwt.return task
-  >>= function
+  let%lwt task = Lwt_mvar.take task_mailbox in
+  match%lwt Lwt_condition.broadcast task_queue_signal task; Lwt.return task with
   | `Accepted _ -> accept_task_loop ()
-  | `Rejected -> return_unit
+  | `Rejected -> Lwt.return_unit
 
 let remove_state id result =
   Lwt_mutex.with_lock task_state_lock (fun () ->
@@ -31,14 +29,12 @@ let remove_state id result =
 
 (** Forever loop to run task. *)
 let rec run_task_loop s task_result_handler () =
-  let open Lwt in
   let module C = Sxfiler_server_core in
   let module S = (val s : C.Statable.S with type state = C.Root_state.t) in
-  Lwt_condition.wait ~mutex:task_queue_lock task_queue_signal
-  >>= function
-  | `Rejected -> return_unit
+  match%lwt Lwt_condition.wait ~mutex:task_queue_lock task_queue_signal with
+  | `Rejected -> Lwt.return_unit
   | `Accepted task -> begin
-      Lwt_mutex.with_lock task_state_lock (fun () ->
+      let%lwt _ = Lwt_mutex.with_lock task_state_lock (fun () ->
           let id = Uuidm.v4_gen (Random.get_state ()) () in
 
           task_state := Task_state.add id () !task_state;
@@ -56,7 +52,8 @@ let rec run_task_loop s task_result_handler () =
             );
           Lwt.return_unit
         )
-      >>= run_task_loop s task_result_handler
+      in
+      run_task_loop s task_result_handler ()
     end
 
 (** [add_task task] add [task] to mailbox of task accepter. *)
@@ -73,11 +70,11 @@ let start ~state ~task_handler =
   let worker = run_task_loop state task_handler () in
 
   let waiter, wakener = Lwt.task () in
-  let open Lwt in
-  let stopper = waiter >>= fun () ->
+  let stopper =
+    let%lwt () = waiter in
     (* Cancel all async threads. *)
-    Lwt_mvar.put task_mailbox `Rejected >>= fun () ->
-    Lwt.join [accepter;worker] >>= Lwt.return
+    let%lwt () = Lwt_mvar.put task_mailbox `Rejected in
+    Lwt.join [accepter;worker]
   in
   Lwt.async (fun () -> accepter);
   Lwt.async (fun () -> worker);

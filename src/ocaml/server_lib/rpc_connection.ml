@@ -55,7 +55,6 @@ let connect t output_writer =
       t.output_writer <- output_writer;
       Lwt.return_unit
     | Some t' ->
-      let open Lwt in
       t'.input_writer None;
       let%lwt () = Lwt_stream.closed t'.input_stream in
       connection := Some t;
@@ -64,13 +63,13 @@ let connect t output_writer =
 
 (** [disconnect ()] kills global connection. *)
 let disconnect () =
-  let open Lwt in
   match !connection with
   | None -> Lwt.return_unit
   | Some t ->
     t.input_writer None;
-    Lwt_stream.closed t.input_stream
-    >>= fun () -> connection := None; Lwt.return_unit
+    let%lwt () = Lwt_stream.closed t.input_stream in
+    connection := None;
+    Lwt.return_unit
 
 (** [default_input_handler t f] handles frame [f] with default behavior for Websocket. *)
 let default_input_handler t f =

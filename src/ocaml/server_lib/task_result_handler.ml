@@ -18,7 +18,6 @@ module Make(Clock:Snapshot_record.Clock)
 
   let handle s = function
     | `Update_workspace (name', snapshot) -> begin
-        let open Lwt in
         let module S = (val s : Statable.S with type state = Root_state.t) in
         let%lwt ws = S.with_lock (fun state ->
             let ws = match Root_state.find_workspace ~name:name' state with
@@ -26,7 +25,8 @@ module Make(Clock:Snapshot_record.Clock)
               | Some ws -> Workspace.replace_current ws ~snapshot ~clock:(module Clock)
             in
             let state = Root_state.add_workspace ~name:name' ~ws state in
-            S.update state >>= fun () -> return ws
+            let%lwt () = S.update state in
+            Lwt.return ws
           ) in
         let module Wu = Rpc.Notification.Workspace_update in
         let module Wuy = Rpcy.Notification.Workspace_update in

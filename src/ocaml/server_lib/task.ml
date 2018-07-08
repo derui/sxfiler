@@ -16,9 +16,8 @@ module File = struct
       let plan = `No_plan
       let apply _ params action =
         let module Action = (val action : A.Instance) in
-        let open Lwt in
-        Action.No_side_effect.take_snapshot ~directory:params.directory
-        >|= fun snapshot -> `Update_workspace (params.workspace_name, snapshot)
+        let%lwt snapshot = Action.No_side_effect.take_snapshot ~directory:params.directory in
+        Lwt.return @@ `Update_workspace (params.workspace_name, snapshot)
     end
 
     include Task
