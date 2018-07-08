@@ -19,8 +19,20 @@ module Viewer_state = struct
     closing: bool;              (* viewer is closing now. *)
     closed: bool;               (* viewer is closed. *)
   }
+
+  let make viewer = {
+    viewer;
+    closing = false;
+    closed = false;
+  }
 end
 
 module Viewer_stack = struct
   type t = Viewer_state.t list
+
+  let empty () = []
+  let push t ~v = v :: t
+  let pop = function
+    | [] -> None
+    | _ :: rest -> Some rest
 end

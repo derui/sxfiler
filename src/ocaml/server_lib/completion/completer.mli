@@ -5,12 +5,12 @@ type t
 
 (** the type of candidate that is used to result of completion via this module.
     Notice start and length in this type are able to apply OCaml's string. It is position and length of "byte", not "character".
- *)
+*)
 type 'a candidate = {
-    start: int;
-    length: int;
-    value: 'a
-  }
+  start: int;
+  length: int;
+  value: 'a
+}
 
 (** Get new instance of completer *)
 val make: migemo:Migemocaml.Migemo.t -> t

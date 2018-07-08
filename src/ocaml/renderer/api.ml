@@ -21,7 +21,7 @@ module Completion = struct
   end
 
   module Read_file_sync : Api_def with type params = R.Completion.Read_file_sync.params
-                                    and type result = R.Completion.Read_file_sync.result
+                                   and type result = R.Completion.Read_file_sync.result
   = struct
     include R.Completion.Read_file_sync
     type json = < > Js.t
@@ -53,7 +53,7 @@ module Workspace = struct
   end
 
   module Get_sync : Api_def with type params = R.Workspace.Get_sync.params
-                              and type result = R.Workspace.Get_sync.result
+                             and type result = R.Workspace.Get_sync.result
   = struct
     include R.Workspace.Get_sync
     type json = < > Js.t

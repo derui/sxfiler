@@ -24,7 +24,7 @@ let layout_container ~key ~state stack  =
                  val state = state
                  val viewerStack = stack
                end)
-              C_viewer_stack.component]
+                 C_viewer_stack.component]
 
 let component = Component.make @@ fun props ->
   let state = props##.state in

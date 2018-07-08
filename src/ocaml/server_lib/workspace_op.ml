@@ -8,7 +8,7 @@ module Rpcy = Sxfiler_rpc_yojson
 module Act = Sxfiler_server_action
 
 module Make_sync(Action:Act.Action_intf.Instance)
-  (Root:Statable.S with type state = Root_state.t) = Procedure_intf.Make(struct
+    (Root:Statable.S with type state = Root_state.t) = Procedure_intf.Make(struct
     include Rpc.Workspace.Make_sync
 
     let params_of_json = `Required Rpcy.Workspace.Make_sync.params_of_yojson

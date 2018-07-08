@@ -2,14 +2,14 @@
 
 (** The type of completer. *)
 type t = {
-    migemo: Migemocaml.Migemo.t;
-  }
+  migemo: Migemocaml.Migemo.t;
+}
 
 type 'a candidate = {
-    start: int;
-    length: int;
-    value: 'a
-  }
+  start: int;
+  length: int;
+  value: 'a
+}
 
 let make ~migemo = {migemo}
 
@@ -24,7 +24,7 @@ let read (type v) t ~input ~collection ~(stringify:(module Collection.Type with 
   List.map (fun s -> (Re.exec_opt regexp @@ fst s, snd s)) collection
   |> List.filter (fun v -> is_some @@ fst v)
   |> List.map (function
-         | (None, _) -> failwith "Invalid branch"
-         | (Some group, v)  -> let start, length = Re.Group.offset group 0 in
-                               {start; length; value = v}
-       )
+      | (None, _) -> failwith "Invalid branch"
+      | (Some group, v)  -> let start, length = Re.Group.offset group 0 in
+        {start; length; value = v}
+    )

@@ -14,6 +14,8 @@ let make () = {
 
 let subscribe t subscriber = t.subscribers <- subscriber :: t.subscribers
 
+let get t = t.state
+
 let update t v =
   t.state <- v;
   List.iter (fun f -> f t.state) t.subscribers
