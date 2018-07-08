@@ -46,7 +46,8 @@ let make () =
     Connection is saved as global.
 *)
 let connect t output_writer =
-  if Lwt_stream.is_closed t.input_stream then Lwt.return_unit
+  if Lwt_stream.is_closed t.input_stream then
+    Lwt.return_unit
   else
     match !connection with
     | None ->
@@ -56,8 +57,7 @@ let connect t output_writer =
     | Some t' ->
       let open Lwt in
       t'.input_writer None;
-      Lwt_stream.closed t'.input_stream
-      >>= fun () ->
+      let%lwt () = Lwt_stream.closed t'.input_stream in
       connection := Some t;
       t.output_writer <- output_writer;
       Lwt.return_unit
@@ -79,5 +79,5 @@ let default_input_handler t f =
   | Frame.Opcode.Ping ->
     let f = Frame.create ~opcode:Frame.Opcode.Pong ~content:f.Frame.content () in
     Lwt.return @@ t.output_writer @@ Some f
-  | Frame.Opcode.Close -> Lwt.fail Exit
+  | Frame.Opcode.Close -> Lwt.return_unit
   | _ as op -> Lwt_io.eprintf "Not implemented opcode: %s" (Frame.Opcode.to_string op)

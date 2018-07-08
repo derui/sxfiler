@@ -1,19 +1,17 @@
 open Lwt
 open Sxfiler_server
-module Comp = Completion_op
-module W = Workspace_op
 module T = Sxfiler_server_task
 
 exception Fail_load_migemo
 
 let handler
-    (rpc_conn: Rpc_connection.t)
     (rpc_server : Jsonrpc_server.t)
     (conn : Conduit_lwt_unix.flow * Cohttp.Connection.t)
     (req  : Cohttp_lwt_unix.Request.t)
     (body : Cohttp_lwt.Body.t) =
   let%lwt () = Lwt_io.eprintf "[CONN] %s\n%!" (Cohttp.Connection.to_string @@ snd conn) in
   let uri = Cohttp.Request.uri req in
+  let rpc_conn = Rpc_connection.make () in
   match Uri.path uri with
   | "/" ->
     let%lwt () = Cohttp_lwt.Body.drain_body body in
@@ -24,7 +22,7 @@ let handler
     in
     (* serve frame/response handler *)
     let%lwt () = Rpc_connection.connect rpc_conn frames_out_fn in
-    let%lwt () = Jsonrpc_server.serve_forever rpc_server rpc_conn in
+    Lwt.ignore_result @@ Jsonrpc_server.serve_forever rpc_server rpc_conn;
     Lwt.return (resp, (body :> Cohttp_lwt.Body.t))
   | _ ->
     Cohttp_lwt_unix.Server.respond_string
@@ -33,7 +31,7 @@ let handler
       ()
 
 let initialize_modules ~migemo =
-  Comp.initialize migemo
+  Completion_op.initialize migemo
 
 let start_server _ port ~config:_ ~keymaps:_ ~migemo:_ =
   let conn_closed (ch,_) =
@@ -42,10 +40,13 @@ let start_server _ port ~config:_ ~keymaps:_ ~migemo:_ =
   in
   let%lwt () = Lwt_io.eprintf "[SERV] Listening for HTTP on port %d\n%!" port in
   let rpc_server = Jsonrpc_server.make () in
-  let rpc_conn = Rpc_connection.make () in
+
+  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Completion_op) in
+  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Workspace_op) in
+
   Cohttp_lwt_unix.Server.create
     ~mode:(`TCP (`Port port))
-    (Cohttp_lwt_unix.Server.make ~callback:(handler rpc_conn rpc_server) ~conn_closed ())
+    (Cohttp_lwt_unix.Server.make ~callback:(handler  rpc_server) ~conn_closed ())
 
 (* Load migemo from specified directory that contains dictionary and conversions.  *)
 let load_migemo dict_dir =

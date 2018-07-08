@@ -11,6 +11,10 @@ let make () =
     method_handler;
   }
 
+let expose t ~operation =
+  let module S = (val operation: Operation_intf.S) in
+  {method_handler = S.expose t.method_handler}
+
 let res_to_frame res =
   let json = J.Response.to_json res in
   let content = Yojson.Safe.to_string json in
@@ -19,6 +23,7 @@ let res_to_frame res =
 (** handle response as JSON-RPC payload. This handler limits handling unfragment frames.  *)
 let request_handler t conn =
   let open Websocket_cohttp_lwt in
+
   Rpc_connection.process_input conn ~f:(fun f ->
       match f.Frame.opcode with
       | Frame.Opcode.Text -> begin
@@ -45,7 +50,5 @@ let request_handler t conn =
     )
 
 (** Serve response sending loop *)
-let serve_forever t frame_output_fn =
-  Lwt.join [
-    request_handler t frame_output_fn;
-  ]
+let serve_forever t conn =
+  request_handler t conn

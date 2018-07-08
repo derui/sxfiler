@@ -30,9 +30,12 @@ end
 module Make(R:Rpc_type) : S with type params := R.params and type result := R.result = struct
 
   let handler req =
+
     let module Rpc = Jsonrpc_ocaml_yojson in
     let module Req = Rpc.Request in
     let module Res = Rpc.Response in
+    let%lwt _ = Lwt_io.printf "Call with param %s" req.Req._method in
+    let%lwt () = Lwt_io.flush_all () in
     let%lwt result = match R.params_of_json with
       | `Not_required param -> R.handle param
       | `Required f -> begin match req.Req.params with
