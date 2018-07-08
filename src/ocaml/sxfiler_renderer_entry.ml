@@ -57,7 +57,7 @@ let () =
             )
             (Some Api.Workspace.Make_sync.({
                  initial_directory = ".";
-                 name = Const.workspace_1;
+                 name;
                }))
           |> Lwt.ignore_result;
         ) [Const.workspace_1;Const.workspace_2];
