@@ -12,4 +12,12 @@ module Component = R.Component.Make_stateless(struct
     end
   end)
 
-let component = Component.make @@ fun _ -> failwith "not implemented yet"
+let component = Component.make @@ fun props ->
+  let state = props##.viewerState in
+  match state.Types.Viewer_state.viewer with
+  | Types.Viewer.File_tree ft -> R.create_element ~key:"file-tree"
+                                   ~props:(object%js
+                                     val viewerState = ft
+                                     val focused = true
+                                   end)
+                                   C_file_list_viewer.component

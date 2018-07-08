@@ -41,9 +41,10 @@ let component = Component.make @@ fun props ->
     let container = Jstable.find state.State.viewer_stacks Js.(string key) >>= fun stack ->
       Js.Optdef.return @@ layout_container ~key ~state stack
     in
-    Js.Optdef.to_option container |> Option.get_exn
+    Js.Optdef.to_option container
   in
 
   R.Dom.of_tag `div
     ~props:R.(element_spec ~class_name ())
-    ~children:(List.map to_container state.State.workspace_order)
+    ~children:(List.map to_container state.State.workspace_order |> List.filter Option.is_some
+              |> List.map Option.get_exn)

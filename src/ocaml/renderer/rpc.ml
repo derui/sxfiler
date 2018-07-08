@@ -98,7 +98,8 @@ module Notification_server = struct
   }
 
   let expose ~_method ~handler t =
-    Jstable.add t.procedure_table _method handler;
+    let _method' = Js.string _method in
+    Jstable.add t.procedure_table _method' handler;
     t
 
   let unexpose ~_method t =

@@ -14,27 +14,31 @@ let notification_handler server message =
     | Ok req -> Rpc.Notification_server.handle_request ~request:req server
     | Error _ -> Lwt.return_unit
   in
-  Lwt.async (fun () -> thread)
+  Lwt.ignore_result thread
 
 let () =
   let container = Dom_html.getElementById container_id in
 
   let websocket = connect_ws (Printf.sprintf "ws://localhost:%d" target_port) in
   let websocket_handler = Websocket_handler.make websocket in
+  Websocket_handler.init websocket_handler;
   let rpc_client = Rpc.Client.make websocket websocket_handler in
   let rpc_notification_server = Rpc.Notification_server.make () in
-  Websocket_handler.add websocket_handler ~handler:(notification_handler rpc_notification_server);
   let store = Store.make () in
+  let rpc_notification_server = Notification_reducer.expose ~store rpc_notification_server in
+
+  Websocket_handler.add websocket_handler ~handler:(notification_handler rpc_notification_server);
 
   let dispatcher = Dispatcher.make store rpc_client in
   websocket##.onopen := Dom.handler (fun _ ->
       List.iter (fun name ->
           Rpc.Client.request rpc_client (module Api.Workspace.Make_sync) (fun res ->
+              Firebug.console##log res;
               let module R = Sxfiler_rpc in
               if res.R.Workspace.Make_sync.created then
                 Rpc.Client.request rpc_client (module Api.Workspace.Get_sync) (fun res ->
                     let state = Store.get store in
-                    Store.update store @@ State.with_stack state ~name:Const.workspace_1 ~f:(fun stack ->
+                    Store.update store @@ State.with_stack state ~name ~f:(fun stack ->
                         let viewer = Types.Viewer.(File_tree File_tree.{
                             snapshot = res.T.Workspace.current;
                             selected_item_index = 0;
@@ -46,7 +50,7 @@ let () =
                         Types.(Viewer_stack.push stack ~v:(Viewer_state.make viewer))
                       )
                   )
-                  (Some Api.Workspace.Get_sync.{name = Const.workspace_1})
+                  (Some Api.Workspace.Get_sync.{name = name})
                 |> Lwt.ignore_result
               else
                 ()
@@ -57,7 +61,7 @@ let () =
                }))
           |> Lwt.ignore_result;
         ) [Const.workspace_1;Const.workspace_2];
-      Js._true
+        Js._true
     );
 
   let element = R.create_element ~props:(object%js
