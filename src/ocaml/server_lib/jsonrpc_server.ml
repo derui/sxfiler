@@ -35,11 +35,11 @@ let request_handler t conn =
                   }
               }
             in
-            Lwt.return @@ Rpc_connection.write_output conn res
+            Lwt.return @@ Rpc_connection.write_output conn ~frame:res
           | Ok req ->
             let%lwt res =  J.Server.handle_request ~request:req t.method_handler in
             let%lwt frame = Lwt.return @@ res_to_frame @@ res in
-            Lwt.return @@ Rpc_connection.write_output conn frame
+            Lwt.return @@ Rpc_connection.write_output conn ~frame
         end
       | _ -> Rpc_connection.default_input_handler conn f
     )

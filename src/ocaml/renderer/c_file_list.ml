@@ -20,7 +20,7 @@ module Component = R.Component.Make_stateful (struct
 let component =
   let module Vt = Types.Viewer.File_tree in
   let spec = R.component_spec
-      ~constructor:(fun this props ->
+      ~constructor:(fun this _ ->
           this##.state := object%js
             val virtualizedList = VL.make ~item_height ()
           end;
@@ -34,15 +34,14 @@ let component =
             let pos = vt.Vt.selected_item_index in
             this##setState (object%js
               val virtualizedList = VL.update_list_height e##.clientHeight vl
-                                    |> VL.update_all_items Types.(Array.of_list vt.Vt.snapshot.nodes)
+                                    |> VL.update_all_items @@ Array.of_list vt.Vt.snapshot.nodes
                                     |> VL.recalculate_visible_window pos
             end))
         )
-      ~component_will_receive_props:(fun this props ->
+      ~component_will_receive_props:(fun this _ ->
           let vt = this##.props##.viewerState in
-          let open Minimal_monadic_caml.Option.Infix in
           ignore (
-            let items = Types.(Array.of_list vt.Vt.snapshot.nodes) in
+            let items = Array.of_list vt.Vt.snapshot.nodes in
             let vl = VL.update_all_items items this##.state##.virtualizedList in
             let vl = VL.recalculate_visible_window vt.Vt.selected_item_index vl
             in

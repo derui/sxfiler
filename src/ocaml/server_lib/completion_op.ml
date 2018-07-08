@@ -21,7 +21,7 @@ module Setup_file_sync = Procedure_intf.Make(struct
 
   let handle param =
     let module R = SC.Root_state in
-    File_source.with_lock (fun source ->
+    File_source.with_lock (fun _ ->
         let%lwt state = Global.Root.get () in
         let ws = match R.find_workspace state ~name:param.workspace_name with
           | None -> raise J.Types.(Jsonrpc_error Error_code.Invalid_request)
@@ -72,7 +72,7 @@ module Read_directory_sync = Procedure_intf.Make(struct
     let params_of_json = `Required params_of_yojson
     let result_to_json = `Result result_to_yojson
 
-    let handle param = failwith "not implemented yet"
+    let handle _ = failwith "not implemented yet"
   end)
 
 module Read_history_sync = Procedure_intf.Make(struct
@@ -82,10 +82,10 @@ module Read_history_sync = Procedure_intf.Make(struct
     let params_of_json = `Required params_of_yojson
     let result_to_json = `Result result_to_yojson
 
-    let handle param = failwith "not implemented yet"
+    let handle _ = failwith "not implemented yet"
   end)
 
-let read param = failwith "not implemented yet"
+let read _ = failwith "not implemented yet"
 
 let initialize migemo =
   Global.Completion.update (Some (Sxfiler_server_completion.Completer.make ~migemo))

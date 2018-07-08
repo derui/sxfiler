@@ -30,7 +30,6 @@ let push_input t ~frame = t.input_writer frame
     do nothing this.
 *)
 let with_conn f =
-  let open Sxfiler_core in
   match !connection with
   | None -> Lwt.return_unit
   | Some conn -> f conn

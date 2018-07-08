@@ -13,7 +13,7 @@ module Component = R.Component.Make_stateful (struct
 
 let component = Component.make
     R.(component_spec
-         ~constructor:(fun this props ->
+         ~constructor:(fun this _ ->
              let store = this##.props##.store in
              Store.subscribe store (fun state ->
                  this##setState (object%js
@@ -25,7 +25,7 @@ let component = Component.make
                val state = store.Store.state
              end
            )
-         ~should_component_update:(fun this _ _ -> true)
+         ~should_component_update:(fun _ _ _ -> true)
          (fun this ->
             let props = this##.props in
             let children_props = object%js

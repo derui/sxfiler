@@ -130,7 +130,7 @@ let component =
   in
 
   let spec = R.component_spec
-      ~constructor:(fun this props ->
+      ~constructor:(fun this _ ->
           this##.nodes := Jstable.create ();
 
           this##.custom := object%js

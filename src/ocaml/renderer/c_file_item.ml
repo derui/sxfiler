@@ -44,7 +44,7 @@ let component =
       ~children:[file_mode; timestamp; file_size; file_name]
   in
   let spec = R.component_spec
-      ~should_component_update:(fun this new_props state -> not @@ L.isEqual this##.props new_props)
+      ~should_component_update:(fun this new_props _ -> not @@ L.isEqual this##.props new_props)
       render
   in
   Component.make spec

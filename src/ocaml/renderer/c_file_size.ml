@@ -39,7 +39,7 @@ module File_size = struct
 
   let of_size size =
     let rec calc_unit size current decimal =
-      if Int64.(zero <= size) && Int64.(size < 1024L) then (current, Int64.to_float size)
+      if Int64.zero <= size && size < 1024L then (current, Int64.to_float size)
       else begin
         match next_unit current with
         | None -> (current, (Int64.to_float size) +. decimal)

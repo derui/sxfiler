@@ -14,5 +14,5 @@ let create = function
     end
   | _ -> fun _ -> Lwt.fail_with "Not implemented yet for modules excluded Core module."
 
-let rec create_from_message = function
+let create_from_message = function
   | _ -> failwith "not implemented yet"

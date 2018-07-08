@@ -29,7 +29,7 @@ let other_props =
 let container_key = "filePaneContainer"
 let component =
   let spec = R.component_spec
-      ~constructor:(fun this props ->
+      ~constructor:(fun this _ ->
           this##.nodes := Jstable.create ();
           this##.state := object%js
             val active = true

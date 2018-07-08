@@ -22,7 +22,7 @@ module Impl = struct
       let content = Yojson.Safe.to_string json in
       Some (W.Frame.create ~opcode:W.Frame.Opcode.Text ~content ())
 
-    let call_api ?handler request =
+    let call_api ?handler:_ request =
       let module Conn = Rpc_connection in
       Conn.with_conn (fun conn ->
           Lwt.return @@ Conn.write_output conn ~frame:(req_to_frame request)

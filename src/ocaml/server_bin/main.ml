@@ -1,6 +1,4 @@
 open Lwt
-open Websocket
-open Websocket_cohttp_lwt
 open Sxfiler_server
 module Comp = Completion_op
 module W = Workspace_op
@@ -14,7 +12,6 @@ let handler
     (conn : Conduit_lwt_unix.flow * Cohttp.Connection.t)
     (req  : Cohttp_lwt_unix.Request.t)
     (body : Cohttp_lwt.Body.t) =
-  let open Frame in
   let%lwt () = Lwt_io.eprintf "[CONN] %s\n%!" (Cohttp.Connection.to_string @@ snd conn) in
   let uri = Cohttp.Request.uri req in
   match Uri.path uri with
@@ -38,7 +35,7 @@ let handler
 let initialize_modules ~migemo =
   Comp.initialize migemo
 
-let start_server host port ~config ~keymaps ~migemo =
+let start_server _ port ~config:_ ~keymaps:_ ~migemo:_ =
   let conn_closed (ch,_) =
     Printf.eprintf "[SERV] connection %s closed\n%!"
       (Sexplib.Sexp.to_string_hum (Conduit_lwt_unix.sexp_of_flow ch))
@@ -122,7 +119,7 @@ let () =
   let module Handler = Task_result_handler.Make(struct
       let unixtime () = Sxfiler_server_core.Time.time_to_int64 @@ Unix.gettimeofday ()
     end)(Notifier.Impl) in
-  let stopper_wakener, stopper = T.Runner.start (module Global.Root) Handler.handle in
+  let stopper_wakener, stopper = T.Runner.start ~state:(module Global.Root) ~task_handler:Handler.handle in
   Lwt_main.at_exit (fun () -> Lwt.wakeup stopper_wakener (); stopper);
-  Lwt_main.run (initialize_modules migemo
+  Lwt_main.run (initialize_modules ~migemo
                 >>= fun () -> start_server "localhost" port ~migemo ~config ~keymaps)
