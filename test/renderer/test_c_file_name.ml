@@ -8,10 +8,10 @@ let suite () =
     "should who filename normally" >:: (fun () ->
         let module C = S.C_file_name in
         let e = R.create_element ~props:(object%js
-            val fileName = Js.string "sample.txt"
-            val isDirectory = Js.bool false
-            val isSymbolicLink = Js.bool false
-            val marked = false
+            val parentDirectory = "/foo/bar/"
+            val path = "/foo/bar/sample.txt"
+            val isDirectory = false
+            val isSymbolicLink = false
           end) C.component
         in
         let renderer = new%js R.Test_renderer.shallow_ctor in
@@ -23,10 +23,10 @@ let suite () =
     "should make another color if item is directory" >:: (fun () ->
         let module C = S.C_file_name in
         let e = R.create_element ~props:(object%js
-            val fileName = Js.string "sample"
-            val isDirectory = Js.bool true
-            val isSymbolicLink = Js.bool false
-            val marked = false
+            val parentDirectory = "/foo/"
+            val path =  "/foo/bar/"
+            val isDirectory = true
+            val isSymbolicLink = false
           end) C.component
         in
         let renderer = new%js R.Test_renderer.shallow_ctor in
@@ -38,25 +38,10 @@ let suite () =
     "should make another color if item is symbolic link" >:: (fun () ->
         let module C = S.C_file_name in
         let e = R.create_element ~props:(object%js
-            val fileName = Js.string "sample.txt"
-            val isDirectory = Js.bool false
-            val isSymbolicLink = Js.bool true
-            val marked = false
-          end) C.component
-        in
-        let renderer = new%js R.Test_renderer.shallow_ctor in
-        renderer##render e;
-        let output = renderer##getRenderOutput in
-        snapshot output;
-        assert_ok true
-      );
-    "should make another color if item have mark" >:: (fun () ->
-        let module C = S.C_file_name in
-        let e = R.create_element ~props:(object%js
-            val fileName = Js.string "sample.txt"
-            val isDirectory = Js.bool false
-            val isSymbolicLink = Js.bool true
-            val marked = true
+            val parentDirectory = "/foo/bar/"
+            val path = "/foo/bar/sample.txt"
+            val isDirectory = false
+            val isSymbolicLink = true
           end) C.component
         in
         let renderer = new%js R.Test_renderer.shallow_ctor in

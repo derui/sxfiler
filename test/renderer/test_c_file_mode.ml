@@ -8,7 +8,7 @@ let suite () =
     "should show current permission of file" >:: (fun () ->
         let module F = S.C_file_mode in
         let e = R.create_element ~props:(object%js
-            val mode = Js.number_of_float @@ float_of_int 0o644
+            val mode = 0o644l
           end) F.component
         in
         let renderer = new%js R.Test_renderer.shallow_ctor in
@@ -20,7 +20,7 @@ let suite () =
     "should be hyphen if no any permission " >:: (fun () ->
         let module F = S.C_file_mode in
         let e = R.create_element ~props:(object%js
-            val mode = Js.number_of_float @@ float_of_int 0
+            val mode = 0l
           end) F.component
         in
         let renderer = new%js R.Test_renderer.shallow_ctor in
@@ -32,7 +32,7 @@ let suite () =
     "should be able to show symlink bit if mode contains symlink bit" >:: (fun () ->
         let module F = S.C_file_mode in
         let e = R.create_element ~props:(object%js
-            val mode = Js.number_of_float @@ float_of_int @@ 0o120000 lor 0o777
+            val mode = Int32.logor 0o120000l 0o777l
           end) F.component
         in
         let renderer = new%js R.Test_renderer.shallow_ctor in
@@ -44,7 +44,7 @@ let suite () =
     "should be able to show directory bit if mode contains directory bit" >:: (fun () ->
         let module F = S.C_file_mode in
         let e = R.create_element ~props:(object%js
-            val mode = Js.number_of_float @@ float_of_int @@ 0o040000 lor 0o755
+            val mode = Int32.logor 0o040000l 0o755l
           end) F.component
         in
         let renderer = new%js R.Test_renderer.shallow_ctor in
