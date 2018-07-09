@@ -4,79 +4,63 @@
 *)
 open Rpc_connection_abbrev
 
-(** Type of Rpc_connection. output_writer is created by Websocket_cohttp_lwt.upgrade_connection,
-    and do not get stream of it.
-*)
-type t = {
-  mutable output_writer: W.Frame.t option -> unit;
-  input_stream: W.Frame.t Lwt_stream.t;
-  input_writer: W.Frame.t option -> unit;
-}
+include Rpc_connection_intf
 
-let connection : t option ref = ref None
+module Impl = struct
+  (** Type of Rpc_connection. output_writer is created by Websocket_cohttp_lwt.upgrade_connection,
+      and do not get stream of it.
+  *)
+  type t = {
+    mutable output_writer: W.Frame.t option -> unit;
+    input_stream: W.Frame.t Lwt_stream.t;
+    input_writer: W.Frame.t option -> unit;
+  }
 
-(** [write_output t ~frame] writes a [frame] to peer on websocket connection.
-    This function calls writer given with calling {!connect}.
-*)
-let write_output t ~frame = t.output_writer frame
+  let write_output t ~frame = t.output_writer frame
 
-(** [process_input t ~f] handles input of [t] on websocket connection with [f] *)
-let process_input t ~f = Lwt_stream.iter_s f t.input_stream
+  let process_input t ~f = Lwt_stream.iter_s f t.input_stream
 
-(** [push_input t ~frame] writes a [frame] to peer on websocket connection. *)
-let push_input t ~frame = t.input_writer frame
+  let push_input t ~frame = t.input_writer frame
 
-(** [with_conn f] execute [f] if connection already created. If does not exists connection,
-    do nothing this.
-*)
-let with_conn f =
-  match !connection with
-  | None -> Lwt.return_unit
-  | Some conn -> f conn
+  let connect t output_writer =
+    if Lwt_stream.is_closed t.input_stream then
+      Lwt.return_unit
+    else begin
+      t.output_writer <- output_writer;
+      Lwt.return_unit
+    end
+
+  let disconnect t =
+    if Lwt_stream.is_closed t.input_stream then Lwt.return_unit
+    else begin
+      t.input_writer None;
+      t.output_writer <- (fun _ -> ());
+      Lwt_stream.closed t.input_stream
+    end
+
+  let is_closed t = Lwt_stream.is_closed t.input_stream
+
+  (** [default_input_handler t f] handles frame [f] with default behavior for Websocket. *)
+  let default_input_handler t f =
+    let open Websocket_cohttp_lwt in
+    match f.Frame.opcode with
+    | Frame.Opcode.Ping ->
+      let f = Frame.create ~opcode:Frame.Opcode.Pong ~content:f.Frame.content () in
+      Lwt.return @@ t.output_writer @@ Some f
+    | Frame.Opcode.Close -> disconnect t
+    | _ as op -> Lwt_io.eprintf "Not implemented opcode: %s" (Frame.Opcode.to_string op)
+
+end
 
 let make () =
   let input_stream, input_writer = Lwt_stream.create () in
-  {
-    output_writer = (fun _ -> ());
+  let t = {
+    Impl.output_writer = (fun _ -> ());
     input_stream;
     input_writer;
-  }
+  } in
+  (module struct
+    module Connection = Impl
 
-(** [connect output_writer] connect to websocket with [output_writer].
-    Connection is saved as global.
-*)
-let connect t output_writer =
-  if Lwt_stream.is_closed t.input_stream then
-    Lwt.return_unit
-  else
-    match !connection with
-    | None ->
-      connection := Some t;
-      t.output_writer <- output_writer;
-      Lwt.return_unit
-    | Some t' ->
-      t'.input_writer None;
-      let%lwt () = Lwt_stream.closed t'.input_stream in
-      connection := Some t;
-      t.output_writer <- output_writer;
-      Lwt.return_unit
-
-(** [disconnect ()] kills global connection. *)
-let disconnect () =
-  match !connection with
-  | None -> Lwt.return_unit
-  | Some t ->
-    t.input_writer None;
-    let%lwt () = Lwt_stream.closed t.input_stream in
-    connection := None;
-    Lwt.return_unit
-
-(** [default_input_handler t f] handles frame [f] with default behavior for Websocket. *)
-let default_input_handler t f =
-  let open Websocket_cohttp_lwt in
-  match f.Frame.opcode with
-  | Frame.Opcode.Ping ->
-    let f = Frame.create ~opcode:Frame.Opcode.Pong ~content:f.Frame.content () in
-    Lwt.return @@ t.output_writer @@ Some f
-  | Frame.Opcode.Close -> Lwt.return_unit
-  | _ as op -> Lwt_io.eprintf "Not implemented opcode: %s" (Frame.Opcode.to_string op)
+    let instance = t
+  end : Instance)

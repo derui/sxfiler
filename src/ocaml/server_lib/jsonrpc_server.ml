@@ -24,7 +24,9 @@ let res_to_frame res =
 let request_handler t conn =
   let open Websocket_cohttp_lwt in
 
-  Rpc_connection.process_input conn ~f:(fun f ->
+  let module C = (val conn : Rpc_connection.Instance) in
+  let conn = C.instance in
+  C.Connection.process_input conn ~f:(fun f ->
       match f.Frame.opcode with
       | Frame.Opcode.Text -> begin
           let json = Yojson.Safe.from_string f.Frame.content in
@@ -40,13 +42,13 @@ let request_handler t conn =
                   }
               }
             in
-            Lwt.return @@ Rpc_connection.write_output conn ~frame:res
+            Lwt.return @@ C.Connection.write_output conn ~frame:res
           | Ok req ->
             let%lwt res =  J.Server.handle_request ~request:req t.method_handler in
             let%lwt frame = Lwt.return @@ res_to_frame @@ res in
-            Lwt.return @@ Rpc_connection.write_output conn ~frame
+            Lwt.return @@ C.Connection.write_output conn ~frame
         end
-      | _ -> Rpc_connection.default_input_handler conn f
+      | _ -> C.Connection.default_input_handler conn f
     )
 
 (** Serve response sending loop *)

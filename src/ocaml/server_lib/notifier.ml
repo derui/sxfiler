@@ -12,7 +12,7 @@ module type S = sig
     -> 'b option -> unit Lwt.t
 end
 
-module Impl = struct
+module Impl(Conn:Rpc_connection.Instance) = struct
   module Rpc : J.Rpc_intf.S with module Thread := Lwt
                              and module Request := Jy.Request
                              and module Response := Jy.Response = struct
@@ -23,10 +23,8 @@ module Impl = struct
       Some (W.Frame.create ~opcode:W.Frame.Opcode.Text ~content ())
 
     let call_api ?handler:_ request =
-      let module Conn = Rpc_connection in
-      Conn.with_conn (fun conn ->
-          Lwt.return @@ Conn.write_output conn ~frame:(req_to_frame request)
-        )
+      let module C = Conn.Connection in
+      Lwt.return @@ C.write_output Conn.instance ~frame:(req_to_frame request)
   end
 
   let notify api_def param =

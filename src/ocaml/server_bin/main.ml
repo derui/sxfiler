@@ -11,18 +11,31 @@ let handler
     (body : Cohttp_lwt.Body.t) =
   let%lwt () = Lwt_io.eprintf "[CONN] %s\n%!" (Cohttp.Connection.to_string @@ snd conn) in
   let uri = Cohttp.Request.uri req in
-  let rpc_conn = Rpc_connection.make () in
+
   match Uri.path uri with
   | "/" ->
+    let%lwt () = Lwt_io.eprintf "[CONN] %s\n%!" (Cohttp.Connection.to_string @@ snd conn) in
+    let module C = (val Rpc_connection.make (): Rpc_connection.Instance) in
+    let module Handler = Task_result_handler.Make(struct
+        let unixtime () = Sxfiler_server_core.Time.time_to_int64 @@ Unix.gettimeofday ()
+      end)(Notifier.Impl(C)) in
+    let stopper_wakener, stopper = T.Runner.start ~state:(module Global.Root) ~task_handler:Handler.handle in
+
     let%lwt () = Cohttp_lwt.Body.drain_body body in
     let%lwt (resp, body, frames_out_fn) =
       Websocket_cohttp_lwt.upgrade_connection req (fst conn) (fun f ->
-          Rpc_connection.push_input rpc_conn ~frame:(Some f)
+          C.Connection.push_input C.instance ~frame:(Some f)
         )
     in
     (* serve frame/response handler *)
-    let%lwt () = Rpc_connection.connect rpc_conn frames_out_fn in
-    Lwt.ignore_result @@ Jsonrpc_server.serve_forever rpc_server rpc_conn;
+    let%lwt () = C.Connection.connect C.instance frames_out_fn in
+    Lwt.ignore_result (
+      (* Disable current task when thread is terminated. *)
+      let thread = Jsonrpc_server.serve_forever rpc_server (module C) in
+      Lwt.on_termination thread (fun () -> Lwt.wakeup stopper_wakener ());
+
+      Lwt.join [thread; stopper]
+    );
     Lwt.return (resp, (body :> Cohttp_lwt.Body.t))
   | _ ->
     Cohttp_lwt_unix.Server.respond_string
@@ -117,10 +130,5 @@ let () =
   let migemo = load_migemo !dict_dir in
 
   (* setup task runner and finalizer *)
-  let module Handler = Task_result_handler.Make(struct
-      let unixtime () = Sxfiler_server_core.Time.time_to_int64 @@ Unix.gettimeofday ()
-    end)(Notifier.Impl) in
-  let stopper_wakener, stopper = T.Runner.start ~state:(module Global.Root) ~task_handler:Handler.handle in
-  Lwt_main.at_exit (fun () -> Lwt.wakeup stopper_wakener (); stopper);
   Lwt_main.run (initialize_modules ~migemo
                 >>= fun () -> start_server "localhost" port ~migemo ~config ~keymaps)
