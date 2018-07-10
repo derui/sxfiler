@@ -9,9 +9,9 @@ end
 
 let to_yojson : t -> Yojson.Safe.json = fun t ->
   Js.to_yojson {
-      Js.records = t.records;
-      max_records = t.max_records;
-    }
+    Js.records = t.records;
+    max_records = t.max_records;
+  }
 
 let of_yojson js =
   let open Ppx_deriving_yojson_runtime in

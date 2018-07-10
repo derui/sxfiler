@@ -44,7 +44,7 @@ module Impl = struct
         end
       )
 
-    (** Forever loop to accept task. Running this function must be in other thread of worker thread. *)
+  (** Forever loop to accept task. Running this function must be in other thread of worker thread. *)
   let rec accept_task_loop t () =
     let%lwt task = Lwt_mvar.take t.task_mailbox in
     match%lwt Lwt.return task with
@@ -84,26 +84,26 @@ module Impl = struct
           );
       ) t.task_queue
 
-(** [add_task task] add [task] to mailbox of task accepter. *)
-let add_task t task = Lwt_mvar.put t.task_mailbox (`Accepted task)
+  (** [add_task task] add [task] to mailbox of task accepter. *)
+  let add_task t task = Lwt_mvar.put t.task_mailbox (`Accepted task)
 
-let start t ~state =
-  let module C = Sxfiler_server_core in
-  let accepter = accept_task_loop t () in
-  let worker = run_task_loop t state () in
+  let start t ~state =
+    let module C = Sxfiler_server_core in
+    let accepter = accept_task_loop t () in
+    let worker = run_task_loop t state () in
 
-  let stopper =
-    let%lwt () = t.waiter in
-    (* Cancel all async threads. *)
-    let%lwt () = Lwt_mvar.put t.task_mailbox `Rejected in
-    t.task_queue_writer None;
-    Lwt.join [accepter;worker]
-  in
-  Lwt.async (fun () -> accepter);
-  Lwt.async (fun () -> worker);
-  stopper
+    let stopper =
+      let%lwt () = t.waiter in
+      (* Cancel all async threads. *)
+      let%lwt () = Lwt_mvar.put t.task_mailbox `Rejected in
+      t.task_queue_writer None;
+      Lwt.join [accepter;worker]
+    in
+    Lwt.async (fun () -> accepter);
+    Lwt.async (fun () -> worker);
+    stopper
 
-let stop t = Lwt.wakeup t.wakener ()
+  let stop t = Lwt.wakeup t.wakener ()
 
 end
 

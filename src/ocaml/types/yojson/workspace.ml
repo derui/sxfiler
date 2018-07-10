@@ -9,9 +9,9 @@ end
 
 let to_yojson : t -> Yojson.Safe.json = fun t ->
   Js.to_yojson {
-      Js.current = t.current;
-      history = t.history;
-    }
+    Js.current = t.current;
+    history = t.history;
+  }
 
 let of_yojson js =
   let open Ppx_deriving_yojson_runtime in

@@ -58,7 +58,7 @@ let start_server _ port ~config:_ ~keymaps:_ ~migemo:_ =
       (Sexplib.Sexp.to_string_hum (Conduit_lwt_unix.sexp_of_flow ch))
   in
   let%lwt () = Lwt_io.eprintf "[SERV] Listening for HTTP on port %d\n%!" port in
-    let module I = (val Global.Task_runner.get (): T.Runner.Instance) in
+  let module I = (val Global.Task_runner.get (): T.Runner.Instance) in
   let rpc_server = Jsonrpc_server.make () in
 
   let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Completion_op) in

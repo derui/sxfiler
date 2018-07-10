@@ -35,10 +35,10 @@ module Read_file_sync = struct
   let result_to_yojson t =
     let module T = Sxfiler_types.Types in
     Js.result_to_yojson @@ Array.map (fun v -> {
-        Ty.Types.Candidate.start = v.T.Candidate.start;
-        length = v.T.Candidate.length;
-        value = Ty.Node.to_yojson v.T.Candidate.value;
-      }) t
+          Ty.Types.Candidate.start = v.T.Candidate.start;
+          length = v.T.Candidate.length;
+          value = Ty.Node.to_yojson v.T.Candidate.value;
+        }) t
 end
 
 module Read_directory_sync = struct
@@ -53,10 +53,10 @@ module Read_directory_sync = struct
   let result_to_yojson t =
     let module T = Sxfiler_types.Types in
     Js.result_to_yojson @@ Array.map (fun v -> {
-        Ty.Types.Candidate.start = v.T.Candidate.start;
-        length = v.T.Candidate.length;
-        value = Ty.Directory_tree.to_yojson v.T.Candidate.value;
-      }) t
+          Ty.Types.Candidate.start = v.T.Candidate.start;
+          length = v.T.Candidate.length;
+          value = Ty.Directory_tree.to_yojson v.T.Candidate.value;
+        }) t
 end
 
 module Read_history_sync = struct
@@ -71,8 +71,8 @@ module Read_history_sync = struct
   let result_to_yojson t =
     let module T = Sxfiler_types.Types in
     Js.result_to_yojson @@ Array.map (fun v -> {
-        Ty.Types.Candidate.start = v.T.Candidate.start;
-        length = v.T.Candidate.length;
-        value = Ty.Snapshot_record.to_yojson v.T.Candidate.value;
-      }) t
+          Ty.Types.Candidate.start = v.T.Candidate.start;
+          length = v.T.Candidate.length;
+          value = Ty.Snapshot_record.to_yojson v.T.Candidate.value;
+        }) t
 end

@@ -9,9 +9,9 @@ end
 
 let to_yojson : t -> Yojson.Safe.json = fun t ->
   Js.to_yojson {
-      Js.directory = t.directory;
-      timestamp = Int64.to_string t.timestamp;
-    }
+    Js.directory = t.directory;
+    timestamp = Int64.to_string t.timestamp;
+  }
 
 let of_yojson js =
   let open Ppx_deriving_yojson_runtime in
