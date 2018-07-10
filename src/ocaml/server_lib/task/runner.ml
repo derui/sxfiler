@@ -23,23 +23,23 @@ module Impl = struct
     wakener: unit Lwt.u;
     waiter: unit Lwt.t;
     handler_lock: Lwt_mutex.t;
-    mutable handlers: handler list;
+    mutable handlers: (string * handler) list;
   }
 
-  let add_task_handler t ~handler =
+  let add_task_handler t ~name ~handler =
     Lwt_mutex.with_lock t.handler_lock (fun () ->
-        if List.mem handler t.handlers then Lwt.return_unit
+        if List.mem_assoc name t.handlers then Lwt.return_unit
         else begin
-          t.handlers <- handler :: t.handlers;
+          t.handlers <- (name, handler) :: t.handlers;
           Lwt.return_unit
         end
       )
 
-  let remove_task_handler t ~handler =
+  let remove_task_handler t ~name ~handler =
     Lwt_mutex.with_lock t.handler_lock (fun () ->
-        if not @@ List.mem handler t.handlers then Lwt.return_unit
+        if not @@ List.mem_assoc name t.handlers then Lwt.return_unit
         else begin
-          t.handlers <- List.filter (fun v -> v <> handler) t.handlers;
+          t.handlers <- List.remove_assoc name t.handlers;
           Lwt.return_unit
         end
       )
@@ -78,7 +78,7 @@ module Impl = struct
               with _ ->
                 remove_state t id (`Failed "Failed task with unhandled exception")
             in
-            Lwt_list.iter_s (fun handler ->
+            Lwt_list.iter_s (fun (_, handler) ->
                 handler s result
               ) t.handlers
           );

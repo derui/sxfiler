@@ -17,7 +17,7 @@ let component = Component.make (fun props ->
         val focused = props##.focused
       end) C_file_list_viewer_header.component
     and content =
-      let props = R.element_spec ~class_name:"fp-FileListPane_Content" ()
+      let props = R.element_spec ~class_name:"fp-FileListViewer_Content" ()
       and children = [
         R.create_element ~key:"file-list" ~props:(object%js
           val viewerState = state
@@ -27,6 +27,6 @@ let component = Component.make (fun props ->
       in
       R.Dom.of_tag `div ~key:"content" ~props ~children
     in
-    let props = R.element_spec ~class_name:"fp-FileListPane" () in
+    let props = R.element_spec ~class_name:"fp-FileListViewer" () in
     R.Dom.of_tag `div ~props ~children:[header; content]
   )

@@ -12,8 +12,8 @@ let component = Component.make (fun props ->
     let directory = props##.directory in
     let class_name =
       let open Classnames in
-      to_string ["fp-FileListPane_Header", true;
-                 "fp-FileListPane_Header-focused", props##.focused]
+      to_string ["fp-FileListViewer_Header", true;
+                 "fp-FileListViewer_Header-focused", props##.focused]
     in
     R.Dom.of_tag `header
       ~props:R.(element_spec ~class_name ())

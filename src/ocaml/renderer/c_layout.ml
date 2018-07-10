@@ -15,12 +15,12 @@ let layout_container ~key ~state stack  =
   let class_name = match state.State.config.C.viewer.C.Viewer.stack_layout with
     | T.Types.Layout.Side_by_side -> Classnames.to_string [
         "fp-LayoutContainer", true;
-        "fp-LayoutContainer_sideBySide", true;
       ]
   in
   R.Dom.of_tag `div
-    ~props:R.(element_spec ~class_name ~key ())
-    ~children:[R.create_element ~props:(object%js
+    ~key
+    ~props:R.(element_spec ~class_name ())
+    ~children:[R.create_element ~key:"viewer-stack" ~props:(object%js
                  val state = state
                  val viewerStack = stack
                end)
@@ -45,6 +45,7 @@ let component = Component.make @@ fun props ->
   in
 
   R.Dom.of_tag `div
-    ~props:R.(element_spec ~class_name ())
-    ~children:(List.map to_container state.State.workspace_order |> List.filter Option.is_some
-              |> List.map Option.get_exn)
+    ~props:R.(element_spec ~key:"layout" ~class_name ())
+    ~children:(List.map to_container state.State.workspace_order
+               |> List.filter Option.is_some
+               |> List.map Option.get_exn)

@@ -77,13 +77,14 @@ let component =
     let resize_sensor = R.create_element ~key:"resize-sensor"
         ~props:(object%js
           val getParentSize = (fun () ->
-              let open Minimal_monadic_caml.Option.Infix in
+              let open Option.Infix in
               let size = R.Ref_table.find ~key:key_of_filelist this##.nodes >|= (fun e ->
                   let rect = e##getBoundingClientRect in
                   let height = int_of_float @@ rect##.bottom -. rect##.top
                   and width = int_of_float @@ rect##.right -. rect##.left in
                   {C_resize_sensor.height;width})
               in
+              Firebug.console##log size;
               Option.get ~default:{C_resize_sensor.height = 0;width = 0} size)
           val onResized = (fun size ->
               let height = size.C_resize_sensor.height in

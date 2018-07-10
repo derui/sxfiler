@@ -37,7 +37,6 @@ let () =
           Rpc.Client.request rpc_client (module Api.Workspace.Make_sync) (fun res ->
               if res.R.Workspace.Make_sync.created then
                 Rpc.Client.request rpc_client (module Api.Workspace.Get_sync) (fun res ->
-                    Firebug.console##log (Js._JSON##stringify res);
                     let state = Store.get store in
                     Store.update store @@ State.with_stack state ~name ~f:(fun stack ->
                         let viewer = Types.Viewer.(File_tree {

@@ -9,7 +9,8 @@ let handler
     (conn : Conduit_lwt_unix.flow * Cohttp.Connection.t)
     (req  : Cohttp_lwt_unix.Request.t)
     (body : Cohttp_lwt.Body.t) =
-  let%lwt () = Lwt_io.eprintf "[CONN] %s\n%!" (Cohttp.Connection.to_string @@ snd conn) in
+  let conn_name = Cohttp.Connection.to_string @@ snd conn in
+  let%lwt () = Lwt_io.eprintf "[CONN] %s\n%!" conn_name in
   let uri = Cohttp.Request.uri req in
 
   match Uri.path uri with
@@ -21,7 +22,7 @@ let handler
     let module R = (val T.Runner.make (): T.Runner.Instance) in
     let%lwt () =
       let module I = (val Global.Task_runner.get (): T.Runner.Instance) in
-      I.Runner.add_task_handler I.instance ~handler:Handler.handle
+      I.Runner.add_task_handler I.instance ~name:conn_name ~handler:Handler.handle
     in
     let%lwt () = Cohttp_lwt.Body.drain_body body in
     let%lwt (resp, body, frames_out_fn) =
@@ -36,7 +37,7 @@ let handler
       let thread = Jsonrpc_server.serve_forever rpc_server (module C) in
       Lwt.on_termination thread (fun () ->
           let module I = (val Global.Task_runner.get (): T.Runner.Instance) in
-          Lwt.ignore_result @@ I.Runner.remove_task_handler I.instance ~handler:Handler.handle
+          Lwt.ignore_result @@ I.Runner.remove_task_handler I.instance ~name:conn_name ~handler:Handler.handle
         );
 
       Lwt.join [thread]

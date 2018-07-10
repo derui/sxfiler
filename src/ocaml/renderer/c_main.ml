@@ -16,6 +16,7 @@ let component = Component.make
          ~constructor:(fun this _ ->
              let store = this##.props##.store in
              Store.subscribe store (fun state ->
+                        Firebug.console##log state;
                  this##setState (object%js
                    val state = state
                  end)

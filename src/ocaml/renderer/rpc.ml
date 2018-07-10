@@ -108,9 +108,8 @@ module Notification_server = struct
     t
 
   let handle_request ~request t =
-    Firebug.console##log (Js._JSON##stringify request);
     let open Jsonrpc_ocaml_jsoo in
-    match Jstable.find t.procedure_table Js.(string request.R.Request._method) |> Js.Optdef.to_option with
+    match Jstable.find t.procedure_table Js.(string request.Request._method) |> Js.Optdef.to_option with
     | None ->
       (* TODO: logging unknown notification *)
       Lwt.return_unit

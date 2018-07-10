@@ -14,11 +14,13 @@ module type S = sig
 
   (** [add_task_handler t ~handler] adds [handler] to [t] as handling task result. *)
   val add_task_handler: t
+    -> name:string
     -> handler:((module Statable.S with type state = Root_state.t) -> Intf.task_result -> unit Lwt.t)
     -> unit Lwt.t
 
   (** [remove_task_handler t ~handler] removes [handler] from [t]. *)
   val remove_task_handler: t
+    -> name:string
     -> handler:((module Statable.S with type state = Root_state.t) -> Intf.task_result -> unit Lwt.t)
     -> unit Lwt.t
 
