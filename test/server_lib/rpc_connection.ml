@@ -49,6 +49,21 @@ let rpc_connection = [
       Lwt.return_unit
     );
 
+  Alcotest_lwt.test_case "return pong opcode when ping given" `Quick (fun _ () ->
+      let module C = (val R.make (): R.Instance) in
+      let conn = C.instance in
+      let module Conn = C.Connection in
+      let frame = ref None in
+
+      let module W = Websocket_cohttp_lwt in
+      let%lwt _ = Conn.connect conn (fun v -> frame := v) in
+      let%lwt _ =
+        Conn.default_input_handler conn W.(Frame.create ~opcode:Frame.Opcode.Ping ())
+      in
+      Alcotest.(check @@ option @@ of_pp Fmt.nop) "closed" (Some W.Frame.(create ~opcode:Opcode.Pong ())) !frame;
+      Lwt.return_unit
+    );
+
   Alcotest_lwt.test_case "disconnect when Close opcode given" `Quick (fun _ () ->
       let module C = (val R.make (): R.Instance) in
       let conn = C.instance in
