@@ -1,5 +1,6 @@
 open Sxfiler_renderer
 module T = Sxfiler_types
+module RI = Sxfiler_rpc
 module R = Jsoo_reactjs
 
 let container_id = "top-entry"
@@ -32,15 +33,15 @@ let () =
   let dispatcher = Dispatcher.make store rpc_client in
   websocket##.onopen := Dom.handler (fun _ ->
       List.iter (fun name ->
+          let module R = Sxfiler_rpc in
           Rpc.Client.request rpc_client (module Api.Workspace.Make_sync) (fun res ->
-              Firebug.console##log res;
-              let module R = Sxfiler_rpc in
               if res.R.Workspace.Make_sync.created then
                 Rpc.Client.request rpc_client (module Api.Workspace.Get_sync) (fun res ->
+                    Firebug.console##log (Js._JSON##stringify res);
                     let state = Store.get store in
                     Store.update store @@ State.with_stack state ~name ~f:(fun stack ->
-                        let viewer = Types.Viewer.(File_tree File_tree.{
-                            snapshot = res.T.Workspace.current;
+                        let viewer = Types.Viewer.(File_tree {
+                            File_tree.snapshot = res.T.Workspace.current;
                             selected_item_index = 0;
                           }) in
                         let stack = match stack with
@@ -50,18 +51,18 @@ let () =
                         Types.(Viewer_stack.push stack ~v:(Viewer_state.make viewer))
                       )
                   )
-                  (Some Api.Workspace.Get_sync.{name = name})
+                  (Some {RI.Workspace.Get_sync.name = name})
                 |> Lwt.ignore_result
               else
                 ()
             )
-            (Some Api.Workspace.Make_sync.({
-                 initial_directory = ".";
-                 name;
-               }))
+            (Some {
+                R.Workspace.Make_sync.initial_directory = ".";
+                name;
+              })
           |> Lwt.ignore_result;
         ) [Const.workspace_1;Const.workspace_2];
-        Js._true
+      Js._true
     );
 
   let element = R.create_element ~props:(object%js

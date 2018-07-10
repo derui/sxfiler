@@ -55,8 +55,8 @@ module Read_file_sync = Procedure_intf.Make(struct
             end) in
             let candidates = Comp.read completer ~input:param.input ~collection ~stringify:(module S) in
 
-            List.map (fun c -> T.Types.Candidate.{
-                start = c.Comp.start;
+            List.map (fun c -> {
+                T.Types.Candidate.start = c.Comp.start;
                 length = c.Comp.length;
                 value = c.Comp.value;
               }) candidates

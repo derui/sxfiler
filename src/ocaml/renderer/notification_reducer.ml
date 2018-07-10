@@ -17,8 +17,8 @@ module Workspace_update = struct
 
       let state = Store.get store in
       Store.update store @@ State.with_stack state ~name:params.name ~f:(fun stack ->
-          let viewer = Types.Viewer.(File_tree File_tree.{
-              snapshot = params.workspace.T.Workspace.current;
+          let viewer = Types.Viewer.(File_tree {
+              File_tree.snapshot = params.workspace.T.Workspace.current;
               selected_item_index = 0;
             }) in
           let stack = match stack with

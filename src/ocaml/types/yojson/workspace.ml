@@ -8,8 +8,8 @@ module Js = struct
 end
 
 let to_yojson : t -> Yojson.Safe.json = fun t ->
-  Js.to_yojson Js.{
-      current = t.current;
+  Js.to_yojson {
+      Js.current = t.current;
       history = t.history;
     }
 

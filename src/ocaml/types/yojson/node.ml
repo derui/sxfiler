@@ -10,8 +10,8 @@ module Js = struct
   } [@@deriving yojson]
 end
 
-let to_yojson : t -> Yojson.Safe.json = fun t -> Js.to_yojson Js.{
-    full_path = t.full_path;
+let to_yojson : t -> Yojson.Safe.json = fun t -> Js.to_yojson {
+    Js.full_path = t.full_path;
     stat = t.stat;
     parent_directory = t.parent_directory;
     link_path = t.link_path;

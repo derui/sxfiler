@@ -32,11 +32,11 @@ let request_handler t conn =
           let json = Yojson.Safe.from_string f.Frame.content in
           match J.Request.of_json json with
           | Error _ ->
-            let%lwt res = Lwt.return @@ res_to_frame @@ J.Response.{
-                result = None;
+            let%lwt res = Lwt.return @@ res_to_frame @@ {
+                J.Response.result = None;
                 id = None;
-                error = Some J.Error.{
-                    code = J.Types.Error_code.Parse_error;
+                error = Some {
+                    J.Error.code = J.Types.Error_code.Parse_error;
                     message = J.Types.Error_code.(to_message Parse_error);
                     data = None;
                   }

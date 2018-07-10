@@ -34,7 +34,6 @@ module Make(R:Rpc_type) : S with type params := R.params and type result := R.re
     let module Rpc = Jsonrpc_ocaml_yojson in
     let module Req = Rpc.Request in
     let module Res = Rpc.Response in
-    let%lwt _ = Lwt_io.printf "Call with param %s" req.Req._method in
     let%lwt () = Lwt_io.flush_all () in
     let%lwt result = match R.params_of_json with
       | `Not_required param -> R.handle param
@@ -42,7 +41,7 @@ module Make(R:Rpc_type) : S with type params := R.params and type result := R.re
           | None -> raise Rpc.Types.(Jsonrpc_error Error_code.Invalid_params)
           | Some params -> begin match f params with
               | Error _ -> raise Rpc.Types.(Jsonrpc_error Error_code.Invalid_params)
-              | Ok param -> R.handle param
+              | Ok param -> Printf.printf "calling %s\n" req.Req._method; R.handle param
             end
         end
     in
@@ -50,9 +49,9 @@ module Make(R:Rpc_type) : S with type params := R.params and type result := R.re
       | `Void -> None
       | `Result f -> Some (f result)
     in
-    Lwt.return Res.({
-        result;
-        id = req.Req.id;
-        error = None
-      })
+    Lwt.return {
+      Res.result;
+      id = req.Req.id;
+      error = None
+    }
 end

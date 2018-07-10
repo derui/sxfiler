@@ -8,8 +8,8 @@ module Js = struct
 end
 
 let to_yojson : t -> Yojson.Safe.json = fun t ->
-  Js.to_yojson Js.{
-      directory = t.directory;
+  Js.to_yojson {
+      Js.directory = t.directory;
       timestamp = Int64.to_string t.timestamp;
     }
 

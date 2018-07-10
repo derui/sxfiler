@@ -1,4 +1,5 @@
 module C = Sxfiler_server_core
+module T = Sxfiler_server_task
 
 module Root = C.Statable.Make(struct
     type t = C.Root_state.t
@@ -11,3 +12,17 @@ module Completion = C.Statable.Make(struct
 
     let empty () = None
   end)
+
+
+module Task_runner : sig
+  val get: unit -> (module T.Runner.Instance)
+end = struct
+  let t = ref None
+
+  let get () =
+    match !t with
+    | None -> let v = T.Runner.make () in
+      t := Some v;
+      v
+    | Some t -> t
+end

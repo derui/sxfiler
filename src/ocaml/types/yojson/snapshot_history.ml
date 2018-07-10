@@ -8,8 +8,8 @@ module Js = struct
 end
 
 let to_yojson : t -> Yojson.Safe.json = fun t ->
-  Js.to_yojson Js.{
-      records = t.records;
+  Js.to_yojson {
+      Js.records = t.records;
       max_records = t.max_records;
     }
 

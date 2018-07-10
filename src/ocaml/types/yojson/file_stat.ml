@@ -18,8 +18,8 @@ end
 (** [to_yojson t] converts OCaml type to Yojson representation.
     Can not use ppx_deriving_yojson because some types can not convert as types wanted.
 *)
-let to_yojson : t -> Yojson.Safe.json = fun t -> Js.to_yojson Js.{
-    mode = Int32.to_string t.mode;
+let to_yojson : t -> Yojson.Safe.json = fun t -> Js.to_yojson {
+    Js.mode = Int32.to_string t.mode;
     uid = t.uid;
     gid = t.gid;
     atime = Int64.to_string t.atime;

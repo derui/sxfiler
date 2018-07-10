@@ -15,14 +15,16 @@ let workspace_op = [
           type t = C.Root_state.t
           let empty () = C.Root_state.empty
         end) in
-      let module Make_sync = S.Workspace_op.Make_sync(A.Dummy)(State) in
       let module Handler = S.Task_result_handler.Make(struct
           let unixtime () = Int64.zero
         end)(struct
           let notify _ _ = Lwt.wakeup task_finished_waken (); Lwt.return_unit
         end) in
 
-      let stop_runner, stopper = Task.Runner.start (module State) Handler.handle in
+      let module Tasker = (val Task.Runner.make (): Task.Runner.Instance) in
+      let module Make_sync = S.Workspace_op.Make_sync(A.Dummy)(State)(Tasker) in
+      let%lwt () = Tasker.Runner.add_task_handler Tasker.instance ~handler:Handler.handle in
+      let stopper = Tasker.Runner.start Tasker.instance (module State) in
 
       let req = Jy.Request.{
           _method = "foo";
@@ -34,7 +36,9 @@ let workspace_op = [
         } in
       let%lwt res = Make_sync.handler req in
       let%lwt () = task_finished in
-      Lwt.wakeup stop_runner ();
+
+      Tasker.Runner.stop Tasker.instance;
+
       let%lwt () = stopper in
       let%lwt state = State.get () in
       let ws = C.Root_state.find_workspace ~name:"foo" state in
@@ -59,7 +63,10 @@ let workspace_op = [
           let notify _ _ = Lwt.return_unit
         end) in
 
-      let stop_runner, stopper = Task.Runner.start (module State) Handler.handle in
+      let module Tasker = (val Task.Runner.make (): Task.Runner.Instance) in
+      let module Make_sync = S.Workspace_op.Make_sync(A.Dummy)(State)(Tasker) in
+      let%lwt () = Tasker.Runner.add_task_handler Tasker.instance ~handler:Handler.handle in
+      let stopper = Tasker.Runner.start Tasker.instance (module State) in
 
       let req = Jy.Request.{
           _method = "foo";
@@ -77,7 +84,7 @@ let workspace_op = [
           State.update state
         ) in
       let%lwt res = Make_sync.handler req in
-      Lwt.wakeup stop_runner ();
+      Tasker.(Runner.stop instance);
       let%lwt () = stopper in
       let res_expected = Some Rpcy.Workspace.Make_sync.(result_to_yojson {created = true}) in
       Alcotest.(check @@ option @@ of_pp @@ Fmt.nop) "created" res_expected res.Jy.Response.result;

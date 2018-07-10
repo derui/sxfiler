@@ -8,8 +8,8 @@ module Js = struct
 end
 
 (** [to_yojson t] converts {!type:t} to {!type:Yojson.json}. *)
-let to_yojson : t -> Yojson.Safe.json = fun t -> Js.to_yojson Js.{
-    directory = t.directory;
+let to_yojson : t -> Yojson.Safe.json = fun t -> Js.to_yojson {
+    Js.directory = t.directory;
     nodes = t.nodes;
   }
 

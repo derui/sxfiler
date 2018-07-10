@@ -14,13 +14,15 @@ let handler
 
   match Uri.path uri with
   | "/" ->
-    let%lwt () = Lwt_io.eprintf "[CONN] %s\n%!" (Cohttp.Connection.to_string @@ snd conn) in
     let module C = (val Rpc_connection.make (): Rpc_connection.Instance) in
     let module Handler = Task_result_handler.Make(struct
         let unixtime () = Sxfiler_server_core.Time.time_to_int64 @@ Unix.gettimeofday ()
       end)(Notifier.Impl(C)) in
-    let stopper_wakener, stopper = T.Runner.start ~state:(module Global.Root) ~task_handler:Handler.handle in
-
+    let module R = (val T.Runner.make (): T.Runner.Instance) in
+    let%lwt () =
+      let module I = (val Global.Task_runner.get (): T.Runner.Instance) in
+      I.Runner.add_task_handler I.instance ~handler:Handler.handle
+    in
     let%lwt () = Cohttp_lwt.Body.drain_body body in
     let%lwt (resp, body, frames_out_fn) =
       Websocket_cohttp_lwt.upgrade_connection req (fst conn) (fun f ->
@@ -32,9 +34,12 @@ let handler
     Lwt.ignore_result (
       (* Disable current task when thread is terminated. *)
       let thread = Jsonrpc_server.serve_forever rpc_server (module C) in
-      Lwt.on_termination thread (fun () -> Lwt.wakeup stopper_wakener ());
+      Lwt.on_termination thread (fun () ->
+          let module I = (val Global.Task_runner.get (): T.Runner.Instance) in
+          Lwt.ignore_result @@ I.Runner.remove_task_handler I.instance ~handler:Handler.handle
+        );
 
-      Lwt.join [thread; stopper]
+      Lwt.join [thread]
     );
     Lwt.return (resp, (body :> Cohttp_lwt.Body.t))
   | _ ->
@@ -52,6 +57,7 @@ let start_server _ port ~config:_ ~keymaps:_ ~migemo:_ =
       (Sexplib.Sexp.to_string_hum (Conduit_lwt_unix.sexp_of_flow ch))
   in
   let%lwt () = Lwt_io.eprintf "[SERV] Listening for HTTP on port %d\n%!" port in
+    let module I = (val Global.Task_runner.get (): T.Runner.Instance) in
   let rpc_server = Jsonrpc_server.make () in
 
   let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Completion_op) in
@@ -130,5 +136,12 @@ let () =
   let migemo = load_migemo !dict_dir in
 
   (* setup task runner and finalizer *)
+  let module I = (val Global.Task_runner.get (): T.Runner.Instance) in
+  let runner_thread = I.Runner.start I.instance ~state:(module Global.Root) in
+  Lwt_main.at_exit (fun () ->
+      I.Runner.stop I.instance;
+      runner_thread
+    );
+
   Lwt_main.run (initialize_modules ~migemo
                 >>= fun () -> start_server "localhost" port ~migemo ~config ~keymaps)

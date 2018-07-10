@@ -40,7 +40,8 @@ module Make(Clock:Snapshot_record.Clock)
 
           let result_of_json _ = ()
         end) in
-        Notifier.notify (module Api) (Some Wu.{name = name'; workspace = ws})
+        Printf.printf "send notification %s\n%!" Api.name;
+        Notifier.notify (module Api) (Some {Wu.name = name'; workspace = ws})
 
       end
     | `Failed err -> Lwt_io.eprintf "Task error: %s\n" err

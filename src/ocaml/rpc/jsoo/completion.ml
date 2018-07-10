@@ -34,8 +34,8 @@ module Read_file_sync = struct
 
   let result_of_json : Jsoo.result Js.t -> result = fun t ->
     let module T = Sxfiler_types.Types in
-    Js.to_array @@ Js.array_map (fun v -> T.Candidate.{
-        start = v##.start;
+    Js.to_array @@ Js.array_map (fun v -> {
+        T.Candidate.start = v##.start;
         length = v##.length;
         value = Tj.Node.of_js @@ Js.Unsafe.coerce v##.value;
       }) t
@@ -51,8 +51,8 @@ module Read_directory_sync = struct
 
   let result_of_json : Jsoo.result Js.t -> result = fun t ->
     let module T = Sxfiler_types.Types in
-    Js.to_array @@ Js.array_map (fun v -> T.Candidate.{
-        start = v##.start;
+    Js.to_array @@ Js.array_map (fun v -> {
+        T.Candidate.start = v##.start;
         length = v##.length;
         value = Tj.Directory_tree.of_js @@ Js.Unsafe.coerce v##.value;
       }) t
@@ -68,8 +68,8 @@ module Read_history_sync = struct
 
   let result_of_json : Jsoo.result Js.t -> result = fun t ->
     let module T = Sxfiler_types.Types in
-    Js.to_array @@ Js.array_map (fun v -> T.Candidate.{
-        start = v##.start;
+    Js.to_array @@ Js.array_map (fun v -> {
+        T.Candidate.start = v##.start;
         length = v##.length;
         value = Tj.Snapshot_record.of_js @@ Js.Unsafe.coerce v##.value;
       }) t

@@ -37,8 +37,8 @@ module Viewer = struct
 
   let to_yojson : t -> Yojson.Safe.json = fun t ->
     let module T = Sxfiler_types.Types in
-    let js = Js.{
-        current_stack_name = t.current_stack_name;
+    let js = {
+        Js.current_stack_name = t.current_stack_name;
         stack_layout = T.Layout.to_string t.stack_layout;
         key_maps = Key_maps.to_yojson t.key_maps;
       }
@@ -92,8 +92,8 @@ module Js = struct
 end
 
 let to_yojson : t -> Yojson.Safe.json = fun t ->
-  Js.to_yojson Js.{
-      viewer = Viewer.to_yojson t.viewer;
+  Js.to_yojson {
+      Js.viewer = Viewer.to_yojson t.viewer;
       server = Server.to_yojson t.server;
     }
 

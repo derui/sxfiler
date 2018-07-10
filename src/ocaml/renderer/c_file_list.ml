@@ -82,9 +82,9 @@ let component =
                   let rect = e##getBoundingClientRect in
                   let height = int_of_float @@ rect##.bottom -. rect##.top
                   and width = int_of_float @@ rect##.right -. rect##.left in
-                  C_resize_sensor.({height;width}))
+                  {C_resize_sensor.height;width})
               in
-              Option.get ~default:C_resize_sensor.({height = 0;width = 0}) size)
+              Option.get ~default:{C_resize_sensor.height = 0;width = 0} size)
           val onResized = (fun size ->
               let height = size.C_resize_sensor.height in
               this##setState (object%js

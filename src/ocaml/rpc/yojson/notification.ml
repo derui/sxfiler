@@ -12,8 +12,8 @@ module Workspace_update = struct
     } [@@deriving yojson]
   end
 
-  let params_to_yojson : params -> Yojson.Safe.json = fun t -> Js.params_to_yojson Js.{
-      name = t.name;
+  let params_to_yojson : params -> Yojson.Safe.json = fun t -> Js.params_to_yojson {
+      Js.name = t.name;
       workspace = t.workspace;
     }
 
