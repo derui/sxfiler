@@ -1,7 +1,7 @@
 module K = Sxfiler_types.Key_map
 module E = Jsoo_reactjs.Event
 
-type t = Action_creator.action -> unit
+type t = action -> unit
 
 let make store rpc =
   fun action ->
@@ -10,5 +10,3 @@ let make store rpc =
       fun state -> Lwt.return @@ Store.update store state
     in
     Lwt.ignore_result lwt
-
-let dispatch ~dispatcher action = dispatcher action

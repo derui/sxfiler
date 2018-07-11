@@ -27,6 +27,7 @@ module Viewer_state = struct
   }
 end
 
+(** {!Viewer_stack} allows to stack modules that are created from {!Viewer_state.S}.  *)
 module Viewer_stack = struct
   type t = Viewer_state.t list
 

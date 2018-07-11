@@ -1,43 +1,38 @@
 (** Define actions are allowed user to call *)
 module Core = struct
   type t =
+    | Change_current_workspace
+    | Quit
+    | Unknown of string
+
+  let module_name = "core"
+
+  let to_string = function
+    | Change_current_workspace -> "change_current_workspace"
+    | Quit -> "quit"
+    | Unknown v -> v
+
+  let of_string = function
+    | "change_current_workspace" -> Change_current_workspace
+    | "quit" -> Quit
+    | _ as v -> Unknown v
+end
+
+module File_list_viewer = struct
+  type t =
       Next_item
     | Prev_item
     | Leave_directory
     | Enter_directory
-    | Change_active_pane
-    | Copy
-    | Move
-    | Delete
-    | Rename
-    | Jump
-    | Quit
-    | Toggle_mark
-    | Make_dir
-    | History
-    | Change_permission
-    | Toggle_bookmark
     | Unknown of string
 
-  let module_name = "core"
+  let module_name = "file_list_viewer"
 
   let to_string = function
     | Next_item -> "next_item"
     | Prev_item -> "prev_item"
     | Leave_directory -> "leave_directory"
     | Enter_directory -> "enter_directory"
-    | Change_active_pane -> "change_active_pane"
-    | Copy -> "copy"
-    | Move -> "move"
-    | Delete -> "delete"
-    | Rename -> "rename"
-    | Jump -> "jump"
-    | Quit -> "quit"
-    | Toggle_mark -> "toggle_mark"
-    | Make_dir -> "make_dir"
-    | History -> "history"
-    | Change_permission -> "change_permission"
-    | Toggle_bookmark -> "toggle_bookmark"
     | Unknown v -> v
 
   let of_string = function
@@ -45,23 +40,12 @@ module Core = struct
     | "prev_item" -> Prev_item
     | "leave_directory" -> Leave_directory
     | "enter_directory" -> Enter_directory
-    | "change_active_pane" -> Change_active_pane
-    | "copy" -> Copy
-    | "move" -> Move
-    | "delete" -> Delete
-    | "rename" -> Rename
-    | "jump" -> Jump
-    | "quit" -> Quit
-    | "toggle_mark" -> Toggle_mark
-    | "make_dir" -> Make_dir
-    | "history" -> History
-    | "change_permission" -> Change_permission
-    | "toggle_bookmark" -> Toggle_bookmark
-    | _ as v-> Unknown v
+    | _ as v -> Unknown v
 end
 
 type t =
     Core of Core.t
+  | File_list_viewer of File_list_viewer.t
   | Thrid_party of string * string
 
 let action_of_string module_name action =
@@ -82,4 +66,5 @@ let of_string action =
 
 let to_string = function
   | Core v -> Core.module_name ^ ":" ^ Core.to_string v
+  | File_list_viewer v -> File_list_viewer.module_name ^ ":" ^ File_list_viewer.to_string v
   | Thrid_party (name, action) -> name ^ ":" ^ action

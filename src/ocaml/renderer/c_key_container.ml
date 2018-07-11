@@ -1,3 +1,4 @@
+open Sxfiler_core
 module T = Sxfiler_types
 module R = Jsoo_reactjs
 
@@ -12,11 +13,30 @@ module Component = R.Component.Make_stateful (struct
     end
   end)
 
+
+let handle_key_event: Dispatcher.t ->
+  ev:R.Event.Keyboard_event.t ->
+  key_map:T.Key_map.t -> bool = fun dispatch ~ev ~key_map ->
+  let module K = T.Key_map in
+  let module E = R.Event in
+  let module KE = E.Keyboard_event in
+  match KE.to_event_type ev with
+  | KE.Unknown | KE.KeyPress | KE.KeyUp -> false
+  | _ -> begin
+      let key = Util.keyboard_event_to_key ev in
+
+      let open Option.Infix in
+      let result = K.find key_map ~key
+        >>= (fun action -> Some (dispatch @@ Action_creator.create action))
+        >|= (fun () -> true)in
+      Option.get ~default:false result
+    end
+
 let key_handler ~dispatch ~state ev =
   let module C = T.Configuration in
   let config = state.State.config in
   let key_map = config.C.viewer.C.Viewer.key_maps.C.Key_maps.file_list in
-  let dispatched = Key_handler.handle_key_event dispatch ~ev ~key_map in
+  let dispatched = handle_key_event dispatch ~ev ~key_map in
   if dispatched then begin
     ev##preventDefault; ev##stopPropagation
   end else ()

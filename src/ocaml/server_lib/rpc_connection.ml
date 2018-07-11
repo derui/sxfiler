@@ -22,19 +22,26 @@ module Impl = struct
 
   let push_input t ~frame = t.input_writer frame
 
+  let tags = Logger.Tags.module_lib ["rpc_connection"]
+
   let connect t output_writer =
     if Lwt_stream.is_closed t.input_stream then
+      let%lwt () = Logs_lwt.warn @@ fun m -> m ~tags "Detected re-connect with disconnected connection" in
       Lwt.return_unit
     else begin
+      let%lwt () = Logs_lwt.info @@ fun m -> m ~tags "Connection connected with Websocket" in
       t.output_writer <- output_writer;
       Lwt.return_unit
     end
 
   let disconnect t =
-    if Lwt_stream.is_closed t.input_stream then Lwt.return_unit
+    if Lwt_stream.is_closed t.input_stream then
+      let%lwt () = Logs_lwt.warn @@ fun m -> m ~tags "Detected disconnect with disconnected connection" in
+      Lwt.return_unit
     else begin
       t.input_writer None;
       t.output_writer <- (fun _ -> ());
+      let%lwt () = Logs_lwt.info @@ fun m -> m ~tags "Connection disconnected" in
       Lwt_stream.closed t.input_stream
     end
 
@@ -48,7 +55,7 @@ module Impl = struct
       let f = Frame.create ~opcode:Frame.Opcode.Pong ~content:f.Frame.content () in
       Lwt.return @@ t.output_writer @@ Some f
     | Frame.Opcode.Close -> disconnect t
-    | _ as op -> Lwt_io.eprintf "Not implemented opcode: %s" (Frame.Opcode.to_string op)
+    | _ as op -> Logs_lwt.err @@ fun m -> m ~tags "Not implemented opcode: %s" (Frame.Opcode.to_string op)
 
 end
 

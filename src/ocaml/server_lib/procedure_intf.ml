@@ -35,7 +35,7 @@ module Make(R:Rpc_type) : S with type params := R.params and type result := R.re
     let module Res = Rpc.Response in
     let tags = Logger.Tags.module_lib ["rpc"] in
 
-    let%lwt () = Logs_lwt.info @@ fun m -> m ~tags "Start method: %s" req.Req._method in
+    let%lwt () = Logs_lwt.info @@ fun m -> m ~tags "Start procedure: {%s}" req.Req._method in
     let%lwt () = Lwt_io.flush_all () in
     let%lwt result = match R.params_of_json with
       | `Not_required param -> R.handle param
@@ -51,7 +51,7 @@ module Make(R:Rpc_type) : S with type params := R.params and type result := R.re
       | `Void -> None
       | `Result f -> Some (f result)
     in
-    let%lwt () = Logs_lwt.info @@ fun m -> m ~tags "Finish method: %s" req.Req._method in
+    let%lwt () = Logs_lwt.info @@ fun m -> m ~tags "Finish procedure: {%s}" req.Req._method in
     Lwt.return {
       Res.result;
       id = req.Req.id;
