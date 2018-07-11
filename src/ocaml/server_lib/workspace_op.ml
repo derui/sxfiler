@@ -24,7 +24,6 @@ module Make_sync(Action:Act.Action_intf.Instance)
         | None -> begin
             let module I = Sxfiler_server_task.Intf in
             let module TS = Task.File.Take_snapshot in
-            Printf.printf "name %s\n%!" param.name;
             let%lwt _ = Runner.Runner.add_task Runner.instance @@ I.make_instance
                 {
                   TS.directory = param.initial_directory;
@@ -50,7 +49,7 @@ module Get_sync(Action:Act.Action_intf.Instance)
       let module S = Sxfiler_server_core.Root_state in
       match S.find_workspace ~name:param.name state with
       | Some ws -> Lwt.return ws
-      | None -> raise Jsonrpc_ocaml.Types.(Jsonrpc_error (Error_code.Others (-32000)))
+      | None -> Jsonrpc_ocaml_yojson.(Exception.raise_error (Types.Error_code.Others (-32000)))
   end)
 
 let expose server =

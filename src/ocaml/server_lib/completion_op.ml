@@ -24,7 +24,7 @@ module Setup_file_sync = Procedure_intf.Make(struct
       File_source.with_lock (fun _ ->
           let%lwt state = Global.Root.get () in
           let ws = match R.find_workspace state ~name:param.workspace_name with
-            | None -> raise J.Types.(Jsonrpc_error Error_code.Invalid_request)
+            | None -> J.(Exception.raise_error Types.Error_code.Invalid_request)
             | Some ws -> ws
           in
           let nodes = ws.T.Workspace.current.T.Tree_snapshot.nodes in
@@ -46,7 +46,7 @@ module Read_file_sync = Procedure_intf.Make(struct
       let module Comp =  Sxfiler_server_completion.Completer in
       let%lwt completer = Global.Completion.get () in
       match completer with
-      | None -> raise J.Types.(Jsonrpc_error Error_code.Internal_error)
+      | None -> J.(Exception.raise_error Types.Error_code.Internal_error)
       | Some completer ->
         File_source.with_lock (fun collection ->
             let module S = (struct

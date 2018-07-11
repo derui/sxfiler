@@ -5,7 +5,7 @@
   (public_name sxfiler_server)
   (package sxfiler)
   (libraries (lwt websocket websocket-lwt.cohttp
-              uuidm
+              logs.fmt
               jsonrpc-ocaml.yojson
               sxfiler.types.yojson
               sxfiler.server

@@ -10,7 +10,7 @@ let handler
     (req  : Cohttp_lwt_unix.Request.t)
     (body : Cohttp_lwt.Body.t) =
   let conn_name = Cohttp.Connection.to_string @@ snd conn in
-  let%lwt () = Lwt_io.eprintf "[CONN] %s\n%!" conn_name in
+  let%lwt () = Logs_lwt.info @@ fun m -> m ~tags:(Logger.Tags.module_main ()) "Connection opened: %s" conn_name in
   let uri = Cohttp.Request.uri req in
 
   match Uri.path uri with
@@ -54,10 +54,10 @@ let initialize_modules ~migemo =
 
 let start_server _ port ~config:_ ~keymaps:_ ~migemo:_ =
   let conn_closed (ch,_) =
-    Printf.eprintf "[SERV] connection %s closed\n%!"
+    Logs.info @@ fun m -> m ~tags:(Logger.Tags.module_main ()) "Connection closed: %s closed"
       (Sexplib.Sexp.to_string_hum (Conduit_lwt_unix.sexp_of_flow ch))
   in
-  let%lwt () = Lwt_io.eprintf "[SERV] Listening for HTTP on port %d\n%!" port in
+  let%lwt () = Logs_lwt.info @@ fun m -> m ~tags:(Logger.Tags.module_main ()) "Listening for HTTP on port %d" port in
   let module I = (val Global.Task_runner.get (): T.Runner.Instance) in
   let rpc_server = Jsonrpc_server.make () in
 
@@ -77,24 +77,26 @@ let load_migemo dict_dir =
 
   let dict_file = Filename.concat dict_dir migemo_dict in
   if not @@ Sys.file_exists dict_file then begin
-    Printf.printf "Dict file not found: %s\n" dict_file;
+    Logs.err (fun m -> m ~tags:(Logger.Tags.module_main ()) "Dict file not found: %s\n" dict_file);
     raise Fail_load_migemo
-  end
-  else begin
+  end else
     let module M = Migemocaml in
     match M.Dict_tree.load_dict dict_file with
-    | None -> begin
-        Printf.printf "Dict can not load: %s\n" dict_file;
-        raise Fail_load_migemo
-      end
-    | Some migemo_dict -> begin
-        let hira_to_kata = Printf.printf "Loading %s\n" hira_to_kata; M.Dict_tree.load_conv @@ Filename.concat dict_dir hira_to_kata
-        and romaji_to_hira = Printf.printf "Loading %s\n" roma_to_hira; M.Dict_tree.load_conv @@ Filename.concat dict_dir roma_to_hira
-        and han_to_zen = Printf.printf "Loading %s\n" han_to_zen; M.Dict_tree.load_conv @@ Filename.concat dict_dir han_to_zen
-        in
-        M.Migemo.make ~dict:migemo_dict ?hira_to_kata ?romaji_to_hira ?han_to_zen ()
-      end
-  end
+    | None ->
+      Logs.err (fun m -> m ~tags:(Logger.Tags.module_main ()) "Dict can not load: %s" dict_file);
+      raise Fail_load_migemo
+    | Some migemo_dict ->
+      let hira_to_kata =
+        Logs.info (fun m -> m ~tags:(Logger.Tags.module_main ()) "Loading %s" hira_to_kata);
+        M.Dict_tree.load_conv @@ Filename.concat dict_dir hira_to_kata
+      and romaji_to_hira =
+        Logs.info (fun m -> m ~tags:(Logger.Tags.module_main ()) "Loading %s" roma_to_hira);
+        M.Dict_tree.load_conv @@ Filename.concat dict_dir roma_to_hira
+      and han_to_zen =
+        Logs.info (fun m -> m ~tags:(Logger.Tags.module_main ()) "Loading %s" han_to_zen);
+        M.Dict_tree.load_conv @@ Filename.concat dict_dir han_to_zen
+      in
+      M.Migemo.make ~dict:migemo_dict ?hira_to_kata ?romaji_to_hira ?han_to_zen ()
 
 (** Load configuration from specified file *)
 let load_configuration config =
@@ -119,6 +121,8 @@ let get_config f config ~default =
 
 (* main routine. *)
 let () =
+  Logs.set_level (Some Logs.Info);
+  Logs.set_reporter @@ Logger.lwt_reporter Format.std_formatter;
 
   let dict_dir = ref "" in
   let config = ref "config.json"

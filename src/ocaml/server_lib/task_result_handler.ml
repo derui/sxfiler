@@ -16,9 +16,12 @@ end
 module Make(Clock:Snapshot_record.Clock)
     (Notifier:Notifier.S): S with type state := Root_state.t = struct
 
-  let handle s = function
+  let handle s result =
+    let tags = Logger.Tags.module_lib ["result_handler"] in
+    match result with
     | `Update_workspace (name', snapshot) -> begin
         let module S = (val s : Statable.S with type state = Root_state.t) in
+        let%lwt () = Logs_lwt.info (fun m -> m ~tags "start handling of {Update_workspace}") in
         let%lwt ws = S.with_lock (fun state ->
             let ws = match Root_state.find_workspace ~name:name' state with
               | None -> Workspace.make ~current:snapshot ~history:(Snapshot_history.make ())
@@ -40,10 +43,9 @@ module Make(Clock:Snapshot_record.Clock)
 
           let result_of_json _ = ()
         end) in
-        Printf.printf "send notification %s\n%!" Api.name;
-        Notifier.notify (module Api) (Some {Wu.name = name'; workspace = ws})
-
+        let%lwt () = Notifier.notify (module Api) (Some {Wu.name = name'; workspace = ws}) in
+        Logs_lwt.info (fun m -> m ~tags "finish handling of {Update_workspace}")
       end
-    | `Failed err -> Lwt_io.eprintf "Task error: %s\n" err
+    | `Failed err -> Logs_lwt.err @@ fun m -> m "Task error: %s\n" err
 
 end

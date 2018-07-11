@@ -28,6 +28,8 @@ module Impl(Conn:Rpc_connection.Instance) = struct
   end
 
   let notify api_def param =
+    let tags = Logger.Tags.module_lib ["notifier"] in
     let req, _ = Jy.Client.make_notification api_def param in
+    let%lwt () = Logs_lwt.info @@ fun m -> m ~tags "Send notification to client: {%s}" req.Jy.Request._method in
     Rpc.call_api req
 end

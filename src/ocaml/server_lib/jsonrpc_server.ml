@@ -37,7 +37,6 @@ let request_handler t conn =
                 id = None;
                 error = Some {
                     J.Error.code = J.Types.Error_code.Parse_error;
-                    message = J.Types.Error_code.(to_message Parse_error);
                     data = None;
                   }
               }
