@@ -9,7 +9,7 @@ const defaultOptions = {
 
 function buildOCaml(options = defaultOptions) {
   try {
-    execFileSync('jbuilder', ['runtest'], {
+    execFileSync('dune', ['runtest'], {
       stdio: 'inherit',
       env: { BISECT_ENABLE: 'YES' },
     });

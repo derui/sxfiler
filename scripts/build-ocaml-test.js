@@ -14,7 +14,7 @@ function bundleTest() {
 
 function buildOCamlTest(ignoreError = false) {
   try {
-    execFileSync('jbuilder', ['runtest'], { stdio: 'inherit' });
+    execFileSync('dune', ['runtest'], { stdio: 'inherit' });
 
     bundleTest();
   } catch (e) {
