@@ -1,0 +1,10 @@
+(library
+ (name sxfiler_server_action)
+ (public_name sxfiler.server.action)
+ (libraries lwt
+            sxfiler.core
+            sxfiler.server.core
+            sxfiler.types.yojson
+            ppx_deriving_yojson.runtime
+            unix)
+ (preprocess (pps lwt_ppx ppx_deriving_yojson )))

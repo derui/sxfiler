@@ -1,0 +1,5 @@
+(library
+ (name sxfiler_server_core)
+ (public_name sxfiler.server.core)
+ (libraries sxfiler.types lwt)
+ )

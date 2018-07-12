@@ -1,5 +1,0 @@
-(library
- ((name sxfiler_server_core)
-  (public_name sxfiler.server.core)
-  (libraries (sxfiler.types lwt))
-  (preprocess (pps (bisect_ppx -conditional)))))

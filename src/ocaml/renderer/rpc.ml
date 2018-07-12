@@ -103,7 +103,6 @@ module Notification_server = struct
     t
 
   let unexpose ~_method t =
-    let open Util.Optdef in
     Jstable.remove t.procedure_table Js.(string _method);
     t
 

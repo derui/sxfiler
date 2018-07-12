@@ -1,9 +1,0 @@
-(jbuild_version 1)
-
-(library
- ((name sxfiler_types_yojson)
-  (public_name sxfiler.types.yojson)
-  (libraries (sxfiler.types yojson ppx_deriving_yojson.runtime))
-  ; to supress warnings are depended on ppx_deriving_yojson
-  (flags (:standard -w -39))
-  (preprocess (pps (ppx_deriving_yojson bisect_ppx -conditional)))))

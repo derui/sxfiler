@@ -21,7 +21,6 @@ module type S = sig
   (** [remove_task_handler t ~handler] removes [handler] from [t]. *)
   val remove_task_handler: t
     -> name:string
-    -> handler:((module Statable.S with type state = Root_state.t) -> Intf.task_result -> unit Lwt.t)
     -> unit Lwt.t
 
   (** [stop t] will stop task loop and accepter in this module. Wait returned thread [start] if you

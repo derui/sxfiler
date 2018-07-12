@@ -35,7 +35,7 @@ module Impl = struct
         end
       )
 
-  let remove_task_handler t ~name ~handler =
+  let remove_task_handler t ~name =
     Lwt_mutex.with_lock t.handler_lock (fun () ->
         if not @@ List.mem_assoc name t.handlers then Lwt.return_unit
         else begin

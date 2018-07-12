@@ -9,11 +9,11 @@ bug-reports: "https://github.com/derui/sxfiler"
 dev-repo: "git+https://github.com/derui/sxfiler"
 tags: []
 build: [
-  ["jbuilder" "build" "-p" name "-j" jobs]
-  ["jbuilder" "runtest" "-p" name] {test}
+  ["dune" "build" "-p" name "-j" jobs]
+  ["dune" "runtest" "-p" name] {test}
 ]
 depends: [
-  "jbuilder" {build & >= "1.0+beta16"}
+  "dune" {build & >= "1.0.0"}
   "js_of_ocaml" { >= "3.0.2"}
   "js_of_ocaml-ppx" { >= "3.0.2"}
   "js_of_ocaml-lwt" { >= "3.0.2"}
@@ -21,7 +21,6 @@ depends: [
   "ppx_deriving_yojson" { >= "3.1"}
   "ppx_sexp_conv" { >= "v0.10.0"}
   "mocha_of_ocaml" {test}
-  "ocaml-flux-frp"
   "jsoo_node"
   "jsoo_reactjs"
   "minimal-monadic-caml"

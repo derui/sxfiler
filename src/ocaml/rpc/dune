@@ -1,0 +1,4 @@
+(library
+ (name sxfiler_rpc)
+ (public_name sxfiler.rpc)
+ (libraries sxfiler.types))

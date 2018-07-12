@@ -1,0 +1,5 @@
+(library
+ (name sxfiler_core)
+ (public_name sxfiler.core)
+ (libraries minimal-monadic-caml)
+ )

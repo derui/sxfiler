@@ -4,7 +4,7 @@ open Sxfiler_core
 (** {!Tags} defines tag type and tag constructor to add tag to log message. *)
 module Tags = struct
   let module_tag : string list Logs.Tag.def =
-    Logs.Tag.def "module" ~doc:"Path of module hierarchy" @@ fun ppf v ->
+    Logs.Tag.def "module" ~doc:"Path of module hierarchy" @@ fun _ v ->
     Printf.printf "%s" (String.concat "." v)
 
   let module_main () = Logs.Tag.(empty |> add module_tag ["main"])
@@ -18,9 +18,9 @@ let lwt_reporter ppf =
     Fmt.with_buffer ~like b,
     fun () -> let m = Buffer.contents b in Buffer.reset b; m
   in
-  let app, app_flush = buf_fmt ~like:Fmt.stdout in
-  let dst, dst_flush = buf_fmt ~like:Fmt.stderr in
-  let report src level ~over k msgf =
+  let _, app_flush = buf_fmt ~like:Fmt.stdout in
+  let _, dst_flush = buf_fmt ~like:Fmt.stderr in
+  let report _ level ~over k msgf =
     let k _ =
       let write () = match level with
       | Logs.App -> Lwt_io.write Lwt_io.stdout (app_flush ())

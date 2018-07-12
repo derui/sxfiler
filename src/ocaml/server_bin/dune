@@ -1,0 +1,11 @@
+(executable
+ (name main)
+ (public_name sxfiler_server)
+ (package sxfiler)
+ (libraries lwt
+            websocket websocket-lwt.cohttp
+            logs.fmt
+            jsonrpc-ocaml.yojson
+            sxfiler.types.yojson
+            sxfiler.server)
+ (preprocess (pps lwt_ppx)))

@@ -37,7 +37,7 @@ let handler
       let thread = Jsonrpc_server.serve_forever rpc_server (module C) in
       Lwt.on_termination thread (fun () ->
           let module I = (val Global.Task_runner.get (): T.Runner.Instance) in
-          Lwt.ignore_result @@ I.Runner.remove_task_handler I.instance ~name:conn_name ~handler:Handler.handle
+          Lwt.ignore_result @@ I.Runner.remove_task_handler I.instance ~name:conn_name
         );
 
       Lwt.join [thread]

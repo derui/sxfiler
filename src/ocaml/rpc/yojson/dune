@@ -1,0 +1,10 @@
+(library
+ (name sxfiler_rpc_yojson)
+ (public_name sxfiler.rpc.yojson)
+ (libraries sxfiler.types
+            sxfiler.types.yojson
+            sxfiler.rpc
+            yojson ppx_deriving_yojson.runtime)
+ ; to supress warnings are depended on ppx_deriving_yojson
+ (flags (:standard -w -39))
+ (preprocess (pps ppx_deriving_yojson)))
