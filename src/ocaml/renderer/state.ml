@@ -1,19 +1,28 @@
+(** State definitions for application. *)
 module T = Sxfiler_types
 
-type t = {
-  viewer_stacks: Types.Viewer_stack.t Jstable.t;
-  config: T.Configuration.t;
-  workspace_order: string list;
-}
+module Viewer_stacks = struct
+  type message = Message.t
+  type t = Types.Viewer_stack.t Jstable.t
 
-let empty () = {
-  viewer_stacks = Jstable.create ();
-  config = T.Configuration.default;
-  workspace_order = [Const.workspace_1;Const.workspace_2]
-}
+  (** [find_by_name t ~name] returns stack via [name] *)
+  let find_by_name t ~name =
+    Js.Optdef.to_option @@ Jstable.find t Js.(string name)
 
-let with_stack t ~name ~f =
-  let stack = Jstable.find t.viewer_stacks Js.(string name) |> Js.Optdef.to_option in
-  let stack = f stack in
-  Jstable.add t.viewer_stacks Js.(string name) stack;
-  t
+  let empty () = Jstable.create ()
+  let update t = function
+    | Message.Update_viewer_stack (name, viewer) ->
+      let open Sxfiler_core in
+      let stack = Option.get ~default:(Types.Viewer_stack.empty) @@ find_by_name t ~name in
+      let stack = Types.(Viewer_stack.push stack ~v:viewer) in
+      Jstable.add t Js.(string name) stack;
+      t
+end
+
+module Config = struct
+  type message = Message.t
+  type t = T.Configuration.t
+
+  let empty () = T.Configuration.default
+  let update t _ = t
+end

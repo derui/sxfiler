@@ -18,10 +18,10 @@ let option_tests = [
     );
 
   "get value from option with some", `Quick, (fun () ->
-      Alcotest.(check int) "some" 1 @@ Option.get ~default:100 (Some 1)
+      Alcotest.(check int) "some" 1 @@ Option.get ~default:(fun () -> 100) (Some 1)
     );
   "get default value", `Quick, (fun () ->
-      Alcotest.(check int) "none" 100 @@ Option.get ~default:100 None
+      Alcotest.(check int) "none" 100 @@ Option.get ~default:(fun () -> 100) None
     );
   "get Some with some", `Quick, (fun () ->
       Alcotest.(check @@ option int) "option" (Some 10) @@ Option.some 10

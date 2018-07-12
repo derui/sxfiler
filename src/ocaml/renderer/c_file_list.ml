@@ -85,7 +85,7 @@ let component =
                   {C_resize_sensor.height;width})
               in
               Firebug.console##log size;
-              Option.get ~default:{C_resize_sensor.height = 0;width = 0} size)
+              Option.get ~default:(fun () -> {C_resize_sensor.height = 0;width = 0}) size)
           val onResized = (fun size ->
               let height = size.C_resize_sensor.height in
               this##setState (object%js

@@ -5,7 +5,7 @@ module R = Jsoo_reactjs
 
 module Component = R.Component.Make_stateless(struct
     class type t = object
-      method state: State.t Js.readonly_prop
+      method context: Context.t Js.readonly_prop
     end
   end)
 
