@@ -1,0 +1,10 @@
+(alias
+  (name runtest)
+  (deps test_sxfiler_server_task.exe)
+  (action (run %{deps})))
+
+(executable
+  (name test_sxfiler_server_task)
+  (flags (-safe-string))
+  (libraries alcotest alcotest-lwt sxfiler.server.task)
+  (preprocess (pps lwt_ppx)))

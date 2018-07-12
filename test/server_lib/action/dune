@@ -1,7 +1,7 @@
 (alias
  (name runtest)
- (deps test_sxfiler_server_action.exe (source_tree data_real/))
- (action (run ${<})))
+ (deps (:prog test_sxfiler_server_action.exe) (source_tree data_real/))
+ (action (run %{prog})))
 
 (executable
   (name test_sxfiler_server_action)

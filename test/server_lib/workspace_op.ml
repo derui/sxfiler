@@ -23,7 +23,7 @@ let workspace_op = [
 
       let module Tasker = (val Task.Runner.make (): Task.Runner.Instance) in
       let module Make_sync = S.Workspace_op.Make_sync(A.Dummy)(State)(Tasker) in
-      let%lwt () = Tasker.Runner.add_task_handler Tasker.instance ~handler:Handler.handle in
+      let%lwt () = Tasker.Runner.add_task_handler Tasker.instance ~name:"foo" ~handler:Handler.handle in
       let stopper = Tasker.Runner.start Tasker.instance (module State) in
 
       let req = Jy.Request.{
@@ -65,7 +65,7 @@ let workspace_op = [
 
       let module Tasker = (val Task.Runner.make (): Task.Runner.Instance) in
       let module Make_sync = S.Workspace_op.Make_sync(A.Dummy)(State)(Tasker) in
-      let%lwt () = Tasker.Runner.add_task_handler Tasker.instance ~handler:Handler.handle in
+      let%lwt () = Tasker.Runner.add_task_handler Tasker.instance ~name:"foo" ~handler:Handler.handle in
       let stopper = Tasker.Runner.start Tasker.instance (module State) in
 
       let req = Jy.Request.{

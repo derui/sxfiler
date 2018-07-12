@@ -1,7 +1,7 @@
 (alias
  (name runtest)
  (deps test_sxfiler_server.exe)
- (action (run ${<})))
+ (action (run %{deps})))
 
 (executable
  (name test_sxfiler_server)

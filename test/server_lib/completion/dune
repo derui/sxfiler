@@ -1,7 +1,7 @@
 (alias
   (name runtest)
-  (deps test_sxfiler_server_completion.exe dict_file.txt)
-  (action (run ${<})))
+  (deps (:prog test_sxfiler_server_completion.exe) dict_file.txt)
+  (action (run %{prog})))
 
 (executable
   (name test_sxfiler_server_completion)
