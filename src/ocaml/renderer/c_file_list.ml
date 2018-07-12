@@ -2,13 +2,14 @@ open Sxfiler_core
 module VL = Sxfiler_virtualized_list
 module T = Sxfiler_types
 module R = Jsoo_reactjs
+module C = Sxfiler_renderer_core
 
 let item_height = 18
 let key_of_filelist = "currentNode"
 
 module Component = R.Component.Make_stateful (struct
     class type t = object
-      method viewerState: Types.Viewer.File_tree.t Js.readonly_prop
+      method viewerState: C.Types.Viewer.File_tree.t Js.readonly_prop
       method focused: bool Js.readonly_prop
     end
   end)(struct
@@ -18,7 +19,7 @@ module Component = R.Component.Make_stateful (struct
   end)
 
 let component =
-  let module Vt = Types.Viewer.File_tree in
+  let module Vt = C.Types.Viewer.File_tree in
   let spec = R.component_spec
       ~constructor:(fun this _ ->
           this##.state := object%js

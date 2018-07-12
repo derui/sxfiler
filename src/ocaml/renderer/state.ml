@@ -1,9 +1,10 @@
 (** State definitions for application. *)
 module T = Sxfiler_types
+module C = Sxfiler_renderer_core
 
 module Viewer_stacks = struct
-  type message = Message.t
-  type t = Types.Viewer_stack.t Jstable.t
+  type message = C.Message.t
+  type t = C.Types.Viewer_stack.t Jstable.t
 
   (** [find_by_name t ~name] returns stack via [name] *)
   let find_by_name t ~name =
@@ -11,18 +12,26 @@ module Viewer_stacks = struct
 
   let empty () = Jstable.create ()
   let update t = function
-    | Message.Update_viewer_stack (name, viewer) ->
+    | C.Message.Update_viewer_stack (name, viewer) ->
       let open Sxfiler_core in
-      let stack = Option.get ~default:(Types.Viewer_stack.empty) @@ find_by_name t ~name in
-      let stack = Types.(Viewer_stack.push stack ~v:viewer) in
+      let stack = Option.get ~default:(C.Types.Viewer_stack.empty) @@ find_by_name t ~name in
+      let stack = C.Types.(Viewer_stack.push stack ~v:viewer) in
       Jstable.add t Js.(string name) stack;
       t
 end
 
 module Config = struct
-  type message = Message.t
+  type message = C.Message.t
   type t = T.Configuration.t
 
   let empty () = T.Configuration.default
+  let update t _ = t
+end
+
+module Layout = struct
+  type message = C.Message.t
+  type t = string list
+
+  let empty () = [Const.workspace_1;Const.workspace_2]
   let update t _ = t
 end

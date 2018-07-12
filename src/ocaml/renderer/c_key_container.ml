@@ -4,15 +4,11 @@ module R = Jsoo_reactjs
 
 module Component = R.Component.Make_stateful (struct
     class type t = object
-      method state: State.t Js.readonly_prop
-      method dispatch: Dispatcher.t Js.readonly_prop
+      method context: Context.t Js.readonly_prop
     end
   end)(struct
-    class type t = object
-      method active: bool Js.readonly_prop
-    end
+    type t = unit
   end)
-
 
 let handle_key_event: Dispatcher.t ->
   ev:R.Event.Keyboard_event.t ->

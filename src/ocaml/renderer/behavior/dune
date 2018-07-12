@@ -1,6 +1,6 @@
 (library
- (name sxfiler_renderer)
- (public_name sxfiler.renderer)
+ (name sxfiler_renderer_behavior)
+ (public_name sxfiler.renderer.behavior)
  (modes byte)
  (libraries js_of_ocaml
             js_of_ocaml.weak
@@ -8,9 +8,6 @@
             jsonrpc-ocaml.jsoo
             lwt
             sxfiler.core
-            sxfiler.renderer.core
-            sxfiler.renderer.behavior
-            sxfiler.virtualized_list
             sxfiler.types sxfiler.types.jsoo
-            sxfiler.rpc sxfiler.rpc.jsoo)
+            sxfiler.renderer.core)
  (preprocess (pps js_of_ocaml-ppx)))
