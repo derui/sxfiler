@@ -28,6 +28,70 @@ let option_tests = [
     );
 ]
 
+let path_tests = [
+  "separator of path on unix", `Quick, (fun () ->
+      let module S = struct
+        let getcwd () = "/foo"
+        end in
+      let expected = "/foo/a/b" in
+      Alcotest.(check string) "unix" expected @@
+      Path.(to_string ~env:`Unix @@ of_string ~env:`Unix (module S) "a/b")
+    );
+  "separator of path on windows", `Quick, (fun () ->
+      let module S = struct
+        let getcwd () = "\\foo"
+        end in
+      let expected = "\\foo\\a\\b" in
+      Alcotest.(check string) "win" expected @@
+      Path.(to_string ~env:`Win @@ of_string ~env:`Win (module S) "a\\b")
+    );
+
+  "ignore cwd if path is absolute", `Quick, (fun () ->
+      let module S = struct
+        let getcwd () = "/foo"
+        end in
+      let expected = "/bar/a" in
+      Alcotest.(check string) "absolute" expected @@
+      Path.(to_string ~env:`Unix @@ of_string ~env:`Unix (module S) "/bar/a")
+    );
+
+  "allow to use windows device name", `Quick, (fun () ->
+      let module S = struct
+        let getcwd () = "c:\\foo"
+        end in
+      let expected = "c:\\foo\\a" in
+      Alcotest.(check string) "absolute" expected @@
+      Path.(to_string ~env:`Win @@ of_string ~env:`Win (module S) "a")
+    );
+
+  "allow to contain . and ..", `Quick, (fun () ->
+      let module S = struct
+        let getcwd () = "/var"
+        end in
+      let expected = "/var/.././foo/../bar" in
+      Alcotest.(check string) "absolute" expected @@
+      Path.(to_string ~env:`Unix @@ of_string ~env:`Unix (module S) ".././foo/../bar")
+    );
+
+  "resolve current and parent directory to realpath", `Quick, (fun () ->
+      let module S = struct
+        let getcwd () = "/var"
+        end in
+      let expected = "/bar" in
+      Alcotest.(check string) "realpath" expected @@
+      Path.(to_string ~env:`Unix @@ resolve @@ of_string ~env:`Unix (module S) ".././foo/../bar")
+    );
+
+  "raise Empth_path", `Quick, (fun () ->
+      let module S = struct
+        let getcwd () = "/var"
+        end in
+      Alcotest.check_raises "empth path" Path.Empty_path (fun () ->
+          Path.of_string ~env:`Unix (module S) "" |> ignore
+        )
+    );
+]
+
 let fun_tests = [
   "get identity", `Quick, (fun () ->
       Alcotest.(check string) "string" "foo" (Fun.ident "foo");
@@ -53,6 +117,7 @@ let fun_tests = [
 let testcases = [
   "Option", option_tests;
   "Fun", fun_tests;
+  "Path", path_tests;
 ]
 
 let () =
