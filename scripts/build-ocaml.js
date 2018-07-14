@@ -23,7 +23,7 @@ function bundleRenderer(options) {
 
 function buildOCaml(options = defaultOptions) {
   try {
-    execFileSync('dune', ['build', '@js'], { stdio: 'inherit' });
+    execFileSync('dune', ['build', '@js', '@install'], { stdio: 'inherit' });
 
     bundleRenderer(options);
   } catch (e) {
