@@ -6,7 +6,7 @@ module State = Sxfiler_server_core.Root_state
 type plan = Tree_snapshot.t * Tree_snapshot.t
 
 type task_result = [
-  | `Update_workspace of string * Tree_snapshot.t
+  | `Update_scanner of string * string * Node.t list
   | `Failed of string
 ]
 

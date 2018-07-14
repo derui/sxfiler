@@ -3,11 +3,11 @@
 module T = Sxfiler_types
 open Sxfiler_server_task.Intf
 
-module File = struct
-  module Take_snapshot = struct
+module Scanner = struct
+  module Move = struct
     type t = {
-      directory: string;
-      workspace_name: string;
+      name: string;
+      location: string;
     }
 
     module Task : S with type params = t = struct
@@ -16,8 +16,8 @@ module File = struct
       let plan = `No_plan
       let apply _ params action =
         let module Action = (val action : A.Instance) in
-        let%lwt snapshot = Action.No_side_effect.take_snapshot ~directory:params.directory in
-        Lwt.return @@ `Update_workspace (params.workspace_name, snapshot)
+        let%lwt snapshot = Action.No_side_effect.read_dir ~directory:params.location in
+        Lwt.return @@ `Update_scanner (params.name, params.location, snapshot)
     end
 
     include Task

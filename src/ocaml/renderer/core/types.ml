@@ -1,9 +1,9 @@
-module T = Sxfiler_types
+module Ty = Sxfiler_types
 
 module Viewer = struct
   module File_tree = struct
     type t = {
-      snapshot: T.Tree_snapshot.t;
+      scanner: Ty.Scanner.t;
       selected_item_index: int;
     }
   end

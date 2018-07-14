@@ -1,8 +1,8 @@
-include Sxfiler_types.Snapshot_history
+include Sxfiler_types.Location_history
 
 module Js = struct
   type t = {
-    records : Snapshot_record.t list;
+    records : Location_record.t list;
     max_records: int [@key "maxRecords"]
   } [@@deriving yojson]
 end

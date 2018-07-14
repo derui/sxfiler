@@ -36,29 +36,29 @@ module Completion = struct
 
 end
 
-module Workspace = struct
-  module Make_sync : Api_def with type params = R.Workspace.Make_sync.params
-                              and type result = R.Workspace.Make_sync.result
+module Scanner = struct
+  module Make_sync : Api_def with type params = R.Scanner.Make_sync.params
+                              and type result = R.Scanner.Make_sync.result
   = struct
-    include R.Workspace.Make_sync
+    include R.Scanner.Make_sync
     type json = < > Js.t
 
-    open Rj.Workspace.Make_sync
+    open Rj.Scanner.Make_sync
 
     let params_to_json params =
       let open Option.Infix in
       params >|= fun v -> Js.Unsafe.coerce @@ params_to_json v
-    let result_of_json v = result_of_json @@ Js.Unsafe.coerce v
+    let result_of_json _ = ()
 
   end
 
-  module Get_sync : Api_def with type params = R.Workspace.Get_sync.params
-                             and type result = R.Workspace.Get_sync.result
+  module Get_sync : Api_def with type params = R.Scanner.Get_sync.params
+                             and type result = R.Scanner.Get_sync.result
   = struct
-    include R.Workspace.Get_sync
+    include R.Scanner.Get_sync
     type json = < > Js.t
 
-    open Rj.Workspace.Get_sync
+    open Rj.Scanner.Get_sync
 
     let params_to_json params =
       let open Option.Infix in

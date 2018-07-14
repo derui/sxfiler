@@ -6,9 +6,9 @@ module Rj = Sxfiler_rpc_jsoo
 module Jr = Jsonrpc_ocaml_jsoo
 module C = Sxfiler_renderer_core
 
-module Workspace_update = struct
-  include R.Notification.Workspace_update
-  open Rj.Notification.Workspace_update
+module Scanner_update = struct
+  include R.Notification.Scanner_update
+  open Rj.Notification.Scanner_update
 
   let handler with_store req =
     match req.Jr.Request.params with
@@ -21,7 +21,7 @@ module Workspace_update = struct
           let module S = Store.Viewer_stacks_store in
 
           let viewer = C.Types.(Viewer_state.make @@ Viewer.(File_tree {
-              File_tree.snapshot = params.workspace.T.Workspace.current;
+              File_tree.scanner = params.scanner;
               selected_item_index = 0;
             })) in
           let store = S.update store (C.Message.Update_viewer_stack (params.name, viewer)) in
@@ -32,4 +32,4 @@ end
 
 
 let expose ~with_store server =
-  Rpc.Notification_server.expose ~_method:Workspace_update.name ~handler:(Workspace_update.handler with_store) server
+  Rpc.Notification_server.expose ~_method:Scanner_update.name ~handler:(Scanner_update.handler with_store) server

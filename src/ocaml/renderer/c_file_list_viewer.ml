@@ -12,9 +12,9 @@ module Component = R.Component.Make_stateless (struct
 
 let component = Component.make (fun props ->
     let state = props##.viewerState in
-    let snapshot = state.C.Types.Viewer.File_tree.snapshot in
+    let scanner = state.C.Types.Viewer.File_tree.scanner in
     let header = R.create_element ~key:"header" ~props:(object%js
-        val directory = snapshot.T.Tree_snapshot.directory
+        val directory = scanner.location
         val focused = props##.focused
       end) C_file_list_viewer_header.component
     and content =

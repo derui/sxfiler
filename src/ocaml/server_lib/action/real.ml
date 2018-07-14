@@ -5,12 +5,12 @@ open Action_intf
 open Sxfiler_core
 
 module No_side_effect : No_side_effect = struct
-  let take_snapshot ~directory =
+  let read_dir ~directory =
     let module T = Sxfiler_types_yojson in
     let items = Sys.readdir directory |> Array.to_list in
     let%lwt nodes = Lwt_list.map_p (fun v -> Lwt.return @@ File_op.get_node directory v) items in
     let%lwt nodes = Lwt.return @@ List.map Option.get_exn @@ List.filter Option.is_some nodes in
-    Lwt.return @@ T.Tree_snapshot.make ~directory ~nodes
+    Lwt.return nodes
 end
 
 module Side_effect : Side_effect = struct end

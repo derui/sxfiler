@@ -41,23 +41,6 @@ module Read_file_sync = struct
         }) t
 end
 
-module Read_directory_sync = struct
-  open Rpc.Completion.Read_directory_sync
-  module Jsoo = Read_common_js
-
-  let params_to_json t = object%js
-    val input = Js.string t.input
-  end
-
-  let result_of_json : Jsoo.result Js.t -> result = fun t ->
-    let module T = Sxfiler_types.Types in
-    Js.to_array @@ Js.array_map (fun v -> {
-          T.Candidate.start = v##.start;
-          length = v##.length;
-          value = Tj.Directory_tree.of_js @@ Js.Unsafe.coerce v##.value;
-        }) t
-end
-
 module Read_history_sync = struct
   open Rpc.Completion.Read_history_sync
   module Jsoo = Read_common_js
@@ -71,6 +54,6 @@ module Read_history_sync = struct
     Js.to_array @@ Js.array_map (fun v -> {
           T.Candidate.start = v##.start;
           length = v##.length;
-          value = Tj.Snapshot_record.of_js @@ Js.Unsafe.coerce v##.value;
+          value = Tj.Location_record.of_js @@ Js.Unsafe.coerce v##.value;
         }) t
 end

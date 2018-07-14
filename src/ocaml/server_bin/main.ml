@@ -62,7 +62,7 @@ let start_server _ port ~config:_ ~keymaps:_ ~migemo:_ =
   let rpc_server = Jsonrpc_server.make () in
 
   let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Completion_op) in
-  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Workspace_op) in
+  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Scanner_op) in
 
   Cohttp_lwt_unix.Server.create
     ~mode:(`TCP (`Port port))

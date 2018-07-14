@@ -4,8 +4,8 @@ open Sxfiler_types_yojson
     to do not apply changes file system.
 *)
 module type No_side_effect = sig
-  (** [take_snapshot ~directory] take the snapshot of [directory]. *)
-  val take_snapshot: directory:string -> Tree_snapshot.t Lwt.t
+  (** [read_dir ~directory] take the list of nodes in [directory]. *)
+  val read_dir: directory:string -> Node.t list Lwt.t
 end
 
 (** {!Side_effect} module defines functions having side effect. *)

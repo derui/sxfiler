@@ -2,7 +2,7 @@
 
 
 type t = {
-  records: Snapshot_record.t list;
+  records: Location_record.t list;
   max_records: int;
 }
 
@@ -12,8 +12,8 @@ type t = {
 let make ?(max_records=100) () = { records = []; max_records = max 0 max_records}
 
 let sort_by_timestamp = List.sort (fun a b -> Int64.compare
-                                      a.Snapshot_record.timestamp
-                                      b.Snapshot_record.timestamp)
+                                      a.Location_record.timestamp
+                                      b.Location_record.timestamp)
 
 (** {[add_record t ~record]} makes new record and *)
 let add_record t ~record =

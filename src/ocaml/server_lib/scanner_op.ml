@@ -1,4 +1,4 @@
-(** Workspace_op module defines functions for procedures of workspace. *)
+(** Scanner_op module defines functions for procedures of scanner. *)
 open Sxfiler_server_core
 module Runner = Sxfiler_server_task.Runner
 module T = Sxfiler_types
@@ -11,27 +11,28 @@ module Make_sync(Action:Act.Action_intf.Instance)
     (Root:Statable.S with type state = Root_state.t)
     (Runner:Runner.Instance)
   = Procedure_intf.Make(struct
-    include Rpc.Workspace.Make_sync
+    include Rpc.Scanner.Make_sync
 
-    let params_of_json = `Required Rpcy.Workspace.Make_sync.params_of_yojson
-    let result_to_json = `Result Rpcy.Workspace.Make_sync.result_to_yojson
+    let params_of_json = `Required Rpcy.Scanner.Make_sync.params_of_yojson
+    let result_to_json = `Void
 
     let handle param =
       let%lwt state = Root.get () in
       let module S = Sxfiler_server_core.Root_state in
-      let%lwt result = match S.find_workspace ~name:param.name state with
-        | Some _ -> Lwt.return {created = true}
+      let%lwt result = match S.find_scanner ~name:param.name state with
+        (* raise error if scanner already exists. *)
+        | Some _ -> Jsonrpc_ocaml_yojson.Exception.raise_error Rpc.Errors.Scanner.already_exists
         | None -> begin
             let module I = Sxfiler_server_task.Intf in
-            let module TS = Task.File.Take_snapshot in
+            let module Task = Task.Scanner.Move in
             let%lwt _ = Runner.Runner.add_task Runner.instance @@ I.make_instance
                 {
-                  TS.directory = param.initial_directory;
-                  workspace_name = param.name
+                  Task.location = param.initial_location;
+                  name = param.name
                 }
                 (module Action)
-                (module TS) in
-            Lwt.return {created = false}
+                (module Task) in
+            Lwt.return_unit
           end
       in
       Lwt.return result
@@ -39,22 +40,22 @@ module Make_sync(Action:Act.Action_intf.Instance)
 
 module Get_sync(Action:Act.Action_intf.Instance)
     (Root:Statable.S with type state = Root_state.t) = Procedure_intf.Make(struct
-    include Rpc.Workspace.Get_sync
+    include Rpc.Scanner.Get_sync
 
-    let params_of_json = `Required Rpcy.Workspace.Get_sync.params_of_yojson
-    let result_to_json = `Result Rpcy.Workspace.Get_sync.result_to_yojson
+    let params_of_json = `Required Rpcy.Scanner.Get_sync.params_of_yojson
+    let result_to_json = `Result Rpcy.Scanner.Get_sync.result_to_yojson
 
     let handle param =
       let%lwt state = Root.get () in
       let module S = Sxfiler_server_core.Root_state in
-      match S.find_workspace ~name:param.name state with
+      match S.find_scanner ~name:param.name state with
       | Some ws -> Lwt.return ws
-      | None -> Jsonrpc_ocaml_yojson.(Exception.raise_error (Types.Error_code.Others (-32000)))
+      | None -> Jsonrpc_ocaml_yojson.(Exception.raise_error Rpc.Errors.Scanner.not_found)
   end)
 
 let expose server =
   let module S = Jsonrpc_ocaml_yojson.Server in
-  let module W = Sxfiler_rpc.Workspace in
+  let module W = Sxfiler_rpc.Scanner in
 
   let module Runner = (val Global.Task_runner.get (): Runner.Instance) in
   let module Make_sync = Make_sync(Act.Real)(Global.Root)(Runner) in

@@ -23,11 +23,11 @@ module Setup_file_sync = Procedure_intf.Make(struct
       let module R = SC.Root_state in
       File_source.with_lock (fun _ ->
           let%lwt state = Global.Root.get () in
-          let ws = match R.find_workspace state ~name:param.workspace_name with
+          let scanner = match R.find_scanner state ~name:param.workspace_name with
             | None -> J.(Exception.raise_error Types.Error_code.Invalid_request)
             | Some ws -> ws
           in
-          let nodes = ws.T.Workspace.current.T.Tree_snapshot.nodes in
+          let nodes = scanner.nodes in
           File_source.update nodes
         )
   end)
@@ -65,16 +65,6 @@ module Read_file_sync = Procedure_intf.Make(struct
           )
   end)
 
-module Read_directory_sync = Procedure_intf.Make(struct
-    include Rpc.Completion.Read_directory_sync
-    open Rpcy.Completion.Read_directory_sync
-
-    let params_of_json = `Required params_of_yojson
-    let result_to_json = `Result result_to_yojson
-
-    let handle _ = failwith "not implemented yet"
-  end)
-
 module Read_history_sync = Procedure_intf.Make(struct
     include Rpc.Completion.Read_history_sync
     open Rpcy.Completion.Read_history_sync
@@ -99,6 +89,5 @@ let expose server =
     ) server [
     (C.Setup_file_sync.name, Setup_file_sync.handler);
     (C.Read_file_sync.name, Read_file_sync.handler);
-    (C.Read_directory_sync.name, Read_directory_sync.handler);
     (C.Read_history_sync.name, Read_history_sync.handler);
   ]

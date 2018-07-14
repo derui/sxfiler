@@ -1,22 +1,24 @@
 module T = Sxfiler_types
 
-module Workspace_map = Map.Make(struct
+module String_map = Map.Make(struct
     type t = string
     let compare = Pervasives.compare
   end)
 
 type t = {
   configuration: T.Configuration.t;
-  workspace_map: T.Workspace.t Workspace_map.t;
+  workspace: T.Workspace.t option;
+  scanner_map: T.Scanner.t String_map.t;
 }
 
 let empty = {
   configuration = T.Configuration.default;
-  workspace_map = Workspace_map.empty;
+  workspace = None;
+  scanner_map = String_map.empty;
 }
 
-let find_workspace ~name t = Workspace_map.find_opt name t.workspace_map
+let find_scanner ~name t = String_map.find_opt name t.scanner_map
 
-let add_workspace ~name ~ws t = {
-  t with workspace_map = Workspace_map.add name ws t.workspace_map;
+let add_scanner ~name ~scanner t = {
+  t with scanner_map = String_map.add name scanner t.scanner_map;
 }

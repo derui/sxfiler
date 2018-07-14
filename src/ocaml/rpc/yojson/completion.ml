@@ -41,24 +41,6 @@ module Read_file_sync = struct
         }) t
 end
 
-module Read_directory_sync = struct
-  open Rpc.Completion.Read_directory_sync
-
-  module Js = Read_common_js
-
-  let params_of_yojson js =
-    let open Ppx_deriving_yojson_runtime in
-    Js.params_of_yojson js >>= fun js -> Ok {input = js.Js.input}
-
-  let result_to_yojson t =
-    let module T = Sxfiler_types.Types in
-    Js.result_to_yojson @@ Array.map (fun v -> {
-          Ty.Types.Candidate.start = v.T.Candidate.start;
-          length = v.T.Candidate.length;
-          value = Ty.Directory_tree.to_yojson v.T.Candidate.value;
-        }) t
-end
-
 module Read_history_sync = struct
   open Rpc.Completion.Read_history_sync
 
@@ -73,6 +55,6 @@ module Read_history_sync = struct
     Js.result_to_yojson @@ Array.map (fun v -> {
           Ty.Types.Candidate.start = v.T.Candidate.start;
           length = v.T.Candidate.length;
-          value = Ty.Snapshot_record.to_yojson v.T.Candidate.value;
+          value = Ty.Location_record.to_yojson v.T.Candidate.value;
         }) t
 end

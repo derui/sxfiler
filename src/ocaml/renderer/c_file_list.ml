@@ -35,14 +35,14 @@ let component =
             let pos = vt.Vt.selected_item_index in
             this##setState (object%js
               val virtualizedList = VL.update_list_height e##.clientHeight vl
-                                    |> VL.update_all_items @@ Array.of_list vt.Vt.snapshot.nodes
+                                    |> VL.update_all_items @@ Array.of_list vt.Vt.scanner.nodes
                                     |> VL.recalculate_visible_window pos
             end))
         )
       ~component_will_receive_props:(fun this _ ->
           let vt = this##.props##.viewerState in
           ignore (
-            let items = Array.of_list vt.Vt.snapshot.nodes in
+            let items = Array.of_list vt.Vt.scanner.nodes in
             let vl = VL.update_all_items items this##.state##.virtualizedList in
             let vl = VL.recalculate_visible_window vt.Vt.selected_item_index vl
             in

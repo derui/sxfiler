@@ -5,12 +5,12 @@ include Sxfiler_types.Workspace
 *)
 
 class type js = object
-  method current: Tree_snapshot.js Js.t Js.readonly_prop
-  method history: Snapshot_history.js Js.t Js.readonly_prop
+  method source: Tree_snapshot.js Js.t Js.readonly_prop
+  method target: Tree_snapshot.js Js.t Js.readonly_prop
 end
 
 let of_js : js Js.t -> t = fun js ->
   {
-    current = Tree_snapshot.of_js js##.current;
-    history = Snapshot_history.of_js js##.history;
+    source = Tree_snapshot.of_js js##.source;
+    target = Tree_snapshot.of_js js##.target;
   }

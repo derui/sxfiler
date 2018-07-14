@@ -1,10 +1,8 @@
 (** [Snapshot_record] provides types for record of history  *)
 type t = {
-  directory: string;
+  location: string;
   timestamp: int64;
 }
-
-let make ~directory ~timestamp = {directory; timestamp}
 
 (** Signature to get current clock to make record with current time. *)
 module type Clock = sig
@@ -14,10 +12,9 @@ module type Clock = sig
   val unixtime : unit -> int64
 end
 
-let of_snapshot ~snapshot clock =
+let record_of ~location clock =
   let module C = (val clock: Clock) in
-  let directory = snapshot.Tree_snapshot.directory in
   let now = C.unixtime () in
   {
-    directory; timestamp = now;
+    location; timestamp = now;
   }
