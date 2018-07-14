@@ -10,7 +10,7 @@ module type S = sig
   val create: unit -> t
 
   (** [update t ~tag ~v] adds or updates value [v] as [tag]. *)
-  val update: t -> tag:'a Tag.def -> v:'a -> t
+  val update: t -> tag:('a, _) Tag.def -> v:'a -> t
 
   (** [subscribe t f] add [f] as subscription that is called when some tag is updated.  *)
   val subscribe: t -> (t -> unit) -> t
@@ -19,7 +19,10 @@ module type S = sig
 
       @raise Fail raises if tag not found.
   *)
-  val get: t -> tag:'a Tag.def -> 'a
+  val get: t -> tag:('a, _) Tag.def -> 'a
+
+  (** [dispatch t ~tag ~message] dispatch message to store specified [tag].  *)
+  val dispatch: t -> tag:(_, 'b) Tag.def -> message:'b -> t
 end
 
 module Core: S = struct
@@ -46,6 +49,16 @@ module Core: S = struct
     let key = Js.string @@ Tag.name tag in
     Jstable.add t.tag_table key (Obj.repr v);
     t
+
+  let dispatch (type v) (type m) t ~(tag:(v, m) Tag.def) ~(message:m) =
+    let key = Js.string @@ Tag.name tag in
+    let v = Js.Optdef.to_option @@ Jstable.find t.tag_table key in
+    let module S = (val (Tag.store tag) : Store_intf.S with type t = v and type message = m) in
+    match v with
+    | None -> t
+    | Some v -> let store : v = Obj.obj v in
+      let store = S.update store message in
+      update t ~tag ~v:store
 
   let subscribe t f = {t with subscriptions = f :: t.subscriptions}
 end
