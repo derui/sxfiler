@@ -6,11 +6,13 @@ open Sxfiler_types.Configuration
 module Key_maps = struct
   include Key_maps
   class type js = object
+    method default: < > Js.t Js.readonly_prop
     method fileList: < > Js.t Js.readonly_prop
   end
 
   let of_js : js Js.t -> t = fun js ->
     {
+      default = Key_map.of_js js##.default;
       file_list = Key_map.of_js js##.fileList;
     }
 end

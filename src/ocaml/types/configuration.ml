@@ -1,10 +1,12 @@
 (** [Key_maps] defines key mappings that are used in each view. *)
 module Key_maps = struct
   type t = {
+    default: Key_map.t;
     file_list: Key_map.t;
   }
 
   let default = {
+    default = Key_map.empty;
     file_list = Key_map.empty;
   }
 end

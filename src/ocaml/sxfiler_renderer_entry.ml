@@ -25,8 +25,8 @@ let () =
   Websocket_handler.init websocket_handler;
   let rpc_client = Rpc.Client.make websocket websocket_handler in
   let rpc_notification_server = Rpc.Notification_server.make () in
-  let store = Store.make () in
-  let rpc_notification_server = Notification_reducer.expose ~store rpc_notification_server in
+  let context = Context.make rpc_client in
+  let rpc_notification_server = Notification_reducer.expose ~context rpc_notification_server in
 
   Websocket_handler.add websocket_handler ~handler:(notification_handler rpc_notification_server);
 

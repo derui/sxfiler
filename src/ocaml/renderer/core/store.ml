@@ -1,14 +1,17 @@
-open Store_intf
+include Store_intf
 
 (** [Make(T)] gets the new module for module with state defined from {!Type}. *)
 module Make(T:State_intf.S) : S with type state = T.t and type message = T.message =
 struct
-  type message = T.message
   type state = T.t
-  type subscriber = state -> unit
+  type message = T.message
+  type event = [`Change | `Dispatch]
+
+  type subscriber = T.t -> unit
+
   type t = {
-    subscribers: subscriber list;
-    mutable state: state;
+    subscribers: (event * subscriber) list;
+    mutable state: T.t;
   }
 
   let make () = {
@@ -16,13 +19,21 @@ struct
     state = T.empty ();
   }
 
-  let subscribe t subscriber = {t with subscribers = subscriber :: t.subscribers}
+  let subscribe t ~f ~event = {t with subscribers = (event, f) :: t.subscribers}
 
   let get {state;_} = state
 
-  let update t message =
-    t.state <- T.update t.state message;
-    List.iter (fun f -> f t.state) t.subscribers;
+  let dispatch t message =
+    let prev = t.state in
+    t.state <- T.reduce t.state message;
+    if prev <> t.state then
+      List.filter (function
+          | (`Dispatch, _) -> false
+          | (`Change, _) -> true
+        ) t.subscribers
+      |>
+      List.iter (fun (_, f) -> f t.state)
+    else ();
     t
 
 end

@@ -6,17 +6,20 @@ module Key_maps = struct
 
   module Js = struct
     type t = {
+      default: Yojson.Safe.json;
       file_list: Yojson.Safe.json [@key "fileList"];
     } [@@deriving yojson]
   end
 
   let to_yojson : t -> Yojson.Safe.json = fun t ->
-    Js.to_yojson {Js.file_list = Key_map.to_yojson t.file_list}
+    Js.to_yojson {Js.default = Key_map.to_yojson t.default;
+                  file_list = Key_map.to_yojson t.file_list}
 
   let of_yojson : Yojson.Safe.json -> t = fun json ->
     match Js.of_yojson json with
     | Error _ -> Printf.eprintf "TODO parse error"; default
     | Ok js -> {
+        default = Key_map.of_yojson js.default;
         file_list = Key_map.of_yojson js.file_list;
       }
 end

@@ -8,6 +8,6 @@ module type S = sig
   (** [empty ()] gets a new instance of [t]. *)
   val empty: unit -> t
 
-  (** [update t event] will update state via event [message]. *)
-  val update: t -> message -> t
+  (** [update t event] will update state via event [message]. state can not update directly.  *)
+  val reduce: t -> message -> t
 end

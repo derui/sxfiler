@@ -1,36 +1,30 @@
 module R = Jsoo_reactjs
+module C = Sxfiler_renderer_core
 
 module Component = R.Component.Make_stateful (struct
     class type t = object
-      method store: Store.t Js.readonly_prop
-      method dispatch: Dispatcher.t Js.readonly_prop
+      method context: Context.t Js.readonly_prop
     end
   end)(struct
     class type t = object
-      method state: State.t Js.readonly_prop
+      method state: C.Store_group.t Js.readonly_prop
     end
   end)
 
 let component = Component.make
     R.(component_spec
          ~constructor:(fun this _ ->
-             let store = this##.props##.store in
-             Store.subscribe store (fun state ->
+             let context = this##.props##.context in
+             Context.subscribe context (`Change (fun state ->
                  this##setState (object%js
                    val state = state
                  end)
-               );
-
-             this##.state := object%js
-               val state = store.Store.state
-             end
+               ));
            )
          ~should_component_update:(fun _ _ _ -> true)
          (fun this ->
-            let props = this##.props in
             let children_props = object%js
-              val dispatch = props##.dispatch
-              val state = this##.state##.state
+              val context = this##.props##.context
             end in
             R.Dom.of_tag `div
               ~props:R.(element_spec ~class_name:"sf-Main" ())

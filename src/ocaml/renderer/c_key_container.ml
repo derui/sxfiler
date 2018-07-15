@@ -1,6 +1,6 @@
-open Sxfiler_core
 module T = Sxfiler_types
 module R = Jsoo_reactjs
+module Be = Sxfiler_renderer_behavior
 
 module Component = R.Component.Make_stateful (struct
     class type t = object
@@ -10,32 +10,14 @@ module Component = R.Component.Make_stateful (struct
     type t = unit
   end)
 
-let handle_key_event: Dispatcher.t ->
-  ev:R.Event.Keyboard_event.t ->
-  key_map:T.Key_map.t -> bool = fun dispatch ~ev ~key_map ->
-  let module K = T.Key_map in
-  let module E = R.Event in
-  let module KE = E.Keyboard_event in
-  match KE.to_event_type ev with
-  | KE.Unknown | KE.KeyPress | KE.KeyUp -> false
-  | _ -> begin
-      let key = Util.keyboard_event_to_key ev in
-
-      let open Option.Infix in
-      let result = K.find key_map ~key
-        >>= (fun action -> Some (dispatch @@ Action_creator.create action))
-        >|= (fun () -> true)in
-      Option.get ~default:false result
-    end
-
-let key_handler ~dispatch ~state ev =
+let key_handler ~context ev =
+  let module Behavior = Be.Default_key_handler in
+  let module Core = Sxfiler_renderer_core in
+  let config = Store.Config_store.get @@ Context.get_store context ~tag:Store.config in
   let module C = T.Configuration in
-  let config = state.State.config in
-  let key_map = config.C.viewer.C.Viewer.key_maps.C.Key_maps.file_list in
-  let dispatched = handle_key_event dispatch ~ev ~key_map in
-  if dispatched then begin
-    ev##preventDefault; ev##stopPropagation
-  end else ()
+  let key_map = config.C.viewer.C.Viewer.key_maps.C.Key_maps.default in
+  let behavior = Behavior.make key_map in
+  Behavior.execute behavior ev
 
 let other_props =
   Some (object%js
@@ -46,10 +28,7 @@ let container_key = "filePaneContainer"
 let component =
   let spec = R.component_spec
       ~constructor:(fun this _ ->
-          this##.nodes := Jstable.create ();
-          this##.state := object%js
-            val active = true
-          end
+          this##.nodes := Jstable.create ()
         )
       ~component_did_update:(fun this _ _ ->
           match R.Ref_table.find this##.nodes ~key:container_key with
@@ -60,7 +39,7 @@ let component =
          let props = this##.props in
          let spec = R.element_spec ()
              ~class_name:"sf-KeyContainer"
-             ~on_key_down:(key_handler ~dispatch:props##.dispatch ~state:(props##.state))
+             ~on_key_down:(key_handler ~context:props##.context)
              ?others:other_props
          in
          R.Dom.of_tag `div
@@ -68,7 +47,7 @@ let component =
            ~props:spec
            ~children:[
              R.create_element ~key:"layout" ~props:(object%js
-               val state = props##.state
+               val context = props##.context
              end) C_layout.component
            ]
       )

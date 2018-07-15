@@ -6,12 +6,11 @@ module R = Jsoo_reactjs
 
 type t = {
   key_map: T.Key_map.t;
-  dispatch: C.Message.default -> unit;
 }
 
-type constructor = T.Key_map.t * (C.Message.default -> unit)
+type constructor = T.Key_map.t
 type param = R.Event.Keyboard_event.t
-type result = unit Lwt.t
+type result = unit
 
 let action_to_message = function
   | T.Callable_action.Core core -> begin
@@ -21,7 +20,7 @@ let action_to_message = function
     end
   | _ -> None
 
-let handle_key_event ~ev ~key_map ~dispatch =
+let handle_key_event ~ev ~key_map =
   let module K = T.Key_map in
   let module KE = R.Event.Keyboard_event in
   match KE.to_event_type ev with
@@ -31,16 +30,15 @@ let handle_key_event ~ev ~key_map ~dispatch =
       let open Option.Infix in
       let result = K.find key_map ~key
         >>= fun action -> action_to_message action
-        >>= fun message -> Some (dispatch message)
-        >|= (fun () -> true)in
+        >|= (fun _ -> true) in
       Option.is_some result
     end
 
-let make (key_map, dispatch) = {key_map; dispatch}
+let make key_map = {key_map}
 
 let execute t ev =
   let module C = T.Configuration in
-  let dispatched = handle_key_event ~ev ~key_map:t.key_map ~dispatch:t.dispatch in
+  let dispatched = handle_key_event ~ev ~key_map:t.key_map in
   if dispatched then begin
     ev##preventDefault; ev##stopPropagation
   end else ()
