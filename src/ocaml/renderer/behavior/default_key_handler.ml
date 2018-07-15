@@ -4,12 +4,9 @@ module T = Sxfiler_types_jsoo
 module C = Sxfiler_renderer_core
 module R = Jsoo_reactjs
 
-type t = {
-  key_map: T.Key_map.t;
-}
+type t = unit
 
-type constructor = T.Key_map.t
-type param = R.Event.Keyboard_event.t
+type param = (T.Key_map.t * R.Event.Keyboard_event.t)
 type result = unit
 
 let action_to_message = function
@@ -34,11 +31,11 @@ let handle_key_event ~ev ~key_map =
       Option.is_some result
     end
 
-let make key_map = {key_map}
+let make _ = ()
 
-let execute t ev =
+let execute () (key_map, ev) =
   let module C = T.Configuration in
-  let dispatched = handle_key_event ~ev ~key_map:t.key_map in
+  let dispatched = handle_key_event ~ev ~key_map:key_map in
   if dispatched then begin
     ev##preventDefault; ev##stopPropagation
   end else ()

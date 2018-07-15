@@ -25,19 +25,19 @@ let component =
     let module F = T.File_stat in
     let file_mode = R.create_element ~key:"mode" ~props:(object%js
         val mode = stat.F.mode
-      end) C_file_mode.component
+      end) P_file_mode.component
     and timestamp = R.create_element ~key:"timestamp" ~props:(object%js
         val timestamp = stat.F.mtime |> Int64.to_float
-      end) C_file_timestamp.component
+      end) P_file_timestamp.component
     and file_size = R.create_element ~key:"size" ~props:(object%js
         val size = stat.F.size
-      end) C_file_size.component
+      end) P_file_size.component
     and file_name = R.create_element ~key:"name" ~props:(object%js
         val parentDirectory = node.T.Node.parent_directory
         val path = node.T.Node.full_path
         val isDirectory = stat.F.is_directory
         val isSymbolicLink = stat.F.is_symlink
-      end) C_file_name.component
+      end) P_file_name.component
     in
     R.Dom.of_tag `li
       ~props:R.(element_spec ~class_name ())

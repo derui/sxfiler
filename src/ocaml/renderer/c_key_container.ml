@@ -16,8 +16,7 @@ let key_handler ~context ev =
   let config = Store.Config_store.get @@ Context.get_store context ~tag:Store.config in
   let module C = T.Configuration in
   let key_map = config.C.viewer.C.Viewer.key_maps.C.Key_maps.default in
-  let behavior = Behavior.make key_map in
-  Behavior.execute behavior ev
+  Context.execute context (module Behavior) (key_map, ev)
 
 let other_props =
   Some (object%js

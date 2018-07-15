@@ -7,6 +7,7 @@ module C = Sxfiler_renderer_core
 let item_height = 18
 let key_of_filelist = "currentNode"
 
+(* header of file list *)
 module Header = R.Component.Make_stateless (struct
     class type t = object
       method directory: string Js.readonly_prop
@@ -26,6 +27,7 @@ let header = Header.make (fun props ->
       ~children:[R.text directory]
   )
 
+(* content of file list *)
 module Content = R.Component.Make_stateful (struct
     class type t = object
       method viewerState: C.Types.File_tree.tree Js.readonly_prop
@@ -83,7 +85,7 @@ let content =
           val item = item
           val selected = index = vt.Vt.selected_item_index
           val focused = this##.props##.focused
-        end) C_file_item.component
+        end) P_file_item.component
       ) items |> Array.to_list
     in
     let scroll_bar =

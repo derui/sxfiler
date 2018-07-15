@@ -19,6 +19,7 @@ module Scanner_update(Repo:C.Repository_intf.Scanner_instance) = struct
       Lwt.return @@ Repo.store instance params.scanner
 end
 
-let expose server =
-  let module Scanner_update = Scanner_update(Locator.Repository.Scanner) in
-  Rpc.Server.expose ~_method:Scanner_update.name ~handler:Scanner_update.handler server
+let expose ~locator server =
+  let module L = (val locator: C.Locator_intf.S) in
+  let module Scanner_update = Scanner_update(L.Repository.Scanner) in
+  C.Rpc.Server.expose ~_method:Scanner_update.name ~handler:Scanner_update.handler server
