@@ -6,7 +6,7 @@ module S = Sxfiler_server
 module Rpcy = Sxfiler_rpc_yojson
 
 let result_handler = [
-  Alcotest_lwt.test_case "update workspace when result is Update_workspace" `Quick (fun _ () ->
+  Alcotest_lwt.test_case "update scanner when result is Update_scanner" `Quick (fun _ () ->
       let notified = ref 0 in
       let module H = S.Task_result_handler.Make(struct
           let unixtime () = Int64.zero
@@ -26,14 +26,19 @@ let result_handler = [
         end)
       in
       let open Lwt in
-      let current = Tree_snapshot.make ~directory:"foo" ~nodes:[] in
-      let%lwt () = H.handle (module State) (`Update_workspace ("test", current)) in
+      let%lwt state = State.get () in
+      let scanner = Scanner.make ~name:"foo" ~nodes:[] ~location:"not tested" ~history:(Location_history.make ()) in
+      let%lwt () = State.update @@ C.Root_state.add_scanner ~scanner state in
+      let%lwt () = H.handle (module State) (`Update_scanner ("foo", "test", [])) in
       Alcotest.(check int) "notified" 1 !notified;
       return_unit
     );
 
   Alcotest_lwt.test_case "notify for updating workspace if Update_workspace" `Quick (fun _ () ->
       let notified = ref None in
+      let module Clock = struct
+        let unixtime () = Int64.zero
+      end in
       let module H = S.Task_result_handler.Make(struct
           let unixtime () = Int64.zero
         end)
@@ -53,18 +58,16 @@ let result_handler = [
         end)
       in
       let open Lwt in
-      let current = Tree_snapshot.make ~directory:"foo" ~nodes:[] in
-      let%lwt () = H.handle (module State) (`Update_workspace ("test", current)) in
-      let%lwt state =  State.get () in
+      let%lwt state = State.get () in
+      let scanner = Scanner.make ~name:"foo" ~nodes:[] ~location:"not tested" ~history:(Location_history.make ()) in
+      let%lwt () = State.update @@ C.Root_state.add_scanner ~scanner state in
+      let%lwt () = H.handle (module State) (`Update_scanner ("foo", "test", [])) in
       let module Ty = Sxfiler_types_yojson in
       let expected =
-        match C.Root_state.find_workspace ~name:"test" state with
-        | None -> None
-        | Some workspace ->
-          Some Rpcy.Notification.Workspace_update.(params_to_yojson {
-              name = "test";
-              workspace;
-            }) in
+        Some Rpcy.Notification.Scanner_update.(params_to_yojson {
+            name = "foo";
+            scanner = Scanner.move_location scanner ~location:"test" ~nodes:[] (module Clock);
+          }) in
       Alcotest.(check @@ option @@ of_pp @@ Fmt.nop) "notified" expected !notified;
       return_unit
     );
@@ -91,23 +94,18 @@ let result_handler = [
         end)
       in
       let open Lwt in
-      let current = Tree_snapshot.make ~directory:"foo" ~nodes:[] in
       let%lwt state = State.get () in
-      let ws = Workspace.(make ~current ~history:Snapshot_history.(make ())) in
-      let state = C.Root_state.add_workspace ~name:"test" ~ws state in
+      let scanner = Scanner.(make ~name:"test" ~nodes:[] ~location:"foo" ~history:Location_history.(make ())) in
+      let state = C.Root_state.add_scanner ~scanner state in
       let%lwt () = State.update state in
-      let%lwt () = H.handle (module State) (`Update_workspace ("test", current)) in
+      let%lwt () = H.handle (module State) (`Update_scanner ("test", "foobar", [])) in
       let%lwt state = State.get () in
       let module Ty = Sxfiler_types_yojson in
-      let expected_ws = Workspace.replace_current ~snapshot:current ~clock:(module Clock) ws in
       let expected =
-        match C.Root_state.find_workspace ~name:"test" state with
-        | None -> None
-        | Some workspace ->
-          Some Rpcy.Notification.Workspace_update.(params_to_yojson {
-              name = "test";
-              workspace = expected_ws;
-            }) in
+        Some Rpcy.Notification.Scanner_update.(params_to_yojson {
+            name = "test";
+            scanner = Scanner.move_location ~location:"foobar" ~nodes:[] scanner (module Clock);
+          }) in
       Alcotest.(check @@ option @@ of_pp @@ Fmt.nop) "notified" expected !notified;
       return_unit
     );

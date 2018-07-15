@@ -16,3 +16,9 @@ module type S = sig
     'p ->
     'r
 end
+
+(** Instance of context. *)
+module type Instance = sig
+  module Context : S
+  val instance : Context.t
+end

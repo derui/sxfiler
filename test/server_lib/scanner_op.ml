@@ -2,13 +2,14 @@ open Sxfiler_core
 
 module T = Sxfiler_types
 module S = Sxfiler_server
+module R = Sxfiler_rpc
 module C = Sxfiler_server_core
 module A = Sxfiler_server_action
 module Jy = Jsonrpc_ocaml_yojson
 module Rpcy = Sxfiler_rpc_yojson
 
-let workspace_op = [
-  Alcotest_lwt.test_case "create new workspace if it does not exists" `Quick (fun switch () ->
+let scanner_op = [
+  Alcotest_lwt.test_case "create new scanner if it does not exists" `Quick (fun switch () ->
       let task_finished, task_finished_waken = Lwt.wait () in
       let module Task = Sxfiler_server_task in
       let module State = C.Statable.Make(struct
@@ -22,14 +23,14 @@ let workspace_op = [
         end) in
 
       let module Tasker = (val Task.Runner.make (): Task.Runner.Instance) in
-      let module Make_sync = S.Workspace_op.Make_sync(A.Dummy)(State)(Tasker) in
+      let module Make_sync = S.Scanner_op.Make_sync(A.Dummy)(State)(Tasker) in
       let%lwt () = Tasker.Runner.add_task_handler Tasker.instance ~name:"foo" ~handler:Handler.handle in
       let stopper = Tasker.Runner.start Tasker.instance (module State) in
 
       let req = Jy.Request.{
           _method = "foo";
-          params = Some Rpcy.Workspace.Make_sync.(params_to_yojson {
-              initial_directory = "/initial";
+          params = Some Rpcy.Scanner.Make_sync.(params_to_yojson {
+              initial_location = "/initial";
               name = "foo"
             });
           id = Some Int64.zero;
@@ -41,12 +42,15 @@ let workspace_op = [
 
       let%lwt () = stopper in
       let%lwt state = State.get () in
-      let ws = C.Root_state.find_workspace ~name:"foo" state in
-      let expected = Option.some @@ T.Workspace.make ~current:T.Tree_snapshot.(make ~directory:"/initial" ~nodes:[])
-          ~history:T.Snapshot_history.(make ()) in
-      let res_expected = Some Rpcy.Workspace.Make_sync.(result_to_yojson {created = false}) in
-      Alcotest.(check @@ option @@ of_pp @@ Fmt.nop) "created" expected ws;
-      Alcotest.(check @@ option @@ of_pp @@ Fmt.nop) "created" res_expected res.Jy.Response.result;
+      let scanner = C.Root_state.find_scanner ~name:"foo" state in
+      let expected = Option.some @@ T.Scanner.make
+          ~name:"foo"
+          ~location:"/initial"
+          ~nodes:[]
+          ~history:T.Location_history.(make ()) in
+      Alcotest.(check @@ option @@ of_pp @@ Fmt.nop) "created" expected scanner;
+      Alcotest.(check @@ option @@ of_pp @@ Fmt.nop) "created" None res.Jy.Response.result;
+      Alcotest.(check @@ option @@ of_pp @@ Fmt.nop) "created" None res.Jy.Response.error;
       Lwt.return_unit
     );
 
@@ -56,7 +60,7 @@ let workspace_op = [
           type t = C.Root_state.t
           let empty () = C.Root_state.empty
         end) in
-      let module Make_sync = S.Workspace_op.Make_sync(A.Dummy)(State) in
+      let module Make_sync = S.Scanner_op.Make_sync(A.Dummy)(State) in
       let module Handler = S.Task_result_handler.Make(struct
           let unixtime () = Int64.zero
         end)(struct
@@ -64,34 +68,35 @@ let workspace_op = [
         end) in
 
       let module Tasker = (val Task.Runner.make (): Task.Runner.Instance) in
-      let module Make_sync = S.Workspace_op.Make_sync(A.Dummy)(State)(Tasker) in
+      let module Make_sync = S.Scanner_op.Make_sync(A.Dummy)(State)(Tasker) in
       let%lwt () = Tasker.Runner.add_task_handler Tasker.instance ~name:"foo" ~handler:Handler.handle in
-      let stopper = Tasker.Runner.start Tasker.instance (module State) in
 
       let req = Jy.Request.{
           _method = "foo";
-          params = Some Rpcy.Workspace.Make_sync.(params_to_yojson {
-              initial_directory = "/initial";
+          params = Some Rpcy.Scanner.Make_sync.(params_to_yojson {
+              initial_location = "/initial";
               name = "foo"
             });
           id = Some Int64.zero;
         } in
       let%lwt () = State.with_lock (fun state ->
-          let ws = T.Workspace.make ~current:T.Tree_snapshot.(make ~directory:"/initial" ~nodes:[])
-              ~history:T.Snapshot_history.(make ()) in
+          let scanner = T.Scanner.make
+              ~name:"foo"
+              ~location:"/initial"
+              ~nodes:[]
+              ~history:T.Location_history.(make ()) in
 
-          let state = C.Root_state.add_workspace ~name:"foo" ~ws state in
+          let state = C.Root_state.add_scanner ~scanner state in
           State.update state
         ) in
-      let%lwt res = Make_sync.handler req in
-      Tasker.(Runner.stop instance);
-      let%lwt () = stopper in
-      let res_expected = Some Rpcy.Workspace.Make_sync.(result_to_yojson {created = true}) in
-      Alcotest.(check @@ option @@ of_pp @@ Fmt.nop) "created" res_expected res.Jy.Response.result;
+      let expected = Jy.(Exception.Jsonrpc_error (R.Errors.Scanner.already_exists, None)) in
+      Alcotest.check_raises "raised" expected (fun () ->
+          Lwt.ignore_result @@ Make_sync.handler req
+        );
       Lwt.return_unit
     );
 ]
 
 let testcases = [
-  "workspace rpc operations", workspace_op;
+  "scanner rpc operations", scanner_op;
 ]

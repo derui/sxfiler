@@ -84,10 +84,8 @@ let real_test = [
 
       Lwt.finalize (fun () ->
           let module R = A.Real in
-          let%lwt snapshot = R.No_side_effect.take_snapshot ~directory:tempfile in
-          let module S = Sxfiler_types.Tree_snapshot in
-          Alcotest.(check string) "directory" tempfile snapshot.S.directory;
-          Alcotest.(check @@ list @@ of_pp Fmt.nop) "nodes" [] snapshot.S.nodes;
+          let%lwt nodes = R.No_side_effect.read_dir ~directory:tempfile in
+          Alcotest.(check @@ list @@ of_pp Fmt.nop) "nodes" [] nodes;
           Lwt.return_unit
         )
         (fun () -> Lwt.return @@ Unix.rmdir tempfile)
@@ -95,11 +93,9 @@ let real_test = [
   Alcotest_lwt.test_case "take_snapshot from directory that contains regular files" `Quick (fun switch () ->
       let module R = A.Real in
       let path = "./data_real/file_only" in
-      let%lwt snapshot = R.No_side_effect.take_snapshot ~directory:path in
-      let module S = Sxfiler_types.Tree_snapshot in
+      let%lwt nodes = R.No_side_effect.read_dir ~directory:path in
       let module N = Sxfiler_types.Node in
-      Alcotest.(check string) "directory" path snapshot.S.directory;
-      let nodes = List.sort compare @@ List.map (fun v -> v.N.full_path) snapshot.S.nodes in
+      let nodes = List.sort compare @@ List.map (fun v -> v.N.full_path) nodes in
       Alcotest.(check @@ list string) "nodes" [Filename.concat path "file1";
                                                Filename.concat path "file2"] nodes;
       Lwt.return_unit

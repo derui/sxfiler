@@ -6,7 +6,7 @@ module S = Sxfiler_renderer
 let suite () =
   "File name component" >::: [
     "should who filename normally" >:: (fun () ->
-        let module C = S.C_file_name in
+        let module C = S.P_file_name in
         let e = R.create_element ~props:(object%js
             val parentDirectory = "/foo/bar/"
             val path = "/foo/bar/sample.txt"
@@ -21,7 +21,7 @@ let suite () =
         assert_ok true
       );
     "should make another color if item is directory" >:: (fun () ->
-        let module C = S.C_file_name in
+        let module C = S.P_file_name in
         let e = R.create_element ~props:(object%js
             val parentDirectory = "/foo/"
             val path =  "/foo/bar/"
@@ -36,7 +36,7 @@ let suite () =
         assert_ok true
       );
     "should make another color if item is symbolic link" >:: (fun () ->
-        let module C = S.C_file_name in
+        let module C = S.P_file_name in
         let e = R.create_element ~props:(object%js
             val parentDirectory = "/foo/bar/"
             val path = "/foo/bar/sample.txt"

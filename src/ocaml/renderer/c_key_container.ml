@@ -1,10 +1,11 @@
 module T = Sxfiler_types
 module R = Jsoo_reactjs
 module Be = Sxfiler_renderer_behavior
+module C = Sxfiler_renderer_core
 
 module Component = R.Component.Make_stateful (struct
     class type t = object
-      method context: Context.t Js.readonly_prop
+      method context: (module C.Context_intf.Instance) Js.readonly_prop
     end
   end)(struct
     type t = unit
@@ -12,11 +13,11 @@ module Component = R.Component.Make_stateful (struct
 
 let key_handler ~context ev =
   let module Behavior = Be.Default_key_handler in
-  let module Core = Sxfiler_renderer_core in
-  let config = Store.Config_store.get @@ Context.get_store context ~tag:Store.config in
+  let module I = (val context: C.Context_intf.Instance) in
+  let config = Store.Config_store.get @@ I.Context.get_store I.instance ~tag:Store.config in
   let module C = T.Configuration in
   let key_map = config.C.viewer.C.Viewer.key_maps.C.Key_maps.default in
-  Context.execute context (module Behavior) (key_map, ev)
+  I.Context.execute I.instance (module Behavior) (key_map, ev)
 
 let other_props =
   Some (object%js

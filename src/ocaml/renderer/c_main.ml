@@ -3,7 +3,7 @@ module C = Sxfiler_renderer_core
 
 module Component = R.Component.Make_stateful (struct
     class type t = object
-      method context: Context.t Js.readonly_prop
+      method context: (module C.Context_intf.Instance) Js.readonly_prop
     end
   end)(struct
     class type t = object
@@ -14,8 +14,8 @@ module Component = R.Component.Make_stateful (struct
 let component = Component.make
     R.(component_spec
          ~constructor:(fun this _ ->
-             let context = this##.props##.context in
-             Context.subscribe context (`Change (fun state ->
+             let module I = (val this##.props##.context : C.Context_intf.Instance) in
+             I.Context.subscribe I.instance (`Change (fun state ->
                  this##setState (object%js
                    val state = state
                  end)

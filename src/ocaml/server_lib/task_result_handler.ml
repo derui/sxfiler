@@ -24,10 +24,10 @@ module Make(Clock:Location_record.Clock)
         let%lwt () = Logs_lwt.info (fun m -> m ~tags "start handling of {Update_scanner}") in
         let%lwt scanner = S.with_lock (fun state ->
             let scanner = match Root_state.find_scanner ~name:name' state with
-              | None -> raise Not_found
+              | None -> Scanner.make ~location:location' ~name:name' ~nodes ~history:(Location_history.make ())
               | Some scanner -> Scanner.move_location scanner ~location:location' ~nodes (module Clock)
             in
-            let state = Root_state.add_scanner ~name:name' ~scanner state in
+            let state = Root_state.add_scanner ~scanner state in
             let%lwt () = S.update state in
             Lwt.return scanner
           ) in
@@ -44,7 +44,7 @@ module Make(Clock:Location_record.Clock)
           let result_of_json _ = ()
         end) in
         let%lwt () = Notifier.notify (module Api) (Some {Su.name = name'; scanner}) in
-        Logs_lwt.info (fun m -> m ~tags "finish handling of {Update_workspace}")
+        Logs_lwt.info (fun m -> m ~tags "finish handling of {Update_scanner}")
       end
     | `Failed err -> Logs_lwt.err @@ fun m -> m "Task error: %s\n" err
 

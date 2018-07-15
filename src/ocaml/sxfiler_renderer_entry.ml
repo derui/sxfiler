@@ -28,7 +28,7 @@ let () =
   let rpc = Rpc.make websocket websocket_handler in
   let module L = Locator.Make((val rpc)) in
   let rpc_notification_server = C.Rpc.Server.make () in
-  let context = Context.make rpc (module L) in
+  let module Ctx = (val Context.make rpc (module L)) in
   let rpc_notification_server = Notification_reducer.expose ~locator:(module L) rpc_notification_server in
 
   Websocket_handler.add websocket_handler ~handler:(notification_handler rpc_notification_server);
@@ -44,7 +44,7 @@ let () =
               | Error e ->
                 let module Ro = Jsonrpc_ocaml_jsoo in
                 if e.Ro.Error.code = R.Errors.Scanner.already_exists then
-                  Context.execute context (module B.Refresh_scanner) name |> Lwt.ignore_result
+                  Ctx.Context.execute Ctx.instance (module B.Refresh_scanner) name |> Lwt.ignore_result
                 else ()
               | Ok _ -> ()
             )
@@ -55,6 +55,6 @@ let () =
     );
 
   let element = R.create_element ~props:(object%js
-      val context = context
+      val context = (module Ctx : C.Context_intf.Instance)
     end) Components.main in
   R.dom##render element container

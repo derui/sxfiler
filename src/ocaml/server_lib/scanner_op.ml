@@ -7,7 +7,8 @@ module Rpc = Sxfiler_rpc
 module Rpcy = Sxfiler_rpc_yojson
 module Act = Sxfiler_server_action
 
-module Make_sync(Action:Act.Action_intf.Instance)
+module Make_sync
+    (Action:Act.Action_intf.Instance)
     (Root:Statable.S with type state = Root_state.t)
     (Runner:Runner.Instance)
   = Procedure_intf.Make(struct
@@ -49,7 +50,7 @@ module Get_sync(Action:Act.Action_intf.Instance)
       let%lwt state = Root.get () in
       let module S = Sxfiler_server_core.Root_state in
       match S.find_scanner ~name:param.name state with
-      | Some ws -> Lwt.return ws
+      | Some scanner -> Lwt.return scanner
       | None -> Jsonrpc_ocaml_yojson.(Exception.raise_error Rpc.Errors.Scanner.not_found)
   end)
 
