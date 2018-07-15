@@ -7,9 +7,28 @@ module C = Sxfiler_renderer_core
 let item_height = 18
 let key_of_filelist = "currentNode"
 
-module Component = R.Component.Make_stateful (struct
+module Header = R.Component.Make_stateless (struct
     class type t = object
-      method viewerState: C.Types.Viewer.File_tree.t Js.readonly_prop
+      method directory: string Js.readonly_prop
+      method focused: bool Js.readonly_prop
+    end
+  end)
+
+let header = Header.make (fun props ->
+    let directory = props##.directory in
+    let class_name =
+      let open Classnames in
+      to_string ["fp-FileList_Header", true;
+                 "fp-FileList_Header-focused", props##.focused]
+    in
+    R.Dom.of_tag `header
+      ~props:R.(element_spec ~class_name ())
+      ~children:[R.text directory]
+  )
+
+module Content = R.Component.Make_stateful (struct
+    class type t = object
+      method viewerState: C.Types.File_tree.tree Js.readonly_prop
       method focused: bool Js.readonly_prop
     end
   end)(struct
@@ -18,8 +37,8 @@ module Component = R.Component.Make_stateful (struct
     end
   end)
 
-let component =
-  let module Vt = C.Types.Viewer.File_tree in
+let content =
+  let module Vt = C.Types.File_tree in
   let spec = R.component_spec
       ~constructor:(fun this _ ->
           this##.state := object%js
@@ -99,4 +118,28 @@ let component =
     let props = R.(element_spec ~class_name:"fp-FileList" ()) in
     R.Dom.of_tag `ul ~_ref ~props ~children
   in
-  Component.make @@ spec render
+  Content.make @@ spec render
+
+(* wrapping component. *)
+module Component = R.Component.Make_stateless (struct
+    class type t = object
+      method viewerState: C.Types.File_tree.tree Js.readonly_prop
+      method focused: bool Js.readonly_prop
+    end
+  end)
+
+let component = Component.make (fun props ->
+    let state = props##.viewerState in
+    let scanner = state.C.Types.File_tree.scanner in
+    let header = R.create_element ~key:"header" ~props:(object%js
+        val directory = scanner.location
+        val focused = props##.focused
+      end) header
+    and content = R.create_element ~key:"file-list" ~props:(object%js
+        val viewerState = state
+        val focused = props##.focused
+      end) content
+    in
+    let props = R.element_spec ~class_name:"fp-FileListContainer" () in
+    R.Dom.of_tag `div ~key:"content" ~props ~children:[header; content]
+  )

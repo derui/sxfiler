@@ -21,4 +21,4 @@ end
 
 let expose server =
   let module Scanner_update = Scanner_update(Locator.Repository.Scanner) in
-  Rpc.Notification_server.expose ~_method:Scanner_update.name ~handler:Scanner_update.handler server
+  Rpc.Server.expose ~_method:Scanner_update.name ~handler:Scanner_update.handler server

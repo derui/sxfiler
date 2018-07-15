@@ -1,6 +1,7 @@
+module T = Sxfiler_types
 
 type t =
-  | Update_viewer_stack of string * Types.Viewer_state.t
+  | Update_scanner of T.Scanner.t
 
 type default =
   | Quit

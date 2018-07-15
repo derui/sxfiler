@@ -81,8 +81,8 @@ module Client = struct
 
 end
 
-(** {!Notification_server} provides some functions to handle notification from server. *)
-module Notification_server = struct
+(** {!Server} provides some functions to handle notification from server. *)
+module Server = struct
   type json = < > Js.t
   module Response = R.Response
   module Request = R.Request

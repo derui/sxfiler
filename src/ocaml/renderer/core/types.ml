@@ -1,39 +1,36 @@
 module Ty = Sxfiler_types
 
-module Viewer = struct
-  module File_tree = struct
-    type t = {
-      scanner: Ty.Scanner.t;
-      selected_item_index: int;
-    }
-  end
+module File_tree = struct
+  type tree = {
+    scanner: Ty.Scanner.t;
+    selected_item_index: int;
+  }
 
-  type t =
-    | File_tree of File_tree.t
-end
-
-(** Viewer_state has some common state for Viewer. Each viewers are related this. *)
-module Viewer_state = struct
   type t = {
-    viewer: Viewer.t;
-    closing: bool;              (* viewer is closing now. *)
-    closed: bool;               (* viewer is closed. *)
+    scanners: tree Jstable.t;
+    scanner_order: string * string;
   }
 
-  let make viewer = {
-    viewer;
-    closing = false;
-    closed = false;
-  }
-end
+  let make order =
+    let table = Jstable.create () in
+    {
+      scanners = table;
+      scanner_order = order;
+    }
 
-(** {!Viewer_stack} allows to stack modules that are created from {!Viewer_state.S}.  *)
-module Viewer_stack = struct
-  type t = Viewer_state.t list
+  let swap_order t = {t with scanner_order = Sxfiler_core.Tuple.swap t.scanner_order}
 
-  let empty () = []
-  let push t ~v = v :: t
-  let pop = function
-    | [] -> None
-    | _ :: rest -> Some rest
+  let update t ~scanner =
+    Jstable.add t.scanners Js.(string scanner.Ty.Scanner.name) {scanner; selected_item_index = 0};
+    t
+
+  let to_list t =
+    let order1, order2 = t.scanner_order in
+    let list = [
+      Jstable.find t.scanners Js.(string order1) |> Js.Optdef.to_option;
+      Jstable.find t.scanners Js.(string order2) |> Js.Optdef.to_option;
+    ] in
+    let open Sxfiler_core.Option in
+    List.filter is_some list |> List.map get_exn
+
 end
