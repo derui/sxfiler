@@ -106,7 +106,6 @@ let content =
                   and width = int_of_float @@ rect##.right -. rect##.left in
                   {C_resize_sensor.height;width})
               in
-              Firebug.console##log size;
               Option.get ~default:(fun () -> {C_resize_sensor.height = 0;width = 0}) size)
           val onResized = (fun size ->
               let height = size.C_resize_sensor.height in

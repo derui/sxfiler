@@ -4,6 +4,7 @@ module RI = Sxfiler_rpc
 module R = Jsoo_reactjs
 module C = Sxfiler_renderer_core
 module B = Sxfiler_renderer_behavior
+module S = Sxfiler_renderer_store
 
 let container_id = "top-entry"
 let target_port = 50879
@@ -30,6 +31,12 @@ let () =
   let rpc_notification_server = C.Rpc.Server.make () in
   let module Ctx = (val Context.make rpc (module L)) in
   let rpc_notification_server = Notification_reducer.expose ~locator:(module L) rpc_notification_server in
+  let store = Ctx.(Context.get_store instance) in
+  Ctx.(Context.execute instance (module B.Initialize_stores) (module struct
+         type message = C.Message.t
+         module Store = S.App.Store
+         let instance = store
+       end));
 
   Websocket_handler.add websocket_handler ~handler:(notification_handler rpc_notification_server);
 
@@ -50,11 +57,11 @@ let () =
             )
 
           |> Lwt.ignore_result;
-        ) [Const.workspace_1;Const.workspace_2];
+        ) [Const.scanner_1;Const.scanner_2];
       Js._true
     );
 
   let element = R.create_element ~props:(object%js
-      val context = (module Ctx : C.Context_intf.Instance)
+      val context = (module Ctx : Context.Instance)
     end) Components.main in
   R.dom##render element container

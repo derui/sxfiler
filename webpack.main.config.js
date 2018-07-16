@@ -19,7 +19,10 @@ module.exports = {
       new FunctionModulePlugin(output)
     )
   },
-
+  node: {
+    fs: "empty",
+    child_process: "empty"
+  },
   plugins: [
     new NodeTargetPlugin(),
     new webpack.ExternalsPlugin("commonjs", [

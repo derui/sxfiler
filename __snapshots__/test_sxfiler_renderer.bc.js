@@ -46,18 +46,6 @@ exports['File size component should show Gigabytes if the size more than 1024 MB
   "_store": {}
 }
 
-exports['File size component should ignore fraction value less than 0.1 1'] = {
-  "type": "span",
-  "key": null,
-  "ref": null,
-  "props": {
-    "className": "fp-FileItem_FileSize",
-    "children": "   3.5K"
-  },
-  "_owner": null,
-  "_store": {}
-}
-
 exports['File mode component should show current permission of file 1'] = {
   "type": "span",
   "key": null,
@@ -124,7 +112,7 @@ exports['File name component should make another color if item is directory 1'] 
   "ref": null,
   "props": {
     "className": "fp-FileItem_FileName fp-FileItem_FileName-directory",
-    "children": "sample"
+    "children": "bar/"
   },
   "_owner": null,
   "_store": {}
@@ -136,18 +124,6 @@ exports['File name component should make another color if item is symbolic link 
   "ref": null,
   "props": {
     "className": "fp-FileItem_FileName fp-FileItem_FileName-symlink",
-    "children": "sample.txt"
-  },
-  "_owner": null,
-  "_store": {}
-}
-
-exports['File name component should make another color if item have mark 1'] = {
-  "type": "span",
-  "key": null,
-  "ref": null,
-  "props": {
-    "className": "fp-FileItem_FileName fp-FileItem_FileName-symlink fp-FileItem_FileName-marked",
     "children": "sample.txt"
   },
   "_owner": null,

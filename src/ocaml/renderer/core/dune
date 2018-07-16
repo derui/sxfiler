@@ -6,8 +6,10 @@
             js_of_ocaml.weak
             jsoo_reactjs
             lwt
+            logs.browser
             jsonrpc-ocaml.jsoo
+            ppx_deriving.runtime
             sxfiler.rpc.jsoo
             sxfiler.core
             sxfiler.types sxfiler.types.jsoo)
- (preprocess (pps js_of_ocaml-ppx)))
+ (preprocess (pps ppx_deriving.std js_of_ocaml-ppx)))

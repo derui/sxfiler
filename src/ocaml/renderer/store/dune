@@ -1,0 +1,9 @@
+(library
+ (name sxfiler_renderer_store)
+ (public_name sxfiler.renderer.store)
+ (modes byte)
+ (libraries js_of_ocaml
+            sxfiler.core
+            sxfiler.renderer.core
+            sxfiler.types sxfiler.types.jsoo)
+ (preprocess (pps js_of_ocaml-ppx)))

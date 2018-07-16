@@ -12,9 +12,8 @@ module File_tree = struct
   }
 
   let make order =
-    let table = Jstable.create () in
     {
-      scanners = table;
+      scanners = Jstable.create ();
       scanner_order = order;
     }
 

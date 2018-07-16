@@ -9,5 +9,6 @@
             lwt
             sxfiler.core
             sxfiler.types sxfiler.types.jsoo
-            sxfiler.renderer.core)
+            sxfiler.renderer.core
+            sxfiler.renderer.store)
  (preprocess (pps js_of_ocaml-ppx)))

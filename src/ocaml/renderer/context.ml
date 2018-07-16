@@ -1,17 +1,19 @@
 (** Type for current renderer context. User should use this if call RPC, lookup state, or update state. *)
 module C = Sxfiler_renderer_core
+module S = Sxfiler_renderer_store
 
 module Core = struct
+  type store = S.App.Store.t
   type t = {
-    mutable store: C.Store_group.t;
+    mutable store: S.App.Store.t;
     rpc: (module Rpc.Rpc);
     locator: (module C.Locator_intf.S);
   }
 
-  (** [get_store t ~tag] is helper function to get store directly.  *)
-  let get_store t ~tag = C.Store_group.get t.store ~tag
+  let get_store {store;_} = store
 
-  let subscribe t event = t.store <- C.Store_group.subscribe t.store ~event
+  let subscribe t f = S.App.Store.subscribe t.store
+      ~f:(fun _ -> f t.store)
 
   (** [execute instance param] execute behavior [instance] with [param]. *)
   let execute
@@ -28,15 +30,18 @@ end
 
 let make rpc locator =
   let module C = Sxfiler_renderer_core in
-  let group = C.Store_group.create () in
-  let group = C.Store_group.set group ~tag:Store.config ~v:(Store.Config_store.make ()) in
-  let group = C.Store_group.set group ~tag:Store.viewer_stacks ~v:(Store.Viewer_stacks_store.make ()) in
-  let group = C.Store_group.set group ~tag:Store.layout ~v:(Store.Layout_store.make ()) in
+  let config = S.Config.(Store.make @@ State.make ())
+  and viewer_stacks = S.Viewer_stacks.(Store.make @@ State.make (Const.scanner_1, Const.scanner_2))
+  and layout = S.Layout.(Store.make @@ State.make ()) in
+  let state = S.App.State.make ~config ~layout ~viewer_stacks in
   (module struct
+    type store = S.App.Store.t
     module Context = Core
     let instance = {
-      Core.store = group;
+      Core.store = S.App.Store.make state;
       rpc;
       locator;
     }
-  end : C.Context_intf.Instance)
+  end : C.Context_intf.Instance with type store = S.App.Store.t)
+
+module type Instance = C.Context_intf.Instance with type store = S.App.Store.t

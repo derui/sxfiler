@@ -2,10 +2,11 @@
 module T = Sxfiler_types
 module R = Jsoo_reactjs
 module C = Sxfiler_renderer_core
+module S = Sxfiler_renderer_store
 
 module Component = R.Component.Make_stateless(struct
     class type t = object
-      method context: (module C.Context_intf.Instance) Js.readonly_prop
+      method context: (module Context.Instance) Js.readonly_prop
     end
   end)
 
@@ -17,11 +18,10 @@ let layout_container ~key stack  =
     C_viewer_stack.component
 
 let component = Component.make @@ fun props ->
-  let module I = (val props##.context : C.Context_intf.Instance) in
-  let config = I.Context.get_store I.instance ~tag:Store.config in
-  let config' = Store.Config_store.get config in
-  let viewer_stacks = I.Context.get_store I.instance ~tag:Store.viewer_stacks in
-  let viewer_stacks' = Store.Viewer_stacks_store.get viewer_stacks in
+  let module I = (val props##.context : Context.Instance) in
+  let store = I.Context.get_store I.instance in
+  let config' = S.Config.Store.get @@ S.App.(State.config @@ Store.get store) in
+  let viewer_stacks' = S.Viewer_stacks.Store.get @@ S.App.(State.viewer_stacks @@ Store.get store) in
   let module C = T.Configuration in
   let class_name = match config'.C.viewer.C.Viewer.stack_layout with
     | T.Types.Layout.Side_by_side -> Classnames.to_string [
