@@ -22,6 +22,5 @@ let component = Component.make (fun props ->
       end) C_file_list.component
     in
 
-    let props = R.element_spec ~class_name:"fp-FileListViewer" () in
-    R.Dom.of_tag `div ~props ~children:(List.map to_component trees)
+    R.fragment ~key:"file-lists" @@ List.map to_component trees
   )

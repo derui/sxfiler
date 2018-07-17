@@ -116,7 +116,7 @@ let content =
     in
     let children = List.concat [children;[resize_sensor;scroll_bar]] in
     let _ref e = R.Ref_table.add ~key:key_of_filelist ~value:e this##.nodes in
-    let props = R.(element_spec ~class_name:"fp-FileList" ()) in
+    let props = R.(element_spec ~class_name:"fp-FileList_Content" ()) in
     R.Dom.of_tag `ul ~_ref ~props ~children
   in
   Content.make @@ spec render
@@ -141,6 +141,6 @@ let component = Component.make (fun props ->
         val focused = props##.focused
       end) content
     in
-    let props = R.element_spec ~class_name:"fp-FileListContainer" () in
+    let props = R.element_spec ~class_name:"fp-FileList" () in
     R.Dom.of_tag `div ~key:"content" ~props ~children:[header; content]
   )
