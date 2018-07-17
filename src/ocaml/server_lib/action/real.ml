@@ -5,6 +5,10 @@ open Action_intf
 open Sxfiler_core
 
 module No_side_effect : No_side_effect = struct
+  let resolve_realpath path =
+    let path = Path.of_string (module System.Real) path in
+    Path.resolve path |> Path.to_string
+
   let read_dir ~directory =
     let module T = Sxfiler_types_yojson in
     let items = Sys.readdir directory |> Array.to_list in

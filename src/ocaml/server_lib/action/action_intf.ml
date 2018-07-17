@@ -4,6 +4,11 @@ open Sxfiler_types_yojson
     to do not apply changes file system.
 *)
 module type No_side_effect = sig
+  (** [resolve_realpath path] gets the absolute path of [directory].
+      If [path] is relative, returns absolute path of current working directory by app.
+  *)
+  val resolve_realpath: string -> string
+
   (** [read_dir ~directory] take the list of nodes in [directory]. *)
   val read_dir: directory:string -> Node.t list Lwt.t
 end

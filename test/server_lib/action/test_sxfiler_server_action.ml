@@ -100,6 +100,18 @@ let real_test = [
                                                Filename.concat path "file2"] nodes;
       Lwt.return_unit
     );
+  "get realpath of absolute path", `Quick, (fun () ->
+      let module R = A.Real in
+      let expected = Filename.dir_sep ^ Filename.concat "foo" "bar" in
+      Alcotest.(check string) "absolute path" expected (R.No_side_effect.resolve_realpath expected)
+    );
+  "get realpath of relative path", `Quick, (fun () ->
+      let module R = A.Real in
+      let cwd = Sys.getcwd () in
+      let path = "foo" in
+      Alcotest.(check string) "absolute path" (Filename.concat cwd  path)
+        (R.No_side_effect.resolve_realpath ("./" ^ path))
+    );
 ]
 
 let () =
