@@ -16,8 +16,9 @@ module Scanner = struct
       let plan = `No_plan
       let apply _ params action =
         let module Action = (val action : A.Instance) in
-        let%lwt snapshot = Action.No_side_effect.read_dir ~directory:params.location in
-        Lwt.return @@ `Update_scanner (params.name, params.location, snapshot)
+        let location = Action.No_side_effect.resolve_realpath params.location in
+        let%lwt snapshot = Action.No_side_effect.read_dir ~directory:location in
+        Lwt.return @@ `Update_scanner (params.name, location, snapshot)
     end
 
     include Task
