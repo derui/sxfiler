@@ -1,29 +1,6 @@
 (* [Configuration] module should be able to convert between json and ocaml.  *)
 open Sxfiler_types.Configuration
 
-module Key_maps = struct
-  include Key_maps
-
-  module Js = struct
-    type t = {
-      default: Yojson.Safe.json;
-      file_list: Yojson.Safe.json [@key "fileList"];
-    } [@@deriving yojson]
-  end
-
-  let to_yojson : t -> Yojson.Safe.json = fun t ->
-    Js.to_yojson {Js.default = Key_map.to_yojson t.default;
-                  file_list = Key_map.to_yojson t.file_list}
-
-  let of_yojson : Yojson.Safe.json -> t = fun json ->
-    match Js.of_yojson json with
-    | Error _ -> Printf.eprintf "TODO parse error"; default
-    | Ok js -> {
-        default = Key_map.of_yojson js.default;
-        file_list = Key_map.of_yojson js.file_list;
-      }
-end
-
 (** [Viewer] provides configuration for viewer. This configuration will not manage
     on server side.
 *)
@@ -34,7 +11,6 @@ module Viewer = struct
     type t = {
       current_stack_name:string [@key "currentStackName"];
       stack_layout:string [@key "stackLayout"];
-      key_maps:Yojson.Safe.json [@key "keyMaps"];
     } [@@deriving yojson]
   end
 
@@ -43,7 +19,6 @@ module Viewer = struct
     let js = {
       Js.current_stack_name = t.current_stack_name;
       stack_layout = T.Layout.to_string t.stack_layout;
-      key_maps = Key_maps.to_yojson t.key_maps;
     }
     in Js.to_yojson js
 
@@ -55,7 +30,6 @@ module Viewer = struct
       {
         current_stack_name = js.Js.current_stack_name;
         stack_layout = T.Layout.of_string js.Js.stack_layout;
-        key_maps = Key_maps.of_yojson js.key_maps;
       }
 end
 

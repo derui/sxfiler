@@ -16,10 +16,8 @@ let key_handler ~context ev =
   let module Behavior = Be.Default_key_handler in
   let module I = (val context: Context.Instance) in
   let app = S.App.Store.get @@ I.Context.get_store I.instance in
-  let config = S.Config.Store.get @@ S.App.State.config app in
-  let module C = T.Configuration in
-  let key_map = config.C.viewer.C.Viewer.key_maps.C.Key_maps.default in
-  I.Context.execute I.instance (module Behavior) (key_map, ev)
+  let keymap = S.Keymap.Store.get @@ S.App.State.keymap app in
+  I.Context.execute I.instance (module Behavior) (keymap, ev)
 
 let other_props =
   Some (object%js

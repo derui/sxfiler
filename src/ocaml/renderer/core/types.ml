@@ -1,5 +1,22 @@
 module Ty = Sxfiler_types
 
+module Viewer_module = struct
+  type t =
+    | Default
+    | File_tree
+    | Third_party of string
+
+  let of_string = function
+    | "default" -> Default
+    | "file_tree" -> File_tree
+    | _ as m -> Third_party m
+
+  let to_string = function
+    | Default -> "default"
+    | File_tree -> "file_tree"
+    | Third_party s -> s
+end
+
 module File_tree = struct
   type tree = {
     scanner: Ty.Scanner.t;

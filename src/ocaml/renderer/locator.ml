@@ -11,5 +11,10 @@ module Make(R:Rpc_intf.Rpc) : S = struct
       module Repo = Repository.Scanner
       let instance = Repo.make ()
     end : Repository_intf.Scanner_instance)
+
+    module Keybindings = struct
+      module Repo = Repository.Keybindings
+      let instance = Repo.make ()
+    end
   end
 end

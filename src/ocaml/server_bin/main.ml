@@ -49,10 +49,11 @@ let handler
       ~body:(Sexplib.Sexp.to_string_hum (Cohttp.Request.sexp_of_t req))
       ()
 
-let initialize_modules ~migemo =
-  Completion_op.initialize migemo
+let initialize_modules ~migemo ~keybindings =
+  let%lwt () = Completion_op.initialize migemo in
+  Global.Keybindings.update keybindings
 
-let start_server _ port ~config:_ ~keymaps:_ ~migemo:_ =
+let start_server _ port ~config:_ =
   let conn_closed (ch,_) =
     Logs.info @@ fun m -> m ~tags:(Logger.Tags.module_main ()) "Connection closed: %s closed"
       (Sexplib.Sexp.to_string_hum (Conduit_lwt_unix.sexp_of_flow ch))
@@ -105,10 +106,7 @@ let load_configuration config =
   Some (Y.of_yojson config)
 
 (* Load keymaps from specified file *)
-let load_keymaps file =
-  let module Y = Sxfiler_types_yojson.Configuration in
-  let config = Yojson.Safe.from_file file in
-  Some (Y.Key_maps.of_yojson config)
+let load_keybindings file = Some (Yojson.Safe.from_file file)
 
 (* Get config from file, but get default when some error happenned  *)
 let get_config f config ~default =
@@ -137,7 +135,7 @@ let () =
   let module C = Sxfiler_types.Configuration in
   let port = 50879 in
   let config = get_config load_configuration !config ~default:C.default in
-  let keymaps = get_config load_keymaps !key_maps ~default:C.Key_maps.default in
+  let keybindings = get_config load_keybindings !key_maps ~default:`Null in
   let migemo = load_migemo !dict_dir in
 
   (* setup task runner and finalizer *)
@@ -148,5 +146,5 @@ let () =
       runner_thread
     );
 
-  Lwt_main.run (initialize_modules ~migemo
-                >>= fun () -> start_server "localhost" port ~migemo ~config ~keymaps)
+  Lwt_main.run (initialize_modules ~migemo ~keybindings
+                >>= fun () -> start_server "localhost" port ~config)

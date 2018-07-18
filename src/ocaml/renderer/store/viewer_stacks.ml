@@ -11,6 +11,7 @@ module State = struct
     | C.Message.Update_scanner scanner ->
       let file_tree = C.Types.File_tree.update t.file_tree ~scanner in
       {file_tree}
+    | _ -> t
 
   let equal _ _ = false
 end

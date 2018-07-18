@@ -26,3 +26,25 @@ module Scanner : Scanner = struct
     t.subscribers <- f :: t.subscribers
 
 end
+
+module Keybindings : Keybindings = struct
+  type t = {
+    mutable subscribers: (Key_map.t -> unit) list;
+    mutable key_map: Key_map.t;
+  }
+
+  let make () = {
+    subscribers = [];
+    key_map = Key_map.empty;
+  }
+
+  let get {key_map;_} = key_map
+
+  let store t key_map =
+    t.key_map <- key_map;
+    List.iter (fun f -> f key_map) t.subscribers
+
+  let on_change t f =
+    t.subscribers <- f :: t.subscribers
+
+end

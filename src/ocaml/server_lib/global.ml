@@ -13,7 +13,6 @@ module Completion = C.Statable.Make(struct
     let empty () = None
   end)
 
-
 module Task_runner : sig
   val get: unit -> (module T.Runner.Instance)
 end = struct
@@ -26,3 +25,9 @@ end = struct
       v
     | Some t -> t
 end
+
+module Keybindings = C.Statable.Make(struct
+    type t = Yojson.Safe.json
+
+    let empty () = `Null
+  end)

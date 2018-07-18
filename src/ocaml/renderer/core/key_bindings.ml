@@ -10,10 +10,10 @@ type t = action Key_map.t
 
 let empty = Key_map.empty
 
-let add key_map ~key ~action = Key_map.add key action key_map
-let remove key_map ~key = Key_map.remove key key_map
+let add key_bindings ~key ~action = Key_map.add key action key_bindings
+let remove key_bindings ~key = Key_map.remove key key_bindings
 
 (** Dispatch key to handler. Return a message if the handler binded with a key *)
-let find key_map ~key = Key_map.find_opt key key_map
+let find key_bindings ~key = Key_map.find_opt key key_bindings
 
 let dump t = Key_map.fold (fun key v list -> (key, v) :: list) t []
