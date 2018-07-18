@@ -34,7 +34,6 @@ module State = struct
     && Layout.(State.equal (Store.get v1.layout) (Store.get v2.layout))
     && Viewer_stacks.(State.equal (Store.get v1.viewer_stacks) (Store.get v2.viewer_stacks))
     && Keymap.(State.equal (Store.get v1.keymap) (Store.get v2.keymap))
-
 end
 
 module Store = C.Store.Make_group(State)(struct

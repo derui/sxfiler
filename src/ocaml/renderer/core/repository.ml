@@ -48,3 +48,25 @@ module Keybindings : Keybindings = struct
     t.subscribers <- f :: t.subscribers
 
 end
+
+module Configuration : Configuration = struct
+  type t = {
+    mutable subscribers: (T.Configuration.t -> unit) list;
+    mutable configuration: T.Configuration.t;
+  }
+
+  let make () = {
+    subscribers = [];
+    configuration = T.Configuration.default;
+  }
+
+  let get {configuration;_} = configuration
+
+  let store t v =
+    t.configuration <- v;
+    List.iter (fun f -> f v) t.subscribers
+
+  let on_change t f =
+    t.subscribers <- f :: t.subscribers
+
+end

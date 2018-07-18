@@ -41,3 +41,25 @@ module type Keybindings_instance = sig
   module Repo : Keybindings
   val instance : Repo.t
 end
+
+(** Repository for configuration. *)
+module type Configuration = sig
+  type t
+
+  (** [make ()] makes a new instance of repository. *)
+  val make: unit -> t
+
+  (** [get t ] should return instance of {!Key_map} *)
+  val get: t -> Sxfiler_types.Configuration.t
+
+  (** [store t scanner] should persistence a instance [scanner] *)
+  val store: t -> Sxfiler_types.Configuration.t -> unit
+
+  (** [on_change t f] appends [f] to subscriber in [t]. This function is mutable. *)
+  val on_change: t -> (Sxfiler_types.Configuration.t -> unit) -> unit
+end
+
+module type Configuration_instance = sig
+  module Repo : Configuration
+  val instance : Repo.t
+end

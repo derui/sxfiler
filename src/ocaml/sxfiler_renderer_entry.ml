@@ -41,6 +41,10 @@ let () =
   Websocket_handler.add websocket_handler ~handler:(notification_handler rpc_notification_server);
 
   websocket##.onopen := Dom.handler (fun _ ->
+      (* Get current properties *)
+      Ctx.(Context.execute Ctx.instance (module B.Refresh_keybindings) ()) |> Lwt.ignore_result;
+      Ctx.(Context.execute Ctx.instance (module B.Refresh_configuration) ()) |> Lwt.ignore_result;
+
       List.iter (fun name ->
           let module R = Sxfiler_rpc in
           let param = Some {

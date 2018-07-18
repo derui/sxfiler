@@ -49,11 +49,12 @@ let handler
       ~body:(Sexplib.Sexp.to_string_hum (Cohttp.Request.sexp_of_t req))
       ()
 
-let initialize_modules ~migemo ~keybindings =
+let initialize_modules ~migemo ~keybindings ~config =
   let%lwt () = Proc_completion.initialize migemo in
-  Global.Keybindings.update keybindings
+  let%lwt () = Global.Keybindings.update keybindings in
+  Global.Configuration.update config
 
-let start_server _ port ~config:_ =
+let start_server _ port =
   let conn_closed (ch,_) =
     Logs.info @@ fun m -> m ~tags:(Logger.Tags.module_main ()) "Connection closed: %s closed"
       (Sexplib.Sexp.to_string_hum (Conduit_lwt_unix.sexp_of_flow ch))
@@ -137,7 +138,7 @@ let () =
   let module C = Sxfiler_types.Configuration in
   let port = 50879 in
   let config = get_config load_configuration !config ~default:C.default in
-  let keybindings = get_config load_keybindings !key_maps ~default:`Null in
+  let keybindings = get_config load_keybindings !key_maps ~default:(`Assoc []) in
   let migemo = load_migemo !dict_dir in
 
   (* setup task runner and finalizer *)
@@ -148,5 +149,5 @@ let () =
       runner_thread
     );
 
-  Lwt_main.run (initialize_modules ~migemo ~keybindings
-                >>= fun () -> start_server "localhost" port ~config)
+  Lwt_main.run (initialize_modules ~migemo ~keybindings ~config
+                >>= fun () -> start_server "localhost" port)

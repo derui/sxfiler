@@ -18,7 +18,7 @@ module Get_sync
 
 let expose server =
   let module S = Jsonrpc_ocaml_yojson.Server in
-  let module W = Sxfiler_rpc.Scanner in
+  let module W = Sxfiler_rpc.Configuration in
 
   let module Get_sync = Get_sync(Global.Configuration) in
 

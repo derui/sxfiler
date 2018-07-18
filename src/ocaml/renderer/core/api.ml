@@ -80,3 +80,16 @@ module Keybindings = struct
     let result_of_json v = v
   end
 end
+
+module Configuration = struct
+  module Get_sync : Api_def with type params = R.Configuration.Get_sync.params
+                             and type result = R.Configuration.Get_sync.result = struct
+    include R.Configuration.Get_sync
+    type json = < > Js.t
+
+    open Rj.Configuration.Get_sync
+
+    let params_to_json _ = None
+    let result_of_json v = result_of_json @@ Js.Unsafe.coerce v
+  end
+end
