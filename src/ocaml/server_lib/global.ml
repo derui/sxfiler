@@ -31,3 +31,9 @@ module Keybindings = C.Statable.Make(struct
 
     let empty () = `Null
   end)
+
+module Configuration = C.Statable.Make(struct
+    type t = Sxfiler_types.Configuration.t
+
+    let empty () = Sxfiler_types.Configuration.default
+  end)

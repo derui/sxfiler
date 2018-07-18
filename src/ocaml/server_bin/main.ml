@@ -64,6 +64,8 @@ let start_server _ port ~config:_ =
 
   let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Completion_op) in
   let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Scanner_op) in
+  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Configuration_op) in
+  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Keybindings_op) in
 
   Cohttp_lwt_unix.Server.create
     ~mode:(`TCP (`Port port))
