@@ -98,5 +98,5 @@ let proc_scanner = [
 ]
 
 let testcases = [
-  "scanner procedure : scanner", proc_scanner;
+  "rpc procedure : scanner", proc_scanner;
 ]
