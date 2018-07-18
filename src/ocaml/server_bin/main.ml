@@ -50,7 +50,7 @@ let handler
       ()
 
 let initialize_modules ~migemo ~keybindings =
-  let%lwt () = Completion_op.initialize migemo in
+  let%lwt () = Proc_completion.initialize migemo in
   Global.Keybindings.update keybindings
 
 let start_server _ port ~config:_ =
@@ -62,10 +62,10 @@ let start_server _ port ~config:_ =
   let module I = (val Global.Task_runner.get (): T.Runner.Instance) in
   let rpc_server = Jsonrpc_server.make () in
 
-  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Completion_op) in
-  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Scanner_op) in
-  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Configuration_op) in
-  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Keybindings_op) in
+  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_completion) in
+  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_scanner) in
+  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_configuration) in
+  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_keybindings) in
 
   Cohttp_lwt_unix.Server.create
     ~mode:(`TCP (`Port port))

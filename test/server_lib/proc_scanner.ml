@@ -8,7 +8,7 @@ module A = Sxfiler_server_action
 module Jy = Jsonrpc_ocaml_yojson
 module Rpcy = Sxfiler_rpc_yojson
 
-let scanner_op = [
+let proc_scanner = [
   Alcotest_lwt.test_case "create new scanner if it does not exists" `Quick (fun switch () ->
       let task_finished, task_finished_waken = Lwt.wait () in
       let module Task = Sxfiler_server_task in
@@ -23,7 +23,7 @@ let scanner_op = [
         end) in
 
       let module Tasker = (val Task.Runner.make (): Task.Runner.Instance) in
-      let module Make_sync = S.Scanner_op.Make_sync(A.Dummy)(State)(Tasker) in
+      let module Make_sync = S.Proc_scanner.Make_sync(A.Dummy)(State)(Tasker) in
       let%lwt () = Tasker.Runner.add_task_handler Tasker.instance ~name:"foo" ~handler:Handler.handle in
       let stopper = Tasker.Runner.start Tasker.instance (module State) in
 
@@ -60,7 +60,7 @@ let scanner_op = [
           type t = C.Root_state.t
           let empty () = C.Root_state.empty
         end) in
-      let module Make_sync = S.Scanner_op.Make_sync(A.Dummy)(State) in
+      let module Make_sync = S.Proc_scanner.Make_sync(A.Dummy)(State) in
       let module Handler = S.Task_result_handler.Make(struct
           let unixtime () = Int64.zero
         end)(struct
@@ -68,7 +68,7 @@ let scanner_op = [
         end) in
 
       let module Tasker = (val Task.Runner.make (): Task.Runner.Instance) in
-      let module Make_sync = S.Scanner_op.Make_sync(A.Dummy)(State)(Tasker) in
+      let module Make_sync = S.Proc_scanner.Make_sync(A.Dummy)(State)(Tasker) in
       let%lwt () = Tasker.Runner.add_task_handler Tasker.instance ~name:"foo" ~handler:Handler.handle in
 
       let req = Jy.Request.{
@@ -98,5 +98,5 @@ let scanner_op = [
 ]
 
 let testcases = [
-  "scanner rpc operations", scanner_op;
+  "scanner procedure : scanner", proc_scanner;
 ]
