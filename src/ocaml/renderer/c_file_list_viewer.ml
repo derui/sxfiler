@@ -5,6 +5,7 @@ module C = Sxfiler_renderer_core
 
 module Component = R.Component.Make_stateless (struct
     class type t = object
+      method context: (module Context.Instance) Js.readonly_prop
       method viewerState: C.Types.File_tree.t Js.readonly_prop
       method focused: bool Js.readonly_prop
     end
@@ -22,5 +23,12 @@ let component = Component.make (fun props ->
       end) C_file_list.component
     in
 
-    R.fragment ~key:"file-lists" @@ List.map to_component trees
+    let lifecycle = R.create_element ~key:"lifecycle"
+        ~props:(object%js
+          val context = props##.context
+          val viewerModule = C.Types.Viewer_module.File_tree
+        end)
+        C_context_lifecycle.component
+    in
+    R.fragment ~key:"file-lists" @@ lifecycle :: List.map to_component trees
   )
