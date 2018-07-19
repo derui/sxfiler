@@ -1,5 +1,18 @@
 module Ty = Sxfiler_types
 
+(** This module provides storing context indicators. *)
+module Viewer_context = struct
+  type t = {
+      (* the context value indicates current focusing element is file tree.  *)
+      in_file_tree: bool;
+    }
+
+  (** [empty] returns empty element of [t] *)
+  let empty = {
+      in_file_tree = false;
+    }
+end
+
 module Viewer_module = struct
   type t =
     | Default

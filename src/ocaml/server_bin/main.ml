@@ -127,11 +127,11 @@ let () =
 
   let dict_dir = ref "" in
   let config = ref "config.json"
-  and key_maps = ref "keymaps.json" in
+  and key_maps = ref "keymap.json" in
   let arg_specs = [
     ("-d", Arg.String (fun v -> dict_dir := v), "Directory of migemo dictionary");
     ("--config", Arg.String (fun v -> config := v), "File path for server configuration");
-    ("--keymaps", Arg.String (fun v -> key_maps := v), "File path for key maps");
+    ("--keymap", Arg.String (fun v -> key_maps := v), "File path for key maps");
   ] in
   Arg.parse arg_specs ignore "";
 

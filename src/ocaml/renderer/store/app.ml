@@ -8,13 +8,15 @@ module State = struct
     layout: Layout.Store.t;
     viewer_stacks: Viewer_stacks.Store.t;
     keymap: Keymap.Store.t;
+    viewer_context: Viewer_context.Store.t;
   }
 
-  let make ~config ~layout ~viewer_stacks ~keymap = {
+  let make ~config ~layout ~viewer_stacks ~keymap ~viewer_context = {
     config;
     layout;
     viewer_stacks;
     keymap;
+    viewer_context;
   }
 
   let reduce t message =
@@ -22,6 +24,7 @@ module State = struct
     Layout.Store.dispatch t.layout message;
     Viewer_stacks.Store.dispatch t.viewer_stacks message;
     Keymap.Store.dispatch t.keymap message;
+    Viewer_context.Store.dispatch t.viewer_context message;
     t
 
   let config {config;_} = config
@@ -34,18 +37,16 @@ module State = struct
     && Layout.(State.equal (Store.get v1.layout) (Store.get v2.layout))
     && Viewer_stacks.(State.equal (Store.get v1.viewer_stacks) (Store.get v2.viewer_stacks))
     && Keymap.(State.equal (Store.get v1.keymap) (Store.get v2.keymap))
+    && Viewer_context.(State.equal (Store.get v1.viewer_context) (Store.get v2.viewer_context))
 end
 
 module Store = C.Store.Make_group(State)(struct
     type state = State.t
 
     let watch_state callback state =
-      Config.Store.subscribe state.State.config
-        ~f:(fun _ -> callback state);
-      Layout.Store.subscribe state.State.layout
-        ~f:(fun _ -> callback state);
-      Viewer_stacks.Store.subscribe state.State.viewer_stacks
-        ~f:(fun _ -> callback state);
-      Keymap.Store.subscribe state.State.keymap
-        ~f:(fun _ -> callback state)
+      Config.Store.subscribe state.State.config ~f:(fun _ -> callback state);
+      Layout.Store.subscribe state.State.layout ~f:(fun _ -> callback state);
+      Viewer_stacks.Store.subscribe state.State.viewer_stacks ~f:(fun _ -> callback state);
+      Keymap.Store.subscribe state.State.keymap ~f:(fun _ -> callback state);
+      Viewer_context.Store.subscribe state.State.viewer_context ~f:(fun _ -> callback state)
   end)

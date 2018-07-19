@@ -18,34 +18,34 @@ module Core = struct
     | _ as v -> Unknown v
 end
 
-module File_list_viewer = struct
+module File_list = struct
   type t =
       Next_item
     | Prev_item
-    | Leave_directory
+    | Parent_directory
     | Enter_directory
     | Unknown of string
 
-  let module_name = "file_list_viewer"
+  let module_name = "file_list"
 
   let to_string = function
     | Next_item -> "next_item"
     | Prev_item -> "prev_item"
-    | Leave_directory -> "leave_directory"
+    | Parent_directory -> "parent_directory"
     | Enter_directory -> "enter_directory"
     | Unknown v -> v
 
   let of_string = function
     | "next_item" -> Next_item
     | "prev_item" -> Prev_item
-    | "leave_directory" -> Leave_directory
+    | "parent_directory" -> Parent_directory
     | "enter_directory" -> Enter_directory
     | _ as v -> Unknown v
 end
 
 type t =
     Core of Core.t
-  | File_list_viewer of File_list_viewer.t
+  | File_list of File_list.t
   | Thrid_party of string * string
 
 let action_of_string module_name action =
@@ -66,5 +66,5 @@ let of_string action =
 
 let to_string = function
   | Core v -> Core.module_name ^ ":" ^ Core.to_string v
-  | File_list_viewer v -> File_list_viewer.module_name ^ ":" ^ File_list_viewer.to_string v
+  | File_list v -> File_list.module_name ^ ":" ^ File_list.to_string v
   | Thrid_party (name, action) -> name ^ ":" ^ action

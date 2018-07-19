@@ -1,0 +1,6 @@
+{
+  "file_tree": [
+    {"action": "file_list:next_item", "key": "j"},
+    {"action": "file_list:prev_item", "key": "k"}
+  ]
+}
