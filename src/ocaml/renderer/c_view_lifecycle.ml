@@ -20,13 +20,11 @@ let component =
   let spec = R.component_spec
       ~component_did_mount:(fun this ->
           let module Context = (val this##.props##.context : Context.Instance) in
-          let store = Context.(Context.get_store instance) in
-          Context.(Context.execute instance (module Be.Enter_view) (store, this##.props##.viewerModule))
+          Context.(Context.execute instance (module Be.Enter_view) this##.props##.viewerModule)
         )
       ~component_will_unmount:(fun this ->
           let module Context = (val this##.props##.context : Context.Instance) in
-          let store = Context.(Context.get_store instance) in
-          Context.(Context.execute instance (module Be.Leave_view) (store, this##.props##.viewerModule))
+          Context.(Context.execute instance (module Be.Leave_view) this##.props##.viewerModule)
         )
       (fun _ -> R.empty ())
   in

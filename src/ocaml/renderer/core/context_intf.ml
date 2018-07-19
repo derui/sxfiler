@@ -1,6 +1,7 @@
 (** Context should be execute behavior and manage store group.  *)
 
 module type S = sig
+  type message
   type store
 
   (** Type for current renderer context. User should use this if call RPC, lookup state, or update state. *)
@@ -14,14 +15,15 @@ module type S = sig
   (** [execute instance param] execute behavior [instance] with [param]. *)
   val execute:
     t ->
-    (module Behavior_intf.S with type param = 'p and type result = 'r) ->
+    (module Behavior_intf.S with type param = 'p and type result = 'r and type message = message) ->
     'p ->
     'r
 end
 
 (** Instance of context. *)
 module type Instance = sig
+  type message
   type store
-  module Context : S with type store = store
+  module Context : S with type store = store and type message = message
   val instance : Context.t
 end

@@ -13,11 +13,10 @@ module Component = R.Component.Make_stateful (struct
   end)
 
 let key_handler ~context ev =
-  let module Behavior = Be.Default_key_handler in
   let module I = (val context: Context.Instance) in
   let app = S.App.Store.get @@ I.Context.get_store I.instance in
   let keymap = S.Keymap.Store.get @@ S.App.State.keymap app in
-  I.Context.execute I.instance (module Behavior) (keymap, ev)
+  I.Context.execute I.instance (module Be.Default_key_handler) (keymap, ev)
 
 let other_props =
   Some (object%js

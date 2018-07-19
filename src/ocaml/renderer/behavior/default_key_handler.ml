@@ -4,6 +4,7 @@ module T = Sxfiler_types_jsoo
 module C = Sxfiler_renderer_core
 module R = Jsoo_reactjs
 
+type message = C.Message.t
 type t = unit
 
 type param = (C.Key_map.t * R.Event.Keyboard_event.t)
@@ -33,7 +34,7 @@ let handle_key_event ~ev ~bindings =
 
 let make _ = ()
 
-let execute () (key_map, ev) =
+let execute () _ (key_map, ev) =
   let bindings = C.Key_map.find key_map ~module_type:C.Types.Viewer_module.Default in
   match bindings with
   | None -> ()

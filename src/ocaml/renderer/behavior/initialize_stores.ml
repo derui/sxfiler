@@ -2,6 +2,7 @@
 module T = Sxfiler_types_jsoo
 module C = Sxfiler_renderer_core
 
+type message = C.Message.t
 type t = {
   scanner_repo: (module C.Repository_intf.Scanner_instance);
 }
@@ -15,7 +16,7 @@ let make locator =
     scanner_repo = (module L.Repository.Scanner)
   }
 
-let execute t store =
+let execute t _ store =
   let module R = (val t.scanner_repo) in let open R in
   let module Store = (val store : C.Store_intf.Instance with type message = C.Message.t) in
   Repo.on_change instance @@ fun v ->

@@ -1,6 +1,8 @@
 
 (** The signature of behavior. *)
 module type S = sig
+  type message
+
   type t
 
   (** type of parameter for execute function *)
@@ -12,6 +14,6 @@ module type S = sig
   (** [make constructor] return behavior instance. *)
   val make: (module Locator_intf.S) -> t
 
-  (** [execute param] do behavior with [param]  *)
-  val execute: t -> param -> result
+  (** [execute t dispatcher param] do behavior with [param]  *)
+  val execute: t -> (module Dispatcher_intf.Instance with type message = message) -> param -> result
 end

@@ -2,6 +2,7 @@
 module T = Sxfiler_types_jsoo
 module C = Sxfiler_renderer_core
 
+type message = C.Message.t
 type t = {
   rpc: (module C.Rpc_intf.Rpc);
   repository: (module C.Repository_intf.Scanner_instance)
@@ -16,7 +17,7 @@ let make locator =
    repository = (module L.Repository.Scanner)
   }
 
-let execute t name =
+let execute t _ name =
 
   let module RI = Sxfiler_rpc in
   C.Rpc.Client.request t.rpc (module C.Api.Scanner.Get_sync)
