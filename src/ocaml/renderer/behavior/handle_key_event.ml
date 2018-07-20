@@ -7,7 +7,7 @@ module R = Jsoo_reactjs
 type message = C.Message.t
 type t = unit
 
-type param = (C.Key_map.t * R.Event.Keyboard_event.t)
+type param = (C.Key_map.t * C.Types.Mode.t * R.Event.Keyboard_event.t)
 type result = unit
 
 let action_to_message = function
@@ -18,7 +18,7 @@ let action_to_message = function
     end
   | _ -> None
 
-let handle_key_event ~ev ~bindings =
+let event_to_message ~ev ~bindings =
   let module K = C.Key_map in
   let module KE = R.Event.Keyboard_event in
   match KE.to_event_type ev with
@@ -34,12 +34,12 @@ let handle_key_event ~ev ~bindings =
 
 let make _ = ()
 
-let execute () _ (key_map, ev) =
-  let bindings = C.Key_map.find key_map ~module_type:C.Types.Viewer_module.Default in
+let execute () _ (key_map, mode, ev) =
+  let bindings = C.Key_map.find key_map ~mode in
   match bindings with
   | None -> ()
   | Some bindings ->
-    let dispatched = handle_key_event ~ev ~bindings in
+    let dispatched = event_to_message ~ev ~bindings in
     if dispatched then begin
       ev##preventDefault; ev##stopPropagation
     end else ()

@@ -16,7 +16,8 @@ let key_handler ~context ev =
   let module I = (val context: Context.Instance) in
   let app = S.App.Store.get @@ I.Context.get_store I.instance in
   let keymap = S.Keymap.Store.get @@ S.App.State.keymap app in
-  I.Context.execute I.instance (module Be.Default_key_handler) (keymap, ev)
+  let mode = S.Config.State.mode @@ S.Config.Store.get @@ S.App.State.config app in
+  I.Context.execute I.instance (module Be.Handle_key_event) (keymap, mode, ev)
 
 let other_props =
   Some (object%js

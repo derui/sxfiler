@@ -23,12 +23,5 @@ let component = Component.make (fun props ->
       end) C_file_list.component
     in
 
-    let lifecycle = R.create_element ~key:"lifecycle"
-        ~props:(object%js
-          val context = props##.context
-          val viewerModule = C.Types.Viewer_module.File_tree
-        end)
-        C_context_lifecycle.component
-    in
-    R.fragment ~key:"file-lists" @@ lifecycle :: List.map to_component trees
+    R.fragment ~key:"file-lists" @@ List.map to_component trees
   )

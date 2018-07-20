@@ -24,7 +24,7 @@ let component = Component.make @@ fun props ->
   let config' = S.Config.Store.get @@ S.App.(State.config @@ Store.get store) in
   let viewer_stacks' = S.Viewer_stacks.Store.get @@ S.App.(State.viewer_stacks @@ Store.get store) in
   let module C = T.Configuration in
-  let class_name = match config'.C.viewer.C.Viewer.stack_layout with
+  let class_name = match (config'.S.Config.State.config).C.viewer.C.Viewer.stack_layout with
     | T.Types.Layout.Side_by_side -> Classnames.to_string [
         "fp-Layout", true;
         "fp-Layout_sideBySide", true;

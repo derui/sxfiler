@@ -1,33 +1,31 @@
 module Ty = Sxfiler_types
 
-(** This module provides storing context indicators. *)
-module Viewer_context = struct
+(* Condition defines condition to handle timing to enable key binding.*)
+module Condition = struct
   type t = {
-      (* the context value indicates current focusing element is file tree.  *)
-      in_file_tree: bool;
-    }
+    on_file_tree: bool;
+  }
 
-  (** [empty] returns empty element of [t] *)
-  let empty = {
-      in_file_tree = false;
+  class type js = object
+    method onFileTree: bool Js.readonly_prop
+  end
+
+  let to_js t = object%js
+    val onFileTree = t.on_file_tree
+  end
+
+  let of_js : js Js.t -> t = fun js ->
+    {
+      on_file_tree = js##.onFileTree;
     }
 end
 
-module Viewer_module = struct
+(** {!Mode} defines type that is current mode of view. *)
+module Mode = struct
   type t =
-    | Default
+    | Command
+    | Completion
     | File_tree
-    | Third_party of string
-
-  let of_string = function
-    | "default" -> Default
-    | "file_tree" -> File_tree
-    | _ as m -> Third_party m
-
-  let to_string = function
-    | Default -> "default"
-    | File_tree -> "file_tree"
-    | Third_party s -> s
 end
 
 module File_tree = struct
