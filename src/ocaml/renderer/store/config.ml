@@ -6,16 +6,27 @@ module State = struct
   type t = {
     config: T.Configuration.t;
     mode: C.Types.Mode.t;
+    condition: C.Types.Condition.t;
   }
 
   let make () = {
     config = T.Configuration.default;
     mode = C.Types.Mode.File_tree;
+    condition = {C.Types.Condition.on_file_tree = true};
   }
-  let reduce t _ = t
+
+  let reduce t = function
+    | C.Message.Switch_mode mode -> begin match mode with
+        | C.Types.Mode.File_tree -> {t with mode = mode;
+                                            condition = {C.Types.Condition.on_file_tree = true}
+                                    }
+        | _ -> t
+      end
+    | _ -> t
+
   let equal = (=)
 
-  let mode {mode;_} = mode
+  let condition {condition;_} = condition
 end
 
 module Store = C.Store.Make(State)

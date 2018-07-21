@@ -3,6 +3,7 @@ module VL = Sxfiler_virtualized_list
 module T = Sxfiler_types
 module R = Jsoo_reactjs
 module C = Sxfiler_renderer_core
+module S = Sxfiler_renderer_store
 
 let item_height = 18
 let key_of_filelist = "currentNode"
@@ -30,7 +31,7 @@ let header = Header.make (fun props ->
 (* content of file list *)
 module Content = R.Component.Make_stateful (struct
     class type t = object
-      method viewerState: C.Types.File_tree.tree Js.readonly_prop
+      method viewerState: S.Viewer_stacks.File_tree.tree Js.readonly_prop
       method focused: bool Js.readonly_prop
     end
   end)(struct
@@ -40,7 +41,7 @@ module Content = R.Component.Make_stateful (struct
   end)
 
 let content =
-  let module Vt = C.Types.File_tree in
+  let module Vt = S.Viewer_stacks.File_tree in
   let spec = R.component_spec
       ~constructor:(fun this _ ->
           this##.state := object%js
@@ -124,14 +125,14 @@ let content =
 (* wrapping component. *)
 module Component = R.Component.Make_stateless (struct
     class type t = object
-      method viewerState: C.Types.File_tree.tree Js.readonly_prop
+      method viewerState: S.Viewer_stacks.File_tree.tree Js.readonly_prop
       method focused: bool Js.readonly_prop
     end
   end)
 
 let component = Component.make (fun props ->
     let state = props##.viewerState in
-    let scanner = state.C.Types.File_tree.scanner in
+    let scanner = state.S.Viewer_stacks.File_tree.scanner in
     let header = R.create_element ~key:"header" ~props:(object%js
         val directory = scanner.location
         val focused = props##.focused

@@ -51,6 +51,7 @@ type t =
 let action_of_string module_name action =
   match module_name with
   | v when v = Core.module_name -> Core (Core.of_string action)
+  | v when v = File_list.module_name -> File_list (File_list.of_string action)
   | _ -> Thrid_party (module_name, action)
 
 let of_string action =

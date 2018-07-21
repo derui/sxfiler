@@ -21,6 +21,8 @@ let notification_handler server message =
   Lwt.ignore_result thread
 
 let () =
+  Logs.set_reporter @@ Logs_browser.console_reporter ();
+  Logs.set_level (Some Logs.App);
   let container = Dom_html.getElementById container_id in
 
   let websocket = connect_ws (Printf.sprintf "ws://localhost:%d" target_port) in

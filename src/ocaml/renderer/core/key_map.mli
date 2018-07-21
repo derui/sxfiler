@@ -5,18 +5,12 @@ type t
 val empty : t
 
 (** Add a new bindings with key and handler function. *)
-val add : t -> condition:Types.Condition.t -> bindings:Key_bindings.t -> t
-
-(** Remove a handler mapped with given key. *)
-val remove : t -> condition:Types.Condition.t -> t
+val add : t -> condition:Types.Condition.t -> key:string -> action:Callable_action.t -> t
 
 (** Find action that is mapped key. Return None if no any action is available
     given key from argument.
 *)
-val find : t -> condition:Types.Condition.t -> Key_bindings.t option
-
-(** [dump t] gets current key-value in [t]. *)
-val dump: t -> (Types.Condition.t * Key_bindings.t) list
+val find : t -> condition:Types.Condition.t -> Key_bindings.t
 
 (** [to_json t] returns json representation of [t]. *)
 val to_json : t -> < > Js.t
