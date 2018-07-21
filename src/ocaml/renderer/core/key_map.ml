@@ -20,12 +20,12 @@ module Original_key_binding = struct
   end
 
   let of_js : js Js.t -> t = fun js -> {
-    key = Js.to_string js##.key;
-    action = Callable_action.of_string @@ Js.to_string js##.action;
-    condition = Js.Optdef.map js##._when Types.Condition.of_js
-                |> Js.Optdef.to_option
-                |> Option.get ~default:(fun () -> Types.Condition.empty);
-  }
+      key = Js.to_string js##.key;
+      action = Callable_action.of_string @@ Js.to_string js##.action;
+      condition = Js.Optdef.map js##._when Types.Condition.of_js
+                  |> Js.Optdef.to_option
+                  |> Option.get ~default:(fun () -> Types.Condition.empty);
+    }
 end
 
 type t = Original_key_binding.t list

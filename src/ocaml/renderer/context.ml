@@ -19,24 +19,24 @@ module Core = struct
 
   let to_dispatcher_instance t =
     (module struct
-       type message = C.Message.t
-       module Dispatcher = struct
-         type message = C.Message.t
-         (* work around to avoid cyclic abbreviation. *)
-         type instance = t
-         type t = instance
-         let dispatch t message = get_store t |> Fun.flip S.App.Store.dispatch message
-       end
-       let instance = t
-     end : C.Dispatcher_intf.Instance with type message = C.Message.t)
+      type message = C.Message.t
+      module Dispatcher = struct
+        type message = C.Message.t
+        (* work around to avoid cyclic abbreviation. *)
+        type instance = t
+        type t = instance
+        let dispatch t message = get_store t |> Fun.flip S.App.Store.dispatch message
+      end
+      let instance = t
+    end : C.Dispatcher_intf.Instance with type message = C.Message.t)
 
   (** [execute instance param] execute behavior [instance] with [param]. *)
   let execute
-        (type p)
-        (type r)
-        t
-        behavior
-        (param:p) =
+      (type p)
+      (type r)
+      t
+      behavior
+      (param:p) =
     let module Be = (val behavior : C.Behavior_intf.S with type param = p
                                                        and type result = r
                                                        and type message = message) in
@@ -57,10 +57,10 @@ let make : (module Rpc.Rpc) -> (module C.Locator_intf.S) -> (module Instance) = 
   and keymap = S.Keymap.(Store.make @@ State.make ()) in
   let state = S.App.State.make ~config ~layout ~viewer_stacks ~keymap in
   (module struct
-     module Context = Core
-     let instance = {
-         Core.store = S.App.Store.make state;
-         rpc;
-         locator;
-       }
-   end : Instance)
+    module Context = Core
+    let instance = {
+      Core.store = S.App.Store.make state;
+      rpc;
+      locator;
+    }
+  end : Instance)
