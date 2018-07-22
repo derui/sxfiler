@@ -26,10 +26,10 @@ let proc_configuration = [
         } in
       let%lwt res = Get_sync.handler req in
       let actual = match res.Jy.Response.result with
-        | None -> None
-        | Some res -> Option.some @@ Sxfiler_types_yojson.Configuration.of_yojson res
+        | None -> Error ""
+        | Some res -> Sxfiler_types_yojson.Configuration.of_yojson res
       in
-      Alcotest.(check @@ option @@ of_pp @@ Fmt.nop) "current" Option.(some expected) actual;
+      Alcotest.(check @@ result (of_pp @@ Fmt.nop) (of_pp @@ Fmt.nop)) "current" (Ok expected) actual;
       Lwt.return_unit
     );
 ]

@@ -10,7 +10,7 @@ module Viewer = struct
   module Js = struct
     type t = {
       current_stack_name:string [@key "currentStackName"];
-      stack_layout:string [@key "stackLayout"];
+      stack_layout:Types.Layout.t [@key "stackLayout"];
     } [@@deriving yojson]
   end
 
@@ -18,19 +18,17 @@ module Viewer = struct
     let module T = Sxfiler_types.Types in
     let js = {
       Js.current_stack_name = t.current_stack_name;
-      stack_layout = T.Layout.to_string t.stack_layout;
+      stack_layout = t.stack_layout;
     }
     in Js.to_yojson js
 
-  let of_yojson : Yojson.Safe.json -> t = fun json ->
-    match Js.of_yojson json with
-    | Error _ -> Printf.eprintf "TODO parse error"; default
-    | Ok js ->
-      let module T = Sxfiler_types.Types in
-      {
-        current_stack_name = js.Js.current_stack_name;
-        stack_layout = T.Layout.of_string js.Js.stack_layout;
-      }
+  let of_yojson json =
+    let open Ppx_deriving_yojson_runtime in
+    Js.of_yojson json >>= fun js ->
+    Ok {
+      current_stack_name = js.Js.current_stack_name;
+      stack_layout = js.Js.stack_layout;
+    }
 end
 
 (** [Server] provides configuration for server. This configuration will not manage
@@ -41,24 +39,16 @@ module Server = struct
 
   module Js = struct
     type t = {
-      sort_order:string [@key "sortOrder"];
+      sort_order:Types.Sort_type.t [@key "sortOrder"];
     } [@@deriving yojson]
   end
 
-  let to_yojson : t -> Yojson.Safe.json = fun t ->
-    let module T = Sxfiler_types.Types in
-    `Assoc [
-      ("sortOrder", `String (T.Sort_type.to_string t.sort_order))
-    ]
+  let to_yojson : t -> Yojson.Safe.json = fun t -> Js.to_yojson {Js.sort_order = t.sort_order}
 
-  let of_yojson : Yojson.Safe.json -> t = fun json ->
-    match Js.of_yojson json with
-    | Error _ -> Printf.eprintf "TODO: handling parse error"; default
-    | Ok js ->
-      let module T = Sxfiler_types.Types in
-      {
-        sort_order = T.Sort_type.of_string js.Js.sort_order;
-      }
+  let of_yojson json =
+    let open Ppx_deriving_yojson_runtime in
+    Js.of_yojson json >>= fun js ->
+    Ok {sort_order = js.Js.sort_order}
 end
 
 module Js = struct
@@ -74,10 +64,9 @@ let to_yojson : t -> Yojson.Safe.json = fun t ->
     server = Server.to_yojson t.server;
   }
 
-let of_yojson : Yojson.Safe.json -> t = fun js ->
-  match Js.of_yojson js with
-  | Error _ -> Printf.eprintf "TODO: handling parse error"; default
-  | Ok js -> {
-      server = Server.of_yojson js.Js.server;
-      viewer = Viewer.of_yojson js.Js.viewer;
-    }
+let of_yojson js =
+  let open Ppx_deriving_yojson_runtime in
+  Js.of_yojson js >>= fun js ->
+  Server.of_yojson js.server >>= fun server ->
+  Viewer.of_yojson js.viewer >>= fun viewer ->
+  Ok {server;viewer}

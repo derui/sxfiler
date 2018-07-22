@@ -106,7 +106,9 @@ let load_migemo dict_dir =
 let load_configuration config =
   let module Y = Sxfiler_types_yojson.Configuration in
   let config = Yojson.Safe.from_file config in
-  Some (Y.of_yojson config)
+  match Y.of_yojson config with
+  | Error _ -> None
+  | Ok v -> Some v
 
 (* Load keymaps from specified file *)
 let load_keybindings file = Some (Yojson.Safe.from_file file)

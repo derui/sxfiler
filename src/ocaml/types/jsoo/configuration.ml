@@ -8,13 +8,13 @@ module Viewer = struct
 
   class type js = object
     method currentStackName: Js.js_string Js.t Js.readonly_prop
-    method stackLayout: Js.js_string Js.t Js.readonly_prop
+    method stackLayout: Types.Layout.js Js.t Js.readonly_prop
   end
 
   let of_js : js Js.t -> t = fun js ->
     {
       current_stack_name = Js.to_string js##.currentStackName;
-      stack_layout = Js.to_string js##.stackLayout |> Sxfiler_types.Types.Layout.of_string;
+      stack_layout = Types.Layout.of_js js##.stackLayout;
     }
 end
 
@@ -22,12 +22,12 @@ module Server = struct
   include Server
 
   class type js = object
-    method sortOrder: Js.js_string Js.t Js.readonly_prop
+    method sortOrder: Types.Sort_type.js Js.t Js.readonly_prop
   end
 
   let of_js : js Js.t -> t = fun js ->
     {
-      sort_order = Js.to_string js##.sortOrder |> Sxfiler_types.Types.Sort_type.of_string;
+      sort_order = Types.Sort_type.of_js js##.sortOrder;
     }
 end
 

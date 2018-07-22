@@ -8,18 +8,7 @@ module Sort_type = struct
     | Name
     | Size
     | Date
-
-  let to_string = function
-    | Name -> "Name"
-    | Size -> "Size"
-    | Date -> "Date"
-
-  let of_string = function
-    | "Name" -> Name
-    | "Size" -> Size
-    | "Date" -> Date
-    | _ -> failwith "Unknown constructor for Sort_type"
-
+  [@@deriving enum,show]
 end
 
 type file_id = string
@@ -27,13 +16,7 @@ type file_id = string
 (** {!Layout} defines type to preset of layout *)
 module Layout = struct
   type t = Side_by_side
-
-  let to_string = function
-    | Side_by_side -> "Side_by_side"
-
-  let of_string = function
-    | "Side_by_side" -> Side_by_side
-    | _ -> failwith "Unknown constructor for Layout"
+  [@@deriving enum,show]
 end
 
 (** {!Source_type} defines type of source for completion.  *)
@@ -42,17 +25,7 @@ module Source_type = struct
     | File
     | Directory_tree
     | History
-
-  let to_string = function
-    | File -> "File"
-    | Directory_tree -> "Directory_tree"
-    | History -> "History"
-
-  let of_string = function
-    | "File" -> File
-    | "Directory_tree" -> Directory_tree
-    | "History" -> History
-    | _ -> failwith "Unknown constructor for Source_type"
+  [@@deriving enum,show]
 end
 
 (** {!Candidate} defines type of result of completion. *)
