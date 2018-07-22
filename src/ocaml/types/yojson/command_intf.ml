@@ -1,7 +1,7 @@
-open Sxfiler_types.Command
+open Sxfiler_types.Command_intf
 
 module Class = struct
-  include Sxfiler_types.Command.Class
+  include Class
 
   let to_yojson: t -> Yojson.Safe.json = fun t -> `Int (to_enum t)
   let of_yojson = function
@@ -13,7 +13,7 @@ module Class = struct
 end
 
 module Param_type = struct
-  include Sxfiler_types.Command.Param_type
+  include Param_type
 
   let to_yojson: t -> Yojson.Safe.json = fun t -> `Int (to_enum t)
   let of_yojson = function
@@ -25,7 +25,7 @@ module Param_type = struct
 end
 
 module Param_def = struct
-  include Sxfiler_types.Command.Param_def
+  include Param_def
 
   module Js = struct
     type t = {

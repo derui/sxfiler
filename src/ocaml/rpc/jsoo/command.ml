@@ -8,11 +8,11 @@ module Init_sync = struct
   open Rpc.Command.Init_sync
 
   class type js_params = object
-    method command: Tj.Command.Class.js Js.t Js.readonly_prop
+    method command: Tj.Command_intf.Class.js Js.t Js.readonly_prop
   end
 
   let params_of_json js = {
-    command = Tj.Command.Class.of_js js##.command;
+    command = Tj.Command_intf.Class.of_js js##.command;
   }
 end
 
