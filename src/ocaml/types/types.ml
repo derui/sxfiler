@@ -27,12 +27,3 @@ module Source_type = struct
     | History
   [@@deriving enum,show]
 end
-
-(** {!Candidate} defines type of result of completion. *)
-module Candidate = struct
-  type 'a t = {
-    start: int ;
-    length: int;
-    value: 'a;
-  }
-end

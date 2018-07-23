@@ -33,11 +33,3 @@ module Sort_type = struct
     | None -> failwith "Unknown type"
     | Some v -> v
 end
-
-module Candidate = struct
-  class type js = object
-    method start: int Js.readonly_prop
-    method length: int Js.readonly_prop
-    method value: < > Js.t Js.readonly_prop
-  end
-end

@@ -42,11 +42,3 @@ module Source_type = struct
 
   let to_yojson : t -> Yojson.Safe.json = fun t -> `Int (to_enum t)
 end
-
-module Candidate = struct
-  type js = {
-    start: int;
-    length: int;
-    value: Yojson.Safe.json;
-  } [@@deriving yojson]
-end
