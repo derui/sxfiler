@@ -2,7 +2,6 @@
     result of completion.
 *)
 
-open Sxfiler_core
 module T = Sxfiler_types
 module R = Jsoo_reactjs
 module C = Sxfiler_renderer_core
@@ -14,7 +13,6 @@ module Component = R.Component.Make_stateless(struct
     end
   end)
 
-let component = Component.make (fun props ->
-
+let component = Component.make (fun _ ->
     R.empty ()
   )

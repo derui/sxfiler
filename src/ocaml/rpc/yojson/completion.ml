@@ -11,6 +11,8 @@ module Setup_sync = struct
     } [@@deriving yojson]
   end
 
+  let params_to_yojson t = Js.params_to_yojson {Js.source = t.source}
+
   let params_of_yojson js =
     let open Ppx_deriving_yojson_runtime in
     Js.params_of_yojson js >>= fun js -> Ok {source = js.Js.source;}
@@ -42,6 +44,7 @@ module Read_sync = struct
   open Rpc.Completion.Read_sync
   module Js = Read_common_js
 
+  let params_to_yojson t = Js.params_to_yojson {Js.input = t.input}
   let params_of_yojson js =
     let open Ppx_deriving_yojson_runtime in
     Js.params_of_yojson js >>= fun js -> Ok {input = js.Js.input}
@@ -53,6 +56,20 @@ module Read_sync = struct
           length = v.T.Candidate.length;
           value = Ty.Completion.Common_item.to_yojson v.T.Candidate.value;
         }) t
+
+  (* WARNING: This function does not handle json conversion error if invalid json given.
+     We should not use this function out of test.
+  *)
+  let result_of_yojson = fun js ->
+    let open Ppx_deriving_yojson_runtime in
+    Js.result_of_yojson js >|= fun js -> Array.map (fun v -> {
+          T.Completion.Candidate.start = v.Ty.Completion.Candidate.start;
+          length = v.length;
+          value = Ty.Completion.Common_item.of_yojson v.value |> (function
+              | Ok v -> v
+              | Error _ -> failwith "Should be common_item type.");
+        }) js
+
 end
 
 module Read_file_sync = struct

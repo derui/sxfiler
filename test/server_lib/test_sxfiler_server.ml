@@ -5,5 +5,6 @@ let () =
               @ Proc_scanner.testcases
               @ Proc_configuration.testcases
               @ Proc_keybindings.testcases
+              @ Proc_completion.testcases
   in
   Alcotest.run "server functionally" tests
