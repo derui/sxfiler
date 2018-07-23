@@ -1,4 +1,4 @@
-open Sxfiler_types.Command_intf
+open Sxfiler_types.Command
 
 module Class = struct
   include Class

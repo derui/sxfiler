@@ -7,7 +7,7 @@ module Init_sync = struct
 
   module Js = struct
     type params = {
-      command: Ty.Command_intf.Class.t;
+      command: Ty.Command.Class.t;
     } [@@deriving yojson]
   end
 

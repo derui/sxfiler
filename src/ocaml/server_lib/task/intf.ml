@@ -17,12 +17,6 @@ module A = Sxfiler_server_action.Action_intf
 module type S = sig
   type params
 
-  (** [plan] get result that task applied virtually. If [`No_plan] passed,
-      task runner do not run plan and run [apply] immediately.
-  *)
-  val plan: [ `No_plan
-            | `Having_plan of (State.t -> params -> (module A.Instance) -> plan Lwt.t)]
-
   (** [apply state] get result of task. All task should return one of type result. *)
   val apply: State.t -> params -> (module A.Instance) -> task_result Lwt.t
 end

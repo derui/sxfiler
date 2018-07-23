@@ -4,7 +4,7 @@ module T = Sxfiler_types
 open Sxfiler_server_task.Intf
 
 module Scanner = struct
-  module Move = struct
+  module Jump = struct
     type t = {
       name: string;
       location: string;
@@ -13,7 +13,6 @@ module Scanner = struct
     module Task : S with type params = t = struct
       type params = t
 
-      let plan = `No_plan
       let apply _ params action =
         let module Action = (val action : A.Instance) in
         let location = Action.No_side_effect.resolve_realpath params.location in

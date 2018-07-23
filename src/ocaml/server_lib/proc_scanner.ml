@@ -25,7 +25,7 @@ module Make_sync
         | Some _ -> Jsonrpc_ocaml_yojson.Exception.raise_error Rpc.Errors.Scanner.already_exists
         | None -> begin
             let module I = Sxfiler_server_task.Intf in
-            let module Task = Task.Scanner.Move in
+            let module Task = Task.Scanner.Jump in
             let%lwt _ = Runner.Runner.add_task Runner.instance @@ I.make_instance
                 {
                   Task.location = param.initial_location;

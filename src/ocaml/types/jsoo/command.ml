@@ -1,4 +1,4 @@
-open Sxfiler_types.Command_intf
+open Sxfiler_types.Command
 
 (** Class is type of command and parameter set. *)
 module Class = struct

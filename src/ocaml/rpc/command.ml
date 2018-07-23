@@ -4,7 +4,7 @@ module T = Sxfiler_types
 (** {!Init_sync} defines interface to initialize the command specified in parameter. *)
 module Init_sync = struct
   type params = {
-    command: T.Command_intf.Class.t;
+    command: T.Command.Class.t;
   }
 
   type result = unit

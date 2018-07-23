@@ -17,6 +17,8 @@ module Param_type = struct
     | List_nodes
     (* only one node *)
     | Single_node
+    (* a string *)
+    | String
   [@@deriving enum,show]
 end
 
@@ -29,7 +31,7 @@ module Param_def = struct
 end
 
 (** Definition of command. *)
-type t = {
+type definition = {
   command_class: Class.t;
   param_defs: Param_def.t list;
 }
