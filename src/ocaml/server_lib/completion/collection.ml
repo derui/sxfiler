@@ -1,4 +1,4 @@
-(** This module provides only interface of colleciton. *)
+(** This module provides only interface of collection. *)
 
 (** Type of item of collection *)
 module type Type = sig
