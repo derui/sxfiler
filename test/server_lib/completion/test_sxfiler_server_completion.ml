@@ -1,3 +1,4 @@
+module T = Sxfiler_types.Completion
 module C = Sxfiler_server_completion
 
 let suite = [
@@ -22,14 +23,14 @@ let suite = [
        | Some v -> v
      in
      let migemo = Migemocaml.Migemo.make ~dict:migemo_dict () in
-     let completer = C.Completer.make ~migemo in
-     let result = C.Completer.(read completer ~input:"foo"
-                                 ~collection
-                                 ~stringify:(module Data)) in
+     let module I = (val C.Completer.make ~migemo) in
+     let result = I.(Completer.read instance ~input:"foo"
+                       ~collection
+                       ~stringify:(module Data)) in
      let expect = [
-       C.Completer.{start = 0; length = 3; value =  {Data.data = "foo"; index = 0}};
-       C.Completer.{start = 0; length = 3; value =  {Data.data = "foobar"; index = 1}};
-       C.Completer.{start = 3; length = 6; value =  {Data.data = "barfoo"; index = 3}};
+       {T.Candidate.start = 0; length = 3; value =  {Data.data = "foo"; index = 0}};
+       {T.Candidate.start = 0; length = 3; value =  {Data.data = "foobar"; index = 1}};
+       {T.Candidate.start = 3; length = 6; value =  {Data.data = "barfoo"; index = 3}};
      ] in
      Alcotest.(check @@ list (of_pp Fmt.nop)) "completed" expect result
   );

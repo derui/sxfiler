@@ -8,9 +8,30 @@ module Root = C.Statable.Make(struct
   end)
 
 module Completion = C.Statable.Make(struct
-    type t = Sxfiler_server_completion.Completer.t option
+    type t = (module Sxfiler_server_completion.Completer.Instance)
 
-    let empty () = None
+    (* initial value is truly dummy implementation. *)
+    let empty () = (module struct
+                     module Completer = struct
+                       type t = string
+                       let read _ ~input:_ ~collection:_ ~stringify:_ = []
+
+                     end
+                     let instance = "not initialized"
+                   end : Sxfiler_server_completion.Completer.Instance)
+  end)
+
+(* File source to complete in next operation. *)
+module File_source = C.Statable.Make(struct
+    type t = Sxfiler_types.Node.t list
+
+    let empty () = []
+  end)
+
+(* Common source to complete in next operation. *)
+module Common_source = C.Statable.Make(struct
+    type t = Sxfiler_types.Completion.Common_item.t list
+    let empty () = []
   end)
 
 module Task_runner : sig
