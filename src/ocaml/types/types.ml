@@ -18,12 +18,3 @@ module Layout = struct
   type t = Side_by_side
   [@@deriving enum,show]
 end
-
-(** {!Source_type} defines type of source for completion.  *)
-module Source_type = struct
-  type t =
-    | File
-    | Directory_tree
-    | History
-  [@@deriving enum,show]
-end

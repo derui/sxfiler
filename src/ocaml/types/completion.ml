@@ -1,24 +1,35 @@
 (** Completion defines value object to complete something.  *)
 
-(** {!Candidate} defines type of result of completion. *)
-module Candidate = struct
-  type 'a t = {
-    start: int ;
-    length: int;
-    value: 'a;
-  }
+(** {!Source_class} defines type of source for completion.  *)
+module Source_class = struct
+  type t =
+    | File
+    | History
+    | Simple
+  [@@deriving enum,show]
 end
 
-(** Common_item is useful type to complete by RPC with unknown types. *)
-module Common_item = struct
+(** Item is only type to complete by RPC with any value. *)
+module Item = struct
   type t = {
     id: string;
     value: string;
   }
 end
 
-(** Type of source that is used to source of completion. *)
-type 'a source = 'a list
+(** {!Candidate} defines type of result of completion. *)
+module Candidate = struct
+  type 'a base = {
+    start: int ;
+    length: int;
+    value: 'a;
+  }
 
-(** Result of completion. Type variable ['a] should equals with {!source} having it.*)
-type 'a result = 'a Candidate.t array
+  type t = Item.t base
+end
+
+(** Type of collection that is used to source of completion. *)
+type collection = Item.t list
+
+(** Result of completion. *)
+type result = Candidate.t array

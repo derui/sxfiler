@@ -33,7 +33,7 @@ end : Co.Completer.Instance)
 let proc_completion = [
   Alcotest_lwt.test_case "can setup common source" `Quick (fun switch () ->
       let module State = C.Statable.Make(struct
-          type t = T.Completion.Common_item.t list
+          type t = T.Completion.collection
           let empty () = []
         end) in
 
@@ -41,9 +41,9 @@ let proc_completion = [
       let module Ry = Rpcy.Completion.Setup_sync in
       let module R = Rpc.Completion.Setup_sync in
       let expected = [
-        {T.Completion.Common_item.id = "1"; value = "foo"};
-        {T.Completion.Common_item.id = "2"; value = "foobar"};
-        {T.Completion.Common_item.id = "3"; value = "bar ball"};
+        {T.Completion.Item.id = "1"; value = "foo"};
+        {T.Completion.Item.id = "2"; value = "foobar"};
+        {T.Completion.Item.id = "3"; value = "bar ball"};
       ] in
       let req = Jy.Request.{
           _method = "foo";
@@ -60,11 +60,11 @@ let proc_completion = [
 
   Alcotest_lwt.test_case "can complete from common source stored before" `Quick (fun switch () ->
       let module State = C.Statable.Make(struct
-          type t = T.Completion.Common_item.t list
+          type t = T.Completion.collection
           let empty () = [
-            {T.Completion.Common_item.id = "1"; value = "foo"};
-            {T.Completion.Common_item.id = "2"; value = "foobar"};
-            {T.Completion.Common_item.id = "3"; value = "bar ball"};
+            {T.Completion.Item.id = "1"; value = "foo"};
+            {T.Completion.Item.id = "2"; value = "foobar"};
+            {T.Completion.Item.id = "3"; value = "bar ball"};
           ]
         end) in
 
@@ -77,12 +77,12 @@ let proc_completion = [
           {
             T.Completion.Candidate.start = 0;
             length = 3;
-            value = {T.Completion.Common_item.id = "1"; value = "foo"}
+            value = {T.Completion.Item.id = "1"; value = "foo"}
           };
           {
             T.Completion.Candidate.start = 0;
             length = 6;
-            value = {T.Completion.Common_item.id = "2"; value = "foobar"};
+            value = {T.Completion.Item.id = "2"; value = "foobar"};
           }
         |] in
 

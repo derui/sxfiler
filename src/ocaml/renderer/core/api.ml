@@ -6,13 +6,13 @@ module type Api_def = Rpc_intf.Api_def
 (** Completion APIs *)
 module Completion = struct
 
-  module Setup_file_sync : Api_def with type params = R.Completion.Setup_file_sync.params
-                                    and type result = R.Completion.Setup_file_sync.result
+  module Setup_sync : Api_def with type params = R.Completion.Setup_sync.params
+                               and type result = R.Completion.Setup_sync.result
   = struct
-    include R.Completion.Setup_file_sync
+    include R.Completion.Setup_sync
     type json = < > Js.t
 
-    open Rj.Completion.Setup_file_sync
+    open Rj.Completion.Setup_sync
 
     let params_to_json params =
       let open Option.Infix in
@@ -20,13 +20,13 @@ module Completion = struct
     let result_of_json = result_of_json
   end
 
-  module Read_file_sync : Api_def with type params = R.Completion.Read_file_sync.params
-                                   and type result = R.Completion.Read_file_sync.result
+  module Read_sync : Api_def with type params = R.Completion.Read_sync.params
+                              and type result = R.Completion.Read_sync.result
   = struct
-    include R.Completion.Read_file_sync
+    include R.Completion.Read_sync
     type json = < > Js.t
 
-    open Rj.Completion.Read_file_sync
+    open Rj.Completion.Read_sync
 
     let params_to_json params =
       let open Option.Infix in

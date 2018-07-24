@@ -20,7 +20,7 @@ module type S = sig
     input:string ->
     collection:'a list ->
     stringify:(module Type with type t = 'a) ->
-    'a Sxfiler_types.Completion.Candidate.t list
+    'a Sxfiler_types.Completion.Candidate.base list
 end
 
 module type Instance = sig

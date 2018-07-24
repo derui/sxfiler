@@ -21,16 +21,9 @@ module Completion = C.Statable.Make(struct
                    end : Sxfiler_server_completion.Completer.Instance)
   end)
 
-(* File source to complete in next operation. *)
-module File_source = C.Statable.Make(struct
-    type t = Sxfiler_types.Node.t list
-
-    let empty () = []
-  end)
-
-(* Common source to complete in next operation. *)
-module Common_source = C.Statable.Make(struct
-    type t = Sxfiler_types.Completion.Common_item.t list
+(* Cached source to complete in next operation. *)
+module Cached_source = C.Statable.Make(struct
+    type t = Sxfiler_types.Completion.collection
     let empty () = []
   end)
 
