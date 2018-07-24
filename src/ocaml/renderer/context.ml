@@ -54,8 +54,10 @@ let make : (module Rpc.Rpc) -> (module C.Locator_intf.S) -> (module Instance) = 
   let config = S.Config.(Store.make @@ State.make ())
   and viewer_stacks = S.Viewer_stacks.(Store.make @@ State.make (Const.scanner_1, Const.scanner_2))
   and layout = S.Layout.(Store.make @@ State.make ())
-  and keymap = S.Keymap.(Store.make @@ State.make ()) in
-  let state = S.App.State.make ~config ~layout ~viewer_stacks ~keymap in
+  and keymap = S.Keymap.(Store.make @@ State.make ())
+  and completion = S.Completion.(Store.make @@ State.make ())
+  in
+  let state = S.App.State.make ~config ~layout ~viewer_stacks ~keymap ~completion in
   (module struct
     module Context = Core
     let instance = {
