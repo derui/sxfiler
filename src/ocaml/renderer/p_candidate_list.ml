@@ -1,4 +1,4 @@
-(** {!C_candidate_display} defines container component to present candidates that are
+(** {!C_candidate_list} defines presentation component to present candidates that are
     result of completion.
 *)
 
@@ -24,6 +24,6 @@ let component = Component.make (fun props ->
         P_candidate_item.component
     in
 
-    R.Dom.of_tag `ul ~key:"completion-result" ~props
+    R.Dom.of_tag `ul ~props
       ~children:(Array.to_list @@ Array.map to_item candidates)
   )

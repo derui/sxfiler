@@ -24,6 +24,22 @@ let other_props =
     val tabIndex = "0"
   end)
 
+(* Get the component of displaying completion result.*)
+let make_completion_result context =
+  let module I = (val context: Context.Instance) in
+  let store = I.(Context.get_store instance) in
+  let completion_store = S.App.(State.completion @@ Store.get store) in
+  let state = S.Completion.Store.get completion_store in
+
+  if S.Completion.State.(state.completing) then
+    R.create_element ~key:"completion-result"
+      ~props:(object%js
+        val candidates = S.Completion.State.(state.candidates)
+      end)
+      P_candidate_list.component
+  else
+    R.empty ()
+
 let container_key = "filePaneContainer"
 let component =
   let spec = R.component_spec
@@ -42,13 +58,16 @@ let component =
              ~on_key_down:(key_handler ~context:props##.context)
              ?others:other_props
          in
+         let layout = R.create_element ~key:"layout" ~props:(object%js
+               val context = props##.context
+             end) C_layout.component;
+         in
          R.Dom.of_tag `div
            ~_ref:(fun e -> R.Ref_table.add this##.nodes ~key:container_key ~value:e)
            ~props:spec
            ~children:[
-             R.create_element ~key:"layout" ~props:(object%js
-               val context = props##.context
-             end) C_layout.component
+             layout;
+             make_completion_result props##.context
            ]
       )
   in

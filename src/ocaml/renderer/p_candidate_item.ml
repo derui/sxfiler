@@ -20,10 +20,9 @@ let component = Component.make (fun props ->
       ]
     in
     let props = R.element_spec () ~class_name in
-    let key = T.Completion.(item.Candidate.value.Item.id) in
     let text = T.Completion.(item.Candidate.value.Item.value) in
 
-    R.Dom.of_tag `li ~key ~props
+    R.Dom.of_tag `li ~props
       ~children:[
         R.Dom.of_tag `div ~props:R.(element_spec ~class_name:"fp-CandidateItem_Content" ())
           ~children:[R.text text]
