@@ -28,10 +28,12 @@ let other_props =
 let make_completion_result context =
   let module I = (val context: Context.Instance) in
   let store = I.(Context.get_store instance) in
-  let completion_store = S.App.(State.completion @@ Store.get store) in
-  let state = S.Completion.Store.get completion_store in
+  let config_store = S.App.(State.config @@ Store.get store) in
+  let config = S.Config.Store.get config_store in
+  let state = S.Completion.Store.get @@ S.App.(State.completion @@ Store.get store) in
 
-  if S.Completion.State.(state.completing) then
+  let expected_context = C.Types.Condition.(of_list [On_completing]) in
+  if S.Config.State.is_subset config ~cond:expected_context then
     R.create_element ~key:"completion-result"
       ~props:(object%js
         val candidates = S.Completion.State.(state.candidates)

@@ -7,19 +7,16 @@ module State = struct
   type t = {
     current_class: T.Completion.Source_class.t;
     candidates: T.Completion.result;
-    completing: bool;
   }
 
   let make () = {
     current_class = T.Completion.Source_class.Simple;
     candidates = [||];
-    completing = false;
   }
 
   let reduce t = function
-    | C.Message.Completion (Setup cls) -> {t with current_class = cls; completing = true}
+    | C.Message.Completion (Setup cls) -> {current_class = cls; candidates = [||]}
     | Completion (Read result) -> {t with candidates = result}
-    | Completion Tear_down -> {t with completing = false}
     | _ -> t
 
   let equal = (=)
