@@ -42,6 +42,13 @@ let make_completion_result context =
   else
     R.empty ()
 
+let make_command_pallet context =
+  R.create_element ~key:"command-pallet"
+    ~props:(object%js
+      val context = context
+    end)
+    C_command_pallet.component
+
 let container_key = "filePaneContainer"
 let component =
   let spec = R.component_spec
@@ -68,6 +75,7 @@ let component =
            ~_ref:(fun e -> R.Ref_table.add this##.nodes ~key:container_key ~value:e)
            ~props:spec
            ~children:[
+             make_command_pallet props##.context;
              layout;
              make_completion_result props##.context
            ]

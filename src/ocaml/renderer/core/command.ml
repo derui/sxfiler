@@ -2,17 +2,25 @@
 module Class = struct
   type t =
     | Scanner_jump
-    | Empty
 end
 
-module Param = struct
+(** {!Param_spec} defines type to define specification of parameter of the command. *)
+module Param_spec = struct
+  type interface =
+    | Arbitrarily
+    | Select
+    | Multi_select
+
   type t = {
     name: string;
-    value: < > Js.t
+    interface: interface;
   }
 end
 
-type t = {
-  current_class: Class.t;
-  params: Param.t list;
-}
+(** Command_def allow to define an interface of a command. *)
+module Command_def = struct
+  type t = {
+    command_class: Class.t;
+    parameters: Param_spec.t list;
+  }
+end
