@@ -12,6 +12,13 @@ module Component = R.Component.Make_stateful (struct
     end
   end)
 
+let make_command_pallet context =
+  R.create_element ~key:"command-pallet"
+    ~props:(object%js
+      val context = context
+    end)
+    C_command_pallet.component
+
 let component = Component.make
     R.(component_spec
          ~constructor:(fun this _ ->
@@ -27,10 +34,21 @@ let component = Component.make
             let children_props = object%js
               val context = this##.props##.context
             end in
+            let layout = R.create_element ~key:"layout" ~props:(object%js
+                val context = this##.props##.context
+              end) C_layout.component;
+            in
+            let children = [
+              make_command_pallet this##.props##.context;
+              layout;
+            ] in
             R.Dom.of_tag `div
               ~props:R.(element_spec ~class_name:"sf-Main" ())
               ~children:[
-                R.create_element ~key:"key-container" ~props:children_props C_key_container.component;
+                R.create_element ~key:"key-container"
+                  ~props:children_props
+                  ~children
+                  C_key_handler.component;
               ]
          )
       )

@@ -1,3 +1,4 @@
+(** C_Key_handler defines that container component to handle key strokes on children component. *)
 module T = Sxfiler_types
 module R = Jsoo_reactjs
 module Be = Sxfiler_renderer_behavior
@@ -24,31 +25,6 @@ let other_props =
     val tabIndex = "0"
   end)
 
-(* Get the component of displaying completion result.*)
-let make_completion_result context =
-  let module I = (val context: Context.Instance) in
-  let store = I.(Context.get_store instance) in
-  let config_store = S.App.(State.config @@ Store.get store) in
-  let config = S.Config.Store.get config_store in
-  let state = S.Completion.Store.get @@ S.App.(State.completion @@ Store.get store) in
-
-  let expected_context = C.Types.Condition.(of_list [On_completing]) in
-  if S.Config.State.is_subset config ~cond:expected_context then
-    R.create_element ~key:"completion-result"
-      ~props:(object%js
-        val candidates = S.Completion.State.(state.candidates)
-      end)
-      P_candidate_list.component
-  else
-    R.empty ()
-
-let make_command_pallet context =
-  R.create_element ~key:"command-pallet"
-    ~props:(object%js
-      val context = context
-    end)
-    C_command_pallet.component
-
 let container_key = "filePaneContainer"
 let component =
   let spec = R.component_spec
@@ -63,22 +39,15 @@ let component =
       (fun this ->
          let props = this##.props in
          let spec = R.element_spec ()
-             ~class_name:"sf-KeyContainer"
+             ~class_name:"sf-KeyHandler"
              ~on_key_down:(key_handler ~context:props##.context)
              ?others:other_props
          in
-         let layout = R.create_element ~key:"layout" ~props:(object%js
-               val context = props##.context
-             end) C_layout.component;
-         in
+         let children = R.Children.to_element this##.props_defined##.children in
          R.Dom.of_tag `div
            ~_ref:(fun e -> R.Ref_table.add this##.nodes ~key:container_key ~value:e)
            ~props:spec
-           ~children:[
-             make_command_pallet props##.context;
-             layout;
-             make_completion_result props##.context
-           ]
+           ~children:[children]
       )
   in
   Component.make spec
