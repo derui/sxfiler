@@ -2,7 +2,7 @@ module T = Sxfiler_types
 
 (* messages for completion operation *)
 type completion =
-  | Setup of T.Completion.Source_class.t
+  | Setup of T.Completion.Source_class.t * string
   | Read of T.Completion.result
   | Tear_down
 

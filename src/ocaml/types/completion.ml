@@ -26,6 +26,14 @@ module Candidate = struct
   }
 
   type t = Item.t base
+
+  (* shortcut functions for {!t} *)
+
+  (** [id t] gets the identifier of [t]. *)
+  let id t = t.value.Item.id
+
+  (** [value t] gets the value of [t]. *)
+  let value t = t.value.Item.value
 end
 
 (** Type of collection that is used to source of completion. *)

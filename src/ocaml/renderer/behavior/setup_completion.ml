@@ -7,14 +7,14 @@ type t = {
   rpc: (module C.Rpc_intf.Rpc);
 }
 
-type param = T.Completion.Source_class.t * T.Completion.collection
+type param = T.Completion.Source_class.t * T.Completion.collection * string
 type result = unit Lwt.t
 
 let make locator =
   let module L = (val locator : C.Locator_intf.S) in
   {rpc = (module L.Rpc)}
 
-let execute t dispatcher (cls, source) =
+let execute t dispatcher (cls, source, completer) =
 
   let module RI = Sxfiler_rpc in
   C.Rpc.Client.request t.rpc (module C.Api.Completion.Setup_sync)
@@ -23,5 +23,5 @@ let execute t dispatcher (cls, source) =
       | Error _ -> ()
       | Ok _ ->
         let module D = (val dispatcher : C.Dispatcher_intf.Instance with type message = C.Message.t) in
-        D.(Dispatcher.dispatch instance C.Message.(Completion (Setup cls)))
+        D.(Dispatcher.dispatch instance C.Message.(Completion (Setup (cls, completer))))
     )
