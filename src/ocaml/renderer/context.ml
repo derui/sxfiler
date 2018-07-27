@@ -8,8 +8,6 @@ module Core = struct
   type store = S.App.Store.t
   type t = {
     mutable store: S.App.Store.t;
-    rpc: (module Rpc.Rpc);
-    locator: (module C.Locator_intf.S);
   }
 
   let get_store {store;_} = store
@@ -37,19 +35,18 @@ module Core = struct
       t
       behavior
       (param:p) =
-    let module Be = (val behavior : C.Behavior_intf.S with type param = p
-                                                       and type result = r
-                                                       and type message = message) in
-    let behavior = Be.make t.locator in
+    let module Be = (val behavior : C.Behavior_intf.Instance with type param = p
+                                                              and type result = r
+                                                              and type message = message) in
     let module I = (val to_dispatcher_instance t) in
-    Be.execute behavior (module I) param
+    Be.(Behavior.execute instance (module I) param)
 
 end
 
 module type Instance = C.Context_intf.Instance with type store := S.App.Store.t
                                                 and type message := C.Message.t
 
-let make : (module Rpc.Rpc) -> (module C.Locator_intf.S) -> (module Instance) = fun rpc locator ->
+let make: unit -> (module Instance) = fun () ->
   let module C = Sxfiler_renderer_core in
   let config = S.Config.(Store.make @@ State.make ())
   and viewer_stacks = S.Viewer_stacks.(Store.make @@ State.make (Const.scanner_1, Const.scanner_2))
@@ -62,7 +59,5 @@ let make : (module Rpc.Rpc) -> (module C.Locator_intf.S) -> (module Instance) = 
     module Context = Core
     let instance = {
       Core.store = S.App.Store.make state;
-      rpc;
-      locator;
     }
   end : Instance)

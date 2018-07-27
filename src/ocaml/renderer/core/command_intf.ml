@@ -45,10 +45,19 @@ module type S = sig
   (** Definition of plan to get difference of between before and after
       command execution.
   *)
-  val plan: [`No_plan | `Plan of t -> (module Locator_intf.S) -> unit]
+  val plan: [
+    | `No_plan
+    | `Plan of t
+        -> (string * string) list
+        -> (module Behavior_intf.S with type param = 'p) * 'p
+  ]
 
-  (** [execute t params locator] run command with parameter and global context. *)
-  val execute: t -> (string * string) list-> (module Locator_intf.S) -> unit
+  (** [execute t params] returns behavior that execute command with
+      some of dependencies.
+  *)
+  val execute: t
+    -> (string * string) list
+    -> (module Behavior_intf.S with type param = 'p) * 'p
 
 end
 

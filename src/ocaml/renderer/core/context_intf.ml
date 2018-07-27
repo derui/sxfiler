@@ -15,7 +15,7 @@ module type S = sig
   (** [execute instance param] execute behavior [instance] with [param]. *)
   val execute:
     t ->
-    (module Behavior_intf.S with type param = 'p and type result = 'r and type message = message) ->
+    (module Behavior_intf.Instance with type param = 'p and type result = 'r and type message = message) ->
     'p ->
     'r
 end
