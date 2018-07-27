@@ -1,26 +1,14 @@
-(** {!Command} defines types for command pallet. *)
-module Class = struct
-  type t =
-    | Scanner_jump
-end
+include Command_intf
 
-(** {!Param_spec} defines type to define specification of parameter of the command. *)
-module Param_spec = struct
-  type interface =
-    | Arbitrarily
-    | Select
-    | Multi_select
+module Registry = struct
 
-  type t = {
-    name: string;
-    interface: interface;
-  }
-end
+  type t = (module Instance) Jstable.t
 
-(** Command_def allow to define an interface of a command. *)
-module Command_def = struct
-  type t = {
-    command_class: Class.t;
-    parameters: Param_spec.t list;
-  }
+  let make () = Jstable.create ()
+  let register t instance =
+    let module I = (val instance : Instance) in
+    Jstable.add t I.(Js.string @@ Command.name instance) instance;
+    t
+
+  let get t ~name = Js.Optdef.to_option @@ Jstable.find t Js.(string name)
 end
