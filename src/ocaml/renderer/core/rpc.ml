@@ -1,10 +1,7 @@
 (** Provides RPC client and server implementation. This implementation only depends on
     Jsonrpc_ocaml_jsoo's interface. All modules are purely.
 *)
-module Rpc = Jsonrpc_ocaml.Rpc_intf
-module R = Jsonrpc_ocaml_jsoo
-
-module type Rpc = Rpc_intf.Rpc
+include Rpc_intf
 
 module Client = struct
 
@@ -36,11 +33,10 @@ end
 
 (** {!Server} provides some functions to handle notification from server. *)
 module Server = struct
-  type json = < > Js.t
   module Response = R.Response
   module Request = R.Request
   module Thread = Lwt
-  type handler = R.Request.t -> unit Lwt.t
+  type handler = R.Request.t -> R.Response.t Lwt.t
   type _method = string
   type t = {
     procedure_table: handler Jstable.t
@@ -64,7 +60,7 @@ module Server = struct
     match Jstable.find t.procedure_table Js.(string request.Request._method) |> Js.Optdef.to_option with
     | None ->
       (* TODO: logging unknown notification *)
-      Lwt.return_unit
+      Lwt.return Response.empty
     | Some handler -> Lwt.catch
                         (fun () -> handler request)
                         (fun e -> raise e)

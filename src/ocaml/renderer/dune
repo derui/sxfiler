@@ -3,6 +3,7 @@
  (public_name sxfiler.renderer)
  (modes byte)
  (libraries js_of_ocaml
+            js_of_ocaml-lwt
             js_of_ocaml.weak
             jsoo_reactjs
             jsonrpc-ocaml.jsoo

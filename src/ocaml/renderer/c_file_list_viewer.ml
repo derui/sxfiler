@@ -6,7 +6,7 @@ module S = Sxfiler_renderer_store
 
 module Component = R.Component.Make_stateless (struct
     class type t = object
-      method context: (module Context.Instance) Js.readonly_prop
+      method locator: (module Locator.Main) Js.readonly_prop
       method viewerState: S.Viewer_stacks.File_tree.t Js.readonly_prop
       method focused: bool Js.readonly_prop
     end

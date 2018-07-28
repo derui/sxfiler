@@ -5,7 +5,6 @@
 *)
 include module type of (struct include Command_intf end)
 
-(** {!Registry} provides set of functions to manage command. *)
 module Registry : sig
   type t
 
@@ -16,6 +15,6 @@ module Registry : sig
   val register: t -> (module Instance) -> t
 
   (** [get t ~name] returns the command having [name]. *)
-  val get: t -> name:string -> (module Instance) option
+  val get: t -> action:Callable_action.t -> (module Instance) option
 
 end

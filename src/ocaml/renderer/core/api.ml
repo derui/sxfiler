@@ -1,7 +1,7 @@
 open Sxfiler_core
 module R = Sxfiler_rpc
 module Rj = Sxfiler_rpc_jsoo
-module type Api_def = Rpc_intf.Api_def
+module type Api_def = Jsonrpc_ocaml_jsoo.Client.Api_def
 
 (** Completion APIs *)
 module Completion = struct

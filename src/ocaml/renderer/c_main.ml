@@ -4,26 +4,26 @@ module S = Sxfiler_renderer_store
 
 module Component = R.Component.Make_stateful (struct
     class type t = object
-      method context: (module Context.Instance) Js.readonly_prop
+      method locator: (module Locator.Main) Js.readonly_prop
     end
   end)(struct
     class type t = object
-      method state: S.App.Store.t Js.readonly_prop
+      method state: S.App.State.t Js.readonly_prop
     end
   end)
 
-let make_command_pallet context =
+let make_command_pallet locator =
   R.create_element ~key:"command-pallet"
     ~props:(object%js
-      val context = context
+      val locator = locator
     end)
-    C_command_pallet.component
+    C_command_pallet.t
 
-let component = Component.make
+let t = Component.make
     R.(component_spec
          ~constructor:(fun this _ ->
-             let module I = (val this##.props##.context : Context.Instance) in
-             I.Context.subscribe I.instance (fun state ->
+             let module L = (val this##.props##.locator : Locator.Main) in
+             S.App.Store.subscribe L.store ~f:(fun state ->
                  this##setState (object%js
                    val state = state
                  end)
@@ -32,14 +32,16 @@ let component = Component.make
          ~should_component_update:(fun _ _ _ -> true)
          (fun this ->
             let children_props = object%js
-              val context = this##.props##.context
+              val locator = this##.props##.locator
+              val className = None
+              val keymap = None
             end in
             let layout = R.create_element ~key:"layout" ~props:(object%js
-                val context = this##.props##.context
+                val locator = this##.props##.locator
               end) C_layout.component;
             in
             let children = [
-              make_command_pallet this##.props##.context;
+              make_command_pallet this##.props##.locator;
               layout;
             ] in
             R.Dom.of_tag `div
@@ -48,7 +50,7 @@ let component = Component.make
                 R.create_element ~key:"key-container"
                   ~props:children_props
                   ~children
-                  C_key_handler.component;
+                  C_key_handler.t;
               ]
          )
       )

@@ -2,29 +2,26 @@
 module T = Sxfiler_types_jsoo
 module C = Sxfiler_renderer_core
 
-type message = C.Message.t
 type t = {
   rpc: (module C.Rpc_intf.Rpc);
-  repository: (module C.Repository_intf.Configuration_instance)
 }
 
 type param = ()
-type result = unit Lwt.t
+type config = (module C.Locator_intf.S)
 
-let make locator =
+let create locator () =
   let module L = (val locator : C.Locator_intf.S) in
-  {rpc = (module L.Rpc);
-   repository = (module L.Repository.Configuration)
-  }
+  {rpc = L.rpc}
 
-let execute t _ () =
+let execute t dispatcher =
 
   let module RI = Sxfiler_rpc_jsoo in
-  C.Rpc.Client.request t.rpc (module C.Api.Configuration.Get_sync)
+  let ret = C.Rpc.Client.request t.rpc (module C.Api.Configuration.Get_sync)
     None
     (function
       | Error _ -> ()
-      | Ok res -> let module Repo = (val t.repository : C.Repository_intf.Configuration_instance) in
-        let open Repo in
-        Repo.store instance res
+      | Ok res -> let module DI = (val dispatcher : C.Dispatcher_intf.Instance) in
+        DI.(Dispatcher.dispatch this C.Message.(Update_configuration res))
     )
+  in
+  `Lwt ret

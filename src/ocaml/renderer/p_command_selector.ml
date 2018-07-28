@@ -11,7 +11,7 @@ module Component = R.Component.Make_stateless(struct
     end
   end)
 
-let component = Component.make (fun props ->
+let t = Component.make (fun props ->
     let label = R.Dom.of_tag `span
         ~props:R.(element_spec () ~key:"label" ~class_name:"fp-CommandSelector_Label")
         ~children:[R.text "Command"]

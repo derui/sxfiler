@@ -1,63 +1,34 @@
 (** Type for current renderer context. User should use this if call RPC, lookup state, or update state. *)
-open Sxfiler_core
 module C = Sxfiler_renderer_core
 module S = Sxfiler_renderer_store
 
-module Core = struct
-  type message = C.Message.t
-  type store = S.App.Store.t
-  type t = {
-    mutable store: S.App.Store.t;
+module type Instance = C.Context.Instance
+
+type store = S.App.Store.t
+type t = {
+  mutable store: S.App.Store.t;
+}
+type config = S.App.Store.t
+
+let create store =
+  {
+    store;
   }
 
-  let get_store {store;_} = store
-
-  let subscribe t f = S.App.Store.subscribe t.store
-      ~f:(fun _ -> f t.store)
-
-  let to_dispatcher_instance t =
+let dispatcher t =
+  C.Dispatcher.make_instance
     (module struct
-      type message = C.Message.t
-      module Dispatcher = struct
-        type message = C.Message.t
-        (* work around to avoid cyclic abbreviation. *)
-        type instance = t
-        type t = instance
-        let dispatch t message = get_store t |> Fun.flip S.App.Store.dispatch message
-      end
-      let instance = t
-    end : C.Dispatcher_intf.Instance with type message = C.Message.t)
+      (* work around to avoid cyclic abbreviation. *)
+      type instance = t
+      type t = instance
+      type config = unit
+      let create () = t
+      let dispatch t message = S.App.Store.dispatch t.store message
+    end)
+    ()
 
-  (** [execute instance param] execute behavior [instance] with [param]. *)
-  let execute
-      (type p)
-      (type r)
-      t
-      behavior
-      (param:p) =
-    let module Be = (val behavior : C.Behavior_intf.Instance with type param = p
-                                                              and type result = r
-                                                              and type message = message) in
-    let module I = (val to_dispatcher_instance t) in
-    Be.(Behavior.execute instance (module I) param)
-
-end
-
-module type Instance = C.Context_intf.Instance with type store := S.App.Store.t
-                                                and type message := C.Message.t
-
-let make: unit -> (module Instance) = fun () ->
-  let module C = Sxfiler_renderer_core in
-  let config = S.Config.(Store.make @@ State.make ())
-  and viewer_stacks = S.Viewer_stacks.(Store.make @@ State.make (Const.scanner_1, Const.scanner_2))
-  and layout = S.Layout.(Store.make @@ State.make ())
-  and keymap = S.Keymap.(Store.make @@ State.make ())
-  and completion = S.Completion.(Store.make @@ State.make ())
-  in
-  let state = S.App.State.make ~config ~layout ~viewer_stacks ~keymap ~completion in
-  (module struct
-    module Context = Core
-    let instance = {
-      Core.store = S.App.Store.make state;
-    }
-  end : Instance)
+(** [execute instance param] execute behavior [instance] with [param]. *)
+let execute t behavior =
+  let module Be = (val behavior : C.Behavior_intf.Instance) in
+  let module I = (val dispatcher t) in
+  Be.(Behavior.execute this (module I))

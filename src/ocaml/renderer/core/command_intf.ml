@@ -12,6 +12,10 @@ module Param_spec = struct
     | Arbitrarily
     | Select
     | Multi_select
+  type completion =
+    | Current_scanner
+    | History
+    | Commands
 
   module type S = sig
     (** [name] get the name of parameter. *)
@@ -25,13 +29,15 @@ module Param_spec = struct
     (** [setup_completion locator] get initial source of completion. Return [`No_completion] if do not need completion. *)
     val setup_completion: [
       | `No_completion
-      | `Completion of (module Locator_intf.S) -> T.Completion.collection
+      | `Completion of completion
     ]
   end
 end
 
 module type S = sig
   type t
+
+  type store
 
   (** [name] is the name of this command. This should be unique from
       all commands. *)
@@ -49,7 +55,8 @@ module type S = sig
     | `No_plan
     | `Plan of t
         -> (string * string) list
-        -> (module Behavior_intf.S with type param = 'p) * 'p
+        -> (module Context.Instance)
+        -> unit Lwt.t
   ]
 
   (** [execute t params] returns behavior that execute command with
@@ -57,12 +64,14 @@ module type S = sig
   *)
   val execute: t
     -> (string * string) list
-    -> (module Behavior_intf.S with type param = 'p) * 'p
+    -> (module Context.Instance)
+    -> unit Lwt.t
 
 end
 
 (** Signature for command *)
 module type Instance = sig
-  module Command: S
-  val instance : Command.t
+  type store
+  module Command: S with type store = store
+  val this : Command.t
 end

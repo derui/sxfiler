@@ -16,7 +16,7 @@ let notification_handler server message =
   let request = R.Request.of_json (Js._JSON##parse message##.data) in
   let thread = match request with
     | Ok req -> C.Rpc.Server.handle_request ~request:req server
-    | Error _ -> Lwt.return_unit
+    | Error _ -> Lwt.return @@ Jsonrpc_ocaml_jsoo.Response.empty
   in
   Lwt.ignore_result thread
 
@@ -29,23 +29,28 @@ let () =
   let websocket_handler = Websocket_handler.make websocket in
   Websocket_handler.init websocket_handler;
   let rpc = Rpc.make websocket websocket_handler in
-  let module L = Locator.Make((val rpc)) in
+  let store = Locator.make_store () in
+  let module Ctx = (val C.Context.make_instance (module Context) store) in
+  let module L = Locator.Make((val rpc))(Ctx) in
+  let module Ctx = (val L.context) in
+  let module D = (val Ctx.(Context.dispatcher this)) in
   let rpc_notification_server = C.Rpc.Server.make () in
-  let module Ctx = (val Context.make rpc (module L)) in
-  let rpc_notification_server = Notification_reducer.expose ~locator:(module L) rpc_notification_server in
-  let store = Ctx.(Context.get_store instance) in
-  Ctx.(Context.execute instance (module B.Initialize_stores) (module struct
-         type message = C.Message.t
-         module Store = S.App.Store
-         let instance = store
-       end));
+  let rpc_notification_server = Notification_reducer.expose ~dispatcher:(module D) rpc_notification_server in
 
   Websocket_handler.add websocket_handler ~handler:(notification_handler rpc_notification_server);
 
   websocket##.onopen := Dom.handler (fun _ ->
       (* Get current properties *)
-      Ctx.(Context.execute Ctx.instance (module B.Refresh_keybindings) ()) |> Lwt.ignore_result;
-      Ctx.(Context.execute Ctx.instance (module B.Refresh_configuration) ()) |> Lwt.ignore_result;
+      let module I = (val C.Behavior.make_instance (module B.Refresh_keybindings) ~config:(module L) ~param:()) in
+      begin match Ctx.(Context.execute this (module I)) with
+        | `Unit _ -> ()
+        | `Lwt v -> Lwt.ignore_result v
+      end;
+      let module I = (val C.Behavior.make_instance (module B.Refresh_configuration) ~config:(module L) ~param:()) in
+      begin match Ctx.(Context.execute this (module I)) with
+        | `Unit _ -> ()
+        | `Lwt v -> Lwt.ignore_result v
+      end;
 
       List.iter (fun name ->
           let module R = Sxfiler_rpc in
@@ -57,7 +62,8 @@ let () =
               | Error e ->
                 let module Ro = Jsonrpc_ocaml_jsoo in
                 if e.Ro.Error.code = R.Errors.Scanner.already_exists then
-                  Ctx.Context.execute Ctx.instance (module B.Refresh_scanner) name |> Lwt.ignore_result
+                  let module I = (val C.Behavior.make_instance (module B.Refresh_scanner) ~config:(module L) ~param:name) in
+                  Ctx.(Context.execute this (module I)) |> ignore
                 else ()
               | Ok _ -> ()
             )
@@ -68,6 +74,6 @@ let () =
     );
 
   let element = R.create_element ~props:(object%js
-      val context = (module Ctx : Context.Instance)
-    end) Components.main in
+      val locator = (module L : Locator.Main)
+    end) C_main.t in
   R.dom##render element container

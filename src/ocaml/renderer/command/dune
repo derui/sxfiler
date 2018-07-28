@@ -1,0 +1,12 @@
+(library
+ (name sxfiler_renderer_command)
+ (public_name sxfiler.renderer.command)
+ (modes byte)
+ (libraries js_of_ocaml
+            jsonrpc-ocaml.jsoo
+            lwt
+            sxfiler.core
+            sxfiler.types sxfiler.types.jsoo
+            sxfiler.renderer.core
+            sxfiler.renderer.store
+            sxfiler.renderer.behavior))

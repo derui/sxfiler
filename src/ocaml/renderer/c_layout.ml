@@ -6,21 +6,21 @@ module S = Sxfiler_renderer_store
 
 module Component = R.Component.Make_stateless(struct
     class type t = object
-      method context: (module Context.Instance) Js.readonly_prop
+      method locator: (module Locator.Main) Js.readonly_prop
     end
   end)
 
-let layout_container ~key context stack  =
+let layout_container ~key locator stack  =
   let module C = T.Configuration in
   R.create_element ~key ~props:(object%js
-    val context = context
+    val locator = locator
     val viewerStack = stack
   end)
     C_viewer_stack.component
 
 let component = Component.make @@ fun props ->
-  let module I = (val props##.context : Context.Instance) in
-  let store = I.Context.get_store I.instance in
+  let module L = (val props##.locator : Locator.Main) in
+  let store = L.store in
   let config' = S.Config.Store.get @@ S.App.(State.config @@ Store.get store) in
   let viewer_stacks' = S.Viewer_stacks.Store.get @@ S.App.(State.viewer_stacks @@ Store.get store) in
   let module C = T.Configuration in
@@ -33,4 +33,4 @@ let component = Component.make @@ fun props ->
 
   R.Dom.of_tag `div
     ~props:R.(element_spec ~key:"layout" ~class_name ())
-    ~children:[layout_container ~key:"stack" props##.context viewer_stacks']
+    ~children:[layout_container ~key:"stack" props##.locator viewer_stacks']

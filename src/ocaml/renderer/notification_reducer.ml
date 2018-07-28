@@ -6,20 +6,23 @@ module Rj = Sxfiler_rpc_jsoo
 module Jr = Jsonrpc_ocaml_jsoo
 module C = Sxfiler_renderer_core
 
-module Scanner_update(Repo:C.Repository_intf.Scanner_instance) = struct
+module type Dispatcher = C.Dispatcher_intf.Instance
+
+module Scanner_update(Dispatcher:Dispatcher) = struct
   include R.Notification.Scanner_update
   open Rj.Notification.Scanner_update
 
   let handler req =
     match req.Jr.Request.params with
-    | None -> Lwt.return_unit
+    | None -> Lwt.return Jr.Response.empty
     | Some params ->
       let params = params_of_json @@ Js.Unsafe.coerce params in
-      let open Repo in
-      Lwt.return @@ Repo.store instance params.scanner
+      let open Lwt.Infix in
+
+      Lwt.return @@ Dispatcher.(Dispatcher.dispatch this @@ C.Message.Update_scanner params.scanner) >>= fun () ->
+      Lwt.return Jr.Response.empty
 end
 
-let expose ~locator server =
-  let module L = (val locator: C.Locator_intf.S) in
-  let module Scanner_update = Scanner_update(L.Repository.Scanner) in
+let expose ~dispatcher server =
+  let module Scanner_update = Scanner_update((val dispatcher : Dispatcher)) in
   C.Rpc.Server.expose ~_method:Scanner_update.name ~handler:Scanner_update.handler server

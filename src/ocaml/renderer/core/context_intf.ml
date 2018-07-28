@@ -1,29 +1,23 @@
 (** Context should be execute behavior and manage store group.  *)
 
 module type S = sig
-  type message
-  type store
+  type config
 
   (** Type for current renderer context. User should use this if call RPC, lookup state, or update state. *)
   type t
 
-  (** [get_store t] is helper function to get store directly.  *)
-  val get_store : t -> store
+  (** [create config] gets a new instance of Context *)
+  val create: config -> t
 
-  val subscribe : t -> (store -> unit) -> unit
+  (** [execute behavior] execute behavior with this context. *)
+  val execute: t -> (module Behavior.Instance) -> Behavior.result
 
-  (** [execute instance param] execute behavior [instance] with [param]. *)
-  val execute:
-    t ->
-    (module Behavior_intf.Instance with type param = 'p and type result = 'r and type message = message) ->
-    'p ->
-    'r
+  (** [dispatcher t] returns current dispatcher of context [t] *)
+  val dispatcher: t -> (module Dispatcher.Instance)
 end
 
 (** Instance of context. *)
 module type Instance = sig
-  type message
-  type store
-  module Context : S with type store = store and type message = message
-  val instance : Context.t
+  module Context : S
+  val this : Context.t
 end
