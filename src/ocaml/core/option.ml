@@ -22,4 +22,13 @@ let get ~default = function
 (** [some v] construct [Some v] as functional way. *)
 let some v = Some v
 
-include Minimal_monadic_caml.Option
+include Monad.Make(struct
+    type 'a t = 'a option
+
+    let bind  m ~f = match m with
+      | None -> None
+      | Some v -> f v
+
+    let fmap = `Use_bind_to_define
+    let return v = Some v
+  end)

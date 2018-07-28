@@ -23,7 +23,6 @@ depends: [
   "mocha_of_ocaml" {test}
   "jsoo_node"
   "jsoo_reactjs"
-  "minimal-monadic-caml"
   "snap-shot-it_of_ocaml" {test}
   "lwt" {<= "4.0.0"}
   "lwt_ppx" {build}
