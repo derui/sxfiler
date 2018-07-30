@@ -17,12 +17,10 @@ let create locator param =
 let execute t dispatcher =
 
   let module RI = Sxfiler_rpc in
-  let ret = C.Rpc.Client.request t.rpc (module C.Api.Scanner.Get_sync)
+  C.Rpc.Client.request t.rpc (module C.Api.Scanner.Get_sync)
     (Some {RI.Scanner.Get_sync.name = t.param})
     (function
       | Error _ -> ()
       | Ok res -> let module DI = (val dispatcher: C.Dispatcher_intf.Instance) in
         DI.(Dispatcher.dispatch this C.Message.(Update_scanner res))
     )
-  in
-  `Lwt ret

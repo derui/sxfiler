@@ -37,8 +37,6 @@ end
 module type S = sig
   type t
 
-  type store
-
   (** [name] is the name of this command. This should be unique from
       all commands. *)
   val name: t -> string
@@ -71,7 +69,6 @@ end
 
 (** Signature for command *)
 module type Instance = sig
-  type store
-  module Command: S with type store = store
+  module Command: S
   val this : Command.t
 end

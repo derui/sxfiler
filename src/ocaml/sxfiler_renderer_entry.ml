@@ -32,7 +32,6 @@ let () =
   let store = Locator.make_store () in
   let module Ctx = (val C.Context.make_instance (module Context) store) in
   let module L = Locator.Make((val rpc))(Ctx) in
-  let module Ctx = (val L.context) in
   let module D = (val Ctx.(Context.dispatcher this)) in
   let rpc_notification_server = C.Rpc.Server.make () in
   let rpc_notification_server = Notification_reducer.expose ~dispatcher:(module D) rpc_notification_server in
@@ -42,15 +41,9 @@ let () =
   websocket##.onopen := Dom.handler (fun _ ->
       (* Get current properties *)
       let module I = (val C.Behavior.make_instance (module B.Refresh_keybindings) ~config:(module L) ~param:()) in
-      begin match Ctx.(Context.execute this (module I)) with
-        | `Unit _ -> ()
-        | `Lwt v -> Lwt.ignore_result v
-      end;
+      Ctx.(Context.execute this (module I)) |> Lwt.ignore_result;
       let module I = (val C.Behavior.make_instance (module B.Refresh_configuration) ~config:(module L) ~param:()) in
-      begin match Ctx.(Context.execute this (module I)) with
-        | `Unit _ -> ()
-        | `Lwt v -> Lwt.ignore_result v
-      end;
+      Ctx.(Context.execute this (module I)) |> Lwt.ignore_result;
 
       List.iter (fun name ->
           let module R = Sxfiler_rpc in

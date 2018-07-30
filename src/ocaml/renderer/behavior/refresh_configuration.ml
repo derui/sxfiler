@@ -16,12 +16,10 @@ let create locator () =
 let execute t dispatcher =
 
   let module RI = Sxfiler_rpc_jsoo in
-  let ret = C.Rpc.Client.request t.rpc (module C.Api.Configuration.Get_sync)
+  C.Rpc.Client.request t.rpc (module C.Api.Configuration.Get_sync)
     None
     (function
       | Error _ -> ()
       | Ok res -> let module DI = (val dispatcher : C.Dispatcher_intf.Instance) in
         DI.(Dispatcher.dispatch this C.Message.(Update_configuration res))
     )
-  in
-  `Lwt ret

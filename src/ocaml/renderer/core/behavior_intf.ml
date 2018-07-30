@@ -1,5 +1,3 @@
-(** type of result for execute function *)
-type result = [`Unit of unit | `Lwt of unit Lwt.t]
 
 (** The signature of behavior. *)
 module type S = sig
@@ -14,7 +12,7 @@ module type S = sig
   val create: config -> param -> t
 
   (** [execute t dispatcher param] do behavior with [param]  *)
-  val execute: t -> (module Dispatcher.Instance) -> result
+  val execute: t -> (module Dispatcher.Instance) -> unit Lwt.t
 end
 
 module type Instance = sig

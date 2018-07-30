@@ -10,7 +10,7 @@ module type S = sig
   val create: config -> t
 
   (** [execute behavior] execute behavior with this context. *)
-  val execute: t -> (module Behavior.Instance) -> Behavior.result
+  val execute: t -> (module Behavior.Instance) -> unit Lwt.t
 
   (** [dispatcher t] returns current dispatcher of context [t] *)
   val dispatcher: t -> (module Dispatcher.Instance)

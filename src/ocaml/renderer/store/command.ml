@@ -6,7 +6,7 @@ module State = struct
   type message = C.Message.t
 
   type t = {
-    current_command: (module C.Command.Instance) option;
+    current_command: C.Callable_action.t option;
     params: string Jstable.t;
     planning: bool;
     preparing: bool;

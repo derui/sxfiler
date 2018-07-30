@@ -16,7 +16,7 @@ let create locator () =
 let execute t dispatcher =
 
   let module RI = Sxfiler_rpc_jsoo in
-  let ret = C.Rpc.Client.request t.rpc (module C.Api.Keybindings.Get_sync)
+  C.Rpc.Client.request t.rpc (module C.Api.Keybindings.Get_sync)
     None
     (function
       | Error _ -> ()
@@ -24,5 +24,3 @@ let execute t dispatcher =
         let keymap = C.Key_map.of_json res in
         DI.(Dispatcher.dispatch this C.Message.(Update_keymap keymap))
     )
-  in
-  `Lwt ret

@@ -11,10 +11,13 @@ module Registry : sig
   (** [make ()] returns new instance of Registry *)
   val make: unit -> t
 
-  (** [register t command] add a command to registry [t]. Overwrite old command if give the command that has same name. *)
+  (** [register t command] add a command to registry [t]. Overwrite old command if give the command that is same name. *)
   val register: t -> (module Instance) -> t
 
   (** [get t ~name] returns the command having [name]. *)
   val get: t -> action:Callable_action.t -> (module Instance) option
+
+  (** [to_action_list t] returns list that contains actions already registered *)
+  val to_action_list: t -> Callable_action.t list
 
 end

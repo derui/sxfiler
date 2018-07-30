@@ -6,6 +6,10 @@ type completion =
   | Read of T.Completion.result
   | Tear_down
 
+type command =
+  (* select current action related specified command. *)
+  | Select of Callable_action.t
+
 type t =
   | Update_scanner of T.Scanner.t
   | Update_keymap of Key_map.t
@@ -16,6 +20,7 @@ type t =
   | Move_cursor_to_prev
   (* completion handling *)
   | Completion of completion
+  | Command of command
 
 type default =
   | Quit

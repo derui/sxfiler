@@ -16,11 +16,11 @@ let make locator =
 let execute t dispatcher input =
 
   let module RI = Sxfiler_rpc in
-  `Lwt (C.Rpc.Client.request t.rpc (module C.Api.Completion.Read_sync)
-          (Some {RI.Completion.Read_sync.input = input})
-          (function
-            | Error _ -> ()
-            | Ok res ->
-              let module D = (val dispatcher : C.Dispatcher_intf.Instance) in
-              D.(Dispatcher.dispatch this C.Message.(Completion (Read res)))
-          ))
+  C.Rpc.Client.request t.rpc (module C.Api.Completion.Read_sync)
+    (Some {RI.Completion.Read_sync.input = input})
+    (function
+      | Error _ -> ()
+      | Ok res ->
+        let module D = (val dispatcher : C.Dispatcher_intf.Instance) in
+        D.(Dispatcher.dispatch this C.Message.(Completion (Read res)))
+    )

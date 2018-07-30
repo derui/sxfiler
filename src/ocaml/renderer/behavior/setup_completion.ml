@@ -16,7 +16,7 @@ let make locator =
 let execute t dispatcher (cls, source, completer) =
 
   let module RI = Sxfiler_rpc in
-  let ret = C.Rpc.Client.request t.rpc (module C.Api.Completion.Setup_sync)
+  C.Rpc.Client.request t.rpc (module C.Api.Completion.Setup_sync)
     (Some {RI.Completion.Setup_sync.source = source})
     (function
       | Error _ -> ()
@@ -24,5 +24,3 @@ let execute t dispatcher (cls, source, completer) =
         let module D = (val dispatcher : C.Dispatcher_intf.Instance) in
         D.(Dispatcher.dispatch this C.Message.(Completion (Setup (cls, completer))))
     )
-  in
-  `Lwt ret
