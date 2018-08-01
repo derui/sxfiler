@@ -22,17 +22,10 @@ let t = Component.make (fun props ->
     else
       let completion = props##.completion in
       let module S = S.Completion.State in
-      let spec = R.element_spec ~class_name:"sf-Completer" () in
       let children = Array.to_list @@ Array.map (fun candidate ->
           let open T.Completion in
-          R.create_element ~key:Candidate.(id candidate)
-            ~props:(object%js
-              val candidate = candidate
-            end)
-            P_completer_item.t
+          [%c P_completer_item.t ~key:Candidate.(id candidate) ~candidate]
         ) completion.S.candidates
       in
-      R.Dom.of_tag `ul
-        ~props:spec
-        ~children
+      [%e ul ~class_name:"sf-Completer" children]
   )

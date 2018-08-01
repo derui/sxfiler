@@ -10,17 +10,15 @@ module Component = R.Component.Make_stateless (struct
 
 
 let visible_window key start size =
-  R.Dom.of_tag `span
-    ~key ~props:R.(element_spec () ~class_name:"fp-ScrollBar_VisibleWindow"
-                     ~others:(object%js
-                       val style = object%js
-                         val top = Printf.sprintf "%f%%" (start *. 100.0)
-                         val height = Printf.sprintf "%f%%" (size *. 100.0)
-                       end
-                     end))
+  [%e span ~key ~class_name:"fp-ScrollBar_VisibleWindow"
+      ~others:(object%js
+        val style = object%js
+          val top = Printf.sprintf "%f%%" (start *. 100.0)
+          val height = Printf.sprintf "%f%%" (size *. 100.0)
+        end
+      end)]
 
-let component = Component.make (fun props ->
-    R.Dom.of_tag `div
-      ~props:R.(element_spec ~class_name:"fp-ScrollBar" ())
-      ~children:[visible_window "bar" props##.start props##.windowSize]
+let t = Component.make (fun props ->
+    [%e div ~class_name:"fp-ScrollBar"
+        [visible_window "bar" props##.start props##.windowSize]]
   )

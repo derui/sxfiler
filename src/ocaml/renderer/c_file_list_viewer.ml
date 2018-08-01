@@ -12,16 +12,16 @@ module Component = R.Component.Make_stateless (struct
     end
   end)
 
-let component = Component.make (fun props ->
+let t = Component.make (fun props ->
     let state = props##.viewerState in
     let trees = S.Viewer_stacks.File_tree.to_list state in
 
     let to_component tree =
       let scanner = tree.S.Viewer_stacks.File_tree.scanner in
-      R.create_element ~key:("file-list_" ^ scanner.T.Scanner.name) ~props:(object%js
-        val viewerState = tree
-        val focused = props##.focused
-      end) C_file_list.component
+      [%c C_file_list.t ~key:("file-list_" ^ scanner.T.Scanner.name)
+          ~viewerState:tree
+          ~focused:props##.focused
+      ]
     in
 
     R.fragment ~key:"file-lists" @@ List.map to_component trees

@@ -15,11 +15,9 @@ let format_date date =
     (date##getMinutes)
     (date##getSeconds)
 
-let component = Component.make (fun props ->
+let t = Component.make (fun props ->
     let timestamp = props##.timestamp in
     let date = new%js Js.date_fromTimeValue timestamp in
     let date = format_date date in
-    R.Dom.of_tag `span
-      ~props:R.(element_spec ~class_name:"fp-FileItem_Timestamp" ())
-      ~children:[R.text date]
+    [%e span ~class_name:"fp-FileItem_Timestamp" [date [@txt]]]
   )

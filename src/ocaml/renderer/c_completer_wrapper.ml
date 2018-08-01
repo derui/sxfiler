@@ -45,30 +45,20 @@ let t =
         )
 
       (fun this ->
-         let children = [
-           R.Dom.of_tag `div ~key:"input"
-             ~props:(R.element_spec () ~class_name:"sf-CompleterWrapper_Input")
-             ~children:[R.Children.to_element this##.props_defined##.children];
-           R.Dom.of_tag `div ~key:"completer"
-             ~props:(R.element_spec () ~class_name:"sf-CompleterWrapper_PositionFixer")
-             ~children:[
-               R.create_element
-                 ~key:"completer"
-                 ~props:(object%js
-                   val completerId = this##.props##.completerId
-                   val completion = this##.props##.completion
-                   val showed = this##.state##.showed
-                 end)
-                 C_completer.t;
-             ];
+         [%c C_key_handler.t
+             ~className:(Some "sf-CompleterWrapper")
+             ~keymap:None
+             ~locator:this##.props##.locator
+             [
+               [%e div ~key:"input" ~class_name:"sf-CompleterWrapper_Input"
+                   [R.Children.to_element this##.props_defined##.children]];
+               [%e div ~key:"completerWrapper" ~class_name:"sf-CompleterWrapper_PositionFixer"
+                   [[%c C_completer.t ~key:"completer"
+                       ~completerId:this##.props##.completerId
+                       ~completion:this##.props##.completion
+                       ~showed:this##.state##.showed]]
+               ]
+             ]
          ]
-         in
-         R.create_element ~key:"handler" ~props:(object%js
-           val className = Some "sf-CompleterWrapper"
-           val keymap = None
-           val locator = this##.props##.locator
-         end)
-           ~children
-           C_key_handler.t
       )
   in Component.make spec

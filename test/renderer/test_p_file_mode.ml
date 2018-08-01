@@ -9,7 +9,7 @@ let suite () =
         let module F = S.P_file_mode in
         let e = R.create_element ~props:(object%js
             val mode = 0o644l
-          end) F.component
+          end) F.t
         in
         let renderer = new%js R.Test_renderer.shallow_ctor in
         renderer##render e;
@@ -21,7 +21,7 @@ let suite () =
         let module F = S.P_file_mode in
         let e = R.create_element ~props:(object%js
             val mode = 0l
-          end) F.component
+          end) F.t
         in
         let renderer = new%js R.Test_renderer.shallow_ctor in
         renderer##render e;
@@ -33,7 +33,7 @@ let suite () =
         let module F = S.P_file_mode in
         let e = R.create_element ~props:(object%js
             val mode = Int32.logor 0o120000l 0o777l
-          end) F.component
+          end) F.t
         in
         let renderer = new%js R.Test_renderer.shallow_ctor in
         renderer##render e;
@@ -45,7 +45,7 @@ let suite () =
         let module F = S.P_file_mode in
         let e = R.create_element ~props:(object%js
             val mode = Int32.logor 0o040000l 0o755l
-          end) F.component
+          end) F.t
         in
         let renderer = new%js R.Test_renderer.shallow_ctor in
         renderer##render e;

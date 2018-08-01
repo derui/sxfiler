@@ -13,11 +13,7 @@ module Component = R.Component.Make_stateful (struct
   end)
 
 let make_command_pallet locator =
-  R.create_element ~key:"command-pallet"
-    ~props:(object%js
-      val locator = locator
-    end)
-    C_command_pallet.t
+  [%c C_command_pallet.t ~key:"command-pallet" ~locator]
 
 let t = Component.make
     R.(component_spec
@@ -31,26 +27,13 @@ let t = Component.make
            )
          ~should_component_update:(fun _ _ _ -> true)
          (fun this ->
-            let children_props = object%js
-              val locator = this##.props##.locator
-              val className = None
-              val keymap = None
-            end in
-            let layout = R.create_element ~key:"layout" ~props:(object%js
-                val locator = this##.props##.locator
-              end) C_layout.component;
-            in
-            let children = [
-              make_command_pallet this##.props##.locator;
-              layout;
-            ] in
-            R.Dom.of_tag `div
-              ~props:R.(element_spec ~class_name:"sf-Main" ())
-              ~children:[
-                R.create_element ~key:"key-container"
-                  ~props:children_props
-                  ~children
-                  C_key_handler.t;
-              ]
+            let layout = [%c C_layout.t ~key:"layout" ~locator:this##.props##.locator] in
+            [%e div ~class_name:"sf-Main" [
+                [%c C_key_handler.t ~key:"key-container"
+                    ~locator:this##.props##.locator ~className:None ~keymap:None
+                    [
+                      make_command_pallet this##.props##.locator;
+                      layout;
+                    ]]]]
          )
       )

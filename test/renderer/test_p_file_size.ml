@@ -9,7 +9,7 @@ let suite () =
         let module F = S.P_file_size in
         let e = R.create_element ~props:(object%js
             val size = 0L
-          end) F.component
+          end) F.t
         in
         let renderer = new%js R.Test_renderer.shallow_ctor in
         renderer##render e;
@@ -21,7 +21,7 @@ let suite () =
         let module F = S.P_file_size in
         let e = R.create_element ~props:(object%js
             val size = 1024L
-          end) F.component
+          end) F.t
         in
         let renderer = new%js R.Test_renderer.shallow_ctor in
         renderer##render e;
@@ -33,7 +33,7 @@ let suite () =
         let module F = S.P_file_size in
         let e = R.create_element ~props:(object%js
             val size = Int64.mul 1024L 1024L
-          end) F.component
+          end) F.t
         in
         let renderer = new%js R.Test_renderer.shallow_ctor in
         renderer##render e;
@@ -45,7 +45,7 @@ let suite () =
         let module F = S.P_file_size in
         let e = R.create_element ~props:(object%js
             val size = Int64.(mul 1024L @@ mul 1024L 1024L)
-          end) F.component
+          end) F.t
         in
         let renderer = new%js R.Test_renderer.shallow_ctor in
         renderer##render e;

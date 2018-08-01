@@ -16,10 +16,6 @@ let t =
       let candidate = props##.candidate in
       let module C = T.Completion.Candidate in
       let module I = T.Completion.Item in
-      let spec = R.element_spec () ~class_name:"sf-CompleterItem" in
 
-      R.Dom.of_tag `li ~props:spec
-        ~children:[
-          R.text candidate.C.value.I.value
-        ]
+      [%e li ~class_name:"sf-CompleterItem" [candidate.C.value.I.value [@txt]]]
     )

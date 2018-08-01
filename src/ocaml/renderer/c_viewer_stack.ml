@@ -11,12 +11,7 @@ module Component = R.Component.Make_stateless(struct
     end
   end)
 
-let component = Component.make @@ fun props ->
+let t = Component.make @@ fun props ->
   let module V = S.Viewer_stacks.State in
-  R.create_element ~key:"file-tree"
-    ~props:(object%js
-      val locator = props##.locator
-      val viewerState = (props##.viewerStack).V.file_tree
-      val focused = true
-    end)
-    C_file_list_viewer.component
+  [%c C_file_list_viewer.t ~locator:props##.locator ~viewerState:(props##.viewerStack).V.file_tree
+      ~focused:true]

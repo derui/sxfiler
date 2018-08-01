@@ -23,9 +23,7 @@ let header = Header.make (fun props ->
       to_string ["fp-FileList_Header", true;
                  "fp-FileList_Header-focused", props##.focused]
     in
-    R.Dom.of_tag `header
-      ~props:R.(element_spec ~class_name ())
-      ~children:[R.text directory]
+    [%e header ~class_name [directory [@txt]]]
   )
 
 (* content of file list *)
@@ -82,20 +80,14 @@ let content =
 
     let children = Array.mapi (fun index item ->
         let module N = T.Node in
-        R.create_element ~key:item.N.full_path ~props:(object%js
-          val item = item
-          val selected = index = vt.Vt.selected_item_index
-          val focused = this##.props##.focused
-        end) P_file_item.component
+        [%c P_file_item.t ~key:item.N.full_path ~item
+            ~selected:(index = vt.Vt.selected_item_index)
+            ~focused:this##.props##.focused ]
       ) items |> Array.to_list
     in
     let scroll_bar =
       let start, size = VL.percentage_by_visible this##.state##.virtualizedList in
-      R.create_element ~key:"scroll-bar"
-        ~props:(object%js
-          val start = start
-          val windowSize = size
-        end) C_scroll_bar.component
+      [%c C_scroll_bar.t ~key:"scroll-bar" ~start ~windowSize:size]
     in
     let resize_sensor = R.create_element ~key:"resize-sensor"
         ~props:(object%js
@@ -113,12 +105,11 @@ let content =
               this##setState (object%js
                 val virtualizedList = VL.update_list_height height vl
               end))
-        end) C_resize_sensor.component
+        end) C_resize_sensor.t
     in
     let children = List.concat [children;[resize_sensor;scroll_bar]] in
     let _ref e = R.Ref_table.add ~key:key_of_filelist ~value:e this##.nodes in
-    let props = R.(element_spec ~class_name:"fp-FileList_Content" ()) in
-    R.Dom.of_tag `ul ~_ref ~props ~children
+    [%e ul ~_ref ~class_name:"fp-FileList_Content"  children]
   in
   Content.make @@ spec render
 
@@ -130,18 +121,11 @@ module Component = R.Component.Make_stateless (struct
     end
   end)
 
-let component = Component.make (fun props ->
+let t = Component.make (fun props ->
     let state = props##.viewerState in
     let scanner = state.S.Viewer_stacks.File_tree.scanner in
-    let header = R.create_element ~key:"header" ~props:(object%js
-        val directory = scanner.location
-        val focused = props##.focused
-      end) header
-    and content = R.create_element ~key:"file-list" ~props:(object%js
-        val viewerState = state
-        val focused = props##.focused
-      end) content
-    in
-    let props = R.element_spec ~class_name:"fp-FileList" () in
-    R.Dom.of_tag `div ~key:"content" ~props ~children:[header; content]
+    [%e div ~class_name:"fp-FileList"
+        [[%c header ~key:"header" ~directory:scanner.location ~focused:props##.focused];
+         [%c content ~key:"file-list" ~viewerState:state ~focused:props##.focused];
+         ]]
   )

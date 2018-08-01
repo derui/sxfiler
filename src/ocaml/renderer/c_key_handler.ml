@@ -53,14 +53,9 @@ let t =
            | None -> Classnames.to_string []
            | Some v -> Classnames.to_string [(v, true)]
          in
-         let spec = R.element_spec ()
-             ~class_name
-             ~on_key_down:(key_handler ~props)
-         in
          let children = R.Children.to_element this##.props_defined##.children in
-         R.Dom.of_tag `div
-           ~props:spec
-           ~children:[children]
+         [%e div ~class_name
+             ~on_key_down:(key_handler ~props) [children]]
       )
   in
   Component.make spec

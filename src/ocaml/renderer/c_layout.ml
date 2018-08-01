@@ -11,14 +11,9 @@ module Component = R.Component.Make_stateless(struct
   end)
 
 let layout_container ~key locator stack  =
-  let module C = T.Configuration in
-  R.create_element ~key ~props:(object%js
-    val locator = locator
-    val viewerStack = stack
-  end)
-    C_viewer_stack.component
+  [%c C_viewer_stack.t ~key ~locator ~viewerStack:stack]
 
-let component = Component.make @@ fun props ->
+let t = Component.make @@ fun props ->
   let module L = (val props##.locator : Locator.Main) in
   let store = L.store in
   let config' = S.Config.Store.get @@ S.App.(State.config @@ Store.get store) in
@@ -31,6 +26,6 @@ let component = Component.make @@ fun props ->
       ]
   in
 
-  R.Dom.of_tag `div
-    ~props:R.(element_spec ~key:"layout" ~class_name ())
-    ~children:[layout_container ~key:"stack" props##.locator viewer_stacks']
+  [%e div ~key:"layout" ~class_name [
+      layout_container ~key:"stack" props##.locator viewer_stacks';
+    ]]

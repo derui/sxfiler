@@ -65,10 +65,8 @@ module Mode_converter = struct
 
 end
 
-let component = Component.make (fun props ->
+let t = Component.make (fun props ->
     let mode' = Int32.to_int props##.mode in
     let mode' = Mode_converter.(of_mode_bits mode' |> to_string) in
-    R.Dom.of_tag `span
-      ~props:R.(element_spec ~class_name:"fp-FileItem_FileMode" ())
-      ~children:[R.text mode']
+    [%e span ~class_name:"fp-FileItem_FileMode" [mode'[@txt]]]
   )

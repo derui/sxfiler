@@ -15,4 +15,4 @@
             sxfiler.virtualized_list
             sxfiler.types sxfiler.types.jsoo
             sxfiler.rpc sxfiler.rpc.jsoo)
- (preprocess (pps js_of_ocaml-ppx)))
+ (preprocess (pps js_of_ocaml-ppx jsoo_reactjs.ppx)))

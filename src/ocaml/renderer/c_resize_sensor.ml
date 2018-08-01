@@ -41,40 +41,33 @@ end
 
 (* the component to detect shrinking *)
 let shrink ~on_scroll ~nodes =
-  let props = R.element_spec ()
-      ~on_scroll
-      ~others:(object%js
-        val style = style
-      end)
+  let child =
+    [%e div ~key:"shrinkChild" ~others:(object%js
+        val style = shrink_child_style
+      end)]
   in
-  let children = [
-    R.Dom.of_tag `div ~key:"shrinkChild" ~props:(R.element_spec ()
-                                                   ~others:(object%js
-                                                     val style = shrink_child_style
-                                                   end))
-  ] in
-  R.Dom.of_tag `div ~key:"shrink" ~props ~children
-    ~_ref:(fun e -> R.Ref_table.add nodes ~key:shrink_key ~value:e)
+  [%e div ~key:"shrink" ~on_scroll ~others:(object%js
+      val style = style
+    end)
+      ~_ref:(fun e -> R.Ref_table.add nodes ~key:shrink_key ~value:e)
+      [child]]
 
 (* the component to detect expanding *)
 let expand ~on_scroll ~nodes =
-  let props = R.element_spec ()
-      ~on_scroll
+  let child = [%e div
+      ~key:"expandChild"
+      ~_ref:(fun e -> R.Ref_table.add nodes ~key:expand_child_key ~value:e)
+      ~others:(object%js
+        val style = expand_child_style
+      end)
+  ] in
+  [%e div ~key:"expand" ~on_scroll
       ~others:(object%js
         val style = style
       end)
-  in
-  let children = [
-    R.Dom.of_tag `div
-      ~key:"expandChild"
-      ~_ref:(fun e -> R.Ref_table.add nodes ~key:expand_child_key ~value:e)
-      ~props:(R.element_spec () ~others:(object%js
-                val style = expand_child_style
-              end))
-  ] in
-  R.Dom.of_tag `div ~key:"expand" ~props ~children
-    ~_ref:(fun e -> R.Ref_table.add nodes ~key:expand_key ~value:e)
-
+      ~_ref:(fun e -> R.Ref_table.add nodes ~key:expand_key ~value:e)
+      [child]
+  ]
 
 (** The component to define sensor for parent resizing.
     Component that use this component should define value of [position] as ["relative"].
@@ -97,19 +90,14 @@ module Component = R.Component.Make_stateful_custom (struct
     end
   end)
 
-let component =
+let t =
   let render this =
-    let spec = R.element_spec () ~class_name:"global-ResizeSensor"
-        ~others:(object%js
-          val style = style
-        end)in
     let on_scroll = this##.custom##.onScroll in
-    R.Dom.of_tag `div
-      ~props:spec
-      ~children:[
-        expand ~on_scroll ~nodes:this##.nodes;
-        shrink ~on_scroll ~nodes:this##.nodes;
-      ]
+    [%e div ~class_name:"global-ResizeSensor" ~others:(object%js
+        val style = style
+      end)
+        [expand ~on_scroll ~nodes:this##.nodes;
+         shrink ~on_scroll ~nodes:this##.nodes]]
   in
   let reset_sensor_elements this =
     let shrink = R.Ref_table.find this##.nodes ~key:shrink_key

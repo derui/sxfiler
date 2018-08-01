@@ -26,9 +26,7 @@ let resolve_name props =
   and path = props##.path in
   String.sub path (String.length base_dir) (String.length path - String.length base_dir)
 
-let component = Component.make (fun props ->
+let t = Component.make (fun props ->
     let name = resolve_name props in
-    R.Dom.of_tag `span
-      ~props:R.(element_spec ~class_name:(get_classname props) ())
-      ~children:[R.text name]
+    [%e span ~class_name:(get_classname props) [name[@txt]]]
   )

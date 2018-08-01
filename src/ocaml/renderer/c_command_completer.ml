@@ -15,17 +15,12 @@ let t = Component.make (fun props ->
     let module L = (val props##.locator) in
     let state = S.App.Store.get L.store in
 
-    R.create_element ~key:"command_completer"
-      ~props:(object%js
-        val completerId = "command"
-        val completion = S.Completion.Store.get @@ S.App.State.completion state
-        val locator = props##.locator
-      end)
-      ~children:[
-        R.create_element ~props:(object%js
-          val onChangeCommand = (fun _ -> failwith "not implemented yet")
-        end)
-          P_command_selector.t
-      ]
-      C_completer_wrapper.t
+    [%c C_completer_wrapper.t
+        ~completerId:"command"
+        ~completion:(S.Completion.Store.get @@ S.App.State.completion state)
+        ~locator:props##.locator
+          [[%c P_command_selector.t ~key:"completer"
+              ~onChangeCommand:(fun _ -> failwith "not implemented yet")]
+          ]
+    ]
   )

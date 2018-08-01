@@ -12,7 +12,7 @@ let suite () =
             val path = "/foo/bar/sample.txt"
             val isDirectory = false
             val isSymbolicLink = false
-          end) C.component
+          end) C.t
         in
         let renderer = new%js R.Test_renderer.shallow_ctor in
         renderer##render e;
@@ -27,7 +27,7 @@ let suite () =
             val path =  "/foo/bar/"
             val isDirectory = true
             val isSymbolicLink = false
-          end) C.component
+          end) C.t
         in
         let renderer = new%js R.Test_renderer.shallow_ctor in
         renderer##render e;
@@ -42,7 +42,7 @@ let suite () =
             val path = "/foo/bar/sample.txt"
             val isDirectory = false
             val isSymbolicLink = true
-          end) C.component
+          end) C.t
         in
         let renderer = new%js R.Test_renderer.shallow_ctor in
         renderer##render e;

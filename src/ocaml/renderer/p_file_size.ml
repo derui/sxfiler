@@ -59,11 +59,8 @@ module File_size = struct
 
 end
 
-let component = Component.make (fun props ->
+let t = Component.make (fun props ->
     let size = props##.size in
-    R.Dom.of_tag `span
-      ~props:R.(element_spec ~class_name:"fp-FileItem_FileSize" ())
-      ~children:[
-        File_size.of_size size |> File_size.to_string |> R.text
-      ]
+    let size = File_size.of_size size |> File_size.to_string in
+    [%e span ~class_name:"fp-FileItem_FileSize" [size [@txt]]]
   )
