@@ -27,5 +27,5 @@ let command_selector locator state =
 let t = Component.make (fun props ->
     let module L = (val props##.locator) in
     let state = S.App.Store.get L.store in
-    [%e div ~class_name:"fp-CommandPallet" [command_selector props##.locator state]]
+    [%e div ~class_name:"sf-CommandPallet" [command_selector props##.locator state]]
   )

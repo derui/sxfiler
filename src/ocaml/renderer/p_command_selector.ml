@@ -12,13 +12,15 @@ module Component = R.Component.Make_stateless(struct
   end)
 
 let t = Component.make (fun props ->
-    let label = [%e span ~key:"label" ~class_name:"fp-CommandSelector_Label" ["Command"]] in
-    let input = [%e input ~key:"input" ~class_name:"fp-CommandSelector_Input" ~default_value:""
+    let label = [%e label ~key:"labelContainer" ~class_name:"sf-CommandSelector_LabelContainer"
+        [[%e span ~key:"label" ~class_name:"sf-CommandSelector_Label" ["Command"]]]
+    ] in
+    let input = [%e input ~key:"input" ~class_name:"sf-CommandSelector_Input" ~default_value:""
         ~on_input:(fun ev ->
             let value = Js.Opt.get ev##.target##.nodeValue (fun () -> Js.string "") in
             props##.onChangeCommand @@ Js.to_string value
           )
     ] in
 
-    [%e div ~class_name:"fp-CommandSelector" [label;input]]
+    [%e div ~class_name:"sf-CommandSelector" [label;input]]
   )

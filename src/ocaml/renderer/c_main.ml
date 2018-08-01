@@ -12,9 +12,6 @@ module Component = R.Component.Make_stateful (struct
     end
   end)
 
-let make_command_pallet locator =
-  [%c C_command_pallet.t ~key:"command-pallet" ~locator]
-
 let t = Component.make
     R.(component_spec
          ~constructor:(fun this _ ->
@@ -27,13 +24,12 @@ let t = Component.make
            )
          ~should_component_update:(fun _ _ _ -> true)
          (fun this ->
-            let layout = [%c C_layout.t ~key:"layout" ~locator:this##.props##.locator] in
             [%e div ~class_name:"sf-Main" [
                 [%c C_key_handler.t ~key:"key-container"
                     ~locator:this##.props##.locator ~className:None ~keymap:None
                     [
-                      make_command_pallet this##.props##.locator;
-                      layout;
+                      [%c C_command_pallet.t ~key:"command-pallet" ~locator:this##.props##.locator];
+                      [%c C_layout.t ~key:"layout" ~locator:this##.props##.locator];
                     ]]]]
          )
       )
