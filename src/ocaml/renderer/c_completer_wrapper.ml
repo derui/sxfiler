@@ -22,6 +22,19 @@ module Component = R.Component.Make_stateful(struct
       end
     end)
 
+let default_key_map =
+  let module A = C.Callable_action in
+  let keymap = C.Key_map.empty in
+  let condition = C.Types.Condition.empty in
+  List.fold_left (fun keymap (key, action) ->
+      C.Key_map.add ~condition ~key ~action keymap
+    )
+    keymap
+    [
+      "ArrowUp", A.Completion (A.Completion.Prev_candidate);
+      "ArrowDown", A.Completion (A.Completion.Next_candidate);
+    ]
+
 let t =
   let spec = R.component_spec
       ~constructor:(fun this _ ->
@@ -47,7 +60,7 @@ let t =
       (fun this ->
          [%c C_key_handler.t
              ~className:(Some "sf-CompleterWrapper")
-             ~keymap:None
+             ~keymap:(Some default_key_map)
              ~locator:this##.props##.locator
              [
                [%e div ~key:"input" ~class_name:"sf-CompleterWrapper_Input"
