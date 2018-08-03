@@ -6,42 +6,22 @@ let module_prefix = "file_list:"
 
 module Next_item = struct
   let make () =
-
-    let module Command = struct
-        type t = unit
-        let name () = module_prefix ^ "next_item"
-        let param_defs () = []
-
-        let plan = `No_plan
-        let execute () _ (module Ctx : C.Context.Instance) =
-          let module I = (val C.Behavior.make_instance (module B.Move_scanner_cursor) ~config:() ~param:`Next) in
-          Ctx.(Context.execute this (module I))
-      end
-    in
-
-    (module struct
-      module Command = Command
-      let this = ()
-    end : C.Command.Instance)
+    {
+      C.Command.Static_command.name = module_prefix ^ "next_item";
+      execute_plan = `No_plan;
+      executor = fun _ (module Ctx : C.Context.Instance) ->
+        let module I = (val C.Behavior.make_instance (module B.Move_scanner_cursor) ~config:() ~param:`Next) in
+        Ctx.(Context.execute this (module I))
+    }
 end
 
 module Prev_item = struct
   let make () =
-
-    let module Command = struct
-        type t = unit
-        let name () = module_prefix ^ "next_item"
-        let param_defs () = []
-
-        let plan = `No_plan
-        let execute () _ (module Ctx : C.Context_intf.Instance) =
-          let module I = (val C.Behavior.make_instance (module B.Move_scanner_cursor) ~config:() ~param:`Prev) in
-          Ctx.(Context.execute this (module I))
-      end
-    in
-
-    (module struct
-      module Command = Command
-      let this = ()
-    end : C.Command.Instance)
+    {
+      C.Command.Static_command.name = module_prefix ^ "prev_item";
+      execute_plan = `No_plan;
+      executor = fun _ (module Ctx : C.Context.Instance) ->
+        let module I = (val C.Behavior.make_instance (module B.Move_scanner_cursor) ~config:() ~param:`Prev) in
+        Ctx.(Context.execute this (module I))
+    }
 end

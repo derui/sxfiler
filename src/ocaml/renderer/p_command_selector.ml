@@ -7,6 +7,7 @@ module S = Sxfiler_renderer_store
 
 module Component = R.Component.Make_stateless(struct
     class type t = object
+      method onFocus: (unit -> unit) Js.readonly_prop
       method onChangeCommand: (string -> unit) Js.readonly_prop
     end
   end)
@@ -20,6 +21,7 @@ let t = Component.make (fun props ->
             let value = Js.Opt.get ev##.target##.nodeValue (fun () -> Js.string "") in
             props##.onChangeCommand @@ Js.to_string value
           )
+        ~on_focus:(fun _ -> props##.onFocus ())
     ] in
 
     [%e div ~class_name:"sf-CommandSelector" [label;input]]

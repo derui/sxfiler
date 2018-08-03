@@ -49,9 +49,9 @@ module Condition = struct
         else set
       ) Context_set.empty
       [
-      On_file_tree, use_context js##.onFileTree;
-      On_completing, use_context js##.onCompleting;
-    ]
+        On_file_tree, use_context js##.onFileTree;
+        On_completing, use_context js##.onCompleting;
+      ]
 
   let subset ~current ~parts = Context_set.subset parts current
 end

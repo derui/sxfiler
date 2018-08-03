@@ -29,7 +29,7 @@ module Core = struct
 end
 
 let make ~migemo = (module struct
-  module Completer = Core
+                     module Completer = Core
 
-  let instance = Core.make ~migemo
-end : Instance)
+                     let instance = Core.make ~migemo
+                   end : Instance)

@@ -127,5 +127,5 @@ let t = Component.make (fun props ->
     [%e div ~class_name:"fp-FileList"
         [[%c header ~key:"header" ~directory:scanner.location ~focused:props##.focused];
          [%c content ~key:"file-list" ~viewerState:state ~focused:props##.focused];
-         ]]
+        ]]
   )

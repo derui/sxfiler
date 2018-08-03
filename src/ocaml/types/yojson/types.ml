@@ -20,8 +20,8 @@ module Layout = struct
   let of_yojson js =
     match js with
     | `Int v -> begin match of_enum v with
-      | None -> Error "Unknown type"
-      | Some v -> Ok v
+        | None -> Error "Unknown type"
+        | Some v -> Ok v
       end
     | _ -> Error "Invalid JSON type"
 

@@ -1,74 +1,62 @@
 module T = Sxfiler_types
 
-(** {!Command} defines types for command pallet. *)
-module Class = struct
-  type t =
-    | Scanner_jump
+type ('a, 'b) executor = 'a -> (module Context.Instance) -> 'b Lwt.t
+type execution_plan = [
+  | `No_plan
+  | `Plan of ((string * string) list, unit) executor
+]
+
+(** type for static command. *)
+module Static_command = struct
+  type t = {
+    name: string;
+    execute_plan: execution_plan;
+    executor: ((string * string) list, unit) executor;
+  }
 end
 
-(** modules for parameter specifications of a command.  *)
-module Param_spec = struct
-  type interface =
-    | Arbitrarily
-    | Select
-    | Multi_select
-  type completion =
-    | Current_scanner
-    | History
-    | Commands
+(** The signature of completer is used from omni bar with dynamic command.  *)
+module type Completer = sig
+  type t
 
-  module type S = sig
-    (** [name] get the name of parameter. *)
-    val name: string
-
-    (** [interface] get the interface of parameter to define the type of
-        user interaction interface.
-    *)
-    val interface: interface
-
-    (** [setup_completion locator] get initial source of completion. Return [`No_completion] if do not need completion. *)
-    val setup_completion: [
-      | `No_completion
-      | `Completion of completion
-    ]
-  end
+  (** [read t input] returns collection to be used to show list as candidates. *)
+  val read: t -> (string, T.Completion.collection) executor
 end
 
-module type S = sig
+(** The signature of static command called from key binding *)
+module type Dynamic_command = sig
   type t
 
   (** [name] is the name of this command. This should be unique from
-      all commands. *)
+      all commands.
+  *)
   val name: t -> string
 
-  (** [param_defs] is the specifications of parameter of this command.
-      Order of this definitions is important to declare order of parameter.
+  (** To enable completer or not. If [completer t] returns [`No_completion], command runner will not
+      do anything for completion.
   *)
-  val param_defs: t -> (module Param_spec.S) list
+  val completer: [
+    | `No_completion
+    | `Complete of t -> (module Completer)
+  ]
 
   (** Definition of plan to get difference of between before and after
       command execution.
   *)
   val plan: [
     | `No_plan
-    | `Plan of t
-        -> (string * string) list
-        -> (module Context.Instance)
-        -> unit Lwt.t
+    | `Plan of t -> (string, unit) executor
   ]
 
-  (** [execute t params] returns behavior that execute command with
+  (** [execute t params context] returns behavior that execute command with
       some of dependencies.
   *)
-  val execute: t
-    -> (string * string) list
-    -> (module Context.Instance)
-    -> unit Lwt.t
+  val execute: t -> (string, unit) executor
 
 end
 
-(** Signature for command *)
+(** Signature for dynamic command *)
 module type Instance = sig
-  module Command: S
+  module Command: Dynamic_command
   val this : Command.t
 end

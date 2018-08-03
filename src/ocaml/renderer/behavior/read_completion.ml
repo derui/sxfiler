@@ -2,22 +2,23 @@
 module T = Sxfiler_types
 module C = Sxfiler_renderer_core
 
+type param = string
 type t = {
   rpc: (module C.Rpc_intf.Rpc);
+  input: param;
 }
 
-type param = string
 type config = (module C.Locator_intf.S)
 
-let make locator =
+let create locator param =
   let module L = (val locator : C.Locator_intf.S) in
-  {rpc = L.rpc}
+  {rpc = L.rpc; input = param}
 
-let execute t dispatcher input =
+let execute t dispatcher =
 
   let module RI = Sxfiler_rpc in
   C.Rpc.Client.request t.rpc (module C.Api.Completion.Read_sync)
-    (Some {RI.Completion.Read_sync.input = input})
+    (Some {RI.Completion.Read_sync.input = t.input})
     (function
       | Error _ -> ()
       | Ok res ->

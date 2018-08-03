@@ -11,21 +11,10 @@ module Component = R.Component.Make_stateless(struct
     end
   end)
 
-let command_selector locator state =
-  [%c C_completer_wrapper.t
-      ~key:"command_completer"
-      ~completerId:"command"
-      ~completion:(S.Completion.Store.get @@ S.App.State.completion state)
-      ~locator
-
-      [
-        [%c P_command_selector.t ~key:"completer" ~onChangeCommand:(fun _ -> failwith "")]
-      ]
-  ]
-
+let command_completer locator =
+  [%c C_command_completer.t ~key:"command_completer" ~locator]
 
 let t = Component.make (fun props ->
     let module L = (val props##.locator) in
-    let state = S.App.Store.get L.store in
-    [%e div ~class_name:"sf-CommandPallet" [command_selector props##.locator state]]
+    [%e div ~class_name:"sf-CommandPallet" [command_completer props##.locator]]
   )
