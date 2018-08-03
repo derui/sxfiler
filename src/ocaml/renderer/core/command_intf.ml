@@ -60,3 +60,29 @@ module type Instance = sig
   module Command: Dynamic_command
   val this : Command.t
 end
+
+module Registry = struct
+  module type Command = sig
+    type t
+
+    (** [to_name t] should return the name of the command [t] *)
+    val to_name: t -> string
+  end
+
+  module type S = sig
+    type t
+    type command
+
+    (** [make ()] returns new instance of Registry *)
+    val make: unit -> t
+
+    (** [register t command] add a command to registry [t]. Overwrite old command if give the command that is same name. *)
+    val register: t -> command -> t
+
+    (** [get t ~name] returns the command having [name]. *)
+    val get: t -> action:Callable_action.t -> command option
+
+    (** [to_action_list t] returns list that contains actions already registered *)
+    val to_action_list: t -> Callable_action.t list
+  end
+end

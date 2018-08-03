@@ -28,7 +28,7 @@ let t = Component.make
                 [%c C_key_handler.t ~key:"key-container"
                     ~locator:this##.props##.locator ~className:None ~keymap:None
                     [
-                      [%c C_command_pallet.t ~key:"command-pallet" ~locator:this##.props##.locator];
+                      [%c C_omni_bar.t ~key:"omni-bar" ~locator:this##.props##.locator];
                       [%c C_layout.t ~key:"layout" ~locator:this##.props##.locator];
                     ]]]]
          )

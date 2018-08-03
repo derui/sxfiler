@@ -12,8 +12,9 @@ let make_store () =
   and viewer_stacks = S.Viewer_stacks.(Store.make @@ State.make (Const.scanner_1, Const.scanner_2))
   and keymap = S.Keymap.(Store.make @@ State.make ())
   and completion = S.Completion.(Store.make @@ State.make ())
+  and command = S.Command.(Store.make @@ State.make ())
   in
-  let state = S.App.State.make ~config ~viewer_stacks ~keymap ~completion in
+  let state = S.App.State.make ~config ~viewer_stacks ~keymap ~completion ~command in
   S.App.Store.make state
 
 module Make
@@ -25,5 +26,6 @@ module Make
   let context = (module Ctx : C.Context.Instance)
   let store = make_store ()
 
-  let command_registry = C.Command.Registry.make ()
+  let command_registry = C.Locator_intf.Static_registry.make ()
+  let dynamic_command_registry = C.Locator_intf.Dynamic_registry.make ()
 end

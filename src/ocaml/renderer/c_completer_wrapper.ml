@@ -33,6 +33,7 @@ let default_key_map =
     [
       "ArrowUp", A.Completion (A.Completion.Prev_candidate);
       "ArrowDown", A.Completion (A.Completion.Next_candidate);
+      "Enter", A.Completion (A.Completion.Select_candidate);
     ]
 
 let t =

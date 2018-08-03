@@ -7,14 +7,12 @@ module State = struct
 
   type t = {
     current_command: C.Callable_action.t option;
-    params: string Jstable.t;
     planning: bool;
     preparing: bool;
   }
 
   let make () = {
     current_command = None;
-    params = Jstable.create ();
     planning = false;
     preparing = false;
   }

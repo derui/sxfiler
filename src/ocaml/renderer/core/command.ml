@@ -1,13 +1,13 @@
 include Command_intf
 
-module Registry = struct
+module Make_registry(Com:Registry.Command) : Registry.S with type command := Com.t = struct
 
-  type t = (module Instance) Jstable.t
+  type t = Com.t Jstable.t
 
   let make () = Jstable.create ()
-  let register t instance =
-    let module I = (val instance : Instance) in
-    Jstable.add t I.(Js.string @@ Command.name this) instance;
+  let register t command =
+    let name = Com.to_name command in
+    Jstable.add t (Js.string name) command;
     t
 
   let get t ~action =
