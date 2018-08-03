@@ -14,6 +14,7 @@ module Component = R.Component.Make_stateful(struct
       method completerId: string Js.readonly_prop
       method completion: S.Completion.State.t Js.readonly_prop
       method locator: (module Locator.Main) Js.readonly_prop
+      method onCompleted: (T.Completion.Item.t -> unit) Js.readonly_prop
     end
   end)
     (struct
@@ -26,9 +27,7 @@ let default_key_map =
   let module A = C.Callable_action in
   let keymap = C.Key_map.empty in
   let condition = C.Types.Condition.empty in
-  List.fold_left (fun keymap (key, action) ->
-      C.Key_map.add ~condition ~key ~action keymap
-    )
+  List.fold_left (fun keymap (key, action) -> C.Key_map.add ~condition ~key ~action keymap)
     keymap
     [
       "ArrowUp", A.Completion (A.Completion.Prev_candidate);
@@ -59,10 +58,16 @@ let t =
         )
 
       (fun this ->
+         let module L = (val this##.props##.locator: Locator.Main) in
+         let keymapState = S.Keymap.Store.get @@ S.App.(State.keymap @@ Store.get L.store)
+         and condition = S.Config.State.condition @@ S.Config.Store.get @@ S.App.(State.config @@ Store.get L.store)
+         in
          [%c C_key_handler.t
+             ~onAction:(fun action -> )
              ~className:(Some "sf-CompleterWrapper")
              ~keymap:(Some default_key_map)
-             ~locator:this##.props##.locator
+             ~keymapState
+             ~condition
              [
                [%e div ~key:"input" ~class_name:"sf-CompleterWrapper_Input"
                    [R.Children.to_element this##.props_defined##.children]];
