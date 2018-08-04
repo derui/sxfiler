@@ -2,14 +2,19 @@ open Sxfiler_domain.Completion
 
 (** {!Source_class} defines type of source for completion.  *)
 module Source_class = struct
-  include Source_class
+  open Source_class
 
   type js = Js.number
 
-  let to_js : t -> js Js.t = fun t -> Js.number_of_float @@ float_of_int @@ to_enum t
-  let of_js : js Js.t -> t = fun js -> match of_enum @@ int_of_float @@ Js.float_of_number js with
-    | None -> failwith "Unknown type"
-    | Some v -> v
+  let to_js : t -> js Js.t = fun t -> Js.number_of_float @@ float_of_int (match t with
+    | File -> 1
+    | History -> 2
+    | Simple -> 3)
+  let of_js : js Js.t -> t = fun js -> match int_of_float @@ Js.float_of_number js with
+    | 1 -> File
+    | 2 -> History
+    | 3 -> Simple
+    | _ -> failwith "Unknown type"
 end
 
 module Item = struct

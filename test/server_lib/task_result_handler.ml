@@ -3,7 +3,7 @@ open Sxfiler_domain
 
 module C = Sxfiler_server_core
 module S = Sxfiler_server
-module Rpcy = Sxfiler_rpc_yojson
+module Rpc = Sxfiler_rpc
 
 let result_handler = [
   Alcotest_lwt.test_case "update scanner when result is Update_scanner" `Quick (fun _ () ->
@@ -62,9 +62,9 @@ let result_handler = [
       let scanner = Scanner.make ~name:"foo" ~nodes:[] ~location:"not tested" ~history:(Location_history.make ()) in
       let%lwt () = State.update @@ C.Root_state.add_scanner ~scanner state in
       let%lwt () = H.handle (module State) (`Update_scanner ("foo", "test", [])) in
-      let module Ty = Sxfiler_domain_yojson in
       let expected =
-        Some Rpcy.Notification.Scanner_update.(params_to_yojson {
+        let module G = Sxfiler_server_gateway in
+        Some Rpc.Notification.Scanner_update.(G.Notification.Scanner_update.params_to_yojson {
             name = "foo";
             scanner = Scanner.move_location scanner ~location:"test" ~nodes:[] (module Clock);
           }) in
@@ -100,9 +100,9 @@ let result_handler = [
       let%lwt () = State.update state in
       let%lwt () = H.handle (module State) (`Update_scanner ("test", "foobar", [])) in
       let%lwt state = State.get () in
-      let module Ty = Sxfiler_domain_yojson in
       let expected =
-        Some Rpcy.Notification.Scanner_update.(params_to_yojson {
+        let module G = Sxfiler_server_gateway in
+        Some Rpc.Notification.Scanner_update.(G.Notification.Scanner_update.params_to_yojson {
             name = "test";
             scanner = Scanner.move_location ~location:"foobar" ~nodes:[] scanner (module Clock);
           }) in

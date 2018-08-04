@@ -4,7 +4,6 @@
  (libraries lwt
             sxfiler.core
             sxfiler.server.core
-            sxfiler.domain.yojson
-            ppx_deriving_yojson.runtime
+            sxfiler.server.presenter
             unix)
- (preprocess (pps lwt_ppx ppx_deriving_yojson )))
+ (preprocess (pps lwt_ppx)))

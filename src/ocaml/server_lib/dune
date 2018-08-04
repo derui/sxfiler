@@ -6,11 +6,12 @@
             logs.lwt
             logs.fmt
             jsonrpc-ocaml.yojson
-            sxfiler.domain.yojson
+            sxfiler.domain
             sxfiler.rpc
-            sxfiler.rpc.yojson
             sxfiler.server.completion
             sxfiler.server.core
             sxfiler.server.task
+            sxfiler.server.gateway
+            sxfiler.server.presenter
             ppx_deriving_yojson.runtime)
  (preprocess (pps lwt_ppx ppx_deriving.std ppx_deriving_yojson)))

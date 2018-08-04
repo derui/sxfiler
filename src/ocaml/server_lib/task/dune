@@ -6,5 +6,5 @@
             sxfiler.core
             sxfiler.server.core
             sxfiler.server.action
-            sxfiler.domain.yojson)
+            sxfiler.domain)
  (preprocess (pps lwt_ppx)))

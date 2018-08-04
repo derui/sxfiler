@@ -2,9 +2,8 @@
 open Sxfiler_server_core
 module Runner = Sxfiler_server_task.Runner
 module T = Sxfiler_domain
-module Ty = Sxfiler_domain_yojson
 module Rpc = Sxfiler_rpc
-module Rpcy = Sxfiler_rpc_yojson
+module G = Sxfiler_server_gateway
 module Act = Sxfiler_server_action
 
 module Make_sync
@@ -14,7 +13,7 @@ module Make_sync
   = Procedure_intf.Make(struct
     include Rpc.Scanner.Make_sync
 
-    let params_of_json = `Required Rpcy.Scanner.Make_sync.params_of_yojson
+    let params_of_json = `Required G.Scanner.Make_sync.params_of_yojson
     let result_to_json = `Void
 
     let handle param =
@@ -43,8 +42,8 @@ module Get_sync(Action:Act.Action_intf.Instance)
     (Root:Statable.S with type state = Root_state.t) = Procedure_intf.Make(struct
     include Rpc.Scanner.Get_sync
 
-    let params_of_json = `Required Rpcy.Scanner.Get_sync.params_of_yojson
-    let result_to_json = `Result Rpcy.Scanner.Get_sync.result_to_yojson
+    let params_of_json = `Required G.Scanner.Get_sync.params_of_yojson
+    let result_to_json = `Result G.Scanner.Get_sync.result_to_yojson
 
     let handle param =
       let%lwt state = Root.get () in

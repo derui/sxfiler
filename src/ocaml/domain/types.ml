@@ -8,7 +8,6 @@ module Sort_type = struct
     | Name
     | Size
     | Date
-  [@@deriving enum,show]
 end
 
 type file_id = string
@@ -16,5 +15,12 @@ type file_id = string
 (** {!Layout} defines type to preset of layout *)
 module Layout = struct
   type t = Side_by_side
-  [@@deriving enum,show]
+end
+
+(** Base signature of thread. *)
+module type Thread = sig
+  type 'a t
+
+  val bind: 'a t -> ('a -> 'b t) -> 'b t
+  val return: 'a -> 'a t
 end

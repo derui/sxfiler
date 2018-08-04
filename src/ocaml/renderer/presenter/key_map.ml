@@ -37,9 +37,14 @@ module Original_key_binding = struct
   }
 end
 
-let to_js (type v) (t:v t) ~conv:(module C:Conv with type t = v) : < > Js.t =
+class type js = object
+  method id: Js.js_string Js.t Js.readonly_prop
+  method bindings: Original_key_binding.js Js.t Js.js_array Js.t Js.readonly_prop
+end
+
+let to_js (type v) (t:v t) ~conv:(module C:Conv with type t = v) : js Js.t =
   let bindings = bindings t in
-  List.map (fun (cond, key, v) -> {Original_key_binding.condition = cond;
+  let bindings = List.map (fun (cond, key, v) -> {Original_key_binding.condition = cond;
                                    key = Sxfiler_kbd.to_keyseq key;
                                    value = v;
                                   })
@@ -48,11 +53,15 @@ let to_js (type v) (t:v t) ~conv:(module C:Conv with type t = v) : < > Js.t =
   |> List.map (Original_key_binding.to_js ~conv:(module C))
   |> Array.of_list
   |> Js.array
-  |> Js.Unsafe.coerce
+  in
+  object%js
+    val id = Js.string @@ id t
+    val bindings = bindings
+  end
 
-let of_js (type v) (js:< > Js.t) ~conv:(module C:Conv with type t = v) : v t =
-  let js = Js.Unsafe.coerce js in
-  Js.array_map (Original_key_binding.of_js ~conv:(module C)) js
+let of_js (type v) (js:js Js.t) ~conv:(module C:Conv with type t = v) : v t =
+  let id = Js.to_string js##.id in
+  Js.array_map (Original_key_binding.of_js ~conv:(module C)) js##.bindings
   |> Js.to_array
   |> Array.to_list
   |> List.fold_left (fun keymap v ->
@@ -60,4 +69,4 @@ let of_js (type v) (js:< > Js.t) ~conv:(module C:Conv with type t = v) : v t =
       match Sxfiler_kbd.of_keyseq v.key with
       | None -> keymap
       | Some key -> add keymap ~condition:v.condition ~key ~value:v.value
-    ) empty
+    ) (make id)

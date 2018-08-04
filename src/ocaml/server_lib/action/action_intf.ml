@@ -1,4 +1,4 @@
-open Sxfiler_domain_yojson
+open Sxfiler_domain
 
 (** {!No_side_effect} module defines functions no side effect. What meaning of the word "side effect" in this module is
     to do not apply changes file system.

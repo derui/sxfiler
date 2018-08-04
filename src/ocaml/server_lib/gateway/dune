@@ -1,9 +1,9 @@
 (library
- (name sxfiler_rpc_yojson)
- (public_name sxfiler.rpc.yojson)
+ (name sxfiler_server_gateway)
+ (public_name sxfiler.server.gateway)
  (libraries sxfiler.domain
-            sxfiler.domain.yojson
             sxfiler.rpc
+            sxfiler.server.presenter
             yojson ppx_deriving_yojson.runtime)
  ; to supress warnings are depended on ppx_deriving_yojson
  (flags (:standard -w -39))

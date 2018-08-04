@@ -1,5 +1,5 @@
 module T = Sxfiler_domain
-module Ty = Sxfiler_domain_yojson
+module P = Sxfiler_server_presenter
 module Rpc = Sxfiler_rpc
 
 module Setup_sync = struct
@@ -7,11 +7,12 @@ module Setup_sync = struct
 
   module Js = struct
     type params = {
-      source: Ty.Completion.Item.t list;
+      source: P.Completion.Item.t list;
     } [@@deriving yojson]
   end
 
-  let params_to_yojson t = Js.params_to_yojson {Js.source = t.source}
+  let params_to_yojson t =
+    Js.params_to_yojson {Js.source = t.source}
 
   let params_of_yojson js =
     let open Ppx_deriving_yojson_runtime in
@@ -25,10 +26,11 @@ module Read_sync = struct
       input: string;
     } [@@deriving yojson]
 
-    type result = Ty.Completion.Candidate.t array [@@deriving yojson]
+    type result = P.Completion.Candidate.t array [@@deriving yojson]
   end
 
   let params_to_yojson t = Js.params_to_yojson {Js.input = t.input}
+
   let params_of_yojson js =
     let open Ppx_deriving_yojson_runtime in
     Js.params_of_yojson js >>= fun js -> Ok {input = js.Js.input}
@@ -37,6 +39,6 @@ module Read_sync = struct
     let module T = Sxfiler_domain.Completion in
     Js.result_to_yojson t
 
-  let result_of_yojson = fun js -> Js.result_of_yojson js
+  let result_of_yojson js = Js.result_of_yojson js
 
 end

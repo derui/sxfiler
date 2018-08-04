@@ -5,13 +5,19 @@ module Source_class = struct
 
   let of_yojson : Yojson.Safe.json -> t Ppx_deriving_yojson_runtime.error_or = fun js ->
     match js with
-    | `Int v -> begin match of_enum v with
-        | None -> Error "Unknown source type"
-        | Some v -> Ok v
+    | `Int v -> begin match v with
+        | 1 -> Ok File
+        | 2 -> Ok History
+        | 3 -> Ok Simple
+        | _ -> Error "Unknown source type"
       end
     | _ -> Error "Unknown constructor"
 
-  let to_yojson : t -> Yojson.Safe.json = fun t -> `Int (to_enum t)
+  let to_yojson : t -> Yojson.Safe.json = fun t -> `Int (match t with
+      | File -> 1
+      | History -> 2
+      | Simple -> 3
+    )
 end
 
 module Item = struct

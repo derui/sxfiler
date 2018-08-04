@@ -1,17 +1,17 @@
 (** this module defines functions for procedures for keybindings. *)
 
 open Sxfiler_server_core
+module Rpc = Sxfiler_rpc
 module T = Sxfiler_domain
-module Ty = Sxfiler_domain_yojson
-module Rpcy = Sxfiler_rpc_yojson
+module G = Sxfiler_server_gateway
 
 (* defines procedure to get current key bindings *)
 module Get_sync
     (State:Statable.S with type state = T.Configuration.t) = Procedure_intf.Make(struct
-    include Rpcy.Configuration.Get_sync
+    include Rpc.Configuration.Get_sync
 
     let params_of_json = `Not_required ()
-    let result_to_json = `Result Ty.Configuration.to_yojson
+    let result_to_json = `Result G.Configuration.Get_sync.result_to_yojson
 
     let handle () = State.get ()
   end)

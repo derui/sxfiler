@@ -6,7 +6,7 @@ module R = Sxfiler_rpc
 module C = Sxfiler_server_core
 module A = Sxfiler_server_action
 module Jy = Jsonrpc_ocaml_yojson
-module Rpcy = Sxfiler_rpc_yojson
+module G = Sxfiler_server_gateway
 
 let proc_scanner = [
   Alcotest_lwt.test_case "create new scanner if it does not exists" `Quick (fun switch () ->
@@ -29,7 +29,7 @@ let proc_scanner = [
 
       let req = Jy.Request.{
           _method = "foo";
-          params = Some Rpcy.Scanner.Make_sync.(params_to_yojson {
+          params = Some R.Scanner.Make_sync.(G.Scanner.Make_sync.params_to_yojson {
               initial_location = "/initial";
               name = "foo"
             });
@@ -73,7 +73,7 @@ let proc_scanner = [
 
       let req = Jy.Request.{
           _method = "foo";
-          params = Some Rpcy.Scanner.Make_sync.(params_to_yojson {
+          params = Some R.Scanner.Make_sync.(G.Scanner.Make_sync.params_to_yojson {
               initial_location = "/initial";
               name = "foo"
             });

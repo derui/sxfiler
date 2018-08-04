@@ -1,6 +1,0 @@
-(library
- (name sxfiler_rpc_jsoo)
- (public_name sxfiler.rpc.jsoo)
- (modes byte)
- (libraries js_of_ocaml sxfiler.domain sxfiler.domain.jsoo sxfiler.rpc)
- (preprocess (pps js_of_ocaml-ppx)))

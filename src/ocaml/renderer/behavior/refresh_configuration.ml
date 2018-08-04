@@ -1,5 +1,5 @@
 (** This module defines behavior for refresh scanner. *)
-module T = Sxfiler_domain_jsoo
+module D = Sxfiler_domain
 module C = Sxfiler_renderer_core
 
 type t = {
@@ -15,7 +15,6 @@ let create locator () =
 
 let execute t dispatcher =
 
-  let module RI = Sxfiler_rpc_jsoo in
   C.Rpc.Client.request t.rpc (module C.Api.Configuration.Get_sync)
     None
     (function

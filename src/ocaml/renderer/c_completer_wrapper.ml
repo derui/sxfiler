@@ -29,7 +29,7 @@ module Component = R.Component.Make_stateful(struct
     end)
 
 let default_key_map =
-  let keymap = T.Key_map.empty in
+  let keymap = T.Key_map.make "completer" in
   let condition = T.Condition.empty in
   List.fold_left (fun keymap (key, value) -> T.Key_map.add ~condition ~key ~value keymap)
     keymap

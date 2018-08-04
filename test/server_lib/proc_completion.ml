@@ -7,7 +7,7 @@ module C = Sxfiler_server_core
 module A = Sxfiler_server_action
 module Jy = Jsonrpc_ocaml_yojson
 module Rpc = Sxfiler_rpc
-module Rpcy = Sxfiler_rpc_yojson
+module G = Sxfiler_server_gateway
 module Co = Sxfiler_server_completion
 
 module Dummy_comp = (struct
@@ -38,7 +38,6 @@ let proc_completion = [
         end) in
 
       let module Setup_sync = S.Proc_completion.Setup_sync(State) in
-      let module Ry = Rpcy.Completion.Setup_sync in
       let module R = Rpc.Completion.Setup_sync in
       let expected = [
         {T.Completion.Item.id = "1"; value = "foo"};
@@ -47,8 +46,8 @@ let proc_completion = [
       ] in
       let req = Jy.Request.{
           _method = "foo";
-          params = Some Ry.(params_to_yojson {
-              source = expected
+          params = Some (G.Completion.Setup_sync.params_to_yojson {
+              R.source = expected
             });
           id = Some Int64.zero;
         } in
@@ -87,17 +86,16 @@ let proc_completion = [
         |] in
 
       let module Read_sync = S.Proc_completion.Read_sync(State)(Comp_state) in
-      let module Ry = Rpcy.Completion.Read_sync in
       let module R = Rpc.Completion.Read_sync in
       let req = Jy.Request.{
           _method = "foo";
-          params = Some Ry.(params_to_yojson {
-              input = "foo.*"
+          params = Some G.Completion.Read_sync.(params_to_yojson {
+              R.input = "foo.*"
             });
           id = Some Int64.zero;
         } in
       let%lwt res = Read_sync.handler req in
-      let result = Ry.result_of_yojson @@ Option.get_exn res.Jy.Response.result in
+      let result = G.Completion.Read_sync.result_of_yojson @@ Option.get_exn res.Jy.Response.result in
       Alcotest.(check @@ result  (of_pp @@ Fmt.nop) (of_pp @@ Fmt.nop)) "created" expected result;
       Lwt.return_unit
     );

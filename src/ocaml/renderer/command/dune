@@ -6,7 +6,7 @@
             jsonrpc-ocaml.jsoo
             lwt
             sxfiler.core
-            sxfiler.domain sxfiler.domain.jsoo
+            sxfiler.domain
             sxfiler.renderer.core
             sxfiler.renderer.store
             sxfiler.renderer.behavior))

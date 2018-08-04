@@ -1,7 +1,7 @@
 (library
  (name sxfiler_server_completion)
  (public_name sxfiler.server.completion)
- (libraries sxfiler.domain.yojson
+ (libraries sxfiler.domain
             migemocaml
             re)
  )

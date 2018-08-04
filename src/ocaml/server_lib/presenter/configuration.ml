@@ -1,16 +1,16 @@
 (* [Configuration] module should be able to convert between json and ocaml.  *)
-open Sxfiler_domain.Configuration
+module D = Sxfiler_domain
 
 (** [Viewer] provides configuration for viewer. This configuration will not manage
     on server side.
 *)
 module Viewer = struct
-  include Viewer
+  open D.Configuration.Viewer
 
   module Js = struct
     type t = {
       current_stack_name:string [@key "currentStackName"];
-      stack_layout:Types.Layout.t [@key "stackLayout"];
+      stack_layout: Types.Layout.t [@key "stackLayout"];
     } [@@deriving yojson]
   end
 
@@ -35,11 +35,11 @@ end
     on viewer side.
 *)
 module Server = struct
-  include Server
+  open D.Configuration.Server
 
   module Js = struct
     type t = {
-      sort_order:Types.Sort_type.t [@key "sortOrder"];
+      sort_order: Types.Sort_type.t [@key "sortOrder"];
     } [@@deriving yojson]
   end
 
@@ -58,7 +58,7 @@ module Js = struct
   } [@@deriving yojson]
 end
 
-let to_yojson : t -> Yojson.Safe.json = fun t ->
+let to_yojson : D.Configuration.t -> Yojson.Safe.json = fun t ->
   Js.to_yojson {
     Js.viewer = Viewer.to_yojson t.viewer;
     server = Server.to_yojson t.server;
@@ -69,4 +69,4 @@ let of_yojson js =
   Js.of_yojson js >>= fun js ->
   Server.of_yojson js.server >>= fun server ->
   Viewer.of_yojson js.viewer >>= fun viewer ->
-  Ok {server;viewer}
+  Ok {D.Configuration.server;viewer}

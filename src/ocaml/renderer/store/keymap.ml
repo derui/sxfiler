@@ -5,7 +5,7 @@ module State = struct
   type message = C.Message.t
   type t = string T.Key_map.t
 
-  let make () = T.Key_map.empty
+  let make () = T.Key_map.make "empty"
   let reduce t = function
     | C.Message.Update_keymap keymap -> keymap
     | _ -> t

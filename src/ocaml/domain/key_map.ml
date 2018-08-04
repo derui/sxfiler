@@ -14,9 +14,17 @@ module Original_key_binding = struct
   }
 end
 
-type 'a t = 'a Original_key_binding.t list Binding_map.t
+type 'a t = {
+  id: string;
+  keymap: 'a Original_key_binding.t list Binding_map.t;
+}
 
-let empty : 'a t = Binding_map.empty
+let id {id;_} = id
+
+let make id = {
+  id;
+  keymap = Binding_map.empty;
+}
 
 let update t ~condition ~key ~value =
   Binding_map.update key
@@ -28,11 +36,11 @@ let update t ~condition ~key ~value =
 
 let add t ~condition ~key ~value =
   let key = Sxfiler_kbd.to_keyseq key in
-  update t ~condition ~key ~value
+  {t with keymap = update t.keymap ~condition ~key ~value}
 
 let find t ~condition ~key =
   let key = Sxfiler_kbd.to_keyseq key in
-  let bindings = Option.get ~default:(fun () -> []) @@ Binding_map.find_opt key t in
+  let bindings = Option.get ~default:(fun () -> []) @@ Binding_map.find_opt key t.keymap in
   let matched = List.filter (fun v -> Condition.subset
                                 ~current:v.Original_key_binding.condition
                                 ~parts:condition) bindings
@@ -42,7 +50,7 @@ let find t ~condition ~key =
   | v :: _ -> Some v.Original_key_binding.value
 
 let bindings t =
-  Binding_map.bindings t
+  Binding_map.bindings t.keymap
   |> List.map (fun (key, values) ->
       let open Original_key_binding in
       let open Option.Infix in

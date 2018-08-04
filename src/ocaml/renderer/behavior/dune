@@ -8,7 +8,7 @@
             jsonrpc-ocaml.jsoo
             lwt
             sxfiler.core
-            sxfiler.domain sxfiler.domain.jsoo
+            sxfiler.domain
             sxfiler.renderer.core
             sxfiler.renderer.store)
  (preprocess (pps js_of_ocaml-ppx)))

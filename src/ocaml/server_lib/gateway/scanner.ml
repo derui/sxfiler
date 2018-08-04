@@ -1,5 +1,5 @@
 module T = Sxfiler_domain
-module Ty = Sxfiler_domain_yojson
+module P = Sxfiler_server_presenter
 module Rpc = Sxfiler_rpc
 
 module Make_sync = struct
@@ -13,16 +13,17 @@ module Make_sync = struct
 
   end
 
+  let params_to_yojson t =
+    Js.params_to_yojson {
+      Js.initial_location = t.initial_location;
+      name = t.name;
+    }
+
   let params_of_yojson js =
     let open Ppx_deriving_yojson_runtime in
     Js.params_of_yojson js >>= fun js -> Ok {
       initial_location = js.Js.initial_location;
       name = js.Js.name;
-    }
-
-  let params_to_yojson : params -> Yojson.Safe.json = fun t -> Js.params_to_yojson {
-      Js.initial_location = t.initial_location;
-      name = t.name;
     }
 end
 
@@ -39,5 +40,5 @@ module Get_sync = struct
     let open Ppx_deriving_yojson_runtime in
     Js.params_of_yojson js >>= fun js -> Ok {name = js.Js.name;}
 
-  let result_to_yojson = Ty.Scanner.to_yojson
+  let result_to_yojson = P.Scanner.to_yojson
 end

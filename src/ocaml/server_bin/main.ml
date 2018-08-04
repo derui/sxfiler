@@ -104,7 +104,7 @@ let load_migemo dict_dir =
 
 (** Load configuration from specified file *)
 let load_configuration config =
-  let module Y = Sxfiler_domain_yojson.Configuration in
+  let module Y = Sxfiler_server_presenter.Configuration in
   let config = Yojson.Safe.from_file config in
   match Y.of_yojson config with
   | Error _ -> None
@@ -113,7 +113,7 @@ let load_configuration config =
 (* Load keymaps from specified file *)
 let load_keymap file =
   let keymap = Yojson.Safe.from_file file in
-  let module Y = Sxfiler_domain_yojson.Key_map in
+  let module Y = Sxfiler_server_presenter.Key_map in
   let module Conv = struct
     type t = string
     let to_yojson t = `String t
@@ -152,7 +152,7 @@ let () =
   let module D = Sxfiler_domain in
   let port = 50879 in
   let config = get_config load_configuration !config ~default:D.Configuration.default in
-  let keymap = get_config load_keymap !key_maps ~default:D.Key_map.empty in
+  let keymap = get_config load_keymap !key_maps ~default:(D.Key_map.make "empty") in
   let migemo = load_migemo !dict_dir in
 
   (* setup task runner and finalizer *)

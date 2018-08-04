@@ -1,10 +1,9 @@
 (** Completion module defines functions for RPC of completion. *)
 module SC = Sxfiler_server_core
-module J = Jsonrpc_ocaml_yojson
 module T = Sxfiler_domain
 module Rpc = Sxfiler_rpc
-module Rpcy = Sxfiler_rpc_yojson
 module C = Sxfiler_server_completion
+module G = Sxfiler_server_gateway
 
 module type Cached_source = SC.Statable.S with type state = T.Completion.collection
 module type File_source = SC.Statable.S with type state = T.Node.t list
@@ -13,9 +12,8 @@ module type Completer = SC.Statable.S with type state = (module C.Completer.Inst
 module Setup_sync(State:Cached_source)
   = Procedure_intf.Make(struct
     include Rpc.Completion.Setup_sync
-    open Rpcy.Completion.Setup_sync
 
-    let params_of_json = `Required params_of_yojson
+    let params_of_json = `Required G.Completion.Setup_sync.params_of_yojson
     let result_to_json = `Void
 
     let handle param =
@@ -29,10 +27,9 @@ module Read_sync
     (Completer:Completer)
   = Procedure_intf.Make(struct
     include Rpc.Completion.Read_sync
-    open Rpcy.Completion.Read_sync
 
-    let params_of_json = `Required params_of_yojson
-    let result_to_json = `Result result_to_yojson
+    let params_of_json = `Required G.Completion.Read_sync.params_of_yojson
+    let result_to_json = `Result G.Completion.Read_sync.result_to_yojson
 
     let handle param =
       let%lwt completer = Completer.get () in

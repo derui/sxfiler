@@ -9,7 +9,8 @@
             logs.browser
             jsonrpc-ocaml.jsoo
             ppx_deriving.runtime
-            sxfiler.rpc.jsoo
             sxfiler.core
-            sxfiler.domain sxfiler.domain.jsoo)
+            sxfiler.rpc
+            sxfiler.renderer.presenter
+            sxfiler.domain)
  (preprocess (pps ppx_deriving.std js_of_ocaml-ppx)))

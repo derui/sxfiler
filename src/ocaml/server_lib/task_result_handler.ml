@@ -3,7 +3,7 @@ open Sxfiler_core
 open Sxfiler_domain
 open Sxfiler_server_core
 module Rpc = Sxfiler_rpc
-module Rpcy = Sxfiler_rpc_yojson
+module G = Sxfiler_server_gateway
 
 module type S = sig
   type state
@@ -32,14 +32,14 @@ module Make(Clock:Location_record.Clock)
             Lwt.return scanner
           ) in
         let module Su = Rpc.Notification.Scanner_update in
-        let module Suy = Rpcy.Notification.Scanner_update in
+        let module Sug = G.Notification.Scanner_update in
         let module Api = (struct
           include Su
           type json = Yojson.Safe.json
 
           let params_to_json params =
             let open Option.Infix in
-            params >|= Suy.params_to_yojson
+            params >|= Sug.params_to_yojson
 
           let result_of_json _ = ()
         end) in

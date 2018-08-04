@@ -2,15 +2,24 @@
 
 module T = Sxfiler_domain
 module R = Sxfiler_rpc
-module Rj = Sxfiler_rpc_jsoo
 module Jr = Jsonrpc_ocaml_jsoo
 module C = Sxfiler_renderer_core
+module P = Sxfiler_renderer_presenter
 
 module type Dispatcher = C.Dispatcher_intf.Instance
 
 module Scanner_update(Dispatcher:Dispatcher) = struct
   include R.Notification.Scanner_update
-  open Rj.Notification.Scanner_update
+
+  class type js_params = object
+    method name: Js.js_string Js.t Js.readonly_prop
+    method scanner: P.Scanner.js Js.t Js.readonly_prop
+  end
+
+  let params_of_json js = {
+    name = Js.to_string js##.name;
+    scanner = P.Scanner.of_js js##.scanner;
+  }
 
   let handler req =
     match req.Jr.Request.params with

@@ -44,7 +44,7 @@ end
 module Keymap = C.Statable.Make(struct
     type t = string D.Key_map.t
 
-    let empty () = D.Key_map.empty
+    let empty () = D.Key_map.make "initial"
   end)
 
 module Configuration = C.Statable.Make(struct

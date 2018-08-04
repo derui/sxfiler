@@ -1,6 +1,6 @@
 (library
- (name sxfiler_domain_jsoo)
- (public_name sxfiler.domain.jsoo)
+ (name sxfiler_renderer_presenter)
+ (public_name sxfiler.renderer.presenter)
  (modes byte)
  (libraries js_of_ocaml sxfiler.domain sxfiler.kbd jsoo_node)
  (preprocess (pps js_of_ocaml-ppx)))
