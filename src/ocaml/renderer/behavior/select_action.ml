@@ -1,7 +1,7 @@
 (** This module defines behavior to set next action to execute. *)
 module C = Sxfiler_renderer_core
 
-type param = C.Callable_action.t
+type param = string
 type t = {
   action : param;
 }

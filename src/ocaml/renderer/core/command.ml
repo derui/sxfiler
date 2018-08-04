@@ -10,12 +10,9 @@ module Make_registry(Com:Registry.Command) : Registry.S with type command := Com
     Jstable.add t (Js.string name) command;
     t
 
-  let get t ~action =
-    let name = Callable_action.to_string action in
+  let get t ~name =
     Js.Optdef.to_option @@ Jstable.find t Js.(string name)
 
-  let to_action_list t =
-    Jstable.keys t
-    |> List.map Js.to_string
-    |> List.map (fun v -> Callable_action.of_string v)
+  let names t =
+    Jstable.keys t |> List.map Js.to_string
 end

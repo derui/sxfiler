@@ -6,7 +6,7 @@ module State = struct
   type message = C.Message.t
 
   type t = {
-    current_command: C.Callable_action.t option;
+    current_command: string option;
     planning: bool;
     preparing: bool;
   }

@@ -8,7 +8,7 @@ type completion =
 
 type command =
   (* select current action related specified command. *)
-  | Select of Callable_action.t
+  | Select of string
 
 type t =
   | Update_scanner of D.Scanner.t

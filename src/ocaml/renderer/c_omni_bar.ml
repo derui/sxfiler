@@ -20,8 +20,8 @@ let t =
     let module L = (val props##.locator: Locator.Main) in
     let state = S.Command.Store.get @@ S.App.(State.command @@ Store.get L.store) in
     let open Option.Infix in
-    let component = state.S.Command.State.current_command >>= fun action ->
-      Dl.get L.dynamic_command_registry ~action >>= fun (module Com) ->
+    let component = state.S.Command.State.current_command >>= fun name ->
+      Dl.get L.dynamic_command_registry ~name >>= fun (module Com) ->
       Some [%e div ~class_name:"sf-OmniBar" [Com.(Command.name this) [@txt]]]
     in
 

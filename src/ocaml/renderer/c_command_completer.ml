@@ -26,8 +26,7 @@ let t = Component.make (fun props ->
     let on_focus props _ =
       let module DL = C.Locator_intf.Dynamic_registry in
       let module L = (val props##.locator: Locator.Main) in
-      let commands = DL.to_action_list L.dynamic_command_registry
-                     |> List.map (C.Callable_action.to_string)
+      let commands = DL.names L.dynamic_command_registry
                      |> List.map (fun action_name -> {T.Completion.Item.id = action_name;
                                                       value = action_name})
       in
