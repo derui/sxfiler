@@ -6,7 +6,7 @@
             logs.lwt
             logs.fmt
             jsonrpc-ocaml.yojson
-            sxfiler.types.yojson
+            sxfiler.domain.yojson
             sxfiler.rpc
             sxfiler.rpc.yojson
             sxfiler.server.completion

@@ -1,5 +1,5 @@
 (** This module defines behavior for refresh scanner. *)
-module T = Sxfiler_types_jsoo
+module T = Sxfiler_domain_jsoo
 module C = Sxfiler_renderer_core
 
 type t = {

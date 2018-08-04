@@ -1,4 +1,4 @@
-module T = Sxfiler_types.Completion
+module T = Sxfiler_domain.Completion
 module C = Sxfiler_server_completion
 
 let suite = [

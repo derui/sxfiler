@@ -1,4 +1,4 @@
-module T = Sxfiler_types
+module T = Sxfiler_domain
 
 (** {!Make_sync} module defines interface to make scanner. *)
 module Make_sync = struct

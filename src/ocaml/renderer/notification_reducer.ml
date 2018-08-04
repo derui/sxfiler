@@ -1,6 +1,6 @@
 (** {!Notification_reducer} defines handlers for notification sent from server.  *)
 
-module T = Sxfiler_types
+module T = Sxfiler_domain
 module R = Sxfiler_rpc
 module Rj = Sxfiler_rpc_jsoo
 module Jr = Jsonrpc_ocaml_jsoo

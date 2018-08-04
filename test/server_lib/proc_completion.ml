@@ -1,6 +1,6 @@
 open Sxfiler_core
 
-module T = Sxfiler_types
+module T = Sxfiler_domain
 module S = Sxfiler_server
 module R = Sxfiler_rpc
 module C = Sxfiler_server_core

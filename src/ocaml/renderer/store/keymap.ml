@@ -1,10 +1,11 @@
+module T = Sxfiler_domain
 module C = Sxfiler_renderer_core
 
 module State = struct
   type message = C.Message.t
-  type t = C.Key_map.t
+  type t = string T.Key_map.t
 
-  let make () = C.Key_map.empty
+  let make () = T.Key_map.empty
   let reduce t = function
     | C.Message.Update_keymap keymap -> keymap
     | _ -> t

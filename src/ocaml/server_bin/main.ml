@@ -104,7 +104,7 @@ let load_migemo dict_dir =
 
 (** Load configuration from specified file *)
 let load_configuration config =
-  let module Y = Sxfiler_types_yojson.Configuration in
+  let module Y = Sxfiler_domain_yojson.Configuration in
   let config = Yojson.Safe.from_file config in
   match Y.of_yojson config with
   | Error _ -> None
@@ -137,7 +137,7 @@ let () =
   ] in
   Arg.parse arg_specs ignore "";
 
-  let module C = Sxfiler_types.Configuration in
+  let module C = Sxfiler_domain.Configuration in
   let port = 50879 in
   let config = get_config load_configuration !config ~default:C.default in
   let keybindings = get_config load_keybindings !key_maps ~default:(`Assoc []) in

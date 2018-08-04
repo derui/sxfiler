@@ -1,5 +1,6 @@
 open Mocha_of_ocaml
 module K = Sxfiler_kbd
+module Kj = Sxfiler_kbd_jsoo
 
 let id x = x
 
@@ -13,9 +14,9 @@ let () =
   "Sxfiler kbd macro" >::: [
     "should convert between Javascript object and kbd type" >:: (fun _ ->
         let k = {K.ctrl = true; meta = false; key = "k"} in
-        let js = K.to_js k in
-        let json : K.js Js.t = Js._JSON##stringify js |> fun s -> Js._JSON##parse s in
-        let conv_k = K.of_js json in
+        let js = Kj.to_js k in
+        let json : Kj.js Js.t = Js._JSON##stringify js |> fun s -> Js._JSON##parse s in
+        let conv_k = Kj.of_js json in
 
         assert_ok (k = conv_k);
       );
@@ -38,9 +39,9 @@ let () =
       );
     "should be able to convert special key name" >:: (fun _ ->
         let k = {K.ctrl = true; meta = false; key = "Tab"} in
-        let js = K.to_js k in
-        let json : K.js Js.t = Js._JSON##stringify js |> fun s -> Js._JSON##parse s in
-        let conv_k = K.of_js json in
+        let js = Kj.to_js k in
+        let json : Kj.js Js.t = Js._JSON##stringify js |> fun s -> Js._JSON##parse s in
+        let conv_k = Kj.of_js json in
 
         assert_ok (k = conv_k);
       );

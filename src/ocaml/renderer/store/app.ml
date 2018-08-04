@@ -1,4 +1,4 @@
-module T = Sxfiler_types
+module T = Sxfiler_domain
 module C = Sxfiler_renderer_core
 
 module State = struct

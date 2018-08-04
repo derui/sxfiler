@@ -1,7 +1,7 @@
 (** Completion module defines functions for RPC of completion. *)
 module SC = Sxfiler_server_core
 module J = Jsonrpc_ocaml_yojson
-module T = Sxfiler_types
+module T = Sxfiler_domain
 module Rpc = Sxfiler_rpc
 module Rpcy = Sxfiler_rpc_yojson
 module C = Sxfiler_server_completion

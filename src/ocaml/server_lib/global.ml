@@ -23,7 +23,7 @@ module Completion = C.Statable.Make(struct
 
 (* Cached source to complete in next operation. *)
 module Cached_source = C.Statable.Make(struct
-    type t = Sxfiler_types.Completion.collection
+    type t = Sxfiler_domain.Completion.collection
     let empty () = []
   end)
 
@@ -47,7 +47,7 @@ module Keybindings = C.Statable.Make(struct
   end)
 
 module Configuration = C.Statable.Make(struct
-    type t = Sxfiler_types.Configuration.t
+    type t = Sxfiler_domain.Configuration.t
 
-    let empty () = Sxfiler_types.Configuration.default
+    let empty () = Sxfiler_domain.Configuration.default
   end)

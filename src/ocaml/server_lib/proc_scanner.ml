@@ -1,8 +1,8 @@
 (** Scanner_op module defines functions for procedures of scanner. *)
 open Sxfiler_server_core
 module Runner = Sxfiler_server_task.Runner
-module T = Sxfiler_types
-module Ty = Sxfiler_types_yojson
+module T = Sxfiler_domain
+module Ty = Sxfiler_domain_yojson
 module Rpc = Sxfiler_rpc
 module Rpcy = Sxfiler_rpc_yojson
 module Act = Sxfiler_server_action

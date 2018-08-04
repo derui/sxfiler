@@ -1,5 +1,5 @@
-module T = Sxfiler_types
-module Ty = Sxfiler_types_yojson
+module T = Sxfiler_domain
+module Ty = Sxfiler_domain_yojson
 module Rpc = Sxfiler_rpc
 
 module Setup_sync = struct
@@ -34,7 +34,7 @@ module Read_sync = struct
     Js.params_of_yojson js >>= fun js -> Ok {input = js.Js.input}
 
   let result_to_yojson t =
-    let module T = Sxfiler_types.Completion in
+    let module T = Sxfiler_domain.Completion in
     Js.result_to_yojson t
 
   let result_of_yojson = fun js -> Js.result_of_yojson js

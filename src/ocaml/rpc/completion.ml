@@ -1,4 +1,4 @@
-module T = Sxfiler_types
+module T = Sxfiler_domain
 
 module Setup_sync = struct
   type params = {

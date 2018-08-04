@@ -1,4 +1,4 @@
-module T = Sxfiler_types
+module T = Sxfiler_domain
 module R = Jsoo_reactjs
 
 module Component = R.Component.Make_stateless (struct

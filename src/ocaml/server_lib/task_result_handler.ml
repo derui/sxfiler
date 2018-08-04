@@ -1,6 +1,6 @@
 (** Task_handler defines handler of task to apply task result to global state. *)
 open Sxfiler_core
-open Sxfiler_types
+open Sxfiler_domain
 open Sxfiler_server_core
 module Rpc = Sxfiler_rpc
 module Rpcy = Sxfiler_rpc_yojson
@@ -12,7 +12,7 @@ module type S = sig
     -> unit Lwt.t
 end
 
-(** Make handler with {module!Sxfiler_types.Snapshot_record.Clock} abstraction *)
+(** Make handler with {module!Sxfiler_domain.Snapshot_record.Clock} abstraction *)
 module Make(Clock:Location_record.Clock)
     (Notifier:Notifier.S): S with type state := Root_state.t = struct
 

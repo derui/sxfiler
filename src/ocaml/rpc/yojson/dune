@@ -1,8 +1,8 @@
 (library
  (name sxfiler_rpc_yojson)
  (public_name sxfiler.rpc.yojson)
- (libraries sxfiler.types
-            sxfiler.types.yojson
+ (libraries sxfiler.domain
+            sxfiler.domain.yojson
             sxfiler.rpc
             yojson ppx_deriving_yojson.runtime)
  ; to supress warnings are depended on ppx_deriving_yojson

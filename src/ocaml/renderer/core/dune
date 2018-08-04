@@ -11,5 +11,5 @@
             ppx_deriving.runtime
             sxfiler.rpc.jsoo
             sxfiler.core
-            sxfiler.types sxfiler.types.jsoo)
+            sxfiler.domain sxfiler.domain.jsoo)
  (preprocess (pps ppx_deriving.std js_of_ocaml-ppx)))

@@ -53,6 +53,10 @@ let result_tests = [
       let open Result.Infix in
       Alcotest.(check @@ result string string) "result" (Ok "bar" >|= fun v -> v ^ "foo") @@ Ok "barfoo"
     );
+  "allow to convert result to option", `Quick, (fun () ->
+      Alcotest.(check @@ option string) "result" (Result.to_option (Ok "bar")) (Some "bar");
+      Alcotest.(check @@ option string) "result" (Result.to_option (Error "bar")) (None)
+    );
 ]
 
 let path_tests = [

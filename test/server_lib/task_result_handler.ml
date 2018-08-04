@@ -1,5 +1,5 @@
 open Sxfiler_core
-open Sxfiler_types
+open Sxfiler_domain
 
 module C = Sxfiler_server_core
 module S = Sxfiler_server
@@ -62,7 +62,7 @@ let result_handler = [
       let scanner = Scanner.make ~name:"foo" ~nodes:[] ~location:"not tested" ~history:(Location_history.make ()) in
       let%lwt () = State.update @@ C.Root_state.add_scanner ~scanner state in
       let%lwt () = H.handle (module State) (`Update_scanner ("foo", "test", [])) in
-      let module Ty = Sxfiler_types_yojson in
+      let module Ty = Sxfiler_domain_yojson in
       let expected =
         Some Rpcy.Notification.Scanner_update.(params_to_yojson {
             name = "foo";
@@ -100,7 +100,7 @@ let result_handler = [
       let%lwt () = State.update state in
       let%lwt () = H.handle (module State) (`Update_scanner ("test", "foobar", [])) in
       let%lwt state = State.get () in
-      let module Ty = Sxfiler_types_yojson in
+      let module Ty = Sxfiler_domain_yojson in
       let expected =
         Some Rpcy.Notification.Scanner_update.(params_to_yojson {
             name = "test";

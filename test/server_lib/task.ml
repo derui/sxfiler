@@ -1,5 +1,5 @@
 open Sxfiler_core
-open Sxfiler_types
+open Sxfiler_domain
 
 module C = Sxfiler_server_core
 

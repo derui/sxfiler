@@ -1,9 +1,9 @@
-module Ty = Sxfiler_types
+module D = Sxfiler_domain
 module C = Sxfiler_renderer_core
 
 module File_tree = struct
   type tree = {
-    scanner: Ty.Scanner.t;
+    scanner: D.Scanner.t;
     selected_item_index: int;
   }
 
@@ -23,7 +23,7 @@ module File_tree = struct
   let swap_order t = {t with tree_order = Sxfiler_core.Tuple.swap t.tree_order}
 
   let update t ~scanner =
-    Jstable.add t.trees Js.(string scanner.Ty.Scanner.name) {scanner; selected_item_index = 0};
+    Jstable.add t.trees Js.(string scanner.D.Scanner.name) {scanner; selected_item_index = 0};
     t
 
   let get t ~name = Jstable.find t.trees Js.(string name)
@@ -32,7 +32,7 @@ module File_tree = struct
   let move_index t ~name ~direction =
     let open Sxfiler_core.Option.Infix in
     let t = get t ~name >>= (fun tree ->
-        let max_index = List.length tree.scanner.Ty.Scanner.nodes in
+        let max_index = List.length tree.scanner.D.Scanner.nodes in
         match direction with
         | `Next -> Some {tree with selected_item_index = min (pred max_index) (succ tree.selected_item_index)}
         | `Prev -> Some {tree with selected_item_index = max 0 (pred tree.selected_item_index)})

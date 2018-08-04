@@ -1,5 +1,5 @@
-module T = Sxfiler_types
-module Tj = Sxfiler_types_jsoo
+module T = Sxfiler_domain
+module Tj = Sxfiler_domain_jsoo
 module Rpc = Sxfiler_rpc
 
 module Make_sync = struct

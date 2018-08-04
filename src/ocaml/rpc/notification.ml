@@ -1,4 +1,4 @@
-module T = Sxfiler_types
+module T = Sxfiler_domain
 module Workspace_update = struct
   type params = {
     name: string;

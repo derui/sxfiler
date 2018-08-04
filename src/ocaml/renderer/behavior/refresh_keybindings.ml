@@ -1,5 +1,5 @@
 (** This module defines behavior for refresh scanner. *)
-module T = Sxfiler_types_jsoo
+module T = Sxfiler_domain_jsoo
 module C = Sxfiler_renderer_core
 
 type t = {
@@ -21,6 +21,10 @@ let execute t dispatcher =
     (function
       | Error _ -> ()
       | Ok res -> let module DI = (val dispatcher : C.Dispatcher_intf.Instance) in
-        let keymap = C.Key_map.of_json res in
+        let keymap = T.Key_map.of_js ~conv:(module struct
+            type t = string
+            let to_json t = Js.Unsafe.coerce @@ Js.string t
+            let of_json js = Js.to_string @@ Js.Unsafe.coerce js
+          end) res in
         DI.(Dispatcher.dispatch this C.Message.(Update_keymap keymap))
     )

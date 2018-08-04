@@ -1,9 +1,9 @@
 (** This module defines functions for operations for file and directory.
-    Include operation of types of {!Sxfiler_types}.
+    Include operation of domain of {!Sxfiler_domain}.
 *)
 
 let stat_to_file_stat stat =
-  let module F = Sxfiler_types_yojson.File_stat in
+  let module F = Sxfiler_domain_yojson.File_stat in
   let module T = Sxfiler_server_core.Time in
   let is_directory_kind = function
     | Unix.S_DIR -> true
@@ -34,5 +34,5 @@ let get_node parent path =
   else
     let stat = Unix.lstat path in
     let stat = stat_to_file_stat stat in
-    let module T = Sxfiler_types_yojson in
+    let module T = Sxfiler_domain_yojson in
     Some (T.Node.make ~full_path:path ~parent_directory:parent ~stat ~link_path:None)

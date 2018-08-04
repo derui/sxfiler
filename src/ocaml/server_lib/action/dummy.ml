@@ -1,6 +1,6 @@
 open Action_intf
 
-module T = Sxfiler_types_yojson
+module T = Sxfiler_domain_yojson
 
 module No_side_effect : No_side_effect = struct
   let resolve_realpath path = path

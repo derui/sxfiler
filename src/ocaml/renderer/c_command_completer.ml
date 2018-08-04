@@ -1,6 +1,6 @@
 (** {!C_command_completer} defines container component to input and completer for command. *)
 
-module T = Sxfiler_types
+module T = Sxfiler_domain
 module R = Jsoo_reactjs
 module C = Sxfiler_renderer_core
 module S = Sxfiler_renderer_store
@@ -43,6 +43,7 @@ let t = Component.make (fun props ->
         ~completerId:"command"
         ~completion:(S.Completion.Store.get @@ S.App.State.completion state)
         ~locator:props##.locator
+        ~onCompleted:(fun _ -> failwith "not implemented yet")
         [[%c P_command_selector.t ~key:"completer"
             ~onFocus:(on_focus props)
             ~onChangeCommand:(complete_command (module L))]

@@ -1,5 +1,5 @@
-module T = Sxfiler_types
-module Ty = Sxfiler_types_yojson
+module T = Sxfiler_domain
+module Ty = Sxfiler_domain_yojson
 module Rpc = Sxfiler_rpc
 
 module Make_sync = struct

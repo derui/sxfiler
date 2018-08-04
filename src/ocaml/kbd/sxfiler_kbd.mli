@@ -1,15 +1,8 @@
 (**
    Define key combination converter for OCaml and JavaScript.
 
-   You can use this library in OCaml, and in JavaScript follows.
-
-   {[
-     const {kbd} = require('sxfiler_kbd.bc.js');
-     let obj = kbd('C-x');
-       console.log(obj); // => {key: "x", ctrl: true, meta: false}
-   ]}
+   You can use this library in OCaml. Use {!Sxfiler_kbd_jsoo} if you use js_of_ocaml.
 *)
-
 
 (** A type represent key combination from string that like Emacs's [kbd] macro. *)
 type t = {
@@ -17,12 +10,6 @@ type t = {
   meta : bool;
   key : string;
 }
-
-class type js = object
-  method ctrl: bool Js.t Js.readonly_prop
-  method meta: bool Js.t Js.readonly_prop
-  method key: Js.js_string Js.t Js.readonly_prop
-end
 
 (** Empty key status. this have key that is empty string, and all modifiers are disabled.  *)
 val empty: t
@@ -38,7 +25,3 @@ val of_keyseq: string -> t option
     - and add key
 *)
 val to_keyseq: t -> string
-
-(** Convert between JavaScript object and type *)
-val to_js: t -> js Js.t
-val of_js: js Js.t -> t

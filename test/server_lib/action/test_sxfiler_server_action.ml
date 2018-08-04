@@ -19,8 +19,8 @@ let file_operations = [
       | None -> Alcotest.fail "Not found "
       | Some node -> begin
           (* stat of file can not fix on unit test, so assert some record only. *)
-          let module N = Sxfiler_types.Node in
-          let module S = Sxfiler_types.File_stat in
+          let module N = Sxfiler_domain.Node in
+          let module S = Sxfiler_domain.File_stat in
           Alcotest.(check string) "full_path" tempfile node.N.full_path;
           Alcotest.(check string) "parent_directory" (Filename.dirname tempfile) node.N.parent_directory;
           Alcotest.(check @@ option string) "link_path" None node.N.link_path;
@@ -47,8 +47,8 @@ let file_operations = [
            | None -> Alcotest.fail "Not found "
            | Some node -> begin
                (* stat of file can not fix on unit test, so assert some record only. *)
-               let module N = Sxfiler_types.Node in
-               let module S = Sxfiler_types.File_stat in
+               let module N = Sxfiler_domain.Node in
+               let module S = Sxfiler_domain.File_stat in
                Alcotest.(check bool) "stat.is_symlink" true node.N.stat.S.is_symlink;
              end
         )
@@ -68,8 +68,8 @@ let file_operations = [
       | None -> Alcotest.fail "Not found "
       | Some node -> begin
           (* stat of file can not fix on unit test, so assert some record only. *)
-          let module N = Sxfiler_types.Node in
-          let module S = Sxfiler_types.File_stat in
+          let module N = Sxfiler_domain.Node in
+          let module S = Sxfiler_domain.File_stat in
           Alcotest.(check bool) "stat.is_file" false node.N.stat.S.is_file;
           Alcotest.(check bool) "stat.is_directory" true node.N.stat.S.is_directory;
         end
@@ -94,7 +94,7 @@ let real_test = [
       let module R = A.Real in
       let path = "./data_real/file_only" in
       let%lwt nodes = R.No_side_effect.read_dir ~directory:path in
-      let module N = Sxfiler_types.Node in
+      let module N = Sxfiler_domain.Node in
       let nodes = List.sort compare @@ List.map (fun v -> v.N.full_path) nodes in
       Alcotest.(check @@ list string) "nodes" [Filename.concat path "file1";
                                                Filename.concat path "file2"] nodes;

@@ -13,6 +13,6 @@
             sxfiler.renderer.core
             sxfiler.renderer.behavior
             sxfiler.virtualized_list
-            sxfiler.types sxfiler.types.jsoo
+            sxfiler.domain sxfiler.domain.jsoo
             sxfiler.rpc sxfiler.rpc.jsoo)
  (preprocess (pps js_of_ocaml-ppx jsoo_reactjs.ppx)))

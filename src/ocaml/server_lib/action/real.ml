@@ -10,7 +10,7 @@ module No_side_effect : No_side_effect = struct
     Path.resolve path |> Path.to_string
 
   let read_dir ~directory =
-    let module T = Sxfiler_types_yojson in
+    let module T = Sxfiler_domain_yojson in
     let items = Sys.readdir directory |> Array.to_list in
     let%lwt nodes = Lwt_list.map_p (fun v -> Lwt.return @@ File_op.get_node directory v) items in
     let%lwt nodes = Lwt.return @@ List.map Option.get_exn @@ List.filter Option.is_some nodes in

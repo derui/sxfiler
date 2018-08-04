@@ -1,5 +1,5 @@
 (** Completer provides simple completion interface via string. *)
-module T = Sxfiler_types.Completion
+module T = Sxfiler_domain.Completion
 
 include Completer_intf
 

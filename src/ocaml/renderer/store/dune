@@ -5,5 +5,5 @@
  (libraries js_of_ocaml
             sxfiler.core
             sxfiler.renderer.core
-            sxfiler.types sxfiler.types.jsoo)
+            sxfiler.domain sxfiler.domain.jsoo)
  (preprocess (pps js_of_ocaml-ppx)))

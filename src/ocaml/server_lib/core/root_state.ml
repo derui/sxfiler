@@ -1,4 +1,4 @@
-module T = Sxfiler_types
+module T = Sxfiler_domain
 
 module String_map = Map.Make(struct
     type t = string

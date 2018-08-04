@@ -1,6 +1,6 @@
 (** This module defines tasks are based on {!Task_intf} *)
 
-module T = Sxfiler_types
+module T = Sxfiler_domain
 open Sxfiler_server_task.Intf
 
 module Scanner = struct

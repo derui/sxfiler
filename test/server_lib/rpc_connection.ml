@@ -1,5 +1,5 @@
 open Sxfiler_core
-open Sxfiler_types
+open Sxfiler_domain
 
 module R = Sxfiler_server.Rpc_connection
 

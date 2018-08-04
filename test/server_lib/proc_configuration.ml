@@ -1,6 +1,6 @@
 open Sxfiler_core
 
-module T = Sxfiler_types
+module T = Sxfiler_domain
 module S = Sxfiler_server
 module R = Sxfiler_rpc
 module C = Sxfiler_server_core
@@ -27,7 +27,7 @@ let proc_configuration = [
       let%lwt res = Get_sync.handler req in
       let actual = match res.Jy.Response.result with
         | None -> Error ""
-        | Some res -> Sxfiler_types_yojson.Configuration.of_yojson res
+        | Some res -> Sxfiler_domain_yojson.Configuration.of_yojson res
       in
       Alcotest.(check @@ result (of_pp @@ Fmt.nop) (of_pp @@ Fmt.nop)) "current" (Ok expected) actual;
       Lwt.return_unit

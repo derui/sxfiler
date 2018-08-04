@@ -1,8 +1,8 @@
 (** this module defines functions for procedures for keybindings. *)
 
 open Sxfiler_server_core
-module T = Sxfiler_types
-module Ty = Sxfiler_types_yojson
+module T = Sxfiler_domain
+module Ty = Sxfiler_domain_yojson
 module Rpcy = Sxfiler_rpc_yojson
 
 (* defines procedure to get current key bindings *)

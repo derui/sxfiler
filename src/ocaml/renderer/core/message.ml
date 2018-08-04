@@ -1,9 +1,9 @@
-module T = Sxfiler_types
+module D = Sxfiler_domain
 
 (* messages for completion operation *)
 type completion =
-  | Setup of T.Completion.Source_class.t * string
-  | Read of T.Completion.result
+  | Setup of D.Completion.Source_class.t * string
+  | Read of D.Completion.result
   | Tear_down
 
 type command =
@@ -11,9 +11,9 @@ type command =
   | Select of Callable_action.t
 
 type t =
-  | Update_scanner of T.Scanner.t
-  | Update_keymap of Key_map.t
-  | Update_configuration of T.Configuration.t
+  | Update_scanner of D.Scanner.t
+  | Update_keymap of string D.Key_map.t
+  | Update_configuration of D.Configuration.t
   (* switch mode *)
   | Switch_mode of Types.Mode.t
   | Move_cursor_to_next
