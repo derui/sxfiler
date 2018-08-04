@@ -3,7 +3,7 @@ include Sxfiler_domain.Key_map
 type js = {
   condition: Condition.t;
   key: string;
-  value: Yojson.Safe.json;
+  value: Yojson.Safe.json[@key "action"];
 }
 [@@deriving yojson]
 

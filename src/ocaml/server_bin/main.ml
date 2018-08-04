@@ -49,9 +49,9 @@ let handler
       ~body:(Sexplib.Sexp.to_string_hum (Cohttp.Request.sexp_of_t req))
       ()
 
-let initialize_modules ~migemo ~keybindings ~config =
+let initialize_modules ~migemo ~keymap ~config =
   let%lwt () = Proc_completion.initialize migemo in
-  let%lwt () = Global.Keybindings.update keybindings in
+  let%lwt () = Global.Keymap.update keymap in
   Global.Configuration.update config
 
 let start_server _ port =
@@ -66,7 +66,7 @@ let start_server _ port =
   let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_completion) in
   let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_scanner) in
   let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_configuration) in
-  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_keybindings) in
+  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_keymap) in
 
   Cohttp_lwt_unix.Server.create
     ~mode:(`TCP (`Port port))
@@ -111,7 +111,19 @@ let load_configuration config =
   | Ok v -> Some v
 
 (* Load keymaps from specified file *)
-let load_keybindings file = Some (Yojson.Safe.from_file file)
+let load_keymap file =
+  let keymap = Yojson.Safe.from_file file in
+  let module Y = Sxfiler_domain_yojson.Key_map in
+  let module Conv = struct
+    type t = string
+    let to_yojson t = `String t
+    let of_yojson = function
+      | `String v -> Ok v
+      | _ -> Error "Unknown type"
+  end in
+  match Y.of_yojson ~conv:(module Conv) keymap with
+  | Error _ -> None
+  | Ok v -> Some v
 
 (* Get config from file, but get default when some error happenned  *)
 let get_config f config ~default =
@@ -137,10 +149,10 @@ let () =
   ] in
   Arg.parse arg_specs ignore "";
 
-  let module C = Sxfiler_domain.Configuration in
+  let module D = Sxfiler_domain in
   let port = 50879 in
-  let config = get_config load_configuration !config ~default:C.default in
-  let keybindings = get_config load_keybindings !key_maps ~default:(`Assoc []) in
+  let config = get_config load_configuration !config ~default:D.Configuration.default in
+  let keymap = get_config load_keymap !key_maps ~default:D.Key_map.empty in
   let migemo = load_migemo !dict_dir in
 
   (* setup task runner and finalizer *)
@@ -151,5 +163,5 @@ let () =
       runner_thread
     );
 
-  Lwt_main.run (initialize_modules ~migemo ~keybindings ~config
+  Lwt_main.run (initialize_modules ~migemo ~keymap ~config
                 >>= fun () -> start_server "localhost" port)

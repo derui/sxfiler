@@ -1,3 +1,4 @@
+module D = Sxfiler_domain
 module C = Sxfiler_server_core
 module T = Sxfiler_server_task
 
@@ -40,10 +41,10 @@ end = struct
     | Some t -> t
 end
 
-module Keybindings = C.Statable.Make(struct
-    type t = Yojson.Safe.json
+module Keymap = C.Statable.Make(struct
+    type t = string D.Key_map.t
 
-    let empty () = `Null
+    let empty () = D.Key_map.empty
   end)
 
 module Configuration = C.Statable.Make(struct

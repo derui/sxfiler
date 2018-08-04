@@ -69,15 +69,20 @@ module Scanner = struct
 
 end
 
-module Keybindings = struct
-  module Get_sync : Api_def with type params = Rj.Keybindings.Get_sync.params
-                             and type result = Rj.Keybindings.Get_sync.result = struct
-    include Rj.Keybindings.Get_sync
+module Keymap = struct
+  module Get_sync : Api_def with type params = Rj.Keymap.Get_sync.params
+                             and type result = Rj.Keymap.Get_sync.result = struct
+    include Rj.Keymap.Get_sync
     type json = < > Js.t
 
     let params_to_json _ = None
 
-    let result_of_json v = v
+    let result_of_json v = let module Dj = Sxfiler_domain_jsoo in
+      Dj.Key_map.of_js v ~conv:(module struct
+                                 type t = string
+                                 let to_json v : < > Js.t = Js.Unsafe.coerce @@ Js.string v
+                                 let of_json v = Js.Unsafe.coerce v |> Js.to_string
+                               end)
   end
 end
 

@@ -39,7 +39,7 @@ let () =
 
   websocket##.onopen := Dom.handler (fun _ ->
       (* Get current properties *)
-      let module I = (val C.Behavior.make_instance (module B.Refresh_keybindings) ~config:(module L) ~param:()) in
+      let module I = (val C.Behavior.make_instance (module B.Refresh_keymap) ~config:(module L) ~param:()) in
       Ctx.(Context.execute this (module I)) |> Lwt.ignore_result;
       let module I = (val C.Behavior.make_instance (module B.Refresh_configuration) ~config:(module L) ~param:()) in
       Ctx.(Context.execute this (module I)) |> Lwt.ignore_result;
