@@ -5,11 +5,9 @@ let special_key_mapping = function
 
 let keyboard_event_to_key v =
   let module K = Sxfiler_kbd in
-  {
-    K.key = special_key_mapping @@ Js.to_string v##.key;
-    meta = Js.to_bool v##.altKey;
-    ctrl = Js.to_bool v##.ctrlKey;
-  }
+  K.make ~ctrl:(Js.to_bool v##.ctrlKey;)
+    ~meta:(Js.to_bool v##.altKey)
+    (special_key_mapping @@ Js.to_string v##.key)
 
 let find_item_index ?(equal=(=)) ~v array =
   let rec find ary v ind =

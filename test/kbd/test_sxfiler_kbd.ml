@@ -13,7 +13,7 @@ let alphabetical_keys =
 let () =
   "Sxfiler kbd macro" >::: [
     "should convert between Javascript object and kbd type" >:: (fun _ ->
-        let k = {K.ctrl = true; meta = false; key = "k"} in
+        let k = K.make ~ctrl:true "k" in
         let js = Kj.to_js k in
         let json : Kj.js Js.t = Js._JSON##stringify js |> fun s -> Js._JSON##parse s in
         let conv_k = Kj.of_js json in
@@ -21,13 +21,13 @@ let () =
         assert_ok (k = conv_k);
       );
     "should convert kbd type to string" >:: (fun _ ->
-        let k = {K.ctrl = true; meta = false; key = "k"} in
+        let k = K.make ~ctrl:true "k" in
         let js = K.to_keyseq k in
 
         assert_ok (js = "C-k");
       );
     "should not equal key sequence and converted key sequence" >:: (fun _ ->
-        let k = {K.ctrl = true; meta = false; key = "k"} in
+        let k = K.make ~ctrl:true "k" in
         let seq = K.to_keyseq k in
         let seq_from_string = match K.of_keyseq "C-k" with
           | Some k -> K.to_keyseq k
@@ -38,7 +38,7 @@ let () =
         assert_ok (seq = seq_from_string) <|> assert_neq seq_from_string "C-k";
       );
     "should be able to convert special key name" >:: (fun _ ->
-        let k = {K.ctrl = true; meta = false; key = "Tab"} in
+        let k = K.make ~ctrl:true "Tab" in
         let js = Kj.to_js k in
         let json : Kj.js Js.t = Js._JSON##stringify js |> fun s -> Js._JSON##parse s in
         let conv_k = Kj.of_js json in
@@ -51,7 +51,7 @@ let () =
         assert_ok (Array.for_all (fun c ->
             let k = String.get alphabetical_keys c |> String.make 1 in
             let t = K.of_keyseq k in
-            t = Some {K.empty with key = k}
+            t = Some (K.make k)
           ) parameter_list)
 
       );
@@ -61,7 +61,7 @@ let () =
         assert_ok (Array.for_all (fun c ->
             let k = String.get alphabetical_keys c |> String.make 1 in
             let t = K.of_keyseq ("M-" ^ k) in
-            t = Some {K.empty with key = k; meta = true}
+            t = Some (K.make ~meta:true k)
           ) parameter_list)
 
       );
@@ -72,7 +72,7 @@ let () =
         assert_ok (Array.for_all (fun c ->
             let k = String.get alphabetical_keys c |> String.make 1 in
             let t = K.of_keyseq ("C-" ^ k) in
-            t = Some {K.empty with key = k; ctrl = true}
+            t = Some (K.make ~ctrl:true k)
           ) parameter_list)
       );
 
@@ -82,11 +82,9 @@ let () =
       );
 
     "should be able to contain multi prefix" >:: (fun _ ->
-        let has_meta k = k.K.meta
-        and has_ctrl k = k.K.ctrl in
         let ( >>> ) v k = (fst v ^ fst k, fun key -> snd v key && snd k key) in
-        let meta = ("M-", has_meta)
-        and ctrl = ("C-", has_ctrl) in
+        let meta = ("M-", K.has_meta)
+        and ctrl = ("C-", K.has_ctrl) in
 
         let prefix_patterns = [
           meta; ctrl;
@@ -101,7 +99,7 @@ let () =
                 let seq = prefix ^ (String.make 1 k) in
                 match K.of_keyseq seq with
                 | None -> false
-                | Some t -> validator t && (t.K.key = (String.make 1 k))
+                | Some t -> validator t && (K.key t = (String.make 1 k))
               ) prefix_patterns
           ) parameter_list
       );

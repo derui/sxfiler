@@ -16,6 +16,16 @@ let empty = {
   key = "";
 }
 
+let make ?(ctrl=false) ?(meta=false) key = {
+  key;
+  ctrl;
+  meta;
+}
+
+let key {key;_} = key
+let has_meta {meta;_} = meta
+let has_ctrl {ctrl;_} = ctrl
+
 let lexer_table = [
   (Some "M-", Meta);
   (Some "C-", Ctrl);

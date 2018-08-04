@@ -5,14 +5,15 @@
 *)
 
 (** A type represent key combination from string that like Emacs's [kbd] macro. *)
-type t = {
-  ctrl : bool;
-  meta : bool;
-  key : string;
-}
+type t
 
-(** Empty key status. this have key that is empty string, and all modifiers are disabled.  *)
-val empty: t
+(** [make ?ctrl ?meta key] returns new type [t] *)
+val make: ?ctrl:bool -> ?meta:bool -> string -> t
+
+(** accessor for [t] *)
+val key: t -> string
+val has_meta: t -> bool
+val has_ctrl: t -> bool
 
 (** Convert from key combination to key status. Return None if key combination is invalid format. *)
 val of_keyseq: string -> t option

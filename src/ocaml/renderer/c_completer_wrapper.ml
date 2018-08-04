@@ -34,9 +34,9 @@ let default_key_map =
   List.fold_left (fun keymap (key, value) -> T.Key_map.add ~condition ~key ~value keymap)
     keymap
     [
-      {Sxfiler_kbd.empty with key = "ArrowUp"}, "prev";
-      {Sxfiler_kbd.empty with key = "ArrowDown"}, "next";
-      {Sxfiler_kbd.empty with key = "Enter"}, "select";
+      Sxfiler_kbd.make "ArrowUp", "prev";
+      Sxfiler_kbd.make "ArrowDown", "next";
+      Sxfiler_kbd.make "Enter", "select";
     ]
 
 let handle_action = function

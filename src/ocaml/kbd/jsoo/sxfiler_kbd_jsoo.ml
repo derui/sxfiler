@@ -7,16 +7,15 @@ class type js = object
 end
 
 let to_js t = object%js
-  val ctrl = Js.bool t.ctrl
-  val meta = Js.bool t.meta
-  val key = Js.string t.key
+  val ctrl = Js.bool @@ has_ctrl t
+  val meta = Js.bool @@ has_meta t
+  val key = Js.string @@ key t
 end
 
-let of_js js = {
-  ctrl = Js.to_bool js##.ctrl;
-  meta = Js.to_bool js##.meta;
-  key = Js.to_string js##.key;
-}
+let of_js js =
+  make ~ctrl:(Js.to_bool js##.ctrl)
+    ~meta:(Js.to_bool js##.meta)
+    @@ Js.to_string js##.key
 
 let () =
   Js.export_all (object%js
