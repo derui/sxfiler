@@ -9,12 +9,12 @@ module type Main = S with type store = Sxfiler_renderer_store.App.Store.t
 let make_store () =
   let module C = Sxfiler_renderer_core in
   let config = S.Config.(Store.make @@ State.make ())
-  and viewer_stacks = S.Viewer_stacks.(Store.make @@ State.make (Const.scanner_1, Const.scanner_2))
+  and scanner = S.Scanner.(Store.make @@ State.make (Const.scanner_1, Const.scanner_2))
   and keymap = S.Keymap.(Store.make @@ State.make ())
   and completion = S.Completion.(Store.make @@ State.make ())
   and command = S.Command.(Store.make @@ State.make ())
   in
-  let state = S.App.State.make ~config ~viewer_stacks ~keymap ~completion ~command in
+  let state = S.App.State.make ~config ~scanner ~keymap ~completion ~command in
   S.App.Store.make state
 
 module Make

@@ -10,14 +10,20 @@ module Component = R.Component.Make_stateless(struct
     end
   end)
 
-let layout_container ~key locator stack  =
-  [%c C_viewer_stack.t ~key ~locator ~viewerStack:stack]
+let scanner_container ~key condition store =
+  let scanner = S.Scanner.Store.get @@ S.App.State.scanner store in
+  let parts = T.Condition.of_list [On_file_tree] in
+
+  if T.Condition.subset ~current:condition ~parts then
+    [%c C_file_list_viewer.t ~key ~scannerState:scanner ~focused:true]
+  else
+    R.empty ()
 
 let t = Component.make @@ fun props ->
   let module L = (val props##.locator : Locator.Main) in
-  let store = L.store in
-  let config' = S.Config.Store.get @@ S.App.(State.config @@ Store.get store) in
-  let viewer_stacks' = S.Viewer_stacks.Store.get @@ S.App.(State.viewer_stacks @@ Store.get store) in
+  let store = S.App.Store.get L.store in
+  let config' = S.Config.Store.get @@ S.App.State.config store in
+  let condition = S.Config.State.condition config' in
   let module C = T.Configuration in
   let class_name = match (config'.S.Config.State.config).C.viewer.C.Viewer.stack_layout with
     | T.Types.Layout.Side_by_side -> Classnames.to_string [
@@ -27,5 +33,5 @@ let t = Component.make @@ fun props ->
   in
 
   [%e div ~key:"layout" ~class_name [
-      layout_container ~key:"stack" props##.locator viewer_stacks';
+      scanner_container ~key:"scanner" condition store;
     ]]

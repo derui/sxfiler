@@ -16,8 +16,6 @@ module State = struct
   let reduce t = function
     | C.Message.Switch_mode mode -> begin match mode with
         | C.Types.Mode.File_tree -> {t with condition = T.Condition.(enable ~context:On_file_tree t.condition)}
-        | C.Types.Mode.Completion -> {t with condition = T.Condition.(enable ~context:On_file_tree t.condition)}
-        | _ -> t
       end
     | _ -> t
 

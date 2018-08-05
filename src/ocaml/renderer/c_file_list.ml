@@ -29,7 +29,7 @@ let header = Header.make (fun props ->
 (* content of file list *)
 module Content = R.Component.Make_stateful (struct
     class type t = object
-      method viewerState: S.Viewer_stacks.File_tree.tree Js.readonly_prop
+      method fileList: S.Scanner.File_list.t Js.readonly_prop
       method focused: bool Js.readonly_prop
     end
   end)(struct
@@ -39,7 +39,7 @@ module Content = R.Component.Make_stateful (struct
   end)
 
 let content =
-  let module Vt = S.Viewer_stacks.File_tree in
+  let module Vt = S.Scanner.File_list in
   let spec = R.component_spec
       ~constructor:(fun this _ ->
           this##.state := object%js
@@ -47,7 +47,7 @@ let content =
           end;
           this##.nodes := Jstable.create ())
       ~component_did_mount:(fun this ->
-          let vt = this##.props##.viewerState in
+          let vt = this##.props##.fileList in
           let vl = this##.state##.virtualizedList in
           let open Option.Infix in
           ignore (
@@ -60,7 +60,7 @@ let content =
             end))
         )
       ~component_will_receive_props:(fun this _ ->
-          let vt = this##.props##.viewerState in
+          let vt = this##.props##.fileList in
           ignore (
             let items = Array.of_list vt.Vt.scanner.nodes in
             let vl = VL.update_all_items items this##.state##.virtualizedList in
@@ -73,7 +73,7 @@ let content =
         )
   in
   let render this =
-    let vt = this##.props##.viewerState in
+    let vt = this##.props##.fileList in
     let vl = this##.state##.virtualizedList in
 
     let items = VL.get_items_in_window vl in
@@ -116,16 +116,16 @@ let content =
 (* wrapping component. *)
 module Component = R.Component.Make_stateless (struct
     class type t = object
-      method viewerState: S.Viewer_stacks.File_tree.tree Js.readonly_prop
+      method fileList: S.Scanner.File_list.t Js.readonly_prop
       method focused: bool Js.readonly_prop
     end
   end)
 
 let t = Component.make (fun props ->
-    let state = props##.viewerState in
-    let scanner = state.S.Viewer_stacks.File_tree.scanner in
+    let state = props##.fileList in
+    let scanner = state.S.Scanner.File_list.scanner in
     [%e div ~class_name:"fp-FileList"
         [[%c header ~key:"header" ~directory:scanner.location ~focused:props##.focused];
-         [%c content ~key:"file-list" ~viewerState:state ~focused:props##.focused];
+         [%c content ~key:"file-list" ~fileList:state ~focused:props##.focused];
         ]]
   )
