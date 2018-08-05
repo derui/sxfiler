@@ -122,7 +122,7 @@ let load_keymap file =
       | _ -> Error "Unknown type"
   end in
   match Y.of_yojson ~conv:(module Conv) keymap with
-  | Error _ -> None
+  | Error err -> Logs.warn (fun m -> m "Error occurred: %s" err); None
   | Ok v -> Some v
 
 (* Get config from file, but get default when some error happenned  *)

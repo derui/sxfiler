@@ -1,8 +1,8 @@
 include Sxfiler_domain.Condition
 
 type js = {
-  on_file_tree: bool [@key "onFileTree"];
-  on_completing: bool [@key "onCompleting"];
+  on_file_tree: bool [@key "onFileTree"][@default false];
+  on_completing: bool [@key "onCompleting"][@default false];
 }
 [@@deriving yojson]
 

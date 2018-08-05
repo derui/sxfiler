@@ -12,6 +12,14 @@ module Component = R.Component.Make_stateful (struct
     end
   end)
 
+let handle_action ~locator:(module L:Locator.Main) action =
+  let module Reg = C.Locator_intf.Static_registry in
+  match Reg.get L.command_registry ~name:action with
+  | None -> ()
+  | Some command ->
+    let module C = C.Command.Static_command in
+    command.C.executor [] L.context |> Lwt.ignore_result
+
 let t = Component.make
     R.(component_spec
          ~constructor:(fun this _ ->
@@ -32,7 +40,7 @@ let t = Component.make
                 ~keymap
                 ~className:(Some "sf-Main")
                 ~condition
-                ~onAction:(fun _ -> failwith "not implemented yet")
+                ~onAction:(handle_action ~locator:(module L))
                 [
                   [%c C_omni_bar.t ~key:"omni-bar" ~locator:this##.props##.locator];
                   [%c C_layout.t ~key:"layout" ~locator:this##.props##.locator];

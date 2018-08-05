@@ -12,25 +12,25 @@ end
 module Original_key_binding = struct
   type 'a t = {
     key: string;
-    value: 'a;
+    action: 'a;
     condition: T.Condition.t;
   }
 
   class type js = object
     method key: Js.js_string Js.t Js.readonly_prop
-    method value: < > Js.t Js.readonly_prop
+    method action: < > Js.t Js.readonly_prop
     method _when: Condition.js Js.t Js.optdef Js.readonly_prop
   end
 
   let to_js (type v) (t:v t) ~conv:(module C:Conv with type t = v) : js Js.t = object%js
     val key = Js.string t.key
-    val value = C.to_json t.value
+    val action = C.to_json t.action
     val _when = Js.Optdef.return @@ Condition.to_js t.condition
   end
 
   let of_js (type v) (js:js Js.t) ~conv:(module C:Conv with type t = v) : v t = {
     key = Js.to_string js##.key;
-    value = C.of_json js##.value;
+action = C.of_json js##.action;
     condition = Js.Optdef.map js##._when Condition.of_js
                 |> Js.Optdef.to_option
                 |> Option.get ~default:(fun () -> T.Condition.empty);
@@ -46,7 +46,7 @@ let to_js (type v) (t:v t) ~conv:(module C:Conv with type t = v) : js Js.t =
   let bindings = bindings t in
   let bindings = List.map (fun (cond, key, v) -> {Original_key_binding.condition = cond;
                                    key = Sxfiler_kbd.to_keyseq key;
-                                   value = v;
+                                   action = v;
                                   })
     bindings
 
@@ -68,5 +68,5 @@ let of_js (type v) (js:js Js.t) ~conv:(module C:Conv with type t = v) : v t =
       let open Original_key_binding in
       match Sxfiler_kbd.of_keyseq v.key with
       | None -> keymap
-      | Some key -> add keymap ~condition:v.condition ~key ~value:v.value
+      | Some key -> add keymap ~condition:v.condition ~key ~value:v.action
     ) (make id)

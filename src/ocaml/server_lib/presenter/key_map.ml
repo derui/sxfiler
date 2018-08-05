@@ -1,7 +1,7 @@
 include Sxfiler_domain.Key_map
 
 type js = {
-  condition: Condition.t;
+  condition: Condition.t [@key "when"];
   key: string;
   action: Yojson.Safe.json;
 }

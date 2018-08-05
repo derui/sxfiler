@@ -1,9 +1,11 @@
 module D = Sxfiler_domain
 
+type command_args = (string * string) list
+
 type ('a, 'b) executor = 'a -> (module Context.Instance) -> 'b Lwt.t
 type execution_plan = [
   | `No_plan
-  | `Plan of ((string * string) list, unit) executor
+  | `Plan of (command_args, unit) executor
 ]
 
 (** type for static command. *)
@@ -11,7 +13,7 @@ module Static_command = struct
   type t = {
     name: string;
     execute_plan: execution_plan;
-    executor: ((string * string) list, unit) executor;
+    executor: (command_args, unit) executor;
   }
 end
 

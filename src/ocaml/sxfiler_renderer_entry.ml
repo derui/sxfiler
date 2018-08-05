@@ -19,6 +19,10 @@ let notification_handler server message =
   in
   Lwt.ignore_result thread
 
+let expose_commands (module Locator: Locator.Main) =
+  let module Com = Sxfiler_renderer_command in
+  Com.expose_static Locator.command_registry |> ignore
+
 let () =
   Logs.set_reporter @@ Logs_browser.console_reporter ();
   Logs.set_level (Some Logs.App);
@@ -38,6 +42,8 @@ let () =
   let rpc_notification_server = Notification_reducer.expose ~dispatcher:(module D) rpc_notification_server in
 
   Websocket_handler.add websocket_handler ~handler:(notification_handler rpc_notification_server);
+
+  expose_commands (module L);
 
   websocket##.onopen := Dom.handler (fun _ ->
       (* Get current properties *)

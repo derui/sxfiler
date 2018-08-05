@@ -47,6 +47,9 @@ let t =
          in
          let children = R.Children.to_element this##.props_defined##.children in
          [%e div ~class_name
+             ~others:(object%js
+               val tabIndex = Js.string "0"
+             end)
              ~on_key_down:(key_handler ~props) [children]]
       )
   in
