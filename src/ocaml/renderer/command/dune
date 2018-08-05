@@ -1,3 +1,8 @@
+(rule
+ (targets sxfiler_renderer_command.ml)
+ (deps gen/discover.exe)
+ (action (run %{deps} -o %{targets})))
+
 (library
  (name sxfiler_renderer_command)
  (public_name sxfiler.renderer.command)

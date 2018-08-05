@@ -25,3 +25,13 @@ module Prev_item = struct
         Ctx.(Context.execute this (module I))
     }
 end
+
+let expose registry =
+  List.fold_right (fun command registry ->
+      C.Locator_intf.Static_registry.register registry command
+    )
+    [
+      Next_item.make ();
+      Prev_item.make ();
+    ]
+    registry
