@@ -14,9 +14,9 @@ let scanner_container ~key condition store =
   let scanner = S.Scanner.Store.get @@ S.App.State.scanner store in
   let parts = T.Condition.of_list [On_file_tree] in
 
-  if T.Condition.subset ~current:condition ~parts then
-    [%c C_file_list_viewer.t ~key ~scannerState:scanner ~focused:true]
-  else
+  if T.Condition.subset ~current:condition ~parts then begin
+    [%c P_file_list_viewer.t ~key ~scannerState:scanner ~focused:true]
+  end else
     R.empty ()
 
 let t = Component.make @@ fun props ->

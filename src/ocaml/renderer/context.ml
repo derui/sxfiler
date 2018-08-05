@@ -6,7 +6,7 @@ module type Instance = C.Context.Instance
 
 type store = S.App.Store.t
 type t = {
-  mutable store: S.App.Store.t;
+  store: S.App.Store.t;
 }
 type config = S.App.Store.t
 

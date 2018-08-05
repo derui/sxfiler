@@ -30,7 +30,9 @@ let () =
   let rpc = Rpc.make websocket websocket_handler in
   let store = Locator.make_store () in
   let module Ctx = (val C.Context.make_instance (module Context) store) in
-  let module L = Locator.Make((val rpc))(Ctx) in
+  let module L = Locator.Make((val rpc))(Ctx)(struct
+      let instance = store
+    end) in
   let module D = (val Ctx.(Context.dispatcher this)) in
   let rpc_notification_server = C.Rpc.Server.make () in
   let rpc_notification_server = Notification_reducer.expose ~dispatcher:(module D) rpc_notification_server in
