@@ -28,15 +28,14 @@ let t = Component.make
             let state = S.App.Store.get L.store in
             let keymap = S.Keymap.Store.get @@ S.App.State.keymap state in
             let condition = S.Config.State.condition @@ S.Config.Store.get @@ S.App.State.config state in
-            [%e div ~class_name:"sf-Main" [
-                [%c C_key_handler.t ~key:"key-container"
-                    ~keymap
-                    ~className:None
-                    ~condition
-                    ~onAction:(fun _ -> failwith "not implemented yet")
-                    [
-                      [%c C_omni_bar.t ~key:"omni-bar" ~locator:this##.props##.locator];
-                      [%c C_layout.t ~key:"layout" ~locator:this##.props##.locator];
-                    ]]]]
+            [%c C_key_handler.t ~key:"key-container"
+                ~keymap
+                ~className:(Some "sf-Main")
+                ~condition
+                ~onAction:(fun _ -> failwith "not implemented yet")
+                [
+                  [%c C_omni_bar.t ~key:"omni-bar" ~locator:this##.props##.locator];
+                  [%c C_layout.t ~key:"layout" ~locator:this##.props##.locator];
+                ]]
          )
       )
