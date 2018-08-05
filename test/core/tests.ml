@@ -121,6 +121,15 @@ let path_tests = [
           Path.of_string ~env:`Unix (module S) "" |> ignore
         )
     );
+  "allow to compare between paths", `Quick, (fun () ->
+      let module S = struct
+        let getcwd () = "/var"
+      end in
+      Alcotest.(check bool) "equal" true Path.(equal (of_string ~env:`Unix (module S) "./foo/bar")
+                                                 (of_string ~env:`Unix (module S) "foo/bar"));
+      Alcotest.(check bool) "equal" false Path.(equal (of_string ~env:`Unix (module S) "../foo")
+                                                 (of_string ~env:`Unix (module S) "foo/bar"));
+    )
 ]
 
 let fun_tests = [

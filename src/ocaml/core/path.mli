@@ -17,3 +17,6 @@ val to_string: ?env:env -> t -> string
 
 (** [resolve t] resolve current(.) and parent(..) in path [t]. *)
 val resolve: t -> t
+
+(** [equal v1 v2] return what [v1] and [v2] are equal. *)
+val equal: t -> t -> bool

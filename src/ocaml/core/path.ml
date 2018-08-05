@@ -141,3 +141,8 @@ let resolve path =
         end
     in
     {path with resolved = true; components = resolve_relatives path.components []}
+
+let equal t1 t2 =
+  let t1' = to_string ~env:`Unix @@ resolve t1
+  and t2' = to_string ~env:`Unix @@ resolve t2 in
+  t1' = t2'
