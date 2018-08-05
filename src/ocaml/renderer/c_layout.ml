@@ -6,7 +6,7 @@ module S = Sxfiler_renderer_store
 
 module Component = R.Component.Make_stateless(struct
     class type t = object
-      method locator: (module Locator.Main) Js.readonly_prop
+      method locator: (module Locator.S) Js.readonly_prop
     end
   end)
 
@@ -20,7 +20,7 @@ let scanner_container ~key condition store =
     R.empty ()
 
 let t = Component.make @@ fun props ->
-  let module L = (val props##.locator : Locator.Main) in
+  let module L = (val props##.locator : Locator.S) in
   let store = S.App.Store.get L.store in
   let config' = S.Config.Store.get @@ S.App.State.config store in
   let condition = S.Config.State.condition config' in

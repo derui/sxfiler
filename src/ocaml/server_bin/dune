@@ -6,6 +6,5 @@
             websocket websocket-lwt.cohttp
             logs.fmt
             jsonrpc-ocaml.yojson
-            sxfiler.server.presenter
             sxfiler.server)
  (preprocess (pps lwt_ppx)))

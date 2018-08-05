@@ -8,10 +8,11 @@
             jsonrpc-ocaml.yojson
             sxfiler.domain
             sxfiler.rpc
-            sxfiler.server.completion
+            sxfiler.usecase
+            sxfiler.completion.migemo
             sxfiler.server.core
             sxfiler.server.task
             sxfiler.server.gateway
-            sxfiler.server.presenter
+            sxfiler.server.infra
             ppx_deriving_yojson.runtime)
  (preprocess (pps lwt_ppx ppx_deriving.std ppx_deriving_yojson)))

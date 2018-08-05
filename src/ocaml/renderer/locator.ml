@@ -1,14 +1,10 @@
 (** Locate application information. This module as is singleton. *)
-module C = Sxfiler_renderer_core
-module S = Sxfiler_renderer_store
+open Locator_abbrevs
 
-include C.Locator_intf
-
-module type Main = S with type store = Sxfiler_renderer_store.App.Store.t
+include Locator_intf
 
 module type Store_instance = sig
-  type t
-  val instance: t
+  val this: S.App.Store.t
 end
 
 let make_store () =
@@ -23,15 +19,13 @@ let make_store () =
   S.App.Store.make state
 
 module Make
-    (R:Rpc.Rpc)
+    (Client:C.Rpc.Client)
     (Ctx: C.Context.Instance)
-    (Store:Store_instance with type t := S.App.Store.t): Main = struct
-  type store = S.App.Store.t
-
-  let rpc = (module R : Rpc.Rpc)
+    (Store:Store_instance): S = struct
+  let client = (module Client : C.Rpc.Client)
   let context = (module Ctx : C.Context.Instance)
-  let store = Store.instance
+  let store = Store.this
 
-  let command_registry = C.Locator_intf.Static_registry.make ()
-  let dynamic_command_registry = C.Locator_intf.Dynamic_registry.make ()
+  let command_registry = C.Command.Static_registry.make ()
+  let dynamic_command_registry = C.Command.Dynamic_registry.make ()
 end

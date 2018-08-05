@@ -10,7 +10,8 @@
             lwt
             sxfiler.server.task
             sxfiler.server.core
+            sxfiler.completion
             sxfiler.server
             sxfiler.core
             sxfiler.rpc)
- (preprocess (pps lwt_ppx)))
+ (preprocess (pps lwt_ppx ppx_deriving_yojson)))

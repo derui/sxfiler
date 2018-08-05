@@ -1,9 +1,10 @@
 module D = Sxfiler_domain
+module Co = Sxfiler_completion.Domain
 
 (* messages for completion operation *)
 type completion =
-  | Setup of D.Completion.Source_class.t * string
-  | Read of D.Completion.result
+  | Setup of string
+  | Read of Co.result
   | Tear_down
 
 type command =

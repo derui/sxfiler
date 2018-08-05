@@ -15,14 +15,10 @@ module Original_key_binding = struct
 end
 
 type 'a t = {
-  id: string;
   keymap: 'a Original_key_binding.t list Binding_map.t;
 }
 
-let id {id;_} = id
-
-let make id = {
-  id;
+let make () = {
   keymap = Binding_map.empty;
 }
 
@@ -36,7 +32,7 @@ let update t ~condition ~key ~value =
 
 let add t ~condition ~key ~value =
   let key = Sxfiler_kbd.to_keyseq key in
-  {t with keymap = update t.keymap ~condition ~key ~value}
+  {keymap = update t.keymap ~condition ~key ~value}
 
 let find t ~condition ~key =
   let key = Sxfiler_kbd.to_keyseq key in

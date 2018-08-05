@@ -1,38 +1,44 @@
 open Sxfiler_core
 
-module T = Sxfiler_domain
+module D = Sxfiler_domain
 module S = Sxfiler_server
-module R = Sxfiler_rpc
+module U = Sxfiler_usecase
 module C = Sxfiler_server_core
-module A = Sxfiler_server_action
 module Jy = Jsonrpc_ocaml_yojson
+module G = Sxfiler_server_gateway
+module Tr = Sxfiler_server_translator
 
 let proc_keymap = [
   Alcotest_lwt.test_case "get current keybindings" `Quick (fun switch () ->
       let expected = List.fold_left (fun keymap (key, value) ->
-          T.Key_map.add keymap ~condition:(T.Condition.empty) ~key ~value
+          D.Key_map.add keymap ~condition:(D.Condition.empty) ~key ~value
         )
-          (T.Key_map.make "empty")
+          (D.Key_map.make ())
           [
             (Sxfiler_kbd.make "k", "foo");
             (Sxfiler_kbd.make "j", "bar");
           ] in
       let module State = C.Statable.Make(struct
-          type t = string T.Key_map.t
+          type t = string D.Key_map.t
           let empty () = expected
         end) in
-      let module Get_sync = S.Proc_keymap.Get_sync(State) in
+      let module Gateway = struct
+        type params = unit
+        type result = Tr.Key_map.t
 
-      let req = Jy.Request.{
-          _method = "foo";
-          params = None;
-          id = Some Int64.zero;
-        } in
-      let%lwt res = Get_sync.handler req in
+        let handle () = Lwt.map Tr.Key_map.of_domain @@ State.get ()
+      end in
+      let module Get= S.Proc_keymap.Get(Gateway) in
+
+      let%lwt res = Get.handle () in
       let module G = Sxfiler_server_gateway in
-      let actual = res.Jy.Response.result in
-      let expected = G.Keymap.Get_sync.result_to_yojson expected in
-      Alcotest.(check @@ option @@ of_pp @@ Fmt.nop) "current" Option.(some expected) actual;
+      Alcotest.(check @@ of_pp Fmt.nop) "current" (Tr.Key_map.of_domain expected) res;
+      Alcotest.(check bool) "params" true (match Get.params_of_json with
+          | `Not_required _ -> true
+          | _ -> false);
+      Alcotest.(check bool) "result" true (match Get.result_to_json with
+          | `Result _ -> true
+          | _ -> false);
       Lwt.return_unit
     );
 ]

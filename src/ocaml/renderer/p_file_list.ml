@@ -80,7 +80,7 @@ let content =
 
     let children = Array.mapi (fun index item ->
         let module N = T.Node in
-        [%c P_file_item.t ~key:item.N.full_path ~item
+        [%c P_file_item.t ~key:(Path.to_string item.N.full_path) ~item
             ~selected:(index = vt.Vt.selected_item_index)
             ~focused:this##.props##.focused ]
       ) items |> Array.to_list
@@ -125,7 +125,7 @@ let t = Component.make (fun props ->
     let state = props##.fileList in
     let scanner = state.S.Scanner.File_list.scanner in
     [%e div ~class_name:"fp-FileList"
-        [[%c header ~key:"header" ~directory:scanner.location ~focused:props##.focused];
+        [[%c header ~key:"header" ~directory:(Path.to_string scanner.location) ~focused:props##.focused];
          [%c content ~key:"file-list" ~fileList:state ~focused:props##.focused];
         ]]
   )

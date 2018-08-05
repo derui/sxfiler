@@ -1,35 +1,32 @@
 open Sxfiler_core
 
-module T = Sxfiler_domain
+module D = Sxfiler_domain
 module S = Sxfiler_server
-module R = Sxfiler_rpc
 module C = Sxfiler_server_core
-module A = Sxfiler_server_action
-module Jy = Jsonrpc_ocaml_yojson
 module G = Sxfiler_server_gateway
+module T = Sxfiler_server_translator
 
 let proc_configuration = [
   Alcotest_lwt.test_case "get current configuration" `Quick (fun switch () ->
-      let expected = T.Configuration.{default with
-                          viewer = Viewer.{default with current_stack_name = "foo"}
-                         } in
+      let expected = D.Configuration.{
+          default with
+          viewer = Viewer.{default with current_stack_name = "foo"}
+        } in
       let module State = C.Statable.Make(struct
           type t = T.Configuration.t
-          let empty () = expected
+          let empty () = T.Configuration.of_domain expected
         end) in
-      let module Get_sync = S.Proc_configuration.Get_sync(State) in
+      let module Gateway = struct
+        type params = unit
+        type result = T.Configuration.t
 
-      let req = Jy.Request.{
-          _method = "foo";
-          params = None;
-          id = Some Int64.zero;
-        } in
-      let%lwt res = Get_sync.handler req in
-      let actual = match res.Jy.Response.result with
-        | None -> Error ""
-        | Some res -> G.Configuration.Get_sync.result_of_yojson res
-      in
-      Alcotest.(check @@ result (of_pp @@ Fmt.nop) (of_pp @@ Fmt.nop)) "current" (Ok expected) actual;
+        let handle () = State.get ()
+      end in
+      let module Get = S.Proc_configuration.Get(Gateway) in
+
+      let%lwt res = Get.handle () in
+      let%lwt actual = State.get () in
+      Alcotest.(check @@ of_pp @@ Fmt.nop) "current" expected @@ T.Configuration.to_domain actual;
       Lwt.return_unit
     );
 ]

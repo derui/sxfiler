@@ -1,7 +1,0 @@
-(library
- (name sxfiler_server_presenter)
- (public_name sxfiler.server.presenter)
- (libraries sxfiler.domain yojson ppx_deriving_yojson.runtime)
- ; to supress warnings are depended on ppx_deriving_yojson
- (flags (:standard -w -39))
- (preprocess (pps ppx_deriving_yojson)))

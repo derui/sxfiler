@@ -1,0 +1,10 @@
+(alias
+ (name runtest)
+ (deps (:prog test_sxfiler_server_infra.exe) (source_tree data_real/))
+ (action (run %{prog})))
+
+(executable
+  (name test_sxfiler_server_infra)
+  (flags (-safe-string))
+  (libraries alcotest alcotest-lwt sxfiler.core sxfiler.server.infra)
+  (preprocess (pps lwt_ppx)))

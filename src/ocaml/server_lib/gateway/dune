@@ -2,9 +2,10 @@
  (name sxfiler_server_gateway)
  (public_name sxfiler.server.gateway)
  (libraries sxfiler.domain
-            sxfiler.rpc
-            sxfiler.server.presenter
+            sxfiler.usecase
+            sxfiler.completion
+            sxfiler.server.translator
             yojson ppx_deriving_yojson.runtime)
  ; to supress warnings are depended on ppx_deriving_yojson
  (flags (:standard -w -39))
- (preprocess (pps ppx_deriving_yojson)))
+ (preprocess (pps lwt_ppx ppx_deriving_yojson)))

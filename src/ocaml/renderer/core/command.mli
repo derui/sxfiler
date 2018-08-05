@@ -6,3 +6,6 @@
 include module type of (struct include Command_intf end)
 
 module Make_registry(Com:Registry.Command) : Registry.S with type command := Com.t
+
+module Static_registry : Registry.S with type command := Static_command.t
+module Dynamic_registry : Registry.S with type command := (module Instance)

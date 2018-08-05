@@ -3,14 +3,13 @@
 *)
 include Rpc_intf
 
-module Client = struct
+module Make_client(Rpc:Rpc) : Client = struct
 
   (* Call api as request with definition and parameter *)
   let request
       (type p)
       (type r)
-      (module Rpc: Rpc)
-      (module Api: Api.Api_def with type params = p and type result = r)
+      (module Api: Api_def with type params = p and type result = r)
       (param: p option)
       (handler: (r, R.Error.t) result -> unit)
     =
@@ -21,8 +20,7 @@ module Client = struct
 
   (* Call api as notification with definition and parameter *)
   let notification (type p)
-      (module Rpc: Rpc)
-      (module Api: Api.Api_def with type params = p)
+      (module Api: Api_def with type params = p)
       (param: p option)
     =
     let module C = R.Client in

@@ -1,0 +1,16 @@
+(alias
+ (name runtest)
+ (deps test_sxfiler_server_gateway.exe)
+ (action (run %{deps})))
+
+(executable
+ (name test_sxfiler_server_gateway)
+ (flags (-safe-string))
+ (libraries alcotest alcotest-lwt
+            lwt
+            sxfiler.server.gateway
+            sxfiler.server.core
+            sxfiler.completion
+            sxfiler.server
+            sxfiler.core)
+ (preprocess (pps lwt_ppx ppx_deriving_yojson)))

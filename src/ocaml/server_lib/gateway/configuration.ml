@@ -1,10 +1,41 @@
 module T = Sxfiler_domain
-module P = Sxfiler_server_presenter
-module Rpc = Sxfiler_rpc
+module Usecase = Sxfiler_usecase
+module Translator = Sxfiler_server_translator
 
-module Get_sync = struct
-  include Rpc.Configuration.Get_sync
+module type Get = sig
+  type params = unit
+  type result = Translator.Configuration.t
 
-  let result_to_yojson = P.Configuration.to_yojson
-  let result_of_yojson = P.Configuration.of_yojson
+  val handle: params -> result Lwt.t
+end
+
+(** The gateway for Use Case of {!Rpc.Configuration.Get} *)
+module Get(Usecase:Usecase.Configuration.Get) = struct
+  type params = unit
+
+  type result = Translator.Configuration.t
+
+  let handle () =
+    match%lwt Usecase.execute () with
+    | Ok result -> Lwt.return @@ Translator.Configuration.of_domain result
+    | Error _ -> assert false   (* Can not route this branch. *)
+end
+
+module type Store = sig
+  type params = Translator.Configuration.t
+  type result = unit
+
+  val handle: params -> result Lwt.t
+end
+
+(** The gateway for use case of {!Rpc.Configuration.Store} *)
+module Store(Usecase:Usecase.Configuration.Store) : Store = struct
+  type params = Translator.Configuration.t
+
+  type result = unit
+
+  let handle params =
+    match%lwt Usecase.execute @@ Translator.Configuration.to_domain params with
+    | Ok () -> Lwt.return_unit
+    | Error _ -> assert false
 end

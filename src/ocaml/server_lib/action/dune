@@ -1,9 +1,0 @@
-(library
- (name sxfiler_server_action)
- (public_name sxfiler.server.action)
- (libraries lwt
-            sxfiler.core
-            sxfiler.server.core
-            sxfiler.server.presenter
-            unix)
- (preprocess (pps lwt_ppx)))

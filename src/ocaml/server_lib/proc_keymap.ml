@@ -1,28 +1,27 @@
 (** this module defines functions for procedures for keymap. *)
 
-open Sxfiler_server_core
-module Rpc = Sxfiler_rpc
+module Usecase = Sxfiler_usecase
 module G = Sxfiler_server_gateway
-module D = Sxfiler_domain
+module T = Sxfiler_server_translator
+module I = Sxfiler_server_infra
 
 (* defines procedure to get current key bindings *)
-module Get_sync
-    (Keymap:Statable.S with type state = string D.Key_map.t) = Procedure_intf.Make(struct
-    include Rpc.Keymap.Get_sync
-
-    let params_of_json = `Not_required ()
-    let result_to_json = `Result G.Keymap.Get_sync.result_to_yojson
-
-    let handle () = Keymap.get ()
-  end)
+module Get(Gateway:G.Keymap.Get) = struct
+  include Gateway
+  let params_of_json = `Not_required ()
+  let result_to_json = `Result T.Key_map.to_yojson
+end
 
 let expose server =
   let module S = Jsonrpc_ocaml_yojson.Server in
 
-  let module Get_sync = Get_sync(Global.Keymap) in
+  let module Usecase = Usecase.Keymap.Get(I.Key_map_repo.Make(Global.Keymap)) in
+  let module Gateway = G.Keymap.Get(Usecase) in
+  let module Get = Procedure_intf.Make(Get(Gateway)) in
 
+  let module E = Sxfiler_rpc.Endpoints in
   List.fold_left (fun server (name, handler) ->
       S.expose ~_method:name ~handler server
     ) server [
-    Rpc.Keymap.Get_sync.name, Get_sync.handler;
+    E.Keymap.Get.endpoint, Get.handler;
   ]

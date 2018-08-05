@@ -1,3 +1,4 @@
+open Sxfiler_core
 module T = Sxfiler_domain
 module R = Jsoo_reactjs
 module L = Modules.Lodash
@@ -22,7 +23,7 @@ let t =
     and file_size = [%c P_file_size.t ~key:"size" ~size:stat.F.size]
     and file_name = [%c P_file_name.t ~key:"name"
         ~parentDirectory:node.T.Node.parent_directory
-        ~path:node.T.Node.full_path
+        ~path:(Path.to_string node.T.Node.full_path)
         ~isDirectory:stat.F.is_directory
         ~isSymbolicLink:stat.F.is_symlink
     ] in

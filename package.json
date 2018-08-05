@@ -45,6 +45,7 @@
     "build:prod:dll": "node ./scripts/build-dll.js prod",
     "watch:css": "node ./scripts/build-css.js watch",
     "watch:main": "node ./scripts/build-ocaml.js watch",
+    "watch:test:main": "node ./scripts/build-ocaml-test.js watch",
     "coverage:main": "node ./scripts/coverage-ocaml.js",
     "package": "node ./scripts/package-electron.js",
     "test:library": "node ./scripts/run-test.js",

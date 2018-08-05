@@ -1,4 +1,5 @@
 const { execFileSync } = require('child_process');
+const chokidar = require('chokidar');
 
 function bundleTest() {
   let options = [

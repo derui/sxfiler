@@ -7,7 +7,7 @@ module S = Sxfiler_renderer_store
 
 module Component = R.Component.Make_stateless(struct
     class type t = object
-      method locator: (module Locator.Main) Js.readonly_prop
+      method locator: (module Locator.S) Js.readonly_prop
     end
   end)
 
@@ -16,8 +16,8 @@ let command_completer locator =
 
 let t =
   let render props =
-    let module Dl = C.Locator_intf.Dynamic_registry in
-    let module L = (val props##.locator: Locator.Main) in
+    let module Dl = C.Command.Dynamic_registry in
+    let module L = (val props##.locator: Locator.S) in
     let state = S.Command.Store.get @@ S.App.(State.command @@ Store.get L.store) in
     let open Option.Infix in
     let component = state.S.Command.State.current_command >>= fun name ->

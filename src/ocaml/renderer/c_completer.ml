@@ -4,7 +4,7 @@
     This component will appear beside of a base component that is passed from props.
 *)
 
-module T = Sxfiler_domain
+module T = Sxfiler_completion.Domain
 module R = Jsoo_reactjs
 module C = Sxfiler_renderer_core
 module S = Sxfiler_renderer_store
@@ -22,8 +22,8 @@ let t = Component.make (fun props ->
     else
       let completion = props##.completion in
       let module S = S.Completion.State in
-      let children = Array.to_list @@ Array.map (fun candidate ->
-          let open T.Completion in
+      let children = List.map (fun candidate ->
+          let open T in
           [%c P_completer_item.t ~key:Candidate.(id candidate) ~candidate]
         ) completion.S.candidates
       in

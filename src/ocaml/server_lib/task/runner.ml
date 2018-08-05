@@ -3,46 +3,24 @@
 include Runner_intf
 
 module Impl = struct
-  open Sxfiler_server_core
 
   (** only entry point to add task to task queue in this module. *)
-  type thread_state = [ `Accepted of (module Intf.Instance) | `Rejected ]
+  type thread_state = [ `Accepted of (module Task.Instance) | `Rejected ]
   module Task_state = Set.Make(struct
       type t = Uuidm.t
       let compare = Uuidm.compare
     end)
 
-  type handler = (module Statable.S with type state = Root_state.t) -> Intf.task_result -> unit Lwt.t
-
   type t = {
-    task_queue: (module Intf.Instance) Lwt_stream.t;
-    task_queue_writer: (module Intf.Instance) option -> unit;
+    task_queue: (module Task.Instance) Lwt_stream.t;
+    task_queue_writer: (module Task.Instance) option -> unit;
     mutable task_state: Task_state.t;
     task_state_lock: Lwt_mutex.t;
     task_mailbox: thread_state Lwt_mvar.t;
     wakener: unit Lwt.u;
     waiter: unit Lwt.t;
     handler_lock: Lwt_mutex.t;
-    mutable handlers: (string * handler) list;
   }
-
-  let add_task_handler t ~name ~handler =
-    Lwt_mutex.with_lock t.handler_lock (fun () ->
-        if List.mem_assoc name t.handlers then Lwt.return_unit
-        else begin
-          t.handlers <- (name, handler) :: t.handlers;
-          Lwt.return_unit
-        end
-      )
-
-  let remove_task_handler t ~name =
-    Lwt_mutex.with_lock t.handler_lock (fun () ->
-        if not @@ List.mem_assoc name t.handlers then Lwt.return_unit
-        else begin
-          t.handlers <- List.remove_assoc name t.handlers;
-          Lwt.return_unit
-        end
-      )
 
   (** Forever loop to accept task. Running this function must be in other thread of worker thread. *)
   let rec accept_task_loop t () =
@@ -53,44 +31,38 @@ module Impl = struct
       accept_task_loop t ()
     | `Rejected -> Lwt.return_unit
 
-  let remove_state t id result =
+  let remove_state t id =
     Lwt_mutex.with_lock t.task_state_lock (fun () ->
         t.task_state <- Task_state.remove id t.task_state;
-        Lwt.return result
+        Lwt.return_unit
       )
 
   (** Forever loop to run task. *)
-  let run_task_loop t s () =
+  let run_task_loop t () =
     let module C = Sxfiler_server_core in
-    let module S = (val s : C.Statable.S with type state = C.Root_state.t) in
     Lwt_stream.iter_p (fun task ->
         let id = Uuidm.v4_gen (Random.get_state ()) () in
         let%lwt _ = Lwt_mutex.with_lock t.task_state_lock (fun () ->
             t.task_state <- Task_state.add id t.task_state;
             Lwt.return_unit
           ) in
-        let module Current_task = (val task : Intf.Instance) in
+        let module Current_task = (val task : Task.Instance) in
         Lwt.return @@ Lwt.async (fun () ->
-            let%lwt result = try%lwt
-                let%lwt state' = S.get () in
-                let%lwt ret = Current_task.Task.apply state' Current_task.instance (module Current_task.Action) in
-                remove_state t id ret
-              with _ ->
-                remove_state t id (`Failed "Failed task with unhandled exception")
-            in
-            Lwt_list.iter_s (fun (_, handler) ->
-                handler s result
-              ) t.handlers
-          );
+            try%lwt
+              let%lwt () = Current_task.(Task.run this) in
+              remove_state t id
+            with _ ->
+              remove_state t id
+          )
       ) t.task_queue
 
   (** [add_task task] add [task] to mailbox of task accepter. *)
   let add_task t task = Lwt_mvar.put t.task_mailbox (`Accepted task)
 
-  let start t ~state =
+  let start t =
     let module C = Sxfiler_server_core in
     let accepter = accept_task_loop t () in
-    let worker = run_task_loop t state () in
+    let worker = run_task_loop t () in
 
     let stopper =
       let%lwt () = t.waiter in
@@ -124,7 +96,6 @@ let make () =
       task_mailbox;
       waiter;
       wakener;
-      handlers = [];
       handler_lock;
     }
   end : Instance)

@@ -1,7 +1,5 @@
 let () =
-  let tests = Task.testcases
-              @ Rpc_connection.testcases
-              @ Task_result_handler.testcases
+  let tests = Rpc_connection.testcases
               @ Proc_scanner.testcases
               @ Proc_configuration.testcases
               @ Proc_keymap.testcases

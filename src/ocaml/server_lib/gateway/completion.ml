@@ -1,44 +1,48 @@
 module T = Sxfiler_domain
-module P = Sxfiler_server_presenter
-module Rpc = Sxfiler_rpc
+module C = Sxfiler_completion
+module Translator = Sxfiler_server_translator.Completion
 
-module Setup_sync = struct
-  open Rpc.Completion.Setup_sync
+module type Setup = sig
+  type params = {
+    source: Translator.Item.t list;
+  } [@@deriving of_yojson]
 
-  module Js = struct
-    type params = {
-      source: P.Completion.Item.t list;
-    } [@@deriving yojson]
-  end
+  type result = unit
 
-  let params_to_yojson t =
-    Js.params_to_yojson {Js.source = t.source}
-
-  let params_of_yojson js =
-    let open Ppx_deriving_yojson_runtime in
-    Js.params_of_yojson js >>= fun js -> Ok {source = js.Js.source;}
+  val handle : params -> result Lwt.t
 end
 
-module Read_sync = struct
-  open Rpc.Completion.Read_sync
-  module Js = struct
-    type params = {
-      input: string;
-    } [@@deriving yojson]
+module Setup(U:C.Usecase.Setup) = struct
+  type params = {
+    source: Translator.Item.t list;
+  } [@@deriving of_yojson]
 
-    type result = P.Completion.Candidate.t array [@@deriving yojson]
-  end
+  type result = unit
 
-  let params_to_yojson t = Js.params_to_yojson {Js.input = t.input}
+  let handle param =
+    let source = List.map Translator.Item.to_domain param.source in
+    U.execute {U.source}
+end
 
-  let params_of_yojson js =
-    let open Ppx_deriving_yojson_runtime in
-    Js.params_of_yojson js >>= fun js -> Ok {input = js.Js.input}
+module type Read = sig
+  type params = {
+    input: string;
+  } [@@deriving of_yojson]
 
-  let result_to_yojson t =
-    let module T = Sxfiler_domain.Completion in
-    Js.result_to_yojson t
+  type result = Translator.Candidate.t list [@@deriving to_yojson]
 
-  let result_of_yojson js = Js.result_of_yojson js
+  val handle : params -> result Lwt.t
+end
+
+module Read(Usecase:C.Usecase.Read) = struct
+  type params = {
+    input: string;
+  } [@@deriving of_yojson]
+
+  type result = Translator.Candidate.t list [@@deriving to_yojson]
+
+  let handle param =
+    let%lwt result = Usecase.execute {Usecase.input = param.input} in
+    Lwt.return @@ List.map Translator.Candidate.of_domain result
 
 end

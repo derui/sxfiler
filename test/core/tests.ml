@@ -66,7 +66,7 @@ let path_tests = [
       end in
       let expected = "/foo/a/b" in
       Alcotest.(check string) "unix" expected @@
-      Path.(to_string ~env:`Unix @@ of_string ~env:`Unix (module S) "a/b")
+      Path.(to_string ~env:`Unix @@ of_string ~env:`Unix (module S) "./a/b")
     );
   "separator of path on windows", `Quick, (fun () ->
       let module S = struct
@@ -99,9 +99,24 @@ let path_tests = [
       let module S = struct
         let getcwd () = "/var"
       end in
-      let expected = "/var/.././foo/../bar" in
+      let expected = "/bar" in
       Alcotest.(check string) "absolute" expected @@
       Path.(to_string ~env:`Unix @@ of_string ~env:`Unix (module S) ".././foo/../bar")
+    );
+
+  "allow to create from list of component", `Quick, (fun () ->
+      let module S = struct
+        let getcwd () = "/var"
+      end in
+      let expected = "/bar" in
+      Alcotest.(check string) "absolute" expected @@
+      Path.(to_string ~env:`Unix @@ of_list ~env:`Unix (module S) ["..";".";"foo";"..";"bar"])
+    );
+  "raise Empty_path from list", `Quick, (fun () ->
+      let module S = struct
+        let getcwd () = "/var"
+      end in
+      Alcotest.check_raises "empty" Path.Empty_path (fun () -> ignore @@ Path.of_list (module S) [])
     );
 
   "resolve current and parent directory to realpath", `Quick, (fun () ->
@@ -154,11 +169,33 @@ let fun_tests = [
     )
 ]
 
+let error_tests = [
+  "make simple error", `Quick, (fun () ->
+      Alcotest.(check string) "error" "sample" Error.(create "sample" |> to_string)
+    );
+  "tagging error", `Quick, (fun () ->
+      let error = Error.create "sample" in
+      Alcotest.(check string) "errro" "tag: sample" Error.(tag error "tag" |> to_string)
+    );
+  "nest tagging", `Quick, (fun () ->
+      let error = Error.create "sample" in
+      let error = Error.tag error "tag1" in
+      Alcotest.(check string) "errro" "tag2: tag1: sample" Error.(tag error "tag2" |> to_string)
+    );
+  "convert exception", `Quick, (fun () ->
+      let error = Error.create "sample" in
+      Alcotest.check_raises "exception" (Error.Error error) (fun () ->
+          raise @@ Error.to_exn error
+        )
+    );
+]
+
 let testcases = [
   "Option", option_tests;
   "Fun", fun_tests;
   "Path", path_tests;
   "Result", result_tests;
+  "Error", error_tests;
 ]
 
 let () =

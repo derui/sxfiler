@@ -8,9 +8,9 @@
             lwt
             logs.browser
             jsonrpc-ocaml.jsoo
-            ppx_deriving.runtime
             sxfiler.core
             sxfiler.rpc
-            sxfiler.renderer.presenter
+            sxfiler.completion
+            sxfiler.renderer.translator
             sxfiler.domain)
- (preprocess (pps ppx_deriving.std js_of_ocaml-ppx)))
+ (preprocess (pps js_of_ocaml-ppx)))

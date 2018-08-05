@@ -1,69 +1,59 @@
 (** Scanner_op module defines functions for procedures of scanner. *)
-open Sxfiler_server_core
-module Runner = Sxfiler_server_task.Runner
-module T = Sxfiler_domain
-module Rpc = Sxfiler_rpc
+open Sxfiler_core
+module D = Sxfiler_domain
+module U = Sxfiler_usecase
 module G = Sxfiler_server_gateway
-module Act = Sxfiler_server_action
+module T = Sxfiler_server_translator
+module Jr = Jsonrpc_ocaml_yojson
 
-module Make_sync
-    (Action:Act.Action_intf.Instance)
-    (Root:Statable.S with type state = Root_state.t)
-    (Runner:Runner.Instance)
-  = Procedure_intf.Make(struct
-    include Rpc.Scanner.Make_sync
+module Make(Gateway: G.Scanner.Make) = struct
+  type params = Gateway.params
 
-    let params_of_json = `Required G.Scanner.Make_sync.params_of_yojson
-    let result_to_json = `Void
+  type result = T.Scanner.t
 
-    let handle param =
-      let%lwt state = Root.get () in
-      let module S = Sxfiler_server_core.Root_state in
-      let%lwt result = match S.find_scanner ~name:param.name state with
-        (* raise error if scanner already exists. *)
-        | Some _ -> Jsonrpc_ocaml_yojson.Exception.raise_error Rpc.Errors.Scanner.already_exists
-        | None -> begin
-            let module I = Sxfiler_server_task.Intf in
-            let module Task = Task.Scanner.Jump in
-            let%lwt _ = Runner.Runner.add_task Runner.instance @@ I.make_instance
-                {
-                  Task.location = param.initial_location;
-                  name = param.name
-                }
-                (module Action)
-                (module Task) in
-            Lwt.return_unit
-          end
-      in
-      Lwt.return result
-  end)
+  let params_of_json = `Required Gateway.params_of_yojson
+  let result_to_json = `Result T.Scanner.to_yojson
 
-module Get_sync(Action:Act.Action_intf.Instance)
-    (Root:Statable.S with type state = Root_state.t) = Procedure_intf.Make(struct
-    include Rpc.Scanner.Get_sync
+  let handle params =
+    let%lwt result = Gateway.handle params in
+    match result with
+    | {Gateway.already_exists = true;_} | {scanner = None;_} ->
+      Jr.Exception.raise_error Sxfiler_rpc.Errors.Scanner.already_exists
+    | {scanner = Some s;_} -> Lwt.return s
+end
 
-    let params_of_json = `Required G.Scanner.Get_sync.params_of_yojson
-    let result_to_json = `Result G.Scanner.Get_sync.result_to_yojson
+module Get(Gateway: G.Scanner.Get) = struct
+  type params = Gateway.params
 
-    let handle param =
-      let%lwt state = Root.get () in
-      let module S = Sxfiler_server_core.Root_state in
-      match S.find_scanner ~name:param.name state with
-      | Some scanner -> Lwt.return scanner
-      | None -> Jsonrpc_ocaml_yojson.(Exception.raise_error Rpc.Errors.Scanner.not_found)
-  end)
+  type result = T.Scanner.t
+
+  let params_of_json = `Required Gateway.params_of_yojson
+  let result_to_json = `Result T.Scanner.to_yojson
+
+  let handle params =
+    let%lwt result = Gateway.handle params in
+    match result with
+    | {Gateway.not_found = true;_} | {scanner = None;_} ->
+      Jsonrpc_ocaml_yojson.(Exception.raise_error Sxfiler_rpc.Errors.Scanner.not_found)
+    | {scanner = Some s; _} -> Lwt.return s
+end
 
 let expose server =
   let module S = Jsonrpc_ocaml_yojson.Server in
-  let module W = Sxfiler_rpc.Scanner in
+  let module W = Sxfiler_usecase.Scanner in
+  let module I = Sxfiler_server_infra in
 
-  let module Runner = (val Global.Task_runner.get (): Runner.Instance) in
-  let module Make_sync = Make_sync(Act.Real)(Global.Root)(Runner) in
-  let module Get_sync = Get_sync(Act.Real)(Global.Root) in
+  let module Scanner_repo = I.Scanner_repo.Make(Global.Root) in
+  let module Make_gateway = G.Scanner.Make(System.Real)(U.Scanner.Make(Scanner_repo)(I.Node_repo)) in
+  let module Make = Procedure_intf.Make(Make(Make_gateway)) in
 
+  let module Get_gateway = G.Scanner.Get(U.Scanner.Get(Scanner_repo)) in
+  let module Get = Procedure_intf.Make(Get(Get_gateway)) in
+
+  let module E = Sxfiler_rpc.Endpoints in
   List.fold_left (fun server (name, handler) ->
       S.expose ~_method:name ~handler server
     ) server [
-    W.Make_sync.name, Make_sync.handler;
-    W.Get_sync.name, Get_sync.handler;
+    E.Scanner.Make.endpoint, Make.handler;
+    E.Scanner.Get.endpoint, Get.handler;
   ]

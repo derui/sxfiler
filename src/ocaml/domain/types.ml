@@ -18,9 +18,4 @@ module Layout = struct
 end
 
 (** Base signature of thread. *)
-module type Thread = sig
-  type 'a t
-
-  val bind: 'a t -> ('a -> 'b t) -> 'b t
-  val return: 'a -> 'a t
-end
+module type Thread = Sxfiler_core.Monad.S

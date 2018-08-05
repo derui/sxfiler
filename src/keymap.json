@@ -1,5 +1,4 @@
 {
-  "id": "default",
   "bindings": [
     {"action": "file_list:next_item", "key": "j", "when": {"onFileTree": true}},
     {"action": "file_list:prev_item", "key": "k", "when": {"onFileTree": true}}

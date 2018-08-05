@@ -5,6 +5,5 @@
             uuidm
             sxfiler.core
             sxfiler.server.core
-            sxfiler.server.action
             sxfiler.domain)
  (preprocess (pps lwt_ppx)))

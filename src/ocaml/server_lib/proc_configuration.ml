@@ -1,29 +1,29 @@
 (** this module defines functions for procedures for keybindings. *)
 
-open Sxfiler_server_core
-module Rpc = Sxfiler_rpc
-module T = Sxfiler_domain
+module Usecase = Sxfiler_usecase
 module G = Sxfiler_server_gateway
+module I = Sxfiler_server_infra
+module T = Sxfiler_server_translator
 
 (* defines procedure to get current key bindings *)
-module Get_sync
-    (State:Statable.S with type state = T.Configuration.t) = Procedure_intf.Make(struct
-    include Rpc.Configuration.Get_sync
-
-    let params_of_json = `Not_required ()
-    let result_to_json = `Result G.Configuration.Get_sync.result_to_yojson
-
-    let handle () = State.get ()
-  end)
+module Get(G:G.Configuration.Get) = struct
+  include G
+  let params_of_json = `Not_required ()
+  let result_to_json = `Result T.Configuration.to_yojson
+end
 
 let expose server =
   let module S = Jsonrpc_ocaml_yojson.Server in
-  let module W = Sxfiler_rpc.Configuration in
+  let module W = Sxfiler_usecase.Configuration in
 
-  let module Get_sync = Get_sync(Global.Configuration) in
+  let module R = I.Configuration_repo.Make(Global.Root) in
+  let module Usecase = Usecase.Configuration.Get(R) in
+  let module Gateway = G.Configuration.Get(Usecase) in
+  let module Get = Procedure_intf.Make(Get(Gateway)) in
 
+  let module E = Sxfiler_rpc.Endpoints in
   List.fold_left (fun server (name, handler) ->
       S.expose ~_method:name ~handler server
     ) server [
-    W.Get_sync.name, Get_sync.handler;
+    E.Configuration.Get.endpoint, Get.handler;
   ]

@@ -1,0 +1,8 @@
+(library
+ (name sxfiler_server_infra)
+ (public_name sxfiler.server.infra)
+ (libraries lwt
+            sxfiler.core
+            sxfiler.server.core
+            unix)
+ (preprocess (pps lwt_ppx)))

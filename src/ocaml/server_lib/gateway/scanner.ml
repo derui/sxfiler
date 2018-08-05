@@ -1,44 +1,77 @@
+open Sxfiler_core
 module T = Sxfiler_domain
-module P = Sxfiler_server_presenter
-module Rpc = Sxfiler_rpc
+module Usecase = Sxfiler_usecase
+module Translator = Sxfiler_server_translator
 
-module Make_sync = struct
-  open Rpc.Scanner.Make_sync
+module type Make = sig
+  type params = {
+    initial_location: string [@key "initialLocation"];
+    name: string;
+  } [@@deriving yojson]
 
-  module Js = struct
-    type params = {
-      initial_location: string [@key "initialLocation"];
-      name: string;
-    } [@@deriving yojson]
+  type result = {
+    scanner: Translator.Scanner.t option;
+    already_exists: bool;
+  }
 
-  end
-
-  let params_to_yojson t =
-    Js.params_to_yojson {
-      Js.initial_location = t.initial_location;
-      name = t.name;
-    }
-
-  let params_of_yojson js =
-    let open Ppx_deriving_yojson_runtime in
-    Js.params_of_yojson js >>= fun js -> Ok {
-      initial_location = js.Js.initial_location;
-      name = js.Js.name;
-    }
+  val handle: params -> result Lwt.t
 end
 
-module Get_sync = struct
-  open Rpc.Scanner.Get_sync
-  module Js = struct
-    type params = {
-      name: string;
-    } [@@deriving yojson]
+module Make(System:System.S)(U:Usecase.Scanner.Make) : Make = struct
+  type params = {
+    initial_location: string [@key "initialLocation"];
+    name: string;
+  } [@@deriving yojson]
 
-  end
+  type result = {
+    scanner: Translator.Scanner.t option;
+    already_exists: bool;
+  }
 
-  let params_of_yojson js =
-    let open Ppx_deriving_yojson_runtime in
-    Js.params_of_yojson js >>= fun js -> Ok {name = js.Js.name;}
+  let handle param =
+    let params = {
+      U.initial_location = Path.of_string (module System) param.initial_location;
+      name = param.name;
+    } in
+    let empty = {scanner = None; already_exists = false} in
+    match%lwt U.execute params with
+    | Ok t -> Lwt.return {empty with scanner = Option.some @@ Translator.Scanner.of_domain t}
+    | Error e -> begin match e with
+        | Usecase.Common.MakeScannerError `Already_exists ->
+          Lwt.return {empty with already_exists = true}
+        | _ -> assert false
+      end
+end
 
-  let result_to_yojson = P.Scanner.to_yojson
+module type Get = sig
+  type params = {
+    name: string;
+  } [@@deriving yojson]
+
+  type result = {
+    scanner: Translator.Scanner.t option;
+    not_found: bool;
+  }
+
+  val handle: params -> result Lwt.t
+end
+
+module Get(U:Usecase.Scanner.Get) : Get = struct
+  type params = {
+    name: string;
+  } [@@deriving yojson]
+
+  type result = {
+    scanner: Translator.Scanner.t option;
+    not_found: bool;
+  }
+
+  let handle param =
+    let params = {
+      U.name = param.name;
+    } in
+    match%lwt U.execute params with
+    | Ok s -> Lwt.return {scanner = Some (Translator.Scanner.of_domain s); not_found = false;}
+    | Error Usecase.Common.GetScannerError `Not_found -> Lwt.return {scanner = None; not_found = true;}
+    | _ -> assert false
 end

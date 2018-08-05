@@ -1,0 +1,8 @@
+(library
+ (name sxfiler_completion_migemo)
+ (public_name sxfiler.completion.migemo)
+ (libraries sxfiler.domain
+            sxfiler.completion
+            migemocaml
+            re)
+ (preprocess (pps lwt_ppx)))

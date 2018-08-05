@@ -17,8 +17,8 @@ let empty = {
   scanner_map = String_map.empty;
 }
 
-let find_scanner ~name t = String_map.find_opt name t.scanner_map
+let find_scanner ~id t = String_map.find_opt id t.scanner_map
 
 let add_scanner ~scanner t = {
-  t with scanner_map = String_map.add scanner.T.Scanner.name scanner t.scanner_map;
+  t with scanner_map = String_map.add scanner.T.Scanner.id scanner t.scanner_map;
 }

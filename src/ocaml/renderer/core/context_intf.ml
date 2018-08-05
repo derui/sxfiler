@@ -1,4 +1,4 @@
-(** Context should be execute behavior and manage store group.  *)
+(** Context should be execute usecase and manage store group.  *)
 
 module type S = sig
   type config
@@ -9,8 +9,8 @@ module type S = sig
   (** [create config] gets a new instance of Context *)
   val create: config -> t
 
-  (** [execute behavior] execute behavior with this context. *)
-  val execute: t -> (module Behavior.Instance) -> unit Lwt.t
+  (** [execute usecase] execute usecase with this context. *)
+  val execute: t -> (module Usecase.Instance) -> unit Lwt.t
 
   (** [dispatcher t] returns current dispatcher of context [t] *)
   val dispatcher: t -> (module Dispatcher.Instance)

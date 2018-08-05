@@ -1,97 +1,79 @@
 open Sxfiler_core
 
-module T = Sxfiler_domain
+module D = Sxfiler_domain
 module S = Sxfiler_server
-module R = Sxfiler_rpc
+module U = Sxfiler_usecase
+module I = Sxfiler_server_infra
 module C = Sxfiler_server_core
-module A = Sxfiler_server_action
+module R = Sxfiler_rpc
 module Jy = Jsonrpc_ocaml_yojson
 module G = Sxfiler_server_gateway
+module T = Sxfiler_server_translator
+
+module Dummy_system = struct
+  let getcwd () = "/foo"
+end
 
 let proc_scanner = [
   Alcotest_lwt.test_case "create new scanner if it does not exists" `Quick (fun switch () ->
-      let task_finished, task_finished_waken = Lwt.wait () in
-      let module Task = Sxfiler_server_task in
-      let module State = C.Statable.Make(struct
-          type t = C.Root_state.t
-          let empty () = C.Root_state.empty
-        end) in
-      let module Handler = S.Task_result_handler.Make(struct
-          let unixtime () = Int64.zero
-        end)(struct
-          let notify _ _ = Lwt.wakeup task_finished_waken (); Lwt.return_unit
-        end) in
-
-      let module Tasker = (val Task.Runner.make (): Task.Runner.Instance) in
-      let module Make_sync = S.Proc_scanner.Make_sync(A.Dummy)(State)(Tasker) in
-      let%lwt () = Tasker.Runner.add_task_handler Tasker.instance ~name:"foo" ~handler:Handler.handle in
-      let stopper = Tasker.Runner.start Tasker.instance (module State) in
-
-      let req = Jy.Request.{
-          _method = "foo";
-          params = Some R.Scanner.Make_sync.(G.Scanner.Make_sync.params_to_yojson {
-              initial_location = "/initial";
-              name = "foo"
-            });
-          id = Some Int64.zero;
-        } in
-      let%lwt res = Make_sync.handler req in
-      let%lwt () = task_finished in
-
-      Tasker.Runner.stop Tasker.instance;
-
-      let%lwt () = stopper in
-      let%lwt state = State.get () in
-      let scanner = C.Root_state.find_scanner ~name:"foo" state in
-      let expected = Option.some @@ T.Scanner.make
-          ~name:"foo"
-          ~location:"/initial"
+      let expected = D.Scanner.make
+          ~id:"foo"
+          ~location:(Path.of_string ~env:`Unix (module Dummy_system:System.S) "/initial")
           ~nodes:[]
-          ~history:T.Location_history.(make ()) in
-      Alcotest.(check @@ option @@ of_pp @@ Fmt.nop) "created" expected scanner;
-      Alcotest.(check @@ option @@ of_pp @@ Fmt.nop) "created" None res.Jy.Response.result;
-      Alcotest.(check @@ option @@ of_pp @@ Fmt.nop) "created" None res.Jy.Response.error;
+          ~history:D.Location_history.(make ()) in
+
+      let module Gateway = struct
+        type params = {
+          initial_location: string;
+          name: string;
+        } [@@deriving yojson]
+
+        type result = {
+          scanner: T.Scanner.t option;
+          already_exists: bool;
+        }
+
+        let handle _ = Lwt.return
+            {scanner = Option.some @@ T.Scanner.of_domain expected;
+             already_exists = false;
+            }
+      end in
+      let module Make = S.Proc_scanner.Make(Gateway) in
+
+      let%lwt res = Make.handle {
+          Gateway.initial_location = "/initial";
+          name = "foo"
+        } in
+
+      Alcotest.(check @@ of_pp @@ Fmt.nop) "created" (T.Scanner.of_domain expected) res;
       Lwt.return_unit
     );
 
   Alcotest_lwt.test_case "do not create workspace if it exists" `Quick (fun switch () ->
-      let module Task = Sxfiler_server_task in
-      let module State = C.Statable.Make(struct
-          type t = C.Root_state.t
-          let empty () = C.Root_state.empty
-        end) in
-      let module Make_sync = S.Proc_scanner.Make_sync(A.Dummy)(State) in
-      let module Handler = S.Task_result_handler.Make(struct
-          let unixtime () = Int64.zero
-        end)(struct
-          let notify _ _ = Lwt.return_unit
-        end) in
+      let module Gateway = struct
+        type params = {
+          initial_location: string;
+          name: string;
+        } [@@deriving yojson]
 
-      let module Tasker = (val Task.Runner.make (): Task.Runner.Instance) in
-      let module Make_sync = S.Proc_scanner.Make_sync(A.Dummy)(State)(Tasker) in
-      let%lwt () = Tasker.Runner.add_task_handler Tasker.instance ~name:"foo" ~handler:Handler.handle in
+        type result = {
+          scanner: T.Scanner.t option;
+          already_exists: bool;
+        }
 
-      let req = Jy.Request.{
-          _method = "foo";
-          params = Some R.Scanner.Make_sync.(G.Scanner.Make_sync.params_to_yojson {
-              initial_location = "/initial";
-              name = "foo"
-            });
-          id = Some Int64.zero;
-        } in
-      let%lwt () = State.with_lock (fun state ->
-          let scanner = T.Scanner.make
-              ~name:"foo"
-              ~location:"/initial"
-              ~nodes:[]
-              ~history:T.Location_history.(make ()) in
+        let handle _ = Lwt.return
+            {scanner = None;
+             already_exists = true;
+            }
+      end in
+      let module Make = S.Proc_scanner.Make(Gateway) in
 
-          let state = C.Root_state.add_scanner ~scanner state in
-          State.update state
-        ) in
       let expected = Jy.(Exception.Jsonrpc_error (R.Errors.Scanner.already_exists, None)) in
       Alcotest.check_raises "raised" expected (fun () ->
-          Lwt.ignore_result @@ Make_sync.handler req
+          Lwt.ignore_result @@ Make.handle {
+              initial_location = "/initial";
+              name = "foo"
+            }
         );
       Lwt.return_unit
     );

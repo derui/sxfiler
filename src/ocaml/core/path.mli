@@ -15,6 +15,11 @@ val of_string: ?env:env -> (module System.S) -> string -> t
 (** [to_string ?env path] get a string representation of [path] *)
 val to_string: ?env:env -> t -> string
 
+(** [of_string ?env (module System) paths] converts [paths] to Path object.
+    [paths] should be only part of path.
+*)
+val of_list: ?env:env -> (module System.S) -> string list -> t
+
 (** [resolve t] resolve current(.) and parent(..) in path [t]. *)
 val resolve: t -> t
 

@@ -1,6 +1,7 @@
 const { buildOCamlTest } = require('./build-ocaml-test.js');
 
 const { spawn } = require('child_process');
+const glob = require('glob');
 
 function testWithMocha(bundled) {
   spawn('mocha', bundled, { stdio: 'inherit' });
@@ -27,11 +28,9 @@ module.exports.testWithKarma = testWithKarma;
 
 if (require.main === module) {
   (function() {
-    const bundledTests = [
-      '_build/default/test/kbd/test_sxfiler_kbd.bc.js',
-      '_build/default/test/renderer/test_sxfiler_renderer.bc.js',
-      '_build/default/test/renderer/core/test_sxfiler_renderer_core.bc.js',
-    ];
+    let bundledTests = glob.sync('_build/default/test/**/test_*.bc.js', {
+      ignore: '_build/default/test/*virtualized*/test_*.bc.js'
+    })
 
     testWithMocha(bundledTests);
     testWithKarma();

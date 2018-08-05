@@ -4,7 +4,8 @@
     This component will appear beside of a base component that is passed from props.
 *)
 
-module T = Sxfiler_domain
+module D = Sxfiler_domain
+module T = Sxfiler_completion.Domain
 module R = Jsoo_reactjs
 module C = Sxfiler_renderer_core
 module S = Sxfiler_renderer_store
@@ -18,8 +19,8 @@ module Component = R.Component.Make_stateful(struct
     class type t = object
       method completerId: string Js.readonly_prop
       method completion: S.Completion.State.t Js.readonly_prop
-      method locator: (module Locator.Main) Js.readonly_prop
-      method onCompleted: (T.Completion.Item.t -> unit) Js.readonly_prop
+      method locator: (module Locator.S) Js.readonly_prop
+      method onCompleted: (T.Item.t -> unit) Js.readonly_prop
     end
   end)
     (struct
@@ -29,9 +30,9 @@ module Component = R.Component.Make_stateful(struct
     end)
 
 let default_key_map =
-  let keymap = T.Key_map.make "completer" in
-  let condition = T.Condition.empty in
-  List.fold_left (fun keymap (key, value) -> T.Key_map.add ~condition ~key ~value keymap)
+  let keymap = D.Key_map.make () in
+  let condition = D.Condition.empty in
+  List.fold_left (fun keymap (key, value) -> D.Key_map.add ~condition ~key ~value keymap)
     keymap
     [
       Sxfiler_kbd.make "ArrowUp", "prev";
@@ -68,7 +69,7 @@ let t =
         )
 
       (fun this ->
-         let module L = (val this##.props##.locator: Locator.Main) in
+         let module L = (val this##.props##.locator: Locator.S) in
          let condition = S.Config.State.condition @@ S.Config.Store.get @@ S.App.(State.config @@ Store.get L.store)
          in
          [%c C_key_handler.t

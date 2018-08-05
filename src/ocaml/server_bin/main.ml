@@ -1,6 +1,9 @@
 open Lwt
 open Sxfiler_server
 module T = Sxfiler_server_task
+module I = Sxfiler_server_infra
+module U = Sxfiler_usecase
+module G = Sxfiler_server_gateway
 
 exception Fail_load_migemo
 
@@ -16,14 +19,7 @@ let handler
   match Uri.path uri with
   | "/" ->
     let module C = (val Rpc_connection.make (): Rpc_connection.Instance) in
-    let module Handler = Task_result_handler.Make(struct
-        let unixtime () = Sxfiler_server_core.Time.time_to_int64 @@ Unix.gettimeofday ()
-      end)(Notifier.Impl(C)) in
     let module R = (val T.Runner.make (): T.Runner.Instance) in
-    let%lwt () =
-      let module I = (val Global.Task_runner.get (): T.Runner.Instance) in
-      I.Runner.add_task_handler I.instance ~name:conn_name ~handler:Handler.handle
-    in
     let%lwt () = Cohttp_lwt.Body.drain_body body in
     let%lwt (resp, body, frames_out_fn) =
       Websocket_cohttp_lwt.upgrade_connection req (fst conn) (fun f ->
@@ -35,10 +31,7 @@ let handler
     Lwt.ignore_result (
       (* Disable current task when thread is terminated. *)
       let thread = Jsonrpc_server.serve_forever rpc_server (module C) in
-      Lwt.on_termination thread (fun () ->
-          let module I = (val Global.Task_runner.get (): T.Runner.Instance) in
-          Lwt.ignore_result @@ I.Runner.remove_task_handler I.instance ~name:conn_name
-        );
+      Lwt.on_termination thread (fun () -> Logs.info (fun m -> m "Terminate thread"));
 
       Lwt.join [thread]
     );
@@ -50,9 +43,27 @@ let handler
       ()
 
 let initialize_modules ~migemo ~keymap ~config =
-  let%lwt () = Proc_completion.initialize migemo in
-  let%lwt () = Global.Keymap.update keymap in
-  Global.Configuration.update config
+  let () = Proc_completion.initialize migemo in
+  let%lwt () = match keymap () with
+    | None ->
+      Logs.warn (fun m -> m "Detect errors when load keymap. Use default keymap.");
+      Lwt.return_unit
+    | Some keymap -> begin
+        let module R = I.Key_map_repo.Make(Global.Keymap) in
+        let module Usecase = U.Keymap.Store(R) in
+        let module Gateway = G.Keymap.Store(Usecase) in
+        Gateway.handle keymap
+      end
+  in
+  match config () with
+  | None ->
+    Logs.warn (fun m -> m "Detect errors when load configuration. Use default configuration.");
+    Lwt.return_unit
+  | Some config ->
+    let module R = I.Configuration_repo.Make(Global.Root) in
+    let module Usecase = U.Configuration.Store(R) in
+    let module Gateway = G.Configuration.Store(Usecase) in
+    Gateway.handle config
 
 let start_server _ port =
   let conn_closed (ch,_) =
@@ -104,7 +115,7 @@ let load_migemo dict_dir =
 
 (** Load configuration from specified file *)
 let load_configuration config =
-  let module Y = Sxfiler_server_presenter.Configuration in
+  let module Y = Sxfiler_server_translator.Configuration in
   let config = Yojson.Safe.from_file config in
   match Y.of_yojson config with
   | Error _ -> None
@@ -113,26 +124,15 @@ let load_configuration config =
 (* Load keymaps from specified file *)
 let load_keymap file =
   let keymap = Yojson.Safe.from_file file in
-  let module Y = Sxfiler_server_presenter.Key_map in
-  let module Conv = struct
-    type t = string
-    let to_yojson t = `String t
-    let of_yojson = function
-      | `String v -> Ok v
-      | _ -> Error "Unknown type"
-  end in
-  match Y.of_yojson ~conv:(module Conv) keymap with
+  let module Y = Sxfiler_server_translator.Key_map in
+  match Y.of_yojson keymap with
   | Error err -> Logs.warn (fun m -> m "Error occurred: %s" err); None
   | Ok v -> Some v
 
 (* Get config from file, but get default when some error happenned  *)
-let get_config f config ~default =
-  if Sys.file_exists config then
-    match f config with
-    | None -> default
-    | Some config -> config
-  else
-    default
+let get_config f config = fun () ->
+  if Sys.file_exists config then f config
+  else None
 
 (* main routine. *)
 let () =
@@ -151,13 +151,13 @@ let () =
 
   let module D = Sxfiler_domain in
   let port = 50879 in
-  let config = get_config load_configuration !config ~default:D.Configuration.default in
-  let keymap = get_config load_keymap !key_maps ~default:(D.Key_map.make "empty") in
+  let config = get_config load_configuration !config in
+  let keymap = get_config load_keymap !key_maps in
   let migemo = load_migemo !dict_dir in
 
   (* setup task runner and finalizer *)
   let module I = (val Global.Task_runner.get (): T.Runner.Instance) in
-  let runner_thread = I.Runner.start I.instance ~state:(module Global.Root) in
+  let runner_thread = I.Runner.start I.instance in
   Lwt_main.at_exit (fun () ->
       I.Runner.stop I.instance;
       runner_thread

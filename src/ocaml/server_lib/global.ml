@@ -8,23 +8,20 @@ module Root = C.Statable.Make(struct
     let empty () = C.Root_state.empty
   end)
 
-module Completion = C.Statable.Make(struct
-    type t = (module Sxfiler_server_completion.Completer.Instance)
+module Completer = struct
+  type t = unit -> (module Sxfiler_completion_migemo.Completer.Instance)
 
-    (* initial value is truly dummy implementation. *)
-    let empty () = (module struct
-                     module Completer = struct
-                       type t = string
-                       let read _ ~input:_ ~collection:_ ~stringify:_ = []
+  let instance : t ref = ref @@ fun () -> failwith "Not initialized"
 
-                     end
-                     let instance = "not initialized"
-                   end : Sxfiler_server_completion.Completer.Instance)
-  end)
+  (** [set closure] set closure to wrap completer instance  *)
+  let set t = instance := t
+
+  let get () = !instance ()
+end
 
 (* Cached source to complete in next operation. *)
 module Cached_source = C.Statable.Make(struct
-    type t = Sxfiler_domain.Completion.collection
+    type t = Sxfiler_completion.Domain.collection
     let empty () = []
   end)
 
@@ -44,7 +41,7 @@ end
 module Keymap = C.Statable.Make(struct
     type t = string D.Key_map.t
 
-    let empty () = D.Key_map.make "initial"
+    let empty () = D.Key_map.make ()
   end)
 
 module Configuration = C.Statable.Make(struct

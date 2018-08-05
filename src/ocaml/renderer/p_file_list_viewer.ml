@@ -17,7 +17,7 @@ let t = Component.make (fun props ->
 
     let to_component file_list =
       let scanner = file_list.S.Scanner.File_list.scanner in
-      [%c P_file_list.t ~key:("file-list_" ^ scanner.T.Scanner.name)
+      [%c P_file_list.t ~key:("file-list_" ^ scanner.T.Scanner.id)
           ~fileList:file_list
           ~focused:props##.focused
       ]

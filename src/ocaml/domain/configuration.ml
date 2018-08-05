@@ -38,3 +38,11 @@ let default = {
   viewer = Viewer.default;
   server = Server.default;
 }
+
+module type Repository = sig
+  (** [resolve ()] returns configuration. Configuration should be singleton.  *)
+  val resolve: unit -> t Lwt.t
+
+  (** [store t] saves the [t] as singleton *)
+  val store: t -> unit Lwt.t
+end

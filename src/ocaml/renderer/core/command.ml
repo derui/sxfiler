@@ -16,3 +16,15 @@ module Make_registry(Com:Registry.Command) : Registry.S with type command := Com
   let names t =
     Jstable.keys t |> List.map Js.to_string
 end
+
+module Static_registry = Make_registry(struct
+    type t = Static_command.t
+
+    let to_name t = t.Static_command.name
+  end)
+
+module Dynamic_registry = Make_registry(struct
+    type t = (module Instance)
+
+    let to_name (module C: Instance) = C.(Command.name this)
+  end)

@@ -57,7 +57,7 @@ module State = struct
 
   let reduce t = function
     | C.Message.Update_scanner scanner ->
-      Jstable.add t.file_lists Js.(string scanner.D.Scanner.name) @@ File_list.make scanner;
+      Jstable.add t.file_lists Js.(string scanner.D.Scanner.id) @@ File_list.make scanner;
       t
     | C.Message.Move_cursor_to_next ->
       update_list t ~name:t.current_scanner ~f:(fun list -> File_list.(move_index list ~direction:`Next))

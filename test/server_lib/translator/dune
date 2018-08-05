@@ -1,0 +1,12 @@
+(alias
+ (name runtest)
+ (deps test_sxfiler_server_translator.exe)
+ (action (run %{deps})))
+
+(executable
+ (name test_sxfiler_server_translator)
+ (flags (-safe-string))
+ (libraries alcotest
+            sxfiler.server.translator
+            sxfiler.domain
+            sxfiler.core))

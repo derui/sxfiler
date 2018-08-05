@@ -27,8 +27,8 @@ let dispatcher t =
     end)
     ()
 
-(** [execute instance param] execute behavior [instance] with [param]. *)
-let execute t behavior =
-  let module Be = (val behavior : C.Behavior_intf.Instance) in
+(** [execute instance usecase] execute usecase [usecase]. *)
+let execute t usecase =
+  let module U = (val usecase : C.Usecase_intf.Instance) in
   let module I = (val dispatcher t) in
-  Be.(Behavior.execute this (module I))
+  U.(Usecase.execute this (module I))

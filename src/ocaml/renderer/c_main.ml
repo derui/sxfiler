@@ -4,7 +4,7 @@ module S = Sxfiler_renderer_store
 
 module Component = R.Component.Make_stateful (struct
     class type t = object
-      method locator: (module Locator.Main) Js.readonly_prop
+      method locator: (module Locator.S) Js.readonly_prop
     end
   end)(struct
     class type t = object
@@ -12,8 +12,8 @@ module Component = R.Component.Make_stateful (struct
     end
   end)
 
-let handle_action ~locator:(module L:Locator.Main) action =
-  let module Reg = C.Locator_intf.Static_registry in
+let handle_action ~locator:(module L:Locator.S) action =
+  let module Reg = C.Command.Static_registry in
   match Reg.get L.command_registry ~name:action with
   | None -> ()
   | Some command ->
@@ -23,7 +23,7 @@ let handle_action ~locator:(module L:Locator.Main) action =
 let t = Component.make
     R.(component_spec
          ~constructor:(fun this _ ->
-             let module L = (val this##.props##.locator : Locator.Main) in
+             let module L = (val this##.props##.locator : Locator.S) in
              S.App.Store.subscribe L.store ~f:(fun state ->
                  this##setState (object%js
                    val state = state
@@ -32,7 +32,7 @@ let t = Component.make
            )
          ~should_component_update:(fun _ _ _ -> true)
          (fun this ->
-            let module L = (val this##.props##.locator : Locator.Main) in
+            let module L = (val this##.props##.locator : Locator.S) in
             let state = S.App.Store.get L.store in
             let keymap = S.Keymap.Store.get @@ S.App.State.keymap state in
             let condition = S.Config.State.condition @@ S.Config.Store.get @@ S.App.State.config state in

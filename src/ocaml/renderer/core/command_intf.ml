@@ -1,4 +1,5 @@
 module D = Sxfiler_domain
+module Co = Sxfiler_completion.Domain
 
 type command_args = (string * string) list
 
@@ -22,7 +23,7 @@ module type Completer = sig
   type t
 
   (** [read t input] returns collection to be used to show list as candidates. *)
-  val read: t -> (string, D.Completion.collection) executor
+  val read: t -> (string, Co.collection) executor
 end
 
 (** The signature of static command called from key binding *)

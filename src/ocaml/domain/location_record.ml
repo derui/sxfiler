@@ -1,6 +1,8 @@
 (** [Snapshot_record] provides types for record of history  *)
+
+open Sxfiler_core
 type t = {
-  location: string;
+  location: Path.t;
   timestamp: int64;
 }
 

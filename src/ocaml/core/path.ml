@@ -112,20 +112,6 @@ let of_string ?env sys path =
 
     construct_path components {device = ""; components = []; resolved = false}
 
-(** [to_string ?env path] get a string representation of [path] *)
-let to_string ?env path =
-  let sep = resolve_sep env in
-
-  let comps = List.map (function
-      | Comp_device dev -> dev
-      | Comp_current -> Filename.current_dir_name
-      | Comp_parent -> Filename.parent_dir_name
-      | Comp_empty -> ""
-      | Comp_filename f -> f
-    ) (Comp_device path.device :: path.components)
-  in
-  String.concat (String.make 1 sep) comps
-
 let resolve path =
   if path.resolved then path
   else
@@ -141,6 +127,29 @@ let resolve path =
         end
     in
     {path with resolved = true; components = resolve_relatives path.components []}
+
+(** [to_string ?env path] get a string representation of [path] *)
+let to_string ?env path =
+  let sep = resolve_sep env in
+
+  let path = resolve path in
+  let comps = List.map (function
+      | Comp_device dev -> dev
+      | Comp_current -> Filename.current_dir_name
+      | Comp_parent -> Filename.parent_dir_name
+      | Comp_empty -> ""
+      | Comp_filename f -> f
+    ) (Comp_device path.device :: path.components)
+  in
+  String.concat (String.make 1 sep) comps
+
+let of_list ?env sys paths =
+  match paths with
+  | [] -> raise Empty_path
+  | _ ->
+    let sep = resolve_sep env in
+    let path = String.concat (String.make 1 sep) paths in
+    of_string ?env sys path
 
 let equal t1 t2 =
   let t1' = to_string ~env:`Unix @@ resolve t1

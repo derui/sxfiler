@@ -1,9 +1,7 @@
 (** C_Key_handler defines that container component to handle key strokes on children component. *)
 module T = Sxfiler_domain
 module R = Jsoo_reactjs
-module Be = Sxfiler_renderer_behavior
 module C = Sxfiler_renderer_core
-module S = Sxfiler_renderer_store
 
 module Component = R.Component.Make_stateful(struct
     class type t = object

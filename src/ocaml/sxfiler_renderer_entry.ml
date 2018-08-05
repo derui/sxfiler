@@ -1,9 +1,9 @@
 open Sxfiler_renderer
-module RI = Sxfiler_rpc
 module R = Jsoo_reactjs
 module C = Sxfiler_renderer_core
-module B = Sxfiler_renderer_behavior
+module U = Sxfiler_renderer_usecase
 module S = Sxfiler_renderer_store
+module SI = Sxfiler_renderer_service_impl
 
 let container_id = "top-entry"
 let target_port = 50879
@@ -19,7 +19,7 @@ let notification_handler server message =
   in
   Lwt.ignore_result thread
 
-let expose_commands (module Locator: Locator.Main) =
+let expose_commands (module Locator: Locator.S) =
   let module Com = Sxfiler_renderer_command in
   Com.expose_static Locator.command_registry |> ignore
 
@@ -34,12 +34,13 @@ let () =
   let rpc = Rpc.make websocket websocket_handler in
   let store = Locator.make_store () in
   let module Ctx = (val C.Context.make_instance (module Context) store) in
-  let module L = Locator.Make((val rpc))(Ctx)(struct
-      let instance = store
+  let module Client = C.Rpc.Make_client((val rpc)) in
+  let module L = Locator.Make(Client)(Ctx)(struct
+      let this = store
     end) in
   let module D = (val Ctx.(Context.dispatcher this)) in
   let rpc_notification_server = C.Rpc.Server.make () in
-  let rpc_notification_server = Notification_reducer.expose ~dispatcher:(module D) rpc_notification_server in
+  let rpc_notification_server = Notification_reducer.expose ~dispatcher:(module D: C.Dispatcher.Instance) rpc_notification_server in
 
   Websocket_handler.add websocket_handler ~handler:(notification_handler rpc_notification_server);
 
@@ -47,33 +48,26 @@ let () =
 
   websocket##.onopen := Dom.handler (fun _ ->
       (* Get current properties *)
-      let module I = (val C.Behavior.make_instance (module B.Refresh_keymap) ~config:(module L) ~param:()) in
+      let module Service = SI.Keymap.Make(Client) in
+      let module I = (val C.Usecase.make_instance (module U.Refresh_keymap.Make(Service)) ~param:()) in
       Ctx.(Context.execute this (module I)) |> Lwt.ignore_result;
-      let module I = (val C.Behavior.make_instance (module B.Refresh_configuration) ~config:(module L) ~param:()) in
+
+      let module Service = SI.Configuration.Make(Client) in
+      let module I = (val C.Usecase.make_instance (module U.Refresh_configuration.Make(Service)) ~param:()) in
       Ctx.(Context.execute this (module I)) |> Lwt.ignore_result;
 
       List.iter (fun name ->
-          let module R = Sxfiler_rpc in
-          let param = Some {
-              R.Scanner.Make_sync.initial_location = ".";
+          let module Service = SI.Scanner.Make(Client) in
+          let module I = (val C.Usecase.make_instance (module U.Initialize_scanner.Make(Service)) ~param:{
+              initial_location = ".";
               name;
-            } in
-          C.Rpc.Client.request rpc (module C.Api.Scanner.Make_sync) param (function
-              | Error e ->
-                let module Ro = Jsonrpc_ocaml_jsoo in
-                if e.Ro.Error.code = R.Errors.Scanner.already_exists then
-                  let module I = (val C.Behavior.make_instance (module B.Refresh_scanner) ~config:(module L) ~param:name) in
-                  Ctx.(Context.execute this (module I)) |> ignore
-                else ()
-              | Ok _ -> ()
-            )
-
-          |> Lwt.ignore_result;
+            }) in
+          Ctx.(Context.execute this (module I)) |> Lwt.ignore_result;
         ) [Const.scanner_1;Const.scanner_2];
       Js._true
     );
 
   let element = R.create_element ~props:(object%js
-      val locator = (module L : Locator.Main)
+      val locator = (module L : Locator.S)
     end) C_main.t in
   R.dom##render element container

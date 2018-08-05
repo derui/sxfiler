@@ -14,4 +14,4 @@
             sxfiler.domain
             sxfiler.renderer.core
             sxfiler.renderer.store
-            sxfiler.renderer.behavior))
+            sxfiler.renderer.usecase))

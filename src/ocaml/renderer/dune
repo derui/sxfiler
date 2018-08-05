@@ -11,7 +11,8 @@
             logs.browser
             sxfiler.core
             sxfiler.renderer.core
-            sxfiler.renderer.behavior
+            sxfiler.renderer.usecase
+            sxfiler.renderer.service.impl
             sxfiler.virtualized_list
             sxfiler.domain
             sxfiler.rpc)
