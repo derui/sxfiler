@@ -6,4 +6,7 @@
   padding: 0;
 
   overflow: hidden;
+
+  display: grid;
+  grid-template-rows: auto 1fr;
 }

@@ -29,6 +29,7 @@
 }
 
 .fp-FileList_Content {
+  position: relative;
   display: grid;
   grid-template-rows: repeat(auto-fill, $fp-FileItemHeight);
   height: 100%;
