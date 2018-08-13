@@ -66,7 +66,8 @@ let t =
 
              (fun this ->
                 let module L = (val this##.props##.locator: Locator.S) in
-                let condition = S.Config.State.condition @@ S.Config.Store.get @@ S.App.(State.config @@ Store.get L.store)
+                let condition = S.Workspace.State.condition @@ S.Workspace.Store.get
+                  @@ S.App.(State.workspace @@ Store.get L.store)
                 in
                 [%c C_key_handler.t
                     ~props:(object%js

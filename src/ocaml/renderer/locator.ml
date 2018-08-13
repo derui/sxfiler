@@ -14,8 +14,9 @@ let make_store () =
   and keymap = S.Keymap.(Store.make @@ State.make ())
   and completion = S.Completion.(Store.make @@ State.make ())
   and command = S.Command.(Store.make @@ State.make ())
+  and workspace = S.Workspace.(Store.make @@ State.make ())
   in
-  let state = S.App.State.make ~config ~scanner ~keymap ~completion ~command in
+  let state = S.App.State.make ~config ~scanner ~keymap ~completion ~command ~workspace in
   S.App.Store.make state
 
 module Make

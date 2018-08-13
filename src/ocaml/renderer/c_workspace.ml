@@ -5,7 +5,7 @@ module C = Sxfiler_renderer_core
 module S = Sxfiler_renderer_store
 
 
-let scanner_container ~key condition store =
+let file_list_container ~key condition store =
   let scanner = S.Scanner.Store.get @@ S.App.State.scanner store in
   let parts = T.Condition.of_list [On_file_tree] in
 
@@ -27,17 +27,12 @@ let t = R.Component.make_stateless
     ~render:(fun props ->
         let module L = (val props##.locator : Locator.S) in
         let store = S.App.Store.get L.store in
-        let config' = S.Config.Store.get @@ S.App.State.config store in
-        let condition = S.Config.State.condition config' in
+        let workspace' = S.Workspace.Store.get @@ S.App.State.workspace store in
+        let condition = S.Workspace.State.condition workspace' in
         let module C = T.Configuration in
-        let class_name = match (config'.S.Config.State.config).C.viewer.C.Viewer.stack_layout with
-          | T.Types.Layout.Side_by_side -> Classnames.to_string [
-              "fp-Layout", true;
-              "fp-Layout_sideBySide", true;
-            ]
-        in
+        let class_name = Classnames.to_string ["fp-Workspace", true;] in
 
         [%e div ~key:"layout" ~class_name [
-            scanner_container ~key:"scanner" condition store;
+            file_list_container ~key:"scanner" condition store;
           ]]
       )

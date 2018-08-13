@@ -9,15 +9,17 @@ module State = struct
     keymap: Keymap.Store.t;
     completion: Completion.Store.t;
     command: Command.Store.t;
+    workspace: Workspace.Store.t;
   }
 
   let make ~config ~scanner ~keymap ~completion
-    ~command = {
+    ~command ~workspace = {
     config;
     scanner;
     keymap;
     completion;
     command;
+    workspace;
   }
 
   let reduce t message =
@@ -26,6 +28,7 @@ module State = struct
     Keymap.Store.dispatch t.keymap message;
     Completion.Store.dispatch t.completion message;
     Command.Store.dispatch t.command message;
+    Workspace.Store.dispatch t.workspace message;
     t
 
   let config {config;_} = config
@@ -33,6 +36,7 @@ module State = struct
   let keymap {keymap;_} = keymap
   let completion {completion;_} = completion
   let command {command;_} = command
+  let workspace {workspace;_} = workspace
 
   let equal v1 v2 =
     Config.(State.equal (Store.get v1.config) (Store.get v2.config))
@@ -40,6 +44,7 @@ module State = struct
     && Keymap.(State.equal (Store.get v1.keymap) (Store.get v2.keymap))
     && Completion.(State.equal (Store.get v1.completion) (Store.get v2.completion))
     && Command.(State.equal (Store.get v1.command) (Store.get v2.command))
+    && Workspace.(State.equal (Store.get v1.workspace) (Store.get v2.workspace))
 end
 
 module Store = C.Store.Make_group(State)(struct
@@ -52,4 +57,5 @@ module Store = C.Store.Make_group(State)(struct
       Keymap.Store.subscribe state.State.keymap ~f;
       Completion.Store.subscribe state.State.completion ~f;
       Command.Store.subscribe state.State.command ~f;
+      Workspace.Store.subscribe state.State.workspace ~f;
   end)
