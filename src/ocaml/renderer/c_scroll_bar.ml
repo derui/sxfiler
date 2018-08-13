@@ -1,14 +1,6 @@
 module T = Sxfiler_domain
 module R = Jsoo_reactjs
 
-module Component = R.Component.Make_stateless (struct
-    class type t = object
-      method start: float Js.readonly_prop
-      method windowSize: float Js.readonly_prop
-    end
-  end)
-
-
 let visible_window key start size =
   [%e span ~key ~class_name:"fp-ScrollBar_VisibleWindow"
       ~others:(object%js
@@ -18,7 +10,15 @@ let visible_window key start size =
         end
       end)]
 
-let t = Component.make (fun props ->
-    [%e div ~class_name:"fp-ScrollBar"
-        [visible_window "bar" props##.start props##.windowSize]]
-  )
+let t= R.Component.make_stateless
+    ~props:(module struct
+             class type t = object
+               method start: float Js.readonly_prop
+               method windowSize: float Js.readonly_prop
+             end
+           end)
+
+    ~render:(fun props ->
+        [%e div ~class_name:"fp-ScrollBar"
+            [visible_window "bar" props##.start props##.windowSize]]
+      )

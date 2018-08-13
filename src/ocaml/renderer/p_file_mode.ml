@@ -1,11 +1,5 @@
 module R = Jsoo_reactjs
 
-module Component = R.Component.Make_stateless (struct
-    class type t = object
-      method mode: int32 Js.readonly_prop
-    end
-  end)
-
 module Mode_converter = struct
   type capability = {
     readable: bool;
@@ -65,8 +59,15 @@ module Mode_converter = struct
 
 end
 
-let t = Component.make (fun props ->
-    let mode' = Int32.to_int props##.mode in
-    let mode' = Mode_converter.(of_mode_bits mode' |> to_string) in
-    [%e span ~class_name:"fp-FileItem_FileMode" [mode'[@txt]]]
-  )
+let t = R.Component.make_stateless
+    ~props:(module struct
+             class type t = object
+               method mode: int32 Js.readonly_prop
+             end
+           end)
+
+    ~render:(fun props ->
+        let mode' = Int32.to_int props##.mode in
+        let mode' = Mode_converter.(of_mode_bits mode' |> to_string) in
+        [%e span ~class_name:"fp-FileItem_FileMode" [mode'[@txt]]]
+      )

@@ -72,33 +72,7 @@ let expand ~on_scroll ~nodes =
 (** The component to define sensor for parent resizing.
     Component that use this component should define value of [position] as ["relative"].
 *)
-module Component = R.Component.Make_stateful_custom (struct
-    class type t = object
-      method onResized: (size -> unit) Js.readonly_prop
-      method getParentSize: (unit -> size) Js.readonly_prop
-    end
-  end)(struct
-    type t = unit
-  end)(struct
-    class type t = object
-      method dirty: bool Js.t Js.prop
-      method lastSize: size Js.prop
-      method currentSize: size Js.prop
-      method onResized: (float -> unit) Js.prop
-      method onScroll: (R.Event.Scroll_event.t -> unit) Js.prop
-      method rafId: Dom_html.animation_frame_request_id Js.opt Js.prop
-    end
-  end)
-
 let t =
-  let render this =
-    let on_scroll = this##.custom##.onScroll in
-    [%e div ~class_name:"global-ResizeSensor" ~others:(object%js
-        val style = style
-      end)
-        [expand ~on_scroll ~nodes:this##.nodes;
-         shrink ~on_scroll ~nodes:this##.nodes]]
-  in
   let reset_sensor_elements this =
     let shrink = R.Ref_table.find this##.nodes ~key:shrink_key
     and expand = R.Ref_table.find this##.nodes ~key:expand_key
@@ -117,46 +91,61 @@ let t =
     | _ -> ()
   in
 
-  let spec = R.component_spec
-      ~constructor:(fun this _ ->
-          this##.nodes := Jstable.create ();
+  R.Component.make_stateful
+    ~props:(module struct
+             class type t = object
+               method onResized: (size -> unit) Js.readonly_prop
+               method getParentSize: (unit -> size) Js.readonly_prop
+             end
+           end)
+    ~spec:(
+      R.component_spec
+        ~initial_state:(fun _ _ -> object%js end)
+        ~initial_custom:(fun this _ ->
+            object%js
+              val mutable dirty = Js.bool true
+              val mutable lastSize = {width = 0;height = 0}
+              val mutable currentSize = {width = 0;height = 0}
+              val mutable onResized = (fun _ ->
+                  this##.custom##.rafId := Js.Opt.empty;
 
-          this##.custom := object%js
-            val mutable dirty = Js.bool true
-            val mutable lastSize = {width = 0;height = 0}
-            val mutable currentSize = {width = 0;height = 0}
-            val mutable onResized = (fun _ ->
-                this##.custom##.rafId := Js.Opt.empty;
+                  if not @@ Js.to_bool this##.custom##.dirty then ()
+                  else begin
+                    this##.custom##.lastSize := this##.custom##.currentSize;
+                    this##.props##.onResized this##.custom##.currentSize
+                  end
+                )
+              val mutable onScroll = (fun _ ->
+                  let last_size = this##.custom##.lastSize
+                  and size = this##.props##.getParentSize () in
+                  let dirty = last_size.width <> size.width || last_size.height <> size.height in
 
-                if not @@ Js.to_bool this##.custom##.dirty then ()
-                else begin
-                  this##.custom##.lastSize := this##.custom##.currentSize;
-                  this##.props##.onResized this##.custom##.currentSize
-                end
-              )
+                  this##.custom##.dirty := Js.bool dirty;
+                  this##.custom##.currentSize := size;
 
-            val mutable onScroll = (fun _ ->
-                let last_size = this##.custom##.lastSize
-                and size = this##.props##.getParentSize () in
-                let dirty = last_size.width <> size.width || last_size.height <> size.height in
+                  begin match (dirty, Js.Opt.to_option this##.custom##.rafId) with
+                    | (true, None) ->
+                      let cb = Js.wrap_callback this##.custom##.onResized in
+                      let id = Dom_html.window##requestAnimationFrame cb in
+                      this##.custom##.rafId := Js.Opt.return id
+                    | (false, None) | (true, Some _) | (false, Some _) -> ()
+                  end;
 
-                this##.custom##.dirty := Js.bool dirty;
-                this##.custom##.currentSize := size;
-
-                begin match (dirty, Js.Opt.to_option this##.custom##.rafId) with
-                  | (true, None) ->
-                    let cb = Js.wrap_callback this##.custom##.onResized in
-                    let id = Dom_html.window##requestAnimationFrame cb in
-                    this##.custom##.rafId := Js.Opt.return id
-                  | (false, None) | (true, Some _) | (false, Some _) -> ()
-                end;
-
-                reset_sensor_elements this
-              )
-            val mutable rafId = Js.Opt.empty
-          end
+                  reset_sensor_elements this
+                )
+              val mutable rafId = Js.Opt.empty
+            end
+          )
+        ~constructor:(fun this _ ->
+            this##.nodes := Jstable.create ();
+          )
+        ~component_did_mount:reset_sensor_elements
+        (fun this ->
+           let on_scroll = this##.custom##.onScroll in
+           [%e div ~class_name:"global-ResizeSensor" ~others:(object%js
+               val style = style
+             end)
+               [expand ~on_scroll ~nodes:this##.nodes;
+                shrink ~on_scroll ~nodes:this##.nodes]]
         )
-      ~component_did_mount:reset_sensor_elements
-      render
-  in
-  Component.make spec
+    )

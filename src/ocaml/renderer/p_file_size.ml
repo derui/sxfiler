@@ -1,11 +1,5 @@
 module R = Jsoo_reactjs
 
-module Component = R.Component.Make_stateless (struct
-    class type t = object
-      method size: int64 Js.readonly_prop
-    end
-  end)
-
 module File_size = struct
   type size_unit =
       Byte
@@ -59,8 +53,15 @@ module File_size = struct
 
 end
 
-let t = Component.make (fun props ->
-    let size = props##.size in
-    let size = File_size.of_size size |> File_size.to_string in
-    [%e span ~class_name:"fp-FileItem_FileSize" [size [@txt]]]
-  )
+let t = R.Component.make_stateless
+    ~props:(module struct
+             class type t = object
+               method size: int64 Js.readonly_prop
+             end
+           end)
+
+    ~render:(fun props ->
+        let size = props##.size in
+        let size = File_size.of_size size |> File_size.to_string in
+        [%e span ~class_name:"fp-FileItem_FileSize" [size [@txt]]]
+      )

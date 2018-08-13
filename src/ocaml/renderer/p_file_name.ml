@@ -1,14 +1,5 @@
 module R = Jsoo_reactjs
 
-module Component = R.Component.Make_stateless (struct
-    class type t = object
-      method parentDirectory: string Js.readonly_prop
-      method path: string Js.readonly_prop
-      method isDirectory: bool Js.readonly_prop
-      method isSymbolicLink: bool Js.readonly_prop
-    end
-  end)
-
 let base_selector = "fp-FileItem_FileName"
 let directory_modifier = base_selector ^ "-directory"
 let symlink_modifier = base_selector ^ "-symlink"
@@ -26,7 +17,17 @@ let resolve_name props =
   and path = props##.path in
   String.sub path (String.length base_dir) (String.length path - String.length base_dir)
 
-let t = Component.make (fun props ->
-    let name = resolve_name props in
-    [%e span ~class_name:(get_classname props) [name[@txt]]]
-  )
+let t = R.Component.make_stateless
+    ~props:(module struct
+             class type t = object
+               method parentDirectory: string Js.readonly_prop
+               method path: string Js.readonly_prop
+               method isDirectory: bool Js.readonly_prop
+               method isSymbolicLink: bool Js.readonly_prop
+             end
+           end)
+
+    ~render:(fun props ->
+        let name = resolve_name props in
+        [%e span ~class_name:(get_classname props) [name[@txt]]]
+      )
