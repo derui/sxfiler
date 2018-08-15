@@ -6,6 +6,8 @@ type completion =
   | Setup of string
   | Read of Co.result
   | Tear_down
+  | Select_next
+  | Select_prev
 
 type command =
   (* select current action related specified command. *)

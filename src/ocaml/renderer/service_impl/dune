@@ -5,6 +5,7 @@
  (libraries js_of_ocaml
             js_of_ocaml.weak
             lwt
+            js_of_ocaml-lwt
             jsonrpc-ocaml.jsoo
             sxfiler.core
             sxfiler.rpc

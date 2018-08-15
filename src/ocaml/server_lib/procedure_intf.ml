@@ -12,7 +12,7 @@ module type Rpc_type = sig
 
   (** [result_of_json f] convert [result] to json if it needed. Do not return anything if
       [`Void] specified.  *)
-  val result_to_json: [`Void | `Result of result -> Yojson.Safe.json]
+  val result_to_json: result -> Yojson.Safe.json
 
   (** Define handling with [param] and return [result]. *)
   val handle : params -> result Lwt.t
@@ -33,9 +33,10 @@ module Make(R:Rpc_type) : S with type params := R.params and type result := R.re
     let module Rpc = Jsonrpc_ocaml_yojson in
     let module Req = Rpc.Request in
     let module Res = Rpc.Response in
+    let open Sxfiler_core in
     let tags = Logger.Tags.module_lib ["rpc"] in
 
-    let%lwt () = Logs_lwt.info @@ fun m -> m ~tags "Start procedure: {%s}" req.Req._method in
+    let%lwt () = Logs_lwt.info @@ fun m -> m ~tags "Start procedure: {%s}, id: {%Ld}" req.Req._method (Option.get ~default:(fun () -> 0L) req.Req.id) in
     let%lwt result = match R.params_of_json with
       | `Not_required param -> R.handle param
       | `Required f -> begin match req.Req.params with
@@ -46,11 +47,8 @@ module Make(R:Rpc_type) : S with type params := R.params and type result := R.re
             end
         end
     in
-    let result = match R.result_to_json with
-      | `Void -> None
-      | `Result f -> Some (f result)
-    in
-    let%lwt () = Logs_lwt.info @@ fun m -> m ~tags "Finish procedure: {%s}" req.Req._method in
+    let result = Option.some @@ R.result_to_json result in
+    let%lwt () = Logs_lwt.info @@ fun m -> m ~tags "Finish procedure: {%s}, id: {%Ld}" req.Req._method (Option.get ~default:(fun () -> 0L) req.Req.id) in
     Lwt.return {
       Res.result;
       id = req.Req.id;

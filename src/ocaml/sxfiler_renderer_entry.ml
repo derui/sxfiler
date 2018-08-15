@@ -21,7 +21,8 @@ let notification_handler server message =
 
 let expose_commands (module Locator: Locator.S) =
   let module Com = Sxfiler_renderer_command in
-  Com.expose_static Locator.command_registry |> ignore
+  Com.expose_static Locator.command_registry |> ignore;
+  Com.expose_dynamic Locator.dynamic_command_registry |> ignore
 
 let () =
   Logs.set_reporter @@ Logs_browser.console_reporter ();

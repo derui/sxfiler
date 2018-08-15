@@ -1,40 +1,35 @@
 @import "base/*";
 
 .sf-CompleterWrapper_PositionFixer {
-  positon: absolute;
+  position: absolute;
   margin: 0;
   padding: 0;
+  width: 100%;
 }
 
 .sf-Completer {
-  position: absolute;
-
-  margin: 0;
-  padding: 0;
-}
-
-.sf-CompletionList {
-  padding: $smallSpace;
-
-  max-height: 20rem;
-  overflow-y: auto;
-}
-
-.sf-CompletionList_ListContainer {
-  padding: 0;
-  margin: 0;
-  list-style: none;
-
   display: flex;
-  flex-direction: column;
+  position: relative;
+
+  padding: 0;
+
+  width: 95%;
+  margin: 0 auto;
+
+  list-style: none;
+  background-color: $sol_base02;
+  color: $sol_base2;
   border: 1px solid $sol_base01;
 }
 
-.sf-CompletionList_ItemContainer {
-  flex: 0 0 auto;
+.sf-CompleterItem {
+  flex: 0 0 5em;
+
+  margin: 0;
+  padding: $smallSpace;
 
   border-top: 1px solid $sol_base01;
-  padding: $smallSpace;
+  border-bottom: 1px solid $sol_base01;
 
   &:first-of-type {
     border-top: none;
@@ -44,8 +39,7 @@
     border-bottom: none;
   }
 
-  &.sf-CompletionList_ItemContainer-selected {
-    background-color: $sol_base3;
-    color: $sol_base03;
+  &.sf-CompletorItem-selected {
+    color: $sol_blue;
   }
 }

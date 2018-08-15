@@ -17,7 +17,10 @@ let event_to_action ~ev ~keymap ~condition =
 let key_handler ~props ev =
   match event_to_action ~ev ~keymap:props##.keymap ~condition:props##.condition with
   | None -> ()
-  | Some action -> props##.onAction action
+  | Some action ->
+    ev##preventDefault;
+    ev##stopPropagation;
+    props##.onAction action
 
 let container_key = "keyHandlerContainer"
 let t = R.Component.make_stateful

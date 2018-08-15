@@ -1,7 +1,9 @@
 @import "base/*";
 
-.fp-Layout {
+.fp-Workspace {
   display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
 
   width: 100%;
   height: 100%;
@@ -13,9 +15,4 @@
   background-color: $sol_base03;
 
   font-size: 1rem;
-}
-
-.fp-Layout_sideBySide {
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr;
 }

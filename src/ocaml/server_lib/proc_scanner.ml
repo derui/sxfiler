@@ -12,7 +12,7 @@ module Make(Gateway: G.Scanner.Make) = struct
   type result = T.Scanner.t
 
   let params_of_json = `Required Gateway.params_of_yojson
-  let result_to_json = `Result T.Scanner.to_yojson
+  let result_to_json = T.Scanner.to_yojson
 
   let handle params =
     let%lwt result = Gateway.handle params in
@@ -28,7 +28,7 @@ module Get(Gateway: G.Scanner.Get) = struct
   type result = T.Scanner.t
 
   let params_of_json = `Required Gateway.params_of_yojson
-  let result_to_json = `Result T.Scanner.to_yojson
+  let result_to_json = T.Scanner.to_yojson
 
   let handle params =
     let%lwt result = Gateway.handle params in

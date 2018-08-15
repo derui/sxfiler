@@ -10,7 +10,7 @@ module type Rpc = Rpc.S with module Thread := Lwt
 module type Client = sig
   val request :
     (module Api_def with type params = 'a and type result = 'b) ->
-    'a option -> (('b, R.Error.t) result -> unit) -> unit Lwt.t
+    'a option -> (('b option, R.Error.t) result -> unit) -> unit Lwt.t
 
   val notification :
     (module Api_def with type params = 'a) -> 'a option -> unit Lwt.t

@@ -9,13 +9,13 @@ module G = Sxfiler_server_gateway
 module Setup(G:G.Completion.Setup) = struct
   include G
   let params_of_json = `Required G.params_of_yojson
-  let result_to_json = `Void
+  let result_to_json () = `Null
 end
 
 module Read(G:G.Completion.Read) = struct
   include G
   let params_of_json = `Required G.params_of_yojson
-  let result_to_json = `Result G.result_to_yojson
+  let result_to_json = G.result_to_yojson
 end
 
 let initialize migemo =

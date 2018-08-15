@@ -11,7 +11,7 @@ module Make_client(Rpc:Rpc) : Client = struct
       (type r)
       (module Api: Api_def with type params = p and type result = r)
       (param: p option)
-      (handler: (r, R.Error.t) result -> unit)
+      (handler: (r option, R.Error.t) result -> unit)
     =
     let module C = R.Client in
     let req, handler = C.make_request (module Api) param handler in

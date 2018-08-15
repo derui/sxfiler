@@ -38,8 +38,8 @@ let find t ~condition ~key =
   let key = Sxfiler_kbd.to_keyseq key in
   let bindings = Option.get ~default:(fun () -> []) @@ Binding_map.find_opt key t.keymap in
   let matched = List.filter (fun v -> Condition.subset
-                                ~current:v.Original_key_binding.condition
-                                ~parts:condition) bindings
+                                ~parts:v.Original_key_binding.condition
+                                ~current:condition) bindings
   in
   match matched with
   | [] -> None

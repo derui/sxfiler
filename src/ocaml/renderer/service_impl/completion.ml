@@ -51,13 +51,13 @@ module Make(Client:C.Rpc.Client) : S = struct
     let%lwt () = Client.request (module Setup_api) (Some params) (function
         (* TODO: should define original exception *)
         | Error _ -> Lwt.wakeup_exn wakener Not_found
-        | Ok v -> Lwt.wakeup wakener v)
+        | Ok _ -> Lwt.wakeup wakener ())
     in waiter
 
   let read params =
     let waiter, wakener = Lwt.wait () in
     let%lwt () = Client.request (module Read_api) (Some params) (function
-        | Error _ -> Lwt.wakeup_exn wakener Not_found
-        | Ok v -> Lwt.wakeup wakener v)
+        | Error _ | Ok None -> Lwt.wakeup_exn wakener Not_found
+        | Ok (Some v) -> Lwt.wakeup wakener v)
     in waiter
 end

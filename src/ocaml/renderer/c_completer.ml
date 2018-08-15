@@ -24,7 +24,10 @@ let t = R.Component.make_stateless
           let module S = S.Completion.State in
           let children = List.map (fun candidate ->
               let open T in
-              [%c P_completer_item.t ~key:Candidate.(id candidate) ~props:(object%js val candidate = candidate end)]
+              [%c P_completer_item.t ~key:Candidate.(id candidate) ~props:(object%js
+                  val candidate = candidate
+                  val selected = Js.bool (candidate.value.Item.id = completion.S.selected_id)
+                end)]
             ) completion.S.candidates
           in
           [%e ul ~class_name:"sf-Completer" children]

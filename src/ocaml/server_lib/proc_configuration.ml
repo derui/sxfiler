@@ -9,7 +9,7 @@ module T = Sxfiler_server_translator
 module Get(G:G.Configuration.Get) = struct
   include G
   let params_of_json = `Not_required ()
-  let result_to_json = `Result T.Configuration.to_yojson
+  let result_to_json = T.Configuration.to_yojson
 end
 
 let expose server =

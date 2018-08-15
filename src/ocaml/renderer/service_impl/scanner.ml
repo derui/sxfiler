@@ -45,7 +45,8 @@ module Make(Client:C.Rpc.Client) : S = struct
     let module R = Sxfiler_rpc in
     let module Jr = Jsonrpc_ocaml_jsoo in
     let%lwt () = Client.request (module Make_api) (Some params) (function
-        | Ok v -> Lwt.wakeup wakener @@ Ok v
+        | Ok (Some v) -> Lwt.wakeup wakener @@ Ok v
+        | Ok None -> assert false
         | Error e when e.code = R.Errors.Scanner.already_exists -> Lwt.wakeup wakener (Error `Already_exists)
         | Error e ->
           let message = Jr.Types.Error_code.to_message e.code in
@@ -57,7 +58,8 @@ module Make(Client:C.Rpc.Client) : S = struct
     let waiter, wakener = Lwt.wait () in
     let module R = Sxfiler_rpc in
     let%lwt () = Client.request (module Get_api) (Some params) (function
-        | Ok v -> Lwt.wakeup wakener @@ Ok v
+        | Ok (Some v) -> Lwt.wakeup wakener @@ Ok v
+        | Ok None -> assert false
         | Error e when e.code = R.Errors.Scanner.not_found ->
           Lwt.wakeup wakener (Error `Not_found)
         | Error e ->

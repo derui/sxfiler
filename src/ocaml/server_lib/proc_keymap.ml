@@ -9,7 +9,7 @@ module I = Sxfiler_server_infra
 module Get(Gateway:G.Keymap.Get) = struct
   include Gateway
   let params_of_json = `Not_required ()
-  let result_to_json = `Result T.Key_map.to_yojson
+  let result_to_json = T.Key_map.to_yojson
 end
 
 let expose server =
