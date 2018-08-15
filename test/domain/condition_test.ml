@@ -8,6 +8,12 @@ let testcases = [
       let expected = C.of_list [C.On_completing] in
       Alcotest.(check bool) "equal" true C.(equal expected expected)
     );
+
+  "should return true if current condition contains parts condition", `Quick, (fun () ->
+      let expected = C.of_list [C.On_completing] in
+      let actual = C.empty in
+      Alcotest.(check bool) "equal" true C.(subset ~current:expected ~parts:actual)
+    );
   "should return what expected condition is contains", `Quick, (fun () ->
       let expected = C.of_list [On_completing] in
       let actual = C.of_list [On_completing;On_file_tree] in
