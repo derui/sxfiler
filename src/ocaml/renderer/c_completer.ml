@@ -18,10 +18,10 @@ let t = R.Component.make_stateless
              end
            end)
     ~render:(fun props ->
-        if not props##.showed then R.empty ()
+        let module S = S.Completion.State in
+        let completion = props##.completion in
+        if not props##.showed || List.length completion.S.candidates = 0 then R.empty ()
         else
-          let completion = props##.completion in
-          let module S = S.Completion.State in
           let children = List.map (fun candidate ->
               let open T in
               [%c P_completer_item.t ~key:Candidate.(id candidate) ~props:(object%js
