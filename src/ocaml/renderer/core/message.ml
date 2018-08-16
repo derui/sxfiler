@@ -21,6 +21,7 @@ type t =
   | Switch_mode of Types.Mode.t
   | Move_cursor_to_next
   | Move_cursor_to_prev
+  | Swap_scanner
   (* completion handling *)
   | Completion of completion
   | Command of command

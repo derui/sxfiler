@@ -28,8 +28,7 @@ let t = R.Component.make_stateful
                    val value = this##.state##.value
                  end)
                  ~on_change:(fun ev ->
-                     let target = Js.Unsafe.coerce ev##.target in
-                     let value = target##.value in
+                     let value = ev##.target##.value in
                      this##setState (object%js
                        val value = value
                      end);

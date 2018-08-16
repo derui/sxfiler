@@ -63,6 +63,9 @@ module State = struct
       update_list t ~name:t.current_scanner ~f:(fun list -> File_list.(move_index list ~direction:`Next))
     | C.Message.Move_cursor_to_prev ->
       update_list t ~name:t.current_scanner ~f:(fun list -> File_list.(move_index list ~direction:`Prev))
+    | C.Message.Swap_scanner ->
+      if fst t.order = t.current_scanner then {t with current_scanner = snd t.order}
+      else {t with current_scanner = fst t.order}
     | _ -> t
 
   let equal _ _ = false

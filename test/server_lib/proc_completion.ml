@@ -35,9 +35,6 @@ let proc_completion = [
       Alcotest.(check bool) "param" true (match Setup.params_of_json with
           | `Required _ -> true
           | _ -> false);
-      Alcotest.(check bool) "result" true (match Setup.result_to_json with
-          | `Void -> true
-          | _ -> false);
       Lwt.return_unit
     );
 ]

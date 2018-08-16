@@ -26,6 +26,17 @@ module Prev_item = struct
     }
 end
 
+module Swap_scanner = struct
+  let make () =
+    {
+      C.Command.Static_command.name = module_prefix ^ "swap_scanner";
+      execute_plan = `No_plan;
+      executor = fun _ (module Ctx : C.Context.Instance) ->
+        let module I = (val C.Usecase.make_instance (module U.Swap_scanner) ~param:()) in
+        Ctx.(Context.execute this (module I))
+    }
+end
+
 let expose registry =
   List.fold_right (fun command registry ->
       C.Command.Static_registry.register registry command
@@ -33,5 +44,6 @@ let expose registry =
     [
       Next_item.make ();
       Prev_item.make ();
+      Swap_scanner.make ();
     ]
     registry

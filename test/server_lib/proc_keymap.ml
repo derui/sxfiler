@@ -36,9 +36,6 @@ let proc_keymap = [
       Alcotest.(check bool) "params" true (match Get.params_of_json with
           | `Not_required _ -> true
           | _ -> false);
-      Alcotest.(check bool) "result" true (match Get.result_to_json with
-          | `Result _ -> true
-          | _ -> false);
       Lwt.return_unit
     );
 ]
