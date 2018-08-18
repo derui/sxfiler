@@ -6,7 +6,7 @@ module T = Sxfiler_server_translator.Location_history
 let data =
   let data' = D.Location_history.make () in
   let record = {
-    D.Location_record.location = Path.of_string (module System.Real) "/foo";
+    D.Location_record.location = Path.of_string" /foo";
     timestamp = Int64.max_int;
   } in
   D.Location_history.add_record ~record data'

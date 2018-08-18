@@ -4,7 +4,7 @@ module D = Sxfiler_domain
 module T = Sxfiler_server_translator.Node
 
 let data = {
-  D.Node.full_path = Path.of_string (module System.Real) "/bar";
+  D.Node.full_path = Path.of_string "/bar";
   stat = D.File_stat.make
     ~mode:(Int32.of_int 0o775)
     ~uid:1000

@@ -4,7 +4,7 @@ module S = Sxfiler_server_core
 module I = Sxfiler_server_infra
 
 let data = D.Scanner.make ~id:"foo"
-    ~location:(Path.of_string (module System.Real) "/var")
+    ~location:(Path.of_string "/var")
     ~nodes:[]
     ~history:(D.Location_history.make ())
 

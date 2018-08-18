@@ -10,18 +10,23 @@ type t
 type env = [`Unix | `Win]
 
 (** [of_string ?env path] converts [path] to Path object. *)
-val of_string: ?env:env -> (module System.S) -> string -> t
+val of_string: ?env:env -> string -> t
 
 (** [to_string ?env path] get a string representation of [path] *)
 val to_string: ?env:env -> t -> string
 
-(** [of_string ?env (module System) paths] converts [paths] to Path object.
+(** [of_string ?env paths] converts [paths] to Path object.
     [paths] should be only part of path.
 *)
-val of_list: ?env:env -> (module System.S) -> string list -> t
+val of_list: ?env:env -> string list -> t
 
-(** [resolve t] resolve current(.) and parent(..) in path [t]. *)
-val resolve: t -> t
+(** [resolve system t] resolve current(.) and parent(..) in path [t]. *)
+val resolve: ?env:env -> (module System.S) -> t -> t
 
-(** [equal v1 v2] return what [v1] and [v2] are equal. *)
-val equal: t -> t -> bool
+(** [basename path] gets the base name of [path].
+    If [path] is directory, this function returns empty string.
+*)
+val basename: t -> string
+
+(** [dirname ?env path] gets the directory name of [path].*)
+val dirname: ?env:env -> t -> string

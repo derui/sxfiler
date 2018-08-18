@@ -7,7 +7,7 @@ let suite () =
   "Location record translator" >::: [
     "should be able to convert between JavaScript and OCaml" >:: (fun () ->
         let data = D.Location_record.record_of
-            ~location:(Path.of_string (module System.Real) @@ Filename.concat "foo" "bar")
+            ~location:(Path.of_string @@ Filename.concat "foo" "bar")
             (module struct
               let unixtime () = 0L
             end) in

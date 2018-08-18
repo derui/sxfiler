@@ -12,10 +12,5 @@ end
 
 type file_id = string
 
-(** {!Layout} defines type to preset of layout *)
-module Layout = struct
-  type t = Side_by_side
-end
-
 (** Base signature of thread. *)
 module type Thread = Sxfiler_core.Monad.S

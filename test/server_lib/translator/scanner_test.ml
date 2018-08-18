@@ -5,7 +5,7 @@ module T = Sxfiler_server_translator.Scanner
 
 let data = {
   D.Scanner.id = "id";
-  location = Path.of_string (module System.Real) "/bar";
+  location = Path.of_string "/bar";
   nodes = [];
   history = D.Location_history.make ();
 }

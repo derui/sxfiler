@@ -19,7 +19,7 @@ let suite () =
             ~is_symlink:true
         in
         let data = D.Node.make
-            ~full_path:(Path.of_string (module System.Real) @@ Filename.concat "foo" "bar")
+            ~full_path:(Path.of_string @@ Filename.concat "foo" "bar")
             ~stat ~parent_directory:"foo" ~link_path:None
         in
         assert_ok (data = T.Node.(of_js @@ to_js data))

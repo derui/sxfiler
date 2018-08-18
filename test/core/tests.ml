@@ -61,29 +61,20 @@ let result_tests = [
 
 let path_tests = [
   "separator of path on unix", `Quick, (fun () ->
-      let module S = struct
-        let getcwd () = "/foo"
-      end in
-      let expected = "/foo/a/b" in
+      let expected = "./a/b" in
       Alcotest.(check string) "unix" expected @@
-      Path.(to_string ~env:`Unix @@ of_string ~env:`Unix (module S) "./a/b")
+      Path.(to_string ~env:`Unix @@ of_string ~env:`Unix "./a/b")
     );
   "separator of path on windows", `Quick, (fun () ->
-      let module S = struct
-        let getcwd () = "\\foo"
-      end in
-      let expected = "\\foo\\a\\b" in
+      let expected = ".\\a\\b" in
       Alcotest.(check string) "win" expected @@
-      Path.(to_string ~env:`Win @@ of_string ~env:`Win (module S) "a\\b")
+      Path.(to_string ~env:`Win @@ of_string ~env:`Win ".\\a\\b")
     );
 
   "ignore cwd if path is absolute", `Quick, (fun () ->
-      let module S = struct
-        let getcwd () = "/foo"
-      end in
       let expected = "/bar/a" in
       Alcotest.(check string) "absolute" expected @@
-      Path.(to_string ~env:`Unix @@ of_string ~env:`Unix (module S) "/bar/a")
+      Path.(to_string ~env:`Unix @@ of_string ~env:`Unix "/bar/a")
     );
 
   "allow to use windows device name", `Quick, (fun () ->
@@ -92,7 +83,7 @@ let path_tests = [
       end in
       let expected = "c:\\foo\\a" in
       Alcotest.(check string) "absolute" expected @@
-      Path.(to_string ~env:`Win @@ of_string ~env:`Win (module S) "a")
+      Path.(to_string ~env:`Win @@ resolve (module S) @@ of_string ~env:`Win "a")
     );
 
   "allow to contain . and ..", `Quick, (fun () ->
@@ -101,7 +92,7 @@ let path_tests = [
       end in
       let expected = "/bar" in
       Alcotest.(check string) "absolute" expected @@
-      Path.(to_string ~env:`Unix @@ of_string ~env:`Unix (module S) ".././foo/../bar")
+      Path.(to_string ~env:`Unix @@ resolve (module S) @@ of_string ~env:`Unix ".././foo/../bar")
     );
 
   "allow to create from list of component", `Quick, (fun () ->
@@ -110,13 +101,13 @@ let path_tests = [
       end in
       let expected = "/bar" in
       Alcotest.(check string) "absolute" expected @@
-      Path.(to_string ~env:`Unix @@ of_list ~env:`Unix (module S) ["..";".";"foo";"..";"bar"])
+      Path.(to_string ~env:`Unix @@ resolve ~env:`Unix (module S) @@ of_list ~env:`Unix ["..";".";"foo";"..";"bar"])
     );
   "raise Empty_path from list", `Quick, (fun () ->
       let module S = struct
         let getcwd () = "/var"
       end in
-      Alcotest.check_raises "empty" Path.Empty_path (fun () -> ignore @@ Path.of_list (module S) [])
+      Alcotest.check_raises "empty" Path.Empty_path (fun () -> ignore @@ Path.of_list [])
     );
 
   "resolve current and parent directory to realpath", `Quick, (fun () ->
@@ -125,7 +116,7 @@ let path_tests = [
       end in
       let expected = "/bar" in
       Alcotest.(check string) "realpath" expected @@
-      Path.(to_string ~env:`Unix @@ resolve @@ of_string ~env:`Unix (module S) ".././foo/../bar")
+      Path.(to_string ~env:`Unix @@ resolve (module S) @@ of_string ~env:`Unix ".././foo/../bar")
     );
 
   "raise Empth_path", `Quick, (fun () ->
@@ -133,18 +124,36 @@ let path_tests = [
         let getcwd () = "/var"
       end in
       Alcotest.check_raises "empth path" Path.Empty_path (fun () ->
-          Path.of_string ~env:`Unix (module S) "" |> ignore
+          Path.of_string ~env:`Unix "" |> ignore
         )
     );
-  "allow to compare between paths", `Quick, (fun () ->
+  "gets base name of a path", `Quick, (fun () ->
       let module S = struct
         let getcwd () = "/var"
       end in
-      Alcotest.(check bool) "equal" true Path.(equal (of_string ~env:`Unix (module S) "./foo/bar")
-                                                 (of_string ~env:`Unix (module S) "foo/bar"));
-      Alcotest.(check bool) "equal" false Path.(equal (of_string ~env:`Unix (module S) "../foo")
-                                                 (of_string ~env:`Unix (module S) "foo/bar"));
-    )
+      let to_path = Path.of_string ~env:`Unix in
+      Alcotest.(check string) "basename" "foo" @@ Path.basename @@ to_path "foo";
+      Alcotest.(check string) "basename" "" @@ Path.basename @@ to_path "/";
+      Alcotest.(check string) "basename" "bar" @@ Path.basename @@ to_path "foo/bar";
+    );
+  "gets dirname of a path", `Quick, (fun () ->
+      let module S = struct
+        let getcwd () = "/var"
+      end in
+      let to_path = Path.of_string ~env:`Unix in
+      Alcotest.(check string) "current" "." @@ Path.dirname @@ to_path "foo";
+      Alcotest.(check string) "parent" ".." @@ Path.dirname @@ to_path "../bar";
+      Alcotest.(check string) "dir" "foo" @@ Path.dirname @@ to_path "foo/bar";
+    );
+  "gets dirname from resolved path", `Quick, (fun () ->
+      let module S = struct
+        let getcwd () = "/var"
+      end in
+      let to_path v = Path.resolve ~env:`Unix (module S) @@ Path.of_string ~env:`Unix v in
+      Alcotest.(check string) "current" "/var" @@ Path.dirname @@ to_path "foo";
+      Alcotest.(check string) "parent" "/" @@ Path.dirname @@ to_path "../bar";
+      Alcotest.(check string) "dir" "/var/foo" @@ Path.dirname @@ to_path "foo/bar";
+    );
 ]
 
 let fun_tests = [

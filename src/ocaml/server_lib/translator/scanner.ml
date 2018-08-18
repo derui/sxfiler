@@ -22,7 +22,7 @@ let to_domain ?(system=(module System.Real:System.S)) t =
   let module S = (val system) in
   {
   D.id = t.id;
-  location = Path.of_string (module S) t.location;
+  location = Path.of_string t.location;
   nodes = List.map Node.to_domain t.nodes;
   history = Location_history.to_domain t.history;
 }

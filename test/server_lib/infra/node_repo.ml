@@ -87,7 +87,7 @@ let testcases = [
       end in
 
       Lwt.finalize (fun () ->
-          let path = Path.of_string (module Dummy) tempfile in
+          let path = Path.of_string tempfile in
           let%lwt nodes = I.Node_repo.find_by_dir ~dir:path in
           Alcotest.(check @@ list @@ of_pp Fmt.nop) "nodes" [] nodes;
           Lwt.return_unit
@@ -99,7 +99,7 @@ let testcases = [
         let getcwd () = Sys.getcwd ()
       end in
 
-      let to_path s = Path.of_string (module Dummy) s in
+      let to_path s = Path.resolve (module Dummy) @@ Path.of_string s in
       let path = to_path "./data_real/file_only" in
       let%lwt nodes = I.Node_repo.find_by_dir ~dir:path in
       let module N = Sxfiler_domain.Node in

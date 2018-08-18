@@ -8,4 +8,4 @@
  (modes byte)
  (libraries logs.browser sxfiler.renderer sxfiler.renderer.command js_of_ocaml-lwt)
  (js_of_ocaml (flags "--pretty"))
- (preprocess (pps js_of_ocaml-ppx ppx_variants_conv)))
+ (preprocess (pps js_of_ocaml-ppx)))

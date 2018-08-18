@@ -15,6 +15,6 @@ let of_domain t = {
   }
 
 let to_domain t = {
-  D.location = Path.of_string (module System.Real) t.location;
+  D.location = Path.of_string t.location;
   timestamp = Int64.of_string t.timestamp;
 }

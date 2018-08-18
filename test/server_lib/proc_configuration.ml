@@ -8,10 +8,7 @@ module T = Sxfiler_server_translator
 
 let proc_configuration = [
   Alcotest_lwt.test_case "get current configuration" `Quick (fun switch () ->
-      let expected = D.Configuration.{
-          default with
-          viewer = Viewer.{default with current_stack_name = "foo"}
-        } in
+      let expected = D.Configuration.{sort_order = D.Types.Sort_type.Date} in
       let module State = C.Statable.Make(struct
           type t = T.Configuration.t
           let empty () = T.Configuration.of_domain expected

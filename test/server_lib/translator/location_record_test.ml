@@ -4,7 +4,7 @@ module D = Sxfiler_domain
 module T = Sxfiler_server_translator.Location_record
 
 let data = {
-  D.Location_record.location = Path.of_string (module System.Real) "/foo";
+  D.Location_record.location = Path.of_string "/foo";
   timestamp = Int64.max_int;
 }
 

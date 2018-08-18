@@ -18,7 +18,7 @@ let proc_scanner = [
   Alcotest_lwt.test_case "create new scanner if it does not exists" `Quick (fun switch () ->
       let expected = D.Scanner.make
           ~id:"foo"
-          ~location:(Path.of_string ~env:`Unix (module Dummy_system:System.S) "/initial")
+          ~location:(Path.of_string ~env:`Unix "/initial")
           ~nodes:[]
           ~history:D.Location_history.(make ()) in
 

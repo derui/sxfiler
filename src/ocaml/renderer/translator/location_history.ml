@@ -1,4 +1,3 @@
-open Sxfiler_core
 open Sxfiler_domain.Location_history
 
 class type js = object
@@ -6,9 +5,9 @@ class type js = object
   method maxRecords: int Js.readonly_prop
 end
 
-let of_js ?(system=(module System.Real : System.S)) js : t =
+let of_js js : t =
   {
-    records = Js.array_map (Location_record.of_js ~system) js##.records |> Js.to_array |> Array.to_list;
+    records = Js.array_map Location_record.of_js js##.records |> Js.to_array |> Array.to_list;
     max_records = js##.maxRecords;
   }
 

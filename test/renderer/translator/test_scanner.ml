@@ -19,12 +19,12 @@ let suite () =
             ~is_symlink:true
         in
         let node = D.Node.make
-            ~full_path:(Path.of_string (module System.Real) @@ Filename.concat "foo" "bar")
+            ~full_path:(Path.of_string @@ Filename.concat "foo" "bar")
             ~stat ~parent_directory:"foo" ~link_path:None
         in
         let data = D.Scanner.make
             ~id:"id"
-            ~location:(Path.of_string (module System.Real) "bar")
+            ~location:(Path.of_string "bar")
             ~nodes:[node]
             ~history:(D.Location_history.make ())
         in

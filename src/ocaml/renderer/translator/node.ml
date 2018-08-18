@@ -9,10 +9,10 @@ class type js = object
   method linkPath: Js.js_string Js.t Js.opt Js.readonly_prop
 end
 
-let of_js ?(system=(module System.Real : System.S)) js : t =
+let of_js js : t =
   {
     (* full_path should be absolute path. *)
-    full_path = Path.of_string system @@ Js.to_string js##.fullPath;
+    full_path = Path.of_string @@ Js.to_string js##.fullPath;
     stat = File_stat.of_js js##.stat;
     parent_directory = Js.to_string js##.parentDirectory;
     link_path = Js.Opt.map js##.linkPath Js.to_string |> Js.Opt.to_option;

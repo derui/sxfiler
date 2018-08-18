@@ -9,10 +9,10 @@ class type js = object
   method history: Location_history.js Js.t Js.readonly_prop
 end
 
-let of_js ?(system=(module System.Real:System.S)) js : t =
+let of_js js : t =
   {
     id = Js.to_string js##.id;
-    location = Path.of_string system @@ Js.to_string js##.location;
+    location = Path.of_string @@ Js.to_string js##.location;
     nodes = Js.array_map Node.of_js js##.nodes |> Js.to_array |> Array.to_list;
     history = Location_history.of_js js##.history;
   }

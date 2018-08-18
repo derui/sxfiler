@@ -8,7 +8,7 @@ let suite () =
     "should be able to convert between JavaScript and OCaml" >:: (fun () ->
         let data = D.Location_history.make () in
         let record = D.Location_record.record_of
-            ~location:(Path.of_string (module System.Real) @@ Filename.concat "foo" "bar")
+            ~location:(Path.of_string @@ Filename.concat "foo" "bar")
             (module struct
               let unixtime () = 0L
             end) in
