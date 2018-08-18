@@ -1,5 +1,4 @@
-open Sxfiler_core
-module T = Sxfiler_domain
+module T = Sxfiler_rpc.Types
 module R = Jsoo_reactjs
 module L = Modules.Lodash
 
@@ -20,13 +19,15 @@ let t = R.Component.make_stateful
                 let node = props##.item in
                 let stat = node.T.Node.stat in
                 let module F = T.File_stat in
-                let file_mode = [%c P_file_mode.t ~key:"mode" ~props:(object%js val mode = stat.F.mode end)]
-                and timestamp = [%c P_file_timestamp.t ~key:"timestamp" ~props:(object%js val timestamp = stat.F.mtime |> Int64.to_float end)]
-                and file_size = [%c P_file_size.t ~key:"size" ~props:(object%js val size = stat.F.size end)]
+                let file_mode = [%c P_file_mode.t ~key:"mode" ~props:(object%js val mode = Int32.of_string stat.F.mode end)]
+                and timestamp = [%c P_file_timestamp.t ~key:"timestamp" ~props:(object%js
+                    val timestamp = Int64.of_string stat.F.mtime |> Int64.to_float
+                  end)]
+                and file_size = [%c P_file_size.t ~key:"size" ~props:(object%js val size = Int64.of_string stat.F.size end)]
                 and file_name = [%c P_file_name.t ~key:"name"
                     ~props:(object%js
                       val parentDirectory = node.T.Node.parent_directory
-                      val path = Path.to_string node.T.Node.full_path
+                      val name = node.T.Node.name
                       val isDirectory = stat.F.is_directory
                       val isSymbolicLink = stat.F.is_symlink
                     end)

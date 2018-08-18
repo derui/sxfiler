@@ -1,26 +1,28 @@
 module D = Sxfiler_domain.Condition
+open Sxfiler_rpc.Types.Condition
 
-type t = {
-  on_file_tree: bool [@key "onFileTree"][@default false];
-  on_completing: bool [@key "onCompleting"][@default false];
-}
-[@@deriving yojson,show]
+let to_yojson t : Yojson.Safe.json =
+  let list = `List (List.map (fun v -> `String v) t.enabled_contexts) in
+  `Assoc ["enabledContexts", list]
+
+let of_yojson js : (t, string) result =
+  let open Yojson.Safe.Util in
+  try
+    let enabled_contexts = js |> member "enabledContexts" |> to_list in
+    let enabled_contexts = List.map to_string enabled_contexts in
+    Ok {enabled_contexts}
+  with Type_error (s, _) -> Error s
 
 let of_domain t =
   let module T = Sxfiler_domain in
   let list = T.Condition.to_list t in
   {
-    on_file_tree = List.mem T.Condition.On_file_tree list;
-    on_completing = List.mem T.Condition.On_completing list;
+    enabled_contexts = list;
   }
 
 let to_domain t =
   let empty = D.empty in
-  List.fold_left (fun cond (context, enabled) ->
-      if enabled then D.enable cond ~context
-      else cond
+  List.fold_left (fun cond context ->
+      D.enable cond ~context
     ) empty
-    [
-      D.On_file_tree, t.on_file_tree;
-      D.On_completing, t.on_completing;
-    ]
+    t.enabled_contexts

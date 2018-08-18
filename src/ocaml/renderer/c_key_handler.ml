@@ -1,21 +1,23 @@
 (** C_Key_handler defines that container component to handle key strokes on children component. *)
-module T = Sxfiler_domain
+module T = Sxfiler_rpc.Types
 module R = Jsoo_reactjs
 module C = Sxfiler_renderer_core
 
 (* convert keyboard event to command. *)
-let event_to_action ~ev ~keymap ~condition =
+let event_to_action ~ev ~keymap =
   let module KE = R.Event.Keyboard_event in
   match KE.to_event_type ev with
   | KE.Unknown | KE.KeyPress | KE.KeyUp -> None
   | _ -> begin
       let key = C.Util.keyboard_event_to_key ev in
-      T.Key_map.find keymap ~condition ~key
+      match List.find_opt (fun key' -> key'.T.Key_map.key = key) keymap.T.Key_map.bindings with
+      | None -> None
+      | Some key -> Some key.action
     end
 
 (* execute command when bound action found. *)
 let key_handler ~props ev =
-  match event_to_action ~ev ~keymap:props##.keymap ~condition:props##.condition with
+  match event_to_action ~ev ~keymap:props##.keymap with
   | None -> ()
   | Some action ->
     ev##preventDefault;
@@ -26,12 +28,10 @@ let container_key = "keyHandlerContainer"
 let t = R.Component.make_stateful
     ~props:(module struct
     class type t = object
-      (** global keymap *)
-      method condition: T.Condition.t Js.readonly_prop
       (** class name for container element.  *)
       method className: string option Js.readonly_prop
       (** specialized key map for this element. If this is None, use global key map instead. *)
-      method keymap: string T.Key_map.t Js.readonly_prop
+      method keymap: T.Key_map.t Js.readonly_prop
       (** callback function. Calling this function when action was found with key stroke. *)
       method onAction: (string -> unit) Js.readonly_prop
     end

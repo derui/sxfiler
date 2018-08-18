@@ -1,10 +1,6 @@
 (* Condition defines condition to handle timing to enable key binding.*)
-type context =
-  | On_file_tree
-  | On_completing
-
 module Context_set = Set.Make(struct
-    type t = context
+    type t = string
     let compare = Pervasives.compare
   end)
 

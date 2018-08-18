@@ -1,6 +1,5 @@
 open Sxfiler_core
-open Sxfiler_domain.Key_map
-module T = Sxfiler_domain
+module T = Sxfiler_rpc.Types
 
 module Original_key_binding = struct
   type t = {
@@ -34,12 +33,13 @@ class type js = object
   method bindings: Original_key_binding.js Js.t Js.js_array Js.t Js.readonly_prop
 end
 
-let to_js t : js Js.t =
-  let bindings = bindings t in
-  let bindings = List.map (fun (cond, key, v) -> {Original_key_binding.condition = cond;
-                                   key = Sxfiler_kbd.to_keyseq key;
-                                   action = v;
-                                  })
+let to_js (t:T.Key_map.t) : js Js.t =
+  let bindings = t.T.Key_map.bindings in
+  let bindings = List.map (fun v -> {
+        Original_key_binding.condition = v.T.Key_map.condition;
+        key = v.T.Key_map.key;
+        action = v.action;
+      })
     bindings
 
   |> List.map Original_key_binding.to_js
@@ -50,13 +50,13 @@ let to_js t : js Js.t =
     val bindings = bindings
   end
 
-let of_js  (js:js Js.t) : string t =
-  Js.array_map Original_key_binding.of_js js##.bindings
-  |> Js.to_array
-  |> Array.to_list
-  |> List.fold_left (fun keymap v ->
-      let open Original_key_binding in
-      match Sxfiler_kbd.of_keyseq v.key with
-      | None -> keymap
-      | Some key -> add keymap ~condition:v.condition ~key ~value:v.action
-    ) (make ())
+let of_js (js:js Js.t) : T.Key_map.t =
+  let bindings = Js.array_map Original_key_binding.of_js js##.bindings
+                 |> Js.to_array
+                 |> Array.to_list
+                 |> List.map (fun v -> {
+                       T.Key_map.key = v.Original_key_binding.key;
+                       condition = v.Original_key_binding.condition;
+                       action = v.action
+                     }) in
+  {T.Key_map.bindings = bindings}

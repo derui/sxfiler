@@ -1,5 +1,5 @@
 
-module T = Sxfiler_domain
+module T = Sxfiler_rpc.Types
 module R = Jsoo_reactjs
 module C = Sxfiler_renderer_core
 module S = Sxfiler_renderer_store

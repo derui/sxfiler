@@ -1,4 +1,4 @@
-open Sxfiler_domain.Location_history
+open Sxfiler_rpc.Types.Location_history
 
 class type js = object
   method records: Location_record.js Js.t Js.js_array Js.t Js.readonly_prop

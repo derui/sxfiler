@@ -4,7 +4,7 @@
     This component will appear beside of a base component that is passed from props.
 *)
 
-module T = Sxfiler_completion.Domain
+module T = Sxfiler_rpc.Types
 module R = Jsoo_reactjs
 module C = Sxfiler_renderer_core
 module S = Sxfiler_renderer_store
@@ -23,10 +23,10 @@ let t = R.Component.make_stateless
         if not props##.showed || List.length completion.S.candidates = 0 then R.empty ()
         else
           let children = List.map (fun candidate ->
-              let open T in
-              [%c P_completer_item.t ~key:Candidate.(id candidate) ~props:(object%js
+              let module C = T.Completion in
+              [%c P_completer_item.t ~key:candidate.C.Candidate.value.C.Item.id ~props:(object%js
                   val candidate = candidate
-                  val selected = Js.bool (candidate.value.Item.id = completion.S.selected_id)
+                  val selected = Js.bool (candidate.value.C.Item.id = completion.S.selected_id)
                 end)]
             ) completion.S.candidates
           in

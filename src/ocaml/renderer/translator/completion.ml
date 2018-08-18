@@ -1,7 +1,7 @@
-module D = Sxfiler_completion.Domain
+module T = Sxfiler_rpc.Types
 
 module Item = struct
-  open D.Item
+  open T.Completion.Item
   class type js = object
     method id: Js.js_string Js.t Js.readonly_prop
     method value: Js.js_string Js.t Js.readonly_prop
@@ -19,7 +19,7 @@ module Item = struct
 end
 
 module Candidate = struct
-  open D.Candidate
+  open T.Completion.Candidate
   class type js = object
     method start: int Js.readonly_prop
     method length: int Js.readonly_prop

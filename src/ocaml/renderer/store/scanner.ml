@@ -1,10 +1,10 @@
 open Sxfiler_core
-module D = Sxfiler_domain
 module C = Sxfiler_renderer_core
+module T = Sxfiler_rpc.Types
 
 module File_list = struct
   type t = {
-    scanner: D.Scanner.t;
+    scanner: T.Scanner.t;
     selected_item_index: int;
   }
 
@@ -15,7 +15,7 @@ module File_list = struct
     }
 
   let move_index t ~direction =
-    let max_index = List.length t.scanner.D.Scanner.nodes in
+    let max_index = List.length t.scanner.T.Scanner.nodes in
     match direction with
     | `Next -> {t with selected_item_index = min (pred max_index) (succ t.selected_item_index)}
     | `Prev -> {t with selected_item_index = max 0 (pred t.selected_item_index)}
@@ -57,7 +57,7 @@ module State = struct
 
   let reduce t = function
     | C.Message.Update_scanner scanner ->
-      Jstable.add t.file_lists Js.(string scanner.D.Scanner.id) @@ File_list.make scanner;
+      Jstable.add t.file_lists Js.(string scanner.T.Scanner.id) @@ File_list.make scanner;
       t
     | C.Message.Move_cursor_to_next ->
       update_list t ~name:t.current_scanner ~f:(fun list -> File_list.(move_index list ~direction:`Next))

@@ -4,7 +4,8 @@ module S = Sxfiler_server
 module C = Sxfiler_server_core
 module G = Sxfiler_server_gateway
 module Co = Sxfiler_completion
-module T = Sxfiler_server_translator
+module Tr = Sxfiler_server_translator
+module T = Sxfiler_rpc.Types
 
 let proc_completion = [
   Alcotest_lwt.test_case "can setup common source" `Quick (fun switch () ->
@@ -16,7 +17,19 @@ let proc_completion = [
       let module Setup_gateway : G.Completion.Setup = struct
         type params = {
           source: T.Completion.Item.t list;
-        } [@@deriving yojson]
+        }
+
+        let params_of_yojson js =
+          let open Yojson.Safe.Util in
+          let open Result.Infix in
+          let source = js |> member "source" |> to_list in
+          let source = List.fold_left (fun accum item ->
+              accum >>= fun accum ->
+              Tr.Completion.Item.of_yojson item >>= fun item ->
+              Ok (item :: accum)
+            ) (Ok []) source
+          in
+          source >>= fun source -> Ok {source = List.rev source}
 
         type result = unit
         let handle {source} = State.update source

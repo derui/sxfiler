@@ -1,6 +1,6 @@
 open Sxfiler_core
 module VL = Sxfiler_virtualized_list
-module T = Sxfiler_domain
+module T = Sxfiler_rpc.Types
 module R = Jsoo_reactjs
 module C = Sxfiler_renderer_core
 module S = Sxfiler_renderer_store
@@ -78,7 +78,7 @@ let content =
 
                 let children = Array.mapi (fun index item ->
                     let module N = T.Node in
-                    [%c P_file_item.t ~key:(Path.to_string item.N.full_path)
+                    [%c P_file_item.t ~key:(item.N.name)
                         ~props:(object%js
                         val item = item
                         val selected = (index = vt.Vt.selected_item_index)
@@ -131,7 +131,7 @@ let t = R.Component.make_stateless
         let scanner = state.S.Scanner.File_list.scanner in
         [%e div ~class_name:"fp-FileList"
             [[%c header ~key:"header" ~props:(object%js
-                val directory = (Path.to_string scanner.location)
+                val directory = scanner.location
                 val focused = props##.focused
             end)];
              [%c content ~key:"file-list" ~props:(object%js

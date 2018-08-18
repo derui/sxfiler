@@ -4,8 +4,7 @@
     This component will appear beside of a base component that is passed from props.
 *)
 
-module D = Sxfiler_domain
-module T = Sxfiler_completion.Domain
+module T = Sxfiler_rpc.Types
 module R = Jsoo_reactjs
 module C = Sxfiler_renderer_core
 module S = Sxfiler_renderer_store
@@ -16,15 +15,17 @@ type action =
   | Select
 
 let default_key_map =
-  let keymap = D.Key_map.make () in
-  let condition = D.Condition.empty in
-  List.fold_left (fun keymap (key, value) -> D.Key_map.add ~condition ~key ~value keymap)
-    keymap
+  let bindings = List.map (fun (key, value) -> T.Key_map.{
+      key = Sxfiler_kbd.to_keyseq key;
+      action = value;
+      condition = T.Condition.empty
+    })
     [
       Sxfiler_kbd.make "ArrowUp", "prev";
       Sxfiler_kbd.make "ArrowDown", "next";
       Sxfiler_kbd.make "Enter", "select";
     ]
+  in {T.Key_map.bindings}
 
 let handle_action this = function
   | "prev" -> this##.props##.onPrev ()
@@ -42,8 +43,7 @@ let t =
              class type t = object
                method completerId: string Js.readonly_prop
                method completion: S.Completion.State.t Js.readonly_prop
-               method condition: D.Condition.t Js.readonly_prop
-               method onCompleted: (T.Candidate.t -> unit) Js.readonly_prop
+               method onCompleted: (T.Completion.Candidate.t -> unit) Js.readonly_prop
                method onNext: (unit -> unit) Js.readonly_prop
                method onPrev: (unit -> unit) Js.readonly_prop
              end
@@ -76,7 +76,6 @@ let t =
                       val onAction = handle_action this
                       val className = Some "sf-CompleterWrapper"
                       val keymap = default_key_map
-                      val condition = this##.props##.condition
                     end)
                     [
                       [%e div ~key:"input" ~class_name:"sf-CompleterWrapper_Input"

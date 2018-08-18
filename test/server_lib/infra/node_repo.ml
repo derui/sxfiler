@@ -24,7 +24,6 @@ let testcases = [
           let module N = Sxfiler_domain.Node in
           let module S = Sxfiler_domain.File_stat in
           Alcotest.(check string) "full_path" tempfile @@ Path.to_string node.N.full_path;
-          Alcotest.(check string) "parent_directory" (Filename.dirname tempfile) node.N.parent_directory;
           Alcotest.(check @@ option string) "link_path" None node.N.link_path;
           Alcotest.(check int32) "stat.mode" 0o666l node.N.stat.S.mode;
           Alcotest.(check int64) "stat.size" 3L node.N.stat.S.size;

@@ -1,16 +1,15 @@
-open Sxfiler_core
 open Mocha_of_ocaml
-module D = Sxfiler_domain
-module T = Sxfiler_renderer_translator
+module Tr = Sxfiler_renderer_translator
+module T = Sxfiler_rpc.Types
 
 let suite () =
   "Location record translator" >::: [
     "should be able to convert between JavaScript and OCaml" >:: (fun () ->
-        let data = D.Location_record.record_of
-            ~location:(Path.of_string @@ Filename.concat "foo" "bar")
-            (module struct
-              let unixtime () = 0L
-            end) in
-        assert_ok (data = T.Location_record.(of_js @@ to_js data))
+        let data = T.Location_record.{
+            location = "foo/bar";
+            timestamp = "100";
+          }
+        in
+        assert_ok (data = Tr.Location_record.(of_js @@ to_js data))
       );
   ]

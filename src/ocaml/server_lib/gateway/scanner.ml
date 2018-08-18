@@ -1,7 +1,7 @@
 open Sxfiler_core
-module T = Sxfiler_domain
 module Usecase = Sxfiler_usecase
 module Translator = Sxfiler_server_translator
+module T = Sxfiler_rpc.Types
 
 module type Make = sig
   type params = {
@@ -10,7 +10,7 @@ module type Make = sig
   } [@@deriving yojson]
 
   type result = {
-    scanner: Translator.Scanner.t option;
+    scanner: T.Scanner.t option;
     already_exists: bool;
   }
 
@@ -24,7 +24,7 @@ module Make(System:System.S)(U:Usecase.Scanner.Make) : Make = struct
   } [@@deriving yojson]
 
   type result = {
-    scanner: Translator.Scanner.t option;
+    scanner: T.Scanner.t option;
     already_exists: bool;
   }
 
@@ -49,7 +49,7 @@ module type Get = sig
   } [@@deriving yojson]
 
   type result = {
-    scanner: Translator.Scanner.t option;
+    scanner: T.Scanner.t option;
     not_found: bool;
   }
 
@@ -62,7 +62,7 @@ module Get(U:Usecase.Scanner.Get) : Get = struct
   } [@@deriving yojson]
 
   type result = {
-    scanner: Translator.Scanner.t option;
+    scanner: T.Scanner.t option;
     not_found: bool;
   }
 

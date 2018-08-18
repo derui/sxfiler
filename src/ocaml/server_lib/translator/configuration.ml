@@ -1,38 +1,44 @@
-(** This module defines translator for {Configuration} module to translate from domain to
-    outer model.
-*)
-open Sxfiler_core
-module T = Sxfiler_domain
+module D = Sxfiler_domain
+module T = Sxfiler_rpc.Types
 
 module Sort_type = struct
-  type t = T.Types.Sort_type.t
+  open T.Configuration.Sort_type
 
-  let of_yojson = function
-    | `Int v -> begin match v with
-        | 1 -> Ok T.Types.Sort_type.Date
-        | 2 -> Ok T.Types.Sort_type.Name
-        | 3 -> Ok T.Types.Sort_type.Size
-        | _ -> Error "Unknown sort_type"
-      end
-    | _ -> Error "Invalid JSON type"
+  let to_yojson t = `Int t
+  let of_yojson js : (t, string) result =
+    let open Yojson.Safe.Util in
+    try
+      Ok (js |> to_int)
+    with Type_error (s, _) -> Error s
 
-  let to_yojson t = `Int (match t with
-      | T.Types.Sort_type.Date -> 1
-      | T.Types.Sort_type.Name -> 2
-      | T.Types.Sort_type.Size -> 3)
+  let to_domain = function
+    | 1 -> D.Types.Sort_type.Date
+    | 2 -> D.Types.Sort_type.Name
+    | 3 -> D.Types.Sort_type.Size
+    | _ -> failwith "Unknown sort_type"
 
-  let of_domain = Fun.ident
-  let to_domain = Fun.ident
+  let of_domain = function
+    | D.Types.Sort_type.Date -> 1
+    | D.Types.Sort_type.Name -> 2
+    | D.Types.Sort_type.Size -> 3
 end
 
-type t = {
-  sort_order: Sort_type.t [@key "sortOrder"];
-} [@@deriving yojson]
+let to_yojson t : Yojson.Safe.json =
+  `Assoc ["sortOrder", Sort_type.to_yojson t.T.Configuration.sort_order]
+
+let of_yojson js =
+  let open Yojson.Safe.Util in
+  try
+    let sort_order = js |> member "sortOrder" in
+    let open Sxfiler_core.Result.Infix in
+    Sort_type.of_yojson sort_order >>= fun sort_order ->
+    Ok {T.Configuration.sort_order}
+  with Type_error (s, _) -> Error s
 
 let of_domain t = {
-  sort_order = Sort_type.of_domain t.T.Configuration.sort_order;
+  T.Configuration.sort_order = Sort_type.of_domain t.D.Configuration.sort_order;
 }
 
 let to_domain t = {
-  T.Configuration.sort_order = Sort_type.to_domain t.sort_order;
+  D.Configuration.sort_order = Sort_type.to_domain t.T.Configuration.sort_order;
 }

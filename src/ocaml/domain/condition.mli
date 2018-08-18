@@ -1,7 +1,4 @@
 (** Condition defines condition of context such as starting completion, inputting on command. *)
-type context =
-  | On_file_tree
-  | On_completing
 
 (** abstract type for Condition *)
 type t
@@ -13,16 +10,16 @@ val equal: t -> t -> bool
 val empty : t
 
 (** [of_list contexts] returns new condition switched on given contexts. *)
-val of_list: context list -> t
+val of_list: string list -> t
 
 (** [to_list t] returns list of context that is contains only switched on. *)
-val to_list: t -> context list
+val to_list: t -> string list
 
 (** [enable t ~context] returns new condition context enabled. *)
-val enable: t -> context:context -> t
+val enable: t -> context:string -> t
 
 (** [disable t ~context] returns new condition context disabled. *)
-val disable: t -> context:context -> t
+val disable: t -> context:string -> t
 
 (** [subset ~current ~parts] returns what [parts] is subset of [current] or not. This function is useful to check
     if current context was fulfilled condition specified by [parts].

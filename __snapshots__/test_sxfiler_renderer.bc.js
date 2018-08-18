@@ -100,7 +100,7 @@ exports['File name component should who filename normally 1'] = {
   "ref": null,
   "props": {
     "className": "fp-FileItem_FileName",
-    "children": "sample.txt"
+    "children": "/foo/bar/sample.txt"
   },
   "_owner": null,
   "_store": {}
@@ -112,7 +112,7 @@ exports['File name component should make another color if item is directory 1'] 
   "ref": null,
   "props": {
     "className": "fp-FileItem_FileName fp-FileItem_FileName-directory",
-    "children": "bar/"
+    "children": "/foo/bar/"
   },
   "_owner": null,
   "_store": {}
@@ -124,7 +124,7 @@ exports['File name component should make another color if item is symbolic link 
   "ref": null,
   "props": {
     "className": "fp-FileItem_FileName fp-FileItem_FileName-symlink",
-    "children": "sample.txt"
+    "children": "/foo/bar/sample.txt"
   },
   "_owner": null,
   "_store": {}

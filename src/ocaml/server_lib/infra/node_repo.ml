@@ -36,7 +36,7 @@ let get_node parent path =
     let stat = stat_to_file_stat stat in
     let module D = Sxfiler_domain in
     let path = Path.of_string path in
-    Some (D.Node.make ~full_path:path ~parent_directory:parent ~stat ~link_path:None)
+    Some (D.Node.make ~full_path:path ~stat ~link_path:None)
 
 module Core : D.Node.Repository = struct
   let find_by_dir ~dir =

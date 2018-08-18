@@ -1,12 +1,12 @@
 (** {!Completion} provides status of completion for renderer.  *)
 module C = Sxfiler_renderer_core
-module Co = Sxfiler_completion.Domain
+module T = Sxfiler_rpc.Types
 
 module State = struct
   type message = C.Message.t
 
   type t = {
-    candidates: Co.result;
+    candidates: T.Completion.Candidate.t list;
     selected_index: int;
     selected_id: string;
     current_completer: string option;
@@ -30,18 +30,20 @@ module State = struct
     | Completion Tear_down -> {t with current_completer = None}
     | Completion Select_next -> begin
         let new_index = max 0 (min (List.length t.candidates - 1) (succ t.selected_index)) in
+        let module C = T.Completion in
         {t with selected_index = new_index;
                 selected_id = match List.nth_opt t.candidates t.selected_index with
                   | None -> ""
-                  | Some v -> v.Co.Candidate.value.Co.Item.value
+                  | Some v -> v.C.Candidate.value.C.Item.value
         }
         end
     | Completion Select_prev -> begin
         let new_index = max 0 (min (List.length t.candidates - 1) (pred t.selected_index)) in
+        let module C = T.Completion in
         {t with selected_index = new_index;
                 selected_id = match List.nth_opt t.candidates t.selected_index with
                   | None -> ""
-                  | Some v -> v.Co.Candidate.value.Co.Item.value
+                  | Some v -> v.C.Candidate.value.C.Item.value
         }
         end
     | _ -> t
@@ -50,7 +52,8 @@ module State = struct
 
   (** [selected_item t] gets current selected item. *)
   let selected_item t =
-    List.find_opt (fun v -> v.Co.Candidate.value.Co.Item.id = t.selected_id)
+    let module C = T.Completion in
+    List.find_opt (fun v -> v.C.Candidate.value.C.Item.id = t.selected_id)
       t.candidates
 end
 

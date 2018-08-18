@@ -1,4 +1,4 @@
-include (struct include Sxfiler_domain.File_stat end)
+open Sxfiler_rpc.Types.File_stat
 
 (* In ppx_deriving_yojson, int32 and int64 are converted as JavaScript's number that has range double.
    The double can not handle int64, so use string as int64 and int32 representation.
@@ -18,26 +18,26 @@ class type js = object
 end
 
 let of_js : js Js.t -> t = fun js -> {
-    mode = Int32.of_string @@ Js.to_string js##.mode;
+    mode = Js.to_string js##.mode;
     uid = js##.uid;
     gid = js##.gid;
-    atime = Int64.of_string @@ Js.to_string js##.atime;
-    ctime = Int64.of_string @@ Js.to_string js##.ctime;
-    mtime = Int64.of_string @@ Js.to_string js##.mtime;
-    size = Int64.of_string @@ Js.to_string js##.size;
+    atime = Js.to_string js##.atime;
+    ctime = Js.to_string js##.ctime;
+    mtime = Js.to_string js##.mtime;
+    size = Js.to_string js##.size;
     is_directory = Js.to_bool js##.isDirectory;
     is_file = Js.to_bool js##.isFile;
     is_symlink = Js.to_bool js##.isSymlink;
   }
 
 let to_js t : js Js.t = object%js
-  val mode = Js.string @@ Int32.to_string t.mode
+  val mode = Js.string t.mode
   val uid = t.uid
   val gid = t.gid
-  val atime = Js.string @@ Int64.to_string t.atime
-  val ctime = Js.string @@ Int64.to_string t.ctime
-  val mtime = Js.string @@ Int64.to_string t.mtime
-  val size = Js.string @@ Int64.to_string t.size
+  val atime = Js.string t.atime
+  val ctime = Js.string t.ctime
+  val mtime = Js.string t.mtime
+  val size = Js.string t.size
   val isDirectory = Js.bool t.is_directory
   val isFile = Js.bool t.is_file
   val isSymlink = Js.bool t.is_symlink

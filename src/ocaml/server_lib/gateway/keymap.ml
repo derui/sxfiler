@@ -1,9 +1,10 @@
 module Usecase = Sxfiler_usecase
 module Translator = Sxfiler_server_translator
+module T = Sxfiler_rpc.Types
 
 module type Get = sig
   type params = unit
-  type result = Translator.Key_map.t
+  type result = T.Key_map.t
 
   val handle: params -> result Lwt.t
 end
@@ -13,7 +14,7 @@ end
 *)
 module Get(Usecase:Usecase.Keymap.Get) = struct
   type params = unit
-  type result = Translator.Key_map.t
+  type result = T.Key_map.t
 
   let handle () =
     match%lwt Usecase.execute () with
@@ -22,7 +23,7 @@ module Get(Usecase:Usecase.Keymap.Get) = struct
 end
 
 module type Store = sig
-  type params = Translator.Key_map.t
+  type params = T.Key_map.t
   type result = unit
 
   val handle: params -> result Lwt.t
@@ -32,7 +33,7 @@ end
     Replace [json] on implementation to match rpc.
 *)
 module Store(Usecase:Usecase.Keymap.Store) = struct
-  type params = Translator.Key_map.t
+  type params = T.Key_map.t
   type result = unit
 
   let handle param =

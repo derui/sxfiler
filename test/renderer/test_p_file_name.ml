@@ -9,7 +9,7 @@ let suite () =
         let module C = S.P_file_name in
         let e = R.create_element ~props:(object%js
             val parentDirectory = "/foo/bar/"
-            val path = "/foo/bar/sample.txt"
+            val name = "/foo/bar/sample.txt"
             val isDirectory = false
             val isSymbolicLink = false
           end) C.t
@@ -24,7 +24,7 @@ let suite () =
         let module C = S.P_file_name in
         let e = R.create_element ~props:(object%js
             val parentDirectory = "/foo/"
-            val path =  "/foo/bar/"
+            val name =  "/foo/bar/"
             val isDirectory = true
             val isSymbolicLink = false
           end) C.t
@@ -39,7 +39,7 @@ let suite () =
         let module C = S.P_file_name in
         let e = R.create_element ~props:(object%js
             val parentDirectory = "/foo/bar/"
-            val path = "/foo/bar/sample.txt"
+            val name = "/foo/bar/sample.txt"
             val isDirectory = false
             val isSymbolicLink = true
           end) C.t

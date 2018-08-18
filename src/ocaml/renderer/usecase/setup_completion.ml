@@ -2,16 +2,17 @@
 module Co = Sxfiler_completion.Domain
 module C = Sxfiler_renderer_core
 module S = Sxfiler_renderer_service
+module RT = Sxfiler_rpc.Types
 
-type param = Co.collection * string
+type param = RT.Completion.Item.t list * string
 
 module Make(Service:S.Completion.S) : C.Usecase.S with type param = param = struct
   type t = {
-    collection: Co.collection;
+    collection: RT.Completion.Item.t list;
     completer_id : string;
   }
 
-  type param = Co.collection * string
+  type param = RT.Completion.Item.t list * string
 
   let create (collection, completer_id) =
     {collection;

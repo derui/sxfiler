@@ -1,10 +1,10 @@
-module D = Sxfiler_domain
 module Co = Sxfiler_completion.Domain
+module T = Sxfiler_rpc.Types
 
 (* messages for completion operation *)
 type completion =
   | Setup of string
-  | Read of Co.result
+  | Read of T.Completion.Candidate.t list
   | Tear_down
   | Select_next
   | Select_prev
@@ -14,9 +14,9 @@ type command =
   | Select of string
 
 type t =
-  | Update_scanner of D.Scanner.t
-  | Update_keymap of string D.Key_map.t
-  | Update_configuration of D.Configuration.t
+  | Update_scanner of T.Scanner.t
+  | Update_keymap of T.Key_map.t
+  | Update_configuration of T.Configuration.t
   (* switch mode *)
   | Switch_mode of Types.Mode.t
   | Move_cursor_to_next

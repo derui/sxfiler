@@ -29,7 +29,7 @@ let proc_scanner = [
         } [@@deriving yojson]
 
         type result = {
-          scanner: T.Scanner.t option;
+          scanner: R.Types.Scanner.t option;
           already_exists: bool;
         }
 
@@ -57,7 +57,7 @@ let proc_scanner = [
         } [@@deriving yojson]
 
         type result = {
-          scanner: T.Scanner.t option;
+          scanner: R.Types.Scanner.t option;
           already_exists: bool;
         }
 

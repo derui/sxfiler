@@ -1,10 +1,10 @@
-module T = Sxfiler_domain
 module Usecase = Sxfiler_usecase
 module Translator = Sxfiler_server_translator
+module T = Sxfiler_rpc.Types
 
 module type Get = sig
   type params = unit
-  type result = Translator.Configuration.t
+  type result = T.Configuration.t
 
   val handle: params -> result Lwt.t
 end
@@ -13,7 +13,7 @@ end
 module Get(Usecase:Usecase.Configuration.Get) = struct
   type params = unit
 
-  type result = Translator.Configuration.t
+  type result = T.Configuration.t
 
   let handle () =
     match%lwt Usecase.execute () with
@@ -22,7 +22,7 @@ module Get(Usecase:Usecase.Configuration.Get) = struct
 end
 
 module type Store = sig
-  type params = Translator.Configuration.t
+  type params = T.Configuration.t
   type result = unit
 
   val handle: params -> result Lwt.t
@@ -30,7 +30,7 @@ end
 
 (** The gateway for use case of {!Rpc.Configuration.Store} *)
 module Store(Usecase:Usecase.Configuration.Store) : Store = struct
-  type params = Translator.Configuration.t
+  type params = T.Configuration.t
 
   type result = unit
 

@@ -1,5 +1,5 @@
 
-val keyboard_event_to_key : 'a Jsoo_reactjs.Event.Keyboard_event.t -> Sxfiler_kbd.t
+val keyboard_event_to_key : 'a Jsoo_reactjs.Event.Keyboard_event.t -> string
 
 val find_item_index: ?equal:('a -> 'a -> bool) -> v:'a -> 'a array -> int
 

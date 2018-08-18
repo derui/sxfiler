@@ -3,7 +3,7 @@
  (public_name sxfiler.renderer.translator)
  (modes byte)
  (libraries js_of_ocaml
-  sxfiler.domain
+  sxfiler.rpc
   sxfiler.kbd
   sxfiler.completion
   jsoo_node)

@@ -38,12 +38,10 @@ let t = R.Component.make_stateful
                   let module L = (val this##.props##.locator : Locator.S) in
                   let state = S.App.Store.get L.store in
                   let keymap = S.Keymap.Store.get @@ S.App.State.keymap state in
-                  let condition = S.Workspace.State.condition @@ S.Workspace.Store.get @@ S.App.State.workspace state in
                   [%c C_key_handler.t ~key:"key-container"
                       ~props:(object%js
                       val keymap = keymap
                       val className = (Some "sf-Main")
-                      val condition = condition
                       val onAction = (handle_action ~locator:(module L))
                       end)
                       [

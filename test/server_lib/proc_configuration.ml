@@ -4,14 +4,15 @@ module D = Sxfiler_domain
 module S = Sxfiler_server
 module C = Sxfiler_server_core
 module G = Sxfiler_server_gateway
-module T = Sxfiler_server_translator
+module Tr = Sxfiler_server_translator
+module T = Sxfiler_rpc.Types
 
 let proc_configuration = [
   Alcotest_lwt.test_case "get current configuration" `Quick (fun switch () ->
       let expected = D.Configuration.{sort_order = D.Types.Sort_type.Date} in
       let module State = C.Statable.Make(struct
           type t = T.Configuration.t
-          let empty () = T.Configuration.of_domain expected
+          let empty () = Tr.Configuration.of_domain expected
         end) in
       let module Gateway = struct
         type params = unit
@@ -23,7 +24,7 @@ let proc_configuration = [
 
       let%lwt res = Get.handle () in
       let%lwt actual = State.get () in
-      Alcotest.(check @@ of_pp @@ Fmt.nop) "current" expected @@ T.Configuration.to_domain actual;
+      Alcotest.(check @@ of_pp @@ Fmt.nop) "current" expected @@ Tr.Configuration.to_domain actual;
       Lwt.return_unit
     );
 ]
