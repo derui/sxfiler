@@ -49,3 +49,9 @@ module Configuration = C.Statable.Make(struct
 
     let empty () = Sxfiler_domain.Configuration.default
   end)
+
+module Condition = C.Statable.Make(struct
+    type t = Sxfiler_domain.Condition.t
+
+    let empty () = Sxfiler_domain.Condition.empty
+  end)

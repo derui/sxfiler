@@ -25,3 +25,14 @@ val disable: t -> context:string -> t
     if current context was fulfilled condition specified by [parts].
 *)
 val subset : current:t -> parts:t -> bool
+
+module type Repository = sig
+  (** [enable context] enable [context] to current condition. *)
+  val enable: string -> unit Lwt.t
+
+  (** [disable context] disable [context] to current condition. *)
+  val disable: string -> unit Lwt.t
+
+  (** [resolve ()] returns condition as singleton instance. *)
+  val resolve: unit -> t Lwt.t
+end
