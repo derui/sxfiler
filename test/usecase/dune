@@ -1,0 +1,10 @@
+(alias
+ (name runtest)
+ (deps tests.exe)
+ (action (run %{deps})))
+
+(executable
+ (name tests)
+ (flags (-safe-string))
+ (libraries alcotest alcotest-lwt sxfiler.core sxfiler.domain sxfiler.usecase)
+ (preprocess (pps lwt_ppx)))

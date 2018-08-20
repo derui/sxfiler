@@ -27,11 +27,8 @@ val disable: t -> context:string -> t
 val subset : current:t -> parts:t -> bool
 
 module type Repository = sig
-  (** [enable context] enable [context] to current condition. *)
-  val enable: string -> unit Lwt.t
-
-  (** [disable context] disable [context] to current condition. *)
-  val disable: string -> unit Lwt.t
+  (** [store t] store [t] to current condition. *)
+  val store: t -> unit Lwt.t
 
   (** [resolve ()] returns condition as singleton instance. *)
   val resolve: unit -> t Lwt.t

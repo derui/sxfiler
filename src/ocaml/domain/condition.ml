@@ -19,12 +19,7 @@ let disable t ~context = Context_set.remove context t
 let subset ~current ~parts = Context_set.subset parts current
 
 module type Repository = sig
-  (** [enable context] enable [context] to current condition. *)
-  val enable: string -> unit Lwt.t
+  val store: t -> unit Lwt.t
 
-  (** [disable context] disable [context] to current condition. *)
-  val disable: string -> unit Lwt.t
-
-  (** [resolve ()] returns condition as singleton instance. *)
   val resolve: unit -> t Lwt.t
 end

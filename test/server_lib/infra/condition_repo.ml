@@ -22,11 +22,9 @@ let testcases = [
         end) in
       let module R = I.Condition_repo.Make(State) in
 
-      let%lwt () = R.enable "context" in
-      let%lwt () = R.enable "context2" in
-      let%lwt () = R.disable "context2" in
-      let%lwt actual = R.resolve () in
       let expected = D.Condition.(empty |> enable ~context:"context") in
+      let%lwt () = R.store expected in
+      let%lwt actual = R.resolve () in
       Alcotest.(check bool) "stored" true (D.Condition.equal actual expected);
       Lwt.return_unit
     );
