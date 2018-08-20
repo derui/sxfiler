@@ -1,9 +1,10 @@
 let () =
   let tests =
-    Completion.testcases
-    @ Configuration.testcases
-    @ Keymap.testcases
-    @ Scanner.testcases
+    Completion_test.testcases
+    @ Configuration_test.testcases
+    @ Keymap_test.testcases
+    @ Scanner_test.testcases
+    @ Condition_test.testcases
   in
 
   Alcotest.run "gateways" tests
