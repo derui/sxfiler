@@ -8,9 +8,6 @@ module State = struct
   let make () = ()
 
   let reduce t = function
-    | C.Message.Switch_mode mode -> begin match mode with
-        | C.Types.Mode.File_tree -> t
-      end
     | _ -> t
 
   let equal = (=)

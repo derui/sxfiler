@@ -58,23 +58,20 @@ module Keymap = struct
     type result = Types.Key_map.t
     let endpoint = "keymap/get"
   end
-end
 
-(** endpoints for condition *)
-module Condition = struct
-  module Enable = struct
+  module Enable_context = struct
     type params = {
       context: string;
     }
     type result = unit
-    let endpoint = "condition/enable"
+    let endpoint = "keymap/enableContext"
   end
 
-  module Disable = struct
+  module Disable_context = struct
     type params = {
       context: string;
     }
     type result = unit
-    let endpoint = "condition/disble"
+    let endpoint = "keymap/disbleContext"
   end
 end

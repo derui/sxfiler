@@ -41,3 +41,52 @@ module Store(Usecase:Usecase.Keymap.Store) = struct
     | Ok () -> Lwt.return_unit
     | Error _ -> assert false
 end
+
+
+module type Enable_context = sig
+  type params = {
+    context: string;
+  } [@@deriving yojson]
+
+  type result = T.Key_map.t
+
+  val handle: params -> result Lwt.t
+end
+
+(** The gateway for Use Case of {!Usecase.Keymap.Enable_context} *)
+module Enable_context(Usecase:Usecase.Keymap.Enable_context) : Enable_context = struct
+  type params = {
+    context: string
+  } [@@deriving yojson]
+
+  type result = T.Key_map.t
+
+  let handle param =
+    match%lwt Usecase.execute {context = param.context} with
+    | Ok keymap -> Lwt.return @@ Translator.Key_map.of_domain keymap
+    | Error _ -> assert false   (* Can not route this branch. *)
+end
+
+module type Disable_context = sig
+  type params = {
+    context: string;
+  } [@@deriving yojson]
+
+  type result = T.Key_map.t
+
+  val handle: params -> result Lwt.t
+end
+
+(** The gateway for Use Case of {!Usecase.Keymap.Disable_context} *)
+module Disable_context(Usecase:Usecase.Keymap.Disable_context) : Disable_context = struct
+  type params = {
+    context: string
+  } [@@deriving yojson]
+
+  type result = T.Key_map.t
+
+  let handle param =
+    match%lwt Usecase.execute {context = param.context} with
+    | Ok keymap -> Lwt.return @@ Translator.Key_map.of_domain keymap
+    | Error _ -> assert false   (* Can not route this branch. *)
+end

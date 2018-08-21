@@ -1,5 +1,4 @@
 let testcases = [
-  "Condition", Condition_test.testcases;
 ]
 
 let () =
