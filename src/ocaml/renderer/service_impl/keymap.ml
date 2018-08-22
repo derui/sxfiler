@@ -30,7 +30,7 @@ module Enable_context_api : J.Api_def with type params = E.Keymap.Enable_context
       val context = Js.string param.context
     end)
 
-  let result_of_json _ = ()
+  let result_of_json js = T.Key_map.of_js @@ Js.Unsafe.coerce js
 end
 
 module Disable_context_api : J.Api_def with type params = E.Keymap.Disable_context.params
@@ -46,7 +46,7 @@ module Disable_context_api : J.Api_def with type params = E.Keymap.Disable_conte
       val context = Js.string param.context
     end)
 
-  let result_of_json _ = ()
+  let result_of_json js = T.Key_map.of_js @@ Js.Unsafe.coerce js
 end
 
 module Make(Client:C.Rpc.Client) : S = struct

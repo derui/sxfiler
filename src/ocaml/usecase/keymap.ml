@@ -48,6 +48,7 @@ module Enable_context
     let condition = Condition.enable cond ~context:input.context in
     let%lwt () = C.store condition in
     let%lwt keymap = R.resolve () in
+    let keymap = Key_map.subset keymap ~condition in
     Lwt.return_ok keymap
 end
 
@@ -65,5 +66,6 @@ module Disable_context
     let condition = Condition.disable cond ~context:input.context in
     let%lwt () = C.store condition in
     let%lwt keymap = R.resolve () in
+    let keymap = Key_map.subset keymap ~condition in
     Lwt.return_ok keymap
 end

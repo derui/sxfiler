@@ -55,3 +55,12 @@ let bindings t =
     )
   |> List.map (Option.get ~default:(fun () -> []))
   |> List.flatten
+
+let subset t ~condition =
+  bindings t
+  |> List.filter (fun (cond, _, _) -> Condition.subset
+                     ~parts:cond
+                     ~current:condition)
+  |> List.fold_left (fun keymap (condition, key, value) ->
+      add keymap ~condition ~key ~value
+    ) (make ())

@@ -4,7 +4,6 @@ let () =
     @ Configuration_test.testcases
     @ Keymap_test.testcases
     @ Scanner_test.testcases
-    @ Condition_test.testcases
   in
 
   Alcotest.run "gateways" tests

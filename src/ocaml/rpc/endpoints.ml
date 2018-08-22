@@ -63,7 +63,7 @@ module Keymap = struct
     type params = {
       context: string;
     }
-    type result = unit
+    type result = Types.Key_map.t
     let endpoint = "keymap/enableContext"
   end
 
@@ -71,7 +71,7 @@ module Keymap = struct
     type params = {
       context: string;
     }
-    type result = unit
+    type result = Types.Key_map.t
     let endpoint = "keymap/disbleContext"
   end
 end

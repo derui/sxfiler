@@ -14,6 +14,11 @@ module type S = sig
   *)
   val find : 'a t -> condition:Condition.t -> key:Sxfiler_kbd.t -> 'a option
 
+  (** [subset keymap ~condition] gets the subset of [keymap] that are matched with clause
+      [condition].
+  *)
+  val subset: 'a t -> condition:Condition.t -> 'a t
+
   (** [bindings t] returns current bindings with condition. *)
   val bindings: 'a t -> (Condition.t * Sxfiler_kbd.t * 'a) list
 end
