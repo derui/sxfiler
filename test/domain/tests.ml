@@ -1,5 +1,6 @@
 let testcases = [
   "Condition", Condition_test.testcases;
+  "keymap", Key_map_test.testcases;
 ]
 
 let () =
