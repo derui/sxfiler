@@ -21,13 +21,9 @@ module Completion = struct
 end
 
 module Condition = struct
-  type t = {
-    enabled_contexts: string list;
-  }
+  type t = string list
 
-  let empty = {
-    enabled_contexts = []
-  }
+  let empty = []
 end
 
 module Configuration = struct

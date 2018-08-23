@@ -17,7 +17,7 @@ let testcases = [
     );
   "can translate to/from yojson", `Quick, (fun () ->
       let data = T.of_domain data in
-      Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop)) "yojson"
+      Alcotest.(check @@ result (of_pp Fmt.nop) string) "yojson"
         (Ok data) (T.of_yojson @@ T.to_yojson data)
     );
 ]

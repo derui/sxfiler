@@ -5,9 +5,7 @@ module T = Sxfiler_rpc.Types
 let suite () =
   "Condition translator" >::: [
     "should be able to convert between JavaScript and OCaml" >:: (fun () ->
-        let data = T.Condition.{
-            enabled_contexts = ["foo"]
-          } in
+        let data = ["foo"] in
         assert_ok (data = Tr.Condition.(of_js @@ to_js data))
       );
   ]
