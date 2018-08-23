@@ -9,43 +9,12 @@ module R = Jsoo_reactjs
 module C = Sxfiler_renderer_core
 module S = Sxfiler_renderer_store
 
-type action =
-  | Next
-  | Prev
-  | Select
-
-let default_key_map =
-  let bindings = List.map (fun (key, value) -> T.Key_map.{
-      key = Sxfiler_kbd.to_keyseq key;
-      action = value;
-      condition = T.Condition.empty
-    })
-    [
-      Sxfiler_kbd.make "ArrowUp", "prev";
-      Sxfiler_kbd.make "ArrowDown", "next";
-      Sxfiler_kbd.make "Enter", "select";
-    ]
-  in {T.Key_map.bindings}
-
-let handle_action this = function
-  | "prev" -> this##.props##.onPrev ()
-  | "next" -> this##.props##.onNext ()
-  | "select" -> begin
-      match S.Completion.State.selected_item this##.props##.completion with
-      | Some v -> this##.props##.onCompleted v
-      | None -> ()
-    end
-  | _ -> ()
-
 let t =
   R.Component.make_stateful
     ~props:(module struct
              class type t = object
                method completerId: string Js.readonly_prop
                method completion: S.Completion.State.t Js.readonly_prop
-               method onCompleted: (T.Completion.Candidate.t -> unit) Js.readonly_prop
-               method onNext: (unit -> unit) Js.readonly_prop
-               method onPrev: (unit -> unit) Js.readonly_prop
              end
            end)
     ~spec:(R.component_spec
@@ -71,12 +40,7 @@ let t =
                )
 
              (fun this ->
-                [%c C_key_handler.t
-                    ~props:(object%js
-                      val onAction = handle_action this
-                      val className = Some "sf-CompleterWrapper"
-                      val keymap = default_key_map
-                    end)
+                [%e div ~class_name:"sf-CompleterWrapper"
                     [
                       [%e div ~key:"input" ~class_name:"sf-CompleterWrapper_Input"
                           [R.Children.to_element this##.props_defined##.children]];

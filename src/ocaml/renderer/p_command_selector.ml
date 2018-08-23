@@ -9,6 +9,7 @@ let t = R.Component.make_stateful
     ~props:(module struct
              class type t = object
                method onFocus: (unit -> unit) Js.readonly_prop
+               method onBlur: (unit -> unit) Js.readonly_prop
                method onChangeCommand: (string -> unit) Js.readonly_prop
              end
            end)
@@ -35,6 +36,7 @@ let t = R.Component.make_stateful
                      this##.props##.onChangeCommand @@ Js.to_string value
                    )
                  ~on_focus:(fun _ -> this##.props##.onFocus ())
+                 ~on_blur:(fun _ -> this##.props##.onBlur ())
              ] in
 
              [%e div ~class_name:"sf-CommandSelector" [label;input]]
