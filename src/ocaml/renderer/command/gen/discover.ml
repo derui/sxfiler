@@ -46,7 +46,7 @@ let build_static_exporter ~ppf commands =
   | [] -> Format.fprintf ppf "()\n[@@@@warning \"-27\"]"
   | head :: rest ->
     List.iter (fun command ->
-        Format.fprintf ppf "let registry = %s.expose registry;\n" @@ String.capitalize_ascii command
+        Format.fprintf ppf "let registry = %s.expose registry in\n" @@ String.capitalize_ascii command
       ) @@ List.rev rest;
     Format.fprintf ppf "%s.expose registry\n" @@ String.capitalize_ascii head
 
