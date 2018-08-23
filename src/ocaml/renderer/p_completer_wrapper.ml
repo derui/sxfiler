@@ -81,7 +81,7 @@ let t =
                       [%e div ~key:"input" ~class_name:"sf-CompleterWrapper_Input"
                           [R.Children.to_element this##.props_defined##.children]];
                       [%e div ~key:"completerWrapper" ~class_name:"sf-CompleterWrapper_PositionFixer"
-                          [[%c C_completer.t ~key:"completer"
+                          [[%c P_completer.t ~key:"completer"
                               ~props:(object%js
                                 val completerId = this##.props##.completerId
                                 val completion = this##.props##.completion
