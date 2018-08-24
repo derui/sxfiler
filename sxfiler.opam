@@ -24,7 +24,7 @@ depends: [
   "jsoo_node"
   "jsoo_reactjs"
   "snap-shot-it_of_ocaml" {test}
-  "lwt" {<= "4.0.0"}
+  "lwt" {>= "3.0.0"}
   "lwt_ppx" {build}
   "cohttp-lwt-unix"
   "websocket-lwt"
