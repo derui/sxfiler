@@ -15,7 +15,6 @@ let get_classname props =
 let t = R.Component.make_stateless
     ~props:(module struct
              class type t = object
-               method parentDirectory: string Js.readonly_prop
                method name: string Js.readonly_prop
                method isDirectory: bool Js.readonly_prop
                method isSymbolicLink: bool Js.readonly_prop

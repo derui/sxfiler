@@ -23,7 +23,7 @@ let data = {
 let testcases = [
   "can translate to/from domain", `Quick, (fun () ->
       let expected = {
-        T.Node.name = "/bar";
+        T.Node.name = "bar";
         stat = Tr.File_stat.of_domain data.stat;
         parent_directory = "/";
         link_path = Some "/foo";

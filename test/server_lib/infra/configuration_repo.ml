@@ -4,7 +4,7 @@ module S = Sxfiler_server_core
 module I = Sxfiler_server_infra
 
 let data = D.Configuration.{
-    sort_order = D.Types.Sort_type.Date
+    default_sort_order = D.Types.Sort_type.Date
   }
 
 let testcases = [

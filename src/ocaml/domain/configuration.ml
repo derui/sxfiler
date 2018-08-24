@@ -1,11 +1,11 @@
 (** Configuration domain has all configurations of application. *)
 
 type t = {
-  sort_order: Types.Sort_type.t;
+  default_sort_order: Types.Sort_type.t;
 }
 
 let default = {
-  sort_order = Types.Sort_type.Name;
+  default_sort_order = Types.Sort_type.Name;
 }
 
 module type Repository = sig

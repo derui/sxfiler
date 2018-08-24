@@ -8,7 +8,6 @@ let suite () =
     "should who filename normally" >:: (fun () ->
         let module C = S.P_file_name in
         let e = R.create_element ~props:(object%js
-            val parentDirectory = "/foo/bar/"
             val name = "/foo/bar/sample.txt"
             val isDirectory = false
             val isSymbolicLink = false
@@ -23,7 +22,6 @@ let suite () =
     "should make another color if item is directory" >:: (fun () ->
         let module C = S.P_file_name in
         let e = R.create_element ~props:(object%js
-            val parentDirectory = "/foo/"
             val name =  "/foo/bar/"
             val isDirectory = true
             val isSymbolicLink = false
@@ -38,7 +36,6 @@ let suite () =
     "should make another color if item is symbolic link" >:: (fun () ->
         let module C = S.P_file_name in
         let e = R.create_element ~props:(object%js
-            val parentDirectory = "/foo/bar/"
             val name = "/foo/bar/sample.txt"
             val isDirectory = false
             val isSymbolicLink = true

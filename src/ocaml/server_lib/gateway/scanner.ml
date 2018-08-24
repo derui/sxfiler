@@ -30,7 +30,7 @@ module Make(System:System.S)(U:Usecase.Scanner.Make) : Make = struct
 
   let handle param =
     let params = {
-      U.initial_location = Path.of_string param.initial_location;
+      U.initial_location = Path.of_string param.initial_location |> Path.resolve (module System);
       name = param.name;
     } in
     let empty = {scanner = None; already_exists = false} in

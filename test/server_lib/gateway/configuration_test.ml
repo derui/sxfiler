@@ -10,7 +10,7 @@ module U = Sxfiler_usecase
 let configuration_tests = [
   Alcotest_lwt.test_case "get current configuration" `Quick (fun switch () ->
       let expected = D.Configuration.{
-          sort_order = D.Types.Sort_type.Date
+          default_sort_order = D.Types.Sort_type.Date
         } in
       let module Usecase = struct
         type input = unit

@@ -25,14 +25,14 @@ module Sort_type = struct
 end
 
 class type js = object
-  method sortOrder: Sort_type.js Js.t Js.readonly_prop
+  method defaultSortOrder: Sort_type.js Js.t Js.readonly_prop
 end
 
 let of_js : js Js.t -> t = fun js ->
   {
-    sort_order = Sort_type.of_js js##.sortOrder;
+    default_sort_order = Sort_type.of_js js##.defaultSortOrder;
   }
 
 let to_js t : js Js.t = object%js
-  val sortOrder = Sort_type.to_js t.sort_order
+  val defaultSortOrder = Sort_type.to_js t.default_sort_order
 end

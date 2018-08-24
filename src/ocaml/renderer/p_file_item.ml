@@ -26,7 +26,6 @@ let t = R.Component.make_stateful
                 and file_size = [%c P_file_size.t ~key:"size" ~props:(object%js val size = Int64.of_string stat.F.size end)]
                 and file_name = [%c P_file_name.t ~key:"name"
                     ~props:(object%js
-                      val parentDirectory = node.T.Node.parent_directory
                       val name = node.T.Node.name
                       val isDirectory = stat.F.is_directory
                       val isSymbolicLink = stat.F.is_symlink

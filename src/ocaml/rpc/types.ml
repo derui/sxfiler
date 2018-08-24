@@ -32,7 +32,7 @@ module Configuration = struct
   end
 
   type t = {
-    sort_order: Sort_type.t;
+    default_sort_order: Sort_type.t;
   }
 end
 

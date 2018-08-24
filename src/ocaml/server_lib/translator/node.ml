@@ -29,7 +29,7 @@ let of_yojson js =
   with Type_error (s, _) -> Error s
 
 let of_domain t = {
-  name = Path.to_string t.D.full_path;
+  name = Path.basename t.D.full_path;
   stat = File_stat.of_domain t.stat;
   parent_directory = Path.dirname t.D.full_path;
   link_path = t.link_path;
