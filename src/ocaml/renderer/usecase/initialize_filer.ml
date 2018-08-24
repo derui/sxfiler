@@ -1,4 +1,4 @@
-(** This module defines usecase to initialize scanner. *)
+(** This module defines usecase to initialize filer. *)
 module C = Sxfiler_renderer_core
 module S = Sxfiler_renderer_service
 
@@ -7,7 +7,7 @@ type param' = {
   name: string;
 }
 
-module Make(Service:S.Scanner.S) : C.Usecase.S with type param = param' = struct
+module Make(Service:S.Filer.S) : C.Usecase.S with type param = param' = struct
   type t = {
     param: param';
   }
@@ -31,7 +31,7 @@ module Make(Service:S.Scanner.S) : C.Usecase.S with type param = param' = struct
           end
       in
       let module DI = (val dispatcher: C.Dispatcher_intf.Instance) in
-      Lwt.return @@ DI.(Dispatcher.dispatch this C.Message.(Update_scanner res))
+      Lwt.return @@ DI.(Dispatcher.dispatch this C.Message.(Update_filer res))
     with Exit ->
       Logs.app (fun m -> m "Not found: %s" t.param.name);
       Lwt.return_unit

@@ -6,10 +6,10 @@ module S = Sxfiler_renderer_store
 
 
 let file_list_container ~key store =
-  let scanner = S.Scanner.Store.get @@ S.App.State.scanner store in
+  let filer = S.Filer.Store.get @@ S.App.State.filer store in
 
   [%c P_file_list_viewer.t ~key ~props:(object%js
-      val scannerState = scanner
+      val filerState = filer
       val focused = true
     end)
   ]
@@ -27,6 +27,6 @@ let t = R.Component.make_stateless
         let class_name = Classnames.to_string ["fp-Workspace", true;] in
 
         [%e div ~key:"layout" ~class_name [
-            file_list_container ~key:"scanner" store;
+            file_list_container ~key:"filer" store;
           ]]
       )

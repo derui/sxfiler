@@ -4,18 +4,18 @@ module T = Sxfiler_rpc.Types
 
 module File_list = struct
   type t = {
-    scanner: T.Scanner.t;
+    filer: T.Filer.t;
     selected_item_index: int;
   }
 
-  let make scanner =
+  let make filer =
     {
-      scanner;
+      filer;
       selected_item_index = 0;
     }
 
   let move_index t ~direction =
-    let max_index = List.length t.scanner.T.Scanner.nodes in
+    let max_index = List.length t.filer.T.Filer.nodes in
     match direction with
     | `Next -> {t with selected_item_index = min (pred max_index) (succ t.selected_item_index)}
     | `Prev -> {t with selected_item_index = max 0 (pred t.selected_item_index)}
@@ -27,7 +27,7 @@ module State = struct
   type t = {
     file_lists: File_list.t Jstable.t;
     order: string * string;
-    current_scanner: string;
+    current_filer: string;
   }
 
   let file_lists t =
@@ -42,7 +42,7 @@ module State = struct
   let make order = {
     file_lists = Jstable.create ();
     order;
-    current_scanner = fst order;
+    current_filer = fst order;
   }
 
   let update_list t ~name ~f =
@@ -56,16 +56,16 @@ module State = struct
     | Some v -> Jstable.add t.file_lists name v; t
 
   let reduce t = function
-    | C.Message.Update_scanner scanner ->
-      Jstable.add t.file_lists Js.(string scanner.T.Scanner.id) @@ File_list.make scanner;
+    | C.Message.Update_filer filer ->
+      Jstable.add t.file_lists Js.(string filer.T.Filer.id) @@ File_list.make filer;
       t
     | C.Message.Move_cursor_to_next ->
-      update_list t ~name:t.current_scanner ~f:(fun list -> File_list.(move_index list ~direction:`Next))
+      update_list t ~name:t.current_filer ~f:(fun list -> File_list.(move_index list ~direction:`Next))
     | C.Message.Move_cursor_to_prev ->
-      update_list t ~name:t.current_scanner ~f:(fun list -> File_list.(move_index list ~direction:`Prev))
-    | C.Message.Swap_scanner ->
-      if fst t.order = t.current_scanner then {t with current_scanner = snd t.order}
-      else {t with current_scanner = fst t.order}
+      update_list t ~name:t.current_filer ~f:(fun list -> File_list.(move_index list ~direction:`Prev))
+    | C.Message.Swap_filer ->
+      if fst t.order = t.current_filer then {t with current_filer = snd t.order}
+      else {t with current_filer = fst t.order}
     | _ -> t
 
   let equal _ _ = false

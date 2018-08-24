@@ -58,13 +58,13 @@ let () =
       Ctx.(Context.execute this (module I)) |> Lwt.ignore_result;
 
       List.iter (fun name ->
-          let module Service = SI.Scanner.Make(Client) in
-          let module I = (val C.Usecase.make_instance (module U.Initialize_scanner.Make(Service)) ~param:{
+          let module Service = SI.Filer.Make(Client) in
+          let module I = (val C.Usecase.make_instance (module U.Initialize_filer.Make(Service)) ~param:{
               initial_location = ".";
               name;
             }) in
           Ctx.(Context.execute this (module I)) |> Lwt.ignore_result;
-        ) [Const.scanner_1;Const.scanner_2];
+        ) [Const.filer_1;Const.filer_2];
       Js._true
     );
 

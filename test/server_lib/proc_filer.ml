@@ -14,9 +14,9 @@ module Dummy_system = struct
   let getcwd () = "/foo"
 end
 
-let proc_scanner = [
-  Alcotest_lwt.test_case "create new scanner if it does not exists" `Quick (fun switch () ->
-      let expected = D.Scanner.make
+let proc_filer = [
+  Alcotest_lwt.test_case "create new filer if it does not exists" `Quick (fun switch () ->
+      let expected = D.Filer.make
           ~id:"foo"
           ~location:(Path.of_string ~env:`Unix "/initial")
           ~nodes:[]
@@ -29,23 +29,23 @@ let proc_scanner = [
         } [@@deriving yojson]
 
         type result = {
-          scanner: R.Types.Scanner.t option;
+          filer: R.Types.Filer.t option;
           already_exists: bool;
         }
 
         let handle _ = Lwt.return
-            {scanner = Option.some @@ T.Scanner.of_domain expected;
+            {filer = Option.some @@ T.Filer.of_domain expected;
              already_exists = false;
             }
       end in
-      let module Make = S.Proc_scanner.Make(Gateway) in
+      let module Make = S.Proc_filer.Make(Gateway) in
 
       let%lwt res = Make.handle {
           Gateway.initial_location = "/initial";
           name = "foo"
         } in
 
-      Alcotest.(check @@ of_pp @@ Fmt.nop) "created" (T.Scanner.of_domain expected) res;
+      Alcotest.(check @@ of_pp @@ Fmt.nop) "created" (T.Filer.of_domain expected) res;
       Lwt.return_unit
     );
 
@@ -57,18 +57,18 @@ let proc_scanner = [
         } [@@deriving yojson]
 
         type result = {
-          scanner: R.Types.Scanner.t option;
+          filer: R.Types.Filer.t option;
           already_exists: bool;
         }
 
         let handle _ = Lwt.return
-            {scanner = None;
+            {filer = None;
              already_exists = true;
             }
       end in
-      let module Make = S.Proc_scanner.Make(Gateway) in
+      let module Make = S.Proc_filer.Make(Gateway) in
 
-      let expected = Jy.(Exception.Jsonrpc_error (R.Errors.Scanner.already_exists, None)) in
+      let expected = Jy.(Exception.Jsonrpc_error (R.Errors.Filer.already_exists, None)) in
       Alcotest.check_raises "raised" expected (fun () ->
           Lwt.ignore_result @@ Make.handle {
               initial_location = "/initial";
@@ -80,5 +80,5 @@ let proc_scanner = [
 ]
 
 let testcases = [
-  "rpc procedure : scanner", proc_scanner;
+  "rpc procedure : filer", proc_filer;
 ]

@@ -10,7 +10,7 @@ module Next_item = struct
       C.Command.Static_command.name = module_prefix ^ "next_item";
       execute_plan = `No_plan;
       executor = fun _ (module Ctx : C.Context.Instance) ->
-        let module I = (val C.Usecase.make_instance (module U.Move_scanner_cursor) ~param:`Next) in
+        let module I = (val C.Usecase.make_instance (module U.Move_filer_cursor) ~param:`Next) in
         Ctx.(Context.execute this (module I))
     }
 end
@@ -21,18 +21,18 @@ module Prev_item = struct
       C.Command.Static_command.name = module_prefix ^ "prev_item";
       execute_plan = `No_plan;
       executor = fun _ (module Ctx : C.Context.Instance) ->
-        let module I = (val C.Usecase.make_instance (module U.Move_scanner_cursor) ~param:`Prev) in
+        let module I = (val C.Usecase.make_instance (module U.Move_filer_cursor) ~param:`Prev) in
         Ctx.(Context.execute this (module I))
     }
 end
 
-module Swap_scanner = struct
+module Swap_filer = struct
   let make () =
     {
-      C.Command.Static_command.name = module_prefix ^ "swap_scanner";
+      C.Command.Static_command.name = module_prefix ^ "swap_filer";
       execute_plan = `No_plan;
       executor = fun _ (module Ctx : C.Context.Instance) ->
-        let module I = (val C.Usecase.make_instance (module U.Swap_scanner) ~param:()) in
+        let module I = (val C.Usecase.make_instance (module U.Swap_filer) ~param:()) in
         Ctx.(Context.execute this (module I))
     }
 end
@@ -44,6 +44,6 @@ let expose registry =
     [
       Next_item.make ();
       Prev_item.make ();
-      Swap_scanner.make ();
+      Swap_filer.make ();
     ]
     registry

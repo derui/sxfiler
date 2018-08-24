@@ -3,5 +3,5 @@
 (* workspaces.
    TODO: more flexible workspace handling?
 *)
-let scanner_1 = "scanner_1"
-let scanner_2 = "scanner_2"
+let filer_1 = "filer_1"
+let filer_2 = "filer_2"

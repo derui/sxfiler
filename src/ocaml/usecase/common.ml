@@ -1,8 +1,8 @@
 (** All errors raised from use cases. A use case should have one by one algebraic type,
     and define polymorphic variant as detail of error. *)
 type error =
-  | GetScannerError of [`Not_found]
-  | MakeScannerError of [`Already_exists]
+  | GetFilerError of [`Not_found]
+  | MakeFilerError of [`Already_exists]
   | No_error
 
 (** Basic interface for Use case. *)

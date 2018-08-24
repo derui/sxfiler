@@ -25,13 +25,13 @@ let suite () =
             link_path = None
           }
         in
-        let data = T.Scanner.{
+        let data = T.Filer.{
             id = "id";
             location = "bar";
             nodes = [node];
             history = {T.Location_history.records = []; max_records = 100}
           }
         in
-        assert_ok (data = Tr.Scanner.(of_js @@ to_js data))
+        assert_ok (data = Tr.Filer.(of_js @@ to_js data))
       );
   ]

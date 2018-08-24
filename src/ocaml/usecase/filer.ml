@@ -1,4 +1,4 @@
-(** Use cases for scanner *)
+(** Use cases for filer *)
 open Sxfiler_core
 module T = Sxfiler_domain
 
@@ -8,10 +8,10 @@ module Make_type = struct
     name: string;
   }
 
-  type output = T.Scanner.t
+  type output = T.Filer.t
 end
 
-(** {!Make_sync} module defines interface to make scanner. *)
+(** {!Make_sync} module defines interface to make filer. *)
 module type Make = sig
   (* trick to remove dependency for Make_type *)
   include module type of Make_type
@@ -20,28 +20,28 @@ module type Make = sig
 end
 
 module Make
-    (SR:T.Scanner.Repository)
+    (SR:T.Filer.Repository)
     (NR:T.Node.Repository) : Make = struct
   include Make_type
 
   let execute (params:input) =
-    (* Create scanner if it is not exists *)
+    (* Create filer if it is not exists *)
     let%lwt v = SR.resolve params.name in
     match v with
     | None ->
       let%lwt nodes = NR.find_by_dir ~dir:params.initial_location in
-      let t = T.Scanner.make ~id:params.name ~location:params.initial_location
+      let t = T.Filer.make ~id:params.name ~location:params.initial_location
           ~nodes ~history:(T.Location_history.make ()) in
       let%lwt () = SR.store t in
       Lwt.return @@ Ok t
-    | Some _ -> Lwt.return @@ Error (Common.MakeScannerError `Already_exists)
+    | Some _ -> Lwt.return @@ Error (Common.MakeFilerError `Already_exists)
 end
 
 module Get_type = struct
   type input = {
     name: string;
   }
-  type output = T.Scanner.t
+  type output = T.Filer.t
 end
 
 module type Get = sig
@@ -50,11 +50,11 @@ module type Get = sig
                           and type output := output
 end
 
-module Get(SR:T.Scanner.Repository) : Get = struct
+module Get(SR:T.Filer.Repository) : Get = struct
   include Get_type
 
   let execute (params:input) =
     match%lwt SR.resolve params.name with
-    | None -> Lwt.return @@ Error (Common.GetScannerError `Not_found)
-    | Some scanner -> Lwt.return @@ Ok scanner
+    | None -> Lwt.return @@ Error (Common.GetFilerError `Not_found)
+    | Some filer -> Lwt.return @@ Ok filer
 end

@@ -14,12 +14,12 @@ type command =
   | Select of string
 
 type t =
-  | Update_scanner of T.Scanner.t
+  | Update_filer of T.Filer.t
   | Update_keymap of T.Key_map.t
   | Update_configuration of T.Configuration.t
   | Move_cursor_to_next
   | Move_cursor_to_prev
-  | Swap_scanner
+  | Swap_filer
   (* completion handling *)
   | Completion of completion
   | Command of command

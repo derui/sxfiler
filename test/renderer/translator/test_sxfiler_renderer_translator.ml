@@ -8,4 +8,4 @@ let () =
   Test_location_record.suite ();
   Test_location_history.suite ();
   Test_node.suite ();
-  Test_scanner.suite ();
+  Test_filer.suite ();

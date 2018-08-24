@@ -1,8 +1,8 @@
-(** This module defines behavior for refresh scanner. *)
+(** This module defines behavior for refresh filer. *)
 module C = Sxfiler_renderer_core
 module S = Sxfiler_renderer_service
 
-module Make(Service:S.Scanner.S) : C.Usecase.S with type param = string = struct
+module Make(Service:S.Filer.S) : C.Usecase.S with type param = string = struct
   type t = {
     param: string;
   }
@@ -16,6 +16,6 @@ module Make(Service:S.Scanner.S) : C.Usecase.S with type param = string = struct
     match%lwt Service.get {name = t.param} with
     | Ok res ->
       let module DI = (val dispatcher: C.Dispatcher_intf.Instance) in
-      Lwt.return @@ DI.(Dispatcher.dispatch this C.Message.(Update_scanner res))
+      Lwt.return @@ DI.(Dispatcher.dispatch this C.Message.(Update_filer res))
     | Error `Not_found -> Lwt.return_unit
 end

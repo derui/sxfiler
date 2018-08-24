@@ -95,7 +95,7 @@ module Node = struct
 
 end
 
-module Scanner = struct
+module Filer = struct
 
   type t = {
     id: string;

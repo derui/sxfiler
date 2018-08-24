@@ -28,11 +28,11 @@ let header = R.Component.make_stateless
 
 (* content of file list *)
 let content =
-  let module Vt = S.Scanner.File_list in
+  let module Vt = S.Filer.File_list in
   R.Component.make_stateful
     ~props:(module struct
              class type t = object
-               method fileList: S.Scanner.File_list.t Js.readonly_prop
+               method fileList: S.Filer.File_list.t Js.readonly_prop
                method focused: bool Js.readonly_prop
              end
            end)
@@ -54,14 +54,14 @@ let content =
                    let pos = vt.Vt.selected_item_index in
                    this##setState (object%js
                      val virtualizedList = VL.update_list_height e##.clientHeight vl
-                                           |> VL.update_all_items @@ Array.of_list vt.Vt.scanner.nodes
+                                           |> VL.update_all_items @@ Array.of_list vt.Vt.filer.nodes
                                            |> VL.recalculate_visible_window pos
                    end))
                )
              ~component_will_receive_props:(fun this _ ->
                  let vt = this##.props##.fileList in
                  ignore (
-                   let items = Array.of_list vt.Vt.scanner.nodes in
+                   let items = Array.of_list vt.Vt.filer.nodes in
                    let vl = VL.update_all_items items this##.state##.virtualizedList in
                    let vl = VL.recalculate_visible_window vt.Vt.selected_item_index vl
                    in
@@ -121,17 +121,17 @@ let content =
 let t = R.Component.make_stateless
     ~props:(module struct
              class type t = object
-               method fileList: S.Scanner.File_list.t Js.readonly_prop
+               method fileList: S.Filer.File_list.t Js.readonly_prop
                method focused: bool Js.readonly_prop
              end
            end)
 
     ~render:(fun props ->
         let state = props##.fileList in
-        let scanner = state.S.Scanner.File_list.scanner in
+        let filer = state.S.Filer.File_list.filer in
         [%e div ~class_name:"fp-FileList"
             [[%c header ~key:"header" ~props:(object%js
-                val directory = scanner.location
+                val directory = filer.location
                 val focused = props##.focused
             end)];
              [%c content ~key:"file-list" ~props:(object%js

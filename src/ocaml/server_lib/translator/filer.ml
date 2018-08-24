@@ -1,6 +1,6 @@
 open Sxfiler_core
-open Sxfiler_rpc.Types.Scanner
-module D = Sxfiler_domain.Scanner
+open Sxfiler_rpc.Types.Filer
+module D = Sxfiler_domain.Filer
 
 let to_yojson t =
   `Assoc [

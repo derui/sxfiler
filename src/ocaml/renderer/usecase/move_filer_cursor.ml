@@ -1,4 +1,4 @@
-(** This module defines behavior to move cursor of current scanner. *)
+(** This module defines behavior to move cursor of current filer. *)
 module C = Sxfiler_renderer_core
 
 type param = [`Next | `Prev]

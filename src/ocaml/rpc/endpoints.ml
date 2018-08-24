@@ -20,16 +20,16 @@ module Completion = struct
   end
 end
 
-(** endpoints for Scanner *)
-module Scanner = struct
+(** endpoints for Filer *)
+module Filer = struct
   module Make = struct
     type params = {
       initial_location: string;
       name: string;
     }
 
-    type result = Types.Scanner.t
-    let endpoint = "scanner/make"
+    type result = Types.Filer.t
+    let endpoint = "filer/make"
   end
 
   module Get = struct
@@ -37,8 +37,8 @@ module Scanner = struct
       name: string;
     }
 
-    type result = Types.Scanner.t
-    let endpoint = "scanner/get"
+    type result = Types.Filer.t
+    let endpoint = "filer/get"
   end
 end
 

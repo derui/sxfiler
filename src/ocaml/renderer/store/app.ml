@@ -5,17 +5,17 @@ module State = struct
   type message = C.Message.t
   type t = {
     config: Config.Store.t;
-    scanner: Scanner.Store.t;
+    filer: Filer.Store.t;
     keymap: Keymap.Store.t;
     completion: Completion.Store.t;
     command: Command.Store.t;
     workspace: Workspace.Store.t;
   }
 
-  let make ~config ~scanner ~keymap ~completion
+  let make ~config ~filer ~keymap ~completion
     ~command ~workspace = {
     config;
-    scanner;
+    filer;
     keymap;
     completion;
     command;
@@ -24,7 +24,7 @@ module State = struct
 
   let reduce t message =
     Config.Store.dispatch t.config message;
-    Scanner.Store.dispatch t.scanner message;
+    Filer.Store.dispatch t.filer message;
     Keymap.Store.dispatch t.keymap message;
     Completion.Store.dispatch t.completion message;
     Command.Store.dispatch t.command message;
@@ -32,7 +32,7 @@ module State = struct
     t
 
   let config {config;_} = config
-  let scanner {scanner;_} = scanner
+  let filer {filer;_} = filer
   let keymap {keymap;_} = keymap
   let completion {completion;_} = completion
   let command {command;_} = command
@@ -40,7 +40,7 @@ module State = struct
 
   let equal v1 v2 =
     Config.(State.equal (Store.get v1.config) (Store.get v2.config))
-    && Scanner.(State.equal (Store.get v1.scanner) (Store.get v2.scanner))
+    && Filer.(State.equal (Store.get v1.filer) (Store.get v2.filer))
     && Keymap.(State.equal (Store.get v1.keymap) (Store.get v2.keymap))
     && Completion.(State.equal (Store.get v1.completion) (Store.get v2.completion))
     && Command.(State.equal (Store.get v1.command) (Store.get v2.command))
@@ -53,7 +53,7 @@ module Store = C.Store.Make_group(State)(struct
     let watch_state callback state =
       let f _ = callback state in
       Config.Store.subscribe state.State.config ~f;
-      Scanner.Store.subscribe state.State.scanner ~f;
+      Filer.Store.subscribe state.State.filer ~f;
       Keymap.Store.subscribe state.State.keymap ~f;
       Completion.Store.subscribe state.State.completion ~f;
       Command.Store.subscribe state.State.command ~f;

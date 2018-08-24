@@ -1,5 +1,5 @@
-(** Scanner module provides type to scan file tree. *)
-open Sxfiler_rpc.Types.Scanner
+(** Filer module provides type to scan file tree. *)
+open Sxfiler_rpc.Types.Filer
 
 class type js = object
   method id: Js.js_string Js.t Js.readonly_prop

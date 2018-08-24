@@ -11,37 +11,37 @@ module Dummy_system = struct
   let getcwd () = "/foo"
 end
 
-let scanner_tests = [
-  Alcotest_lwt.test_case "create new scanner if it does not exists" `Quick (fun switch () ->
-      let expected = D.Scanner.make
+let filer_tests = [
+  Alcotest_lwt.test_case "create new filer if it does not exists" `Quick (fun switch () ->
+      let expected = D.Filer.make
           ~id:"foo"
           ~location:(Path.of_string ~env:`Unix "/initial")
           ~nodes:[]
           ~history:D.Location_history.(make ()) in
 
       let module Usecase = struct
-        include U.Scanner.Make_type
+        include U.Filer.Make_type
 
         let execute _ = Lwt.return_ok expected
       end in
-      let module Gateway = G.Scanner.Make(Dummy_system)(Usecase) in
+      let module Gateway = G.Filer.Make(Dummy_system)(Usecase) in
 
       let%lwt res = Gateway.handle {
           Gateway.initial_location = "/initial";
           name = "foo"
         } in
       Alcotest.(check @@ option @@ of_pp @@ Fmt.nop) "created"
-        (Option.some @@ T.Scanner.of_domain expected) res.scanner;
+        (Option.some @@ T.Filer.of_domain expected) res.filer;
       Lwt.return_unit
     );
 
   Alcotest_lwt.test_case "do not create workspace if it exists" `Quick (fun switch () ->
       let module Usecase = struct
-        include U.Scanner.Make_type
+        include U.Filer.Make_type
 
-        let execute _ = Lwt.return_error (U.Common.MakeScannerError `Already_exists)
+        let execute _ = Lwt.return_error (U.Common.MakeFilerError `Already_exists)
       end in
-      let module Gateway = G.Scanner.Make(Dummy_system)(Usecase) in
+      let module Gateway = G.Filer.Make(Dummy_system)(Usecase) in
 
       let%lwt res = Gateway.handle {
           initial_location = "/initial";
@@ -53,5 +53,5 @@ let scanner_tests = [
 ]
 
 let testcases = [
-  "rpc procedure : scanner", scanner_tests;
+  "rpc procedure : filer", filer_tests;
 ]

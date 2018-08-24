@@ -1,14 +1,14 @@
 (** this module defines JSON-RPC API utilities.*)
 open Abbrevs
-include I.Scanner
+include I.Filer
 
 open Sxfiler_core
 module J = Jsonrpc_ocaml_jsoo.Client
 module T = Sxfiler_renderer_translator
 
-module Make_api : J.Api_def with type params = E.Scanner.Make.params
-                             and type result = E.Scanner.Make.result = struct
-  include E.Scanner.Make
+module Make_api : J.Api_def with type params = E.Filer.Make.params
+                             and type result = E.Filer.Make.result = struct
+  include E.Filer.Make
   type json = < > Js.t
 
   let name = endpoint
@@ -21,12 +21,12 @@ module Make_api : J.Api_def with type params = E.Scanner.Make.params
       val name = Js.string v.name
     end)
 
-  let result_of_json v = T.Scanner.of_js @@ Js.Unsafe.coerce v
+  let result_of_json v = T.Filer.of_js @@ Js.Unsafe.coerce v
 end
 
-module Get_api : J.Api_def with type params = E.Scanner.Get.params
-                            and type result = E.Scanner.Get.result = struct
-  include E.Scanner.Get
+module Get_api : J.Api_def with type params = E.Filer.Get.params
+                            and type result = E.Filer.Get.result = struct
+  include E.Filer.Get
   type json = < > Js.t
   let name = endpoint
 
@@ -36,7 +36,7 @@ module Get_api : J.Api_def with type params = E.Scanner.Get.params
       val name = Js.string v.name
     end)
 
-  let result_of_json v = T.Scanner.of_js @@ Js.Unsafe.coerce v
+  let result_of_json v = T.Filer.of_js @@ Js.Unsafe.coerce v
 end
 
 module Make(Client:C.Rpc.Client) : S = struct
@@ -47,7 +47,7 @@ module Make(Client:C.Rpc.Client) : S = struct
     let%lwt () = Client.request (module Make_api) (Some params) (function
         | Ok (Some v) -> Lwt.wakeup wakener @@ Ok v
         | Ok None -> assert false
-        | Error e when e.code = R.Errors.Scanner.already_exists -> Lwt.wakeup wakener (Error `Already_exists)
+        | Error e when e.code = R.Errors.Filer.already_exists -> Lwt.wakeup wakener (Error `Already_exists)
         | Error e ->
           let message = Jr.Types.Error_code.to_message e.code in
           Lwt.wakeup_exn wakener Error.(to_exn @@ create message)
@@ -60,7 +60,7 @@ module Make(Client:C.Rpc.Client) : S = struct
     let%lwt () = Client.request (module Get_api) (Some params) (function
         | Ok (Some v) -> Lwt.wakeup wakener @@ Ok v
         | Ok None -> assert false
-        | Error e when e.code = R.Errors.Scanner.not_found ->
+        | Error e when e.code = R.Errors.Filer.not_found ->
           Lwt.wakeup wakener (Error `Not_found)
         | Error e ->
           let module Jr = Jsonrpc_ocaml_jsoo in

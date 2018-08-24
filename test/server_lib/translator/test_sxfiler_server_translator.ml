@@ -8,6 +8,6 @@ let () =
                @ Location_history_test.suite
                @ Location_record_test.suite
                @ Node_test.suite
-               @ Scanner_test.suite
+               @ Filer_test.suite
   in
   Alcotest.run "Translators" suites

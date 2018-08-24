@@ -1,4 +1,4 @@
-(** This module defines behavior for refresh scanner. *)
+(** This module defines behavior for refresh filer. *)
 module C = Sxfiler_renderer_core
 module S = Sxfiler_renderer_service
 

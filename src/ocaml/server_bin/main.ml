@@ -75,7 +75,7 @@ let start_server _ port =
   let rpc_server = Jsonrpc_server.make () in
 
   let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_completion) in
-  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_scanner) in
+  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_filer) in
   let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_configuration) in
   let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_keymap) in
 
