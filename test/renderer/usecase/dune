@@ -1,3 +1,9 @@
+(rule
+ (targets test_sxfiler_renderer_usecase.ml)
+ (deps (:gen ../suite_gen/suite_gen.exe)
+  (glob_files %{workspace_root}/*_test.ml))
+ (action (run %{gen} -s _test -o %{targets})))
+
 (alias
  (name runtest)
  (deps test_sxfiler_renderer_usecase.bc.js))
