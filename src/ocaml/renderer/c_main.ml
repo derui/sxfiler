@@ -17,36 +17,38 @@ let t = R.Component.make_stateful
              end
            end)
 
-    ~spec:R.(component_spec
-               ~initial_custom:(fun _ _ -> object%js end)
-               ~initial_state:(fun _ props ->
-                   let module L = (val props##.locator : Locator.S) in
-                   object%js
-                     val state = S.App.Store.get L.store
-                   end
-                 )
-               ~constructor:(fun this _ ->
-                   let module L = (val this##.props##.locator : Locator.S) in
-                   S.App.Store.subscribe L.store ~f:(fun state ->
-                       this##setState (object%js
-                         val state = state
-                       end)
-                     )
-                 )
-               ~should_component_update:(fun _ _ _ -> true)
-               (fun this ->
-                  let module L = (val this##.props##.locator : Locator.S) in
-                  let state = S.App.Store.get L.store in
-                  let keymap = S.Keymap.Store.get @@ S.App.State.keymap state in
-                  [%c C_key_handler.t ~key:"key-container"
-                      ~props:(object%js
-                        val keymap = keymap
-                        val className = (Some "sf-Main")
-                        val onAction = (handle_action ~locator:(module L))
-                      end)
-                      [
-                        [%c C_omni_bar.t ~key:"omni-bar" ~props:(object%js val locator = this##.props##.locator end)];
-                        [%c C_workspace.t ~key:"layout" ~props:(object%js val locator = this##.props##.locator end)];
-                      ]]
-               )
+    ~spec:R.(
+        component_spec
+          ~initial_custom:(fun _ _ -> object%js end)
+          ~initial_state:(fun _ props ->
+              let module L = (val props##.locator : Locator.S) in
+              object%js
+                val state = S.App.Store.get L.store
+              end
             )
+          ~constructor:(fun this _ ->
+              let module L = (val this##.props##.locator : Locator.S) in
+              S.App.Store.subscribe L.store ~f:(fun state ->
+                  this##setState (object%js
+                    val state = state
+                  end)
+                )
+            )
+          ~should_component_update:(fun _ _ _ -> true)
+          (fun this ->
+             let module L = (val this##.props##.locator : Locator.S) in
+             let state = S.App.Store.get L.store in
+             let keymap = S.Keymap.Store.get @@ S.App.State.keymap state in
+             [%c C_key_handler.t ~key:"key-container"
+                 ~props:(object%js
+                   val keymap = keymap
+                   val className = (Some "sf-Main")
+                   val onAction = (handle_action ~locator:(module L))
+                 end)
+                 [
+                   [%c C_mode_manager.t ~key:"mode-manager" ~props:(object%js val locator = this##.props##.locator end)];
+                   [%c C_omni_bar.t ~key:"omni-bar" ~props:(object%js val locator = this##.props##.locator end)];
+                   [%c C_workspace.t ~key:"layout" ~props:(object%js val locator = this##.props##.locator end)];
+                 ]]
+          )
+      )

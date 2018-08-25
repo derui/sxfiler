@@ -28,7 +28,7 @@ let setup_command_source props _ =
   let instance = C.Usecase.make_instance
       (module U.Setup_completion.Make(Service)) ~param in
   let open Lwt in
-  ignore_result @@ (Lwt_js.yield () >>= fun () ->
+  ignore_result @@ (let%lwt () = Lwt_js.yield () in
                     Ctx.(Context.execute this instance))
 
 let clean_up_completer props _ =
@@ -48,6 +48,8 @@ let t = R.Component.make_stateless
     ~render:(fun props ->
         let module L = (val props##.locator : Locator.S) in
         let state = Store.App.Store.get L.store in
+        let ws = Store.Workspace.Store.get @@ Store.App.State.workspace state in
+        let focused = Store.Workspace.State.match_current_mode ws ~mode:C.Types.Mode.Complete in
 
         [%c P_completer_wrapper.t
             ~props:(object%js
@@ -55,6 +57,7 @@ let t = R.Component.make_stateless
               val completion = Store.(Completion.Store.get @@ App.State.completion state)
             end)
             [[%c P_command_selector.t ~key:"completer" ~props:(object%js
+                val focused = focused
                 val onFocus = (setup_command_source props)
                 val onBlur = (clean_up_completer props)
                 val onChangeCommand = (complete_command (module L))

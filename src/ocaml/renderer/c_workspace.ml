@@ -7,10 +7,11 @@ module S = Sxfiler_renderer_store
 
 let file_list_container ~key store =
   let filer = S.File_list.Store.get @@ S.App.State.file_list store in
+  let ws = S.Workspace.Store.get @@ S.App.State.workspace store in
 
   [%c P_file_list_viewer.t ~key ~props:(object%js
       val filerState = filer
-      val focused = true
+      val focused = S.Workspace.State.match_current_mode ws ~mode:C.Types.Mode.File_tree
     end)
   ]
 

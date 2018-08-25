@@ -23,6 +23,7 @@ type t =
   (* completion handling *)
   | Completion of completion
   | Command of command
+  | Change_mode of Types.Mode.t
 
 type default =
   | Quit

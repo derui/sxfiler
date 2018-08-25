@@ -16,4 +16,4 @@
             sxfiler.virtualized_list
             sxfiler.domain
             sxfiler.rpc)
- (preprocess (pps js_of_ocaml-ppx jsoo_reactjs.ppx)))
+ (preprocess (pps lwt_ppx js_of_ocaml-ppx jsoo_reactjs.ppx)))
