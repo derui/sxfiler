@@ -80,11 +80,11 @@ let content =
                     let module N = T.Node in
                     [%c P_file_item.t ~key:(item.N.name)
                         ~props:(object%js
-                        val item = item
-                        val selected = (index = this##.props##.selectedItemIndex)
-                        val focused = this##.props##.focused
+                          val item = item
+                          val selected = (index = this##.props##.selectedItemIndex)
+                          val focused = this##.props##.focused
                         end)
-                        ]
+                    ]
                   ) items |> Array.to_list
                 in
                 let scroll_bar =
@@ -133,7 +133,7 @@ let t = R.Component.make_stateless
             [[%c header ~key:"header" ~props:(object%js
                 val directory = state.location
                 val focused = props##.focused
-            end)];
+              end)];
              [%c content ~key:"file-list" ~props:(object%js
                  val filer = state
                  val selectedItemIndex = props##.selectedItemIndex

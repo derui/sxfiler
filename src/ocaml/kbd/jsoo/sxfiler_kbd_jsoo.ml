@@ -15,7 +15,7 @@ end
 let of_js js =
   make ~ctrl:(Js.to_bool js##.ctrl)
     ~meta:(Js.to_bool js##.meta)
-    @@ Js.to_string js##.key
+  @@ Js.to_string js##.key
 
 let () =
   Js.export_all (object%js

@@ -53,7 +53,7 @@ module Enable_context
 end
 
 module type Disable_context = Common.Usecase with type input = Type.input
-                                             and type output = Type.output
+                                              and type output = Type.output
 
 (** This module defines rpc interface to disable context in this application. *)
 module Disable_context

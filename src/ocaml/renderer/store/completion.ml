@@ -36,7 +36,7 @@ module State = struct
                   | None -> ""
                   | Some v -> v.C.Candidate.value.C.Item.value
         }
-        end
+      end
     | Completion Select_prev -> begin
         let new_index = max 0 (min (List.length t.candidates - 1) (pred t.selected_index)) in
         let module C = T.Completion in
@@ -45,7 +45,7 @@ module State = struct
                   | None -> ""
                   | Some v -> v.C.Candidate.value.C.Item.value
         }
-        end
+      end
     | _ -> t
 
   let equal = (=)

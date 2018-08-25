@@ -13,9 +13,9 @@ module Sort_type = struct
   let of_js js = Js.float_of_number js |> int_of_float
 
   let of_domain t = match t with
-      | D.Types.Sort_type.Size -> 1
-      | D.Types.Sort_type.Name -> 2
-      | D.Types.Sort_type.Date -> 3
+    | D.Types.Sort_type.Size -> 1
+    | D.Types.Sort_type.Name -> 2
+    | D.Types.Sort_type.Date -> 3
 
   let to_domain t = match t with
     | 1 -> D.Types.Sort_type.Size

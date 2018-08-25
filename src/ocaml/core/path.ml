@@ -148,18 +148,18 @@ let to_string ?env path =
         | Comp_empty -> false
         | _ -> true)
       path.components
-  |>
+    |>
     List.map (function
-      | Comp_current -> Filename.current_dir_name
-      | Comp_parent -> Filename.parent_dir_name
-      | Comp_empty -> ""
-      | Comp_filename f -> f
-    )
+        | Comp_current -> Filename.current_dir_name
+        | Comp_parent -> Filename.parent_dir_name
+        | Comp_empty -> ""
+        | Comp_filename f -> f
+      )
   in
   let concatted = String.concat (String.make 1 sep) comps in
   match path.root with
-    | None -> concatted
-    | Some v -> v ^ concatted
+  | None -> concatted
+  | Some v -> v ^ concatted
 
 let of_list ?env paths =
   match paths with

@@ -26,7 +26,7 @@ module Setup_api : J.Api_def with type params = E.Completion.Setup.params
 end
 
 module Read_api : J.Api_def with type params = E.Completion.Read.params
-                         and type result = E.Completion.Read.result = struct
+                             and type result = E.Completion.Read.result = struct
   include E.Completion.Read
   type json = < > Js.t
 

@@ -12,13 +12,13 @@ let handle_action ~locator:(module L:Locator.S) action =
 
 let t = R.Component.make_stateful
     ~props:(module struct
-    class type t = object
-      method locator: (module Locator.S) Js.readonly_prop
-    end
-  end)
+             class type t = object
+               method locator: (module Locator.S) Js.readonly_prop
+             end
+           end)
 
     ~spec:R.(component_spec
-              ~initial_custom:(fun _ _ -> object%js end)
+               ~initial_custom:(fun _ _ -> object%js end)
                ~initial_state:(fun _ props ->
                    let module L = (val props##.locator : Locator.S) in
                    object%js
@@ -40,9 +40,9 @@ let t = R.Component.make_stateful
                   let keymap = S.Keymap.Store.get @@ S.App.State.keymap state in
                   [%c C_key_handler.t ~key:"key-container"
                       ~props:(object%js
-                      val keymap = keymap
-                      val className = (Some "sf-Main")
-                      val onAction = (handle_action ~locator:(module L))
+                        val keymap = keymap
+                        val className = (Some "sf-Main")
+                        val onAction = (handle_action ~locator:(module L))
                       end)
                       [
                         [%c C_omni_bar.t ~key:"omni-bar" ~props:(object%js val locator = this##.props##.locator end)];

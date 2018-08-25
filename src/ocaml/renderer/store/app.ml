@@ -13,7 +13,7 @@ module State = struct
   }
 
   let make ~config ~file_list ~keymap ~completion
-    ~command ~workspace = {
+      ~command ~workspace = {
     config;
     file_list;
     keymap;

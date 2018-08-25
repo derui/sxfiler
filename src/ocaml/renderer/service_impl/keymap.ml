@@ -34,7 +34,7 @@ module Enable_context_api : J.Api_def with type params = E.Keymap.Enable_context
 end
 
 module Disable_context_api : J.Api_def with type params = E.Keymap.Disable_context.params
-                                       and type result = E.Keymap.Disable_context.result = struct
+                                        and type result = E.Keymap.Disable_context.result = struct
   include E.Keymap.Disable_context
   type json = < > Js.t
   let name = endpoint

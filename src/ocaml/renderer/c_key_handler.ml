@@ -27,15 +27,15 @@ let key_handler ~props ev =
 let container_key = "keyHandlerContainer"
 let t = R.Component.make_stateful
     ~props:(module struct
-    class type t = object
-      (** class name for container element.  *)
-      method className: string option Js.readonly_prop
-      (** specialized key map for this element. If this is None, use global key map instead. *)
-      method keymap: T.Key_map.t Js.readonly_prop
-      (** callback function. Calling this function when action was found with key stroke. *)
-      method onAction: (string -> unit) Js.readonly_prop
-    end
-  end)
+             class type t = object
+               (** class name for container element.  *)
+               method className: string option Js.readonly_prop
+               (** specialized key map for this element. If this is None, use global key map instead. *)
+               method keymap: T.Key_map.t Js.readonly_prop
+               (** callback function. Calling this function when action was found with key stroke. *)
+               method onAction: (string -> unit) Js.readonly_prop
+             end
+           end)
     ~spec:(
       R.component_spec
         ~initial_state:(fun _ _ -> object%js end)

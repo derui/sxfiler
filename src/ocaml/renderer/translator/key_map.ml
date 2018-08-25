@@ -40,11 +40,11 @@ let to_js (t:T.Key_map.t) : js Js.t =
         key = v.T.Key_map.key;
         action = v.action;
       })
-    bindings
+      bindings
 
-  |> List.map Original_key_binding.to_js
-  |> Array.of_list
-  |> Js.array
+                 |> List.map Original_key_binding.to_js
+                 |> Array.of_list
+                 |> Js.array
   in
   object%js
     val bindings = bindings
