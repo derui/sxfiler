@@ -18,7 +18,7 @@ module State = struct
   (** [match_current_mode t ~mode] returns current mode of [t] is same or not [mode] *)
   let match_current_mode t ~mode = t.current_mode = mode
 
-  let equal = (=)
+  let equal : t -> t -> bool = (=)
 end
 
 module Store = C.Store.Make(State)

@@ -1,0 +1,9 @@
+(alias
+ (name runtest)
+ (deps test_sxfiler_renderer_usecase.bc.js))
+
+(executable
+ (name test_sxfiler_renderer_usecase)
+ (libraries js_of_ocaml sxfiler.renderer.usecase mocha_of_ocaml.async)
+ (js_of_ocaml (flags ("--pretty" "--source-map-inline")))
+ (preprocess (pps js_of_ocaml-ppx lwt_ppx)))
