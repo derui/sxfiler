@@ -5,22 +5,6 @@ module T = Sxfiler_rpc.Types
 module S = Sxfiler_renderer_service
 module U = Sxfiler_renderer_usecase
 
-module type Dispatch = sig
-  val dispatch : C.Message.t -> unit
-end
-
-module Dummy_dispatcher(D:Dispatch) : C.Dispatcher.Instance = struct
-  module Dispatcher : C.Dispatcher.S with type config = unit = struct
-    type t = unit
-
-    type config = unit
-    let create () = ()
-    let dispatch _ m = D.dispatch m
-  end
-
-  let this : Dispatcher.t = Dispatcher.create ()
-end
-
 let suite () =
   "Initialize filer usecase" >::: [
     "should return filer when make operation returns no error" >:- (fun () ->
@@ -46,7 +30,7 @@ let suite () =
           let dispatch m = message_ := m
         end in
 
-        let%lwt () = Target.execute instance (module Dummy_dispatcher(D)) in
+        let%lwt () = Target.execute instance (module Util.Dummy_dispatcher(D)) in
         Lwt.return @@ assert_ok (!D.message_ = C.Message.Update_filer (`Left, expected))
       );
 
@@ -73,7 +57,7 @@ let suite () =
           let dispatch m = message_ := m
         end in
 
-        let%lwt () = Target.execute instance (module Dummy_dispatcher(D)) in
+        let%lwt () = Target.execute instance (module Util.Dummy_dispatcher(D)) in
         Lwt.return @@ assert_ok (!D.message_ = C.Message.Update_filer (`Left, expected))
       );
     "should not send message all operation failed" >:- (fun () ->
@@ -92,7 +76,7 @@ let suite () =
           let dispatch _ = incr count
         end in
 
-        let%lwt () = Target.execute instance (module Dummy_dispatcher(D)) in
+        let%lwt () = Target.execute instance (module Util.Dummy_dispatcher(D)) in
         Lwt.return @@ assert_ok (!D.count = 0)
       );
   ]
