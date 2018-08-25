@@ -14,7 +14,7 @@ type command =
   | Select of string
 
 type t =
-  | Update_filer of T.Filer.t
+  | Update_filer of (Types.File_list_pos.t * T.Filer.t)
   | Update_keymap of T.Key_map.t
   | Update_configuration of T.Configuration.t
   | Move_cursor_to_next

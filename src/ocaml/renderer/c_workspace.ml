@@ -6,7 +6,7 @@ module S = Sxfiler_renderer_store
 
 
 let file_list_container ~key store =
-  let filer = S.Filer.Store.get @@ S.App.State.filer store in
+  let filer = S.File_list.Store.get @@ S.App.State.file_list store in
 
   [%c P_file_list_viewer.t ~key ~props:(object%js
       val filerState = filer

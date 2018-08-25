@@ -2,7 +2,7 @@
   "bindings": [
     {"action": "file_list:next_item", "key": "j", "when": ["onFileTree"]},
     {"action": "file_list:prev_item", "key": "k", "when": ["onFileTree"]},
-    {"action": "file_list:swap_scanner", "key": "Tab", "when": ["onFileTree"]},
+    {"action": "file_list:swap_filer", "key": "Tab", "when": ["onFileTree"]},
     {"action": "completion:prev_item", "key": "ArrowUp", "when": ["onCompletion"]},
     {"action": "completion:next_item", "key": "ArrowDown", "when": ["onCompletion"]},
     {"action": "completion:select_item", "key": "Enter", "when": ["onCompletion"]}

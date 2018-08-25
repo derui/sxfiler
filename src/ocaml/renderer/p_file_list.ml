@@ -28,11 +28,12 @@ let header = R.Component.make_stateless
 
 (* content of file list *)
 let content =
-  let module Vt = S.Filer.File_list in
+  let module Vt = T.Filer in
   R.Component.make_stateful
     ~props:(module struct
              class type t = object
-               method fileList: S.Filer.File_list.t Js.readonly_prop
+               method filer: T.Filer.t Js.readonly_prop
+               method selectedItemIndex: int Js.readonly_prop
                method focused: bool Js.readonly_prop
              end
            end)
@@ -46,24 +47,24 @@ let content =
                  end
                )
              ~component_did_mount:(fun this ->
-                 let vt = this##.props##.fileList in
+                 let vt = this##.props##.filer in
                  let vl = this##.state##.virtualizedList in
                  let open Option.Infix in
                  ignore (
                    R.Ref_table.find ~key:key_of_filelist this##.nodes >|= fun e ->
-                   let pos = vt.Vt.selected_item_index in
+                   let pos = this##.props##.selectedItemIndex in
                    this##setState (object%js
                      val virtualizedList = VL.update_list_height e##.clientHeight vl
-                                           |> VL.update_all_items @@ Array.of_list vt.Vt.filer.nodes
+                                           |> VL.update_all_items @@ Array.of_list vt.Vt.nodes
                                            |> VL.recalculate_visible_window pos
                    end))
                )
              ~component_will_receive_props:(fun this _ ->
-                 let vt = this##.props##.fileList in
+                 let vt = this##.props##.filer in
                  ignore (
-                   let items = Array.of_list vt.Vt.filer.nodes in
+                   let items = Array.of_list vt.Vt.nodes in
                    let vl = VL.update_all_items items this##.state##.virtualizedList in
-                   let vl = VL.recalculate_visible_window vt.Vt.selected_item_index vl
+                   let vl = VL.recalculate_visible_window this##.props##.selectedItemIndex vl
                    in
                    this##setState (object%js
                      val virtualizedList = vl
@@ -71,7 +72,6 @@ let content =
                  )
                )
              (fun this ->
-                let vt = this##.props##.fileList in
                 let vl = this##.state##.virtualizedList in
 
                 let items = VL.get_items_in_window vl in
@@ -81,7 +81,7 @@ let content =
                     [%c P_file_item.t ~key:(item.N.name)
                         ~props:(object%js
                         val item = item
-                        val selected = (index = vt.Vt.selected_item_index)
+                        val selected = (index = this##.props##.selectedItemIndex)
                         val focused = this##.props##.focused
                         end)
                         ]
@@ -121,21 +121,22 @@ let content =
 let t = R.Component.make_stateless
     ~props:(module struct
              class type t = object
-               method fileList: S.Filer.File_list.t Js.readonly_prop
+               method filer: T.Filer.t Js.readonly_prop
+               method selectedItemIndex: int Js.readonly_prop
                method focused: bool Js.readonly_prop
              end
            end)
 
     ~render:(fun props ->
-        let state = props##.fileList in
-        let filer = state.S.Filer.File_list.filer in
+        let state = props##.filer in
         [%e div ~class_name:"fp-FileList"
             [[%c header ~key:"header" ~props:(object%js
-                val directory = filer.location
+                val directory = state.location
                 val focused = props##.focused
             end)];
              [%c content ~key:"file-list" ~props:(object%js
-                 val fileList = state
+                 val filer = state
+                 val selectedItemIndex = props##.selectedItemIndex
                  val focused = props##.focused
                end)];
             ]]

@@ -10,13 +10,13 @@ end
 let make_store () =
   let module C = Sxfiler_renderer_core in
   let config = S.Config.(Store.make @@ State.make ())
-  and filer = S.Filer.(Store.make @@ State.make (Const.filer_1, Const.filer_2))
+  and file_list = S.File_list.(Store.make @@ State.make ())
   and keymap = S.Keymap.(Store.make @@ State.make ())
   and completion = S.Completion.(Store.make @@ State.make ())
   and command = S.Command.(Store.make @@ State.make ())
   and workspace = S.Workspace.(Store.make @@ State.make ())
   in
-  let state = S.App.State.make ~config ~filer ~keymap ~completion ~command ~workspace in
+  let state = S.App.State.make ~config ~file_list ~keymap ~completion ~command ~workspace in
   S.App.Store.make state
 
 module Make

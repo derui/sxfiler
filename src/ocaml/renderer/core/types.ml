@@ -4,3 +4,11 @@ module Mode = struct
     | File_tree
 
 end
+
+module File_list_pos = struct
+  type t = [`Left | `Right]
+
+  let to_string = function
+    | `Left -> "left"
+    | `Right -> "right"
+end

@@ -5,17 +5,17 @@ module State = struct
   type message = C.Message.t
   type t = {
     config: Config.Store.t;
-    filer: Filer.Store.t;
+    file_list: File_list.Store.t;
     keymap: Keymap.Store.t;
     completion: Completion.Store.t;
     command: Command.Store.t;
     workspace: Workspace.Store.t;
   }
 
-  let make ~config ~filer ~keymap ~completion
+  let make ~config ~file_list ~keymap ~completion
     ~command ~workspace = {
     config;
-    filer;
+    file_list;
     keymap;
     completion;
     command;
@@ -24,7 +24,7 @@ module State = struct
 
   let reduce t message =
     Config.Store.dispatch t.config message;
-    Filer.Store.dispatch t.filer message;
+    File_list.Store.dispatch t.file_list message;
     Keymap.Store.dispatch t.keymap message;
     Completion.Store.dispatch t.completion message;
     Command.Store.dispatch t.command message;
@@ -32,7 +32,7 @@ module State = struct
     t
 
   let config {config;_} = config
-  let filer {filer;_} = filer
+  let file_list {file_list;_} = file_list
   let keymap {keymap;_} = keymap
   let completion {completion;_} = completion
   let command {command;_} = command
@@ -40,7 +40,7 @@ module State = struct
 
   let equal v1 v2 =
     Config.(State.equal (Store.get v1.config) (Store.get v2.config))
-    && Filer.(State.equal (Store.get v1.filer) (Store.get v2.filer))
+    && File_list.(State.equal (Store.get v1.file_list) (Store.get v2.file_list))
     && Keymap.(State.equal (Store.get v1.keymap) (Store.get v2.keymap))
     && Completion.(State.equal (Store.get v1.completion) (Store.get v2.completion))
     && Command.(State.equal (Store.get v1.command) (Store.get v2.command))
@@ -53,7 +53,7 @@ module Store = C.Store.Make_group(State)(struct
     let watch_state callback state =
       let f _ = callback state in
       Config.Store.subscribe state.State.config ~f;
-      Filer.Store.subscribe state.State.filer ~f;
+      File_list.Store.subscribe state.State.file_list ~f;
       Keymap.Store.subscribe state.State.keymap ~f;
       Completion.Store.subscribe state.State.completion ~f;
       Command.Store.subscribe state.State.command ~f;
