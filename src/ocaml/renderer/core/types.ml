@@ -4,9 +4,9 @@ module Mode = struct
     | File_tree
     | Complete
 
-  let to_string = function
-    | File_tree -> "file_tree"
-    | Complete -> "complete"
+  let to_context = function
+    | File_tree -> "onFileTree"
+    | Complete -> "onComplete"
 
   let others = function
     | File_tree -> [Complete]

@@ -40,26 +40,26 @@ let build_command_aliases ~ppf static_commands dynamic_commands =
     ) dynamic_commands
 
 let build_static_exporter ~ppf commands =
-  Format.fprintf ppf "let expose_static registry = \n";
+  Format.fprintf ppf "let expose_static registry hub = \n";
   let commands = List.rev commands in
   match commands with
   | [] -> Format.fprintf ppf "()\n[@@@@warning \"-27\"]"
   | head :: rest ->
     List.iter (fun command ->
-        Format.fprintf ppf "let registry = %s.expose registry in\n" @@ String.capitalize_ascii command
+        Format.fprintf ppf "let registry = %s.expose registry hub in\n" @@ String.capitalize_ascii command
       ) @@ List.rev rest;
-    Format.fprintf ppf "%s.expose registry\n" @@ String.capitalize_ascii head
+    Format.fprintf ppf "%s.expose registry hub\n" @@ String.capitalize_ascii head
 
 let build_dynamic_exporter ~ppf commands =
-  Format.fprintf ppf "let expose_dynamic registry = \n";
+  Format.fprintf ppf "let expose_dynamic registry hub = \n";
   let commands = List.rev commands in
   match commands with
   | [] -> Format.fprintf ppf "()\n[@@@@warning \"-27\"]"
   | head :: rest ->
     List.iter (fun command ->
-        Format.fprintf ppf "let registry = %s.expose registry;\n" @@ String.capitalize_ascii command
+        Format.fprintf ppf "let registry = %s.expose registry hub;\n" @@ String.capitalize_ascii command
       ) @@ List.rev rest;
-    Format.fprintf ppf "%s.expose registry\n" @@ String.capitalize_ascii head
+    Format.fprintf ppf "%s.expose registry hub\n" @@ String.capitalize_ascii head
 
 let () =
   let dir = Sys.getcwd () in

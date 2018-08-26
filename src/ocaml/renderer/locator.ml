@@ -29,4 +29,12 @@ module Make
 
   let command_registry = C.Command.Static_registry.make ()
   let dynamic_command_registry = C.Command.Dynamic_registry.make ()
+  let service_registry =
+    (module struct
+      module I = Sxfiler_renderer_service_impl
+      let configuration () = (module I.Configuration.Make(Client): Service.Configuration.S)
+      let keymap () = (module I.Keymap.Make(Client): Service.Keymap.S)
+      let filer () = (module I.Filer.Make(Client): Service.Filer.S)
+      let completion () = (module I.Completion.Make(Client): Service.Completion.S)
+    end : Service.Service_registry.S)
 end

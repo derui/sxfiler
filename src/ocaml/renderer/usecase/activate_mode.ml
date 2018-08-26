@@ -12,8 +12,8 @@ module Make(Service:S.Keymap.S) : C.Usecase.S with type param = C.Types.Mode.t =
 
   let execute t dispatcher =
 
-    let context = C.Types.Mode.(to_string t.mode) in
-    let other_contexts = C.Types.Mode.(others t.mode |> List.map to_string) in
+    let context = C.Types.Mode.(to_context t.mode) in
+    let other_contexts = C.Types.Mode.(others t.mode |> List.map to_context) in
     let module D = (val dispatcher : C.Dispatcher_intf.Instance) in
     let () = D.(Dispatcher.dispatch this C.Message.(Change_mode t.mode)) in
     let%lwt _ = Lwt_list.map_p (fun v -> Service.disable_context {context = v}) other_contexts in

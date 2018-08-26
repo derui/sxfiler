@@ -37,7 +37,7 @@ module Swap_filer = struct
     }
 end
 
-let expose registry =
+let expose registry _ =
   List.fold_right (fun command registry ->
       C.Command.Static_registry.register registry command
     )

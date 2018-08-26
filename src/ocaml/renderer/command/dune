@@ -18,4 +18,5 @@
             sxfiler.domain
             sxfiler.renderer.core
             sxfiler.renderer.store
-            sxfiler.renderer.usecase))
+            sxfiler.renderer.usecase
+            sxfiler.renderer.service.impl))

@@ -13,4 +13,7 @@ module type S = sig
 
   (** the singleton instance for dynamic command registry *)
   val dynamic_command_registry: Command.Dynamic_registry.t
+
+  (** Service registry is contains singleton service instances to use in command. *)
+  val service_registry: (module Service.Service_registry.S)
 end
