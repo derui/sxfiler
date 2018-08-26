@@ -49,6 +49,19 @@ module File_stat = struct
     is_file: bool;
     is_symlink: bool;
   }
+
+  let empty = {
+    mode = "0777";
+    uid = 1000;
+    gid = 1000;
+    atime = "0";
+    ctime = "0";
+    mtime = "0";
+    size = "0";
+    is_directory = false;
+    is_file = true;
+    is_symlink = false;
+  }
 end
 
 module Key_map = struct
@@ -83,6 +96,11 @@ module Location_history = struct
     max_records: int;
   }
 
+  let empty = {
+    records = [];
+    max_records = 0;
+  }
+
 end
 
 module Node = struct
@@ -91,6 +109,13 @@ module Node = struct
     stat: File_stat.t;
     parent_directory: string;
     link_path: string option;
+  }
+
+  let empty = {
+    name = "";
+    stat = File_stat.empty;
+    parent_directory = "";
+    link_path = None;
   }
 
 end
@@ -102,6 +127,13 @@ module Filer = struct
     location: string;
     nodes: Node.t list;
     history: Location_history.t;
+  }
+
+  let empty = {
+    id = "";
+    location = "";
+    nodes = [];
+    history = Location_history.empty;
   }
 
 end

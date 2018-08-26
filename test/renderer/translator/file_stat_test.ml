@@ -15,7 +15,7 @@ let data = T.File_stat.{
     is_symlink = true;
   }
 
-let suite () =
+let () =
   "File stat translator" >::: [
     "should be able to convert between JavaScript and OCaml" >:: (fun () ->
         assert_ok (data = Tr.File_stat.(of_js @@ to_js data))

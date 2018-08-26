@@ -12,16 +12,10 @@ module Sort_type = struct
   let to_js t = Js.number_of_float @@ float_of_int t
   let of_js js = Js.float_of_number js |> int_of_float
 
-  let of_domain t = match t with
-    | D.Types.Sort_type.Size -> 1
-    | D.Types.Sort_type.Name -> 2
-    | D.Types.Sort_type.Date -> 3
+  let of_domain t = D.Types.Sort_type.to_int t
 
-  let to_domain t = match t with
-    | 1 -> D.Types.Sort_type.Size
-    | 2 -> D.Types.Sort_type.Name
-    | 3 -> D.Types.Sort_type.Date
-    | _ -> failwith "Unknown type"
+  let to_domain t = let open Sxfiler_core in
+    Option.get_exn @@ D.Types.Sort_type.of_int t
 end
 
 class type js = object

@@ -4,7 +4,7 @@ module C = Sxfiler_renderer_core
 module S = Sxfiler_renderer_service
 module U = Sxfiler_renderer_usecase
 
-let suite () =
+let () =
   "Swap filer use case" >::: [
     "should send message to swap filer position" >:- (fun () ->
         let module Target = U.Swap_filer in

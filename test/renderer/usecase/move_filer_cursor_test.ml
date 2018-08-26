@@ -4,7 +4,7 @@ module C = Sxfiler_renderer_core
 module S = Sxfiler_renderer_service
 module U = Sxfiler_renderer_usecase
 
-let suite () =
+let () =
   "Move filer cursor use case" >::: [
     "should send message to move cursor next" >:- (fun () ->
         let module Target = U.Move_filer_cursor in

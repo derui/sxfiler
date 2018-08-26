@@ -28,7 +28,7 @@ module.exports.testWithKarma = testWithKarma;
 
 if (require.main === module) {
   (function() {
-    let bundledTests = glob.sync('_build/default/test/**/test_*.bc.js', {
+    let bundledTests = glob.sync('_build/default/test/**/*.bc.js', {
       ignore: '_build/default/test/*virtualized*/test_*.bc.js',
     });
 

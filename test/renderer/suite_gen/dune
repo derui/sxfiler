@@ -1,4 +1,0 @@
-
-(executable
- (name suite_gen)
- (libraries logs re sxfiler.core))

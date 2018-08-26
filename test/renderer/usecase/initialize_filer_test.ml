@@ -5,7 +5,7 @@ module T = Sxfiler_rpc.Types
 module S = Sxfiler_renderer_service
 module U = Sxfiler_renderer_usecase
 
-let suite () =
+let () =
   "Initialize filer usecase" >::: [
     "should return filer when make operation returns no error" >:- (fun () ->
         let expected = {

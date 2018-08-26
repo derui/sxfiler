@@ -2,7 +2,7 @@ open Mocha_of_ocaml
 module Tr = Sxfiler_renderer_translator
 module T = Sxfiler_rpc.Types
 
-let suite () =
+let () =
   "Location record translator" >::: [
     "should be able to convert between JavaScript and OCaml" >:: (fun () ->
         let data = T.Location_record.{

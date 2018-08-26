@@ -8,6 +8,19 @@ module Sort_type = struct
     | Name
     | Size
     | Date
+
+  (** [to_int t] returns int representation of [t] *)
+  let to_int = function
+    | Name -> 1
+    | Size -> 2
+    | Date -> 3
+
+  (** [of_int int] returns [t] related given argument. *)
+  let of_int = function
+    | 1 -> Some Name
+    | 2 -> Some Size
+    | 3 -> Some Date
+    | _ -> None
 end
 
 type file_id = string

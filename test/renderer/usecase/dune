@@ -1,15 +1,16 @@
-(rule
- (targets test_sxfiler_renderer_usecase.ml)
- (deps (:gen ../suite_gen/suite_gen.exe)
-  (glob_files %{workspace_root}/*_test.ml))
- (action (run %{gen} -s _test -o %{targets})))
-
 (alias
  (name runtest)
- (deps test_sxfiler_renderer_usecase.bc.js))
+ (deps tests.bc.js))
+
+(library
+ (name test_sxfiler_renderer_usecase)
+ (modules (:standard \ tests))
+ (modes byte)
+ (libraries js_of_ocaml sxfiler.renderer.usecase mocha_of_ocaml.async)
+ (preprocess (pps js_of_ocaml-ppx lwt_ppx)))
 
 (executable
- (name test_sxfiler_renderer_usecase)
- (libraries js_of_ocaml sxfiler.renderer.usecase mocha_of_ocaml.async)
- (js_of_ocaml (flags ("--pretty" "--source-map-inline")))
- (preprocess (pps js_of_ocaml-ppx lwt_ppx)))
+ (name tests)
+ (modules tests)
+ (libraries test_sxfiler_renderer_usecase)
+ (js_of_ocaml (flags ("--pretty" "--source-map-inline"))))
