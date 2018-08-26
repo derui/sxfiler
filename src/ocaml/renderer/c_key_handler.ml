@@ -1,5 +1,6 @@
-(** C_Key_handler defines that container component to handle key strokes on children component. *)
-open Sxfiler_core
+(** C_Key_handler defines that container component to handle key strokes on children component.
+    This component can handles bubbled event of onkeydown.
+*)
 module T = Sxfiler_rpc.Types
 module R = Jsoo_reactjs
 module C = Sxfiler_renderer_core
@@ -25,7 +26,6 @@ let key_handler ~props ev =
     ev##stopPropagation;
     props##.onAction action
 
-let container_key = "keyHandlerContainer"
 let t = R.Component.make_stateful
     ~props:(module struct
              class type t = object
@@ -39,13 +39,8 @@ let t = R.Component.make_stateful
            end)
     ~spec:(
       R.component_spec
-        ~constructor:(fun this _ -> this##.nodes := Jstable.create ())
         ~initial_state:(fun _ _ -> object%js end)
         ~initial_custom:(fun _ _ -> object%js end)
-        ~component_did_mount:(fun this ->
-            let open Option.Infix in
-            ignore (R.Ref_table.find ~key:container_key this##.nodes >|= fun e -> e##focus)
-          )
         (fun this ->
            let props = this##.props in
            let class_name = match props##.className with
@@ -53,11 +48,6 @@ let t = R.Component.make_stateful
              | Some v -> Classnames.to_string [(v, true)]
            in
            let children = R.Children.to_element this##.props_defined##.children in
-           [%e div ~class_name
-               ~_ref:(fun e -> R.Ref_table.add ~key:container_key ~value:e this##.nodes)
-               ~others:(object%js
-                 val tabIndex = Js.string "0"
-               end)
-               ~on_key_down:(key_handler ~props) [children]]
+           [%e div ~class_name ~on_key_down:(key_handler ~props) [children]]
         )
     )

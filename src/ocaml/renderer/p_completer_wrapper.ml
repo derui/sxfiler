@@ -24,12 +24,6 @@ let t =
                  end
                )
              ~initial_custom:(fun _ _ -> object%js end)
-             ~should_component_update:(fun this props state ->
-                 let module S = S.Completion.State in
-                 let completion = props##.completion in
-                 Some this##.props##.completerId = completion.S.current_completer
-                 || this##.state##.showed <> state##.showed
-               )
              ~component_will_receive_props:(fun this new_props ->
                  let module S = S.Completion.State in
                  let completion = new_props##.completion in

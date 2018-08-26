@@ -28,7 +28,8 @@ let t = R.Component.make_stateful
               let open Option.Infix in
               if props##.focused then
                 ignore (R.Ref_table.find ~key:key_of_input this##.nodes >|= fun e -> e##focus)
-              else ()
+              else
+                ignore (R.Ref_table.find ~key:key_of_input this##.nodes >|= fun e -> e##blur)
             )
           (fun this ->
              let label = [%e label ~key:"labelContainer" ~class_name:"sf-CommandSelector_LabelContainer"

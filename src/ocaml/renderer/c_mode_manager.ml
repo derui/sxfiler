@@ -17,7 +17,6 @@ let activate_mode (module L : Locator.S) =
     Ctx.(Context.execute this activation)
   )
 
-
 let t = R.Component.make_stateful
     ~props:(module struct
              class type t = object
