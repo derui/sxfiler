@@ -3,4 +3,4 @@
 (library
  (name sxfiler_rpc)
  (public_name sxfiler.rpc)
- (libraries sxfiler.domain sxfiler.completion jsonrpc-ocaml))
+ (libraries sxfiler.completion jsonrpc-ocaml))
