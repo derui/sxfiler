@@ -3,7 +3,7 @@ open Snap_shot_it_of_ocaml
 module R = Jsoo_reactjs
 module S = Sxfiler_renderer
 
-let suite () =
+let () =
   "File mode component" >::: [
     "should show current permission of file" >:: (fun () ->
         let module F = S.P_file_mode in

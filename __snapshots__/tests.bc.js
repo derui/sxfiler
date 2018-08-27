@@ -1,3 +1,15 @@
+exports['File time component should show time string 1'] = {
+  "type": "span",
+  "key": null,
+  "ref": null,
+  "props": {
+    "className": "fp-FileItem_Timestamp",
+    "children": "1970/01/01"
+  },
+  "_owner": null,
+  "_store": {}
+}
+
 exports['File size component should show size of the file 1'] = {
   "type": "span",
   "key": null,
@@ -46,6 +58,42 @@ exports['File size component should show Gigabytes if the size more than 1024 MB
   "_store": {}
 }
 
+exports['File name component should who filename normally 1'] = {
+  "type": "span",
+  "key": null,
+  "ref": null,
+  "props": {
+    "className": "fp-FileItem_FileName",
+    "children": "/foo/bar/sample.txt"
+  },
+  "_owner": null,
+  "_store": {}
+}
+
+exports['File name component should make another color if item is directory 1'] = {
+  "type": "span",
+  "key": null,
+  "ref": null,
+  "props": {
+    "className": "fp-FileItem_FileName fp-FileItem_FileName-directory",
+    "children": "/foo/bar/"
+  },
+  "_owner": null,
+  "_store": {}
+}
+
+exports['File name component should make another color if item is symbolic link 1'] = {
+  "type": "span",
+  "key": null,
+  "ref": null,
+  "props": {
+    "className": "fp-FileItem_FileName fp-FileItem_FileName-symlink",
+    "children": "/foo/bar/sample.txt"
+  },
+  "_owner": null,
+  "_store": {}
+}
+
 exports['File mode component should show current permission of file 1'] = {
   "type": "span",
   "key": null,
@@ -89,42 +137,6 @@ exports['File mode component should be able to show directory bit if mode contai
   "props": {
     "className": "fp-FileItem_FileMode",
     "children": "drwxr-xr-x"
-  },
-  "_owner": null,
-  "_store": {}
-}
-
-exports['File name component should who filename normally 1'] = {
-  "type": "span",
-  "key": null,
-  "ref": null,
-  "props": {
-    "className": "fp-FileItem_FileName",
-    "children": "/foo/bar/sample.txt"
-  },
-  "_owner": null,
-  "_store": {}
-}
-
-exports['File name component should make another color if item is directory 1'] = {
-  "type": "span",
-  "key": null,
-  "ref": null,
-  "props": {
-    "className": "fp-FileItem_FileName fp-FileItem_FileName-directory",
-    "children": "/foo/bar/"
-  },
-  "_owner": null,
-  "_store": {}
-}
-
-exports['File name component should make another color if item is symbolic link 1'] = {
-  "type": "span",
-  "key": null,
-  "ref": null,
-  "props": {
-    "className": "fp-FileItem_FileName fp-FileItem_FileName-symlink",
-    "children": "/foo/bar/sample.txt"
   },
   "_owner": null,
   "_store": {}

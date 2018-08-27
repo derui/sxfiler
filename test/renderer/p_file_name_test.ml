@@ -3,7 +3,7 @@ open Snap_shot_it_of_ocaml
 module R = Jsoo_reactjs
 module S = Sxfiler_renderer
 
-let suite () =
+let () =
   "File name component" >::: [
     "should who filename normally" >:: (fun () ->
         let module C = S.P_file_name in

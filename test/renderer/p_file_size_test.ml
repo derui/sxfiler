@@ -3,7 +3,7 @@ open Snap_shot_it_of_ocaml
 module R = Jsoo_reactjs
 module S = Sxfiler_renderer
 
-let suite () =
+let () =
   "File size component" >::: [
     "should show size of the file" >:: (fun () ->
         let module F = S.P_file_size in
