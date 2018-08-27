@@ -30,3 +30,6 @@ val basename: t -> string
 
 (** [dirname ?env path] gets the directory name of [path].*)
 val dirname: ?env:env -> t -> string
+
+(** [dirname_as_path path] gets a new path object of dirname of [path]. *)
+val dirname_as_path: t -> t

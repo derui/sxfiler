@@ -145,6 +145,16 @@ let path_tests = [
       Alcotest.(check string) "parent" ".." @@ Path.dirname @@ to_path "../bar";
       Alcotest.(check string) "dir" "foo" @@ Path.dirname @@ to_path "foo/bar";
     );
+  "gets dirname of a path as path object", `Quick, (fun () ->
+      let module S = struct
+        let getcwd () = "/var"
+      end in
+      let to_full_path v = Path.(resolve ~env:`Unix (module S)
+                                 @@ of_string ~env:`Unix v) in
+      let to_path v = Path.(to_string ~env:`Unix @@ of_string ~env:`Unix v) in
+      Alcotest.(check string) "current" (to_path "/var")
+      @@ Path.(to_string ~env:`Unix @@ dirname_as_path @@ to_full_path "foo");
+    );
   "gets dirname from resolved path", `Quick, (fun () ->
       let module S = struct
         let getcwd () = "/var"

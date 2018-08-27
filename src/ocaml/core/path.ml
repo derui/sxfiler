@@ -1,4 +1,4 @@
-(** Pathname is utility module more flexibility handling path and filename based on {!Filename} module.
+(** Path is utility module more flexibility handling path and filename based on {!Filename} module.
     This module allows to handle pathname on windows and *nix platform do not change codebase.
 *)
 
@@ -176,8 +176,11 @@ let basename path =
   | Comp_filename fname :: _ -> fname
   | _ -> ""
 
+let dirname_as_path path =
+  {path with components = List.rev @@ List.tl @@ List.rev path.components}
+
 let dirname ?env path =
-  let path' = {path with components = List.rev @@ List.tl @@ List.rev path.components} in
+  let path' = dirname_as_path path in
   match to_string ?env path' with
   | "" -> Filename.current_dir_name
   | _ as v -> v
