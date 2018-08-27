@@ -20,18 +20,21 @@ module type Make = sig
 end
 
 module Make
+    (CR:T.Configuration.Repository)
     (SR:T.Filer.Repository)
     (NR:T.Node.Repository) : Make = struct
   include Make_type
 
   let execute (params:input) =
     (* Create filer if it is not exists *)
+    let%lwt config = CR.resolve () in
     let%lwt v = SR.resolve params.name in
     match v with
     | None ->
+      let sort_order = config.T.Configuration.default_sort_order in
       let%lwt nodes = NR.find_by_dir ~dir:params.initial_location in
       let t = T.Filer.make ~id:params.name ~location:params.initial_location
-          ~nodes ~history:(T.Location_history.make ()) in
+          ~nodes ~history:(T.Location_history.make ()) ~sort_order in
       let%lwt () = SR.store t in
       Lwt.return @@ Ok t
     | Some _ -> Lwt.return @@ Error (Common.MakeFilerError `Already_exists)

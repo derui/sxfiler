@@ -17,6 +17,7 @@ let filer_tests = [
           ~id:"foo"
           ~location:(Path.of_string ~env:`Unix "/initial")
           ~nodes:[]
+          ~sort_order:D.Types.Sort_type.Date
           ~history:D.Location_history.(make ()) in
 
       let module Usecase = struct

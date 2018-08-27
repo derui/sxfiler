@@ -8,6 +8,7 @@ let data = {
   D.Filer.id = "id";
   location = Path.of_string "/bar";
   nodes = [];
+  sort_order = D.Types.Sort_type.Date;
   history = D.Location_history.make ();
 }
 

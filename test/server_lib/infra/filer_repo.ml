@@ -6,6 +6,7 @@ module I = Sxfiler_server_infra
 let data = D.Filer.make ~id:"foo"
     ~location:(Path.of_string "/var")
     ~nodes:[]
+    ~sort_order:D.Types.Sort_type.Date
     ~history:(D.Location_history.make ())
 
 let testcases = [

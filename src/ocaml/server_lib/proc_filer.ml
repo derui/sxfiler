@@ -45,7 +45,8 @@ let expose server =
   let module I = Sxfiler_server_infra in
 
   let module Filer_repo = I.Filer_repo.Make(Global.Root) in
-  let module Make_gateway = G.Filer.Make(System.Real)(U.Filer.Make(Filer_repo)(I.Node_repo)) in
+  let module Conf_repo = I.Configuration_repo.Make(Global.Root) in
+  let module Make_gateway = G.Filer.Make(System.Real)(U.Filer.Make(Conf_repo)(Filer_repo)(I.Node_repo)) in
   let module Make = Procedure_intf.Make(Make(Make_gateway)) in
 
   let module Get_gateway = G.Filer.Get(U.Filer.Get(Filer_repo)) in
