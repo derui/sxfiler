@@ -17,6 +17,9 @@ let make ~full_path ~stat ~link_path =
     link_path
   }
 
+(** [is_directory v] shortcut function to detect node is directory or not *)
+let is_directory v = v.stat.File_stat.is_directory
+
 module type Repository = sig
   (** [find_by_dir ~dir] search nodes in directory. *)
   val find_by_dir: dir:Path.t -> t list Lwt.t

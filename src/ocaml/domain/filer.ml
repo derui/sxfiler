@@ -19,7 +19,13 @@ let to_sort_fun = function
 (* sort nodes with sort_order in [t] *)
 let sort_nodes t =
   let sort_fun = to_sort_fun t.sort_order in
-  {t with nodes = List.sort sort_fun t.nodes}
+  let dirs = List.filter Node.is_directory t.nodes
+  and files = List.filter (fun v -> not @@ Node.is_directory v) t.nodes in
+  {t with nodes = List.concat [
+       List.sort sort_fun dirs;
+       List.sort sort_fun files;
+     ]
+  }
 
 let move_location t ~location ~nodes clock =
   let record = Location_record.record_of ~location clock in
