@@ -37,9 +37,7 @@ module Make(System:System.S)(U:Usecase.Filer.Make) : Make = struct
     match%lwt U.execute params with
     | Ok t -> Lwt.return {empty with filer = Option.some @@ Translator.Filer.of_domain t}
     | Error e -> begin match e with
-        | Usecase.Common.MakeFilerError `Already_exists ->
-          Lwt.return {empty with already_exists = true}
-        | _ -> assert false
+        | `Already_exists -> Lwt.return {empty with already_exists = true}
       end
 end
 
@@ -72,6 +70,38 @@ module Get(U:Usecase.Filer.Get) : Get = struct
     } in
     match%lwt U.execute params with
     | Ok s -> Lwt.return {filer = Some (Translator.Filer.of_domain s); not_found = false;}
-    | Error Usecase.Common.GetFilerError `Not_found -> Lwt.return {filer = None; not_found = true;}
-    | _ -> assert false
+    | Error `Not_found -> Lwt.return {filer = None; not_found = true;}
+end
+
+(* gateway for Move_parent use case. *)
+module type Move_parent = sig
+  type params = {
+    name: string;
+  } [@@deriving yojson]
+
+  type result = {
+    filer: T.Filer.t option;
+    not_found: bool;
+  }
+
+  val handle: params -> result Lwt.t
+end
+
+module Move_parent(U:Usecase.Filer.Move_parent) : Move_parent = struct
+  type params = {
+    name: string;
+  } [@@deriving yojson]
+
+  type result = {
+    filer: T.Filer.t option;
+    not_found: bool;
+  }
+
+  let handle param =
+    let params = {
+      U.name = param.name;
+    } in
+    match%lwt U.execute params with
+    | Ok s -> Lwt.return {filer = Some (Translator.Filer.of_domain s); not_found = false;}
+    | Error `Not_found -> Lwt.return {filer = None; not_found = true;}
 end

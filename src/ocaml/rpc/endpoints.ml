@@ -40,6 +40,16 @@ module Filer = struct
     type result = Types.Filer.t
     let endpoint = "filer/get"
   end
+
+  module Move_parent = struct
+    type params = {
+      name: string;
+      new_location: string;
+    }
+
+    type result = Types.Filer.t
+    let endpoint = "filer/move"
+  end
 end
 
 (** endpoints for Configuration *)

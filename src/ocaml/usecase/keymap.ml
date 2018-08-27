@@ -2,6 +2,7 @@ open Sxfiler_domain
 
 module type Get = Common.Usecase with type input = unit
                                   and type output = string Key_map.t
+                                  and type error = unit
 
 (** This module defines usecase interface to get current key bindings.
     Replace [json] on implementation to match rpc.
@@ -10,18 +11,21 @@ module Get(R:Key_map_repository.S with type value = string) : Get = struct
   type input = unit
 
   type output = string Key_map.t
+  type error = unit
 
   let execute () = let open Lwt in R.resolve () >>= return_ok
 end
 
 module type Store = Common.Usecase with type input = string Key_map.t
                                     and type output = unit
+                                    and type error = unit
 
 (** This module defines usecase interface to store key map with repository *)
 module Store(R:Key_map_repository.S with type value = string) : Store = struct
   type input = string Key_map.t
 
   type output = unit
+  type error = unit
 
   let execute input = let open Lwt in R.store input >>= return_ok
 end
@@ -32,10 +36,12 @@ module Type = struct
   }
 
   type output = string Key_map.t
+  type error = unit
 end
 
 module type Enable_context = Common.Usecase with type input = Type.input
                                              and type output = Type.output
+                                             and type error = unit
 
 (** This module defines rpc interface to enable context in this application. *)
 module Enable_context
@@ -54,6 +60,7 @@ end
 
 module type Disable_context = Common.Usecase with type input = Type.input
                                               and type output = Type.output
+                                              and type error = unit
 
 (** This module defines rpc interface to disable context in this application. *)
 module Disable_context

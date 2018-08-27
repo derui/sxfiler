@@ -55,3 +55,8 @@ module Condition = C.Statable.Make(struct
 
     let empty () = Sxfiler_domain.Condition.empty
   end)
+
+(* Clock module to get current unix time *)
+module Clock : D.Location_record.Clock = struct
+  let unixtime () = Int64.of_float @@ Unix.gettimeofday ()
+end

@@ -40,7 +40,7 @@ let filer_tests = [
       let module Usecase = struct
         include U.Filer.Make_type
 
-        let execute _ = Lwt.return_error (U.Common.MakeFilerError `Already_exists)
+        let execute _ = Lwt.return_error `Already_exists
       end in
       let module Gateway = G.Filer.Make(Dummy_system)(Usecase) in
 

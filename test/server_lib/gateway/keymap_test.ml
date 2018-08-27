@@ -20,6 +20,7 @@ let keymap_tests = [
       let module Usecase = struct
         type input = unit
         type output = string D.Key_map.t
+        type error = unit
 
         let execute () = Lwt.return_ok expected
       end in

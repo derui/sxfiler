@@ -15,6 +15,7 @@ let configuration_tests = [
       let module Usecase = struct
         type input = unit
         type output = D.Configuration.t
+        type error = unit
 
         let execute () = Lwt.return @@ Ok expected
         end in
