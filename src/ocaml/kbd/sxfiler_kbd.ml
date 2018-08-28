@@ -1,5 +1,12 @@
-type t = {ctrl : bool; meta : bool; key : string}
-type token = Meta | Ctrl | Key of string
+type t =
+  { ctrl : bool
+  ; meta : bool
+  ; key : string }
+
+type token =
+  | Meta
+  | Ctrl
+  | Key of string
 
 let empty = {ctrl = false; meta = false; key = ""}
 let make ?(ctrl = false) ?(meta = false) key = {key; ctrl; meta}

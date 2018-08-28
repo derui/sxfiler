@@ -4,19 +4,27 @@ module Translator = Sxfiler_server_translator
 module T = Sxfiler_rpc.Types
 
 module type Make = sig
-  type params = {initial_location : string [@key "initialLocation"]; name : string}
+  type params =
+    { initial_location : string [@key "initialLocation"]
+    ; name : string }
   [@@deriving yojson]
 
-  type result = {filer : T.Filer.t option; already_exists : bool}
+  type result =
+    { filer : T.Filer.t option
+    ; already_exists : bool }
 
   val handle : params -> result Lwt.t
 end
 
 module Make (System : System.S) (U : Usecase.Filer.Make) : Make = struct
-  type params = {initial_location : string [@key "initialLocation"]; name : string}
+  type params =
+    { initial_location : string [@key "initialLocation"]
+    ; name : string }
   [@@deriving yojson]
 
-  type result = {filer : T.Filer.t option; already_exists : bool}
+  type result =
+    { filer : T.Filer.t option
+    ; already_exists : bool }
 
   let handle param =
     let params =
@@ -33,14 +41,20 @@ end
 
 module type Get = sig
   type params = {name : string} [@@deriving yojson]
-  type result = {filer : T.Filer.t option; not_found : bool}
+
+  type result =
+    { filer : T.Filer.t option
+    ; not_found : bool }
 
   val handle : params -> result Lwt.t
 end
 
 module Get (U : Usecase.Filer.Get) : Get = struct
   type params = {name : string} [@@deriving yojson]
-  type result = {filer : T.Filer.t option; not_found : bool}
+
+  type result =
+    { filer : T.Filer.t option
+    ; not_found : bool }
 
   let handle param =
     let params = {U.name = param.name} in
@@ -54,14 +68,20 @@ end
 (* gateway for Move_parent use case. *)
 module type Move_parent = sig
   type params = {name : string} [@@deriving yojson]
-  type result = {filer : T.Filer.t option; not_found : bool}
+
+  type result =
+    { filer : T.Filer.t option
+    ; not_found : bool }
 
   val handle : params -> result Lwt.t
 end
 
 module Move_parent (U : Usecase.Filer.Move_parent) : Move_parent = struct
   type params = {name : string} [@@deriving yojson]
-  type result = {filer : T.Filer.t option; not_found : bool}
+
+  type result =
+    { filer : T.Filer.t option
+    ; not_found : bool }
 
   let handle param =
     let params = {U.name = param.name} in

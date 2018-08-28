@@ -1,8 +1,18 @@
 module R = Jsoo_reactjs
 
 module File_size = struct
-  type size_unit = Byte | KByte | MByte | GByte | TByte | Unknown
-  type t = {size_unit : size_unit; aligned_size : float; original : int64}
+  type size_unit =
+    | Byte
+    | KByte
+    | MByte
+    | GByte
+    | TByte
+    | Unknown
+
+  type t =
+    { size_unit : size_unit
+    ; aligned_size : float
+    ; original : int64 }
 
   let next_unit = function
     | Byte ->

@@ -2,7 +2,9 @@
 
 open Sxfiler_core
 
-type t = {location : Path.t; timestamp : int64}
+type t =
+  { location : Path.t
+  ; timestamp : int64 }
 
 (** Signature to get current clock to make record with current time. *)
 module type Clock = sig

@@ -8,7 +8,9 @@ module Binding_map = Map.Make (struct
   end)
 
 module Original_key_binding = struct
-  type 'a t = {value : 'a; condition : Condition.t}
+  type 'a t =
+    { value : 'a
+    ; condition : Condition.t }
 end
 
 type 'a t = {keymap : 'a Original_key_binding.t list Binding_map.t}

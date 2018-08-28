@@ -4,11 +4,16 @@
 
 module Completion = struct
   module Item = struct
-    type t = {id : string; value : string}
+    type t =
+      { id : string
+      ; value : string }
   end
 
   module Candidate = struct
-    type t = {start : int; length : int; value : Item.t}
+    type t =
+      { start : int
+      ; length : int
+      ; value : Item.t }
   end
 end
 
@@ -53,34 +58,52 @@ module File_stat = struct
 end
 
 module Key_map = struct
-  type key = {condition : Condition.t; key : string; action : string}
+  type key =
+    { condition : Condition.t
+    ; key : string
+    ; action : string }
+
   type t = {bindings : key list}
 
   let empty = {bindings = []}
 end
 
 module Location_record = struct
-  type t = {location : string; timestamp : string}
+  type t =
+    { location : string
+    ; timestamp : string }
 end
 
 module Location_history = struct
-  type t = {records : Location_record.t list; max_records : int}
+  type t =
+    { records : Location_record.t list
+    ; max_records : int }
 
   let empty = {records = []; max_records = 0}
 end
 
 module Node = struct
-  type t = {name : string; stat : File_stat.t; parent_directory : string; link_path : string option}
+  type t =
+    { name : string
+    ; stat : File_stat.t
+    ; parent_directory : string
+    ; link_path : string option }
 
   let empty = {name = ""; stat = File_stat.empty; parent_directory = ""; link_path = None}
 end
 
 module Filer = struct
-  type t = {id : string; location : string; nodes : Node.t list; history : Location_history.t}
+  type t =
+    { id : string
+    ; location : string
+    ; nodes : Node.t list
+    ; history : Location_history.t }
 
   let empty = {id = ""; location = ""; nodes = []; history = Location_history.empty}
 end
 
 module Tree_snapshot = struct
-  type t = {directory : string; nodes : Node.t list}
+  type t =
+    { directory : string
+    ; nodes : Node.t list }
 end

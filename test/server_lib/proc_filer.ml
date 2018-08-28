@@ -22,8 +22,14 @@ let proc_filer =
             ~history:D.Location_history.(make ())
         in
         let module Gateway = struct
-          type params = {initial_location : string; name : string} [@@deriving yojson]
-          type result = {filer : R.Types.Filer.t option; already_exists : bool}
+          type params =
+            { initial_location : string
+            ; name : string }
+          [@@deriving yojson]
+
+          type result =
+            { filer : R.Types.Filer.t option
+            ; already_exists : bool }
 
           let handle _ =
             Lwt.return {filer = Option.some @@ T.Filer.of_domain expected; already_exists = false}
@@ -34,8 +40,14 @@ let proc_filer =
         Lwt.return_unit )
   ; Alcotest_lwt.test_case "do not create workspace if it exists" `Quick (fun switch () ->
         let module Gateway = struct
-          type params = {initial_location : string; name : string} [@@deriving yojson]
-          type result = {filer : R.Types.Filer.t option; already_exists : bool}
+          type params =
+            { initial_location : string
+            ; name : string }
+          [@@deriving yojson]
+
+          type result =
+            { filer : R.Types.Filer.t option
+            ; already_exists : bool }
 
           let handle _ = Lwt.return {filer = None; already_exists = true}
         end in

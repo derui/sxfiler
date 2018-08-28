@@ -4,7 +4,10 @@ open Sxfiler_core
 module T = Sxfiler_domain
 
 module Make_type = struct
-  type input = {initial_location : Path.t; name : string}
+  type input =
+    { initial_location : Path.t
+    ; name : string }
+
   type output = T.Filer.t
   type error = [`Already_exists]
 end

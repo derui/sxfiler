@@ -15,8 +15,14 @@ type component =
 
 (* / on *nix, "" on Windows *)
 
-type t = {root : string option; components : component list; resolved : bool}
-type env = [`Unix | `Win]
+type t =
+  { root : string option
+  ; components : component list
+  ; resolved : bool }
+
+type env =
+  [ `Unix
+  | `Win ]
 
 let resolve_sep env =
   let sep_of_env = function `Unix -> '/' | `Win -> '\\' in

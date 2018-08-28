@@ -1,7 +1,10 @@
 module R = Jsoo_reactjs
 
 module Mode_converter = struct
-  type capability = {readable : bool; writeable : bool; executable : bool}
+  type capability =
+    { readable : bool
+    ; writeable : bool
+    ; executable : bool }
 
   type t =
     { file : bool

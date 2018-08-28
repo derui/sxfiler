@@ -5,7 +5,11 @@ module C = Sxfiler_renderer_core
 
 module State = struct
   type message = C.Message.t
-  type t = {current_command : string option; planning : bool; preparing : bool}
+
+  type t =
+    { current_command : string option
+    ; planning : bool
+    ; preparing : bool }
 
   let make () = {current_command = None; planning = false; preparing = false}
   let reduce t = function _ -> t

@@ -1,7 +1,10 @@
 (** This module defines behavior to move cursor of current filer. *)
 module C = Sxfiler_renderer_core
 
-type param = [`Next | `Prev]
+type param =
+  [ `Next
+  | `Prev ]
+
 type t = {direction : param}
 
 let create param = {direction = param}

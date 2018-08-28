@@ -2,12 +2,18 @@
 
 (** Item is only type to complete by RPC with any value. *)
 module Item = struct
-  type t = {id : string; value : string}
+  type t =
+    { id : string
+    ; value : string }
 end
 
 (** {!Candidate} defines type of result of completion. *)
 module Candidate = struct
-  type 'a base = {start : int; length : int; value : 'a}
+  type 'a base =
+    { start : int
+    ; length : int
+    ; value : 'a }
+
   type t = Item.t base
 
   (* shortcut functions for {!t} *)

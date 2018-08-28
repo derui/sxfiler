@@ -1,6 +1,8 @@
 (** {!Snapshot_history} provides management records in history. *)
 
-type t = {records : Location_record.t list; max_records : int}
+type t =
+  { records : Location_record.t list
+  ; max_records : int }
 
 (** {[make ?max_records ()]} gets new history.
    Use default value of [max_records] is [100] if it did not give any value.

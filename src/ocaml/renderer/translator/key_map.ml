@@ -2,7 +2,10 @@ open Sxfiler_core
 module T = Sxfiler_rpc.Types
 
 module Original_key_binding = struct
-  type t = {key : string; action : string; condition : T.Condition.t}
+  type t =
+    { key : string
+    ; action : string
+    ; condition : T.Condition.t }
 
   class type js =
     object

@@ -7,7 +7,9 @@ let completer_tests =
     , `Quick
     , fun () ->
       let module Data = struct
-        type t = {data : string; index : int}
+        type t =
+          { data : string
+          ; index : int }
 
         let to_string {data} = data
       end in

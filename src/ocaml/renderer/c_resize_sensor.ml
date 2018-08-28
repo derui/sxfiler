@@ -2,7 +2,9 @@
 
 module R = Jsoo_reactjs
 
-type size = {width : int; height : int}
+type size =
+  { width : int
+  ; height : int }
 
 let shrink_key = "shrink"
 let expand_key = "expand"

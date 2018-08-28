@@ -20,7 +20,10 @@ end
 (** endpoints for Filer *)
 module Filer = struct
   module Make = struct
-    type params = {initial_location : string; name : string}
+    type params =
+      { initial_location : string
+      ; name : string }
+
     type result = Types.Filer.t
 
     let endpoint = "filer/make"

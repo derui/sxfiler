@@ -4,7 +4,9 @@ include Runner_intf
 
 module Impl = struct
   (** only entry point to add task to task queue in this module. *)
-  type thread_state = [`Accepted of (module Task.Instance) | `Rejected]
+  type thread_state =
+    [ `Accepted of (module Task.Instance)
+    | `Rejected ]
 
   module Task_state = Set.Make (struct
       type t = Uuidm.t

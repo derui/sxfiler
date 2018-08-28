@@ -5,7 +5,10 @@ module Make (T : State_intf.S) : S with type state = T.t and type message = T.me
   type state = T.t
   type message = T.message
   type subscriber = T.t -> unit
-  type t = {mutable subscribers : subscriber list; mutable state : T.t}
+
+  type t =
+    { mutable subscribers : subscriber list
+    ; mutable state : T.t }
 
   let make state = {subscribers = []; state}
   let subscribe t ~f = t.subscribers <- f :: t.subscribers
@@ -23,7 +26,10 @@ module Make_group (T : State_intf.S) (G : Grouping with type state = T.t) :
   type state = T.t
   type message = T.message
   type subscriber = T.t -> unit
-  type t = {mutable subscribers : subscriber list; mutable state : T.t}
+
+  type t =
+    { mutable subscribers : subscriber list
+    ; mutable state : T.t }
 
   let make state =
     let t = {subscribers = []; state} in

@@ -1,5 +1,7 @@
 (** this module defines simple composable error. Use with Or_error module more useful. *)
-type t = String of string | Tag of t * string
+type t =
+  | String of string
+  | Tag of t * string
 
 exception Error of t
 

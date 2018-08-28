@@ -7,7 +7,9 @@ exception Empty_path
 (** The type of Path. *)
 type t
 
-type env = [`Unix | `Win]
+type env =
+  [ `Unix
+  | `Win ]
 
 val of_string : ?env:env -> string -> t
 (** [of_string ?env path] converts [path] to Path object. *)

@@ -7,7 +7,10 @@ type command_args = (string * string) list
    application state.
 *)
 type ('a, 'state, 'b) executor = 'a -> 'state -> (module C.Context.Instance) -> 'b Lwt.t
-type 'store execution_plan = [`No_plan | `Plan of (command_args, 'store, unit) executor]
+
+type 'store execution_plan =
+  [ `No_plan
+  | `Plan of (command_args, 'store, unit) executor ]
 
 (** type for static command. *)
 module Static_command = struct

@@ -3,7 +3,9 @@ module C = Sxfiler_renderer_core
 
 module S = Sxfiler_renderer_service
 
-type param' = {initial_location : string; pos : C.Types.File_list_pos.t}
+type param' =
+  { initial_location : string
+  ; pos : C.Types.File_list_pos.t }
 
 module Make (Service : S.Filer.S) : C.Usecase.S with type param = param' = struct
   type t = {param : param'}

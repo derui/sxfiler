@@ -8,7 +8,10 @@ module RT = Sxfiler_rpc.Types
 type param = RT.Completion.Item.t list * string
 
 module Make (Service : S.Completion.S) : C.Usecase.S with type param = param = struct
-  type t = {collection : RT.Completion.Item.t list; completer_id : string}
+  type t =
+    { collection : RT.Completion.Item.t list
+    ; completer_id : string }
+
   type param = RT.Completion.Item.t list * string
 
   let create (collection, completer_id) = {collection; completer_id}

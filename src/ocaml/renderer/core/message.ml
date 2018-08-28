@@ -9,8 +9,8 @@ type completion =
   | Select_next
   | Select_prev
 
-type command = (* select current action related specified command. *)
-  | Select of string
+(* select current action related specified command. *)
+type command = Select of string
 
 type t =
   | Update_filer of (Types.File_list_pos.t * T.Filer.t)
@@ -18,6 +18,7 @@ type t =
   | Update_configuration of T.Configuration.t
   | Move_cursor_to_next
   | Move_cursor_to_prev
+  | Toggle_mark
   | Swap_filer
   (* completion handling *)
   | Completion of completion
