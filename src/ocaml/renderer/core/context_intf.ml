@@ -6,18 +6,19 @@ module type S = sig
   (** Type for current renderer context. User should use this if call RPC, lookup state, or update state. *)
   type t
 
+  val create : config -> t
   (** [create config] gets a new instance of Context *)
-  val create: config -> t
 
+  val execute : t -> (module Usecase.Instance) -> unit Lwt.t
   (** [execute usecase] execute usecase with this context. *)
-  val execute: t -> (module Usecase.Instance) -> unit Lwt.t
 
+  val dispatcher : t -> (module Dispatcher.Instance)
   (** [dispatcher t] returns current dispatcher of context [t] *)
-  val dispatcher: t -> (module Dispatcher.Instance)
 end
 
 (** Instance of context. *)
 module type Instance = sig
   module Context : S
+
   val this : Context.t
 end

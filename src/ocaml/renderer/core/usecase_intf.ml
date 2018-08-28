@@ -1,4 +1,3 @@
-
 (** The signature of behavior. *)
 module type S = sig
   type t
@@ -6,14 +5,15 @@ module type S = sig
   (** type of parameter for execute function *)
   type param
 
+  val create : param -> t
   (** [create config param] gets a new instance of behavior *)
-  val create: param -> t
 
+  val execute : t -> (module Dispatcher.Instance) -> unit Lwt.t
   (** [execute t dispatcher param] do behavior with [param]  *)
-  val execute: t -> (module Dispatcher.Instance) -> unit Lwt.t
 end
 
 module type Instance = sig
   module Usecase : S
-  val this: Usecase.t
+
+  val this : Usecase.t
 end

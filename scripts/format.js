@@ -2,9 +2,10 @@ const { execFileSync } = require('child_process');
 
 const glob = require('glob');
 
-glob('src/**/*.{ml,mli}', (er, files) => {
+glob('{src,test}/**/*.{ml,mli}', (er, files) => {
   files.forEach(f => {
     console.log(`Formatting OCaml source: ${f}`);
+    execFileSync('ocamlformat', ['-i', f], { stdio: 'inherit' });
     execFileSync('ocp-indent', ['-i', f], { stdio: 'inherit' });
   });
 });

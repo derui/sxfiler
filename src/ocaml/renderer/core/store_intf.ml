@@ -7,7 +7,6 @@ end
 
 (** The signature of store to define store for state [state]. *)
 module type S = sig
-
   type message
 
   (** The type of state to be stored in this module. *)
@@ -19,24 +18,26 @@ module type S = sig
   (** The abstract type of store. *)
   type t
 
-  (** [make state] gets new instance of store *)
   val make : state -> t
+  (** [make state] gets new instance of store *)
 
+  val subscribe : t -> f:subscriber -> unit
   (** [subscribe t f] adds [f] to subscription list in [t]. [f] will call when [t] is updated. *)
-  val subscribe: t -> f:subscriber -> unit
 
-  (** [get t] returns current state of [t]. *)
   val get : t -> state
+  (** [get t] returns current state of [t]. *)
 
+  val dispatch : t -> message -> unit
   (** [dispatch t message] dispatchs message to subscriptions registered by [subscribe] with [`Dispatch]
       type.
   *)
-  val dispatch: t -> message -> unit
 end
 
 (** The signature of instance of store *)
 module type Instance = sig
   type message
+
   module Store : S with type message = message
-  val instance: Store.t
+
+  val instance : Store.t
 end

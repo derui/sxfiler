@@ -2,8 +2,7 @@
 
 (** Interface of system module. *)
 module type S = sig
-
-  val getcwd: unit -> string
+  val getcwd : unit -> string
 end
 
 (** Implementation of module signature *)

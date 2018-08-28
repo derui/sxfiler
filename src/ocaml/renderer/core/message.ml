@@ -9,8 +9,7 @@ type completion =
   | Select_next
   | Select_prev
 
-type command =
-  (* select current action related specified command. *)
+type command = (* select current action related specified command. *)
   | Select of string
 
 type t =
@@ -26,5 +25,4 @@ type t =
   | Change_mode of Types.Mode.t
   | Raise_error of Sxfiler_core.Error.t
 
-type default =
-  | Quit
+type default = Quit

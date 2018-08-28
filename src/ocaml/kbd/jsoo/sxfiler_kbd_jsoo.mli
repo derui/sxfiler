@@ -10,13 +10,16 @@
    ]}
 *)
 
+class type js =
+  object
+    method ctrl : bool Js.t Js.readonly_prop
 
-class type js = object
-  method ctrl: bool Js.t Js.readonly_prop
-  method meta: bool Js.t Js.readonly_prop
-  method key: Js.js_string Js.t Js.readonly_prop
-end
+    method meta : bool Js.t Js.readonly_prop
 
+    method key : Js.js_string Js.t Js.readonly_prop
+  end
+
+val to_js : Sxfiler_kbd.t -> js Js.t
 (** Convert between JavaScript object and type *)
-val to_js: Sxfiler_kbd.t -> js Js.t
-val of_js: js Js.t -> Sxfiler_kbd.t
+
+val of_js : js Js.t -> Sxfiler_kbd.t

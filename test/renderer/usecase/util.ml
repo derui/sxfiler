@@ -6,11 +6,11 @@ module type Dispatch = sig
 end
 
 (** dummy dispatcher instance with mocking interface *)
-module Dummy_dispatcher(D:Dispatch) : C.Dispatcher.Instance = struct
+module Dummy_dispatcher (D : Dispatch) : C.Dispatcher.Instance = struct
   module Dispatcher : C.Dispatcher.S with type config = unit = struct
     type t = unit
-
     type config = unit
+
     let create () = ()
     let dispatch _ m = D.dispatch m
   end

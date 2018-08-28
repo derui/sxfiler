@@ -6,15 +6,16 @@ module type S = sig
 
   type config
 
+  val create : config -> t
   (** [create config] gets new instance of dispatcher. *)
-  val create: config -> t
 
-  (** [dispatch t message] dispatch [message] to some instances subscribed with [t] *)
   val dispatch : t -> Message.t -> unit
+  (** [dispatch t message] dispatch [message] to some instances subscribed with [t] *)
 end
 
 (** Instance of dispatcher. *)
 module type Instance = sig
   module Dispatcher : S
+
   val this : Dispatcher.t
 end

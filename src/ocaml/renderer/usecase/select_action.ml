@@ -2,10 +2,7 @@
 module C = Sxfiler_renderer_core
 
 type param = string
-type t = {
-  action : param;
-}
-
+type t = {action : param}
 type config = unit
 
 let create () param = {action = param}

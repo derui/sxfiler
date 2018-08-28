@@ -2,12 +2,12 @@
 module type S = sig
   type t
 
+  val run : t -> unit Lwt.t
   (** [run ()] execute the task. All task is as thread, so can not return anything. *)
-  val run: t -> unit Lwt.t
 end
 
 module type Instance = sig
-  module Task: S
+  module Task : S
 
-  val this: Task.t
+  val this : Task.t
 end

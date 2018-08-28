@@ -9,6 +9,6 @@ module type Usecase = sig
   type output
   type error
 
+  val execute : input -> (output, error) result Lwt.t
   (** [execute input] runs use case with input.  *)
-  val execute: input -> (output, error) result Lwt.t
 end

@@ -2,11 +2,6 @@
     these will be used to workspace of task.
 *)
 
-type t = {
-  source: Tree_snapshot.t;
-  target: Tree_snapshot.t;
-}
+type t = {source : Tree_snapshot.t; target : Tree_snapshot.t}
 
-let make ~source ~target = {
-  source; target;
-}
+let make ~source ~target = {source; target}

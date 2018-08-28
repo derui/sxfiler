@@ -8,11 +8,8 @@ module State = struct
   type t = T.Key_map.t
 
   let make () = T.Key_map.empty
-  let reduce t = function
-    | C.Message.Update_keymap keymap -> keymap
-    | _ -> t
-
-  let equal = (=)
+  let reduce t = function C.Message.Update_keymap keymap -> keymap | _ -> t
+  let equal = ( = )
 end
 
-module Store = C.Store.Make(State)
+module Store = C.Store.Make (State)

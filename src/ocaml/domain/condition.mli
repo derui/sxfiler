@@ -3,33 +3,33 @@
 (** abstract type for Condition *)
 type t
 
+val equal : t -> t -> bool
 (** [equal v1 v2] returns equal v1 and v2 or not*)
-val equal: t -> t -> bool
 
-(** Get a empty condition {!t}. Condition is immutable. *)
 val empty : t
+(** Get a empty condition {!t}. Condition is immutable. *)
 
+val of_list : string list -> t
 (** [of_list contexts] returns new condition switched on given contexts. *)
-val of_list: string list -> t
 
+val to_list : t -> string list
 (** [to_list t] returns list of context that is contains only switched on. *)
-val to_list: t -> string list
 
+val enable : t -> context:string -> t
 (** [enable t ~context] returns new condition context enabled. *)
-val enable: t -> context:string -> t
 
+val disable : t -> context:string -> t
 (** [disable t ~context] returns new condition context disabled. *)
-val disable: t -> context:string -> t
 
+val subset : current:t -> parts:t -> bool
 (** [subset ~current ~parts] returns what [parts] is subset of [current] or not. This function is useful to check
     if current context was fulfilled condition specified by [parts].
 *)
-val subset : current:t -> parts:t -> bool
 
 module type Repository = sig
+  val store : t -> unit Lwt.t
   (** [store t] store [t] to current condition. *)
-  val store: t -> unit Lwt.t
 
+  val resolve : unit -> t Lwt.t
   (** [resolve ()] returns condition as singleton instance. *)
-  val resolve: unit -> t Lwt.t
 end
