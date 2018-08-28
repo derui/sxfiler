@@ -177,7 +177,10 @@ let basename path =
   | _ -> ""
 
 let dirname_as_path path =
-  {path with components = List.rev @@ List.tl @@ List.rev path.components}
+  match List.rev path.components with
+  | [] -> path
+  | _ as components ->
+    {path with components = List.rev @@ List.tl components}
 
 let dirname ?env path =
   let path' = dirname_as_path path in

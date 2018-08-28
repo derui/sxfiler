@@ -154,6 +154,8 @@ let path_tests = [
       let to_path v = Path.(to_string ~env:`Unix @@ of_string ~env:`Unix v) in
       Alcotest.(check string) "current" (to_path "/var")
       @@ Path.(to_string ~env:`Unix @@ dirname_as_path @@ to_full_path "foo");
+      Alcotest.(check string) "parent of root" (to_path "/")
+      @@ Path.(to_string ~env:`Unix @@ dirname_as_path @@ to_full_path "..");
     );
   "gets dirname from resolved path", `Quick, (fun () ->
       let module S = struct
