@@ -1,10 +1,14 @@
 (alias
  (name gen)
- (deps sxfiler_renderer_command.ml))
+ (deps (:f sxfiler_renderer_command.ml)
+  (:discover gen/discover.exe))
+ (action (run %{discover} -o %{f})))
 
 (rule
  (targets sxfiler_renderer_command.ml)
- (deps (:discover gen/discover.exe))
+ (deps (:discover gen/discover.exe)
+  (glob_files %{workspace_root}/s_**.ml)
+  (glob_files %{workspace_root}/d_**.ml))
  (action (run %{discover} -o %{targets})))
 
 (library

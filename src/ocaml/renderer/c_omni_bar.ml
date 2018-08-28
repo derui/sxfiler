@@ -15,7 +15,8 @@ let t = R.Component.make_stateless
              end
            end)
     ~render:(fun props ->
-        let module Dl = C.Command.Dynamic_registry in
+        let module Command = Sxfiler_renderer_command in
+        let module Dl = Command.Dynamic_registry in
         let module L = (val props##.locator: Locator.S) in
         let state = S.Command.Store.get @@ S.App.(State.command @@ Store.get L.store) in
         let open Option.Infix in

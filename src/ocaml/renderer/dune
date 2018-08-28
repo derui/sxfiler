@@ -15,5 +15,6 @@
             sxfiler.renderer.service.impl
             sxfiler.virtualized_list
             sxfiler.domain
+            sxfiler.renderer.command
             sxfiler.rpc)
  (preprocess (pps lwt_ppx js_of_ocaml-ppx jsoo_reactjs.ppx)))

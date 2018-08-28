@@ -24,6 +24,7 @@ type t =
   | Completion of completion
   | Command of command
   | Change_mode of Types.Mode.t
+  | Raise_error of Sxfiler_core.Error.t
 
 type default =
   | Quit

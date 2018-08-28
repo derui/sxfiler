@@ -1,13 +1,14 @@
 open Mocha_of_ocaml
 open Mocha_of_ocaml_async
+open Sxfiler_core
 module C = Sxfiler_renderer_core
 module T = Sxfiler_rpc.Types
 module S = Sxfiler_renderer_service
 module U = Sxfiler_renderer_usecase
 
 let () =
-  "Refresh filer use case" >::: [
-    "should return filer when get operation returns no error" >:- (fun () ->
+  "Move filer to parent usecase" >::: [
+    "should return filer when make operation returns no error" >:- (fun () ->
         let expected = {
           T.Filer.id = "foo";
           location = "loc";
@@ -17,36 +18,39 @@ let () =
 
         let module S : S.Filer.S = struct
           let make _ = assert false
-          let get _ = Lwt.return_ok expected
-          let move_parent _ = assert false
+          let get _ = assert false
+          let move_parent _ = Lwt.return expected
         end in
 
-        let module Target = U.Refresh_filer.Make(S) in
+        let module Target = U.Move_filer_to_parent.Make(S) in
         let instance = Target.create `Left in
         let module D = struct
-          let message_ = ref C.Message.Swap_filer
-          let dispatch m = message_ := m
+          let message_ = ref None
+          let dispatch m = message_ := Some m
         end in
 
         let%lwt () = Target.execute instance (module Util.Dummy_dispatcher(D)) in
-        Lwt.return @@ assert_ok (!D.message_ = C.Message.Update_filer (`Left, expected))
+        Lwt.return @@ assert_ok (!D.message_ = Option.some @@ C.Message.Update_filer (`Left, expected))
       );
 
-    "do not send any message if filer not found" >:- (fun () ->
+    "should be send error message when error occurred" >:- (fun () ->
+
         let module S : S.Filer.S = struct
           let make _ = assert false
-          let get _ = Lwt.return_error `Not_found
-          let move_parent _ = assert false
+          let get _ = assert false
+          let move_parent _ = Lwt.fail Error.(create "foo" |> to_exn)
         end in
 
-        let module Target = U.Refresh_filer.Make(S) in
+        let module Target = U.Move_filer_to_parent.Make(S) in
         let instance = Target.create `Left in
         let module D = struct
-          let count = ref 0
-          let dispatch _ = incr count
+          let message_ = ref None
+          let dispatch m = message_ := Some m
         end in
 
         let%lwt () = Target.execute instance (module Util.Dummy_dispatcher(D)) in
-        Lwt.return @@ assert_ok (!D.count = 0)
+        Lwt.return @@ assert_ok (match !D.message_ with
+            | Some C.Message.Raise_error _ -> true
+            | _ -> false)
       );
   ]

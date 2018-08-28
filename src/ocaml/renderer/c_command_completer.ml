@@ -7,6 +7,7 @@ module U = Sxfiler_renderer_usecase
 module S = Sxfiler_renderer_service
 module SI = Sxfiler_renderer_service_impl
 module T = Sxfiler_rpc.Types
+module Command = Sxfiler_renderer_command
 
 let complete_command (module L: Locator.S) command =
   let module Ctx = (val L.context) in
@@ -16,7 +17,7 @@ let complete_command (module L: Locator.S) command =
   Ctx.(Context.execute this (module B)) |> Lwt.ignore_result
 
 let setup_command_source props _ =
-  let module DL = C.Command.Dynamic_registry in
+  let module DL = Command.Dynamic_registry in
   let module L = (val props##.locator: Locator.S) in
   let commands = DL.names L.dynamic_command_registry
                  |> List.map (fun action_name ->

@@ -44,7 +44,6 @@ module Filer = struct
   module Move_parent = struct
     type params = {
       name: string;
-      new_location: string;
     }
 
     type result = Types.Filer.t

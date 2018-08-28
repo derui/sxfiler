@@ -20,6 +20,8 @@ let find_modules ~dir ~prefix =
 let find_static_commands = find_modules ~prefix:static_prefix
 let find_dymanic_commands = find_modules ~prefix:dynamic_prefix
 
+let print_header ~ppf = Format.fprintf ppf "include Core\n"
+
 let build_command_alias ~ppf ~command ~prefix =
   let regexp = Re.Posix.compile_pat ("^" ^ prefix) in
   let list = Re.split regexp command in
@@ -43,7 +45,7 @@ let build_static_exporter ~ppf commands =
   Format.fprintf ppf "let expose_static registry hub = \n";
   let commands = List.rev commands in
   match commands with
-  | [] -> Format.fprintf ppf "()\n[@@@@warning \"-27\"]"
+  | [] -> Format.fprintf ppf "registry\n[@@@@warning \"-27\"]"
   | head :: rest ->
     List.iter (fun command ->
         Format.fprintf ppf "let registry = %s.expose registry hub in\n" @@ String.capitalize_ascii command
@@ -54,7 +56,7 @@ let build_dynamic_exporter ~ppf commands =
   Format.fprintf ppf "let expose_dynamic registry hub = \n";
   let commands = List.rev commands in
   match commands with
-  | [] -> Format.fprintf ppf "()\n[@@@@warning \"-27\"]"
+  | [] -> Format.fprintf ppf "registry\n[@@@@warning \"-27\"]"
   | head :: rest ->
     List.iter (fun command ->
         Format.fprintf ppf "let registry = %s.expose registry hub;\n" @@ String.capitalize_ascii command
@@ -76,6 +78,7 @@ let () =
     ~teardown:(fun chan -> close_out chan)
     (fun chan ->
        let ppf = Format.formatter_of_out_channel chan in
+       print_header ~ppf;
        build_command_aliases ~ppf static_commands dynamic_commands;
        build_static_exporter ~ppf static_commands;
        build_dynamic_exporter ~ppf dynamic_commands;

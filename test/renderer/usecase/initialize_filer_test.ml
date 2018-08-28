@@ -18,6 +18,7 @@ let () =
         let module S : S.Filer.S = struct
           let make _ = Lwt.return_ok expected
           let get _ = assert false
+          let move_parent _ = assert false
         end in
 
         let module Target = U.Initialize_filer.Make(S) in
@@ -45,6 +46,7 @@ let () =
         let module S : S.Filer.S = struct
           let make _ = Lwt.return_error `Already_exists
           let get _ = Lwt.return_ok expected
+          let move_parent _ = assert false
         end in
 
         let module Target = U.Initialize_filer.Make(S) in
@@ -64,6 +66,7 @@ let () =
         let module S : S.Filer.S = struct
           let make _ = Lwt.return_error `Already_exists
           let get _ = Lwt.return_error `Not_found
+          let move_parent _ = assert false
         end in
 
         let module Target = U.Initialize_filer.Make(S) in

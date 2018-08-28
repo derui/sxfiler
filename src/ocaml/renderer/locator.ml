@@ -27,8 +27,8 @@ module Make
   let context = (module Ctx : C.Context.Instance)
   let store = Store.this
 
-  let command_registry = C.Command.Static_registry.make ()
-  let dynamic_command_registry = C.Command.Dynamic_registry.make ()
+  let command_registry = Command.Static_registry.make ()
+  let dynamic_command_registry = Command.Dynamic_registry.make ()
   let service_registry =
     (module struct
       module I = Sxfiler_renderer_service_impl

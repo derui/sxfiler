@@ -51,6 +51,19 @@ let filer_tests = [
       Alcotest.(check bool) "error" true res.already_exists;
       Lwt.return_unit
     );
+
+  Alcotest_lwt.test_case "move_parent raise error if filer is not found" `Quick (fun switch () ->
+      let module Usecase = struct
+        include U.Filer.Move_parent_type
+
+        let execute _ = Lwt.return_error `Not_found
+      end in
+      let module Gateway = G.Filer.Move_parent(Usecase) in
+
+      let%lwt res = Gateway.handle {name = "foo"} in
+      Alcotest.(check bool) "error" true res.not_found;
+      Lwt.return_unit
+    );
 ]
 
 let testcases = [

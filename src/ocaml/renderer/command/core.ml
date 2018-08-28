@@ -1,4 +1,4 @@
-include Command_intf
+include Core_intf
 
 module Make_registry(Com:Registry.Command) : Registry.S with type command := Com.t = struct
 

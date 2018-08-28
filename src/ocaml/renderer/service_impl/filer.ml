@@ -39,6 +39,21 @@ module Get_api : J.Api_def with type params = E.Filer.Get.params
   let result_of_json v = T.Filer.of_js @@ Js.Unsafe.coerce v
 end
 
+module Move_parent_api : J.Api_def with type params = E.Filer.Move_parent.params
+                                    and type result = E.Filer.Move_parent.result = struct
+  include E.Filer.Move_parent
+  type json = < > Js.t
+  let name = endpoint
+
+  let params_to_json params =
+    let open Option.Infix in
+    params >|= fun v -> Js.Unsafe.coerce (object%js
+      val name = Js.string v.name
+    end)
+
+  let result_of_json v = T.Filer.of_js @@ Js.Unsafe.coerce v
+end
+
 module Make(Client:C.Rpc.Client) : S = struct
   let make params =
     let waiter, wakener = Lwt.wait () in
@@ -62,6 +77,19 @@ module Make(Client:C.Rpc.Client) : S = struct
         | Ok None -> assert false
         | Error e when e.code = R.Errors.Filer.not_found ->
           Lwt.wakeup wakener (Error `Not_found)
+        | Error e ->
+          let module Jr = Jsonrpc_ocaml_jsoo in
+          let message = Jr.Types.Error_code.to_message e.code in
+          Lwt.wakeup_exn wakener Error.(to_exn @@ create message)
+      )
+    in waiter
+
+  let move_parent params =
+    let waiter, wakener = Lwt.wait () in
+    let module R = Sxfiler_rpc in
+    let%lwt () = Client.request (module Move_parent_api) (Some params) (function
+        | Ok (Some v) -> Lwt.wakeup wakener v
+        | Ok None -> assert false
         | Error e ->
           let module Jr = Jsonrpc_ocaml_jsoo in
           let message = Jr.Types.Error_code.to_message e.code in

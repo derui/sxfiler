@@ -7,9 +7,9 @@ let module_prefix = "completion:"
 module Next_item = struct
   let make () =
     {
-      C.Command.Static_command.name = module_prefix ^ "next_item";
+      Core.Static_command.name = module_prefix ^ "next_item";
       execute_plan = `No_plan;
-      executor = fun _ (module Ctx : C.Context.Instance) ->
+      executor = fun _ _ (module Ctx : C.Context.Instance) ->
         let module B = (val C.Usecase.make_instance (module U.Select_next_candidate)
                            ~param:()) in
         Ctx.(Context.execute this (module B))
@@ -19,9 +19,9 @@ end
 module Prev_item = struct
   let make () =
     {
-      C.Command.Static_command.name = module_prefix ^ "prev_item";
+      Core.Static_command.name = module_prefix ^ "prev_item";
       execute_plan = `No_plan;
-      executor = fun _ (module Ctx : C.Context.Instance) ->
+      executor = fun _ _ (module Ctx : C.Context.Instance) ->
         let module I = (val C.Usecase.make_instance (module U.Select_prev_candidate) ~param:()) in
         Ctx.(Context.execute this (module I))
     }
@@ -29,7 +29,7 @@ end
 
 let expose registry _ =
   List.fold_right (fun command registry ->
-      C.Command.Static_registry.register registry command
+      Core.Static_registry.register registry command
     )
     [
       Next_item.make ();

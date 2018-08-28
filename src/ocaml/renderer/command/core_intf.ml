@@ -1,34 +1,41 @@
-module D = Sxfiler_domain
+module C = Sxfiler_renderer_core
 module Co = Sxfiler_completion.Domain
+module S = Sxfiler_renderer_store
 
 type command_args = (string * string) list
 
-type ('a, 'b) executor = 'a -> (module Context.Instance) -> 'b Lwt.t
-type execution_plan = [
+(* The type of function that is to execute command body with
+   application state.
+*)
+type ('a, 'state, 'b) executor = 'a -> 'state -> (module C.Context.Instance) -> 'b Lwt.t
+type 'store execution_plan = [
   | `No_plan
-  | `Plan of (command_args, unit) executor
+  | `Plan of (command_args, 'store, unit) executor
 ]
 
 (** type for static command. *)
 module Static_command = struct
+  type state = S.App.State.t
   type t = {
     name: string;
-    execute_plan: execution_plan;
-    executor: (command_args, unit) executor;
+    execute_plan: state execution_plan;
+    executor: (command_args, state, unit) executor;
   }
 end
 
 (** The signature of completer is used from omni bar with dynamic command.  *)
 module type Completer = sig
   type t
+  type state = S.App.State.t
 
   (** [read t input] returns collection to be used to show list as candidates. *)
-  val read: t -> (string, Co.collection) executor
+  val read: t -> (string, state, Co.collection) executor
 end
 
 (** The signature of static command called from key binding *)
 module type Dynamic_command = sig
   type t
+  type state = S.App.State.t
 
   (** [name] is the name of this command. This should be unique from
       all commands.
@@ -48,13 +55,13 @@ module type Dynamic_command = sig
   *)
   val plan: [
     | `No_plan
-    | `Plan of t -> (string, unit) executor
+    | `Plan of t -> (string, state, unit) executor
   ]
 
   (** [execute t params context] returns behavior that execute command with
       some of dependencies.
   *)
-  val execute: t -> (string, unit) executor
+  val execute: t -> (string, state, unit) executor
 
 end
 
