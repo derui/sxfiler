@@ -50,6 +50,17 @@ module Move_parent = struct
            Ctx.(Context.execute this (module I)) ) }
 end
 
+(* the command toggles mark of item in current filer.  *)
+module Toggle_mark = struct
+  let make (module Reg : Svc.Service_registry.S) =
+    { Core.Static_command.name = module_prefix ^ "move_parent"
+    ; execute_plan = `No_plan
+    ; executor =
+        (fun _ _ (module Ctx : C.Context.Instance) ->
+           let module I = (val C.Usecase.make_instance (module U.Filer_toggle_mark) ~param:()) in
+           Ctx.(Context.execute this (module I)) ) }
+end
+
 let expose registry services =
   List.fold_right
     (fun command registry -> Core.Static_registry.register registry command)

@@ -31,13 +31,12 @@ let header =
 
 (* content of file list *)
 let content =
-  let module Vt = T.Filer in
   R.Component.make_stateful
     ~props:
       ( module struct
         class type t =
           object
-            method filer : T.Filer.t Js.readonly_prop
+            method nodes: S.File_list.Filer.node array Js.readonly_prop
 
             method selectedItemIndex : int Js.readonly_prop
 
@@ -53,7 +52,7 @@ let content =
                val virtualizedList = VL.make ~item_height ()
              end )
          ~component_did_mount:(fun this ->
-             let vt = this##.props##.filer in
+             let nodes = this##.props##.nodes in
              let vl = this##.state##.virtualizedList in
              let open Option.Infix in
              ignore
@@ -64,13 +63,13 @@ let content =
                    (object%js
                      val virtualizedList =
                        VL.update_list_height e##.clientHeight vl
-                       |> VL.update_all_items @@ Array.of_list vt.Vt.nodes
+                       |> VL.update_all_items nodes
                        |> VL.recalculate_visible_window pos
                    end) ) )
          ~component_will_receive_props:(fun this new_props ->
-             let vt = new_props##.filer in
+             let items = new_props##.nodes in
              ignore
-               (let items = Array.of_list vt.Vt.nodes in
+               (
                 let vl = VL.update_all_items items this##.state##.virtualizedList in
                 let vl = VL.recalculate_visible_window new_props##.selectedItemIndex vl in
                 this##setState
@@ -81,8 +80,9 @@ let content =
             let vl = this##.state##.virtualizedList in
             let items = VL.get_items_in_window vl in
             let children =
-              Array.mapi
-                (fun index item ->
+              Array.to_list items
+              |> List.mapi
+                (fun index (item, _) ->
                    let module N = T.Node in
                    [%c
                      P_file_item.t ~key:item.N.name
@@ -94,8 +94,6 @@ let content =
 
                            val focused = this##.props##.focused
                          end)] )
-                items
-              |> Array.to_list
             in
             let scroll_bar =
               let start, size = VL.percentage_by_visible this##.state##.virtualizedList in
@@ -149,7 +147,8 @@ let t =
       ( module struct
         class type t =
           object
-            method filer : T.Filer.t Js.readonly_prop
+            method location : string Js.readonly_prop
+            method nodes: S.File_list.Filer.node array Js.readonly_prop
 
             method selectedItemIndex : int Js.readonly_prop
 
@@ -157,14 +156,13 @@ let t =
           end
       end )
     ~render:(fun props ->
-        let state = props##.filer in
         [%e
           div ~class_name:"fp-FileList"
             [ [%c
               header ~key:"header"
                 ~props:
                   (object%js
-                    val directory = state.location
+                    val directory = props##.location
 
                     val focused = props##.focused
                   end)]
@@ -172,7 +170,7 @@ let t =
               content ~key:"file-list"
                 ~props:
                   (object%js
-                    val filer = state
+                    val nodes = props##.nodes
 
                     val selectedItemIndex = props##.selectedItemIndex
 

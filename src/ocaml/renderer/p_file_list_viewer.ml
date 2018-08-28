@@ -19,16 +19,17 @@ let t =
         let state = props##.filerState in
         let left = S.File_list.State.left state and right = S.File_list.State.right state in
         let to_component filer =
-          let filer = filer.S.File_list.Filer.filer
-          and index = filer.S.File_list.Filer.selected_item_index in
+          let location = filer.S.File_list.Filer.location
+          and id = filer.id
+          and nodes = filer.nodes
+          and index = filer.selected_item_index in
           [%c
-            P_file_list.t ~key:("file-list_" ^ filer.T.Filer.id)
+            P_file_list.t ~key:("file-list_" ^ id)
               ~props:
                 (object%js
-                  val filer = filer
-
+                  val location = location
+                  val nodes = nodes
                   val selectedItemIndex = index
-
                   val focused = props##.focused
                 end)]
         in
