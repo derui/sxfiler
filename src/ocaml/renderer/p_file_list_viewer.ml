@@ -17,8 +17,9 @@ let t =
       end )
     ~render:(fun props ->
         let state = props##.filerState in
-        let left = S.File_list.State.left state and right = S.File_list.State.right state in
-        let to_component filer =
+        let left = S.File_list.State.(left state, is_current state ~pos:`Left)
+        and right = S.File_list.State.(right state, is_current state ~pos:`Right) in
+        let to_component (filer, focused) =
           let location = filer.S.File_list.Filer.location
           and id = filer.id
           and nodes = filer.nodes
@@ -33,11 +34,13 @@ let t =
 
                   val selectedItemIndex = index
 
-                  val focused = props##.focused
+                  val focused = props##.focused && focused
                 end)]
         in
         let components =
-          List.filter Option.is_some [left; right]
-          |> List.map Option.get_exn |> List.map to_component
+          let open Fun in
+          List.filter (fst %> Option.is_some) [left; right]
+          |> List.map (fun (v, focused) -> (Option.get_exn v, focused))
+          |> List.map to_component
         in
         R.fragment ~key:"file-lists" components )

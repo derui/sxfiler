@@ -49,6 +49,7 @@ module State = struct
     ; current : C.Types.File_list_pos.t }
 
   let make () = {left = None; right = None; current = `Left}
+  let is_current {current; _} ~pos = current = pos
   let left {left; _} = left
   let right {right; _} = right
 
