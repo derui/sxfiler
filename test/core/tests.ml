@@ -222,7 +222,12 @@ let fun_tests =
         |> ignore
       with Not_found ->
         () ;
-        Alcotest.(check int) "call teardown" 2 !v ) ]
+        Alcotest.(check int) "call teardown" 2 !v )
+  ; ( "return first value always"
+    , `Quick
+    , fun () ->
+      Alcotest.(check int) "const" 1 Fun.(const 1 2) ;
+      Alcotest.(check string) "diff type" "foo" Fun.(const "foo" 100) ) ]
 
 
 let error_tests =
