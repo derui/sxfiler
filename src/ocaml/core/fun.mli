@@ -14,3 +14,6 @@ val flip : ('a -> 'b -> 'c) -> 'b -> 'a -> 'c
 
 val const : 'a -> 'b -> 'a
 (** [const x y] gets constant function to return [x] always called.  *)
+
+val ( %> ) : ('a -> 'b) -> ('b -> 'c) -> 'a -> 'c
+(** [f %> g] compose [f] and [g] to call as pipeline flow these. *)

@@ -227,7 +227,12 @@ let fun_tests =
     , `Quick
     , fun () ->
       Alcotest.(check int) "const" 1 Fun.(const 1 2) ;
-      Alcotest.(check string) "diff type" "foo" Fun.(const "foo" 100) ) ]
+      Alcotest.(check string) "diff type" "foo" Fun.(const "foo" 100) )
+  ; ( "compose functions"
+    , `Quick
+    , fun () ->
+      Alcotest.(check int) "compose same type" 3 Fun.((succ %> succ) 1) ;
+      Alcotest.(check @@ float 0.0) "compose diff type" 2.0 Fun.((succ %> float_of_int) 1) ) ]
 
 
 let error_tests =
