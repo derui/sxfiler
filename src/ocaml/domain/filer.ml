@@ -40,6 +40,9 @@ let make ~id ~location ~nodes ~history ~sort_order =
   sort_nodes t
 
 
+(** [find_node t ~id] search node having [id] in filer [t] *)
+let find_node t ~id = List.find_opt (fun (v : Node.t) -> v.id = id) t.nodes
+
 (** Signature for repository of scanner. *)
 module type Repository = sig
   val resolve : string -> t option Lwt.t

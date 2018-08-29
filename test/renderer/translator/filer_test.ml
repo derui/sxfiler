@@ -19,7 +19,9 @@ let () =
                  ; is_file = false
                  ; is_symlink = true }
              in
-             let node = T.Node.{name = "bar"; parent_directory = "/foo"; stat; link_path = None} in
+             let node =
+               T.Node.{id = "id"; name = "bar"; parent_directory = "/foo"; stat; link_path = None}
+             in
              let data =
                T.Filer.
                  { id = "id"

@@ -19,5 +19,7 @@ let () =
                  ; is_file = false
                  ; is_symlink = true }
              in
-             let data = T.Node.{name = "bar"; parent_directory = "foo"; stat; link_path = None} in
+             let data =
+               T.Node.{id = "id"; name = "bar"; parent_directory = "foo"; stat; link_path = None}
+             in
              assert_ok (data = Tr.Node.(of_js @@ to_js data)) ) ]

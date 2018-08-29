@@ -8,7 +8,6 @@ let stat_base =
     ~mtime:(Int64.of_int 1000) ~ctime:(Int64.of_int 10000) ~size:Int64.max_int ~is_directory:true
     ~is_file:false ~is_symlink:true
 
-
 let node_base = D.Node.make ~full_path:(Path.of_string "foo") ~stat:stat_base ~link_path:None
 
 let testcases =
@@ -16,9 +15,13 @@ let testcases =
     , `Quick
     , fun () ->
       let node_1 =
-        D.Node.make ~full_path:(Path.of_string ~env:`Unix "/foo") ~stat:stat_base ~link_path:None
+        D.Node.make ~id:"id1"
+          ~full_path:(Path.of_string ~env:`Unix "/foo")
+          ~stat:stat_base ~link_path:None
       and node_2 =
-        D.Node.make ~full_path:(Path.of_string ~env:`Unix "/bar") ~stat:stat_base ~link_path:None
+        D.Node.make ~id:"id2"
+          ~full_path:(Path.of_string ~env:`Unix "/bar")
+          ~stat:stat_base ~link_path:None
       in
       let data = [node_1; node_2] in
       let expected = [node_2; node_1] in
@@ -32,9 +35,13 @@ let testcases =
     , `Quick
     , fun () ->
       let node_1 =
-        D.Node.make ~full_path:(Path.of_string ~env:`Unix "/foo") ~stat:stat_base ~link_path:None
+        D.Node.make ~id:"id1"
+          ~full_path:(Path.of_string ~env:`Unix "/foo")
+          ~stat:stat_base ~link_path:None
       and node_2 =
-        D.Node.make ~full_path:(Path.of_string ~env:`Unix "/bar") ~stat:stat_base ~link_path:None
+        D.Node.make ~id:"id2"
+          ~full_path:(Path.of_string ~env:`Unix "/bar")
+          ~stat:stat_base ~link_path:None
       in
       let expected = [node_2; node_1] in
       let filer =

@@ -38,8 +38,7 @@ module Make (CR : T.Configuration.Repository) (SR : T.Filer.Repository) (NR : T.
       in
       let%lwt () = SR.store t in
       Lwt.return @@ Ok t
-    | Some _ ->
-      Lwt.return @@ Error `Already_exists
+    | Some _ -> Lwt.return @@ Error `Already_exists
 end
 
 module Get_type = struct
@@ -58,10 +57,8 @@ module Get (SR : T.Filer.Repository) : Get = struct
 
   let execute (params : input) =
     match%lwt SR.resolve params.name with
-    | None ->
-      Lwt.return @@ Error `Not_found
-    | Some filer ->
-      Lwt.return @@ Ok filer
+    | None -> Lwt.return_error `Not_found
+    | Some filer -> Lwt.return_ok filer
 end
 
 (* move parent location from current location of filer *)
@@ -84,8 +81,7 @@ module Move_parent
 
   let execute (params : input) =
     match%lwt SR.resolve params.name with
-    | None ->
-      Lwt.return_error `Not_found
+    | None -> Lwt.return_error `Not_found
     | Some filer ->
       let parent_dir = Path.dirname_as_path filer.T.Filer.location in
       let%lwt new_nodes = NR.find_by_dir ~dir:parent_dir in
@@ -94,4 +90,46 @@ module Move_parent
       in
       let%lwt () = SR.store filer' in
       Lwt.return_ok filer'
+end
+
+(* move to location of the node in filer *)
+module Enter_directory_type = struct
+  type input =
+    { name : string
+    ; node_id : string }
+
+  type output = T.Filer.t
+
+  type error =
+    [ `Not_found_filer
+    | `Not_found_node ]
+end
+
+module type Enter_directory = sig
+  include module type of Enter_directory_type
+  include Common.Usecase with type input := input and type output := output and type error := error
+end
+
+module Enter_directory
+    (SR : T.Filer.Repository)
+    (NR : T.Node.Repository)
+    (Clock : T.Location_record.Clock) : Enter_directory = struct
+  include Enter_directory_type
+
+  let execute (params : input) =
+    let%lwt filer = SR.resolve params.name in
+    let node = Option.Infix.(filer >>= T.Filer.find_node ~id:params.node_id) in
+    match (filer, node) with
+    | None, _ -> Lwt.return_error `Not_found_filer
+    | _, None -> Lwt.return_error `Not_found_node
+    | Some filer, Some node ->
+      if not node.stat.is_directory then Lwt.return_ok filer
+      else
+        let%lwt new_nodes = NR.find_by_dir ~dir:node.full_path in
+        let filer' =
+          let location = node.full_path and nodes = new_nodes in
+          T.Filer.move_location filer (module Clock) ~location ~nodes
+        in
+        let%lwt () = SR.store filer' in
+        Lwt.return_ok filer'
 end

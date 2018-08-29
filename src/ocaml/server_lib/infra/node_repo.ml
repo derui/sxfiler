@@ -26,8 +26,8 @@ let get_node parent path =
     let stat = Unix.lstat path in
     let stat = stat_to_file_stat stat in
     let module D = Sxfiler_domain in
-    let path = Path.of_string path in
-    Some (D.Node.make ~full_path:path ~stat ~link_path:None)
+    let path = Path.of_string path and id = Digest.string path |> Digest.to_hex in
+    Some (D.Node.make ~id ~full_path:path ~stat ~link_path:None)
 
 
 module Core : D.Node.Repository = struct

@@ -84,12 +84,13 @@ end
 
 module Node = struct
   type t =
-    { name : string
+    { id : string
+    ; name : string
     ; stat : File_stat.t
     ; parent_directory : string
     ; link_path : string option }
 
-  let empty = {name = ""; stat = File_stat.empty; parent_directory = ""; link_path = None}
+  let empty = {id = ""; name = ""; stat = File_stat.empty; parent_directory = ""; link_path = None}
 end
 
 module Filer = struct

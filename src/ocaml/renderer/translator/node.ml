@@ -5,6 +5,8 @@ include Sxfiler_rpc.Types.Node
 
 class type js =
   object
+    method id : Js.js_string Js.t Js.readonly_prop
+
     method name : Js.js_string Js.t Js.readonly_prop
 
     method stat : File_stat.js Js.t Js.readonly_prop
@@ -15,8 +17,9 @@ class type js =
   end
 
 let of_js js : t =
-  { (* full_path should be absolute path. *)
-    name = Js.to_string js##.name
+  (* full_path should be absolute path. *)
+  { id = Js.to_string js##.id
+  ; name = Js.to_string js##.name
   ; stat = File_stat.of_js js##.stat
   ; parent_directory = Js.to_string js##.parentDirectory
   ; link_path = Js.Opt.map js##.linkPath Js.to_string |> Js.Opt.to_option }
@@ -24,6 +27,8 @@ let of_js js : t =
 
 let to_js t : js Js.t =
   object%js
+    val id = Js.string t.id
+
     val name = Js.string t.name
 
     val stat = File_stat.to_js t.stat
