@@ -52,8 +52,8 @@ end
 
 (* the command toggles mark of item in current filer.  *)
 module Toggle_mark = struct
-  let make (module Reg : Svc.Service_registry.S) =
-    { Core.Static_command.name = module_prefix ^ "move_parent"
+  let make () =
+    { Core.Static_command.name = module_prefix ^ "toggle_mark"
     ; execute_plan = `No_plan
     ; executor =
         (fun _ _ (module Ctx : C.Context.Instance) ->
@@ -64,5 +64,9 @@ end
 let expose registry services =
   List.fold_right
     (fun command registry -> Core.Static_registry.register registry command)
-    [Next_item.make (); Prev_item.make (); Swap_filer.make (); Move_parent.make services]
+    [ Next_item.make ()
+    ; Prev_item.make ()
+    ; Swap_filer.make ()
+    ; Move_parent.make services
+    ; Toggle_mark.make () ]
     registry

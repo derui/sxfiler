@@ -6,6 +6,7 @@
     {"action": "file_list:prev_item", "key": "k", "when": ["onFileTree"]},
     {"action": "file_list:swap_filer", "key": "Tab", "when": ["onFileTree"]},
     {"action": "file_list:move_parent", "key": "^", "when": ["onFileTree"]},
+    {"action": "file_list:toggle_mark", "key": "Space", "when": ["onFileTree"]},
     {"action": "completion:prev_item", "key": "ArrowUp", "when": ["onComplete"]},
     {"action": "completion:next_item", "key": "ArrowDown", "when": ["onComplete"]},
     {"action": "completion:select_item", "key": "Enter", "when": ["onComplete"]}

@@ -10,9 +10,9 @@ let t =
           object
             method item : T.Node.t Js.readonly_prop
 
-            method selected : bool Js.readonly_prop
+            method marked : bool Js.readonly_prop
 
-            method focused : bool Js.readonly_prop
+            method selected : bool Js.readonly_prop
           end
       end )
     ~spec:
@@ -62,6 +62,6 @@ let t =
               Classnames.to_string
                 [ ("fp-FileItem", true)
                 ; ("fp-FileItem-selected", props##.selected)
-                ; ("fp-FileItem-focused", props##.focused && props##.selected) ]
+                ; ("fp-FileItem-marked", props##.marked) ]
             in
             [%e li ~class_name [file_mode; timestamp; file_size; file_name]] ))

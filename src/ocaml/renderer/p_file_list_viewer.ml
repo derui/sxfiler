@@ -28,8 +28,11 @@ let t =
               ~props:
                 (object%js
                   val location = location
+
                   val nodes = nodes
+
                   val selectedItemIndex = index
+
                   val focused = props##.focused
                 end)]
         in

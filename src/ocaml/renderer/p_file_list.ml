@@ -36,7 +36,7 @@ let content =
       ( module struct
         class type t =
           object
-            method nodes: S.File_list.Filer.node array Js.readonly_prop
+            method nodes : S.File_list.Filer.node array Js.readonly_prop
 
             method selectedItemIndex : int Js.readonly_prop
 
@@ -63,14 +63,12 @@ let content =
                    (object%js
                      val virtualizedList =
                        VL.update_list_height e##.clientHeight vl
-                       |> VL.update_all_items nodes
-                       |> VL.recalculate_visible_window pos
+                       |> VL.update_all_items nodes |> VL.recalculate_visible_window pos
                    end) ) )
          ~component_will_receive_props:(fun this new_props ->
              let items = new_props##.nodes in
              ignore
-               (
-                let vl = VL.update_all_items items this##.state##.virtualizedList in
+               (let vl = VL.update_all_items items this##.state##.virtualizedList in
                 let vl = VL.recalculate_visible_window new_props##.selectedItemIndex vl in
                 this##setState
                   (object%js
@@ -81,19 +79,19 @@ let content =
             let items = VL.get_items_in_window vl in
             let children =
               Array.to_list items
-              |> List.mapi
-                (fun index (item, _) ->
-                   let module N = T.Node in
-                   [%c
-                     P_file_item.t ~key:item.N.name
-                       ~props:
-                         (object%js
-                           val item = item
+              |> List.mapi (fun index (item, marked) ->
+                  let module N = T.Node in
+                  [%c
+                    P_file_item.t ~key:item.N.name
+                      ~props:
+                        (object%js
+                          val item = item
 
-                           val selected = index = this##.props##.selectedItemIndex
+                          val marked = marked
 
-                           val focused = this##.props##.focused
-                         end)] )
+                          val selected =
+                            index = this##.props##.selectedItemIndex && this##.props##.focused
+                        end)] )
             in
             let scroll_bar =
               let start, size = VL.percentage_by_visible this##.state##.virtualizedList in
@@ -148,7 +146,8 @@ let t =
         class type t =
           object
             method location : string Js.readonly_prop
-            method nodes: S.File_list.Filer.node array Js.readonly_prop
+
+            method nodes : S.File_list.Filer.node array Js.readonly_prop
 
             method selectedItemIndex : int Js.readonly_prop
 
