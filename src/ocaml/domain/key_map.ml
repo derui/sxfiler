@@ -25,11 +25,9 @@ let update t ~condition ~key ~value =
        Some (value :: values) )
     t
 
-
 let add t ~condition ~key ~value =
   let key = Sxfiler_kbd.to_keyseq key in
   {keymap = update t.keymap ~condition ~key ~value}
-
 
 let find t ~condition ~key =
   let key = Sxfiler_kbd.to_keyseq key in
@@ -41,7 +39,6 @@ let find t ~condition ~key =
   in
   match matched with [] -> None | v :: _ -> Some v.Original_key_binding.value
 
-
 let bindings t =
   Binding_map.bindings t.keymap
   |> List.map (fun (key, values) ->
@@ -51,7 +48,6 @@ let bindings t =
       >|= fun kbd -> List.map (fun value -> (value.condition, kbd, value.value)) values )
   |> List.map (Option.get ~default:(fun () -> []))
   |> List.flatten
-
 
 let subset t ~condition =
   bindings t

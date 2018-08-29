@@ -25,7 +25,6 @@ module Original_key_binding = struct
       val _when = Js.Optdef.return @@ Condition.to_js t.condition
     end
 
-
   let of_js (js : js Js.t) : t =
     { key = Js.to_string js##.key
     ; action = Js.to_string js##.action
@@ -55,7 +54,6 @@ let to_js (t : T.Key_map.t) : js Js.t =
   object%js
     val bindings = bindings
   end
-
 
 let of_js (js : js Js.t) : T.Key_map.t =
   let bindings =

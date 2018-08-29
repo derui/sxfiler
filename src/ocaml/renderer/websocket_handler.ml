@@ -11,5 +11,4 @@ let init t =
         List.iter (fun handler -> handler message) t.handlers ;
         Js._true )
 
-
 let add t ~handler = t.handlers <- handler :: t.handlers

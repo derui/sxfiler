@@ -31,7 +31,6 @@ module Impl = struct
       t.output_writer <- output_writer ;
       Lwt.return_unit
 
-
   let disconnect t =
     if Lwt_stream.is_closed t.input_stream then
       let%lwt () =
@@ -44,7 +43,6 @@ module Impl = struct
       let%lwt () = Logs_lwt.info @@ fun m -> m ~tags "Connection disconnected" in
       Lwt_stream.closed t.input_stream )
 
-
   let is_closed t = Lwt_stream.is_closed t.input_stream
 
   (** [default_input_handler t f] handles frame [f] with default behavior for Websocket. *)
@@ -54,8 +52,7 @@ module Impl = struct
     | Frame.Opcode.Ping ->
       let f = Frame.create ~opcode:Frame.Opcode.Pong ~content:f.Frame.content () in
       Lwt.return @@ t.output_writer @@ Some f
-    | Frame.Opcode.Close ->
-      disconnect t
+    | Frame.Opcode.Close -> disconnect t
     | _ as op ->
       Logs_lwt.err @@ fun m -> m ~tags "Not implemented opcode: %s" (Frame.Opcode.to_string op)
 end

@@ -18,7 +18,6 @@ let of_js js : t =
   ; nodes = Js.array_map Node.of_js js##.nodes |> Js.to_array |> Array.to_list
   ; history = Location_history.of_js js##.history }
 
-
 let to_js t : js Js.t =
   object%js
     val id = Js.string t.id

@@ -27,7 +27,6 @@ module Setup_api :
     in
     Js.Unsafe.coerce params
 
-
   let result_of_json _ = ()
 end
 
@@ -51,7 +50,6 @@ struct
     in
     Js.Unsafe.coerce params
 
-
   let result_of_json v =
     let v = Js.Unsafe.coerce v in
     Array.to_list @@ Js.to_array @@ Js.array_map (fun v -> T.Completion.Candidate.of_js v) v
@@ -66,13 +64,10 @@ module Make (Client : C.Rpc.Client) : S = struct
         (Some params)
         (function
           (* TODO: should define original exception *)
-          | Error _ ->
-            Lwt.wakeup_exn wakener Not_found
-          | Ok _ ->
-            Lwt.wakeup wakener ())
+          | Error _ -> Lwt.wakeup_exn wakener Not_found
+          | Ok _ -> Lwt.wakeup wakener ())
     in
     waiter
-
 
   let read params =
     let waiter, wakener = Lwt.wait () in
@@ -81,10 +76,8 @@ module Make (Client : C.Rpc.Client) : S = struct
         (module Read_api)
         (Some params)
         (function
-          | Error _ | Ok None ->
-            Lwt.wakeup_exn wakener Not_found
-          | Ok (Some v) ->
-            Lwt.wakeup wakener v)
+          | Error _ | Ok None -> Lwt.wakeup_exn wakener Not_found
+          | Ok (Some v) -> Lwt.wakeup wakener v)
     in
     waiter
 end

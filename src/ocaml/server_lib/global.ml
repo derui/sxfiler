@@ -37,8 +37,7 @@ end = struct
       let v = T.Runner.make () in
       t := Some v ;
       v
-    | Some t ->
-      t
+    | Some t -> t
 end
 
 module Keymap = C.Statable.Make (struct

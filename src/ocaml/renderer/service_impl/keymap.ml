@@ -38,7 +38,6 @@ module Enable_context_api :
         val context = Js.string param.context
       end)
 
-
   let result_of_json js = T.Key_map.of_js @@ Js.Unsafe.coerce js
 end
 
@@ -61,7 +60,6 @@ module Disable_context_api :
         val context = Js.string param.context
       end)
 
-
   let result_of_json js = T.Key_map.of_js @@ Js.Unsafe.coerce js
 end
 
@@ -73,13 +71,10 @@ module Make (Client : C.Rpc.Client) : S = struct
         (module Get_api)
         None
         (function
-          | Error _ | Ok None ->
-            Lwt.wakeup_exn wakener Not_found
-          | Ok (Some v) ->
-            Lwt.wakeup wakener v)
+          | Error _ | Ok None -> Lwt.wakeup_exn wakener Not_found
+          | Ok (Some v) -> Lwt.wakeup wakener v)
     in
     waiter
-
 
   let enable_context param =
     let waiter, wakener = Lwt.wait () in
@@ -88,13 +83,10 @@ module Make (Client : C.Rpc.Client) : S = struct
         (module Enable_context_api)
         (Some param)
         (function
-          | Error _ | Ok None ->
-            Lwt.wakeup_exn wakener Not_found
-          | Ok (Some v) ->
-            Lwt.wakeup wakener v)
+          | Error _ | Ok None -> Lwt.wakeup_exn wakener Not_found
+          | Ok (Some v) -> Lwt.wakeup wakener v)
     in
     waiter
-
 
   let disable_context param =
     let waiter, wakener = Lwt.wait () in
@@ -103,10 +95,8 @@ module Make (Client : C.Rpc.Client) : S = struct
         (module Disable_context_api)
         (Some param)
         (function
-          | Error _ | Ok None ->
-            Lwt.wakeup_exn wakener Not_found
-          | Ok (Some v) ->
-            Lwt.wakeup wakener v)
+          | Error _ | Ok None -> Lwt.wakeup_exn wakener Not_found
+          | Ok (Some v) -> Lwt.wakeup wakener v)
     in
     waiter
 end

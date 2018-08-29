@@ -27,5 +27,4 @@ let testcases =
         Alcotest.(check bool) "stored" true (D.Condition.equal actual expected) ;
         Lwt.return_unit ) ]
 
-
 let suite = [("condition repository", testcases)]

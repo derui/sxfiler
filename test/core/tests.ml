@@ -44,7 +44,6 @@ let option_tests =
       Alcotest.(check @@ option string) "option" (Some "bar" >|= fun v -> v ^ "foo")
       @@ Option.some "barfoo" ) ]
 
-
 let result_tests =
   [ ( "allow to use result as monad"
     , `Quick
@@ -68,7 +67,6 @@ let result_tests =
     , fun () ->
       Alcotest.(check @@ option string) "result" (Result.to_option (Ok "bar")) (Some "bar") ;
       Alcotest.(check @@ option string) "result" (Result.to_option (Error "bar")) None ) ]
-
 
 let path_tests =
   [ ( "separator of path on unix"
@@ -190,7 +188,6 @@ let path_tests =
       Alcotest.(check string) "parent" "/" @@ Path.dirname @@ to_path "../bar" ;
       Alcotest.(check string) "dir" "/var/foo" @@ Path.dirname @@ to_path "foo/bar" ) ]
 
-
 let fun_tests =
   [ ( "get identity"
     , `Quick
@@ -234,7 +231,6 @@ let fun_tests =
       Alcotest.(check int) "compose same type" 3 Fun.((succ %> succ) 1) ;
       Alcotest.(check @@ float 0.0) "compose diff type" 2.0 Fun.((succ %> float_of_int) 1) ) ]
 
-
 let error_tests =
   [ ( "make simple error"
     , `Quick
@@ -258,13 +254,11 @@ let error_tests =
       Alcotest.check_raises "exception" (Error.Error error) (fun () ->
           raise @@ Error.to_exn error ) ) ]
 
-
 let testcases =
   [ ("Option", option_tests)
   ; ("Fun", fun_tests)
   ; ("Path", path_tests)
   ; ("Result", result_tests)
   ; ("Error", error_tests) ]
-
 
 let () = Alcotest.run "Core functionally" testcases

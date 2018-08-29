@@ -28,6 +28,5 @@ module Make (T : Type) : S with type state = T.t = struct
     t := v ;
     Lwt.return_unit
 
-
   let with_lock f = Lwt_mutex.with_lock mutex (fun () -> f !t)
 end

@@ -15,42 +15,27 @@ module File_size = struct
     ; original : int64 }
 
   let next_unit = function
-    | Byte ->
-      Some KByte
-    | KByte ->
-      Some MByte
-    | MByte ->
-      Some GByte
-    | GByte ->
-      Some TByte
-    | TByte ->
-      Some Unknown
-    | Unknown ->
-      None
-
+    | Byte -> Some KByte
+    | KByte -> Some MByte
+    | MByte -> Some GByte
+    | GByte -> Some TByte
+    | TByte -> Some Unknown
+    | Unknown -> None
 
   let size_unit_to_string = function
-    | Byte ->
-      "B"
-    | KByte ->
-      "K"
-    | MByte ->
-      "M"
-    | GByte ->
-      "G"
-    | TByte ->
-      "T"
-    | Unknown ->
-      "-"
-
+    | Byte -> "B"
+    | KByte -> "K"
+    | MByte -> "M"
+    | GByte -> "G"
+    | TByte -> "T"
+    | Unknown -> "-"
 
   let of_size size =
     let rec calc_unit size current decimal =
       if Int64.zero <= size && size < 1024L then (current, Int64.to_float size)
       else
         match next_unit current with
-        | None ->
-          (current, Int64.to_float size +. decimal)
+        | None -> (current, Int64.to_float size +. decimal)
         | Some next_unit ->
           calc_unit
             Int64.(div size 1024L)
@@ -59,7 +44,6 @@ module File_size = struct
     in
     let size_unit, aligned_size = calc_unit size Byte 0.0 in
     {size_unit; aligned_size; original = size}
-
 
   let to_string t =
     let size_unit = size_unit_to_string t.size_unit in

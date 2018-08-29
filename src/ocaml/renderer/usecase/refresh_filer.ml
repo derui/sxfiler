@@ -17,6 +17,5 @@ module Make (Service : S.Filer.S) : C.Usecase.S with type param = param' = struc
     | Ok res ->
       let module DI = (val dispatcher : C.Dispatcher_intf.Instance) in
       Lwt.return @@ DI.(Dispatcher.dispatch this C.Message.(Update_filer (t.param, res)))
-    | Error `Not_found ->
-      Lwt.return_unit
+    | Error `Not_found -> Lwt.return_unit
 end

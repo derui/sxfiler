@@ -8,7 +8,6 @@ let bracket ~setup ~teardown f =
   (try f data with _ as e -> teardown data ; raise e) ;
   teardown data
 
-
 let flip f x y = f y x
 let const x _ = x
 let ( %> ) f g x = g (f x)

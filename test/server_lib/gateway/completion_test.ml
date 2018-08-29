@@ -48,5 +48,4 @@ let completion_tests =
           res ;
         Lwt.return_unit ) ]
 
-
 let testcases = [("rpc procedure : completion", completion_tests)]

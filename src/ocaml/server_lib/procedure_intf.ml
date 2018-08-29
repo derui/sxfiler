@@ -42,18 +42,14 @@ module Make (R : Rpc_type) : S with type params := R.params and type result := R
     in
     let%lwt result =
       match R.params_of_json with
-      | `Not_required param ->
-        R.handle param
+      | `Not_required param -> R.handle param
       | `Required f -> (
           match req.Req.params with
-          | None ->
-            Rpc.(Exception.raise_error Types.Error_code.Invalid_params)
+          | None -> Rpc.(Exception.raise_error Types.Error_code.Invalid_params)
           | Some params -> (
               match f params with
-              | Error _ ->
-                Rpc.(Exception.raise_error Types.Error_code.Invalid_params)
-              | Ok param ->
-                R.handle param ) )
+              | Error _ -> Rpc.(Exception.raise_error Types.Error_code.Invalid_params)
+              | Ok param -> R.handle param ) )
     in
     let result = Option.some @@ R.result_to_json result in
     let%lwt () =

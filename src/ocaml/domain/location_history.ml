@@ -12,7 +12,6 @@ let make ?(max_records = 100) () = {records = []; max_records = max 0 max_record
 let sort_by_timestamp =
   List.sort (fun a b -> Int64.compare a.Location_record.timestamp b.Location_record.timestamp)
 
-
 (** {[add_record t ~record]} makes new record and *)
 let add_record t ~record =
   let records = sort_by_timestamp @@ (record :: t.records) in

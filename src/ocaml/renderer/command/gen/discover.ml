@@ -16,7 +16,6 @@ let find_modules ~dir ~prefix =
   List.filter (fun file -> Re.execp regexp file) files
   |> List.map (fun file -> Filename.chop_extension file)
 
-
 let find_static_commands = find_modules ~prefix:static_prefix
 let find_dymanic_commands = find_modules ~prefix:dynamic_prefix
 let print_header ~ppf = Format.fprintf ppf "include Core\n"
@@ -25,13 +24,11 @@ let build_command_alias ~ppf ~command ~prefix =
   let regexp = Re.Posix.compile_pat ("^" ^ prefix) in
   let list = Re.split regexp command in
   match list with
-  | [] ->
-    Printf.eprintf "Prefix only file."
+  | [] -> Printf.eprintf "Prefix only file."
   | file :: _ ->
     Format.fprintf ppf "module %s = %s\n" (String.capitalize_ascii file)
       (String.capitalize_ascii command) ;
     Format.pp_print_newline ppf ()
-
 
 let build_command_aliases ~ppf static_commands dynamic_commands =
   List.iter
@@ -41,13 +38,11 @@ let build_command_aliases ~ppf static_commands dynamic_commands =
     (fun command -> build_command_alias ~command ~prefix:dynamic_prefix ~ppf)
     dynamic_commands
 
-
 let build_static_exporter ~ppf commands =
   Format.fprintf ppf "let expose_static registry hub = \n" ;
   let commands = List.rev commands in
   match commands with
-  | [] ->
-    Format.fprintf ppf "registry\n[@@@@warning \"-27\"]"
+  | [] -> Format.fprintf ppf "registry\n[@@@@warning \"-27\"]"
   | head :: rest ->
     List.iter (fun command ->
         Format.fprintf ppf "let registry = %s.expose registry hub in\n"
@@ -55,20 +50,17 @@ let build_static_exporter ~ppf commands =
     @@ List.rev rest ;
     Format.fprintf ppf "%s.expose registry hub\n" @@ String.capitalize_ascii head
 
-
 let build_dynamic_exporter ~ppf commands =
   Format.fprintf ppf "let expose_dynamic registry hub = \n" ;
   let commands = List.rev commands in
   match commands with
-  | [] ->
-    Format.fprintf ppf "registry\n[@@@@warning \"-27\"]"
+  | [] -> Format.fprintf ppf "registry\n[@@@@warning \"-27\"]"
   | head :: rest ->
     List.iter (fun command ->
         Format.fprintf ppf "let registry = %s.expose registry hub;\n"
         @@ String.capitalize_ascii command )
     @@ List.rev rest ;
     Format.fprintf ppf "%s.expose registry hub\n" @@ String.capitalize_ascii head
-
 
 let () =
   let dir = Sys.getcwd () in

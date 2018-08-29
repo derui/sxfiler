@@ -10,7 +10,6 @@ module Make_registry (Com : Registry.Command) : Registry.S with type command := 
     Jstable.add t (Js.string name) command ;
     t
 
-
   let get t ~name = Js.Optdef.to_option @@ Jstable.find t Js.(string name)
   let names t = Jstable.keys t |> List.map Js.to_string
 end

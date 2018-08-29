@@ -3,7 +3,6 @@ module R = Jsoo_reactjs
 let format_date date =
   Printf.sprintf "%04d/%02d/%02d" date##getFullYear (date##getMonth + 1) date##getDate
 
-
 let t =
   R.Component.make_stateless
     ~props:

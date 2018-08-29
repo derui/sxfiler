@@ -14,7 +14,6 @@ let command_completer locator =
           val locator = locator
         end)]
 
-
 let t =
   R.Component.make_stateless
     ~props:

@@ -9,7 +9,6 @@ let to_yojson t =
     ; ("nodes", `List (List.map Node.to_yojson t.nodes))
     ; ("history", Location_history.to_yojson t.history) ]
 
-
 let of_yojson js =
   let open Yojson.Safe.Util in
   try
@@ -27,7 +26,6 @@ let of_yojson js =
     nodes
     >>= fun nodes -> history >>= fun history -> Ok {id; location; nodes = List.rev nodes; history}
   with Type_error (s, _) -> Error s
-
 
 let of_domain t =
   { id = t.D.id

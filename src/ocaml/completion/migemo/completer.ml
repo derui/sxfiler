@@ -17,8 +17,7 @@ module Core = struct
     List.map (fun s -> (Re.exec_opt regexp @@ fst s, snd s)) collection
     |> List.filter (fun v -> is_some @@ fst v)
     |> List.map (function
-        | None, _ ->
-          failwith "Invalid branch"
+        | None, _ -> failwith "Invalid branch"
         | Some group, v ->
           let start, length = Re.Group.offset group 0 in
           {T.Candidate.start; length; value = v} )

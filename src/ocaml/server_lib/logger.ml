@@ -7,7 +7,6 @@ module Tags = struct
     Logs.Tag.def "module" ~doc:"Path of module hierarchy"
     @@ fun _ v -> Printf.printf "%s" (String.concat "." v)
 
-
   let module_main () = Logs.Tag.(empty |> add module_tag ["main"])
   let module_lib c = Logs.Tag.(empty |> add module_tag (["lib"] @ c))
 end
@@ -27,10 +26,8 @@ let lwt_reporter ppf =
     let k _ =
       let write () =
         match level with
-        | Logs.App ->
-          Lwt_io.write Lwt_io.stdout (app_flush ())
-        | _ ->
-          Lwt_io.write Lwt_io.stderr (dst_flush ())
+        | Logs.App -> Lwt_io.write Lwt_io.stdout (app_flush ())
+        | _ -> Lwt_io.write Lwt_io.stderr (dst_flush ())
       in
       let unblock () = over () ; Lwt.return_unit in
       Lwt.finalize write unblock |> Lwt.ignore_result ;
@@ -41,10 +38,8 @@ let lwt_reporter ppf =
       let open Option.Infix in
       let module_path =
         match tags >>= Logs.Tag.find Tags.module_tag with
-        | None ->
-          "unknown"
-        | Some list ->
-          String.concat "." list
+        | None -> "unknown"
+        | Some list -> String.concat "." list
       in
       let now = Unix.gettimeofday () in
       let utc = Unix.gmtime now in

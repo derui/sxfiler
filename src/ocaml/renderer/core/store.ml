@@ -36,7 +36,6 @@ module Make_group (T : State_intf.S) (G : Grouping with type state = T.t) :
     G.watch_state (fun state -> t.state <- state) state ;
     t
 
-
   let subscribe t ~f = t.subscribers <- f :: t.subscribers
   let get {state; _} = state
 

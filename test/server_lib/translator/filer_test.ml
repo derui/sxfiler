@@ -10,7 +10,6 @@ let data =
   ; sort_order = D.Types.Sort_type.Date
   ; history = D.Location_history.make () }
 
-
 let testcases =
   [ ( "can translate to/from domain"
     , `Quick
@@ -29,6 +28,5 @@ let testcases =
       Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
         "yojson" (Ok data)
         (Tr.Filer.of_yojson @@ Tr.Filer.to_yojson data) ) ]
-
 
 let suite = [("filer", testcases)]

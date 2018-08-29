@@ -12,7 +12,6 @@ let argv =
   let argv = Js.to_array Js.Unsafe.global##.process##.argv in
   Array.sub argv 2 (Array.length argv - 2)
 
-
 let option_config = ref ""
 let options = [("--config", Arg.Set_string option_config, "Path for configuraiton")]
 
@@ -20,19 +19,16 @@ let subscription ipc t =
   let module S = Sxfiler_common.State in
   Lwt.return @@ E.IPC.(send ~channel:(update (S.to_js t)) ~ipc)
 
-
 let default_pane () =
   let directory = Jsoo_node.Path.resolve ["."] in
   T.Pane.make ~directory ()
-
 
 let restore_state_from_user_data ~state ~user_data =
   let module PH = Sxfiler_common.Pane_history in
   let left_pane_history = user_data.U.left_pane_history
   and right_pane_history = user_data.U.right_pane_history in
   let restore_pane = function
-    | [] ->
-      default_pane ()
+    | [] -> default_pane ()
     | hist :: _ ->
       T.Pane.make ~focused_item:hist.PH.History.focused_item ~directory:hist.PH.History.directory
         ()
@@ -50,11 +46,9 @@ let restore_state_from_user_data ~state ~user_data =
     ; left_pane_history = restore_history left_pane_history
     ; right_pane_history = restore_history right_pane_history }
 
-
 let quit_application state app =
   U.save @@ U.of_state state ;
   app##quit ()
-
 
 let () =
   let crash_reporter = M.crash_reporter () in
@@ -87,8 +81,7 @@ let () =
   let module Subscription = struct
     let handle t =
       match window_binder.Window_binder.main_window with
-      | None ->
-        Lwt.return_unit
+      | None -> Lwt.return_unit
       | Some w ->
         let module S = Sxfiler_common.State in
         if t.S.terminated then quit_application t app |> Lwt.return
@@ -100,8 +93,7 @@ let () =
     Js.wrap_callback (fun _ _ ->
         Window_binder.on_ready window_binder () ;
         match window_binder.Window_binder.main_window with
-        | None ->
-          ()
+        | None -> ()
         | Some bw ->
           let module M = Sxfiler_common.Message in
           let module E = FFI.BrowserWindow.Web_contents_event in

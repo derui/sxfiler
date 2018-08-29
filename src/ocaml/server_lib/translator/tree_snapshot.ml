@@ -5,7 +5,6 @@ module D = Sxfiler_domain.Tree_snapshot
 let to_yojson t =
   `Assoc [("directory", `String t.directory); ("nodes", `List (List.map Node.to_yojson t.nodes))]
 
-
 let of_yojson js =
   let open Yojson.Safe.Util in
   try
@@ -20,7 +19,6 @@ let of_yojson js =
     in
     nodes >>= fun nodes -> Ok {directory; nodes = List.rev nodes}
   with Type_error (s, _) -> Error s
-
 
 (** [of_domain t] converts {!type:D.t} to {!type:t}. *)
 let of_domain t = {directory = t.D.directory; nodes = List.map Node.of_domain t.nodes}

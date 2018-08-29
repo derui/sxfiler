@@ -8,7 +8,6 @@ let key_to_yojson t =
     ; ("action", `String t.action)
     ; ("when", Condition.to_yojson t.condition) ]
 
-
 let key_of_yojson js =
   let open Yojson.Safe.Util in
   try
@@ -18,7 +17,6 @@ let key_of_yojson js =
     let open Sxfiler_core.Result.Infix in
     Condition.of_yojson condition >>= fun condition -> Ok {T.key; action; condition}
   with Type_error (s, _) -> Error s
-
 
 let to_yojson t = `Assoc [("bindings", `List (List.map key_to_yojson t.T.bindings))]
 
@@ -30,17 +28,13 @@ let of_yojson js =
       List.fold_left
         (fun accum key ->
            match (key_of_yojson key, accum) with
-           | Ok key, Ok accum ->
-             Ok (key :: accum)
-           | (Error _ as v), _ ->
-             v
-           | _, Error _ ->
-             accum )
+           | Ok key, Ok accum -> Ok (key :: accum)
+           | (Error _ as v), _ -> v
+           | _, Error _ -> accum )
         (Ok []) bindings
     in
     Sxfiler_core.Result.fmap ~f:(fun v -> {T.bindings = List.rev v}) bindings
   with Type_error (s, _) -> Error s
-
 
 (* translator between domain and response/request type *)
 let of_domain t =
@@ -51,14 +45,12 @@ let of_domain t =
     bindings
   |> fun v -> {T.bindings = v}
 
-
 let to_domain t =
   let empty = D.make () in
   List.fold_left
     (fun keymap binding ->
        match Sxfiler_kbd.of_keyseq binding.T.key with
-       | None ->
-         keymap
+       | None -> keymap
        | Some key ->
          D.add keymap
            ~condition:(Condition.to_domain binding.condition)

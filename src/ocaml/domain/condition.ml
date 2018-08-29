@@ -13,7 +13,6 @@ let empty = Context_set.empty
 let of_list contexts =
   List.fold_left (fun set context -> Context_set.add context set) empty contexts
 
-
 let to_list t = Context_set.fold (fun c l -> c :: l) t []
 let enable t ~context = Context_set.add context t
 let disable t ~context = Context_set.remove context t

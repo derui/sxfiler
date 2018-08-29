@@ -40,7 +40,6 @@ let of_js : js Js.t -> t =
     ; is_file = Js.to_bool js##.isFile
     ; is_symlink = Js.to_bool js##.isSymlink }
 
-
 let to_js t : js Js.t =
   object%js
     val mode = Js.string t.mode

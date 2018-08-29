@@ -11,11 +11,9 @@ let of_yojson js : (t, string) result =
     Ok enabled_contexts
   with Type_error (s, _) -> Error s
 
-
 let of_domain t =
   let module T = Sxfiler_domain in
   T.Condition.to_list t
-
 
 let to_domain t =
   let empty = D.empty in

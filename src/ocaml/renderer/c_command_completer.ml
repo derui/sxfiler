@@ -17,7 +17,6 @@ let complete_command (module L : Locator.S) command =
   in
   Ctx.(Context.execute this (module B)) |> Lwt.ignore_result
 
-
 let setup_command_source props _ =
   let module DL = Command.Dynamic_registry in
   let module L = (val props##.locator : Locator.S) in
@@ -34,14 +33,12 @@ let setup_command_source props _ =
   @@ let%lwt () = Lwt_js.yield () in
   Ctx.(Context.execute this instance)
 
-
 let clean_up_completer props _ =
   let module L = (val props##.locator : Locator.S) in
   let module Ctx = (val L.context) in
   let instance = C.Usecase.make_instance (module U.Cleanup_completion) ~param:() in
   let open Lwt in
   ignore_result @@ (Lwt_js.yield () >>= fun () -> Ctx.(Context.execute this instance))
-
 
 let t =
   R.Component.make_stateless

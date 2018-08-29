@@ -9,7 +9,6 @@ let alphabetical_keys =
   let upper_chars = chars ^ String.uppercase_ascii chars ^ punctures in
   chars ^ upper_chars ^ punctures
 
-
 let () =
   "Sxfiler kbd macro"
   >::: [ ( "should convert between Javascript object and kbd type"
@@ -93,9 +92,7 @@ let () =
                        let k = alphabetical_keys.[k] in
                        let seq = prefix ^ String.make 1 k in
                        match K.of_keyseq seq with
-                       | None ->
-                         false
-                       | Some t ->
-                         validator t && K.key t = String.make 1 k )
+                       | None -> false
+                       | Some t -> validator t && K.key t = String.make 1 k )
                     prefix_patterns )
                parameter_list ) ]

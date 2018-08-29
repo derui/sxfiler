@@ -24,7 +24,6 @@ let of_js js : t =
   ; parent_directory = Js.to_string js##.parentDirectory
   ; link_path = Js.Opt.map js##.linkPath Js.to_string |> Js.Opt.to_option }
 
-
 let to_js t : js Js.t =
   object%js
     val id = Js.string t.id

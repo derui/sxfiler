@@ -33,5 +33,4 @@ let task_runner =
         Alcotest.(check int) "task run" 1 !data ;
         Lwt.return_unit ) ]
 
-
 let () = Alcotest.run "Task library" [("task_runner", task_runner)]

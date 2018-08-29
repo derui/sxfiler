@@ -15,7 +15,6 @@ let data =
     ; is_file = false
     ; is_symlink = true }
 
-
 let () =
   "File stat translator"
   >::: [ ( "should be able to convert between JavaScript and OCaml"

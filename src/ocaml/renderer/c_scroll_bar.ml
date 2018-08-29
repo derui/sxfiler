@@ -14,7 +14,6 @@ let visible_window key start size =
             end
         end)]
 
-
 let t =
   R.Component.make_stateless
     ~props:

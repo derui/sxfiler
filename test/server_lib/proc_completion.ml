@@ -30,7 +30,6 @@ let proc_completion =
             in
             source >>= fun source -> Ok {source = List.rev source}
 
-
           type result = unit
 
           let handle {source} = State.update source
@@ -48,6 +47,5 @@ let proc_completion =
           "param" true
           (match Setup.params_of_json with `Required _ -> true | _ -> false) ;
         Lwt.return_unit ) ]
-
 
 let testcases = [("rpc procedure : completion", proc_completion)]

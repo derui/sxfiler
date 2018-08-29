@@ -21,10 +21,8 @@ let () =
                end) in
              let module S = SI.Filer.Make (Client) in
              match%lwt S.make {initial_location = "loc"; name = "bar"} with
-             | Error _ ->
-               Lwt.return @@ assert_fail "Unknown branch"
-             | Ok actual ->
-               Lwt.return @@ assert_ok (expected = actual) )
+             | Error _ -> Lwt.return @@ assert_fail "Unknown branch"
+             | Ok actual -> Lwt.return @@ assert_ok (expected = actual) )
        ; ( "should return error if it already created"
            >:- fun () ->
              let module Client = Util.Make_client (struct
@@ -35,10 +33,8 @@ let () =
                end) in
              let module S = SI.Filer.Make (Client) in
              match%lwt S.make {initial_location = "loc"; name = "bar"} with
-             | Error e ->
-               Lwt.return @@ assert_ok (e = `Already_exists)
-             | Ok _ ->
-               Lwt.return @@ assert_fail "Unknown branch" )
+             | Error e -> Lwt.return @@ assert_ok (e = `Already_exists)
+             | Ok _ -> Lwt.return @@ assert_fail "Unknown branch" )
        ; ( "should raise error when get response another error"
            >:- fun () ->
              let module Client = Util.Make_client (struct
@@ -51,10 +47,8 @@ let () =
                end) in
              let module S = SI.Filer.Make (Client) in
              match%lwt S.make {initial_location = "loc"; name = "bar"} with
-             | exception Sxfiler_core.Error.Error _ ->
-               Lwt.return @@ assert_ok true
-             | _ ->
-               Lwt.return @@ assert_fail "Unknown branch" ) ] ;
+             | exception Sxfiler_core.Error.Error _ -> Lwt.return @@ assert_ok true
+             | _ -> Lwt.return @@ assert_fail "Unknown branch" ) ] ;
   "Filer service implementation: Get"
   >::: [ ( "should return filer if it exists"
            >:- fun () ->
@@ -69,10 +63,8 @@ let () =
                end) in
              let module S = SI.Filer.Make (Client) in
              match%lwt S.get {name = "bar"} with
-             | Error _ ->
-               Lwt.return @@ assert_fail "Unknown branch"
-             | Ok actual ->
-               Lwt.return @@ assert_ok (expected = actual) )
+             | Error _ -> Lwt.return @@ assert_fail "Unknown branch"
+             | Ok actual -> Lwt.return @@ assert_ok (expected = actual) )
        ; ( "should return error if it do not find"
            >:- fun () ->
              let module Client = Util.Make_client (struct
@@ -83,10 +75,8 @@ let () =
                end) in
              let module S = SI.Filer.Make (Client) in
              match%lwt S.get {name = "bar"} with
-             | Error e ->
-               Lwt.return @@ assert_ok (e = `Not_found)
-             | Ok _ ->
-               Lwt.return @@ assert_fail "Unknown branch" )
+             | Error e -> Lwt.return @@ assert_ok (e = `Not_found)
+             | Ok _ -> Lwt.return @@ assert_fail "Unknown branch" )
        ; ( "should raise error when get response another error"
            >:- fun () ->
              let module Client = Util.Make_client (struct
@@ -99,7 +89,5 @@ let () =
                end) in
              let module S = SI.Filer.Make (Client) in
              match%lwt S.get {name = "bar"} with
-             | exception Sxfiler_core.Error.Error _ ->
-               Lwt.return @@ assert_ok true
-             | _ ->
-               Lwt.return @@ assert_fail "Unknown branch" ) ]
+             | exception Sxfiler_core.Error.Error _ -> Lwt.return @@ assert_ok true
+             | _ -> Lwt.return @@ assert_fail "Unknown branch" ) ]

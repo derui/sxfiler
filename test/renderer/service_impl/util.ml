@@ -15,7 +15,6 @@ module Make_client (Res : Gen_res) : C.Rpc.Client = struct
     let req, handler = C.make_request (module Api) param handler in
     Lwt.return (match handler with None -> () | Some f -> Res.gen req.R.Request.id |> f)
 
-
   (* Call api as notification with definition and parameter *)
   let notification (type p) (module Api : Api_def with type params = p) (param : p option) =
     let module C = R.Client in

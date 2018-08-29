@@ -30,7 +30,6 @@ module Setup (U : C.Usecase.Setup) = struct
       source >>= fun source -> Ok {source = List.rev source}
     with Type_error (s, _) -> Error s
 
-
   type result = unit
 
   let handle param =

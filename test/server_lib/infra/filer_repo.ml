@@ -7,7 +7,6 @@ let data =
   D.Filer.make ~id:"foo" ~location:(Path.of_string "/var") ~nodes:[]
     ~sort_order:D.Types.Sort_type.Date ~history:(D.Location_history.make ())
 
-
 let testcases =
   [ Alcotest_lwt.test_case "can store filer to state" `Quick (fun switch () ->
         let module State = S.Statable.Make (struct
@@ -32,6 +31,5 @@ let testcases =
         let%lwt actual = R.resolve "foo" in
         Alcotest.(check @@ option @@ of_pp Fmt.nop) "stored" (Some data) actual ;
         Lwt.return_unit ) ]
-
 
 let suite = [("filer repository", testcases)]

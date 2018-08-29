@@ -37,7 +37,6 @@ let handler (rpc_server : Jsonrpc_server.t) (conn : Conduit_lwt_unix.flow * Coht
       ~body:(Sexplib.Sexp.to_string_hum (Cohttp.Request.sexp_of_t req))
       ()
 
-
 let initialize_modules ~migemo ~keymap ~config =
   let () = Proc_completion.initialize migemo in
   let%lwt () =
@@ -61,7 +60,6 @@ let initialize_modules ~migemo ~keymap ~config =
     let module Gateway = G.Configuration.Store (Usecase) in
     Gateway.handle config
 
-
 let start_server _ port =
   let conn_closed (ch, _) =
     Logs.info
@@ -82,7 +80,6 @@ let start_server _ port =
   Cohttp_lwt_unix.Server.create
     ~mode:(`TCP (`Port port))
     (Cohttp_lwt_unix.Server.make ~callback:(handler rpc_server) ~conn_closed ())
-
 
 (* Load migemo from specified directory that contains dictionary and conversions.  *)
 let load_migemo dict_dir =
@@ -113,13 +110,11 @@ let load_migemo dict_dir =
       in
       M.Migemo.make ~dict:migemo_dict ?hira_to_kata ?romaji_to_hira ?han_to_zen ()
 
-
 (** Load configuration from specified file *)
 let load_configuration config =
   let module Y = Sxfiler_server_translator.Configuration in
   let config = Yojson.Safe.from_file config in
   match Y.of_yojson config with Error _ -> None | Ok v -> Some v
-
 
 (* Load keymaps from specified file *)
 let load_keymap file =
@@ -129,9 +124,7 @@ let load_keymap file =
   | Error err ->
     Logs.warn (fun m -> m "Error occurred: %s" err) ;
     None
-  | Ok v ->
-    Some v
-
+  | Ok v -> Some v
 
 (* Get config from file, but get default when some error happenned  *)
 let get_config f config () = if Sys.file_exists config then f config else None

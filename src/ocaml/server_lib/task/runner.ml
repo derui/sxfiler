@@ -28,17 +28,13 @@ module Impl = struct
   let rec accept_task_loop t () =
     let%lwt task = Lwt_mvar.take t.task_mailbox in
     match%lwt Lwt.return task with
-    | `Accepted task ->
-      t.task_queue_writer (Some task) ; accept_task_loop t ()
-    | `Rejected ->
-      Lwt.return_unit
-
+    | `Accepted task -> t.task_queue_writer (Some task) ; accept_task_loop t ()
+    | `Rejected -> Lwt.return_unit
 
   let remove_state t id =
     Lwt_mutex.with_lock t.task_state_lock (fun () ->
         t.task_state <- Task_state.remove id t.task_state ;
         Lwt.return_unit )
-
 
   (** Forever loop to run task. *)
   let run_task_loop t () =
@@ -60,7 +56,6 @@ module Impl = struct
              with _ -> remove_state t id ) )
       t.task_queue
 
-
   (** [add_task task] add [task] to mailbox of task accepter. *)
   let add_task t task = Lwt_mvar.put t.task_mailbox (`Accepted task)
 
@@ -78,7 +73,6 @@ module Impl = struct
     Lwt.async (fun () -> accepter) ;
     Lwt.async (fun () -> worker) ;
     stopper
-
 
   let stop t = Lwt.wakeup t.wakener ()
 end

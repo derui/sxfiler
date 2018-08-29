@@ -9,7 +9,6 @@ type 'a t =
 let make ?item_height () =
   {all_items = [||]; visible_window = (0, 0); list_height = None; item_height}
 
-
 let update_all_items all_items t = {t with all_items}
 let update_list_height h t = {t with list_height = Some h}
 let update_item_height h t = {t with item_height = Some h}
@@ -19,7 +18,6 @@ let calc_viewable_item_count list_height item_height =
   let list_height = float_of_int @@ option_to_int list_height
   and item_height = float_of_int @@ option_to_int item_height in
   int_of_float @@ ceil @@ (list_height /. item_height)
-
 
 let calc_visible_window t visible_count cursor_position =
   let prev_start, prev_count = t.visible_window in
@@ -33,11 +31,9 @@ let calc_visible_window t visible_count cursor_position =
     (start, visible_count)
   else (prev_start, visible_count)
 
-
 let correct_visible_window all_item_count (start, count) =
   if start + count < all_item_count then (start, count)
   else (start - (start + count - all_item_count), count)
-
 
 let recalculate_visible_window cursor_position t =
   let visible_count = calc_viewable_item_count t.list_height t.item_height in
@@ -45,11 +41,9 @@ let recalculate_visible_window cursor_position t =
   let visible_window = correct_visible_window (Array.length t.all_items) visible_window in
   {t with visible_window}
 
-
 let get_items_in_window t =
   let window_start, window_size = t.visible_window in
   if Array.length t.all_items = 0 then [||] else Array.sub t.all_items window_start window_size
-
 
 (** Get values as percentage that first is start position, second is visible size. *)
 let percentage_by_visible t =

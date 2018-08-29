@@ -12,6 +12,5 @@ let of_yojson js =
     Ok {location; timestamp}
   with Type_error (s, _) -> Error s
 
-
 let of_domain t =
   {location = Path.to_string t.D.location; timestamp = Int64.to_string t.D.timestamp}

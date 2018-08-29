@@ -61,5 +61,4 @@ let keymap_tests =
         Alcotest.(check @@ of_pp Fmt.nop) "current" (Tr.Key_map.of_domain expected) res ;
         Lwt.return_unit ) ]
 
-
 let testcases = [("rpc procedure : keymap", keymap_tests)]

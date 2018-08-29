@@ -14,7 +14,6 @@ let to_yojson t =
     ; ("isFile", `Bool t.T.is_file)
     ; ("isSymlink", `Bool t.T.is_symlink) ]
 
-
 let of_yojson js =
   let open Yojson.Safe.Util in
   try
@@ -31,7 +30,6 @@ let of_yojson js =
     Ok {T.mode; uid; gid; atime; ctime; mtime; size; is_directory; is_file; is_symlink}
   with Type_error (s, _) -> Error s
 
-
 (** [of_domain t] converts domain object to [t] *)
 let of_domain t =
   { T.mode = Int32.to_string t.D.mode
@@ -44,7 +42,6 @@ let of_domain t =
   ; is_directory = t.is_directory
   ; is_file = t.is_file
   ; is_symlink = t.is_symlink }
-
 
 (** [to_domain t] converts [t] to domain object.*)
 let to_domain t =

@@ -15,7 +15,6 @@ module State = struct
   let make ~config ~file_list ~keymap ~completion ~command ~workspace =
     {config; file_list; keymap; completion; command; workspace}
 
-
   let reduce t message =
     Config.Store.dispatch t.config message ;
     File_list.Store.dispatch t.file_list message ;
@@ -24,7 +23,6 @@ module State = struct
     Command.Store.dispatch t.command message ;
     Workspace.Store.dispatch t.workspace message ;
     t
-
 
   let config {config; _} = config
   let file_list {file_list; _} = file_list

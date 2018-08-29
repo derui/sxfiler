@@ -8,7 +8,6 @@ let data =
   let record = {D.Location_record.location = Path.of_string " /foo"; timestamp = Int64.max_int} in
   D.Location_history.add_record ~record data'
 
-
 let testcases =
   [ ( "can translate to/from domain"
     , `Quick
@@ -25,6 +24,5 @@ let testcases =
       Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
         "yojson" (Ok data)
         (Tr.Location_history.of_yojson @@ Tr.Location_history.to_yojson data) ) ]
-
 
 let suite = [("location history", testcases)]

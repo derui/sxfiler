@@ -25,7 +25,6 @@ module Make_api :
         val name = Js.string v.name
       end)
 
-
   let result_of_json v = T.Filer.of_js @@ Js.Unsafe.coerce v
 end
 
@@ -45,7 +44,6 @@ module Get_api :
       (object%js
         val name = Js.string v.name
       end)
-
 
   let result_of_json v = T.Filer.of_js @@ Js.Unsafe.coerce v
 end
@@ -69,7 +67,6 @@ module Move_parent_api :
         val name = Js.string v.name
       end)
 
-
   let result_of_json v = T.Filer.of_js @@ Js.Unsafe.coerce v
 end
 
@@ -83,10 +80,8 @@ module Make (Client : C.Rpc.Client) : S = struct
         (module Make_api)
         (Some params)
         (function
-          | Ok (Some v) ->
-            Lwt.wakeup wakener @@ Ok v
-          | Ok None ->
-            assert false
+          | Ok (Some v) -> Lwt.wakeup wakener @@ Ok v
+          | Ok None -> assert false
           | Error e when e.code = R.Errors.Filer.already_exists ->
             Lwt.wakeup wakener (Error `Already_exists)
           | Error e ->
@@ -94,7 +89,6 @@ module Make (Client : C.Rpc.Client) : S = struct
             Lwt.wakeup_exn wakener Error.(to_exn @@ create message))
     in
     waiter
-
 
   let get params =
     let waiter, wakener = Lwt.wait () in
@@ -104,19 +98,15 @@ module Make (Client : C.Rpc.Client) : S = struct
         (module Get_api)
         (Some params)
         (function
-          | Ok (Some v) ->
-            Lwt.wakeup wakener @@ Ok v
-          | Ok None ->
-            assert false
-          | Error e when e.code = R.Errors.Filer.not_found ->
-            Lwt.wakeup wakener (Error `Not_found)
+          | Ok (Some v) -> Lwt.wakeup wakener @@ Ok v
+          | Ok None -> assert false
+          | Error e when e.code = R.Errors.Filer.not_found -> Lwt.wakeup wakener (Error `Not_found)
           | Error e ->
             let module Jr = Jsonrpc_ocaml_jsoo in
             let message = Jr.Types.Error_code.to_message e.code in
             Lwt.wakeup_exn wakener Error.(to_exn @@ create message))
     in
     waiter
-
 
   let move_parent params =
     let waiter, wakener = Lwt.wait () in
@@ -126,10 +116,8 @@ module Make (Client : C.Rpc.Client) : S = struct
         (module Move_parent_api)
         (Some params)
         (function
-          | Ok (Some v) ->
-            Lwt.wakeup wakener v
-          | Ok None ->
-            assert false
+          | Ok (Some v) -> Lwt.wakeup wakener v
+          | Ok None -> assert false
           | Error e ->
             let module Jr = Jsonrpc_ocaml_jsoo in
             let message = Jr.Types.Error_code.to_message e.code in

@@ -20,8 +20,7 @@ module Make (Gateway : G.Filer.Make) = struct
     match result with
     | {Gateway.already_exists = true; _} | {filer = None; _} ->
       Jr.Exception.raise_error Sxfiler_rpc.Errors.Filer.already_exists
-    | {filer = Some s; _} ->
-      Lwt.return s
+    | {filer = Some s; _} -> Lwt.return s
 end
 
 module Get (Gateway : G.Filer.Get) = struct
@@ -36,8 +35,7 @@ module Get (Gateway : G.Filer.Get) = struct
     match result with
     | {Gateway.not_found = true; _} | {filer = None; _} ->
       Jsonrpc_ocaml_yojson.(Exception.raise_error Sxfiler_rpc.Errors.Filer.not_found)
-    | {filer = Some s; _} ->
-      Lwt.return s
+    | {filer = Some s; _} -> Lwt.return s
 end
 
 module Move_parent (Gateway : G.Filer.Move_parent) = struct
@@ -52,8 +50,7 @@ module Move_parent (Gateway : G.Filer.Move_parent) = struct
     match result with
     | {Gateway.not_found = true; _} | {filer = None; _} ->
       Jsonrpc_ocaml_yojson.(Exception.raise_error Sxfiler_rpc.Errors.Filer.not_found)
-    | {filer = Some s; _} ->
-      Lwt.return s
+    | {filer = Some s; _} -> Lwt.return s
 end
 
 let expose server =

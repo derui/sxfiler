@@ -5,27 +5,22 @@ let prepare () =
   let div = Dom_html.createDiv Dom_html.document in
   div##setAttribute (Js.string "id") (Js.string "js") ;
   match Dom_html.getElementById_opt "test" with
-  | Some v ->
-    ignore @@ Dom.removeChild Dom_html.document v
+  | Some v -> ignore @@ Dom.removeChild Dom_html.document v
   | None ->
     () ;
     let body =
       let nl = Dom_html.document##getElementsByTagName (Js.string "body") in
       match nl##item 0 |> Js.Opt.to_option with
-      | None ->
-        failwith "Not found body tag"
-      | Some v ->
-        v
+      | None -> failwith "Not found body tag"
+      | Some v -> v
     in
     Dom.appendChild body div
-
 
 let append_div parent ?text attrs =
   let div = Dom_html.createDiv Dom_html.document in
   List.iter (fun (key, v) -> div##setAttribute (Js.string key) (Js.string v)) attrs ;
   (match text with None -> () | Some text -> div##.textContent := Js.Opt.return @@ Js.string text) ;
   Dom.appendChild parent div ; div
-
 
 let () =
   "Virtualized list"

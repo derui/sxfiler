@@ -33,8 +33,7 @@ module Make (System : System.S) (U : Usecase.Filer.Make) : Make = struct
     in
     let empty = {filer = None; already_exists = false} in
     match%lwt U.execute params with
-    | Ok t ->
-      Lwt.return {empty with filer = Option.some @@ Translator.Filer.of_domain t}
+    | Ok t -> Lwt.return {empty with filer = Option.some @@ Translator.Filer.of_domain t}
     | Error e -> (
         match e with `Already_exists -> Lwt.return {empty with already_exists = true} )
 end
@@ -59,10 +58,8 @@ module Get (U : Usecase.Filer.Get) : Get = struct
   let handle param =
     let params = {U.name = param.name} in
     match%lwt U.execute params with
-    | Ok s ->
-      Lwt.return {filer = Some (Translator.Filer.of_domain s); not_found = false}
-    | Error `Not_found ->
-      Lwt.return {filer = None; not_found = true}
+    | Ok s -> Lwt.return {filer = Some (Translator.Filer.of_domain s); not_found = false}
+    | Error `Not_found -> Lwt.return {filer = None; not_found = true}
 end
 
 (* gateway for Move_parent use case. *)
@@ -86,8 +83,6 @@ module Move_parent (U : Usecase.Filer.Move_parent) : Move_parent = struct
   let handle param =
     let params = {U.name = param.name} in
     match%lwt U.execute params with
-    | Ok s ->
-      Lwt.return {filer = Some (Translator.Filer.of_domain s); not_found = false}
-    | Error `Not_found ->
-      Lwt.return {filer = None; not_found = true}
+    | Ok s -> Lwt.return {filer = Some (Translator.Filer.of_domain s); not_found = false}
+    | Error `Not_found -> Lwt.return {filer = None; not_found = true}
 end

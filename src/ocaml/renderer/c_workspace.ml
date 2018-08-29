@@ -18,7 +18,6 @@ let file_list_container ~key store =
           val focused = S.Workspace.State.match_current_mode ws ~mode:C.Types.Mode.File_tree
         end)]
 
-
 let container_key = "container"
 
 let t =

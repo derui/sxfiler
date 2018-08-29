@@ -10,7 +10,6 @@ module Make_client (Rpc : Rpc) : Client = struct
     let req, handler = C.make_request (module Api) param handler in
     Rpc.call_api ?handler req
 
-
   (* Call api as notification with definition and parameter *)
   let notification (type p) (module Api : Api_def with type params = p) (param : p option) =
     let module C = R.Client in
@@ -35,20 +34,16 @@ module Server = struct
     Jstable.add t.procedure_table _method' handler ;
     t
 
-
   let unexpose ~_method t =
     Jstable.remove t.procedure_table Js.(string _method) ;
     t
-
 
   let handle_request ~request t =
     let open Jsonrpc_ocaml_jsoo in
     match
       Jstable.find t.procedure_table Js.(string request.Request._method) |> Js.Optdef.to_option
     with
-    | None ->
-      (* TODO: logging unknown notification *)
+    | None -> (* TODO: logging unknown notification *)
       Lwt.return Response.empty
-    | Some handler ->
-      Lwt.catch (fun () -> handler request) (fun e -> raise e)
+    | Some handler -> Lwt.catch (fun () -> handler request) (fun e -> raise e)
 end

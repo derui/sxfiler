@@ -30,7 +30,6 @@ let style =
     val visibility = Js.string "hidden"
   end
 
-
 let expand_child_style =
   object%js
     val position = Js.string "absolute"
@@ -41,7 +40,6 @@ let expand_child_style =
 
     val transition = Js.string "0s"
   end
-
 
 let shrink_child_style =
   object%js
@@ -57,7 +55,6 @@ let shrink_child_style =
 
     val height = Js.string "200%"
   end
-
 
 (* the component to detect shrinking *)
 let shrink ~on_scroll ~nodes =
@@ -77,7 +74,6 @@ let shrink ~on_scroll ~nodes =
         end)
       ~_ref:(fun e -> R.Ref_table.add nodes ~key:shrink_key ~value:e)
       [child]]
-
 
 (* the component to detect expanding *)
 let expand ~on_scroll ~nodes =
@@ -99,7 +95,6 @@ let expand ~on_scroll ~nodes =
       ~_ref:(fun e -> R.Ref_table.add nodes ~key:expand_key ~value:e)
       [child]]
 
-
 (** The component to define sensor for parent resizing.
     Component that use this component should define value of [position] as ["relative"].
 *)
@@ -116,8 +111,7 @@ let t =
       expand##.scrollTop := 1000000 ;
       expand_child##.style##.width := Js.string "1000000px" ;
       expand_child##.style##.height := Js.string "1000000px"
-    | _ ->
-      ()
+    | _ -> ()
   in
   R.Component.make_stateful
     ~props:
@@ -160,8 +154,7 @@ let t =
                        let cb = Js.wrap_callback this##.custom##.onResized in
                        let id = Dom_html.window##requestAnimationFrame cb in
                        this##.custom##.rafId := Js.Opt.return id
-                     | false, None | true, Some _ | false, Some _ ->
-                       () ) ;
+                     | false, None | true, Some _ | false, Some _ -> () ) ;
                    reset_sensor_elements this
 
                val mutable rafId = Js.Opt.empty

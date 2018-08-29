@@ -7,7 +7,6 @@ let data =
     ~mtime:(Int64.of_int 1000) ~ctime:(Int64.of_int 10000) ~size:Int64.max_int ~is_directory:true
     ~is_file:false ~is_symlink:true
 
-
 let testcases =
   [ ( "can translate to/from domain"
     , `Quick
@@ -20,6 +19,5 @@ let testcases =
       Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
         "yojson" (Ok data)
         (T.of_yojson @@ T.to_yojson data) ) ]
-
 
 let suite = [("file_stat", testcases)]

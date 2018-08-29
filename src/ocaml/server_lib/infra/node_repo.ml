@@ -18,7 +18,6 @@ let stat_to_file_stat stat =
     ~is_file:(is_file_kind stat.Unix.st_kind)
     ~is_symlink:(is_symlink_kind stat.Unix.st_kind)
 
-
 let get_node parent path =
   let path = Filename.concat parent path in
   if not @@ Sys.file_exists path then None
@@ -28,7 +27,6 @@ let get_node parent path =
     let module D = Sxfiler_domain in
     let path = Path.of_string path and id = Digest.string path |> Digest.to_hex in
     Some (D.Node.make ~id ~full_path:path ~stat ~link_path:None)
-
 
 module Core : D.Node.Repository = struct
   let find_by_dir ~dir =

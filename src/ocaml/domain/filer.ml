@@ -19,7 +19,6 @@ let to_sort_fun = function
   | Types.Sort_type.Size ->
     fun v1 v2 -> Pervasives.compare v1.Node.stat.File_stat.size v2.Node.stat.File_stat.size
 
-
 (* sort nodes with sort_order in [t] *)
 let sort_nodes t =
   let sort_fun = to_sort_fun t.sort_order in
@@ -27,18 +26,15 @@ let sort_nodes t =
   and files = List.filter (fun v -> not @@ Node.is_directory v) t.nodes in
   {t with nodes = List.concat [List.sort sort_fun dirs; List.sort sort_fun files]}
 
-
 let move_location t ~location ~nodes clock =
   let record = Location_record.record_of ~location clock in
   let history = Location_history.add_record t.history ~record in
   sort_nodes {t with location; nodes; history}
 
-
 (** [make ~id ~location ~nodes ~history ~sort_order] gets new instance of filer. *)
 let make ~id ~location ~nodes ~history ~sort_order =
   let t = {id; location; nodes; history; sort_order} in
   sort_nodes t
-
 
 (** [find_node t ~id] search node having [id] in filer [t] *)
 let find_node t ~id = List.find_opt (fun (v : Node.t) -> v.id = id) t.nodes

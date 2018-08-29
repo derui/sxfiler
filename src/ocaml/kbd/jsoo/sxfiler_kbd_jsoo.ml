@@ -18,10 +18,8 @@ let to_js t =
     val key = Js.string @@ key t
   end
 
-
 let of_js js =
   make ~ctrl:(Js.to_bool js##.ctrl) ~meta:(Js.to_bool js##.meta) @@ Js.to_string js##.key
-
 
 let () =
   Js.export_all

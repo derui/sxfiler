@@ -57,5 +57,4 @@ let proc_filer =
             Lwt.ignore_result @@ Make.handle {initial_location = "/initial"; name = "foo"} ) ;
         Lwt.return_unit ) ]
 
-
 let testcases = [("rpc procedure : filer", proc_filer)]

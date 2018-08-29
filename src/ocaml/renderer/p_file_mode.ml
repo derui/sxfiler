@@ -17,7 +17,6 @@ module Mode_converter = struct
   let bits_to_capability octal =
     {readable = octal land 4 = 4; writeable = octal land 2 = 2; executable = octal land 1 = 1}
 
-
   let of_mode_bits mode_bits =
     let bits_per_access = 3 in
     let owner_bits = (mode_bits land 0o700) lsr (bits_per_access * 2)
@@ -33,23 +32,18 @@ module Mode_converter = struct
     ; group = bits_to_capability group_bits
     ; other = bits_to_capability other_bits }
 
-
   let capability_to_string {readable; writeable; executable} =
     let readable = if readable then "r" else "-"
     and writeable = if writeable then "w" else "-"
     and executable = if executable then "x" else "-" in
     readable ^ writeable ^ executable
 
-
   let to_string t =
     let file_state =
       match (t.file, t.directory, t.symlink) with
-      | _, true, _ ->
-        "d"
-      | _, _, true ->
-        "l"
-      | _ ->
-        "-"
+      | _, true, _ -> "d"
+      | _, _, true -> "l"
+      | _ -> "-"
     in
     let owner = capability_to_string t.owner
     and group = capability_to_string t.group

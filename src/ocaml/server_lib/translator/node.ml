@@ -10,7 +10,6 @@ let to_yojson t =
     ; ("parentDirectory", `String t.parent_directory)
     ; ("linkPath", match t.link_path with None -> `Null | Some v -> `String v) ]
 
-
 let of_yojson js =
   let open Yojson.Safe.Util in
   try
@@ -25,7 +24,6 @@ let of_yojson js =
     let link_path = match link_path with `Null -> None | _ -> Some (to_string link_path) in
     Ok {id; name; stat; link_path; parent_directory}
   with Type_error (s, _) -> Error s
-
 
 let of_domain t =
   { id = t.D.id

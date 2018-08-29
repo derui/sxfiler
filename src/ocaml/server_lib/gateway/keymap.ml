@@ -18,10 +18,8 @@ module Get (Usecase : Usecase.Keymap.Get) = struct
 
   let handle () =
     match%lwt Usecase.execute () with
-    | Ok result ->
-      Lwt.return @@ Translator.Key_map.of_domain result
-    | Error _ ->
-      assert false
+    | Ok result -> Lwt.return @@ Translator.Key_map.of_domain result
+    | Error _ -> assert false
 end
 
 module type Store = sig
@@ -40,10 +38,8 @@ module Store (Usecase : Usecase.Keymap.Store) = struct
 
   let handle param =
     match%lwt Usecase.execute @@ Translator.Key_map.to_domain param with
-    | Ok () ->
-      Lwt.return_unit
-    | Error _ ->
-      assert false
+    | Ok () -> Lwt.return_unit
+    | Error _ -> assert false
 end
 
 module type Enable_context = sig
@@ -60,10 +56,8 @@ module Enable_context (Usecase : Usecase.Keymap.Enable_context) : Enable_context
 
   let handle param =
     match%lwt Usecase.execute {context = param.context} with
-    | Ok keymap ->
-      Lwt.return @@ Translator.Key_map.of_domain keymap
-    | Error _ ->
-      assert false
+    | Ok keymap -> Lwt.return @@ Translator.Key_map.of_domain keymap
+    | Error _ -> assert false
 
   (* Can not route this branch. *)
 end
@@ -82,10 +76,8 @@ module Disable_context (Usecase : Usecase.Keymap.Disable_context) : Disable_cont
 
   let handle param =
     match%lwt Usecase.execute {context = param.context} with
-    | Ok keymap ->
-      Lwt.return @@ Translator.Key_map.of_domain keymap
-    | Error _ ->
-      assert false
+    | Ok keymap -> Lwt.return @@ Translator.Key_map.of_domain keymap
+    | Error _ -> assert false
 
   (* Can not route this branch. *)
 end

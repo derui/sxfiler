@@ -9,7 +9,6 @@ let data =
     (D.Key_map.make ())
     [(Sxfiler_kbd.make "k", "foo"); (Sxfiler_kbd.make "j", "bar")]
 
-
 let testcases =
   [ Alcotest_lwt.test_case "can store keymap to state" `Quick (fun switch () ->
         let module State = S.Statable.Make (struct
@@ -32,6 +31,5 @@ let testcases =
         let%lwt actual = R.resolve () in
         Alcotest.(check @@ of_pp Fmt.nop) "stored" data actual ;
         Lwt.return_unit ) ]
-
 
 let suite = [("keymap repository", testcases)]

@@ -29,7 +29,6 @@ let expose server =
     let store collection =
       Global.Cached_source.with_lock (fun _ -> Global.Cached_source.update collection)
 
-
     let resolve () = Global.Cached_source.get ()
   end in
   let module Setup_gateway = G.Completion.Setup (C.Usecase.Setup (Collection_repo)) in

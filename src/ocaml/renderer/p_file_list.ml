@@ -28,7 +28,6 @@ let header =
         in
         [%e header ~class_name [(directory [@txt])]] )
 
-
 (* content of file list *)
 let content =
   R.Component.make_stateful
@@ -136,7 +135,6 @@ let content =
             let children = List.concat [children; [resize_sensor; scroll_bar]] in
             let _ref e = R.Ref_table.add ~key:key_of_filelist ~value:e this##.nodes in
             [%e ul ~_ref ~class_name:"fp-FileList_Content" children] ))
-
 
 (* wrapping component. *)
 let t =

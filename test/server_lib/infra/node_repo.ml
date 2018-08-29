@@ -20,8 +20,7 @@ let testcases =
       close_out oc ;
       let node = R.get_node (Filename.dirname tempfile) (Filename.basename tempfile) in
       match node with
-      | None ->
-        Alcotest.fail "Not found "
+      | None -> Alcotest.fail "Not found "
       | Some node ->
         let module (* stat of file can not fix on unit test, so assert some record only. *)
           N =
@@ -52,8 +51,7 @@ let testcases =
            Unix.symlink tempfile Filename.(concat dir linkname) ;
            let node = R.get_node dir linkname in
            match node with
-           | None ->
-             Alcotest.fail "Not found "
+           | None -> Alcotest.fail "Not found "
            | Some node ->
              let module (* stat of file can not fix on unit test, so assert some record only. *)
                N =
@@ -75,8 +73,7 @@ let testcases =
       let dir = Filename.dirname !temp_dir and fname = Filename.basename !temp_dir in
       let node = I.Node_repo.get_node dir fname in
       match node with
-      | None ->
-        Alcotest.fail "Not found "
+      | None -> Alcotest.fail "Not found "
       | Some node ->
         let module (* stat of file can not fix on unit test, so assert some record only. *)
           N =
@@ -117,6 +114,5 @@ let testcases =
            ; Path.to_string @@ to_path "./data_real/file_only/file2" ]
            nodes ;
          Lwt.return_unit ) ]
-
 
 let suite = [("node repository", testcases)]

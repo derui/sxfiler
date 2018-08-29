@@ -6,13 +6,11 @@ let handle_action ~locator:(module L : Locator.S) action =
   let module Command = Sxfiler_renderer_command in
   let module Reg = Command.Static_registry in
   match Reg.get L.command_registry ~name:action with
-  | None ->
-    ()
+  | None -> ()
   | Some command ->
     let module C = Command.Static_command in
     let state = S.App.Store.get L.store in
     command.C.executor [] state L.context |> Lwt.ignore_result
-
 
 let t =
   R.Component.make_stateful

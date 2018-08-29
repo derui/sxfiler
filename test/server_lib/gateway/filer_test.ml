@@ -51,5 +51,4 @@ let filer_tests =
         Alcotest.(check bool) "error" true res.not_found ;
         Lwt.return_unit ) ]
 
-
 let testcases = [("rpc procedure : filer", filer_tests)]

@@ -17,7 +17,6 @@ let activate_mode (module L : Locator.S) =
     (let%lwt () = Lwt_js.yield () in
      Ctx.(Context.execute this activation))
 
-
 let t =
   R.Component.make_stateful
     ~props:

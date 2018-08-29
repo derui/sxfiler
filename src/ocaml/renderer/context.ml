@@ -24,7 +24,6 @@ let dispatcher t =
     end )
     ()
 
-
 (** [execute instance usecase] execute usecase [usecase]. *)
 let execute t usecase =
   let module U = (val usecase : C.Usecase_intf.Instance) in

@@ -8,7 +8,6 @@ let data =
     (D.Key_map.make ())
     [(Sxfiler_kbd.make "j", "foo"); (Sxfiler_kbd.make "k", "bar")]
 
-
 let testcases =
   [ ( "can translate to/from domain"
     , `Quick
@@ -21,6 +20,5 @@ let testcases =
       Alcotest.(check @@ result (of_pp Fmt.nop) string)
         "yojson" (Ok data)
         (T.of_yojson @@ T.to_yojson data) ) ]
-
 
 let suite = [("key_map", testcases)]

@@ -17,10 +17,8 @@ module State = struct
   let reduce t = function
     | C.Message.Completion (Setup completer) ->
       {candidates = []; selected_id = ""; selected_index = 0; current_completer = Some completer}
-    | Completion (Read result) ->
-      {t with candidates = result}
-    | Completion Tear_down ->
-      {t with current_completer = None}
+    | Completion (Read result) -> {t with candidates = result}
+    | Completion Tear_down -> {t with current_completer = None}
     | Completion Select_next ->
       let new_index = max 0 (min (List.length t.candidates - 1) (succ t.selected_index)) in
       let module C = T.Completion in
@@ -28,10 +26,8 @@ module State = struct
         selected_index = new_index
       ; selected_id =
           ( match List.nth_opt t.candidates t.selected_index with
-            | None ->
-              ""
-            | Some v ->
-              v.C.Candidate.value.C.Item.value ) }
+            | None -> ""
+            | Some v -> v.C.Candidate.value.C.Item.value ) }
     | Completion Select_prev ->
       let new_index = max 0 (min (List.length t.candidates - 1) (pred t.selected_index)) in
       let module C = T.Completion in
@@ -39,13 +35,9 @@ module State = struct
         selected_index = new_index
       ; selected_id =
           ( match List.nth_opt t.candidates t.selected_index with
-            | None ->
-              ""
-            | Some v ->
-              v.C.Candidate.value.C.Item.value ) }
-    | _ ->
-      t
-
+            | None -> ""
+            | Some v -> v.C.Candidate.value.C.Item.value ) }
+    | _ -> t
 
   let equal = ( = )
 

@@ -23,32 +23,27 @@ let match_lexer_table seq =
   in
   match result with None -> None | Some (_, typ) -> Some typ
 
-
 let lex_combination seq =
   let token = ref "" in
   let types = ref [] in
   match seq with
-  | "" ->
-    !types
+  | "" -> !types
   | seq ->
     String.iter
       (fun c ->
          let temp_token = !token ^ String.make 1 c in
          match match_lexer_table temp_token with
-         | None ->
-           token := temp_token
+         | None -> token := temp_token
          | Some typ ->
            token := "" ;
            types := typ :: !types )
       seq ;
     List.rev (Key !token :: !types)
 
-
 let parse_sequence seq =
   let tokens = lex_combination seq in
   match tokens with
-  | [] ->
-    None
+  | [] -> None
   | _ ->
     let k =
       List.fold_left
@@ -58,15 +53,12 @@ let parse_sequence seq =
     in
     if k.key = "" then None else Some k
 
-
 let invalid_formats =
   [(fun seq -> seq = ""); (fun seq -> String.length seq > 1 && String.index_opt seq '-' = Some 0)]
-
 
 let of_keyseq key =
   let key = String.trim key in
   if List.exists (fun f -> f key) invalid_formats then None else parse_sequence key
-
 
 let to_keyseq t =
   let meta = if t.meta then "M-" else "" and ctrl = if t.ctrl then "C-" else "" in

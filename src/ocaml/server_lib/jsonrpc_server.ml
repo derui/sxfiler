@@ -7,17 +7,14 @@ let make () =
   let method_handler = J.Server.make () in
   {method_handler}
 
-
 let expose t ~operation =
   let module S = (val operation : Operation_intf.S) in
   {method_handler = S.expose t.method_handler}
-
 
 let res_to_frame res =
   let json = J.Response.to_json res in
   let content = Yojson.Safe.to_string json in
   Some (W.Frame.create ~opcode:W.Frame.Opcode.Text ~content ())
-
 
 (** handle response as JSON-RPC payload. This handler limits handling unfragment frames.  *)
 let request_handler t conn =
@@ -41,9 +38,7 @@ let request_handler t conn =
             let%lwt res = J.Server.handle_request ~request:req t.method_handler in
             let%lwt frame = Lwt.return @@ res_to_frame @@ res in
             Lwt.return @@ C.Connection.write_output conn ~frame )
-      | _ ->
-        C.Connection.default_input_handler conn f )
-
+      | _ -> C.Connection.default_input_handler conn f )
 
 (** Serve response sending loop *)
 let serve_forever t conn = request_handler t conn

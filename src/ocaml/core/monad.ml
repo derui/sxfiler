@@ -7,11 +7,8 @@ module Make (T : Base) : S with type 'a t := 'a T.t = struct
 
   let fmap =
     match T.fmap with
-    | `Use_bind_to_define ->
-      fun m ~f -> bind m ~f:(lift f)
-    | `Use_original f ->
-      f
-
+    | `Use_bind_to_define -> fun m ~f -> bind m ~f:(lift f)
+    | `Use_original f -> f
 
   module Infix = struct
     let ( >>= ) m f = bind m ~f
@@ -26,11 +23,8 @@ module Make2 (T : Base2) : S2 with type ('a, 'b) t := ('a, 'b) T.t = struct
 
   let fmap =
     match T.fmap with
-    | `Use_bind_to_define ->
-      fun m ~f -> bind m ~f:(lift f)
-    | `Use_original f ->
-      f
-
+    | `Use_bind_to_define -> fun m ~f -> bind m ~f:(lift f)
+    | `Use_original f -> f
 
   module Infix = struct
     let ( >>= ) m f = bind m ~f

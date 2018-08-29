@@ -21,5 +21,4 @@ let configuration_tests =
         Alcotest.(check @@ of_pp Fmt.nop) "current" (T.Configuration.of_domain expected) res ;
         Lwt.return_unit ) ]
 
-
 let testcases = [("rpc procedure : configuration", configuration_tests)]

@@ -11,7 +11,6 @@ let get_classname props =
     ; (directory_modifier, props##.isDirectory)
     ; (symlink_modifier, props##.isSymbolicLink) ]
 
-
 let t =
   R.Component.make_stateless
     ~props:

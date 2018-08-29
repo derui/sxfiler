@@ -16,10 +16,8 @@ module Get (Usecase : Usecase.Configuration.Get) = struct
 
   let handle () =
     match%lwt Usecase.execute () with
-    | Ok result ->
-      Lwt.return @@ Translator.Configuration.of_domain result
-    | Error _ ->
-      assert false
+    | Ok result -> Lwt.return @@ Translator.Configuration.of_domain result
+    | Error _ -> assert false
 
   (* Can not route this branch. *)
 end
@@ -38,8 +36,6 @@ module Store (Usecase : Usecase.Configuration.Store) : Store = struct
 
   let handle params =
     match%lwt Usecase.execute @@ Translator.Configuration.to_domain params with
-    | Ok () ->
-      Lwt.return_unit
-    | Error _ ->
-      assert false
+    | Ok () -> Lwt.return_unit
+    | Error _ -> assert false
 end

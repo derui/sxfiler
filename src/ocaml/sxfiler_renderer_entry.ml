@@ -14,19 +14,15 @@ let notification_handler server message =
   let request = R.Request.of_json (Js._JSON##parse message##.data) in
   let thread =
     match request with
-    | Ok req ->
-      C.Rpc.Server.handle_request ~request:req server
-    | Error _ ->
-      Lwt.return @@ Jsonrpc_ocaml_jsoo.Response.empty
+    | Ok req -> C.Rpc.Server.handle_request ~request:req server
+    | Error _ -> Lwt.return @@ Jsonrpc_ocaml_jsoo.Response.empty
   in
   Lwt.ignore_result thread
-
 
 let expose_commands (module Locator : Locator.S) =
   let module Com = Sxfiler_renderer_command in
   Com.expose_static Locator.command_registry Locator.service_registry |> ignore ;
   Com.expose_dynamic Locator.dynamic_command_registry Locator.service_registry |> ignore
-
 
 let () =
   Logs.set_reporter @@ Logs_browser.console_reporter () ;

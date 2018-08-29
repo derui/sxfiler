@@ -18,7 +18,6 @@ module Item = struct
         val value = Js.string t.value
       end
 
-
   let of_js : js Js.t -> t = fun js -> {id = Js.to_string js##.id; value = Js.to_string js##.value}
 end
 
@@ -43,7 +42,6 @@ module Candidate = struct
 
         val value = Item.to_js t.value
       end
-
 
   let of_js : js Js.t -> t =
     fun js -> {start = js##.start; length = js##.length; value = Item.of_js js##.value}

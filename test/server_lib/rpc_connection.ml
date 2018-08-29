@@ -73,5 +73,4 @@ let rpc_connection =
         Alcotest.(check bool) "closed" true Conn.(is_closed conn) ;
         Lwt.return_unit ) ]
 
-
 let testcases = [("rpc_connection", rpc_connection)]

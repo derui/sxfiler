@@ -26,10 +26,8 @@ module Make (Client : C.Rpc.Client) : S = struct
         (module Get_api)
         None
         (function
-          | Error _ | Ok None ->
-            Lwt.wakeup_exn wakener Not_found
-          | Ok (Some v) ->
-            Lwt.wakeup wakener v)
+          | Error _ | Ok None -> Lwt.wakeup_exn wakener Not_found
+          | Ok (Some v) -> Lwt.wakeup wakener v)
     in
     waiter
 end

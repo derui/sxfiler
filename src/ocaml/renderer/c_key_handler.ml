@@ -10,27 +10,21 @@ module C = Sxfiler_renderer_core
 let event_to_action ~ev ~keymap =
   let module KE = R.Event.Keyboard_event in
   match KE.to_event_type ev with
-  | KE.Unknown | KE.KeyPress | KE.KeyUp ->
-    None
+  | KE.Unknown | KE.KeyPress | KE.KeyUp -> None
   | _ -> (
       let key = C.Util.keyboard_event_to_key ev in
       match List.find_opt (fun key' -> key'.T.Key_map.key = key) keymap.T.Key_map.bindings with
-      | None ->
-        None
-      | Some key ->
-        Some key.action )
-
+      | None -> None
+      | Some key -> Some key.action )
 
 (* execute command when bound action found. *)
 let key_handler ~props ev =
   match event_to_action ~ev ~keymap:props##.keymap with
-  | None ->
-    ()
+  | None -> ()
   | Some action ->
     ev##preventDefault ;
     ev##stopPropagation ;
     props##.onAction action
-
 
 let t =
   R.Component.make_stateful
@@ -56,10 +50,8 @@ let t =
             let props = this##.props in
             let class_name =
               match props##.className with
-              | None ->
-                Classnames.to_string []
-              | Some v ->
-                Classnames.to_string [(v, true)]
+              | None -> Classnames.to_string []
+              | Some v -> Classnames.to_string [(v, true)]
             in
             let children = R.Children.to_element this##.props_defined##.children in
             [%e div ~class_name ~on_key_down:(key_handler ~props) [children]] ))

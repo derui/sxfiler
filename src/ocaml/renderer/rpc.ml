@@ -25,8 +25,7 @@ let make ws handlers =
           Jstable.find id_handler_map key |> Js.Optdef.to_option
           >>= fun handler -> handler res ; Jstable.remove id_handler_map key ; Some () )
       |> ignore
-    | Error _ ->
-      (* FIXME: should handle error *)
+    | Error _ -> (* FIXME: should handle error *)
       ()
   in
   Websocket_handler.add handlers ~handler:message_handler ;
@@ -37,8 +36,7 @@ let make ws handlers =
         match (req.R.Request.id, handler) with
         | Some id, Some handler ->
           Jstable.add t.id_handler_map (Js.string @@ Int64.to_string id) handler
-        | None, _ | _, None ->
-          ()
+        | None, _ | _, None -> ()
       in
       let json = Js._JSON##stringify (R.Request.to_json req) in
       (t.ws)##send json ;

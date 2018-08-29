@@ -37,5 +37,4 @@ let testcases =
         "yojson" (Ok data)
         Tr.Candidate.(of_yojson @@ to_yojson data) ) ]
 
-
 let suite = [("completion", testcases)]

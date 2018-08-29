@@ -18,7 +18,6 @@ let make_store () =
   let state = S.App.State.make ~config ~file_list ~keymap ~completion ~command ~workspace in
   S.App.Store.make state
 
-
 module Make (Client : C.Rpc.Client) (Ctx : C.Context.Instance) (Store : Store_instance) : S =
 struct
   let client = (module Client : C.Rpc.Client)
