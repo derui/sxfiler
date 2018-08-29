@@ -35,7 +35,7 @@ let keymap_tests =
             [(Sxfiler_kbd.make "k", "foo"); (Sxfiler_kbd.make "j", "bar")]
         in
         let module Usecase : U.Keymap.Enable_context = struct
-          include U.Keymap.Type
+          include U.Keymap.Context_type
 
           let execute _ = Lwt.return_ok expected
         end in
@@ -52,7 +52,7 @@ let keymap_tests =
             [(Sxfiler_kbd.make "k", "foo"); (Sxfiler_kbd.make "j", "bar")]
         in
         let module Usecase : U.Keymap.Disable_context = struct
-          include U.Keymap.Type
+          include U.Keymap.Context_type
 
           let execute _ = Lwt.return_ok expected
         end in
