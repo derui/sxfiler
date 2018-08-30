@@ -34,6 +34,11 @@ module Filer = struct
     let node, marked = copied.(index) in
     copied.(index) <- (node, not marked) ;
     {t with nodes = copied}
+
+  (* Get a node selected now. *)
+  let current_selected_node t =
+    let index = t.selected_item_index in
+    t.nodes.(index)
 end
 
 module State = struct
@@ -45,9 +50,6 @@ module State = struct
     ; current : C.Types.File_list_pos.t }
 
   let make () = {left = None; right = None; current = `Left}
-  let is_current {current; _} ~pos = current = pos
-  let left {left; _} = left
-  let right {right; _} = right
 
   let update_filer t ~side ~f =
     match side with `Left -> {t with left = f t.left} | `Right -> {t with right = f t.right}
@@ -68,6 +70,10 @@ module State = struct
     | _ -> t
 
   let equal _ _ = false
+  (* helper functions of state *)
+  let is_current {current; _} ~pos = current = pos
+  let left {left; _} = left
+  let right {right; _} = right
 end
 
 module Store = C.Store.Make (State)
