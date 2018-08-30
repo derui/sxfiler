@@ -16,9 +16,9 @@ let () =
                ; history = T.Location_history.{records = []; max_records = 100} }
              in
              let module S : S.Filer.S = struct
-               let make _ = assert false
+               include Util.Service_stub.Filer
+
                let get _ = Lwt.return_ok expected
-               let move_parent _ = assert false
              end in
              let module Target = U.Refresh_filer.Make (S) in
              let instance = Target.create `Left in
@@ -31,9 +31,9 @@ let () =
        ; ( "do not send any message if filer not found"
            >:- fun () ->
              let module S : S.Filer.S = struct
-               let make _ = assert false
+               include Util.Service_stub.Filer
+
                let get _ = Lwt.return_error `Not_found
-               let move_parent _ = assert false
              end in
              let module Target = U.Refresh_filer.Make (S) in
              let instance = Target.create `Left in

@@ -16,9 +16,9 @@ let () =
                ; history = T.Location_history.{records = []; max_records = 100} }
              in
              let module S : S.Filer.S = struct
+               include Util.Service_stub.Filer
+
                let make _ = Lwt.return_ok expected
-               let get _ = assert false
-               let move_parent _ = assert false
              end in
              let module Target = U.Initialize_filer.Make (S) in
              let instance = Target.create {initial_location = "foo"; pos = `Left} in
@@ -37,9 +37,10 @@ let () =
                ; history = T.Location_history.{records = []; max_records = 100} }
              in
              let module S : S.Filer.S = struct
+               include Util.Service_stub.Filer
+
                let make _ = Lwt.return_error `Already_exists
                let get _ = Lwt.return_ok expected
-               let move_parent _ = assert false
              end in
              let module Target = U.Initialize_filer.Make (S) in
              let instance = Target.create {initial_location = "foo"; pos = `Left} in
@@ -52,9 +53,10 @@ let () =
        ; ( "should not send message all operation failed"
            >:- fun () ->
              let module S : S.Filer.S = struct
+               include Util.Service_stub.Filer
+
                let make _ = Lwt.return_error `Already_exists
                let get _ = Lwt.return_error `Not_found
-               let move_parent _ = assert false
              end in
              let module Target = U.Initialize_filer.Make (S) in
              let instance = Target.create {initial_location = "foo"; pos = `Left} in

@@ -17,8 +17,8 @@ let () =
                ; history = T.Location_history.{records = []; max_records = 100} }
              in
              let module S : S.Filer.S = struct
-               let make _ = assert false
-               let get _ = assert false
+               include Util.Service_stub.Filer
+
                let move_parent _ = Lwt.return expected
              end in
              let module Target = U.Move_filer_to_parent.Make (S) in
@@ -33,8 +33,8 @@ let () =
        ; ( "should be send error message when error occurred"
            >:- fun () ->
              let module S : S.Filer.S = struct
-               let make _ = assert false
-               let get _ = assert false
+               include Util.Service_stub.Filer
+
                let move_parent _ = Lwt.fail Error.(create "foo" |> to_exn)
              end in
              let module Target = U.Move_filer_to_parent.Make (S) in

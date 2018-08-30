@@ -1,4 +1,5 @@
 module C = Sxfiler_renderer_core
+module S = Sxfiler_renderer_service
 
 (** Mocking interface for dispatcher *)
 module type Dispatch = sig
@@ -16,4 +17,14 @@ module Dummy_dispatcher (D : Dispatch) : C.Dispatcher.Instance = struct
   end
 
   let this : Dispatcher.t = Dispatcher.create ()
+end
+
+(* Service stubs. *)
+module Service_stub = struct
+  module Filer : S.Filer.S = struct
+    let make _ = assert false
+    let get _ = assert false
+    let move_parent _ = assert false
+    let enter_directory _ = assert false
+  end
 end

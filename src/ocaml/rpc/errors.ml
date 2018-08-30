@@ -5,4 +5,6 @@ module E = Jsonrpc_ocaml.Types.Error_code
 module Filer = struct
   let not_found = E.make ~message:"filer:Not_found" (-1)
   let already_exists = E.make ~message:"filer:Already_exists" (-2)
+  let not_found_node = E.make ~message:"filer:Not_found_node" (-3)
+  let not_directory = E.make ~message:"filer:Not_directory" (-4)
 end

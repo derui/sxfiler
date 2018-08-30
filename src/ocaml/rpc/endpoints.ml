@@ -40,7 +40,17 @@ module Filer = struct
     type params = {name : string}
     type result = Types.Filer.t
 
-    let endpoint = "filer/move"
+    let endpoint = "filer/moveParent"
+  end
+
+  module Enter_directory = struct
+    type params =
+      { name : string
+      ; node_id : string }
+
+    type result = Types.Filer.t
+
+    let endpoint = "filer/enterDirectory"
   end
 end
 

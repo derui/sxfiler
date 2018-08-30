@@ -17,4 +17,10 @@ module type S = sig
 
       @raise {Sxfiler_core.Error.t} if service failed with some of errors.
   *)
+
+  val enter_directory : E.Filer.Enter_directory.params -> E.Filer.Enter_directory.result Lwt.t
+  (** [enter_directory param] calls the service to enter directory to specified directory of node in a filer.
+
+      @raise {Sxfiler_core.Error.t} if service failed with some of errors.
+  *)
 end

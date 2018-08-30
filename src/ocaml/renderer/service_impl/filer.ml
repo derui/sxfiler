@@ -70,6 +70,28 @@ module Move_parent_api :
   let result_of_json v = T.Filer.of_js @@ Js.Unsafe.coerce v
 end
 
+module Enter_directory_api :
+  J.Api_def
+  with type params = E.Filer.Enter_directory.params
+   and type result = E.Filer.Enter_directory.result = struct
+  include E.Filer.Enter_directory
+
+  type json = < > Js.t
+
+  let name = endpoint
+
+  let params_to_json params =
+    let open Option.Infix in
+    params
+    >|= fun v ->
+    Js.Unsafe.coerce
+      (object%js
+        val name = Js.string v.name
+      end)
+
+  let result_of_json v = T.Filer.of_js @@ Js.Unsafe.coerce v
+end
+
 module Make (Client : C.Rpc.Client) : S = struct
   let make params =
     let waiter, wakener = Lwt.wait () in
@@ -108,12 +130,14 @@ module Make (Client : C.Rpc.Client) : S = struct
     in
     waiter
 
-  let move_parent params =
+  (* commonly call API *)
+  let call_api_only (type params result) (params : params)
+      (module Api : J.Api_def with type params = params and type result = result) =
     let waiter, wakener = Lwt.wait () in
     let module R = Sxfiler_rpc in
     let%lwt () =
       Client.request
-        (module Move_parent_api)
+        (module Api)
         (Some params)
         (function
           | Ok (Some v) -> Lwt.wakeup wakener v
@@ -124,4 +148,7 @@ module Make (Client : C.Rpc.Client) : S = struct
             Lwt.wakeup_exn wakener Error.(to_exn @@ create message))
     in
     waiter
+
+  let move_parent params = call_api_only params (module Move_parent_api)
+  let enter_directory params = call_api_only params (module Enter_directory_api)
 end
