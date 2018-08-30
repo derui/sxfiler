@@ -87,6 +87,8 @@ module Enter_directory_api :
     Js.Unsafe.coerce
       (object%js
         val name = Js.string v.name
+
+        val nodeId = Js.string v.node_id
       end)
 
   let result_of_json v = T.Filer.of_js @@ Js.Unsafe.coerce v

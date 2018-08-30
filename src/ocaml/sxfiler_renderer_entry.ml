@@ -55,7 +55,9 @@ let () =
         (* Get current properties *)
         let module Service = SI.Keymap.Make (Client) in
         let module I =
-          (val C.Usecase.make_instance (module U.Refresh_keymap.Make (Service)) ~param:())
+          ( val C.Usecase.make_instance
+              (module U.Activate_mode.Make (Service))
+              ~param:C.Types.Mode.File_tree )
         in
         Ctx.(Context.execute this (module I)) |> Lwt.ignore_result ;
         let module Service = SI.Configuration.Make (Client) in

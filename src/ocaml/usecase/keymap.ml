@@ -16,12 +16,15 @@ module type Get =
 (** This module defines usecase interface to get current key bindings.
     Replace [json] on implementation to match rpc.
 *)
-module Get (R : Key_map_repository.S with type value = string) : Get = struct
+module Get (C : Condition.Repository) (R : Key_map_repository.S with type value = string) : Get =
+struct
   include Get_type
 
   let execute () =
-    let open Lwt in
-    R.resolve () >>= return_ok
+    let%lwt condition = C.resolve () in
+    let%lwt keymap = R.resolve () in
+    let keymap = Key_map.subset keymap ~condition in
+    Lwt.return_ok keymap
 end
 
 (** Module to share interface and structure. *)

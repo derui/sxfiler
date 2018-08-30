@@ -38,7 +38,7 @@ module Filer = struct
   (* Get a node selected now. *)
   let current_selected_node t =
     let index = t.selected_item_index in
-    t.nodes.(index)
+    fst t.nodes.(index)
 end
 
 module State = struct
@@ -72,6 +72,7 @@ module State = struct
   let equal _ _ = false
   (* helper functions of state *)
   let is_current {current; _} ~pos = current = pos
+  let current t = match t.current with `Left -> t.left | `Right -> t.right
   let left {left; _} = left
   let right {right; _} = right
 end

@@ -61,6 +61,30 @@ module Toggle_mark = struct
            Ctx.(Context.execute this (module I)) ) }
 end
 
+module Enter_directory = struct
+  let make (module Reg : Svc.Service_registry.S) =
+    { Core.Static_command.name = module_prefix ^ "enter_directory"
+    ; execute_plan = `No_plan
+    ; executor =
+        (fun _ state (module Ctx : C.Context.Instance) ->
+           Logs.app (fun m -> m "Start enter directory") ;
+           let file_list = S.(App.State.file_list state |> File_list.Store.get) in
+           let pos = file_list.current in
+           let node =
+             let open Sxfiler_core.Option.Infix in
+             S.File_list.(State.current file_list >|= Filer.current_selected_node)
+           in
+           match node with
+           | None -> Lwt.fail_with "Not initialized yet"
+           | Some node ->
+             let module I =
+               ( val C.Usecase.make_instance
+                   (module U.Filer_enter_directory.Make ((val Reg.filer ())))
+                   ~param:{pos; node} )
+             in
+             Ctx.(Context.execute this (module I)) ) }
+end
+
 let expose registry services =
   List.fold_right
     (fun command registry -> Core.Static_registry.register registry command)
@@ -68,5 +92,6 @@ let expose registry services =
     ; Prev_item.make ()
     ; Swap_filer.make ()
     ; Move_parent.make services
-    ; Toggle_mark.make () ]
+    ; Toggle_mark.make ()
+    ; Enter_directory.make services ]
     registry

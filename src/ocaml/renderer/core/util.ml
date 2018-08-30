@@ -2,6 +2,7 @@ let special_key_mapping = function " " -> "Space" | _ as key -> key
 
 let keyboard_event_to_key v =
   let module K = Sxfiler_kbd in
+  Logs.app (fun m -> m "key: %s" (Js.to_string v##.key)) ;
   K.to_keyseq
   @@ K.make
     ~ctrl:(Js.to_bool v##.ctrlKey)

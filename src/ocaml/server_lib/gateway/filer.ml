@@ -91,7 +91,7 @@ end
 module Enter_directory_type = struct
   type params =
     { name : string
-    ; node_id : string }
+    ; node_id : string [@key "nodeId"] }
   [@@deriving yojson]
 
   type result =
