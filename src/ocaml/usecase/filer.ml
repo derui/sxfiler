@@ -102,7 +102,8 @@ module Enter_directory_type = struct
 
   type error =
     [ `Not_found_filer
-    | `Not_found_node ]
+    | `Not_found_node
+    | `Not_directory ]
 end
 
 module type Enter_directory = sig
@@ -123,7 +124,7 @@ module Enter_directory
     | None, _ -> Lwt.return_error `Not_found_filer
     | _, None -> Lwt.return_error `Not_found_node
     | Some filer, Some node ->
-      if not node.stat.is_directory then Lwt.return_ok filer
+      if not node.stat.is_directory then Lwt.return_error `Not_directory
       else
         let%lwt new_nodes = NR.find_by_dir ~dir:node.full_path in
         let filer' =

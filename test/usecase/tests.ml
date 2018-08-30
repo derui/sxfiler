@@ -1,2 +1,1 @@
-let testcases = []
-let () = Alcotest.run "Use cases" testcases
+let () = Filer_test.run ()
