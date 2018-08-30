@@ -1,11 +1,11 @@
 (alias
  (name gen)
- (deps (:f sxfiler_renderer_command.ml)
-  (:discover gen/discover.exe))
- (action (run %{discover} -o %{f})))
+ (deps (:generated sxfiler_renderer_command.ml.gen)
+  (:original sxfiler_renderer_command.ml))
+ (action (diff %{original} %{generated})))
 
 (rule
- (targets sxfiler_renderer_command.ml)
+ (targets sxfiler_renderer_command.ml.gen)
  (deps (:discover gen/discover.exe))
  (action (run %{discover} -o %{targets})))
 
