@@ -67,7 +67,6 @@ module Enter_directory = struct
     ; execute_plan = `No_plan
     ; executor =
         (fun _ state (module Ctx : C.Context.Instance) ->
-           Logs.app (fun m -> m "Start enter directory") ;
            let file_list = S.(App.State.file_list state |> File_list.Store.get) in
            let pos = file_list.current in
            let node =
