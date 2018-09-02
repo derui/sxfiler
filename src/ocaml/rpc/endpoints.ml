@@ -52,6 +52,24 @@ module Filer = struct
 
     let endpoint = "filer/enterDirectory"
   end
+
+  module Move_nodes = struct
+    type params = {planner_id : string}
+    type result = unit
+
+    let endpoint = "filer/moveNodes"
+  end
+
+  module Move_nodes_plan = struct
+    type params =
+      { from : string
+      ; node_ids : string list
+      ; _to : string }
+
+    type result = Types.Planner.t
+
+    let endpoint = "filer/moveNodes/plan"
+  end
 end
 
 (** endpoints for Configuration *)

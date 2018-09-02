@@ -2,8 +2,10 @@
 
 open Sxfiler_core
 
+type id = string
+
 type t =
-  { id : string
+  { id : id
   ; location : Path.t
   ; nodes : Node.t list
   ; history : Location_history.t
