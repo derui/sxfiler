@@ -5,13 +5,13 @@ let testcases =
   [ ( "get_node should return None if file is not found"
     , `Quick
     , fun () ->
-      let module R = I.Node_repo in
+      let module R = I.Location_scanner_service in
       Alcotest.(check @@ option @@ of_pp Fmt.nop)
         "Not found" None (R.get_node "parent" "not_found") )
   ; ( "get_node should return node if file found"
     , `Quick
     , fun () ->
-      let module R = I.Node_repo in
+      let module R = I.Location_scanner_service in
       Fun.bracket ~setup:(fun () -> Filename.temp_file "action" "tmp") ~teardown:Sys.remove
       @@ fun tempfile ->
       let oc = open_out tempfile in
@@ -37,7 +37,7 @@ let testcases =
   ; ( "get_node can handle symlink as is"
     , `Quick
     , fun () ->
-      let module R = I.Node_repo in
+      let module R = I.Location_scanner_service in
       let linkname = "link" in
       Fun.bracket
         ~setup:(fun () -> linkname)
@@ -71,7 +71,7 @@ let testcases =
         ~teardown:(fun _ -> Unix.rmdir !temp_dir)
       @@ fun () ->
       let dir = Filename.dirname !temp_dir and fname = Filename.basename !temp_dir in
-      let node = I.Node_repo.get_node dir fname in
+      let node = I.Location_scanner_service.get_node dir fname in
       match node with
       | None -> Alcotest.fail "Not found "
       | Some node ->
@@ -92,7 +92,7 @@ let testcases =
         Lwt.finalize
           (fun () ->
              let path = Path.of_string tempfile in
-             let%lwt nodes = I.Node_repo.find_by_dir ~dir:path in
+             let%lwt nodes = I.Location_scanner_service.scan path in
              Alcotest.(check @@ list @@ of_pp Fmt.nop) "nodes" [] nodes ;
              Lwt.return_unit )
           (fun () -> Lwt.return @@ Unix.rmdir tempfile) )
@@ -103,7 +103,7 @@ let testcases =
          end in
          let to_path s = Path.resolve (module Dummy) @@ Path.of_string s in
          let path = to_path "./data_real/file_only" in
-         let%lwt nodes = I.Node_repo.find_by_dir ~dir:path in
+         let%lwt nodes = I.Location_scanner_service.scan path in
          let module N = Sxfiler_domain.Node in
          let nodes =
            List.map (fun v -> v.N.full_path) nodes |> List.map Path.to_string |> List.sort compare
@@ -115,4 +115,4 @@ let testcases =
            nodes ;
          Lwt.return_unit ) ]
 
-let suite = [("node repository", testcases)]
+let suite = [("Location scanner service", testcases)]

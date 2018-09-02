@@ -79,16 +79,18 @@ let expose server =
   let module Filer_repo = I.Filer_repo.Make (Global.Root) in
   let module Conf_repo = I.Configuration_repo.Make (Global.Root) in
   let module Make_gateway =
-    G.Filer.Make (System.Real) (U.Filer.Make (Conf_repo) (Filer_repo) (I.Node_repo))
+    G.Filer.Make (System.Real) (U.Filer.Make (Conf_repo) (Filer_repo) (I.Location_scanner_service))
   in
   let module Make = Procedure_intf.Make (Make (Make_gateway)) in
   let module Get_gateway = G.Filer.Get (U.Filer.Get (Filer_repo)) in
   let module Get = Procedure_intf.Make (Get (Get_gateway)) in
   let module Move_parent_gateway =
-    G.Filer.Move_parent (U.Filer.Move_parent (Filer_repo) (I.Node_repo) (Global.Clock)) in
+    G.Filer.Move_parent
+      (U.Filer.Move_parent (Filer_repo) (I.Location_scanner_service) (Global.Clock)) in
   let module Move_parent = Procedure_intf.Make (Move_parent (Move_parent_gateway)) in
   let module Enter_directory_gateway =
-    G.Filer.Enter_directory (U.Filer.Enter_directory (Filer_repo) (I.Node_repo) (Global.Clock)) in
+    G.Filer.Enter_directory
+      (U.Filer.Enter_directory (Filer_repo) (I.Location_scanner_service) (Global.Clock)) in
   let module Enter_directory = Procedure_intf.Make (Enter_directory (Enter_directory_gateway)) in
   let module E = Sxfiler_rpc.Endpoints in
   List.fold_left

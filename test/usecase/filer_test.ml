@@ -33,13 +33,13 @@ let enter_directory_tests =
             Lwt.return_unit
         end in
         let new_nodes = [node_base ~id:"foo" ()] in
-        let module NR = struct
-          let find_by_dir ~dir:_ = Lwt.return new_nodes
+        let module Svc = struct
+          let scan _ = Lwt.return new_nodes
         end in
         let module Clock = struct
           let unixtime () = Int64.min_int
         end in
-        let module Usecase = U.Filer.Enter_directory (SR) (NR) (Clock) in
+        let module Usecase = U.Filer.Enter_directory (SR) (Svc) (Clock) in
         let%lwt result = Usecase.execute {name = "foo"; node_id = "bar"} in
         Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
           "renew filer" (Ok !SR.data) result ;
@@ -56,13 +56,13 @@ let enter_directory_tests =
           let resolve _ = Lwt.return_none
           let store _ = assert false
         end in
-        let module NR = struct
-          let find_by_dir ~dir:_ = assert false
+        let module Svc = struct
+          let scan _ = assert false
         end in
         let module Clock = struct
           let unixtime () = Int64.min_int
         end in
-        let module Usecase = U.Filer.Enter_directory (SR) (NR) (Clock) in
+        let module Usecase = U.Filer.Enter_directory (SR) (Svc) (Clock) in
         let%lwt result = Usecase.execute {name = "foo"; node_id = "bar"} in
         Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
           "not found filer"
@@ -81,13 +81,13 @@ let enter_directory_tests =
           let resolve _ = Lwt.return_some filer
           let store _ = assert false
         end in
-        let module NR = struct
-          let find_by_dir ~dir:_ = assert false
+        let module Svc = struct
+          let scan _ = assert false
         end in
         let module Clock = struct
           let unixtime () = Int64.min_int
         end in
-        let module Usecase = U.Filer.Enter_directory (SR) (NR) (Clock) in
+        let module Usecase = U.Filer.Enter_directory (SR) (Svc) (Clock) in
         let%lwt result = Usecase.execute {name = "foo"; node_id = "not found"} in
         Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
           "not found node"

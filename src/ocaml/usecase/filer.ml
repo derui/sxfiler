@@ -20,8 +20,10 @@ module type Make = sig
   include Common.Usecase with type input := input and type output := output and type error := error
 end
 
-module Make (CR : T.Configuration.Repository) (SR : T.Filer.Repository) (NR : T.Node.Repository) :
-  Make = struct
+module Make
+    (CR : T.Configuration.Repository)
+    (SR : T.Filer.Repository)
+    (Svc : T.Location_scanner_service.S) : Make = struct
   include Make_type
 
   let execute (params : input) =
@@ -31,7 +33,7 @@ module Make (CR : T.Configuration.Repository) (SR : T.Filer.Repository) (NR : T.
     match v with
     | None ->
       let sort_order = config.T.Configuration.default_sort_order in
-      let%lwt nodes = NR.find_by_dir ~dir:params.initial_location in
+      let%lwt nodes = Svc.scan params.initial_location in
       let t =
         T.Filer.make ~id:params.name ~location:params.initial_location ~nodes
           ~history:(T.Location_history.make ()) ~sort_order
@@ -75,7 +77,7 @@ end
 
 module Move_parent
     (SR : T.Filer.Repository)
-    (NR : T.Node.Repository)
+    (Svc : T.Location_scanner_service.S)
     (Clock : T.Location_record.Clock) : Move_parent = struct
   include Move_parent_type
 
@@ -84,10 +86,8 @@ module Move_parent
     | None -> Lwt.return_error `Not_found
     | Some filer ->
       let parent_dir = Path.dirname_as_path filer.T.Filer.location in
-      let%lwt new_nodes = NR.find_by_dir ~dir:parent_dir in
-      let filer' =
-        T.Filer.move_location filer (module Clock) ~location:parent_dir ~nodes:new_nodes
-      in
+      let%lwt nodes = Svc.scan parent_dir in
+      let filer' = T.Filer.move_location filer (module Clock) ~location:parent_dir ~nodes in
       let%lwt () = SR.store filer' in
       Lwt.return_ok filer'
 end
@@ -113,7 +113,7 @@ end
 
 module Enter_directory
     (SR : T.Filer.Repository)
-    (NR : T.Node.Repository)
+    (Svc : T.Location_scanner_service.S)
     (Clock : T.Location_record.Clock) : Enter_directory = struct
   include Enter_directory_type
 
@@ -126,11 +126,52 @@ module Enter_directory
     | Some filer, Some node ->
       if not node.stat.is_directory then Lwt.return_error `Not_directory
       else
-        let%lwt new_nodes = NR.find_by_dir ~dir:node.full_path in
+        let%lwt new_nodes = Svc.scan node.full_path in
         let filer' =
           let location = node.full_path and nodes = new_nodes in
           T.Filer.move_location filer (module Clock) ~location ~nodes
         in
         let%lwt () = SR.store filer' in
         Lwt.return_ok filer'
+end
+
+(* move nodes in filer to the location of another filer *)
+module Move_nodes_type = struct
+  type input =
+    { from : string
+    ; node_ids : string list
+    ; _to : string }
+
+  type output = unit
+  type error = [`Not_found_filer]
+end
+
+module type Move_nodes = sig
+  include module type of Move_nodes_type
+  include Common.Usecase with type input := input and type output := output and type error := error
+end
+
+module Move_nodes
+    (SR : T.Filer.Repository)
+    (Scan : T.Location_scanner_service.S)
+    (Transport : T.Node_transporter_service.S) : Move_nodes = struct
+  include Move_nodes_type
+
+  let execute (params : input) =
+    let%lwt from_filer = SR.resolve params.from in
+    let%lwt to_filer = SR.resolve params._to in
+    match (from_filer, to_filer) with
+    | None, _ | _, None -> Lwt.return_error `Not_found_filer
+    | Some from_filer, Some to_filer ->
+      let nodes =
+        List.map (fun id -> T.Filer.find_node ~id from_filer) params.node_ids
+        |> List.filter Option.is_some |> List.map Option.get_exn
+      in
+      let%lwt () = Transport.transport ~nodes ~_to:to_filer.T.Filer.location in
+      let%lwt from_nodes = Scan.scan from_filer.location
+      and to_nodes = Scan.scan to_filer.location in
+      let from_filer = T.Filer.update_nodes from_filer ~nodes:from_nodes
+      and to_filer = T.Filer.update_nodes to_filer ~nodes:to_nodes in
+      let%lwt () = Lwt.join [SR.store from_filer; SR.store to_filer] in
+      Lwt.return_ok ()
 end

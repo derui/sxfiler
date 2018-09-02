@@ -36,6 +36,11 @@ let make ~id ~location ~nodes ~history ~sort_order =
   let t = {id; location; nodes; history; sort_order} in
   sort_nodes t
 
+(** [update_nodes t ~nodes] get new filer is based on [t] and updated nodes from parameter. *)
+let update_nodes t ~nodes =
+  let t = {t with nodes} in
+  sort_nodes t
+
 (** [find_node t ~id] search node having [id] in filer [t] *)
 let find_node t ~id = List.find_opt (fun (v : Node.t) -> v.id = id) t.nodes
 
@@ -45,5 +50,5 @@ module type Repository = sig
   (** [resolve id] returns scanner instance if already exists. *)
 
   val store : t -> unit Lwt.t
-  (** [store scanner] stores [t] to any place. *)
+  (** [store filer] stores [t] to any place. *)
 end
