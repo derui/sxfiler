@@ -23,5 +23,8 @@ val recalculate_visible_window : int -> 'a t -> 'a t
 val get_items_in_window : 'a t -> 'a array
 (** get items in current visible window *)
 
+val adjust_cursor_position : int -> 'a t -> int
+(** [adjust_cursor_position pos t] get adjusted cursor position from [t] *)
+
 val percentage_by_visible : 'a t -> float * float
 (** Get the percentage by visible item in all items *)

@@ -53,3 +53,7 @@ let percentage_by_visible t =
   let start' = float_of_int start in
   let start' = start' /. size_of_all in
   (start', size')
+
+let adjust_cursor_position pos t =
+  let start, _ = t.visible_window in
+  pos - start

@@ -69,6 +69,7 @@ let content =
              ignore
                (let vl = VL.update_all_items items this##.state##.virtualizedList in
                 let vl = VL.recalculate_visible_window new_props##.selectedItemIndex vl in
+                Logs.app (fun m -> m "index :%d" new_props##.selectedItemIndex) ;
                 this##setState
                   (object%js
                     val virtualizedList = vl
@@ -76,6 +77,7 @@ let content =
          (fun this ->
             let vl = this##.state##.virtualizedList in
             let items = VL.get_items_in_window vl in
+            let cursor = VL.adjust_cursor_position this##.props##.selectedItemIndex vl in
             let children =
               Array.to_list items
               |> List.mapi (fun index (item, marked) ->
@@ -88,8 +90,7 @@ let content =
 
                           val marked = marked
 
-                          val selected =
-                            index = this##.props##.selectedItemIndex && this##.props##.focused
+                          val selected = index = cursor && this##.props##.focused
                         end)] )
             in
             let scroll_bar =
