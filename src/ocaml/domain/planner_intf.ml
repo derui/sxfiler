@@ -20,6 +20,6 @@ type plan =
   ; dest : node_plan list }
 
 module type S = sig
-  val make : Workbench.t -> plan
+  val make : Workbench.t -> plan Lwt.t
   (** [make workbench] returns the plan with [workbench] *)
 end
