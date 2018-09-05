@@ -9,17 +9,18 @@ module Operation = struct
   let of_int = function 0 -> Some Append | 1 -> Some Delete | 2 -> Some Remained | _ -> None
 end
 
-(** Plan is difference between current nodes and simulated it. *)
+(** [node_plan] is difference between current nodes and simulated it. *)
 type node_plan =
   { operation : Operation.t
   ; node : Node.t }
 
-(** [simulated] is result of simulation. *)
-type plan =
+(** [t] is result of plan. *)
+type t =
   { source : node_plan list
   ; dest : node_plan list }
 
-module type S = sig
-  val make : Workbench.t -> plan Lwt.t
-  (** [make workbench] returns the plan with [workbench] *)
-end
+let make ~source ~dest = {source; dest}
+(* functions to make node plan *)
+let node_to_delete node = {operation = Operation.Delete; node}
+let node_to_append node = {operation = Operation.Append; node}
+let node_to_remain node = {operation = Operation.Remained; node}

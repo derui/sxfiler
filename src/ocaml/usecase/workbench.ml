@@ -10,7 +10,7 @@ module Make_type = struct
     ; node_ids : string list
     ; _to : T.Filer.id }
 
-  type output = T.Planner_intf.plan
+  type output = T.Workbench.t
   type error = [`Not_found_filer]
 end
 
@@ -19,11 +19,8 @@ module type Make = sig
   include Common.Usecase with type input := input and type output := output and type error := error
 end
 
-module Make
-    (SR : T.Filer.Repository)
-    (Factory : T.Workbench.Factory)
-    (WR : T.Workbench.Repository)
-    (Planner : T.Planner_intf.S) : Make = struct
+module Make (SR : T.Filer.Repository) (Factory : T.Workbench.Factory) (WR : T.Workbench.Repository) :
+  Make = struct
   include Make_type
 
   let execute (params : input) =
@@ -39,28 +36,27 @@ module Make
       let env = {T.Workbench.source; dest; nodes} in
       let wb = Factory.make env in
       let%lwt () = WR.store wb in
-      let%lwt plan = Planner.make wb in
-      Lwt.return_ok plan
+      Lwt.return_ok wb
 end
 
-(* Execute plan already created. To delete runs after executed the plan. *)
-module Execute_type = struct
+(* Clean up workbench. *)
+module Cleanup_type = struct
   type input = {workbench_id : T.Workbench.id}
   type output = unit
   type error = [`Not_found]
 end
 
-module type Execute = sig
-  include module type of Execute_type
+module type Cleanup = sig
+  include module type of Cleanup_type
   include Common.Usecase with type input := input and type output := output and type error := error
 end
 
-module Execute (WR : T.Workbench.Repository) (Executor : T.Executor_intf.S) : Execute = struct
-  include Execute_type
+module Cleanup (WR : T.Workbench.Repository) : Cleanup = struct
+  include Cleanup_type
 
   let execute (params : input) =
     let%lwt wb = WR.resolve params.workbench_id in
     match wb with
     | None -> Lwt.return_error `Not_found
-    | Some wb -> Lwt.(Executor.run wb >>= Lwt.return_ok)
+    | Some wb -> Lwt.(WR.remove wb >>= Lwt.return_ok)
 end
