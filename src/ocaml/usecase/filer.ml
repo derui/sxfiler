@@ -191,8 +191,7 @@ module type Plan_move_nodes = sig
   include Common.Usecase with type input := input and type output := output and type error := error
 end
 
-module Plan_move_nodes (SR : T.Filer.Repository) (WR : T.Workbench.Repository) : Plan_move_nodes =
-struct
+module Plan_move_nodes (WR : T.Workbench.Repository) : Plan_move_nodes = struct
   include Plan_move_nodes_type
 
   let execute (params : input) =

@@ -5,5 +5,5 @@
 
 (executable
  (name tests)
- (libraries alcotest alcotest-lwt sxfiler.core sxfiler.domain sxfiler.usecase)
+ (libraries uuidm alcotest alcotest-lwt sxfiler.core sxfiler.domain sxfiler.usecase)
  (preprocess (pps lwt_ppx)))
