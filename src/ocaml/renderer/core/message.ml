@@ -10,7 +10,10 @@ type completion =
   | Select_prev
 
 (* select current action related specified command. *)
-type command = Select of string
+type command =
+  | Select of string
+  | Planning
+  | Plan of T.Plan.t
 
 type t =
   | Update_filer of (Types.File_list_pos.t * T.Filer.t)
