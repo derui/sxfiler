@@ -60,15 +60,15 @@ module Filer = struct
     let endpoint = "filer/moveNodes"
   end
 
-  module Move_nodes_plan = struct
+  module Plan_move_nodes = struct
     type params =
       { from : string
       ; node_ids : string list
       ; _to : string }
 
-    type result = Types.Planner.t
+    type result = Types.Plan.t
 
-    let endpoint = "filer/moveNodes/plan"
+    let endpoint = "filer/planMoveNodes"
   end
 end
 

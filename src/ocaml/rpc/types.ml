@@ -109,24 +109,14 @@ module Tree_snapshot = struct
     ; nodes : Node.t list }
 end
 
-module Planner = struct
-  type plan =
+module Plan = struct
+  type node_plan =
     { operation : int
     ; node : Node.t }
 
-  type env =
-    { from : Filer.t
-    ; _to : Filer.t }
-
-  type simulated =
-    { from : plan list
-    ; _to : plan list }
-
   type t =
-    { id : string
-    ; env : env
-    ; nodes : Node.t list
-    ; simulated : simulated option }
+    { source : node_plan list
+    ; dest : node_plan list }
 
-  let empty = {id = ""; env = {from = Filer.empty; _to = Filer.empty}; nodes = []; simulated = None}
+  let empty = {source = []; dest = []}
 end

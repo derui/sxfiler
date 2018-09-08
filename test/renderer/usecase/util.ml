@@ -26,5 +26,6 @@ module Service_stub = struct
     let get _ = assert false
     let move_parent _ = assert false
     let enter_directory _ = assert false
+    let plan_move_nodes _ = assert false
   end
 end

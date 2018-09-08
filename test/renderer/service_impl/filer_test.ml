@@ -90,4 +90,19 @@ let () =
              let module S = SI.Filer.Make (Client) in
              match%lwt S.get {name = "bar"} with
              | exception Sxfiler_core.Error.Error _ -> Lwt.return @@ assert_ok true
-             | _ -> Lwt.return @@ assert_fail "Unknown branch" ) ]
+             | _ -> Lwt.return @@ assert_fail "Unknown branch" ) ] ;
+  "Filer service implementation: Move_parent"
+  >::: [ ( "should return filer"
+           >:- fun () ->
+             let expected =
+               T.Filer.{id = "foo"; location = "loc"; nodes = []; history = T.Location_history.empty}
+             in
+             let module Client = Util.Make_client (struct
+                 let gen id =
+                   let module R = Jsonrpc_ocaml_jsoo in
+                   R.Response.
+                     {empty with id; result = Some (Js.Unsafe.coerce @@ Tr.Filer.to_js expected)}
+               end) in
+             let module S = SI.Filer.Make (Client) in
+             let%lwt v = S.move_parent {name = ""} in
+             Lwt.return (assert_ok (v = expected)) ) ]
