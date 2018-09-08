@@ -180,10 +180,7 @@ end
 module Plan_move_nodes_type = struct
   type input = {workbench_id : T.Workbench.id}
   type output = T.Plan.t
-
-  type error =
-    [ `Not_found_filer
-    | `Not_found_wb ]
+  type error = [`Not_found_wb]
 end
 
 module type Plan_move_nodes = sig
