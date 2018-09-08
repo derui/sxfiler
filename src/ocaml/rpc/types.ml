@@ -110,8 +110,10 @@ module Tree_snapshot = struct
 end
 
 module Plan = struct
+  module Operation = Sxfiler_domain.Plan.Operation
+
   type node_plan =
-    { operation : int
+    { operation : Operation.t
     ; node : Node.t }
 
   type t =
