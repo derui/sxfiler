@@ -18,21 +18,26 @@ let node_list_of_domain t = {operation = t.D.operation; node = Node.of_domain t.
 
 let to_yojson t =
   `Assoc
-    [ ("source", `List (List.map node_list_to_yojson t.source))
+    [ ("workbenchId", `String t.workbench_id)
+    ; ("source", `List (List.map node_list_to_yojson t.source))
     ; ("dest", `List (List.map node_list_to_yojson t.dest)) ]
 
 let of_yojson js =
   let open Yojson.Safe.Util in
   try
-    let source = js |> member "source" |> convert_each node_list_of_yojson
+    let workbench_id = js |> member "workbenchId" |> to_string
+    and source = js |> member "source" |> convert_each node_list_of_yojson
     and dest = js |> member "dest" |> convert_each node_list_of_yojson in
     let open Result.Infix in
     let conv_list list =
       List.fold_left (fun list v -> list >>= fun list -> v >|= fun v -> v :: list) (Ok []) list
       >>= Result.lift List.rev
     in
-    conv_list source >>= fun source -> conv_list dest >>= fun dest -> Ok {source; dest}
+    conv_list source
+    >>= fun source -> conv_list dest >>= fun dest -> Ok {workbench_id; source; dest}
   with Type_error (s, _) -> Error s
 
 let of_domain t =
-  {source = List.map node_list_of_domain t.D.source; dest = List.map node_list_of_domain t.D.dest}
+  { workbench_id = Uuidm.to_string t.D.workbench_id
+  ; source = List.map node_list_of_domain t.D.source
+  ; dest = List.map node_list_of_domain t.D.dest }

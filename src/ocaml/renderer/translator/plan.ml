@@ -12,6 +12,8 @@ class type node_plan =
 
 class type js =
   object
+    method workbenchId : Js.js_string Js.t Js.readonly_prop
+
     method source : node_plan Js.t Js.js_array Js.t Js.readonly_prop
 
     method dest : node_plan Js.t Js.js_array Js.t Js.readonly_prop
@@ -31,11 +33,13 @@ let node_plan_to_js t : node_plan Js.t =
 let of_js js : P.t =
   (* full_path should be absolute path. *)
   let conv = Fun.(Js.array_map node_plan_of_js %> Js.to_array %> Array.to_list) in
-  {source = conv js##.source; dest = conv js##.dest}
+  {workbench_id = Js.to_string js##.workbenchId; source = conv js##.source; dest = conv js##.dest}
 
 let to_js t : js Js.t =
   let conv = Fun.(List.map node_plan_to_js %> Array.of_list %> Js.array) in
   object%js
+    val workbenchId = Js.string t.P.workbench_id
+
     val source = conv t.P.source
 
     val dest = conv t.dest

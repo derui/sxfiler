@@ -52,7 +52,7 @@ let filer_tests =
         Lwt.return_unit )
   ; Alcotest_lwt.test_case "make plan to move nodes" `Quick (fun switch () ->
         let id = Uuidm.v4_gen (Random.get_state ()) () in
-        let plan = D.Plan.make ~source:[] ~dest:[] in
+        let plan = D.Plan.make ~workbench_id:id ~source:[] ~dest:[] in
         let filer =
           D.Filer.make ~id:"foo"
             ~location:(Path.of_string ~env:`Unix "/initial")
@@ -60,7 +60,7 @@ let filer_tests =
             ~history:D.Location_history.(make ())
         in
         let module Usecase = struct
-          include U.Filer.Plan_move_nodes_type
+          include U.Filer.Plan_move_nodes.Type
 
           let execute {workbench_id} =
             Alcotest.(check @@ of_pp Fmt.nop) "id" id workbench_id ;

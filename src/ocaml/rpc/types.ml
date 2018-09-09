@@ -117,8 +117,9 @@ module Plan = struct
     ; node : Node.t }
 
   type t =
-    { source : node_plan list
+    { workbench_id : string
+    ; source : node_plan list
     ; dest : node_plan list }
 
-  let empty = {source = []; dest = []}
+  let empty = {workbench_id = ""; source = []; dest = []}
 end

@@ -17,13 +17,15 @@ let testcases =
     , `Quick
     , fun () ->
       let actual =
-        { D.Plan.source =
+        { D.Plan.workbench_id = Uuidm.v4_gen (Random.get_state ()) ()
+        ; source =
             [ {operation = D.Plan.Operation.Append; node}
             ; {operation = D.Plan.Operation.Delete; node} ]
         ; dest = [{operation = D.Plan.Operation.Remained; node}] }
       in
       let expected =
-        { T.Plan.source =
+        { T.Plan.workbench_id = Uuidm.to_string actual.workbench_id
+        ; source =
             [ {operation = T.Plan.Operation.Append; node = Tr.Node.of_domain node}
             ; {operation = T.Plan.Operation.Delete; node = Tr.Node.of_domain node} ]
         ; dest = [{operation = T.Plan.Operation.Remained; node = Tr.Node.of_domain node}] }
@@ -34,7 +36,8 @@ let testcases =
     , fun () ->
       let data =
         Tr.Plan.of_domain
-          { D.Plan.source =
+          { D.Plan.workbench_id = Uuidm.v4_gen (Random.get_state ()) ()
+          ; source =
               [ {operation = D.Plan.Operation.Append; node}
               ; {operation = D.Plan.Operation.Delete; node} ]
           ; dest = [{operation = D.Plan.Operation.Remained; node}] }

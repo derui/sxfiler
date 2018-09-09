@@ -24,7 +24,8 @@ let () =
              in
              let data =
                T.Plan.
-                 { source = [{operation = Operation.Append; node}]
+                 { workbench_id = "foo"
+                 ; source = [{operation = Operation.Append; node}]
                  ; dest = [{operation = Operation.Delete; node}] }
              in
              assert_ok (data = Tr.Plan.(of_js @@ to_js data)) ) ]

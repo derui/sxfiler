@@ -102,7 +102,7 @@ let plan_move_nodes_test =
           let store _ = assert false
           let remove _ = assert false
         end in
-        let module Usecase = U.Filer.Plan_move_nodes (WR) in
+        let module Usecase = U.Filer.Plan_move_nodes.Make (WR) in
         let%lwt result = Usecase.execute {workbench_id = Uuidm.v4_gen (Random.get_state ()) ()} in
         Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
           "not found workbench"
@@ -132,13 +132,14 @@ let plan_move_nodes_test =
           let store _ = assert false
           let remove _ = assert false
         end in
-        let module Usecase = U.Filer.Plan_move_nodes (WR) in
+        let module Usecase = U.Filer.Plan_move_nodes.Make (WR) in
         match%lwt Usecase.execute {workbench_id = Uuidm.v4_gen (Random.get_state ()) ()} with
         | Error _ -> Alcotest.fail "Unknown error"
         | Ok plan ->
           let expected =
             D.Plan.
-              { source = [Fun.(List.hd %> node_to_delete) nodes]
+              { workbench_id = id
+              ; source = [Fun.(List.hd %> node_to_delete) nodes]
               ; dest = [Fun.(List.hd %> node_to_append) nodes] }
           in
           Alcotest.(check (of_pp Fmt.nop)) "plan" expected plan ;

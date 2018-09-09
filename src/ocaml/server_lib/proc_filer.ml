@@ -117,7 +117,8 @@ let expose server =
   let module Enter_directory = Procedure_intf.Make (Enter_directory (Enter_directory_gateway)) in
   let module Plan_move_nodes_gateway =
     G.Filer.Plan_move_nodes.Make
-      (U.Workbench.Make (Filer_repo) (Wb_factory) (Wb_repo)) (U.Filer.Plan_move_nodes (Wb_repo))
+      (U.Workbench.Make (Filer_repo) (Wb_factory) (Wb_repo))
+      (U.Filer.Plan_move_nodes.Make (Wb_repo))
   in
   let module Plan_move_nodes = Procedure_intf.Make (Plan_move_nodes (Plan_move_nodes_gateway)) in
   let module E = Sxfiler_rpc.Endpoints in
