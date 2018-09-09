@@ -128,7 +128,7 @@ let plan_move_nodes_test =
         let id = Uuidm.v4_gen (Random.get_state ()) () in
         let env = D.Workbench.{source = source_filer; nodes; dest = dest_filer} in
         let module WR = struct
-          let resolve _ = Lwt.return_some (D.Workbench.make ~id ~env)
+          let resolve _ = Lwt.return_some (D.Workbench.make ~id ~env ~corrections:[])
           let store _ = assert false
           let remove _ = assert false
         end in

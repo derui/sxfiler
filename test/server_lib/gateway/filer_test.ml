@@ -74,7 +74,9 @@ let filer_tests =
             Alcotest.(check @@ list string) "ids" ["id"] node_ids ;
             Alcotest.(check string) "to" "to" _to ;
             Lwt.return_ok
-            @@ D.Workbench.make ~id ~env:{D.Workbench.source = filer; nodes = []; dest = filer}
+            @@ D.Workbench.make ~id
+              ~env:{D.Workbench.source = filer; nodes = []; dest = filer}
+              ~corrections:[]
         end in
         let module Gateway = G.Filer.Plan_move_nodes.Make (Wb) (Usecase) in
         let%lwt res = Gateway.handle {from = "from"; node_ids = ["id"]; _to = "to"} in
