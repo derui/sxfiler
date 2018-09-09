@@ -1,0 +1,11 @@
+(library
+ (name sxfiler_renderer_planner)
+ (public_name sxfiler.renderer.planner)
+ (modes byte)
+ (libraries js_of_ocaml
+            sxfiler.core
+            sxfiler.renderer.core
+            sxfiler.rpc
+            sxfiler.renderer.store
+            sxfiler.domain)
+ (preprocess (pps js_of_ocaml-ppx)))
