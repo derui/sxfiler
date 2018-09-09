@@ -15,7 +15,7 @@ let file_list_container ~key store =
         (object%js
           val filerState = filer
 
-          val focused = S.Workspace.State.match_current_mode ws ~mode:C.Types.Mode.File_tree
+          val focused = S.Workspace.State.is_content_focused ws
         end)]
 
 let container_key = "container"
@@ -41,7 +41,7 @@ let t =
              let module L = (val this##.props##.locator : Locator.S) in
              let store = S.App.Store.get L.store in
              let ws = S.Workspace.Store.get @@ S.App.State.workspace store in
-             let focused = S.Workspace.State.match_current_mode ws ~mode:C.Types.Mode.File_tree in
+             let focused = S.Workspace.State.is_content_focused ws in
              let open Option.Infix in
              if focused then
                ignore (R.Ref_table.find ~key:container_key this##.nodes >|= fun e -> e##focus)

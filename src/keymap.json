@@ -1,7 +1,8 @@
 {
   "bindings": [
-    {"action": "global:activate_file_tree", "key": "Escape", "when": ["onComplete"]},
+    {"action": "global:activate_content", "key": "Escape", "when": ["onComplete"]},
     {"action": "global:activate_omnibar", "key": "C-;", "when": ["onFileTree"]},
+    {"action": "global:activate_omnibar", "key": "C-;", "when": ["onPreview"]},
     {"action": "file_list:next_item", "key": "j", "when": ["onFileTree"]},
     {"action": "file_list:prev_item", "key": "k", "when": ["onFileTree"]},
     {"action": "file_list:swap_filer", "key": "Tab", "when": ["onFileTree"]},
