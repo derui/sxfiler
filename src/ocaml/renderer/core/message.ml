@@ -10,10 +10,15 @@ type completion =
   | Select_prev
 
 (* select current action related specified command. *)
-type command =
-  | Select of string
-  | Planning
-  | Plan of T.Plan.t
+module Command = struct
+  type t =
+    | Select of string
+    | Planning
+    | Plan of T.Plan.t
+    | Approve
+    | Reject
+    | Conflict of Types.corrections
+end
 
 type t =
   | Update_filer of (Types.File_list_pos.t * T.Filer.t)
@@ -25,7 +30,7 @@ type t =
   | Swap_filer
   (* completion handling *)
   | Completion of completion
-  | Command of command
+  | Command of Command.t
   | Change_mode of Types.Mode.t
   | Raise_error of Sxfiler_core.Error.t
 

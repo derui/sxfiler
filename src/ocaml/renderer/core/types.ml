@@ -26,3 +26,5 @@ module File_list_pos = struct
 
   let to_string = function `Left -> "left" | `Right -> "right"
 end
+
+type corrections = Sxfiler_rpc.Types.Node.t list

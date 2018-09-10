@@ -1,0 +1,2 @@
+(* Dummy implementation *)
+let () = ()

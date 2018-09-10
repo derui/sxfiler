@@ -6,6 +6,5 @@
             sxfiler.core
             sxfiler.renderer.core
             sxfiler.rpc
-            sxfiler.renderer.store
-            sxfiler.domain)
+            sxfiler.renderer.store)
  (preprocess (pps lwt.ppx js_of_ocaml-ppx)))

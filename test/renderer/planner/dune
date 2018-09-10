@@ -1,0 +1,16 @@
+(alias
+ (name runtest)
+ (deps tests.bc.js))
+
+(library
+ (name test_sxfiler_renderer_planner)
+ (libraries js_of_ocaml sxfiler.renderer.planner jsoo_reactjs mocha_of_ocaml.async snap-shot-it_of_ocaml)
+ (modules (:standard \ tests))
+ (js_of_ocaml (flags ("--pretty" "--source-map-inline")))
+ (preprocess (pps js_of_ocaml-ppx)))
+
+(executable
+ (name tests)
+ (modules tests)
+ (libraries test_sxfiler_renderer_planner)
+ (js_of_ocaml (flags ("--pretty" "--source-map-inline"))))
