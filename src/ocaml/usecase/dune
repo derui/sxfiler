@@ -2,4 +2,4 @@
  (name sxfiler_usecase)
  (public_name sxfiler.usecase)
  (libraries sxfiler.domain lwt)
- (preprocess (pps lwt.ppx)))
+ (preprocess (pps lwt_ppx)))
