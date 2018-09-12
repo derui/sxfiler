@@ -6,10 +6,14 @@ module S = Sxfiler_renderer_store
 module type Instance = C.Context.Instance
 
 type store = S.App.Store.t
-type t = {store : S.App.Store.t}
+
+type t =
+  { store : S.App.Store.t
+  ; mutable subscribers : C.Dispatcher.subscriber list }
+
 type config = S.App.Store.t
 
-let create store = {store}
+let create store = {store; subscribers = []}
 
 let dispatcher t =
   C.Dispatcher.make_instance
@@ -20,7 +24,11 @@ let dispatcher t =
       type config = unit
 
       let create () = t
-      let dispatch t message = S.App.Store.dispatch t.store message
+      let subscribe t ~f = t.subscribers <- f :: t.subscribers
+
+      let dispatch t message =
+        S.App.Store.dispatch t.store message ;
+        List.iter (fun f -> f message) t.subscribers
     end )
     ()
 

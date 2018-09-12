@@ -24,6 +24,15 @@ let expose_commands (module Locator : Locator.S) =
   Com.expose_static Locator.command_registry Locator.service_registry |> ignore ;
   Com.expose_dynamic Locator.dynamic_command_registry Locator.service_registry |> ignore
 
+let setup_planner (module Locator : Locator.S) =
+  let module P = Sxfiler_renderer_planner in
+  let module C = (val Locator.context) in
+  let module D = (val C.(Context.dispatcher this)) in
+  let state = S.App.Store.get Locator.store in
+  P.initialize state ;
+  let open Sxfiler_core.Option.Infix in
+  P.start () >|= fun (accepter, _) -> D.(Dispatcher.subscribe this ~f:accepter)
+
 let () =
   Logs.set_reporter @@ Logs_browser.console_reporter () ;
   Logs.set_level (Some Logs.App) ;
@@ -50,6 +59,8 @@ let () =
   in
   Websocket_handler.add websocket_handler ~handler:(notification_handler rpc_notification_server) ;
   expose_commands (module L) ;
+  (* TODO: should handle stopper *)
+  setup_planner (module L) |> ignore ;
   websocket##.onopen :=
     Dom.handler (fun _ ->
         (* Get current properties *)
@@ -57,7 +68,7 @@ let () =
         let module I =
           ( val C.Usecase.make_instance
               (module U.Activate_mode.Make (Service))
-              ~param:C.Types.Mode.File_tree )
+              ~param:C.Types.Mode.(Content File_tree) )
         in
         Ctx.(Context.execute this (module I)) |> Lwt.ignore_result ;
         let module Service = SI.Configuration.Make (Client) in

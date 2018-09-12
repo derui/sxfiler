@@ -7,14 +7,10 @@ module type Action = sig
 end
 
 (** [plan] defines type to make plan with planner.  *)
-type plan =
-  C.Types.corrections
-  -> dispatcher:(module C.Dispatcher.Instance)
-  -> action:(module Action)
-  -> unit Lwt.t
+type plan = C.Types.corrections -> action:(module Action) -> unit Lwt.t
 
 (** [execute] defines type to execute plan.  *)
-type execute = dispatcher:(module C.Dispatcher.Instance) -> action:(module Action) -> unit Lwt.t
+type execute = action:(module Action) -> unit Lwt.t
 
 type executor =
   { plan : plan
@@ -29,19 +25,17 @@ type t =
   { mutable current_corrections : T.Node.t list
   ; executor_signal : executor Lwt_condition.t
   ; executor_mutex : Lwt_mutex.t
-  ; dispatcher : (module C.Dispatcher.Instance)
   ; action : (module Action) }
 
 let instance = ref None
 
 (* the singleton instance for planner *)
-let initialize (module I : C.Dispatcher.Instance) store =
+let initialize store =
   instance :=
     Some
       { current_corrections = []
       ; executor_signal = Lwt_condition.create ()
       ; executor_mutex = Lwt_mutex.create ()
-      ; dispatcher = (module I)
       ; action =
           ( module struct
             let state () = store
@@ -59,18 +53,15 @@ let start () =
     let%lwt executor = Lwt_condition.wait t.executor_signal in
     let%lwt () =
       Lwt_mutex.with_lock t.executor_mutex (fun () ->
-          let%lwt () =
-            executor.plan t.current_corrections ~dispatcher:t.dispatcher ~action:t.action
-          in
+          let%lwt () = executor.plan t.current_corrections ~action:t.action in
           let rec loop () =
             match%lwt Lwt_mvar.take accepter with
-            | C.Message.(Command Command.Approve) ->
-              executor.execute ~dispatcher:t.dispatcher ~action:t.action
+            | C.Message.(Command Command.Approve) -> executor.execute ~action:t.action
             | C.Message.(Command Command.Reject) -> Lwt.return_unit
             | C.Message.(Command (Command.Conflict corrections)) ->
               let corrections = List.flatten [t.current_corrections; corrections] in
               t.current_corrections <- corrections ;
-              let%lwt () = executor.plan corrections ~dispatcher:t.dispatcher ~action:t.action in
+              let%lwt () = executor.plan corrections ~action:t.action in
               loop ()
             | _ -> loop ()
           in

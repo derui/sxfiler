@@ -7,18 +7,6 @@ module C = Sxfiler_renderer_core
 module P = Sxfiler_renderer_planner
 module S = Sxfiler_renderer_store
 
-module D : C.Dispatcher.Instance = struct
-  module Dispatcher = struct
-    type t = unit
-    type config = unit
-
-    let create () = ()
-    let dispatch () _ = ()
-  end
-
-  let this = ()
-end
-
 let state =
   let config = S.Config.(Store.make @@ State.make ())
   and file_list = S.File_list.(Store.make @@ State.make ())
@@ -32,14 +20,13 @@ let () =
   "Planner"
   >::: [ ( "should be able to run normal process"
            >:- fun () ->
-             let () = P.initialize (module D) state in
+             let () = P.initialize state in
              let accepter, stopper = P.start () |> Option.get_exn in
              let plan_waiter, plan_wakener = Lwt.task ()
              and execute_waiter, execute_wakener = Lwt.task () in
              let executor =
-               { P.execute =
-                   (fun ~dispatcher:_ ~action:_ -> Lwt.wakeup execute_wakener () |> Lwt.return)
-               ; plan = (fun _ ~dispatcher:_ ~action:_ -> Lwt.wakeup plan_wakener () |> Lwt.return) }
+               { P.execute = (fun ~action:_ -> Lwt.wakeup execute_wakener () |> Lwt.return)
+               ; plan = (fun _ ~action:_ -> Lwt.wakeup plan_wakener () |> Lwt.return) }
              in
              P.reserve_executor executor |> ignore ;
              Lwt.async (fun () ->
@@ -50,14 +37,13 @@ let () =
              assert_ok true |> Lwt.return )
        ; ( "should not execute if plan rejected"
            >:- fun () ->
-             let () = P.initialize (module D) state in
+             let () = P.initialize state in
              let accepter, stopper = P.start () |> Option.get_exn in
              let plan_waiter, plan_wakener = Lwt.task ()
              and execute_waiter, execute_wakener = Lwt.task () in
              let executor =
-               { P.execute =
-                   (fun ~dispatcher:_ ~action:_ -> Lwt.wakeup execute_wakener () |> Lwt.return)
-               ; plan = (fun _ ~dispatcher:_ ~action:_ -> Lwt.wakeup plan_wakener () |> Lwt.return) }
+               { P.execute = (fun ~action:_ -> Lwt.wakeup execute_wakener () |> Lwt.return)
+               ; plan = (fun _ ~action:_ -> Lwt.wakeup plan_wakener () |> Lwt.return) }
              in
              P.reserve_executor executor |> ignore ;
              Lwt.async (fun () ->
@@ -71,16 +57,15 @@ let () =
              | _ -> assert_fail "do not stop" |> Lwt.return )
        ; ( "should be able to handle conflict repeated"
            >:- fun () ->
-             let () = P.initialize (module D) state in
+             let () = P.initialize state in
              let accepter, stopper = P.start () |> Option.get_exn in
              let plan_waiter, plan_wakener = Lwt.task ()
              and execute_waiter, execute_wakener = Lwt.task () in
              let data = ref 0 in
              let executor =
-               { P.execute =
-                   (fun ~dispatcher:_ ~action:_ -> Lwt.wakeup execute_wakener () |> Lwt.return)
+               { P.execute = (fun ~action:_ -> Lwt.wakeup execute_wakener () |> Lwt.return)
                ; plan =
-                   (fun _ ~dispatcher:_ ~action:_ ->
+                   (fun _ ~action:_ ->
                       incr data ;
                       if !data >= 3 then Lwt.wakeup plan_wakener () |> Lwt.return else Lwt.return_unit
                    ) }

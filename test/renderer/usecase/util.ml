@@ -13,6 +13,7 @@ module Dummy_dispatcher (D : Dispatch) : C.Dispatcher.Instance = struct
     type config = unit
 
     let create () = ()
+    let subscribe _ ~f:_ = ()
     let dispatch _ m = D.dispatch m
   end
 
