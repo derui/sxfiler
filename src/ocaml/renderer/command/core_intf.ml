@@ -1,26 +1,25 @@
 module C = Sxfiler_renderer_core
 module Co = Sxfiler_completion.Domain
 module S = Sxfiler_renderer_store
+module P = Sxfiler_renderer_planner
 
 type command_args = (string * string) list
+
 (* The type of function that is to execute command body with
    application state.
 *)
-type ('a, 'state, 'b) executor = 'a -> 'state -> (module C.Context.Instance) -> 'b Lwt.t
+type ('a, 'state, 'b) executor =
+  | Immediate of ('a -> 'state -> (module C.Context.Instance) -> 'b Lwt.t)
+  | With_plan of (command_args -> (module C.Context.Instance) -> P.executor)
 
 type 'store execution_plan =
   [ `No_plan
   | `Plan of (command_args, 'store, unit) executor ]
 
 (** type for static command. *)
-module Static_command = struct
-  type state = S.App.State.t
-
-  type t =
-    { name : string
-    ; execute_plan : state execution_plan
-    ; executor : (command_args, state, unit) executor }
-end
+type static_command =
+  { name : string
+  ; executor : (command_args, S.App.State.t, unit) executor }
 
 (** The signature of completer is used from omni bar with dynamic command.  *)
 module type Completer = sig

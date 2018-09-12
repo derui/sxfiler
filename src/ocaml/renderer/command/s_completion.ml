@@ -6,26 +6,26 @@ let module_prefix = "completion:"
 
 module Next_item = struct
   let make () =
-    { Core.Static_command.name = module_prefix ^ "next_item"
-    ; execute_plan = `No_plan
+    { Core.name = module_prefix ^ "next_item"
     ; executor =
-        (fun _ _ (module Ctx : C.Context.Instance) ->
-           let module B =
-             (val C.Usecase.make_instance (module U.Select_next_candidate) ~param:())
-           in
-           Ctx.(Context.execute this (module B)) ) }
+        Immediate
+          (fun _ _ (module Ctx : C.Context.Instance) ->
+             let module B =
+               (val C.Usecase.make_instance (module U.Select_next_candidate) ~param:())
+             in
+             Ctx.(Context.execute this (module B)) ) }
 end
 
 module Prev_item = struct
   let make () =
-    { Core.Static_command.name = module_prefix ^ "prev_item"
-    ; execute_plan = `No_plan
+    { Core.name = module_prefix ^ "prev_item"
     ; executor =
-        (fun _ _ (module Ctx : C.Context.Instance) ->
-           let module I =
-             (val C.Usecase.make_instance (module U.Select_prev_candidate) ~param:())
-           in
-           Ctx.(Context.execute this (module I)) ) }
+        Immediate
+          (fun _ _ (module Ctx : C.Context.Instance) ->
+             let module I =
+               (val C.Usecase.make_instance (module U.Select_prev_candidate) ~param:())
+             in
+             Ctx.(Context.execute this (module I)) ) }
 end
 
 let expose registry _ =

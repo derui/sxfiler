@@ -21,4 +21,5 @@
             sxfiler.renderer.core
             sxfiler.renderer.store
             sxfiler.renderer.usecase
+            sxfiler.renderer.planner
             sxfiler.renderer.service.impl))

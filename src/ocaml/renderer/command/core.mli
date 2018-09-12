@@ -8,5 +8,5 @@ include module type of struct
 end
 
 module Make_registry (Com : Registry.Command) : Registry.S with type command := Com.t
-module Static_registry : Registry.S with type command := Static_command.t
+module Static_registry : Registry.S with type command := static_command
 module Dynamic_registry : Registry.S with type command := (module Instance)

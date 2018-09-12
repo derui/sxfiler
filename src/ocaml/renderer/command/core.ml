@@ -15,9 +15,9 @@ module Make_registry (Com : Registry.Command) : Registry.S with type command := 
 end
 
 module Static_registry = Make_registry (struct
-    type t = Static_command.t
+    type t = static_command
 
-    let to_name t = t.Static_command.name
+    let to_name t = t.name
   end)
 
 module Dynamic_registry = Make_registry (struct
