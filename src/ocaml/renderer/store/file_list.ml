@@ -39,6 +39,16 @@ module Filer = struct
   let current_selected_node t =
     let index = t.selected_item_index in
     fst t.nodes.(index)
+
+  (* Get list of nodes that are marked before. When no any nodes are marked,
+     return list that contains only current focusing node.
+  *)
+  let marked_nodes t =
+    let open Fun in
+    let filter_marked = Array.to_list %> List.filter snd in
+    let marked = filter_marked t.nodes in
+    let marked = match marked with [] -> [t.nodes.(t.selected_item_index)] | _ -> marked in
+    List.map fst marked
 end
 
 module State = struct
@@ -73,6 +83,7 @@ module State = struct
   (* helper functions of state *)
   let is_current {current; _} ~pos = current = pos
   let current t = match t.current with `Left -> t.left | `Right -> t.right
+  let fellow_position t = match t.current with `Left -> `Right | `Right -> `Left
   let left {left; _} = left
   let right {right; _} = right
 end
