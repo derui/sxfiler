@@ -8,9 +8,9 @@ let handle_action ~locator:(module L : Locator.S) action =
   match Reg.get L.command_registry ~name:action with
   | None -> ()
   | Some command ->
-    let module C = Command.Static_command in
+    let module C = Command.Static_command_runner in
     let state = S.App.Store.get L.store in
-    command.C.executor [] state L.context |> Lwt.ignore_result
+    C.run ~param:[] ~context:L.context ~state command |> Lwt.ignore_result
 
 let t =
   R.Component.make_stateful

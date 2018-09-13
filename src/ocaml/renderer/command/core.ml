@@ -25,3 +25,19 @@ module Dynamic_registry = Make_registry (struct
 
     let to_name (module C : Instance) = C.(Command.name this)
   end)
+
+module Static_command_runner :
+  Runner
+  with type command := static_command
+   and type state := S.App.State.t
+   and type param := command_args = struct
+  let run ~param ~state ~context command =
+    match command.executor with
+    | Immediate f -> f param state context
+    | With_plan f ->
+      let plan_executor = f param context in
+      let open Sxfiler_core in
+      let open Fun in
+      (* ignore result of [reserve_executor] when planner is not initialized yet *)
+      (P.reserve_executor %> Option.get ~default:(const ()) %> Lwt.return) plan_executor
+end

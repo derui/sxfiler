@@ -4,22 +4,30 @@ module S = Sxfiler_renderer_store
 module P = Sxfiler_renderer_planner
 
 type command_args = (string * string) list
+type ('a, 'state, 'b) executor = 'a -> 'state -> (module C.Context.Instance) -> 'b Lwt.t
 
 (* The type of function that is to execute command body with
    application state.
 *)
-type ('a, 'state, 'b) executor =
-  | Immediate of ('a -> 'state -> (module C.Context.Instance) -> 'b Lwt.t)
-  | With_plan of (command_args -> (module C.Context.Instance) -> P.executor)
-
-type 'store execution_plan =
-  [ `No_plan
-  | `Plan of (command_args, 'store, unit) executor ]
+type ('a, 'state) command =
+  | Immediate of ('a, 'state, unit) executor
+  | With_plan of ('a -> (module C.Context.Instance) -> P.executor)
 
 (** type for static command. *)
 type static_command =
   { name : string
-  ; executor : (command_args, S.App.State.t, unit) executor }
+  ; executor : (command_args, S.App.State.t) command }
+
+(** The interface to run command *)
+module type Runner = sig
+  type command
+  type param
+  type state
+
+  val run :
+    param:param -> state:state -> context:(module C.Context.Instance) -> command -> unit Lwt.t
+    (** [run ~param ~state ~context command] run [command] with [param] and [state]. *)
+end
 
 (** The signature of completer is used from omni bar with dynamic command.  *)
 module type Completer = sig
@@ -45,12 +53,7 @@ module type Dynamic_command = sig
       do anything for completion.
   *)
 
-  val plan : [`No_plan | `Plan of t -> (string, state, unit) executor]
-  (** Definition of plan to get difference of between before and after
-      command execution.
-  *)
-
-  val execute : t -> (string, state, unit) executor
+  val execute : t -> (string, state) command
   (** [execute t params context] returns behavior that execute command with
       some of dependencies.
   *)
