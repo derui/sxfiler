@@ -10,10 +10,8 @@ module Next_item = struct
     ; executor =
         Immediate
           (fun _ _ (module Ctx : C.Context.Instance) ->
-             let module B =
-               (val C.Usecase.make_instance (module U.Select_next_candidate) ~param:())
-             in
-             Ctx.(Context.execute this (module B)) ) }
+             let instance = C.Usecase.make_instance (module U.Select_next_candidate) ~param:() in
+             Ctx.(Context.execute this instance) ) }
 end
 
 module Prev_item = struct
@@ -22,10 +20,8 @@ module Prev_item = struct
     ; executor =
         Immediate
           (fun _ _ (module Ctx : C.Context.Instance) ->
-             let module I =
-               (val C.Usecase.make_instance (module U.Select_prev_candidate) ~param:())
-             in
-             Ctx.(Context.execute this (module I)) ) }
+             let instance = C.Usecase.make_instance (module U.Select_prev_candidate) ~param:() in
+             Ctx.(Context.execute this instance) ) }
 end
 
 let expose registry _ =

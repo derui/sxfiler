@@ -96,12 +96,14 @@ module Move = struct
                let state = A.state () in
                let file_list = S.(App.State.file_list state |> File_list.Store.get) in
                let node_ids =
-                 let open Sxfiler_core.Option.Infix in
-                 S.File_list.(
-                   State.current file_list >|= Filer.marked_nodes
-                   >|= fun nodes ->
+                 let open Sxfiler_core.Option in
+                 let open Infix in
+                 let extract_id =
                    let module T = Sxfiler_rpc.Types in
-                   List.map (fun node -> node.T.Node.id) nodes)
+                   List.map (fun node -> node.T.Node.id)
+                 in
+                 S.File_list.(
+                   State.current file_list >>= lift Filer.marked_nodes >>= lift extract_id)
                in
                match node_ids with
                | None -> Lwt.fail_with "Not initialized yet"

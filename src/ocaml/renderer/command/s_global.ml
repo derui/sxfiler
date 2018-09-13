@@ -17,12 +17,12 @@ module Activate_content = struct
                  S.App.State.workspace %> S.Workspace.Store.get %> S.Workspace.State.current_content)
                  state
              in
-             let module I =
-               ( val C.Usecase.make_instance
-                   (module U.Activate_mode.Make ((val H.keymap ())))
-                   ~param:C.Types.Mode.(Content current_content) )
+             let instance =
+               C.Usecase.make_instance
+                 (module U.Activate_mode.Make ((val H.keymap ())))
+                 ~param:C.Types.Mode.(Content current_content)
              in
-             Ctx.(Context.execute this (module I)) ) }
+             Ctx.(Context.execute this instance) ) }
 end
 
 module Activate_omnibar = struct
@@ -31,12 +31,12 @@ module Activate_omnibar = struct
     ; executor =
         Immediate
           (fun _ _ (module Ctx : C.Context.Instance) ->
-             let module I =
-               ( val C.Usecase.make_instance
-                   (module U.Activate_mode.Make ((val H.keymap ())))
-                   ~param:C.Types.Mode.Complete )
+             let instance =
+               C.Usecase.make_instance
+                 (module U.Activate_mode.Make ((val H.keymap ())))
+                 ~param:C.Types.Mode.Complete
              in
-             Ctx.(Context.execute this (module I)) ) }
+             Ctx.(Context.execute this instance) ) }
 end
 
 let expose registry hub =
