@@ -4,7 +4,7 @@ open Sxfiler_core
 open Mocha_of_ocaml
 open Mocha_of_ocaml_async
 module C = Sxfiler_renderer_core
-module P = Sxfiler_renderer_planner
+module P = Sxfiler_renderer_background.Planner
 module S = Sxfiler_renderer_store
 
 let state =

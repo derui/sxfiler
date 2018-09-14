@@ -31,7 +31,8 @@ type t =
   (* completion handling *)
   | Completion of completion
   | Command of Command.t
-  | Change_mode of Types.Mode.t
+  | Focus_mode of Types.Mode.t
+  | Blur_mode
   | Raise_error of Sxfiler_core.Error.t
 
 type default = Quit

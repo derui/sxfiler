@@ -2,15 +2,11 @@ module C = Sxfiler_renderer_core
 module T = Sxfiler_rpc.Types
 module S = Sxfiler_renderer_store
 
-module type Action = sig
-  val state : unit -> S.App.State.t
-end
-
 (** [plan] defines type to make plan with planner.  *)
-type plan = C.Types.corrections -> action:(module Action) -> unit Lwt.t
+type plan = C.Types.corrections -> action:(module Types.Action) -> unit Lwt.t
 
 (** [execute] defines type to execute plan.  *)
-type execute = action:(module Action) -> unit Lwt.t
+type execute = action:(module Types.Action) -> unit Lwt.t
 
 type executor =
   { plan : plan
@@ -25,7 +21,7 @@ type t =
   { mutable current_corrections : T.Node.t list
   ; executor_signal : executor Lwt_condition.t
   ; executor_mutex : Lwt_mutex.t
-  ; action : (module Action) }
+  ; action : (module Types.Action) }
 
 let instance = ref None
 

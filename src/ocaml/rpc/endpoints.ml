@@ -91,17 +91,17 @@ module Keymap = struct
     let endpoint = "keymap/get"
   end
 
-  module Enable_context = struct
+  module Add_context = struct
     type params = {context : string}
     type result = Types.Key_map.t
 
-    let endpoint = "keymap/enableContext"
+    let endpoint = "keymap/addContext"
   end
 
-  module Disable_context = struct
+  module Delete_context = struct
     type params = {context : string}
     type result = Types.Key_map.t
 
-    let endpoint = "keymap/disbleContext"
+    let endpoint = "keymap/deleteContext"
   end
 end

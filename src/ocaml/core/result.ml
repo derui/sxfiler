@@ -8,3 +8,5 @@ include Monad.Make2 (struct
     let fmap = `Use_bind_to_define
     let return v = Ok v
   end)
+
+include Infix

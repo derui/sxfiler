@@ -1,7 +1,7 @@
 module C = Sxfiler_renderer_core
 module Co = Sxfiler_completion.Domain
 module S = Sxfiler_renderer_store
-module P = Sxfiler_renderer_planner
+module P = Sxfiler_renderer_background.Planner
 
 type command_args = (string * string) list
 type ('a, 'state, 'b) executor = 'a -> 'state -> (module C.Context.Instance) -> 'b Lwt.t

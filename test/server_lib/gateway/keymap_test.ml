@@ -34,12 +34,12 @@ let keymap_tests =
             (D.Key_map.make ())
             [(Sxfiler_kbd.make "k", "foo"); (Sxfiler_kbd.make "j", "bar")]
         in
-        let module Usecase : U.Keymap.Enable_context = struct
+        let module Usecase : U.Keymap.Add_context.S = struct
           include U.Keymap.Context_type
 
           let execute _ = Lwt.return_ok expected
         end in
-        let module Gateway = G.Keymap.Enable_context (Usecase) in
+        let module Gateway = G.Keymap.Add_context.Make (Usecase) in
         let%lwt res = Gateway.handle {context = "foo"} in
         Alcotest.(check @@ of_pp Fmt.nop) "current" (Tr.Key_map.of_domain expected) res ;
         Lwt.return_unit )
@@ -51,12 +51,12 @@ let keymap_tests =
             (D.Key_map.make ())
             [(Sxfiler_kbd.make "k", "foo"); (Sxfiler_kbd.make "j", "bar")]
         in
-        let module Usecase : U.Keymap.Disable_context = struct
+        let module Usecase : U.Keymap.Delete_context.S = struct
           include U.Keymap.Context_type
 
           let execute _ = Lwt.return_ok expected
         end in
-        let module Gateway = G.Keymap.Disable_context (Usecase) in
+        let module Gateway = G.Keymap.Delete_context.Make (Usecase) in
         let%lwt res = Gateway.handle {context = "foo"} in
         Alcotest.(check @@ of_pp Fmt.nop) "current" (Tr.Key_map.of_domain expected) res ;
         Lwt.return_unit ) ]

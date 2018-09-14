@@ -22,3 +22,5 @@ include Monad.Make (struct
     let fmap = `Use_bind_to_define
     let return v = Some v
   end)
+
+include Infix

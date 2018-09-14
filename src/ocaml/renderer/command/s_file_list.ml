@@ -91,13 +91,13 @@ module Move = struct
     ; executor =
         With_plan
           (fun _ (module Ctx : C.Context.Instance) ->
-             let module P = Sxfiler_renderer_planner in
-             let plan _ ~action:(module A : P.Action) =
+             let module B = Sxfiler_renderer_background in
+             let module P = B.Planner in
+             let plan _ ~action:(module A : B.Types.Action) =
                let state = A.state () in
                let file_list = S.(App.State.file_list state |> File_list.Store.get) in
                let node_ids =
                  let open Sxfiler_core.Option in
-                 let open Infix in
                  let extract_id =
                    let module T = Sxfiler_rpc.Types in
                    List.map (fun node -> node.T.Node.id)

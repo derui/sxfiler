@@ -1,6 +1,6 @@
 {
   "bindings": [
-    {"action": "global:activate_content", "key": "Escape", "when": ["onComplete"]},
+    {"action": "global:exit_omnibar", "key": "Escape", "when": ["onComplete"]},
     {"action": "global:activate_omnibar", "key": "C-;", "when": ["onFileTree"]},
     {"action": "global:activate_omnibar", "key": "C-;", "when": ["onPreview"]},
     {"action": "file_list:next_item", "key": "j", "when": ["onFileTree"]},

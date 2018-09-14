@@ -19,11 +19,11 @@ module Get_api :
     T.Key_map.of_js v
 end
 
-module Enable_context_api :
+module Add_context_api :
   J.Api_def
-  with type params = E.Keymap.Enable_context.params
-   and type result = E.Keymap.Enable_context.result = struct
-  include E.Keymap.Enable_context
+  with type params = E.Keymap.Add_context.params
+   and type result = E.Keymap.Add_context.result = struct
+  include E.Keymap.Add_context
 
   type json = < > Js.t
 
@@ -41,11 +41,11 @@ module Enable_context_api :
   let result_of_json js = T.Key_map.of_js @@ Js.Unsafe.coerce js
 end
 
-module Disable_context_api :
+module Delete_context_api :
   J.Api_def
-  with type params = E.Keymap.Disable_context.params
-   and type result = E.Keymap.Disable_context.result = struct
-  include E.Keymap.Disable_context
+  with type params = E.Keymap.Delete_context.params
+   and type result = E.Keymap.Delete_context.result = struct
+  include E.Keymap.Delete_context
 
   type json = < > Js.t
 
@@ -76,11 +76,11 @@ module Make (Client : C.Rpc.Client) : S = struct
     in
     waiter
 
-  let enable_context param =
+  let add_context param =
     let waiter, wakener = Lwt.wait () in
     let%lwt () =
       Client.request
-        (module Enable_context_api)
+        (module Add_context_api)
         (Some param)
         (function
           | Error _ | Ok None -> Lwt.wakeup_exn wakener Not_found
@@ -88,11 +88,11 @@ module Make (Client : C.Rpc.Client) : S = struct
     in
     waiter
 
-  let disable_context param =
+  let delete_context param =
     let waiter, wakener = Lwt.wait () in
     let%lwt () =
       Client.request
-        (module Disable_context_api)
+        (module Delete_context_api)
         (Some param)
         (function
           | Error _ | Ok None -> Lwt.wakeup_exn wakener Not_found

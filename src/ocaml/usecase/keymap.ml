@@ -56,44 +56,46 @@ module Context_type = struct
   type error = unit
 end
 
-module type Enable_context =
-  Common.Usecase
-  with type input = Context_type.input
-   and type output = Context_type.output
-   and type error = Context_type.error
+module Add_context = struct
+  module type S =
+    Common.Usecase
+    with type input = Context_type.input
+     and type output = Context_type.output
+     and type error = Context_type.error
 
-(** This module defines rpc interface to enable context in this application. *)
-module Enable_context
-    (C : Condition.Repository)
-    (R : Key_map_repository.S with type value = string) : Enable_context = struct
-  include Context_type
+  (** This module defines rpc interface to enable context in this application. *)
+  module Make (C : Condition.Repository) (R : Key_map_repository.S with type value = string) : S =
+  struct
+    include Context_type
 
-  let execute input =
-    let%lwt cond = C.resolve () in
-    let condition = Condition.enable cond ~context:input.context in
-    let%lwt () = C.store condition in
-    let%lwt keymap = R.resolve () in
-    let keymap = Key_map.subset keymap ~condition in
-    Lwt.return_ok keymap
+    let execute input =
+      let%lwt cond = C.resolve () in
+      let condition = Condition.enable cond ~context:input.context in
+      let%lwt () = C.store condition in
+      let%lwt keymap = R.resolve () in
+      let keymap = Key_map.subset keymap ~condition in
+      Lwt.return_ok keymap
+  end
 end
 
-module type Disable_context =
-  Common.Usecase
-  with type input = Context_type.input
-   and type output = Context_type.output
-   and type error = Context_type.error
+module Delete_context = struct
+  module type S =
+    Common.Usecase
+    with type input = Context_type.input
+     and type output = Context_type.output
+     and type error = Context_type.error
 
-(** This module defines rpc interface to disable context in this application. *)
-module Disable_context
-    (C : Condition.Repository)
-    (R : Key_map_repository.S with type value = string) : Disable_context = struct
-  include Context_type
+  (** This module defines rpc interface to disable context in this application. *)
+  module Make (C : Condition.Repository) (R : Key_map_repository.S with type value = string) : S =
+  struct
+    include Context_type
 
-  let execute input =
-    let%lwt cond = C.resolve () in
-    let condition = Condition.disable cond ~context:input.context in
-    let%lwt () = C.store condition in
-    let%lwt keymap = R.resolve () in
-    let keymap = Key_map.subset keymap ~condition in
-    Lwt.return_ok keymap
+    let execute input =
+      let%lwt cond = C.resolve () in
+      let condition = Condition.disable cond ~context:input.context in
+      let%lwt () = C.store condition in
+      let%lwt keymap = R.resolve () in
+      let keymap = Key_map.subset keymap ~condition in
+      Lwt.return_ok keymap
+  end
 end
