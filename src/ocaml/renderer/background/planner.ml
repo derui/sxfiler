@@ -40,7 +40,7 @@ let initialize store =
 (* [start ()] runs planner main loop asynchronous. This function returns tuple [(sender, stopper)].
    User can send message via [sender] and stop loop via [stopper]. *)
 let start () =
-  let open Sxfiler_core.Option.Infix in
+  let open Sxfiler_core.Option in
   !instance
   >|= fun instance ->
   let accepter : C.Message.t Lwt_mvar.t = Lwt_mvar.create_empty () in
@@ -72,7 +72,7 @@ let start () =
 (* [reserve_executor executor] reserves executor to next planning *)
 let reserve_executor executor =
   let open Sxfiler_core in
-  let open Option.Infix in
+  let open Option in
   let open Fun in
   !instance
   >>= fun instance -> (Lwt_condition.signal instance.executor_signal %> Option.some) executor

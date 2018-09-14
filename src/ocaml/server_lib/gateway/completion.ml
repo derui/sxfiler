@@ -17,7 +17,7 @@ module Setup (U : C.Usecase.Setup) = struct
 
   let params_of_yojson js =
     let open Yojson.Safe.Util in
-    let open Sxfiler_core.Result.Infix in
+    let open Sxfiler_core.Result in
     try
       let source = js |> member "source" |> to_list in
       let source =

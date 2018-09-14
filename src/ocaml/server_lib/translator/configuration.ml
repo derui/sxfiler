@@ -29,7 +29,7 @@ let of_yojson js =
   let open Yojson.Safe.Util in
   try
     let sort_order = js |> member "defaultSortOrder" in
-    let open Sxfiler_core.Result.Infix in
+    let open Sxfiler_core.Result in
     Sort_type.of_yojson sort_order
     >>= fun default_sort_order -> Ok {T.Configuration.default_sort_order}
   with Type_error (s, _) -> Error s

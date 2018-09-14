@@ -14,7 +14,7 @@ let key_of_yojson js =
     let key = js |> member "key" |> to_string
     and action = js |> member "action" |> to_string
     and condition = js |> member "when" in
-    let open Sxfiler_core.Result.Infix in
+    let open Sxfiler_core.Result in
     Condition.of_yojson condition >>= fun condition -> Ok {T.key; action; condition}
   with Type_error (s, _) -> Error s
 

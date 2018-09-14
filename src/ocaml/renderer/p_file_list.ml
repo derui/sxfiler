@@ -53,7 +53,7 @@ let content =
          ~component_did_mount:(fun this ->
              let nodes = this##.props##.nodes in
              let vl = this##.state##.virtualizedList in
-             let open Option.Infix in
+             let open Option in
              ignore
                ( R.Ref_table.find ~key:key_of_filelist this##.nodes
                  >|= fun e ->
@@ -110,7 +110,7 @@ let content =
                   (object%js
                     val getParentSize =
                       fun () ->
-                        let open Option.Infix in
+                        let open Option in
                         let size =
                           R.Ref_table.find ~key:key_of_filelist this##.nodes
                           >|= fun e ->

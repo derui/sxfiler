@@ -33,7 +33,7 @@ let t =
                 val value = Js.string ""
               end )
           ~component_did_update:(fun this props _ ->
-              let open Option.Infix in
+              let open Option in
               if props##.focused then
                 ignore (R.Ref_table.find ~key:key_of_input this##.nodes >|= fun e -> e##focus)
               else ignore (R.Ref_table.find ~key:key_of_input this##.nodes >|= fun e -> e##blur) )

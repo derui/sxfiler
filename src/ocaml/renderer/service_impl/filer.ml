@@ -15,7 +15,7 @@ module Make_api :
   let name = endpoint
 
   let params_to_json params =
-    let open Option.Infix in
+    let open Option in
     params
     >|= fun v ->
     Js.Unsafe.coerce
@@ -37,7 +37,7 @@ module Get_api :
   let name = endpoint
 
   let params_to_json params =
-    let open Option.Infix in
+    let open Option in
     params
     >|= fun v ->
     Js.Unsafe.coerce
@@ -59,7 +59,7 @@ module Move_parent_api :
   let name = endpoint
 
   let params_to_json params =
-    let open Option.Infix in
+    let open Option in
     params
     >|= fun v ->
     Js.Unsafe.coerce
@@ -81,7 +81,7 @@ module Enter_directory_api :
   let name = endpoint
 
   let params_to_json params =
-    let open Option.Infix in
+    let open Option in
     params
     >|= fun v ->
     Js.Unsafe.coerce
@@ -105,7 +105,7 @@ module Plan_move_nodes_api :
   let name = endpoint
 
   let params_to_json params =
-    let open Option.Infix in
+    let open Option in
     params
     >|= fun v ->
     Js.Unsafe.coerce

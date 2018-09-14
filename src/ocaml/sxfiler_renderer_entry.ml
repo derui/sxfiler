@@ -33,6 +33,16 @@ let setup_planner (module Locator : Locator.S) =
   let open Sxfiler_core.Option in
   P.start () >|= fun (accepter, _) -> D.(Dispatcher.subscribe this ~f:accepter)
 
+let setup_keymap_refresher (module Locator : Locator.S) =
+  let module K = Sxfiler_renderer_background.Keymap in
+  let module C = (val Locator.context) in
+  let module D = (val C.(Context.dispatcher this)) in
+  let state = S.App.Store.get Locator.store in
+  K.initialize state ;
+  let open Sxfiler_core.Option in
+  K.start (module D) Locator.service_registry
+  >|= fun (accepter, _) -> D.(Dispatcher.subscribe this ~f:accepter)
+
 let () =
   Logs.set_reporter @@ Logs_browser.console_reporter () ;
   Logs.set_level (Some Logs.App) ;
@@ -61,14 +71,12 @@ let () =
   expose_commands (module L) ;
   (* TODO: should handle stopper *)
   setup_planner (module L) |> ignore ;
+  setup_keymap_refresher (module L) |> ignore ;
   websocket##.onopen :=
     Dom.handler (fun _ ->
         (* Get current properties *)
-        let module Service = SI.Keymap.Make (Client) in
         let module I =
-          ( val C.Usecase.make_instance
-              (module U.Activate_mode.Make (Service))
-              ~param:C.Types.Mode.File_tree )
+          (val C.Usecase.make_instance (module U.Activate_mode) ~param:C.Types.Mode.File_tree)
         in
         Ctx.(Context.execute this (module I)) |> Lwt.ignore_result ;
         let module Service = SI.Configuration.Make (Client) in

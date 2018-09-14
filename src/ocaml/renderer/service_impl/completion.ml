@@ -17,7 +17,7 @@ module Setup_api :
   let name = endpoint
 
   let params_to_json params =
-    let open Option.Infix in
+    let open Option in
     params
     >|= fun v ->
     let params =
@@ -40,7 +40,7 @@ struct
   let name = endpoint
 
   let params_to_json params =
-    let open Option.Infix in
+    let open Option in
     params
     >|= fun v ->
     let params =

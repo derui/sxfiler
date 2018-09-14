@@ -35,7 +35,7 @@ let lwt_reporter ppf =
     in
     (* custom formater to contains timestamp and module name to log. *)
     let with_timestamp h tags k ppf fmt =
-      let open Option.Infix in
+      let open Option in
       let module_path =
         match tags >>= Logs.Tag.find Tags.module_tag with
         | None -> "unknown"

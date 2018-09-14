@@ -30,7 +30,7 @@ module Candidate = struct
       let start = js |> member "start" |> to_int
       and length = js |> member "length" |> to_int
       and value = js |> member "value" in
-      let open Result.Infix in
+      let open Result in
       Item.of_yojson value >>= fun value -> Ok {start; length; value}
     with Type_error (s, _) -> Error s
 

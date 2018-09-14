@@ -119,7 +119,7 @@ module Enter_directory
 
   let execute (params : input) =
     let%lwt filer = SR.resolve params.name in
-    let node = Option.Infix.(filer >>= T.Filer.find_node ~id:params.node_id) in
+    let node = Option.(filer >>= T.Filer.find_node ~id:params.node_id) in
     match (filer, node) with
     | None, _ -> Lwt.return_error `Not_found_filer
     | _, None -> Lwt.return_error `Not_found_node

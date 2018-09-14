@@ -70,7 +70,7 @@ module Enter_directory = struct
              let file_list = S.(App.State.file_list state |> File_list.Store.get) in
              let pos = file_list.current in
              let node =
-               let open Sxfiler_core.Option.Infix in
+               let open Sxfiler_core.Option in
                S.File_list.(State.current file_list >|= Filer.current_selected_node)
              in
              match node with

@@ -10,7 +10,7 @@ let of_yojson js =
   try
     let directory = js |> member "directory" |> to_string
     and nodes = js |> member "nodes" |> to_list in
-    let open Result.Infix in
+    let open Result in
     let nodes =
       List.fold_left
         (fun accum node ->

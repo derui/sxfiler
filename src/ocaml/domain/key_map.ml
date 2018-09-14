@@ -43,7 +43,7 @@ let bindings t =
   Binding_map.bindings t.keymap
   |> List.map (fun (key, values) ->
       let open Original_key_binding in
-      let open Option.Infix in
+      let open Option in
       Sxfiler_kbd.of_keyseq key
       >|= fun kbd -> List.map (fun value -> (value.condition, kbd, value.value)) values )
   |> List.map (Option.get ~default:(fun () -> []))

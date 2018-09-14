@@ -9,10 +9,7 @@ module U = Sxfiler_renderer_usecase
 
 let activate_mode (module L : Locator.S) =
   let module Ctx = (val L.context) in
-  let module Service = SI.Keymap.Make ((val L.client)) in
-  let activation =
-    C.Usecase.make_instance (module U.Activate_mode.Make (Service)) ~param:C.Types.Mode.Complete
-  in
+  let activation = C.Usecase.make_instance (module U.Activate_mode) ~param:C.Types.Mode.Complete in
   Lwt.ignore_result
     (let%lwt () = Lwt_js.yield () in
      Ctx.(Context.execute this activation))

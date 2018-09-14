@@ -15,7 +15,7 @@ let make ws handlers =
   let id_handler_map = Jstable.create () in
   (* apply message handler to given websocket *)
   let message_handler message =
-    let open Option.Infix in
+    let open Option in
     let response = R.Response.of_json (Js._JSON##parse message##.data) in
     match response with
     | Ok res ->

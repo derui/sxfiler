@@ -30,7 +30,7 @@ module Add_context_api :
   let name = endpoint
 
   let params_to_json param =
-    let open Sxfiler_core.Option.Infix in
+    let open Sxfiler_core.Option in
     param
     >|= fun param ->
     Js.Unsafe.coerce
@@ -52,7 +52,7 @@ module Delete_context_api :
   let name = endpoint
 
   let params_to_json param =
-    let open Sxfiler_core.Option.Infix in
+    let open Sxfiler_core.Option in
     param
     >|= fun param ->
     Js.Unsafe.coerce

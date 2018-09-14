@@ -35,14 +35,14 @@ let t =
          ~initial_state:(fun _ _ -> object%js end)
          ~initial_custom:(fun _ _ -> object%js end)
          ~component_did_mount:(fun this ->
-             let open Option.Infix in
+             let open Option in
              ignore (R.Ref_table.find ~key:container_key this##.nodes >|= fun e -> e##focus) )
          ~component_did_update:(fun this _ _ ->
              let module L = (val this##.props##.locator : Locator.S) in
              let store = S.App.Store.get L.store in
              let ws = S.Workspace.Store.get @@ S.App.State.workspace store in
              let focused = S.Workspace.State.current_mode ws = File_tree in
-             let open Option.Infix in
+             let open Option in
              if focused then
                ignore (R.Ref_table.find ~key:container_key this##.nodes >|= fun e -> e##focus)
              else () )

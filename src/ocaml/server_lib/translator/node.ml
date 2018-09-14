@@ -18,7 +18,7 @@ let of_yojson js =
     and stat = js |> member "stat" |> File_stat.of_yojson
     and parent_directory = js |> member "parentDirectory" |> to_string
     and link_path = js |> member "linkPath" in
-    let open Result.Infix in
+    let open Result in
     stat
     >>= fun stat ->
     let link_path = match link_path with `Null -> None | _ -> Some (to_string link_path) in

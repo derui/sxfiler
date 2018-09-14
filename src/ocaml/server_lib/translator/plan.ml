@@ -10,7 +10,7 @@ let node_list_of_yojson js =
   try
     let operation = js |> member "operation" |> to_int |> Operation.of_int |> Option.get_exn
     and node = js |> member "node" |> Node.of_yojson in
-    let open Result.Infix in
+    let open Result in
     node >|= fun node -> {operation; node}
   with Type_error (s, _) -> Error s
 
@@ -28,7 +28,7 @@ let of_yojson js =
     let workbench_id = js |> member "workbenchId" |> to_string
     and source = js |> member "source" |> convert_each node_list_of_yojson
     and dest = js |> member "dest" |> convert_each node_list_of_yojson in
-    let open Result.Infix in
+    let open Result in
     let conv_list list =
       List.fold_left (fun list v -> list >>= fun list -> v >|= fun v -> v :: list) (Ok []) list
       >>= Result.lift List.rev

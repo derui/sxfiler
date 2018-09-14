@@ -28,7 +28,7 @@ let t =
         let module Dl = Command.Dynamic_registry in
         let module L = (val props##.locator : Locator.S) in
         let state = S.Command.Store.get @@ S.App.(State.command @@ Store.get L.store) in
-        let open Option.Infix in
+        let open Option in
         let component =
           state.S.Command.State.current_command
           >>= fun name ->

@@ -16,7 +16,7 @@ let of_yojson js =
     and location = js |> member "location" |> to_string
     and nodes = js |> member "nodes" |> to_list
     and history = js |> member "history" |> Location_history.of_yojson in
-    let open Result.Infix in
+    let open Result in
     let nodes =
       List.fold_left
         (fun accum node ->
