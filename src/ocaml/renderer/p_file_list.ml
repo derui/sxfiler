@@ -69,7 +69,6 @@ let content =
              ignore
                (let vl = VL.update_all_items items this##.state##.virtualizedList in
                 let vl = VL.recalculate_visible_window new_props##.selectedItemIndex vl in
-                Logs.app (fun m -> m "index :%d" new_props##.selectedItemIndex) ;
                 this##setState
                   (object%js
                     val virtualizedList = vl
