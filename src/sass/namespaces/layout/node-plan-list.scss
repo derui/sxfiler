@@ -1,0 +1,30 @@
+@import "base/*";
+@import "./_variable";
+
+.fp-PlanPreviewer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+
+  width: 100%;
+  max-height: 100%;
+  margin: 0;
+  padding: 0;
+
+  color: $sol_base1;
+  background-color: $sol_base03;
+
+  font-size: 1rem;
+}
+
+.fp-NodePlanList {
+  display: grid;
+  grid-template-rows: repeat(auto-fill, $fp-NodePlanItemHeight);
+
+  max-height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+
+  overflow-y: scroll;
+}

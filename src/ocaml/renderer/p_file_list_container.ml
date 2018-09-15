@@ -43,4 +43,4 @@ let t =
           |> List.map (fun (v, focused) -> (Option.get_exn v, focused))
           |> List.map to_component
         in
-        R.fragment ~key:"file-lists" components )
+        [%e div ~class_name:"fp-FileListContainer" components] )

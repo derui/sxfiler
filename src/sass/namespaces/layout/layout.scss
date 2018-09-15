@@ -1,12 +1,8 @@
 @import "base/*";
 
 .fp-Workspace {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr;
-
   width: 100%;
-  height: 100%;
+  max-height: 100%;
   margin: 0;
   padding: 0;
 

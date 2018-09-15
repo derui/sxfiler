@@ -13,6 +13,8 @@ let () =
                  ~props:
                    (object%js
                      val mode = 0o644l
+
+                     val className = Js.string "fp-FileItem_FileMode"
                    end)
                  F.t
              in
@@ -28,6 +30,8 @@ let () =
                  ~props:
                    (object%js
                      val mode = 0l
+
+                     val className = Js.string "fp-FileItem_FileMode"
                    end)
                  F.t
              in
@@ -43,6 +47,8 @@ let () =
                  ~props:
                    (object%js
                      val mode = Int32.logor 0o120000l 0o777l
+
+                     val className = Js.string "fp-FileItem_FileMode"
                    end)
                  F.t
              in
@@ -58,6 +64,8 @@ let () =
                  ~props:
                    (object%js
                      val mode = Int32.logor 0o040000l 0o755l
+
+                     val className = Js.string "fp-FileItem_FileMode"
                    end)
                  F.t
              in

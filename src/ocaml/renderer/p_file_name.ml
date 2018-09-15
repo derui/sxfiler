@@ -1,15 +1,14 @@
 module R = Jsoo_reactjs
 
-let base_selector = "fp-FileItem_FileName"
-let directory_modifier = base_selector ^ "-directory"
-let symlink_modifier = base_selector ^ "-symlink"
-let marked_modifier = base_selector ^ "-marked"
+let directory_modifier base = base ^ "-directory"
+let symlink_modifier base = base ^ "-symlink"
 
 let get_classname props =
+  let base = Js.to_string props##.className in
   Classnames.to_string
-    [ (base_selector, true)
-    ; (directory_modifier, props##.isDirectory)
-    ; (symlink_modifier, props##.isSymbolicLink) ]
+    [ (base, true)
+    ; (directory_modifier base, props##.isDirectory)
+    ; (symlink_modifier base, props##.isSymbolicLink) ]
 
 let t =
   R.Component.make_stateless
@@ -22,6 +21,8 @@ let t =
             method isDirectory : bool Js.readonly_prop
 
             method isSymbolicLink : bool Js.readonly_prop
+
+            method className : Js.js_string Js.t Js.readonly_prop
           end
       end )
     ~render:(fun props ->

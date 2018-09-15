@@ -141,3 +141,47 @@ exports['File mode component should be able to show directory bit if mode contai
   "_owner": null,
   "_store": {}
 }
+
+exports['Node plan operation should be able to show operation to append 1'] = {
+  "type": "span",
+  "key": null,
+  "ref": null,
+  "props": {
+    "className": "fp-NodePlanItem_Operation fp-NodePlanItem_Operation-appended"
+  },
+  "_owner": null,
+  "_store": {}
+}
+
+exports['Node plan operation should be able to show operation to delete 1'] = {
+  "type": "span",
+  "key": null,
+  "ref": null,
+  "props": {
+    "className": "fp-NodePlanItem_Operation fp-NodePlanItem_Operation-deleted"
+  },
+  "_owner": null,
+  "_store": {}
+}
+
+exports['Node plan operation should be able to show operation for remained 1'] = {
+  "type": "span",
+  "key": null,
+  "ref": null,
+  "props": {
+    "className": "fp-NodePlanItem_Operation fp-NodePlanItem_Operation-remained"
+  },
+  "_owner": null,
+  "_store": {}
+}
+
+exports['Node plan operation should be able to show operation to conflict 1'] = {
+  "type": "span",
+  "key": null,
+  "ref": null,
+  "props": {
+    "className": "fp-NodePlanItem_Operation fp-NodePlanItem_Operation-conflicted"
+  },
+  "_owner": null,
+  "_store": {}
+}

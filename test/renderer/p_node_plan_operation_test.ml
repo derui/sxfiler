@@ -1,24 +1,19 @@
 open Mocha_of_ocaml
 open Snap_shot_it_of_ocaml
+module D = Sxfiler_domain
 module R = Jsoo_reactjs
 module S = Sxfiler_renderer
 
 let () =
-  "File name component"
-  >::: [ ( "should who filename normally"
+  "Node plan operation"
+  >::: [ ( "should be able to show operation to append"
            >:: fun () ->
-             let module C = S.P_file_name in
+             let module C = S.P_node_plan_operation in
              let e =
                R.create_element
                  ~props:
                    (object%js
-                     val name = "/foo/bar/sample.txt"
-
-                     val isDirectory = false
-
-                     val isSymbolicLink = false
-
-                     val className = Js.string "fp-FileItem_FileName"
+                     val operation = D.Plan.Operation.Append
                    end)
                  C.t
              in
@@ -26,20 +21,14 @@ let () =
              renderer##render e ;
              let output = renderer##getRenderOutput in
              snapshot output ; assert_ok true )
-       ; ( "should make another color if item is directory"
+       ; ( "should be able to show operation to delete"
            >:: fun () ->
-             let module C = S.P_file_name in
+             let module C = S.P_node_plan_operation in
              let e =
                R.create_element
                  ~props:
                    (object%js
-                     val name = "/foo/bar/"
-
-                     val isDirectory = true
-
-                     val isSymbolicLink = false
-
-                     val className = Js.string "fp-FileItem_FileName"
+                     val operation = D.Plan.Operation.Delete
                    end)
                  C.t
              in
@@ -47,20 +36,29 @@ let () =
              renderer##render e ;
              let output = renderer##getRenderOutput in
              snapshot output ; assert_ok true )
-       ; ( "should make another color if item is symbolic link"
+       ; ( "should be able to show operation for remained"
            >:: fun () ->
-             let module C = S.P_file_name in
+             let module C = S.P_node_plan_operation in
              let e =
                R.create_element
                  ~props:
                    (object%js
-                     val name = "/foo/bar/sample.txt"
-
-                     val isDirectory = false
-
-                     val isSymbolicLink = true
-
-                     val className = Js.string "fp-FileItem_FileName"
+                     val operation = D.Plan.Operation.Remained
+                   end)
+                 C.t
+             in
+             let renderer = new%js R.Test_renderer.shallow_ctor in
+             renderer##render e ;
+             let output = renderer##getRenderOutput in
+             snapshot output ; assert_ok true )
+       ; ( "should be able to show operation to conflict"
+           >:: fun () ->
+             let module C = S.P_node_plan_operation in
+             let e =
+               R.create_element
+                 ~props:
+                   (object%js
+                     val operation = D.Plan.Operation.Conflict
                    end)
                  C.t
              in

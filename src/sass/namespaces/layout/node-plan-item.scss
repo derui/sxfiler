@@ -1,0 +1,67 @@
+@import "base/*";
+
+.fp-NodePlanItem {
+  display: flex;
+
+  align-self: center;
+  list-style: none;
+
+  color: $sol_base1;
+  font-family: monospace;
+  white-space: nowrap;
+
+  font-size: 1rem;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+}
+
+.fp-NodePlanItem_FileName {
+  flex: 1 0 auto;
+  padding: 0;
+  font-weight: bold;
+
+  &.fp-NodePlanItem_FileName-directory {
+    color: $sol_yellow;
+  }
+
+  &.fp-NodePlanItem_FileName-symlink {
+    color: $sol_orange;
+  }
+}
+
+.fp-NodePlanItem_FileSize {
+  flex: 0 1 auto;
+  padding: 0 $baseSpace;
+  text-align: right;
+
+  white-space: pre;
+}
+
+.fp-NodePlanItem_FileMode {
+  flex: 0 1 auto;
+  padding: 0 $smallSpace;
+
+  white-space: nowrap;
+}
+
+.fp-NodePlanItem_Operation {
+  flex: 0 0 1em;
+
+  font-family: monospace;
+
+  &.fp-NodePlanItem_Operation-deleted {
+    content: '-';
+  }
+
+  &.fp-NodePlanItem_Operation-remained {
+    content: '=';
+  }
+
+  &.fp-NodePlanItem_Operation-appended {
+    content: '+';
+  }
+
+  &.fp-NodePlanItem_Operation-conflicted {
+    content: '|';
+  }
+}

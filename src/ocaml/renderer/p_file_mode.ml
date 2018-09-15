@@ -58,9 +58,11 @@ let t =
         class type t =
           object
             method mode : int32 Js.readonly_prop
+
+            method className : Js.js_string Js.t Js.readonly_prop
           end
       end )
     ~render:(fun props ->
         let mode' = Int32.to_int props##.mode in
         let mode' = Mode_converter.(of_mode_bits mode' |> to_string) in
-        [%e span ~class_name:"fp-FileItem_FileMode" [(mode' [@txt])]] )
+        [%e span ~class_name:Js.(to_string props##.className) [(mode' [@txt])]] )

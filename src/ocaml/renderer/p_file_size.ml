@@ -57,9 +57,11 @@ let t =
         class type t =
           object
             method size : int64 Js.readonly_prop
+
+            method className : Js.js_string Js.t Js.readonly_prop
           end
       end )
     ~render:(fun props ->
         let size = props##.size in
         let size = File_size.of_size size |> File_size.to_string in
-        [%e span ~class_name:"fp-FileItem_FileSize" [(size [@txt])]] )
+        [%e span ~class_name:Js.(to_string props##.className) [(size [@txt])]] )

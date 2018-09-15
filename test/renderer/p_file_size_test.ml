@@ -13,6 +13,8 @@ let () =
                  ~props:
                    (object%js
                      val size = 0L
+
+                     val className = Js.string "fp-FileItem_FileSize"
                    end)
                  F.t
              in
@@ -28,6 +30,8 @@ let () =
                  ~props:
                    (object%js
                      val size = 1024L
+
+                     val className = Js.string "fp-FileItem_FileSize"
                    end)
                  F.t
              in
@@ -43,6 +47,8 @@ let () =
                  ~props:
                    (object%js
                      val size = Int64.mul 1024L 1024L
+
+                     val className = Js.string "fp-FileItem_FileSize"
                    end)
                  F.t
              in
@@ -58,6 +64,8 @@ let () =
                  ~props:
                    (object%js
                      val size = Int64.(mul 1024L @@ mul 1024L 1024L)
+
+                     val className = Js.string "fp-FileItem_FileSize"
                    end)
                  F.t
              in
