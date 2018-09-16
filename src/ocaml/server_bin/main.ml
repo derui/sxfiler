@@ -77,6 +77,7 @@ let start_server _ port =
   let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_filer) in
   let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_configuration) in
   let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_keymap) in
+  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_plan) in
   Cohttp_lwt_unix.Server.create
     ~mode:(`TCP (`Port port))
     (Cohttp_lwt_unix.Server.make ~callback:(handler rpc_server) ~conn_closed ())

@@ -148,7 +148,7 @@ module Plan_move_nodes = struct
     val handle : params -> result Lwt.t
   end
 
-  module Make (WB : Usecase.Workbench.Make) (U : Usecase.Filer.Plan_move_nodes.S) : S = struct
+  module Make (WB : Usecase.Workbench.Make) (U : Usecase.Plan.Filer.Move_nodes.S) : S = struct
     include Types
 
     let handle param =

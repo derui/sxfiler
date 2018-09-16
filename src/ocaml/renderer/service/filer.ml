@@ -23,7 +23,4 @@ module type S = sig
 
       @raise Sxfiler_core.Error.t if service failed with some of errors.
   *)
-
-  val plan_move_nodes : E.Filer.Plan_move_nodes.params -> E.Filer.Plan_move_nodes.result Lwt.t
-  (** [plan_move_nodes param] calls the service to make a plan to move nodes between filers.  *)
 end

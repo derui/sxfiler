@@ -31,8 +31,10 @@ type t =
   (* completion handling *)
   | Completion of completion
   | Command of Command.t
-  | Focus_mode of Types.Mode.t
-  | Blur_mode
+  | Initialize_omnibar
+  | Finalize_omnibar
+  (* Bootstrap finished. *)
+  | Finish_bootstrap
   | Raise_error of Sxfiler_core.Error.t
 
 type default = Quit

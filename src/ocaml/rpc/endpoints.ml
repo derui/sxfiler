@@ -59,17 +59,6 @@ module Filer = struct
 
     let endpoint = "filer/moveNodes"
   end
-
-  module Plan_move_nodes = struct
-    type params =
-      { from : string
-      ; node_ids : string list
-      ; _to : string }
-
-    type result = Types.Plan.t
-
-    let endpoint = "filer/planMoveNodes"
-  end
 end
 
 (** endpoints for Configuration *)
@@ -103,5 +92,28 @@ module Keymap = struct
     type result = Types.Key_map.t
 
     let endpoint = "keymap/deleteContext"
+  end
+end
+
+(** endpoint for plan *)
+module Plan = struct
+  module Reject = struct
+    type params = {workbench_id : string}
+    type result = unit
+
+    let endpoint = "plan/reject"
+  end
+
+  module Filer = struct
+    module Move_nodes = struct
+      type params =
+        { from : string
+        ; node_ids : string list
+        ; _to : string }
+
+      type result = Types.Plan.t
+
+      let endpoint = "plan/filer/moveNodes"
+    end
   end
 end

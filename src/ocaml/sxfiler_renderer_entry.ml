@@ -75,25 +75,29 @@ let () =
   websocket##.onopen :=
     Dom.handler (fun _ ->
         (* Get current properties *)
-        let module I =
-          (val C.Usecase.make_instance (module U.Activate_mode) ~param:C.Types.Mode.File_tree)
-        in
-        Ctx.(Context.execute this (module I)) |> Lwt.ignore_result ;
         let module Service = SI.Configuration.Make (Client) in
-        let module I =
-          (val C.Usecase.make_instance (module U.Refresh_configuration.Make (Service)) ~param:())
+        let instance =
+          C.Usecase.make_instance (module U.Refresh_configuration.Make (Service)) ~param:()
         in
-        Ctx.(Context.execute this (module I)) |> Lwt.ignore_result ;
-        List.iter
-          (fun pos ->
-             let module Service = SI.Filer.Make (Client) in
-             let module I =
-               ( val C.Usecase.make_instance
-                   (module U.Initialize_filer.Make (Service))
-                   ~param:{initial_location = "."; pos} )
-             in
-             Ctx.(Context.execute this (module I)) |> Lwt.ignore_result )
-          [`Left; `Right] ;
+        Ctx.(Context.execute this instance) |> Lwt.ignore_result ;
+        let open Lwt in
+        ignore_result
+          ( Lwt_js.yield ()
+            >>= fun () ->
+            let%lwt () =
+              Lwt_list.iter_p
+                (fun pos ->
+                   let module Service = SI.Filer.Make (Client) in
+                   let instance =
+                     C.Usecase.make_instance
+                       (module U.Initialize_filer.Make (Service))
+                       ~param:{initial_location = "."; pos}
+                   in
+                   Ctx.(Context.execute this instance) )
+                [`Left; `Right]
+            in
+            let i = C.Usecase.make_instance (module U.Finish_bootstrap) ~param:() in
+            Ctx.(Context.execute this i) ) ;
         Js._true ) ;
   let element =
     R.create_element

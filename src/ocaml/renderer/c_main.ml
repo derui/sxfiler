@@ -53,12 +53,6 @@ let t =
                      val onAction = handle_action ~locator:(module L)
                    end)
                  [ [%c
-                   C_mode_manager.t ~key:"mode-manager"
-                     ~props:
-                       (object%js
-                         val locator = this##.props##.locator
-                       end)]
-                 ; [%c
                    C_omni_bar.t ~key:"omni-bar"
                      ~props:
                        (object%js

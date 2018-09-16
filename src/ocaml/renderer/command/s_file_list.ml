@@ -94,8 +94,7 @@ module Move = struct
              let module B = Sxfiler_renderer_background in
              let module P = B.Planner in
              let plan _ ~action:(module A : B.Types.Action) =
-               let state = A.state () in
-               let file_list = S.(App.State.file_list state |> File_list.Store.get) in
+               let file_list = S.(A.state () |> App.State.file_list |> File_list.Store.get) in
                let node_ids =
                  let open Sxfiler_core.Option in
                  let extract_id =
@@ -112,7 +111,7 @@ module Move = struct
                  and _to = S.File_list.State.fellow_position file_list in
                  let instance =
                    C.Usecase.make_instance
-                     (module U.Make_plan_to_move_nodes.Make ((val Reg.filer ())))
+                     (module U.Plan_to_move_nodes.Make ((val Reg.plan ())))
                      ~param:{from; node_ids; _to}
                  in
                  Ctx.(Context.execute this instance)

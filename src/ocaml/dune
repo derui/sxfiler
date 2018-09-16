@@ -10,4 +10,4 @@
   sxfiler.renderer.command js_of_ocaml-lwt
   sxfiler.renderer.background)
  (js_of_ocaml (flags "--pretty"))
- (preprocess (pps js_of_ocaml-ppx)))
+ (preprocess (pps lwt.ppx js_of_ocaml-ppx)))

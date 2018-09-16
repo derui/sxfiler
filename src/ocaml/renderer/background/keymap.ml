@@ -33,16 +33,14 @@ let start (module D : C.Dispatcher.Instance) (module Svc : Svc.Service_registry.
       Lwt_list.map_p (fun context -> K.delete_context {context}) all_modes
     in
     match%lwt Lwt_mvar.take accepter with
-    | C.Message.Focus_mode mode ->
-      let%lwt _ = reset_modes () in
-      let module K = (val Svc.keymap ()) in
-      let context = C.Types.Mode.to_context mode in
-      let%lwt keymap = K.add_context {context} in
-      D.(Dispatcher.dispatch this C.Message.(Update_keymap keymap)) ;
-      main_loop t
-    | C.Message.Blur_mode ->
+    | C.Message.Finish_bootstrap
+    |Command Planning
+    |Command Approve
+    |Command Reject
+    |Initialize_omnibar | Finalize_omnibar ->
       let open Sxfiler_core.Fun in
       let%lwt _ = reset_modes () in
+      let module K = (val Svc.keymap ()) in
       let to_context = S.Workspace.State.current_mode %> C.Types.Mode.to_context in
       let module A = (val t.action) in
       let module K = (val Svc.keymap ()) in

@@ -34,6 +34,7 @@ struct
       let keymap () = (module I.Keymap.Make (Client) : Service.Keymap.S)
       let filer () = (module I.Filer.Make (Client) : Service.Filer.S)
       let completion () = (module I.Completion.Make (Client) : Service.Completion.S)
+      let plan () = (module I.Plan.Make (Client) : Service.Plan.S)
     end
     : Service.Service_registry.S )
 end

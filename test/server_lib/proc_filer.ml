@@ -2,8 +2,6 @@ open Sxfiler_core
 module D = Sxfiler_domain
 module S = Sxfiler_server
 module U = Sxfiler_usecase
-module I = Sxfiler_server_infra
-module C = Sxfiler_server_core
 module R = Sxfiler_rpc
 module Jy = Jsonrpc_ocaml_yojson
 module G = Sxfiler_server_gateway
@@ -22,14 +20,7 @@ let proc_filer =
             ~history:D.Location_history.(make ())
         in
         let module Gateway = struct
-          type params =
-            { initial_location : string
-            ; name : string }
-          [@@deriving yojson]
-
-          type result =
-            { filer : R.Types.Filer.t option
-            ; already_exists : bool }
+          include G.Filer.Make.Types
 
           let handle _ =
             Lwt.return {filer = Option.some @@ T.Filer.of_domain expected; already_exists = false}
@@ -40,14 +31,7 @@ let proc_filer =
         Lwt.return_unit )
   ; Alcotest_lwt.test_case "do not create workspace if it exists" `Quick (fun switch () ->
         let module Gateway = struct
-          type params =
-            { initial_location : string
-            ; name : string }
-          [@@deriving yojson]
-
-          type result =
-            { filer : R.Types.Filer.t option
-            ; already_exists : bool }
+          include G.Filer.Make.Types
 
           let handle _ = Lwt.return {filer = None; already_exists = true}
         end in

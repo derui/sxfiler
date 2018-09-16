@@ -7,4 +7,5 @@ module type S = sig
   val configuration : unit -> (module Configuration.S)
   val filer : unit -> (module Filer.S)
   val keymap : unit -> (module Keymap.S)
+  val plan : unit -> (module Plan.S)
 end

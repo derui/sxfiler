@@ -9,10 +9,11 @@ module State = struct
   let make () = {app_context = A.make File_tree}
 
   let reduce t = function
-    | C.Message.Focus_mode (_ as mode) -> {app_context = A.push_mode t.app_context ~mode}
-    | C.Message.Blur_mode -> {app_context = A.pop_mode t.app_context}
     | C.Message.(Command Planning) -> {app_context = A.push_mode t.app_context ~mode:Preview}
     | C.Message.(Command Approve) | Command Reject -> {app_context = A.pop_mode t.app_context}
+    | C.Message.Finish_bootstrap -> {app_context = A.make File_tree}
+    | C.Message.Initialize_omnibar -> {app_context = A.push_mode t.app_context ~mode:Complete}
+    | C.Message.Finalize_omnibar -> {app_context = A.pop_mode t.app_context}
     | _ -> t
 
   (** [match_current_mode t ~mode] returns current mode of [t] is same or not [mode] *)
