@@ -147,7 +147,8 @@ exports['Node plan operation should be able to show operation to append 1'] = {
   "key": null,
   "ref": null,
   "props": {
-    "className": "fp-NodePlanItem_Operation fp-NodePlanItem_Operation-appended"
+    "className": "fp-NodePlanItem_Operation",
+    "children": "+"
   },
   "_owner": null,
   "_store": {}
@@ -158,7 +159,8 @@ exports['Node plan operation should be able to show operation to delete 1'] = {
   "key": null,
   "ref": null,
   "props": {
-    "className": "fp-NodePlanItem_Operation fp-NodePlanItem_Operation-deleted"
+    "className": "fp-NodePlanItem_Operation",
+    "children": "-"
   },
   "_owner": null,
   "_store": {}
@@ -169,7 +171,8 @@ exports['Node plan operation should be able to show operation for remained 1'] =
   "key": null,
   "ref": null,
   "props": {
-    "className": "fp-NodePlanItem_Operation fp-NodePlanItem_Operation-remained"
+    "className": "fp-NodePlanItem_Operation",
+    "children": "="
   },
   "_owner": null,
   "_store": {}
@@ -180,7 +183,8 @@ exports['Node plan operation should be able to show operation to conflict 1'] = 
   "key": null,
   "ref": null,
   "props": {
-    "className": "fp-NodePlanItem_Operation fp-NodePlanItem_Operation-conflicted"
+    "className": "fp-NodePlanItem_Operation",
+    "children": "|"
   },
   "_owner": null,
   "_store": {}

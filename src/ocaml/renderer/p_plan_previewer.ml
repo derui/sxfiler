@@ -22,10 +22,14 @@ let t =
                 ~props:
                   (object%js
                     val nodePlans = source
+
+                    val name = Js.string "Source"
                   end)]
             ; [%c
               P_node_plan_list.t ~key:"dest"
                 ~props:
                   (object%js
                     val nodePlans = dest
+
+                    val name = Js.string "Destination"
                   end)] ]] )

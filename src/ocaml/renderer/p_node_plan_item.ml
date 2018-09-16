@@ -59,5 +59,12 @@ let t =
                       val operation = node_plan.operation
                     end)]
             in
-            let class_name = Classnames.to_string [("fp-NodePlanItem", true)] in
+            let class_name =
+              Classnames.to_string
+                [ ("fp-NodePlanItem", true)
+                ; ("fp-NodePlanItem-appended", node_plan.operation = Append)
+                ; ("fp-NodePlanItem-deleted", node_plan.operation = Delete)
+                ; ("fp-NodePlanItem-conflicted", node_plan.operation = Conflict)
+                ; ("fp-NodePlanItem-remained", node_plan.operation = Remained) ]
+            in
             [%e li ~class_name [operation; file_mode; file_size; file_name]] ))

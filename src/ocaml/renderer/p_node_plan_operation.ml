@@ -14,12 +14,8 @@ let t =
       end )
     ~render:(fun props ->
         let op = props##.operation in
-        let class_name =
-          Classnames.to_string
-            [ ("fp-NodePlanItem_Operation", true)
-            ; ("fp-NodePlanItem_Operation-deleted", op = D.Plan.Operation.Delete)
-            ; ("fp-NodePlanItem_Operation-remained", op = D.Plan.Operation.Remained)
-            ; ("fp-NodePlanItem_Operation-appended", op = Append)
-            ; ("fp-NodePlanItem_Operation-conflicted", op = Conflict) ]
+        let text =
+          match op with Delete -> "-" | Remained -> "=" | Append -> "+" | Conflict -> "|"
         in
-        [%e span ~class_name []] )
+        let class_name = Classnames.to_string [("fp-NodePlanItem_Operation", true)] in
+        [%e span ~class_name [(text [@txt])]] )

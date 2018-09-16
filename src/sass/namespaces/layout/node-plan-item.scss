@@ -13,20 +13,30 @@
   font-size: 1rem;
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
+
+  &.fp-NodePlanItem-deleted {
+    color: $sol_base3;
+    background-color: $sol_red;
+  }
+
+  &.fp-NodePlanItem-remained {
+    opacity: 0.7;
+  }
+
+  &.fp-NodePlanItem-appended {
+    color: $sol_base03;
+    background-color: $sol_green;
+  }
+
+  &.fp-NodePlanItem-conflicted {
+    background-color: $sol_yellow;
+  }
 }
 
 .fp-NodePlanItem_FileName {
   flex: 1 0 auto;
   padding: 0;
   font-weight: bold;
-
-  &.fp-NodePlanItem_FileName-directory {
-    color: $sol_yellow;
-  }
-
-  &.fp-NodePlanItem_FileName-symlink {
-    color: $sol_orange;
-  }
 }
 
 .fp-NodePlanItem_FileSize {
@@ -45,23 +55,8 @@
 }
 
 .fp-NodePlanItem_Operation {
-  flex: 0 0 1em;
+  flex: 0 0 (1em + $smallSpace);
 
   font-family: monospace;
-
-  &.fp-NodePlanItem_Operation-deleted {
-    content: '-';
-  }
-
-  &.fp-NodePlanItem_Operation-remained {
-    content: '=';
-  }
-
-  &.fp-NodePlanItem_Operation-appended {
-    content: '+';
-  }
-
-  &.fp-NodePlanItem_Operation-conflicted {
-    content: '|';
-  }
+  padding-left: $nanoSpace;
 }
