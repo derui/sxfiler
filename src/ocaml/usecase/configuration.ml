@@ -1,43 +1,47 @@
 module T = Sxfiler_domain
 
-module Get_type = struct
-  type input = unit
-  type output = T.Configuration.t
-  type error = unit
+module Get = struct
+  module Type = struct
+    type input = unit
+    type output = T.Configuration.t
+    type error = unit
+  end
+
+  module type S =
+    Common.Usecase
+    with type input = Type.input
+     and type output = Type.output
+     and type error = Type.error
+
+  (** This module defines rpc interface to manage application configuration. *)
+  module Make (R : T.Configuration.Repository) : S = struct
+    include Type
+
+    let execute () =
+      let%lwt ret = R.resolve () in
+      Lwt.return_ok ret
+  end
 end
 
-module type Get =
-  Common.Usecase
-  with type input = Get_type.input
-   and type output = Get_type.output
-   and type error = Get_type.error
+module Store = struct
+  module Type = struct
+    type input = T.Configuration.t
+    type output = unit
+    type error = unit
+  end
 
-(** This module defines rpc interface to manage application configuration. *)
-module Get (R : T.Configuration.Repository) : Get = struct
-  include Get_type
+  module type S =
+    Common.Usecase
+    with type input = Type.input
+     and type output = Type.output
+     and type error = Type.error
 
-  let execute () =
-    let%lwt ret = R.resolve () in
-    Lwt.return_ok ret
-end
+  (** This module defines rpc interface to store application configuration. *)
+  module Make (R : T.Configuration.Repository) : S = struct
+    include Type
 
-module Store_type = struct
-  type input = T.Configuration.t
-  type output = unit
-  type error = unit
-end
-
-module type Store =
-  Common.Usecase
-  with type input = Store_type.input
-   and type output = Store_type.output
-   and type error = Store_type.error
-
-(** This module defines rpc interface to store application configuration. *)
-module Store (R : T.Configuration.Repository) : Store = struct
-  include Store_type
-
-  let execute input =
-    let%lwt () = R.store input in
-    Lwt.return_ok ()
+    let execute input =
+      let%lwt () = R.store input in
+      Lwt.return_ok ()
+  end
 end

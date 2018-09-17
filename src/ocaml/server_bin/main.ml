@@ -56,7 +56,7 @@ let initialize_modules ~migemo ~keymap ~config =
     Lwt.return_unit
   | Some config ->
     let module R = I.Configuration_repo.Make (Global.Root) in
-    let module Usecase = U.Configuration.Store (R) in
+    let module Usecase = U.Configuration.Store.Make (R) in
     let module Gateway = G.Configuration.Store (Usecase) in
     Gateway.handle config
 

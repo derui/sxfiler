@@ -1,6 +1,7 @@
 ((items
   (((name filer_test))
-   ((name plan_filer_test))))
+   ((name plan_filer_test))
+   ((name configuration_test))))
  (libraries (uuidm alcotest alcotest-lwt sxfiler.core sxfiler.domain sxfiler.usecase))
  (preprocess (pps lwt.ppx))
 )

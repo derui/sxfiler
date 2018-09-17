@@ -10,7 +10,7 @@ module type Get = sig
 end
 
 (** The gateway for Use Case of {!Rpc.Configuration.Get} *)
-module Get (Usecase : Usecase.Configuration.Get) = struct
+module Get (Usecase : Usecase.Configuration.Get.S) = struct
   type params = unit
   type result = T.Configuration.t
 
@@ -30,7 +30,7 @@ module type Store = sig
 end
 
 (** The gateway for use case of {!Rpc.Configuration.Store} *)
-module Store (Usecase : Usecase.Configuration.Store) : Store = struct
+module Store (Usecase : Usecase.Configuration.Store.S) : Store = struct
   type params = T.Configuration.t
   type result = unit
 
