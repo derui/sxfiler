@@ -27,4 +27,4 @@ let proc_configuration =
         @@ Tr.Configuration.to_domain actual ;
         Lwt.return_unit ) ]
 
-let testcases = [("rpc procedure : confguration", proc_configuration)]
+let () = Alcotest.run "Configuration procedures" [("get", proc_configuration)]

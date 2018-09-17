@@ -1,17 +1,11 @@
-(alias
- (name runtest)
- (deps test_sxfiler_server.exe)
- (action (run %{deps})))
+(include dune.inc)
 
-(executable
- (name test_sxfiler_server)
- (flags (-safe-string))
- (libraries alcotest alcotest-lwt
-            lwt
-            sxfiler.server.task
-            sxfiler.server.core
-            sxfiler.completion
-            sxfiler.server
-            sxfiler.core
-            sxfiler.rpc)
- (preprocess (pps lwt_ppx ppx_deriving_yojson)))
+(rule
+ (targets dune.diff)
+ (deps (:generator ../gen-dune/gen.exe) dune.gen)
+ (action (with-stdout-to dune.diff (run %{generator} dune.gen))))
+
+(alias
+ (name gen-test)
+ (deps dune.diff)
+ (action (diff dune.inc dune.diff)))

@@ -27,3 +27,5 @@ let testcases =
       let expected = C.of_list ["completing"] in
       let actual = C.of_list ["completing"; "file_tree"] in
       Alcotest.(check bool) "subset" false C.(subset ~parts:actual ~current:expected) ) ]
+
+let () = Alcotest.run "Condition" [("Condition", testcases)]

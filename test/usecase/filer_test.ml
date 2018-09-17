@@ -95,4 +95,4 @@ let enter_directory_tests =
           result ;
         Lwt.return_unit ) ]
 
-let testcases = [("Enter directory", enter_directory_tests)]
+let () = Alcotest.run "Enter directory usecase" [("Enter directory", enter_directory_tests)]

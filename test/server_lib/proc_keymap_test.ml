@@ -37,4 +37,4 @@ let proc_keymap =
           (match Get.params_of_json with `Not_required _ -> true | _ -> false) ;
         Lwt.return_unit ) ]
 
-let testcases = [("rpc procedure : keymap", proc_keymap)]
+let () = Alcotest.run "Keymap procedures" [("get", proc_keymap)]

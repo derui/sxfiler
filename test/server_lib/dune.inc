@@ -1,0 +1,8 @@
+(executable(name proc_completion_test)(modules proc_completion_test)(libraries alcotest alcotest-lwt lwt sxfiler.server.core sxfiler.completion sxfiler.server sxfiler.core sxfiler.rpc)(flags -safe-string)(preprocess(pps lwt.ppx)))
+(executable(name proc_configuration_test)(modules proc_configuration_test)(libraries alcotest alcotest-lwt lwt sxfiler.server.core sxfiler.completion sxfiler.server sxfiler.core sxfiler.rpc)(flags -safe-string)(preprocess(pps lwt.ppx)))
+(executable(name proc_filer_test)(modules proc_filer_test)(libraries alcotest alcotest-lwt lwt sxfiler.server.core sxfiler.completion sxfiler.server sxfiler.core sxfiler.rpc)(flags -safe-string)(preprocess(pps lwt.ppx)))
+(executable(name rpc_connection_test)(modules rpc_connection_test)(libraries alcotest alcotest-lwt lwt sxfiler.server.core sxfiler.completion sxfiler.server sxfiler.core sxfiler.rpc)(flags -safe-string)(preprocess(pps lwt.ppx)))
+(alias(name runtest)(deps proc_completion_test.exe)(action(run %{deps})))
+(alias(name runtest)(deps proc_configuration_test.exe)(action(run %{deps})))
+(alias(name runtest)(deps proc_filer_test.exe)(action(run %{deps})))
+(alias(name runtest)(deps rpc_connection_test.exe)(action(run %{deps})))

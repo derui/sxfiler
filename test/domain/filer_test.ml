@@ -57,3 +57,5 @@ let testcases =
           end )
       in
       Alcotest.(check @@ of_pp Fmt.nop) "subset" expected F.(filer.nodes) ) ]
+
+let () = Alcotest.run "Filer" [("sorting", testcases)]

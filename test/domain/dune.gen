@@ -1,0 +1,6 @@
+((items
+  (((name condition_test))
+   ((name key_map_test))
+   ((name filer_test))))
+ (libraries (alcotest alcotest-lwt sxfiler.core sxfiler.domain))
+)

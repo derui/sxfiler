@@ -65,4 +65,4 @@ let plan_move_nodes_test =
           Alcotest.(check (of_pp Fmt.nop)) "plan" expected plan ;
           Lwt.return_unit ) ]
 
-let testcases = [("Plan to move nodes", plan_move_nodes_test)]
+let () = Alcotest.run "Plan to move nodes" [("normal function", plan_move_nodes_test)]

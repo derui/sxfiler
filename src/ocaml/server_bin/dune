@@ -7,4 +7,4 @@
             logs.fmt
             jsonrpc-ocaml.yojson
             sxfiler.server)
- (preprocess (pps lwt_ppx)))
+ (preprocess (pps lwt.ppx)))

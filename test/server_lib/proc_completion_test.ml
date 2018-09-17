@@ -48,4 +48,4 @@ let proc_completion =
           (match Setup.params_of_json with `Required _ -> true | _ -> false) ;
         Lwt.return_unit ) ]
 
-let testcases = [("rpc procedure : completion", proc_completion)]
+let () = Alcotest.run "Completion procedures" [("setup", proc_completion)]

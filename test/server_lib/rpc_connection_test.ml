@@ -2,7 +2,7 @@ open Sxfiler_core
 open Sxfiler_domain
 module R = Sxfiler_server.Rpc_connection
 
-let rpc_connection =
+let testcases =
   [ Alcotest_lwt.test_case "can connect and disconnect" `Quick (fun _ () ->
         let conn = R.make () in
         let module C = (val conn : R.Instance) in
@@ -73,4 +73,4 @@ let rpc_connection =
         Alcotest.(check bool) "closed" true Conn.(is_closed conn) ;
         Lwt.return_unit ) ]
 
-let testcases = [("rpc_connection", rpc_connection)]
+let () = Alcotest.run "RPC connection" [("connection", testcases)]

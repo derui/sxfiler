@@ -35,3 +35,5 @@ let testcases =
       let t' = K.subset t ~condition:cond in
       Alcotest.(check @@ option string) "find" (Some "foo") K.(find t' ~condition:cond ~key) ;
       Alcotest.(check @@ option string) "find" None K.(find t' ~condition:cond' ~key) ) ]
+
+let () = Alcotest.run "Key map" [("function", testcases)]

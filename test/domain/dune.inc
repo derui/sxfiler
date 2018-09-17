@@ -1,0 +1,6 @@
+(executable(name condition_test)(modules condition_test)(libraries alcotest alcotest-lwt sxfiler.core sxfiler.domain))
+(executable(name key_map_test)(modules key_map_test)(libraries alcotest alcotest-lwt sxfiler.core sxfiler.domain))
+(executable(name filer_test)(modules filer_test)(libraries alcotest alcotest-lwt sxfiler.core sxfiler.domain))
+(alias(name runtest)(deps condition_test.exe)(action(run %{deps})))
+(alias(name runtest)(deps key_map_test.exe)(action(run %{deps})))
+(alias(name runtest)(deps filer_test.exe)(action(run %{deps})))

@@ -1,9 +1,11 @@
-(alias
- (name runtest)
- (deps tests.exe)
- (action (run %{deps})))
+(include dune.inc)
 
-(executable
- (name tests)
- (flags (-safe-string))
- (libraries alcotest alcotest-lwt sxfiler.core sxfiler.domain))
+(rule
+ (targets dune.diff)
+ (deps (:generator ../gen-dune/gen.exe) dune.gen)
+ (action (with-stdout-to dune.diff (run %{generator} dune.gen))))
+
+(alias
+ (name gen-test)
+ (deps dune.diff)
+ (action (diff dune.inc dune.diff)))
