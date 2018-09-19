@@ -32,4 +32,4 @@ let testcases =
         "yojson" (Ok data)
         (Tr.Node.of_yojson @@ Tr.Node.to_yojson data) ) ]
 
-let suite = [("node", testcases)]
+let () = Alcotest.run "node translator" [("translation", testcases)]

@@ -46,4 +46,4 @@ let testcases =
         "yojson" (Ok data)
         Fun.(Tr.Plan.to_yojson data |> Tr.Plan.of_yojson) ) ]
 
-let suite = [("plan", testcases)]
+let () = Alcotest.run "plan translator" [("translation", testcases)]

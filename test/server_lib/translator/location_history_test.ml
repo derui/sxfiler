@@ -25,4 +25,4 @@ let testcases =
         "yojson" (Ok data)
         (Tr.Location_history.of_yojson @@ Tr.Location_history.to_yojson data) ) ]
 
-let suite = [("location history", testcases)]
+let () = Alcotest.run "location history translator" [("translation", testcases)]

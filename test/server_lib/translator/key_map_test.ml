@@ -21,4 +21,4 @@ let testcases =
         "yojson" (Ok data)
         (T.of_yojson @@ T.to_yojson data) ) ]
 
-let suite = [("key_map", testcases)]
+let () = Alcotest.run "key map translator" [("translation", testcases)]

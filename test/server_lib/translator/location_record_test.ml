@@ -21,4 +21,4 @@ let testcases =
         "yojson" (Ok data)
         (Tr.of_yojson @@ Tr.to_yojson data) ) ]
 
-let suite = [("location_record", testcases)]
+let () = Alcotest.run "location record translator" [("translation", testcases)]

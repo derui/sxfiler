@@ -16,4 +16,4 @@ let testcases =
         "yojson" (Ok data)
         (T.of_yojson @@ T.to_yojson data) ) ]
 
-let suite = [("condition", testcases)]
+let () = Alcotest.run "condition translator" [("translation", testcases)]
