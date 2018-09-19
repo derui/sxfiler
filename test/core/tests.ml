@@ -121,11 +121,8 @@ let path_tests =
           @@ of_list ~env:`Unix [".."; "."; "foo"; ".."; "bar"]) )
   ; ( "raise Empty_path from list"
     , `Quick
-    , fun () ->
-      let module S = struct
-        let getcwd () = "/var"
-      end in
-      Alcotest.check_raises "empty" Path.Empty_path (fun () -> ignore @@ Path.of_list []) )
+    , fun () -> Alcotest.check_raises "empty" Path.Empty_path (fun () -> ignore @@ Path.of_list [])
+    )
   ; ( "resolve current and parent directory to realpath"
     , `Quick
     , fun () ->
@@ -140,17 +137,11 @@ let path_tests =
   ; ( "raise Empth_path"
     , `Quick
     , fun () ->
-      let module S = struct
-        let getcwd () = "/var"
-      end in
       Alcotest.check_raises "empth path" Path.Empty_path (fun () ->
           Path.of_string ~env:`Unix "" |> ignore ) )
   ; ( "gets base name of a path"
     , `Quick
     , fun () ->
-      let module S = struct
-        let getcwd () = "/var"
-      end in
       let to_path = Path.of_string ~env:`Unix in
       Alcotest.(check string) "basename" "foo" @@ Path.basename @@ to_path "foo" ;
       Alcotest.(check string) "basename" "" @@ Path.basename @@ to_path "/" ;
@@ -158,9 +149,6 @@ let path_tests =
   ; ( "gets dirname of a path"
     , `Quick
     , fun () ->
-      let module S = struct
-        let getcwd () = "/var"
-      end in
       let to_path = Path.of_string ~env:`Unix in
       Alcotest.(check string) "current" "." @@ Path.dirname @@ to_path "foo" ;
       Alcotest.(check string) "parent" ".." @@ Path.dirname @@ to_path "../bar" ;

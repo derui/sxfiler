@@ -11,8 +11,8 @@ module Dummy_system = struct
   let getcwd () = "/foo"
 end
 
-let proc_filer =
-  [ Alcotest_lwt.test_case "create new filer if it does not exists" `Quick (fun switch () ->
+let test_set =
+  [ Alcotest_lwt.test_case "create new filer if it does not exists" `Quick (fun _ () ->
         let expected =
           D.Filer.make ~id:"foo"
             ~location:(Path.of_string ~env:`Unix "/initial")
@@ -29,7 +29,7 @@ let proc_filer =
         let%lwt res = Make.handle {Gateway.initial_location = "/initial"; name = "foo"} in
         Alcotest.(check @@ of_pp @@ Fmt.nop) "created" (T.Filer.of_domain expected) res ;
         Lwt.return_unit )
-  ; Alcotest_lwt.test_case "do not create workspace if it exists" `Quick (fun switch () ->
+  ; Alcotest_lwt.test_case "do not create workspace if it exists" `Quick (fun _ () ->
         let module Gateway = struct
           include G.Filer.Make.Types
 
@@ -40,5 +40,3 @@ let proc_filer =
         Alcotest.check_raises "raised" expected (fun () ->
             Lwt.ignore_result @@ Make.handle {initial_location = "/initial"; name = "foo"} ) ;
         Lwt.return_unit ) ]
-
-let () = Alcotest.run "Filer procedures" [("make", proc_filer)]

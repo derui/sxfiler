@@ -1,11 +1,5 @@
-(alias
- (name runtest)
- (deps test_sxfiler_server_gateway.exe)
- (action (run %{deps})))
-
-(executable
- (name test_sxfiler_server_gateway)
- (flags (-safe-string))
+(test
+ (name tests)
  (libraries alcotest alcotest-lwt
             lwt
             sxfiler.server.gateway

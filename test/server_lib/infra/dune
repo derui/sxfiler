@@ -1,11 +1,9 @@
-(include dune.inc)
-
-(rule
- (targets dune.diff)
- (deps (:generator ../../gen-dune/gen.exe) dune.gen)
- (action (with-stdout-to dune.diff (run %{generator} dune.gen))))
-
 (alias
- (name gen-test)
- (deps dune.diff)
- (action (diff dune.inc dune.diff)))
+ (name runtest)
+ (deps (source_tree data_real/))
+ (action (run ./tests.exe)))
+
+(executable
+  (name tests)
+  (libraries alcotest alcotest-lwt sxfiler.core sxfiler.server.infra)
+  (preprocess (pps lwt_ppx)))

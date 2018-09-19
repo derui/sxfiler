@@ -5,7 +5,7 @@ module T = Sxfiler_rpc.Types
 
 let data = {D.Location_record.location = Path.of_string "/foo"; timestamp = Int64.max_int}
 
-let testcases =
+let test_set =
   [ ( "can translate to/from domain"
     , `Quick
     , fun () ->
@@ -20,5 +20,3 @@ let testcases =
       Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
         "yojson" (Ok data)
         (Tr.of_yojson @@ Tr.to_yojson data) ) ]
-
-let () = Alcotest.run "location record translator" [("translation", testcases)]

@@ -1,8 +1,0 @@
-
-((items
-  (((name workbench_state_test))))
- (libraries (alcotest alcotest-lwt
-             sxfiler.server.core))
- (flags (-safe-string))
- (preprocess (pps lwt.ppx))
-)

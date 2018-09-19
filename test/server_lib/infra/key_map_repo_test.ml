@@ -1,4 +1,3 @@
-open Sxfiler_core
 module D = Sxfiler_domain
 module S = Sxfiler_server_core
 module I = Sxfiler_server_infra
@@ -9,8 +8,8 @@ let data =
     (D.Key_map.make ())
     [(Sxfiler_kbd.make "k", "foo"); (Sxfiler_kbd.make "j", "bar")]
 
-let testcases =
-  [ Alcotest_lwt.test_case "can store keymap to state" `Quick (fun switch () ->
+let test_set =
+  [ Alcotest_lwt.test_case "can store keymap to state" `Quick (fun _ () ->
         let module State = S.Statable.Make (struct
             type t = string D.Key_map.t
 
@@ -21,7 +20,7 @@ let testcases =
         let%lwt actual = State.get () in
         Alcotest.(check @@ of_pp Fmt.nop) "stored" data actual ;
         Lwt.return_unit )
-  ; Alcotest_lwt.test_case "can get keymap stored" `Quick (fun switch () ->
+  ; Alcotest_lwt.test_case "can get keymap stored" `Quick (fun _ () ->
         let module State = S.Statable.Make (struct
             type t = string D.Key_map.t
 
@@ -31,5 +30,3 @@ let testcases =
         let%lwt actual = R.resolve () in
         Alcotest.(check @@ of_pp Fmt.nop) "stored" data actual ;
         Lwt.return_unit ) ]
-
-let () = Alcotest.run "keymap repository" [("operations", testcases)]

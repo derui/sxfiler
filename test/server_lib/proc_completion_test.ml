@@ -6,8 +6,8 @@ module Co = Sxfiler_completion
 module Tr = Sxfiler_server_translator
 module T = Sxfiler_rpc.Types
 
-let proc_completion =
-  [ Alcotest_lwt.test_case "can setup common source" `Quick (fun switch () ->
+let test_set =
+  [ Alcotest_lwt.test_case "can setup common source" `Quick (fun _ () ->
         let module State = C.Statable.Make (struct
             type t = T.Completion.Item.t list
 
@@ -18,7 +18,7 @@ let proc_completion =
 
           let params_of_yojson js =
             let open Yojson.Safe.Util in
-            let open Result.Infix in
+            let open Result in
             let source = js |> member "source" |> to_list in
             let source =
               List.fold_left
@@ -40,12 +40,10 @@ let proc_completion =
           ; {T.Completion.Item.id = "2"; value = "foobar"}
           ; {T.Completion.Item.id = "3"; value = "bar ball"} ]
         in
-        let%lwt res = Setup.handle {Setup_gateway.source = expected} in
+        let%lwt _ = Setup.handle {Setup_gateway.source = expected} in
         let%lwt state = State.get () in
         Alcotest.(check @@ list @@ of_pp @@ Fmt.nop) "created" expected state ;
         Alcotest.(check bool)
           "param" true
           (match Setup.params_of_json with `Required _ -> true | _ -> false) ;
         Lwt.return_unit ) ]
-
-let () = Alcotest.run "Completion procedures" [("setup", proc_completion)]

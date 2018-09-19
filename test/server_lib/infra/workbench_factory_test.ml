@@ -7,7 +7,7 @@ let filer =
   D.Filer.make ~id:"foo" ~location:(Path.of_string "/var") ~nodes:[]
     ~sort_order:D.Types.Sort_type.Date ~history:(D.Location_history.make ())
 
-let testcases =
+let test_set =
   [ ( "create new instance each execution"
     , `Quick
     , fun () ->
@@ -19,5 +19,3 @@ let testcases =
       let data = R.make {source = filer; dest = filer; nodes = []} in
       let data' = R.make {source = filer; dest = filer; nodes = []} in
       Alcotest.(check @@ of_pp Fmt.nop) "not same id" false (Uuidm.equal data.id data'.id) ) ]
-
-let () = Alcotest.run "workbench repository" [("operations", testcases)]

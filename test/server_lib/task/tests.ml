@@ -1,5 +1,5 @@
 let task_runner =
-  [ Alcotest_lwt.test_case "run asynchronous loops" `Quick (fun switch () ->
+  [ Alcotest_lwt.test_case "run asynchronous loops" `Quick (fun _ () ->
         let module T = Sxfiler_server_task in
         let module Tasker = (val T.Runner.make () : T.Runner.Instance) in
         let stopper = Tasker.Runner.start Tasker.instance in
@@ -7,7 +7,7 @@ let task_runner =
         let%lwt () = stopper in
         Alcotest.(check @@ of_pp @@ Fmt.nop) "thread stopped" (Lwt.Return ()) (Lwt.state stopper) ;
         Lwt.return_unit )
-  ; Alcotest_lwt.test_case "allow to run task immediately" `Quick (fun switch () ->
+  ; Alcotest_lwt.test_case "allow to run task immediately" `Quick (fun _ () ->
         let module T = Sxfiler_server_task in
         let module Tasker = (val T.Runner.make () : T.Runner.Instance) in
         let stopper = Tasker.Runner.start Tasker.instance in

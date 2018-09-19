@@ -1,10 +1,9 @@
-open Sxfiler_core
 module D = Sxfiler_domain
 module S = Sxfiler_server_core
 module I = Sxfiler_server_infra
 
-let testcases =
-  [ Alcotest_lwt.test_case "can get current condition" `Quick (fun switch () ->
+let test_set =
+  [ Alcotest_lwt.test_case "can get current condition" `Quick (fun _ () ->
         let module State = S.Statable.Make (struct
             type t = D.Condition.t
 
@@ -14,7 +13,7 @@ let testcases =
         let%lwt cond = R.resolve () in
         Alcotest.(check bool) "stored" true D.Condition.(equal empty cond) ;
         Lwt.return_unit )
-  ; Alcotest_lwt.test_case "can enable/disable context" `Quick (fun switch () ->
+  ; Alcotest_lwt.test_case "can enable/disable context" `Quick (fun _ () ->
         let module State = S.Statable.Make (struct
             type t = D.Condition.t
 
@@ -26,5 +25,3 @@ let testcases =
         let%lwt actual = R.resolve () in
         Alcotest.(check bool) "stored" true (D.Condition.equal actual expected) ;
         Lwt.return_unit ) ]
-
-let () = Alcotest.run "condition repository" [("operations", testcases)]

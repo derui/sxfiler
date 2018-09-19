@@ -1,9 +1,8 @@
-open Sxfiler_core
 module D = Sxfiler_completion.Domain
 module Tr = Sxfiler_server_translator.Completion
 module T = Sxfiler_rpc.Types
 
-let testcases =
+let test_set =
   [ ( "can translate item to/from domain"
     , `Quick
     , fun () ->
@@ -36,5 +35,3 @@ let testcases =
       Alcotest.(check @@ result (of_pp Fmt.nop) string)
         "yojson" (Ok data)
         Tr.Candidate.(of_yojson @@ to_yojson data) ) ]
-
-let () = Alcotest.run "completion translator" [("translation", testcases)]

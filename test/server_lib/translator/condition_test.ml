@@ -1,8 +1,7 @@
-open Sxfiler_core
 module D = Sxfiler_domain
 module T = Sxfiler_server_translator.Condition
 
-let testcases =
+let test_set =
   [ ( "can translate to/from domain"
     , `Quick
     , fun () ->
@@ -15,5 +14,3 @@ let testcases =
       Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
         "yojson" (Ok data)
         (T.of_yojson @@ T.to_yojson data) ) ]
-
-let () = Alcotest.run "condition translator" [("translation", testcases)]

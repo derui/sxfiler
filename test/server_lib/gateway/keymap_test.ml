@@ -1,4 +1,3 @@
-open Sxfiler_core
 module D = Sxfiler_domain
 module S = Sxfiler_server
 module U = Sxfiler_usecase
@@ -6,8 +5,8 @@ module C = Sxfiler_server_core
 module G = Sxfiler_server_gateway
 module Tr = Sxfiler_server_translator
 
-let keymap_tests =
-  [ Alcotest_lwt.test_case "get current keybindings" `Quick (fun switch () ->
+let test_set =
+  [ Alcotest_lwt.test_case "get current keybindings" `Quick (fun _ () ->
         let expected =
           List.fold_left
             (fun keymap (key, value) ->
@@ -26,7 +25,7 @@ let keymap_tests =
         let%lwt res = Gateway.handle () in
         Alcotest.(check @@ of_pp Fmt.nop) "current" (Tr.Key_map.of_domain expected) res ;
         Lwt.return_unit )
-  ; Alcotest_lwt.test_case "enable context and get updated keymap" `Quick (fun switch () ->
+  ; Alcotest_lwt.test_case "enable context and get updated keymap" `Quick (fun _ () ->
         let expected =
           List.fold_left
             (fun keymap (key, value) ->
@@ -43,7 +42,7 @@ let keymap_tests =
         let%lwt res = Gateway.handle {context = "foo"} in
         Alcotest.(check @@ of_pp Fmt.nop) "current" (Tr.Key_map.of_domain expected) res ;
         Lwt.return_unit )
-  ; Alcotest_lwt.test_case "disable context and get updated keymap" `Quick (fun switch () ->
+  ; Alcotest_lwt.test_case "disable context and get updated keymap" `Quick (fun _ () ->
         let expected =
           List.fold_left
             (fun keymap (key, value) ->
@@ -60,5 +59,3 @@ let keymap_tests =
         let%lwt res = Gateway.handle {context = "foo"} in
         Alcotest.(check @@ of_pp Fmt.nop) "current" (Tr.Key_map.of_domain expected) res ;
         Lwt.return_unit ) ]
-
-let testcases = [("rpc procedure : keymap", keymap_tests)]

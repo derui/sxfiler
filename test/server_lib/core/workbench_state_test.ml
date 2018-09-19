@@ -11,7 +11,7 @@ module Factory = struct
   let make env = {D.Workbench.env; id; corrections = []}
 end
 
-let testcases =
+let test_set =
   [ ( "can add and find workbench"
     , `Quick
     , fun () ->
@@ -49,15 +49,10 @@ let testcases =
       let state = W.add ~value:data W.empty in
       let state = W.add ~value:data' state in
       let actual = Option.(W.find ~id:Factory.id state >|= fun v -> v.env.nodes) in
-      Alcotest.(check @@ option @@ of_pp Fmt.nop) "none" (Some data'.env.nodes) actual ) ]
-
-let testcases_for_find =
-  [ ( "return None if not found workbench related id"
+      Alcotest.(check @@ option @@ of_pp Fmt.nop) "none" (Some data'.env.nodes) actual )
+  ; ( "return None if not found workbench related id"
     , `Quick
     , fun () ->
       let module W = C.Workbench_state in
       let data' = W.find ~id:Factory.id W.empty in
       Alcotest.(check @@ option @@ of_pp Fmt.nop) "none" None data' ) ]
-
-let () =
-  Alcotest.run "Workbench backend" [("add and remove", testcases); ("find", testcases_for_find)]

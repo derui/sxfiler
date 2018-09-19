@@ -1,9 +1,4 @@
-(alias
- (name runtest)
- (deps tests.exe)
- (action (run %{deps})))
 
-(executable
+(test
  (name tests)
- (flags (-safe-string))
  (libraries alcotest alcotest-lwt sxfiler.core))

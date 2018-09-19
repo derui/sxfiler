@@ -1,4 +1,3 @@
-open Sxfiler_core
 module D = Sxfiler_domain
 module T = Sxfiler_server_translator.File_stat
 
@@ -7,7 +6,7 @@ let data =
     ~mtime:(Int64.of_int 1000) ~ctime:(Int64.of_int 10000) ~size:Int64.max_int ~is_directory:true
     ~is_file:false ~is_symlink:true
 
-let testcases =
+let test_set =
   [ ( "can translate to/from domain"
     , `Quick
     , fun () -> Alcotest.(check @@ of_pp Fmt.nop) "domain" data (T.to_domain @@ T.of_domain data)
@@ -19,5 +18,3 @@ let testcases =
       Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
         "yojson" (Ok data)
         (T.of_yojson @@ T.to_yojson data) ) ]
-
-let () = Alcotest.run "file_stat translator" [("translation", testcases)]

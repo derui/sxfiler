@@ -12,7 +12,7 @@ let node =
         ~is_directory:true ~is_file:false ~is_symlink:true
   ; link_path = Some "/foo" }
 
-let testcases =
+let test_set =
   [ ( "can translate to/from domain"
     , `Quick
     , fun () ->
@@ -44,6 +44,4 @@ let testcases =
       in
       Alcotest.(check @@ result (of_pp Fmt.nop) string)
         "yojson" (Ok data)
-        Fun.(Tr.Plan.to_yojson data |> Tr.Plan.of_yojson) ) ]
-
-let () = Alcotest.run "plan translator" [("translation", testcases)]
+        (Tr.Plan.to_yojson data |> Tr.Plan.of_yojson) ) ]

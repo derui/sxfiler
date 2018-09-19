@@ -10,7 +10,7 @@ let stat_base =
 
 let node_base = D.Node.make ~full_path:(Path.of_string "foo") ~stat:stat_base ~link_path:None
 
-let testcases =
+let test_set =
   [ ( "should be sorted with send order when instance created"
     , `Quick
     , fun () ->
@@ -57,5 +57,3 @@ let testcases =
           end )
       in
       Alcotest.(check @@ of_pp Fmt.nop) "subset" expected F.(filer.nodes) ) ]
-
-let () = Alcotest.run "Filer" [("sorting", testcases)]

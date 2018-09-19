@@ -1,4 +1,3 @@
-open Sxfiler_core
 module D = Sxfiler_domain
 module S = Sxfiler_server
 module U = Sxfiler_usecase
@@ -8,8 +7,8 @@ module G = Sxfiler_server_gateway
 module Tr = Sxfiler_server_translator
 module T = Sxfiler_rpc.Types
 
-let proc_keymap =
-  [ Alcotest_lwt.test_case "get current keybindings" `Quick (fun switch () ->
+let test_set =
+  [ Alcotest_lwt.test_case "get current keybindings" `Quick (fun _ () ->
         let expected =
           List.fold_left
             (fun keymap (key, value) ->
@@ -36,5 +35,3 @@ let proc_keymap =
           "params" true
           (match Get.params_of_json with `Not_required _ -> true | _ -> false) ;
         Lwt.return_unit ) ]
-
-let () = Alcotest.run "Keymap procedures" [("get", proc_keymap)]

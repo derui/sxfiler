@@ -2,7 +2,7 @@ module Kbd = Sxfiler_kbd
 module C = Sxfiler_domain.Condition
 module K = Sxfiler_domain.Key_map
 
-let testcases =
+let test_set =
   [ ( "add and find action bound with key"
     , `Quick
     , fun () ->
@@ -35,5 +35,3 @@ let testcases =
       let t' = K.subset t ~condition:cond in
       Alcotest.(check @@ option string) "find" (Some "foo") K.(find t' ~condition:cond ~key) ;
       Alcotest.(check @@ option string) "find" None K.(find t' ~condition:cond' ~key) ) ]
-
-let () = Alcotest.run "Key map" [("function", testcases)]

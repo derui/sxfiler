@@ -10,8 +10,8 @@ module Dummy_system = struct
   let getcwd () = "/foo"
 end
 
-let filer_tests =
-  [ Alcotest_lwt.test_case "make plan to move nodes" `Quick (fun switch () ->
+let test_set =
+  [ Alcotest_lwt.test_case "make plan to move nodes" `Quick (fun _ () ->
         let id = Uuidm.v4_gen (Random.get_state ()) () in
         let plan = D.Plan.make ~workbench_id:id ~source:[] ~dest:[] in
         let filer =
@@ -46,5 +46,3 @@ let filer_tests =
           (Option.some @@ T.Plan.of_domain plan)
           res.plan ;
         Lwt.return_unit ) ]
-
-let testcases = [("rpc procedure : plan", filer_tests)]

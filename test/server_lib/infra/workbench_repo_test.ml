@@ -12,8 +12,8 @@ module Factory = struct
   let make env = {D.Workbench.env; id; corrections = []}
 end
 
-let testcases =
-  [ Alcotest_lwt.test_case "can store and resolve the workbench with id" `Quick (fun switch () ->
+let test_set =
+  [ Alcotest_lwt.test_case "can store and resolve the workbench with id" `Quick (fun _ () ->
         let module State = C.Statable.Make (struct
             type t = C.Workbench_state.t
 
@@ -25,7 +25,7 @@ let testcases =
         let%lwt actual = R.resolve Factory.id in
         Alcotest.(check @@ option @@ of_pp Fmt.nop) "stored" (Some data) actual ;
         Lwt.return_unit )
-  ; Alcotest_lwt.test_case "return None if workbench did not stored" `Quick (fun switch () ->
+  ; Alcotest_lwt.test_case "return None if workbench did not stored" `Quick (fun _ () ->
         let module State = C.Statable.Make (struct
             type t = C.Workbench_state.t
 
@@ -35,7 +35,7 @@ let testcases =
         let%lwt actual = R.resolve Factory.id in
         Alcotest.(check @@ option @@ of_pp Fmt.nop) "stored" None actual ;
         Lwt.return_unit )
-  ; Alcotest_lwt.test_case "can remove the workbench stored already" `Quick (fun switch () ->
+  ; Alcotest_lwt.test_case "can remove the workbench stored already" `Quick (fun _ () ->
         let module State = C.Statable.Make (struct
             type t = C.Workbench_state.t
 
@@ -50,5 +50,3 @@ let testcases =
         Alcotest.(check @@ option @@ of_pp Fmt.nop) "stored" (Some data) actual ;
         Alcotest.(check @@ option @@ of_pp Fmt.nop) "removed" None actual' ;
         Lwt.return_unit ) ]
-
-let () = Alcotest.run "workbench repository" [("operations", testcases)]

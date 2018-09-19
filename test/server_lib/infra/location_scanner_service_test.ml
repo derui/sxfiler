@@ -1,7 +1,7 @@
 open Sxfiler_core
 module I = Sxfiler_server_infra
 
-let testcases =
+let test_set =
   [ ( "get_node should return None if file is not found"
     , `Quick
     , fun () ->
@@ -61,7 +61,7 @@ let testcases =
              Alcotest.(check bool) "stat.is_symlink" true node.N.stat.S.is_symlink ) )
   ; ( "get_node can handle directory as is"
     , `Quick
-    , fun ctx ->
+    , fun () ->
       let temp_dir = ref "" in
       let tempfile = Filename.temp_file "action" "" in
       temp_dir := tempfile ;
@@ -82,13 +82,10 @@ let testcases =
         let module S = Sxfiler_domain.File_stat in
         Alcotest.(check bool) "stat.is_file" false node.N.stat.S.is_file ;
         Alcotest.(check bool) "stat.is_directory" true node.N.stat.S.is_directory )
-  ; Alcotest_lwt.test_case "find_by_dir with empty directory" `Quick (fun switch () ->
+  ; Alcotest_lwt.test_case "find_by_dir with empty directory" `Quick (fun _ () ->
         let tempfile = Filename.temp_file "action" "" in
         Sys.remove tempfile ;
         Unix.mkdir tempfile 0o755 ;
-        let module Dummy = struct
-          let getcwd () = Sys.getcwd ()
-        end in
         Lwt.finalize
           (fun () ->
              let path = Path.of_string tempfile in
@@ -97,7 +94,7 @@ let testcases =
              Lwt.return_unit )
           (fun () -> Lwt.return @@ Unix.rmdir tempfile) )
   ; Alcotest_lwt.test_case "find_by_dir from directory that contains regular files" `Quick
-      (fun switch () ->
+      (fun _ () ->
          let module Dummy = struct
            let getcwd () = Sys.getcwd ()
          end in
@@ -114,5 +111,3 @@ let testcases =
            ; Path.to_string @@ to_path "./data_real/file_only/file2" ]
            nodes ;
          Lwt.return_unit ) ]
-
-let () = Alcotest.run "Location scanner service" [("scan", testcases)]

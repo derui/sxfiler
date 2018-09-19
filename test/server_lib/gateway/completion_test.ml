@@ -1,4 +1,3 @@
-open Sxfiler_core
 module D = Sxfiler_domain
 module S = Sxfiler_server
 module C = Sxfiler_server_core
@@ -7,8 +6,8 @@ module Co = Sxfiler_completion
 module T = Sxfiler_server_translator
 module U = Sxfiler_usecase
 
-let completion_tests =
-  [ Alcotest_lwt.test_case "can setup common source" `Quick (fun switch () ->
+let test_set =
+  [ Alcotest_lwt.test_case "can setup common source" `Quick (fun _ () ->
         let called = ref [] in
         let module Usecase : Co.Usecase.Setup = struct
           type input = {source : Co.Domain.collection}
@@ -24,10 +23,10 @@ let completion_tests =
           ; {Co.Domain.Item.id = "2"; value = "foobar"}
           ; {Co.Domain.Item.id = "3"; value = "bar ball"} ]
         in
-        let%lwt res = Setup.handle {source = List.map T.Completion.Item.of_domain expected} in
+        let%lwt _ = Setup.handle {source = List.map T.Completion.Item.of_domain expected} in
         Alcotest.(check @@ list @@ of_pp Fmt.nop) "called" expected !called ;
         Lwt.return_unit )
-  ; Alcotest_lwt.test_case "can complete from common source stored before" `Quick (fun switch () ->
+  ; Alcotest_lwt.test_case "can complete from common source stored before" `Quick (fun _ () ->
         let expected =
           [ { Co.Domain.Candidate.start = 0
             ; length = 3
@@ -47,5 +46,3 @@ let completion_tests =
           (List.map T.Completion.Candidate.of_domain expected)
           res ;
         Lwt.return_unit ) ]
-
-let testcases = [("rpc procedure : completion", completion_tests)]
