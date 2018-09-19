@@ -1,5 +1,5 @@
 (** Backend for workbench *)
-module D = Sxfiler_domain
+open Workbench_state_abbrev
 
 module Uuid_map = Map.Make (struct
     type t = Uuidm.t
