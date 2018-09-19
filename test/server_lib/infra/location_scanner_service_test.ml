@@ -115,4 +115,4 @@ let testcases =
            nodes ;
          Lwt.return_unit ) ]
 
-let suite = [("Location scanner service", testcases)]
+let () = Alcotest.run "Location scanner service" [("scan", testcases)]

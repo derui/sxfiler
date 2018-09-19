@@ -1,10 +1,11 @@
-(alias
- (name runtest)
- (deps (:prog test_sxfiler_server_infra.exe) (source_tree data_real/))
- (action (run %{prog})))
+(include dune.inc)
 
-(executable
-  (name test_sxfiler_server_infra)
-  (flags (-safe-string))
-  (libraries alcotest alcotest-lwt sxfiler.core sxfiler.server.infra)
-  (preprocess (pps lwt_ppx)))
+(rule
+ (targets dune.diff)
+ (deps (:generator ../../gen-dune/gen.exe) dune.gen)
+ (action (with-stdout-to dune.diff (run %{generator} dune.gen))))
+
+(alias
+ (name gen-test)
+ (deps dune.diff)
+ (action (diff dune.inc dune.diff)))

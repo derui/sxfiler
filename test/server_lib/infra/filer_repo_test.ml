@@ -21,7 +21,7 @@ let testcases =
           "stored" (Some data)
           (S.Root_state.find_filer ~id:"foo" actual) ;
         Lwt.return_unit )
-  ; Alcotest_lwt.test_case "can get keymap stored" `Quick (fun switch () ->
+  ; Alcotest_lwt.test_case "can get filer stored" `Quick (fun switch () ->
         let module State = S.Statable.Make (struct
             type t = S.Root_state.t
 
@@ -32,4 +32,4 @@ let testcases =
         Alcotest.(check @@ option @@ of_pp Fmt.nop) "stored" (Some data) actual ;
         Lwt.return_unit ) ]
 
-let suite = [("filer repository", testcases)]
+let () = Alcotest.run "filer repository" [("operations", testcases)]

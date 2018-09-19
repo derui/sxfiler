@@ -32,4 +32,4 @@ let testcases =
         Alcotest.(check @@ of_pp Fmt.nop) "stored" data actual ;
         Lwt.return_unit ) ]
 
-let suite = [("keymap repository", testcases)]
+let () = Alcotest.run "keymap repository" [("operations", testcases)]

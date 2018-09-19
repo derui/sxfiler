@@ -28,4 +28,4 @@ let testcases =
         Alcotest.(check @@ of_pp Fmt.nop) "stored" data actual ;
         Lwt.return_unit ) ]
 
-let suite = [("configuration repository", testcases)]
+let () = Alcotest.run "configuration repository" [("operations", testcases)]
