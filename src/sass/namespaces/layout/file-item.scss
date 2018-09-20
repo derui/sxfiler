@@ -2,8 +2,9 @@
 
 .fp-FileItem {
   display: flex;
+  padding: $nanoSpace 0;
 
-  align-self: center;
+  flex: 0 0 auto;
   list-style: none;
 
   color: $sol_base1;
@@ -13,7 +14,6 @@
   font-size: 1rem;
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
-  line-height: 1.24em;
 }
 
 .fp-FileItem.fp-FileItem-selected {
