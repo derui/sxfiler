@@ -31,5 +31,8 @@ let t =
           end
       end )
     ~render:(fun props ->
-        let plans = props##.nodePlans in
+        let is_changed node_plan =
+          match node_plan.T.Plan.operation with Remained -> false | _ -> true
+        in
+        let plans = List.filter is_changed props##.nodePlans in
         [%e div ~class_name:"fp-NodePlanList" [header props##.name; content plans]] )
