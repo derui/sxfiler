@@ -29,7 +29,7 @@ depends: [
   "cohttp-lwt-unix"
   "websocket-lwt"
   "conduit-lwt-unix"
-  "ocaml-re" { >= "1.7.3"}
+  "re" { >= "1.7.3"}
   "uuidm" { >= "0.9.6"}
   "alcotest" {>= "0.8.3" & test}
   "alcotest-lwt" {>= "0.8.0" & test}
