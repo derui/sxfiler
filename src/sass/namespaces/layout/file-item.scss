@@ -16,6 +16,13 @@
   border-bottom: 1px solid transparent;
 }
 
+.fp-FileItem-dummy {
+  position: absolute;
+  top: -200%;
+  visibility: hidden;
+  z-index: -1;
+}
+
 .fp-FileItem.fp-FileItem-selected {
   border-bottom: 1px solid $sol_red;
 }

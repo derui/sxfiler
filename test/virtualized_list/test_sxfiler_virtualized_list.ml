@@ -36,8 +36,8 @@ let () =
              append_div index ~text:"baz" [("id", "third"); ("height", style)] |> ignore ;
              let all_items = Array.init 10 succ in
              let lst =
-               L.make ~item_height:10 () |> L.update_all_items all_items
-               |> L.update_list_height index##.clientHeight
+               L.make ~item_height:10. () |> L.update_all_items all_items
+               |> L.update_list_height (float_of_int index##.clientHeight)
                |> L.recalculate_visible_window 0
              in
              assert_strict_eq [|1; 2; 3; 4|] (L.get_items_in_window lst) )
@@ -53,8 +53,8 @@ let () =
              append_div index ~text:"baz" [("id", "third"); ("height", style)] |> ignore ;
              let all_items = Array.init 3 succ in
              let lst =
-               L.make ~item_height:10 () |> L.update_all_items all_items
-               |> L.update_list_height index##.clientHeight
+               L.make ~item_height:10. () |> L.update_all_items all_items
+               |> L.update_list_height (float_of_int index##.clientHeight)
                |> L.recalculate_visible_window 0
              in
              let new_lst = L.recalculate_visible_window 2 lst in
@@ -73,8 +73,8 @@ let () =
              append_div index ~text:"baz" [("id", "third"); ("height", style)] |> ignore ;
              let all_items = Array.init 3 succ in
              let lst =
-               L.make ~item_height:10 () |> L.update_all_items all_items
-               |> L.update_list_height index##.clientHeight
+               L.make ~item_height:10. () |> L.update_all_items all_items
+               |> L.update_list_height (float_of_int index##.clientHeight)
                |> L.recalculate_visible_window 0
              in
              let step_one = L.recalculate_visible_window 1 lst in
@@ -93,8 +93,8 @@ let () =
              append_div index ~text:"foo" [("id", "first"); ("style", style)] |> ignore ;
              let all_items = Array.init 10 succ in
              let lst =
-               L.make ~item_height:10 () |> L.update_all_items all_items
-               |> L.update_list_height index##.clientHeight
+               L.make ~item_height:10. () |> L.update_all_items all_items
+               |> L.update_list_height (float_of_int index##.clientHeight)
                |> L.recalculate_visible_window 0
              in
              let step_one = L.recalculate_visible_window 1 lst in
@@ -108,10 +108,10 @@ let () =
              prepare () ;
              let all_items = Array.init 10 succ in
              let lst =
-               L.make ~item_height:10 () |> L.update_all_items all_items |> L.update_list_height 40
+               L.make ~item_height:10. () |> L.update_all_items all_items |> L.update_list_height 40.
                |> L.recalculate_visible_window 7
              in
-             let next = L.update_list_height 80 lst |> L.recalculate_visible_window 7 in
+             let next = L.update_list_height 80. lst |> L.recalculate_visible_window 7 in
              let open Infix in
              assert_strict_eq [|7; 8; 9; 10|] @@ L.get_items_in_window lst
                                                  <|> assert_strict_eq [|3; 4; 5; 6; 7; 8; 9; 10|] @@ L.get_items_in_window next ) ]

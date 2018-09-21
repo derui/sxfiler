@@ -5,16 +5,16 @@
 (** The virtualized list type to calculate something of virtualized list *)
 type 'a t
 
-val make : ?item_height:int -> unit -> 'a t
+val make : ?item_height:float -> unit -> 'a t
 (** Get an empty virtualized list *)
 
 val update_all_items : 'a array -> 'a t -> 'a t
 (** Update totally items *)
 
-val update_list_height : int -> 'a t -> 'a t
+val update_list_height : float -> 'a t -> 'a t
 (** Update list element that is DOM of list to manage with this type *)
 
-val update_item_height : int -> 'a t -> 'a t
+val update_item_height : float -> 'a t -> 'a t
 (** Update item element cache that is used to calculate  *)
 
 val recalculate_visible_window : int -> 'a t -> 'a t

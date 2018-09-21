@@ -49,12 +49,17 @@ let t =
       end )
     ~spec:
       (R.component_spec
-         ~constructor:(fun this _ -> this##.nodes := Jstable.create ())
          ~initial_state:(fun _ _ -> object%js end)
-         ~initial_custom:(fun _ _ -> object%js end)
+         ~initial_custom:(fun _ _ ->
+             let refs = R.Ref_table.create () in
+             R.Ref_table.define ~key:container_key refs ;
+             object%js
+               val refs = refs
+             end )
          ~component_did_mount:(fun this ->
              let open Option in
-             ignore (R.Ref_table.find ~key:container_key this##.nodes >|= fun e -> e##focus) )
+             ignore (R.Ref_table.find ~key:container_key this##.custom##.refs >|= fun e -> e##focus)
+           )
          ~component_did_update:(fun this _ _ ->
              let module L = (val this##.props##.locator : Locator.S) in
              let store = S.App.Store.get L.store in
@@ -62,7 +67,7 @@ let t =
              let focused = S.Workspace.State.current_mode ws <> Complete in
              let open Option in
              if focused then
-               ignore (R.Ref_table.find ~key:container_key this##.nodes >|= fun e -> e##focus)
+               ignore (R.Ref_table.find ~key:container_key this##.custom##.refs >|= fun e -> e##focus)
              else () )
          (fun this ->
             let module L = (val this##.props##.locator : Locator.S) in
@@ -71,7 +76,7 @@ let t =
             let class_name = Classnames.to_string [("fp-Workspace", true)] in
             [%e
               div ~key:"layout" ~class_name
-                ~_ref:(fun e -> R.Ref_table.add ~key:container_key ~value:e this##.nodes)
+                ~_ref:(R.Ref_table.use ~key:container_key this##.custom##.refs)
                 ~others:
                   (object%js
                     val tabIndex = Js.string "0"

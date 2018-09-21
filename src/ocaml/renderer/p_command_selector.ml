@@ -26,8 +26,12 @@ let t =
     ~spec:
       R.(
         component_spec
-          ~constructor:(fun this _ -> this##.nodes := Jstable.create ())
-          ~initial_custom:(fun _ _ -> object%js end)
+          ~initial_custom:(fun _ _ ->
+              let refs = R.Ref_table.create () in
+              R.Ref_table.define ~key:key_of_input refs ;
+              object%js
+                val refs = refs
+              end )
           ~initial_state:(fun _ _ ->
               object%js
                 val value = Js.string ""
@@ -35,8 +39,10 @@ let t =
           ~component_did_update:(fun this props _ ->
               let open Option in
               if props##.focused then
-                ignore (R.Ref_table.find ~key:key_of_input this##.nodes >|= fun e -> e##focus)
-              else ignore (R.Ref_table.find ~key:key_of_input this##.nodes >|= fun e -> e##blur) )
+                ignore (R.Ref_table.find ~key:key_of_input this##.custom##.refs >|= fun e -> e##focus)
+              else
+                ignore (R.Ref_table.find ~key:key_of_input this##.custom##.refs >|= fun e -> e##blur)
+            )
           (fun this ->
              let label =
                [%e
@@ -46,7 +52,7 @@ let t =
              let input =
                [%e
                  input ~key:"input" ~class_name:"sf-CommandSelector_Input"
-                   ~_ref:(fun e -> R.Ref_table.add this##.nodes ~key:key_of_input ~value:e)
+                   ~_ref:R.Ref_table.(use this##.custom##.refs ~key:key_of_input)
                    ~others:
                      (object%js
                        val type_ = Js.string "text"

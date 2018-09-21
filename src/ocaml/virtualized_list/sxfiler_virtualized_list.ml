@@ -3,8 +3,8 @@ module R = Jsoo_reactjs
 type 'a t =
   { all_items : 'a array
   ; visible_window : int * int
-  ; list_height : int option
-  ; item_height : int option }
+  ; list_height : float option
+  ; item_height : float option }
 
 let make ?item_height () =
   {all_items = [||]; visible_window = (0, 0); list_height = None; item_height}
@@ -14,10 +14,9 @@ let update_list_height h t = {t with list_height = Some h}
 let update_item_height h t = {t with item_height = Some h}
 
 let calc_viewable_item_count list_height item_height =
-  let option_to_int = function None -> 1 | Some v -> v in
-  let list_height = float_of_int @@ option_to_int list_height
-  and item_height = float_of_int @@ option_to_int item_height in
-  int_of_float @@ ceil @@ (list_height /. item_height)
+  match (list_height, item_height) with
+  | None, _ | _, None -> 0
+  | Some list_height, Some item_height -> int_of_float @@ floor @@ (list_height /. item_height)
 
 let calc_visible_window t visible_count cursor_position =
   let prev_start, prev_count = t.visible_window in

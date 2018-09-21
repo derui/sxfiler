@@ -3,8 +3,8 @@
 module R = Jsoo_reactjs
 
 type size =
-  { width : int
-  ; height : int }
+  { width : float
+  ; height : float }
 
 let shrink_key = "shrink"
 let expand_key = "expand"
@@ -57,7 +57,7 @@ let shrink_child_style =
   end
 
 (* the component to detect shrinking *)
-let shrink ~on_scroll ~nodes =
+let shrink ~on_scroll ~refs =
   let child =
     [%e
       div ~key:"shrinkChild"
@@ -72,15 +72,15 @@ let shrink ~on_scroll ~nodes =
         (object%js
           val style = style
         end)
-      ~_ref:(fun e -> R.Ref_table.add nodes ~key:shrink_key ~value:e)
+      ~_ref:(R.Ref_table.use refs ~key:shrink_key)
       [child]]
 
 (* the component to detect expanding *)
-let expand ~on_scroll ~nodes =
+let expand ~on_scroll ~refs =
   let child =
     [%e
       div ~key:"expandChild"
-        ~_ref:(fun e -> R.Ref_table.add nodes ~key:expand_child_key ~value:e)
+        ~_ref:(R.Ref_table.use refs ~key:expand_child_key)
         ~others:
           (object%js
             val style = expand_child_style
@@ -92,7 +92,7 @@ let expand ~on_scroll ~nodes =
         (object%js
           val style = style
         end)
-      ~_ref:(fun e -> R.Ref_table.add nodes ~key:expand_key ~value:e)
+      ~_ref:(R.Ref_table.use refs ~key:expand_key)
       [child]]
 
 (** The component to define sensor for parent resizing.
@@ -100,9 +100,9 @@ let expand ~on_scroll ~nodes =
 *)
 let t =
   let reset_sensor_elements this =
-    let shrink = R.Ref_table.find this##.nodes ~key:shrink_key
-    and expand = R.Ref_table.find this##.nodes ~key:expand_key
-    and expand_child = R.Ref_table.find this##.nodes ~key:expand_child_key in
+    let shrink = R.Ref_table.find this##.custom##.refs ~key:shrink_key
+    and expand = R.Ref_table.find this##.custom##.refs ~key:expand_key
+    and expand_child = R.Ref_table.find this##.custom##.refs ~key:expand_child_key in
     match (shrink, expand, expand_child) with
     | Some shrink, Some expand, Some expand_child ->
       shrink##.scrollLeft := 1000000 ;
@@ -127,12 +127,18 @@ let t =
       (R.component_spec
          ~initial_state:(fun _ _ -> object%js end)
          ~initial_custom:(fun this _ ->
+             let refs = R.Ref_table.create () in
+             R.Ref_table.define ~key:shrink_key refs ;
+             R.Ref_table.define ~key:expand_key refs ;
+             R.Ref_table.define ~key:expand_child_key refs ;
              object%js
+               val refs = refs
+
                val mutable dirty = Js.bool true
 
-               val mutable lastSize = {width = 0; height = 0}
+               val mutable lastSize = {width = 0.; height = 0.}
 
-               val mutable currentSize = {width = 0; height = 0}
+               val mutable currentSize = {width = 0.; height = 0.}
 
                val mutable onResized =
                  fun _ ->
@@ -159,7 +165,6 @@ let t =
 
                val mutable rafId = Js.Opt.empty
              end )
-         ~constructor:(fun this _ -> this##.nodes := Jstable.create ())
          ~component_did_mount:reset_sensor_elements
          (fun this ->
             let on_scroll = this##.custom##.onScroll in
@@ -169,4 +174,5 @@ let t =
                   (object%js
                     val style = style
                   end)
-                [expand ~on_scroll ~nodes:this##.nodes; shrink ~on_scroll ~nodes:this##.nodes]] ))
+                [ expand ~on_scroll ~refs:this##.custom##.refs
+                ; shrink ~on_scroll ~refs:this##.custom##.refs ]] ))
