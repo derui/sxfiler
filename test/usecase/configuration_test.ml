@@ -15,7 +15,7 @@ let dir_stat =
 let node_base ~id ?(full_path = Path.of_string "foo") ?(stat = stat_base) ?(link_path = None) () =
   D.Node.make ~id ~full_path ~stat ~link_path
 
-let get_tests =
+let test_set =
   [ Alcotest_lwt.test_case "return current configuration" `Quick (fun _ () ->
         let configuration = D.Configuration.default in
         let module CR = struct
@@ -30,10 +30,8 @@ let get_tests =
         let%lwt result = Usecase.execute () in
         Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
           "renew filer" (Ok !CR.data) result ;
-        Lwt.return_unit ) ]
-
-let store_tests =
-  [ Alcotest_lwt.test_case "return current configuration" `Quick (fun _ () ->
+        Lwt.return_unit )
+  ; Alcotest_lwt.test_case "return current configuration" `Quick (fun _ () ->
         let configuration = D.Configuration.default in
         let module CR = struct
           let data = ref None
@@ -48,5 +46,3 @@ let store_tests =
         Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
           "stored" (Ok !CR.data) (Ok (Some configuration)) ;
         Lwt.return_unit ) ]
-
-let () = Alcotest.run "Configuration usecases" [("Get", get_tests); ("Store", store_tests)]

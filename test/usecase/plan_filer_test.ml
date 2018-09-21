@@ -15,7 +15,7 @@ let dir_stat =
 let node_base ~id ?(full_path = Path.of_string "foo") ?(stat = stat_base) ?(link_path = None) () =
   D.Node.make ~id ~full_path ~stat ~link_path
 
-let plan_move_nodes_test =
+let test_set =
   [ Alcotest_lwt.test_case "issue error when workbench not found" `Quick (fun _ () ->
         let module WR = struct
           let resolve _ = Lwt.return_none
@@ -64,5 +64,3 @@ let plan_move_nodes_test =
           in
           Alcotest.(check (of_pp Fmt.nop)) "plan" expected plan ;
           Lwt.return_unit ) ]
-
-let () = Alcotest.run "Plan to move nodes" [("normal function", plan_move_nodes_test)]

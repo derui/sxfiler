@@ -15,7 +15,7 @@ let dir_stat =
 let node_base ~id ?(full_path = Path.of_string "foo") ?(stat = stat_base) ?(link_path = None) () =
   D.Node.make ~id ~full_path ~stat ~link_path
 
-let enter_directory_tests =
+let test_set =
   [ Alcotest_lwt.test_case "renewal filer with entered directory" `Quick (fun _ () ->
         let filer =
           D.Filer.make ~id:"foo"
@@ -94,5 +94,3 @@ let enter_directory_tests =
           (Error `Not_found_node)
           result ;
         Lwt.return_unit ) ]
-
-let () = Alcotest.run "Enter directory usecase" [("Enter directory", enter_directory_tests)]
