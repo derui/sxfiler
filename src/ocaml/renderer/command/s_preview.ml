@@ -24,7 +24,21 @@ module Reject = struct
                Ctx.(Context.execute this instance) ) }
 end
 
+module Approve = struct
+  let make () =
+    { Core.name = module_prefix ^ "approve"
+    ; executor =
+        Immediate
+          (fun _ state (module Ctx : C.Context.Instance) ->
+             let command = Fun.(S.App.State.command %> S.Command.Store.get) state in
+             if Option.is_some command.plan then
+               let instance = C.Usecase.make_instance (module U.Approve_current_plan) ~param:() in
+               Ctx.(Context.execute this instance)
+             else Lwt.return_unit ) }
+end
+
 let expose registry service =
   List.fold_right
     (fun command registry -> Core.Static_registry.register registry command)
-    [Reject.make service] registry
+    [Reject.make service; Approve.make ()]
+    registry
