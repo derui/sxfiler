@@ -22,7 +22,7 @@ depends: [
   "ppx_sexp_conv" { >= "v0.10.0"}
   "mocha_of_ocaml" {test}
   "jsoo_node"
-  "jsoo_reactjs"
+  "jsoo_reactjs" { >= "0.4.1"}
   "snap-shot-it_of_ocaml" {test}
   "lwt" {>= "3.0.0"}
   "lwt_ppx" {build}
