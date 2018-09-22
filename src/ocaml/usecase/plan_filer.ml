@@ -1,5 +1,6 @@
 (** This module provides use cases to make plan for filer  *)
 
+open Sxfiler_core
 module T = Sxfiler_domain
 
 (** Make plan to move nodes between filers. *)
@@ -27,16 +28,23 @@ module Move_nodes = struct
       | None -> Lwt.return_error `Not_found_wb
       | Some wb ->
         let source = wb.env.source and dest = wb.env.dest and nodes = wb.env.nodes in
+        let is_same_filer = Path.to_string source.location = Path.to_string dest.location in
         let source_nodes =
           List.map
             (fun node ->
                if List.exists (fun v -> T.Node.(v.id = node.id)) nodes then
-                 T.Plan.node_to_delete node
+                 if is_same_filer then T.Plan.node_to_conflict node
+                 else T.Plan.node_to_delete node
                else T.Plan.node_to_remain node )
             source.nodes
         and dest_nodes =
           List.concat
-            [List.map T.Plan.node_to_remain dest.nodes; List.map T.Plan.node_to_append nodes]
+            [ List.map T.Plan.node_to_remain dest.nodes
+            ; List.map
+                (fun node ->
+                   if is_same_filer then T.Plan.node_to_conflict node
+                   else T.Plan.node_to_append node )
+                nodes ]
         in
         T.Plan.make ~workbench_id:wb.id ~source:source_nodes ~dest:dest_nodes |> Lwt.return_ok
   end
