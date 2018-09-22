@@ -31,10 +31,13 @@ module Approve = struct
         Immediate
           (fun _ state (module Ctx : C.Context.Instance) ->
              let command = Fun.(S.App.State.command %> S.Command.Store.get) state in
-             if Option.is_some command.plan then
-               let instance = C.Usecase.make_instance (module U.Approve_current_plan) ~param:() in
-               Ctx.(Context.execute this instance)
-             else Lwt.return_unit ) }
+             match command.plan with
+             | None -> Lwt.return_unit
+             | Some plan ->
+               let instance =
+                 C.Usecase.make_instance (module U.Approve_current_plan) ~param:plan
+               in
+               Ctx.(Context.execute this instance) ) }
 end
 
 let expose registry service =

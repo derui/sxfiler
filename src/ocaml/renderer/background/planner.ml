@@ -18,8 +18,7 @@ type operation =
   | Conflict of T.Node.t list
 
 type t =
-  { mutable current_corrections : T.Node.t list
-  ; executor_signal : executor Lwt_condition.t
+  { executor_signal : executor Lwt_condition.t
   ; executor_mutex : Lwt_mutex.t
   ; action : (module Types.Action) }
 
@@ -29,8 +28,7 @@ let instance = ref None
 let initialize store =
   instance :=
     Some
-      { current_corrections = []
-      ; executor_signal = Lwt_condition.create ()
+      { executor_signal = Lwt_condition.create ()
       ; executor_mutex = Lwt_mutex.create ()
       ; action =
           ( module struct
@@ -49,13 +47,12 @@ let start () =
     let%lwt executor = Lwt_condition.wait t.executor_signal in
     let%lwt () =
       Lwt_mutex.with_lock t.executor_mutex (fun () ->
-          let%lwt () = executor.plan t.current_corrections ~action:t.action in
+          let%lwt () = executor.plan [] ~action:t.action in
           let rec loop () =
             match%lwt Lwt_mvar.take accepter with
             | C.Message.(Command Command.Approve) -> executor.execute ~action:t.action
             | C.Message.(Command Command.Reject) -> Lwt.return_unit
             | C.Message.(Command (Command.Conflict corrections)) ->
-              t.current_corrections <- corrections ;
               let%lwt () = executor.plan corrections ~action:t.action in
               loop ()
             | _ -> loop ()

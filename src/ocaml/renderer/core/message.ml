@@ -15,6 +15,7 @@ module Command = struct
     | Select of string
     | Planning
     | Plan of T.Plan.t
+    | Remains_conflict
     | Approve
     | Reject
     | Conflict of Types.corrections
