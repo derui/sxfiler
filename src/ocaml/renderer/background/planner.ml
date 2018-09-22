@@ -55,7 +55,6 @@ let start () =
             | C.Message.(Command Command.Approve) -> executor.execute ~action:t.action
             | C.Message.(Command Command.Reject) -> Lwt.return_unit
             | C.Message.(Command (Command.Conflict corrections)) ->
-              let corrections = List.flatten [t.current_corrections; corrections] in
               t.current_corrections <- corrections ;
               let%lwt () = executor.plan corrections ~action:t.action in
               loop ()
