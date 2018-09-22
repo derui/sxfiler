@@ -4,11 +4,8 @@ module Tr = Sxfiler_server_translator
 module T = Sxfiler_rpc.Types
 
 let data =
-  { D.Filer.id = "id"
-  ; location = Path.of_string "/bar"
-  ; nodes = []
-  ; sort_order = D.Types.Sort_type.Date
-  ; history = D.Location_history.make () }
+  D.Filer.make ~id:"id" ~location:(Path.of_string "/bar") ~nodes:[]
+    ~sort_order:D.Types.Sort_type.Date ~history:(D.Location_history.make ())
 
 let test_set =
   [ ( "can translate to/from domain"
