@@ -31,7 +31,7 @@ end
 let expose server =
   let module S = Jsonrpc_ocaml_yojson.Server in
   let module Repo = I.Key_map_repo.Make (Global.Keymap) in
-  let module Usecase = U.Keymap.Get (I.Condition_repo.Make (Global.Condition)) (Repo) in
+  let module Usecase = U.Keymap.Get.Make (I.Condition_repo.Make (Global.Condition)) (Repo) in
   let module Gateway = G.Keymap.Get (Usecase) in
   let module Get = Procedure_intf.Make (Get (Gateway)) in
   let module Cond_repo = I.Condition_repo.Make (Global.Condition) in

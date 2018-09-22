@@ -1,52 +1,56 @@
 open Sxfiler_domain
 
-(** Module to share interface and structure. *)
-module Get_type = struct
-  type input = unit
-  type output = string Key_map.t
-  type error = unit
+module Get = struct
+  (** Module to share interface and structure. *)
+  module Type = struct
+    type input = unit
+    type output = string Key_map.t
+    type error = unit
+  end
+
+  module type S =
+    Common.Usecase
+    with type input = Type.input
+     and type output = Type.output
+     and type error = Type.error
+
+  (** This module defines usecase interface to get current key bindings.
+      Replace [json] on implementation to match rpc.
+  *)
+  module Make (C : Condition.Repository) (R : Key_map_repository.S with type value = string) : S =
+  struct
+    include Type
+
+    let execute () =
+      let%lwt condition = C.resolve () in
+      let%lwt keymap = R.resolve () in
+      let keymap = Key_map.subset keymap ~condition in
+      Lwt.return_ok keymap
+  end
 end
 
-module type Get =
-  Common.Usecase
-  with type input = Get_type.input
-   and type output = Get_type.output
-   and type error = Get_type.error
+module Store = struct
+  (** Module to share interface and structure. *)
+  module Type = struct
+    type input = string Key_map.t
+    type output = unit
+    type error = unit
+  end
 
-(** This module defines usecase interface to get current key bindings.
-    Replace [json] on implementation to match rpc.
-*)
-module Get (C : Condition.Repository) (R : Key_map_repository.S with type value = string) : Get =
-struct
-  include Get_type
+  module type S =
+    Common.Usecase
+    with type input = Type.input
+     and type output = Type.output
+     and type error = Type.error
 
-  let execute () =
-    let%lwt condition = C.resolve () in
-    let%lwt keymap = R.resolve () in
-    let keymap = Key_map.subset keymap ~condition in
-    Lwt.return_ok keymap
-end
+  (** This module defines usecase interface to store key map with repository *)
+  module Make (R : Key_map_repository.S with type value = string) : S = struct
+    include Type
 
-(** Module to share interface and structure. *)
-module Store_type = struct
-  type input = string Key_map.t
-  type output = unit
-  type error = unit
-end
-
-module type Store =
-  Common.Usecase
-  with type input = Store_type.input
-   and type output = Store_type.output
-   and type error = Store_type.error
-
-(** This module defines usecase interface to store key map with repository *)
-module Store (R : Key_map_repository.S with type value = string) : Store = struct
-  include Store_type
-
-  let execute input =
-    let open Lwt in
-    R.store input >>= return_ok
+    let execute input =
+      let open Lwt in
+      R.store input >>= return_ok
+  end
 end
 
 (** Module to share interface and structure. *)

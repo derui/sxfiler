@@ -12,7 +12,7 @@ end
 (** This module defines rpc interface to get current key bindings.
     Replace [json] on implementation to match rpc.
 *)
-module Get (Usecase : Usecase.Keymap.Get) = struct
+module Get (Usecase : Usecase.Keymap.Get.S) = struct
   type params = unit
   type result = T.Key_map.t
 
@@ -32,7 +32,7 @@ end
 (** This module defines rpc interface to get current key bindings.
     Replace [json] on implementation to match rpc.
 *)
-module Store (Usecase : Usecase.Keymap.Store) = struct
+module Store (Usecase : Usecase.Keymap.Store.S) = struct
   type params = T.Key_map.t
   type result = unit
 

@@ -46,7 +46,7 @@ let initialize_modules ~migemo ~keymap ~config =
       Lwt.return_unit
     | Some keymap ->
       let module R = I.Key_map_repo.Make (Global.Keymap) in
-      let module Usecase = U.Keymap.Store (R) in
+      let module Usecase = U.Keymap.Store.Make (R) in
       let module Gateway = G.Keymap.Store (Usecase) in
       Gateway.handle keymap
   in
