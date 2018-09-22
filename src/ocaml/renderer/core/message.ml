@@ -18,7 +18,7 @@ module Command = struct
     | Remains_conflict
     | Approve
     | Reject
-    | Conflict of Types.corrections
+    | Edit of T.Node.t
 end
 
 type t =

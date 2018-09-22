@@ -73,8 +73,8 @@ let () =
              P.reserve_executor executor |> ignore ;
              Lwt.async (fun () ->
                  let%lwt () = Lwt_js.yield () in
-                 accepter C.Message.(Command Command.(Conflict [])) ;
-                 accepter C.Message.(Command Command.(Conflict [])) ;
+                 accepter C.Message.(Command Command.(Remains_conflict)) ;
+                 accepter C.Message.(Command Command.(Remains_conflict)) ;
                  accepter C.Message.(Command Command.Approve) |> Lwt.return ) ;
              let%lwt () = Lwt.join [plan_waiter; execute_waiter] in
              stopper () ;

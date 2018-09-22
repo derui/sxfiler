@@ -1,3 +1,4 @@
+open Sxfiler_core
 module C = Sxfiler_renderer_core
 module T = Sxfiler_rpc.Types
 module S = Sxfiler_renderer_store
@@ -38,7 +39,7 @@ let initialize store =
 (* [start ()] runs planner main loop asynchronous. This function returns tuple [(sender, stopper)].
    User can send message via [sender] and stop loop via [stopper]. *)
 let start () =
-  let open Sxfiler_core.Option in
+  let open Option in
   !instance
   >|= fun instance ->
   let accepter : C.Message.t Lwt_mvar.t = Lwt_mvar.create_empty () in
@@ -47,13 +48,15 @@ let start () =
     let%lwt executor = Lwt_condition.wait t.executor_signal in
     let%lwt () =
       Lwt_mutex.with_lock t.executor_mutex (fun () ->
+          let module A = (val t.action) in
           let%lwt () = executor.plan [] ~action:t.action in
           let rec loop () =
             match%lwt Lwt_mvar.take accepter with
             | C.Message.(Command Command.Approve) -> executor.execute ~action:t.action
             | C.Message.(Command Command.Reject) -> Lwt.return_unit
-            | C.Message.(Command (Command.Conflict corrections)) ->
-              let%lwt () = executor.plan corrections ~action:t.action in
+            | C.Message.(Command Command.Remains_conflict) ->
+              let state = Fun.(A.state %> S.App.State.command %> S.Command.Store.get) () in
+              let%lwt () = executor.plan state.corrections ~action:t.action in
               loop ()
             | _ -> loop ()
           in
@@ -67,7 +70,6 @@ let start () =
 
 (* [reserve_executor executor] reserves executor to next planning *)
 let reserve_executor executor =
-  let open Sxfiler_core in
   let open Option in
   let open Fun in
   !instance

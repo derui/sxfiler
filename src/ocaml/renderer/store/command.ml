@@ -9,14 +9,17 @@ module State = struct
   type t =
     { current_command : string option
     ; plan : T.Plan.t option
-    ; planning : bool
-    ; preparing : bool }
+    ; corrections : C.Types.corrections
+    ; planning : bool }
 
-  let make () = {current_command = None; plan = None; planning = false; preparing = false}
+  let make () = {current_command = None; plan = None; planning = false; corrections = []}
 
   let reduce t = function
     | C.Message.Command Planning -> {t with planning = true}
     | C.Message.Command (Plan plan) -> {t with planning = false; plan = Some plan}
+    | C.Message.Command (Edit correction) -> {t with corrections = correction :: t.corrections}
+    | C.Message.Command Approve | C.Message.Command Reject ->
+      {t with corrections = []; plan = None; current_command = None}
     | _ -> t
 
   let equal = ( = )
