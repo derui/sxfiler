@@ -163,3 +163,28 @@ module Plan_move_nodes = struct
       | Error `Not_found_filer -> Lwt.return {empty with not_found_filer = true}
   end
 end
+
+module Move_nodes = struct
+  (* gateway for Plan_move_nodes use case. *)
+  module Types = struct
+    type params = {workbench_id : string [@key "workbenchId"]} [@@deriving yojson]
+    type result = {not_found_workbench : bool}
+  end
+
+  module type S = sig
+    include module type of Types
+
+    val handle : params -> result Lwt.t
+  end
+
+  module Make (U : Usecase.Filer.Move_nodes.S) : S = struct
+    include Types
+
+    let handle param =
+      let params = {U.workbench_id = param.workbench_id} in
+      let empty = {not_found_workbench = false} in
+      match%lwt U.execute params with
+      | Ok () -> Lwt.return empty
+      | Error `Not_found_workbench -> Lwt.return {not_found_workbench = true}
+  end
+end

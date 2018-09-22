@@ -135,43 +135,45 @@ module Enter_directory
         Lwt.return_ok filer'
 end
 
-(* move nodes in filer to the location of another filer *)
-module Move_nodes_type = struct
-  type input =
-    { from : string
-    ; node_ids : string list
-    ; _to : string }
+module Move_nodes = struct
+  (* move nodes in filer to the location of another filer *)
+  module Type = struct
+    type input = {workbench_id : string}
+    type output = unit
+    type error = [`Not_found_workbench]
+  end
 
-  type output = unit
-  type error = [`Not_found_filer]
-end
+  module type S = sig
+    include module type of Type
 
-module type Move_nodes = sig
-  include module type of Move_nodes_type
-  include Common.Usecase with type input := input and type output := output and type error := error
-end
+    include
+      Common.Usecase with type input := input and type output := output and type error := error
+  end
 
-module Move_nodes
-    (SR : T.Filer.Repository)
-    (Scan : T.Location_scanner_service.S)
-    (Transport : T.Node_transporter_service.S) : Move_nodes = struct
-  include Move_nodes_type
+  module Make
+      (FR : T.Filer.Repository)
+      (WR : T.Workbench.Repository)
+      (Scan : T.Location_scanner_service.S)
+      (Transport : T.Node_transporter_service.S) : S = struct
+    include Type
 
-  let execute (params : input) =
-    let%lwt from_filer = SR.resolve params.from in
-    let%lwt to_filer = SR.resolve params._to in
-    match (from_filer, to_filer) with
-    | None, _ | _, None -> Lwt.return_error `Not_found_filer
-    | Some from_filer, Some to_filer ->
-      let nodes =
-        List.map (fun id -> T.Filer.find_node ~id from_filer) params.node_ids
-        |> List.filter Option.is_some |> List.map Option.get_exn
-      in
-      let%lwt () = Transport.transport ~nodes ~_to:to_filer.T.Filer.location in
-      let%lwt from_nodes = Scan.scan from_filer.location
-      and to_nodes = Scan.scan to_filer.location in
-      let from_filer = T.Filer.update_nodes from_filer ~nodes:from_nodes
-      and to_filer = T.Filer.update_nodes to_filer ~nodes:to_nodes in
-      let%lwt () = Lwt.join [SR.store from_filer; SR.store to_filer] in
-      Lwt.return_ok ()
+    let execute (params : input) =
+      let id = Uuidm.of_string params.workbench_id in
+      match id with
+      | None -> Lwt.return_error `Not_found_workbench
+      | Some id -> (
+          match%lwt WR.resolve id with
+          | None -> Lwt.return_error `Not_found_workbench
+          | Some wb ->
+            let%lwt () =
+              Transport.transport ~nodes:wb.env.nodes ~corrections:wb.corrections
+                ~_to:wb.env.dest.location
+            in
+            let%lwt from_nodes = Scan.scan wb.env.source.location
+            and to_nodes = Scan.scan wb.env.dest.location in
+            let from_filer = T.Filer.update_nodes wb.env.source ~nodes:from_nodes
+            and to_filer = T.Filer.update_nodes wb.env.dest ~nodes:to_nodes in
+            let%lwt () = Lwt.join [FR.store from_filer; FR.store to_filer] in
+            Lwt.return_ok () )
+  end
 end

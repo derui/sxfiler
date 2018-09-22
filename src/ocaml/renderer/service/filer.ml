@@ -23,4 +23,10 @@ module type S = sig
 
       @raise Sxfiler_core.Error.t if service failed with some of errors.
   *)
+
+  val move_nodes : E.Filer.Move_nodes.params -> E.Filer.Move_nodes.result Lwt.t
+  (** [move_nodes param] calls the service to move nodes with params.
+
+      @raise Sxfiler_core.Error.t if service failed with some of errors
+  *)
 end

@@ -7,14 +7,11 @@ type env =
   ; dest : Filer.t
   ; nodes : Node.t list }
 
-(** [corrections] contains corrected node in workbench. *)
-type corrections = Node.t list
-
 (** type of plan *)
 type t =
   { id : id
   ; env : env
-  ; corrections : corrections }
+  ; corrections : Types.corrections }
 
 (** [make ~id ~env] makes instance of plan *)
 let make ~id ~env ~corrections = {id; env; corrections}

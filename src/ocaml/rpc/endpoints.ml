@@ -54,7 +54,7 @@ module Filer = struct
   end
 
   module Move_nodes = struct
-    type params = {planner_id : string}
+    type params = {workbench_id : string}
     type result = unit
 
     let endpoint = "filer/moveNodes"

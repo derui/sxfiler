@@ -94,6 +94,28 @@ module Enter_directory_api :
   let result_of_json v = T.Filer.of_js @@ Js.Unsafe.coerce v
 end
 
+module Move_nodes_api :
+  J.Api_def
+  with type params = E.Filer.Move_nodes.params
+   and type result = E.Filer.Move_nodes.result = struct
+  include E.Filer.Move_nodes
+
+  type json = < > Js.t
+
+  let name = endpoint
+
+  let params_to_json params =
+    let open Option in
+    params
+    >|= fun v ->
+    Js.Unsafe.coerce
+      (object%js
+        val workbenchId = Js.string v.workbench_id
+      end)
+
+  let result_of_json _ = ()
+end
+
 module Make (Client : C.Rpc.Client) : S = struct
   let make params =
     let waiter, wakener = Lwt.wait () in
@@ -153,4 +175,5 @@ module Make (Client : C.Rpc.Client) : S = struct
 
   let move_parent params = call_api_only params (module Move_parent_api)
   let enter_directory params = call_api_only params (module Enter_directory_api)
+  let move_nodes params = call_api_only params (module Move_nodes_api)
 end
