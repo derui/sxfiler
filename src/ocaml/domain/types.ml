@@ -23,7 +23,13 @@ module type Thread = Sxfiler_core.Monad.S
 
 (** {type!correction} takes method to avoid error in transportation *)
 module Correction = struct
-  type t = Name of (string * string)
+  type method_ = Name of string
+
+  type t =
+    { node_id : string
+    ; method_ : method_ }
+
+  let name id name = {node_id = id; method_ = Name name}
 end
 
 type corrections = Correction.t list
