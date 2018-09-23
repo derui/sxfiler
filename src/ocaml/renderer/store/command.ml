@@ -18,7 +18,7 @@ module State = struct
     | C.Message.Command Planning -> {t with planning = true}
     | C.Message.Command (Plan plan) -> {t with planning = false; plan = Some plan}
     | C.Message.Command (Edit correction) -> {t with corrections = correction :: t.corrections}
-    | C.Message.Command Approve | C.Message.Command Reject ->
+    | C.Message.Command Finished | C.Message.Command Reject ->
       {t with corrections = []; plan = None; current_command = None}
     | _ -> t
 

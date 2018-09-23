@@ -18,6 +18,7 @@ module Command = struct
     | Remains_conflict
     | Approve
     | Reject
+    | Finished
     | Edit of T.Node.t
 end
 
