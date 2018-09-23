@@ -36,6 +36,7 @@ let start (module D : C.Dispatcher.Instance) (module Svc : Svc.Service_registry.
     | C.Message.Finish_bootstrap
     |Command Planning
     |Command Approve
+    |Command Finished
     |Command Reject
     |Initialize_omnibar | Finalize_omnibar ->
       let open Sxfiler_core.Fun in
