@@ -116,7 +116,18 @@ module Move = struct
                  in
                  Ctx.(Context.execute this instance)
              in
-             let execute ~action:_ = Lwt.return_unit in
+             let execute ~action:(module A : B.Types.Action) =
+               let command = S.(A.state () |> App.State.command |> Command.Store.get) in
+               match command.plan with
+               | None -> Lwt.return_unit
+               | Some plan ->
+                 let instance =
+                   C.Usecase.make_instance
+                     (module U.Filer_move_nodes.Make ((val Reg.filer ())))
+                     ~param:plan
+                 in
+                 Ctx.(Context.execute this instance)
+             in
              {P.plan; execute} ) }
 end
 
