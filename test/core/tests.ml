@@ -217,7 +217,18 @@ let fun_tests =
     , `Quick
     , fun () ->
       Alcotest.(check int) "compose same type" 3 Fun.((succ %> succ) 1) ;
-      Alcotest.(check @@ float 0.0) "compose diff type" 2.0 Fun.((succ %> float_of_int) 1) ) ]
+      Alcotest.(check @@ float 0.0) "compose diff type" 2.0 Fun.((succ %> float_of_int) 1) )
+  ; ( "reverse compose functions"
+    , `Quick
+    , fun () ->
+      let sub a b = a - b in
+      Alcotest.(check int) "compose same type" 0 Fun.((succ %< flip sub 2) 1) ;
+      Alcotest.(check @@ float 0.0) "compose diff type" 2.0 Fun.((float_of_int %< succ) 1) )
+  ; ( "shortcut apply"
+    , `Quick
+    , fun () ->
+      Alcotest.(check int) "same type" 3 Fun.(succ & succ 1) ;
+      Alcotest.(check @@ float 0.0) "diff type" 2.0 Fun.(float_of_int & succ 1) ) ]
 
 let error_tests =
   [ ( "make simple error"

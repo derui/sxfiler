@@ -17,3 +17,9 @@ val const : 'a -> 'b -> 'a
 
 val ( %> ) : ('a -> 'b) -> ('b -> 'c) -> 'a -> 'c
 (** [f %> g] compose [f] and [g] to call as pipeline flow these. *)
+
+val ( %< ) : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b
+(** [f %< g] compose [f] and [g] as [f (g v)] *)
+
+val ( & ) : ('a -> 'b) -> 'a -> 'b
+(** [f & v] shortcut as {!@@} *)

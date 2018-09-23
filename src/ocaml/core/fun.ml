@@ -11,3 +11,5 @@ let bracket ~setup ~teardown f =
 let flip f x y = f y x
 let const x _ = x
 let ( %> ) f g x = g (f x)
+let ( %< ) f g x = f (g x)
+let ( & ) f v = f v
