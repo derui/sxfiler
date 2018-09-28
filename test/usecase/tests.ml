@@ -3,4 +3,5 @@ let () =
     [ ("use case for planning of filer", Plan_filer_test.test_set)
     ; ("use cases for filer", Filer_test.test_set)
     ; ("use cases for configuration", Configuration_test.test_set)
-    ; ("use cases for key map", Keymap_test.test_set) ]
+    ; ("use cases for key map", Keymap_test.test_set)
+    ; ("use cases for notification", Notification_test.test_set) ]
