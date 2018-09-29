@@ -123,3 +123,13 @@ module Plan = struct
 
   let empty = {workbench_id = ""; source = []; dest = []}
 end
+
+module Notification = struct
+  type level = Sxfiler_domain.Notification.Level.t
+  type body = Sxfiler_domain.Notification.body
+
+  type t =
+    { id : string
+    ; level : level
+    ; body : body }
+end

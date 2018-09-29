@@ -117,3 +117,26 @@ module Plan = struct
     end
   end
 end
+
+module Notification = struct
+  module Notify = struct
+    type params =
+      { message : string
+      ; level : Types.Notification.level }
+
+    type result = unit
+
+    let endpoint = "notification/notify"
+  end
+
+  module Progress = struct
+    type params =
+      { process : string
+      ; current : float
+      ; targeted : float }
+
+    type result = unit
+
+    let endpoint = "notification/progress"
+  end
+end
