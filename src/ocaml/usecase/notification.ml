@@ -5,7 +5,10 @@ module T = Sxfiler_domain
 (** Notify a object. *)
 module Notify = struct
   module Type = struct
-    type input = {notification : T.Notification.body}
+    type input =
+      { notification : T.Notification.body
+      ; level : T.Notification.Level.t }
+
     type output = unit
     type error = unit
   end
@@ -21,7 +24,7 @@ module Notify = struct
     include Type
 
     let execute (params : input) =
-      let notification = NF.create params.notification in
+      let notification = NF.create ~level:params.level ~body:params.notification in
       let open Lwt in
       NS.send notification >>= return_ok
   end
