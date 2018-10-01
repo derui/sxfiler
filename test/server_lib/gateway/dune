@@ -1,6 +1,7 @@
 (test
  (name tests)
  (libraries alcotest alcotest-lwt
+            spy
             lwt
             sxfiler.server.gateway
             sxfiler.server.core
