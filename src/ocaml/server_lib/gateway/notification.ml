@@ -6,9 +6,10 @@ module Notify_message = struct
   module type S = sig
     type params =
       { message : string
-      ; level : T.Notification.level }
+      ; level : int }
+    [@@deriving yojson]
 
-    type result = unit
+    type result = {invalid_level : bool}
 
     val handle : params -> result Lwt.t
   end
@@ -16,14 +17,19 @@ module Notify_message = struct
   module Make (Usecase : Usecase.Notification.Notify.S) : S = struct
     type params =
       { message : string
-      ; level : T.Notification.level }
+      ; level : int }
+    [@@deriving yojson]
 
-    type result = unit
+    type result = {invalid_level : bool}
 
     let handle param =
       let notification = D.Notification.OneShot {message = param.message} in
-      match%lwt Usecase.execute {notification; level = param.level} with
-      | Ok () -> Lwt.return_unit
-      | Error _ -> assert false
+      let level = D.Notification.Level.of_int param.level in
+      match level with
+      | None -> Lwt.return {invalid_level = true}
+      | Some level -> (
+          match%lwt Usecase.execute {notification; level} with
+          | Ok () -> Lwt.return {invalid_level = false}
+          | Error _ -> assert false )
   end
 end

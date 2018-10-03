@@ -14,7 +14,9 @@ let test_set =
           let execute = f
         end in
         let module Gateway = G.Notification.Notify_message.Make (Usecase) in
-        let%lwt _ = Gateway.handle {message = "message"; level = Info} in
+        let%lwt _ =
+          Gateway.handle {message = "message"; level = D.Notification.Level.to_int Info}
+        in
         Alcotest.(check @@ list @@ of_pp Fmt.nop)
           "message"
           [ { U.Notification.Notify.Type.notification = D.Notification.OneShot {message = "message"}
