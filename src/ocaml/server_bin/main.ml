@@ -1,5 +1,6 @@
 open Lwt
 open Sxfiler_server
+open Sxfiler_server_core
 module T = Sxfiler_server_task
 module I = Sxfiler_server_infra
 module U = Sxfiler_usecase
@@ -7,8 +8,21 @@ module G = Sxfiler_server_gateway
 
 exception Fail_load_migemo
 
-let handler (rpc_server : Jsonrpc_server.t) (conn : Conduit_lwt_unix.flow * Cohttp.Connection.t)
-    (req : Cohttp_lwt_unix.Request.t) (body : Cohttp_lwt.Body.t) =
+let create_server (module C : Rpc_connection.Instance) =
+  let rpc_server = Jsonrpc_server.make () in
+  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_completion) in
+  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_filer) in
+  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_configuration) in
+  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_keymap) in
+  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_plan) in
+  let rpc_server =
+    let module NS = (val Sxfiler_server_infra.Notification_service.make (module C)) in
+    Jsonrpc_server.expose rpc_server ~operation:(module Proc_notification.Make (NS))
+  in
+  rpc_server
+
+let handler (conn : Conduit_lwt_unix.flow * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
+    (body : Cohttp_lwt.Body.t) =
   let conn_name = Cohttp.Connection.to_string @@ snd conn in
   let%lwt () =
     Logs_lwt.info
@@ -28,6 +42,7 @@ let handler (rpc_server : Jsonrpc_server.t) (conn : Conduit_lwt_unix.flow * Coht
     let%lwt () = C.Connection.connect C.instance frames_out_fn in
     Lwt.ignore_result
       ((* Disable current task when thread is terminated. *)
+        let rpc_server = create_server (module C) in
         let thread = Jsonrpc_server.serve_forever rpc_server (module C) in
         Lwt.on_termination thread (fun () -> Logs.info (fun m -> m "Terminate thread")) ;
         Lwt.join [thread]) ;
@@ -71,17 +86,9 @@ let start_server _ port =
     Logs_lwt.info
     @@ fun m -> m ~tags:(Logger.Tags.module_main ()) "Listening for HTTP on port %d" port
   in
-  let module I = (val Global.Task_runner.get () : T.Runner.Instance) in
-  let rpc_server = Jsonrpc_server.make () in
-  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_completion) in
-  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_filer) in
-  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_configuration) in
-  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_keymap) in
-  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_plan) in
-  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_notification) in
   Cohttp_lwt_unix.Server.create
     ~mode:(`TCP (`Port port))
-    (Cohttp_lwt_unix.Server.make ~callback:(handler rpc_server) ~conn_closed ())
+    (Cohttp_lwt_unix.Server.make ~callback:handler ~conn_closed ())
 
 (* Load migemo from specified directory that contains dictionary and conversions.  *)
 let load_migemo dict_dir =

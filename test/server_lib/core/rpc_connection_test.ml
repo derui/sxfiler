@@ -1,4 +1,4 @@
-module R = Sxfiler_server.Rpc_connection
+module R = Sxfiler_server_core.Rpc_connection
 
 let test_set =
   [ Alcotest_lwt.test_case "can connect and disconnect" `Quick (fun _ () ->

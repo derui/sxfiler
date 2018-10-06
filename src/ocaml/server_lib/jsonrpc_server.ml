@@ -1,3 +1,4 @@
+open Sxfiler_server_core
 module W = Websocket_cohttp_lwt
 module J = Jsonrpc_ocaml_yojson
 

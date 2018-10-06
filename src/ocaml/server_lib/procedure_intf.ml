@@ -33,7 +33,7 @@ module Make (R : Rpc_type) : S with type params := R.params and type result := R
     let module Req = Rpc.Request in
     let module Res = Rpc.Response in
     let open Sxfiler_core in
-    let tags = Logger.Tags.module_lib ["rpc"] in
+    let tags = Sxfiler_server_core.Logger.Tags.module_lib ["rpc"] in
     try%lwt
       Logs_lwt.debug (fun m ->
           m ~tags "Start procedure: {%s}, id: {%Ld}" req.Req._method

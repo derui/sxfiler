@@ -4,5 +4,7 @@
  (libraries lwt
             sxfiler.core
             sxfiler.server.core
+            sxfiler.server.translator
+            jsonrpc-ocaml.yojson
             unix)
  (preprocess (pps lwt_ppx)))
