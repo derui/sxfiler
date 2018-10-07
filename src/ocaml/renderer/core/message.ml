@@ -38,5 +38,7 @@ type t =
   (* Bootstrap finished. *)
   | Finish_bootstrap
   | Raise_error of Sxfiler_core.Error.t
+  | Notify of T.Notification.t
+  | Timeout_notification of string
 
 type default = Quit

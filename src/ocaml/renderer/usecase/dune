@@ -4,6 +4,7 @@
  (modes byte)
  (libraries js_of_ocaml
             js_of_ocaml.weak
+            js_of_ocaml-lwt
             jsoo_reactjs
             jsonrpc-ocaml.jsoo
             lwt

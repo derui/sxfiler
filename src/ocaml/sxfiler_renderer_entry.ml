@@ -46,7 +46,6 @@ let setup_keymap_refresher (module Locator : Locator.S) =
 let () =
   Logs.set_reporter @@ Logs_browser.console_reporter () ;
   Logs.set_level (Some Logs.App) ;
-  let container = Dom_html.getElementById container_id in
   let websocket = connect_ws (Printf.sprintf "ws://localhost:%d" target_port) in
   let websocket_handler = Websocket_handler.make websocket in
   Websocket_handler.init websocket_handler ;
@@ -63,9 +62,7 @@ let () =
   let module D = (val Ctx.(Context.dispatcher this)) in
   let rpc_notification_server = C.Rpc.Server.make () in
   let rpc_notification_server =
-    Notification_reducer.expose
-      ~dispatcher:(module D : C.Dispatcher.Instance)
-      rpc_notification_server
+    Notification_reducer.expose ~context:(module Ctx) rpc_notification_server
   in
   Websocket_handler.add websocket_handler ~handler:(notification_handler rpc_notification_server) ;
   expose_commands (module L) ;
@@ -107,4 +104,5 @@ let () =
         end)
       C_main.t
   in
+  let container = Dom_html.getElementById container_id in
   R.dom##render element container
