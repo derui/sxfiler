@@ -9,13 +9,16 @@ end
 
 let make_store () =
   let module C = Sxfiler_renderer_core in
-  let config = S.Config.(Store.make @@ State.make ())
-  and file_list = S.File_list.(Store.make @@ State.make ())
-  and keymap = S.Keymap.(Store.make @@ State.make ())
-  and completion = S.Completion.(Store.make @@ State.make ())
-  and command = S.Command.(Store.make @@ State.make ())
-  and workspace = S.Workspace.(Store.make @@ State.make ()) in
-  let state = S.App.State.make ~config ~file_list ~keymap ~completion ~command ~workspace in
+  let config = S.Config.(State.make () |> Store.make)
+  and file_list = S.File_list.(State.make () |> Store.make)
+  and keymap = S.Keymap.(State.make () |> Store.make)
+  and completion = S.Completion.(State.make () |> Store.make)
+  and command = S.Command.(State.make () |> Store.make)
+  and workspace = S.Workspace.(State.make () |> Store.make)
+  and notification = S.Notification.(State.make () |> Store.make) in
+  let state =
+    S.App.State.make ~config ~file_list ~keymap ~completion ~command ~workspace ~notification
+  in
   S.App.Store.make state
 
 module Make (Client : C.Rpc.Client) (Ctx : C.Context.Instance) (Store : Store_instance) : S =
