@@ -126,7 +126,7 @@ module Notification = struct
 
     type result = unit
 
-    let endpoint = "notification/notify"
+    let endpoint = "notification/message"
   end
 
   module Progress = struct
