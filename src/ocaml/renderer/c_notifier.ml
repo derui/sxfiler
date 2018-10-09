@@ -5,7 +5,7 @@ module S = Sxfiler_renderer_store
 
 let to_message notification =
   [%c
-    P_notifier_item.t
+    P_notifier_item.t ~key:notification.T.Notification.id
       ~props:
         (object%js
           val item = notification
