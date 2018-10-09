@@ -5,7 +5,9 @@ module type State = sig
 end
 
 module Make (State : State) : D.Workbench.Factory = struct
+  let id_gen = Uuidm.v4_gen (State.get ())
+
   let make env =
-    let id = Uuidm.v4_gen (State.get ()) () in
+    let id = id_gen () in
     D.Workbench.make ~id ~env ~corrections:[]
 end

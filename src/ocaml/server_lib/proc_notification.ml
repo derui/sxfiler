@@ -24,8 +24,10 @@ module Make (NS : T.Notification_service.S) = struct
   let expose server =
     let module S = Jsonrpc_ocaml_yojson.Server in
     let module Factory = struct
+      let id_gen = Uuidm.v4_gen (Random.get_state ())
+
       let create ~level ~body =
-        let id = Uuidm.v4_gen (Random.get_state ()) () in
+        let id = id_gen () in
         T.Notification.make ~id ~level ~body
     end in
     let module Notify_message_gateway =

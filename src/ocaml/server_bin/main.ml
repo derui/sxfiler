@@ -142,6 +142,7 @@ let get_config f config () = if Sys.file_exists config then f config else None
 let () =
   Logs.set_level (Some Logs.Info) ;
   Logs.set_reporter @@ Logger.lwt_reporter Format.std_formatter ;
+  Random.init Unix.(gettimeofday () |> int_of_float) ;
   let dict_dir = ref "" in
   let config = ref "config.json" and key_maps = ref "keymap.json" in
   let arg_specs =
