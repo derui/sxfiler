@@ -1,0 +1,40 @@
+@import "base/*";
+@import "./_variable";
+
+.fp-NotificationContainer {
+  position: relative;
+
+  width: 100%;
+  max-width: 100%;
+}
+
+.fp-NotificationList {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  padding:0;
+  list-style: none;
+  right:0;
+  bottom: 0;
+  width: $fp-NotificationMessageWidth;
+}
+
+.fp-NotificationList_Item {
+  width: 100%;
+
+  padding:  $baseSpace ($baseSpace * 2);
+  margin:0;
+  margin-right:$smallSpace;
+  margin-bottom:$smallSpace;
+
+  box-shadow: 4px 4px 7px rgba(black, 0.4), -4px 0px 7px rgba(black, 0.4);
+}
+
+.fp-NotificationList_Item.fp-NotificationList_Item-info {
+  border: 2px solid darken($sol_blue, 20%);
+  background-color: lighten($sol_blue, 20%);
+  color: $sol_base02;
+
+  border-radius: 5px;
+}

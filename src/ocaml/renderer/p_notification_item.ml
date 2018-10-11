@@ -16,10 +16,12 @@ let t =
         let item = props##.item in
         let class_name =
           Classnames.to_string
-            [ ("fp-Notifier_Item", true)
-            ; ("fp-Notifier_Item-info", item.T.Notification.level = D.Notification.Level.Info)
-            ; ("fp-Notifier_Item-warning", item.T.Notification.level = D.Notification.Level.Warning)
-            ; ("fp-Notifier_Item-error", item.T.Notification.level = D.Notification.Level.Error) ]
+            [ ("fp-NotificationList_Item", true)
+            ; ("fp-NotificationList_Item-info", item.T.Notification.level = D.Notification.Level.Info)
+            ; ( "fp-NotificationList_Item-warning"
+              , item.T.Notification.level = D.Notification.Level.Warning )
+            ; ( "fp-NotificationList_Item-error"
+              , item.T.Notification.level = D.Notification.Level.Error ) ]
         in
         match item.body with
         | D.Notification.OneShot v -> [%e li ~class_name [(v.message) [@txt]]]

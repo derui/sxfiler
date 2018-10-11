@@ -12,7 +12,7 @@ module State = struct
   let reduce t = function
     | C.Message.Notify v -> {notifications = v :: t.notifications}
     | C.Message.Timeout_notification id ->
-      {notifications = List.filter (fun v -> v.T.Notification.id = id) t.notifications}
+      {notifications = List.filter (fun v -> v.T.Notification.id <> id) t.notifications}
     | _ -> t
 
   let equal = ( = )

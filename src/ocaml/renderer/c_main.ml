@@ -65,7 +65,7 @@ let t =
                          val locator = this##.props##.locator
                        end)]
                  ; [%c
-                   C_notifier.t ~key:"notifier"
+                   C_notification.t ~key:"notifier"
                      ~props:
                        (object%js
                          val locator = this##.props##.locator
