@@ -40,5 +40,6 @@ type t =
   | Raise_error of Sxfiler_core.Error.t
   | Notify of T.Notification.t
   | Timeout_notification of string
+  | Delete_notification of string
 
 type default = Quit
