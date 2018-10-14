@@ -16,4 +16,5 @@ let () =
                let dispatch m = message_ := Some m
              end in
              let%lwt () = Target.execute instance (module Util.Dummy_dispatcher (D)) in
-             Lwt.return @@ assert_ok (!D.message_ = Some C.Message.(Delete_notification "id")) ) ]
+             Lwt.return @@ assert_ok (!D.message_ = Some C.Message.(Delete_notification_message "id"))
+         ) ]

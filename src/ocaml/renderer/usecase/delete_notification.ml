@@ -12,4 +12,4 @@ let create param = {param}
 let execute t dispatcher =
   let id = t.param in
   let module D = (val dispatcher : C.Dispatcher_intf.Instance) in
-  Lwt.return D.(Dispatcher.dispatch this C.Message.(Delete_notification id))
+  Lwt.return D.(Dispatcher.dispatch this C.Message.(Delete_notification_message id))

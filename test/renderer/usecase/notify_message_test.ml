@@ -32,7 +32,7 @@ let () =
              Infix.(
                assert_ok
                  ( List.rev !D.messages_
-                   = [C.Message.(Notify data); C.Message.Timeout_notification "foo"] )
+                   = [C.Message.(Notify_message data); C.Message.Timeout_notification_message "foo"] )
                <|> assert_eq U.Notify_message.timeout !S.arg)
              |> Lwt.return )
        ; ( "should send message without timeout if progress"
@@ -57,6 +57,6 @@ let () =
              end in
              let%lwt () = Target.execute instance (module Util.Dummy_dispatcher (D)) in
              Infix.(
-               assert_ok (List.rev !D.messages_ = [C.Message.(Notify data)])
+               assert_ok (List.rev !D.messages_ = [C.Message.(Notify_progress data)])
                <|> assert_ok (!S.arg = None))
              |> Lwt.return ) ]
