@@ -6,6 +6,7 @@
             js_of_ocaml-lwt
             js_of_ocaml.weak
             jsoo_reactjs
+            jsoo_reactjs.transition_group
             jsonrpc-ocaml.jsoo
             lwt
             logs.browser

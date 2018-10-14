@@ -11,7 +11,7 @@
 .fp-NotificationList {
   position: absolute;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   margin: 0;
   padding:0;
   list-style: none;
@@ -21,7 +21,7 @@
 }
 
 .fp-NotificationList_Item {
-  width: 100%;
+  max-width: 100%;
 
   padding:  $baseSpace ($baseSpace * 2);
   margin:0;
@@ -53,4 +53,22 @@
   color: $sol_base2;
 
   border-radius: 5px;
+}
+
+.fp-NotificationList_ItemAnimation-enter {
+  opacity: 0.01;
+}
+
+.fp-NotificationList_ItemAnimation-enter-active {
+  opacity: 1;
+  transition: opacity 200ms ease-out;
+}
+
+.fp-NotificationList_ItemAnimation-exit {
+  opacity: 1;
+}
+
+.fp-NotificationList_ItemAnimation-exit-active {
+  opacity: 0.01;
+  transition: opacity 200ms ease-out;
 }
