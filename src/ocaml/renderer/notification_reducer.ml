@@ -28,4 +28,9 @@ let expose ~context server =
       ~handler:(message_notification_handler context)
       server
   in
+  let server =
+    C.Rpc.Server.expose ~_method:R.Endpoints.Notification.Progress.endpoint
+      ~handler:(message_notification_handler context)
+      server
+  in
   server
