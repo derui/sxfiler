@@ -24,11 +24,16 @@ let t =
           let module Ctx = (val L.context) in
           Ctx.(Context.execute this instance) |> Lwt.ignore_result
         in
+        let on_process_finished process =
+          let instance = C.Usecase.make_instance (module U.Delete_progress) ~param:process in
+          let module Ctx = (val L.context) in
+          Ctx.(Context.execute this instance) |> Lwt.ignore_result
+        in
         let timeouts = S.Notification.Notification_set.fold List.cons state.timeouts [] in
         [%e
           div ~class_name:"fp-NotificationContainer"
             [ [%c
-              P_notification_list.t
+              P_notification_list.t ~key:"messages"
                 ~props:
                   (object%js
                     val messages = state.notifications
@@ -36,4 +41,12 @@ let t =
                     val timeouts = timeouts
 
                     val onItemTimeouted = on_item_timeouted
+                  end)]
+            ; [%c
+              P_notified_progress_list.t ~key:"progresses"
+                ~props:
+                  (object%js
+                    val progresses = state.progresses
+
+                    val onProcessFinished = on_process_finished
                   end)] ]] )

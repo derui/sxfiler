@@ -18,7 +18,7 @@ let message_notification_handler (module Ctx : Context.Instance) req =
     >>= Js.Unsafe.coerce %> T.Notification.of_js %> some
     >>= fun param ->
     let usecase = C.Usecase.make_instance (module U.Notify_message.Make (Sleeper)) ~param in
-    Some Lwt.(Ctx.(Context.execute this usecase) >>= fun () -> Lwt.return Jr.Response.empty)
+    Some Lwt.(Ctx.(Context.execute this usecase) >>= fun () -> return Jr.Response.empty)
   in
   get ~default:(fun () -> Lwt.return Jr.Response.empty) handling
 

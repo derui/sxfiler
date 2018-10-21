@@ -4,7 +4,7 @@ $historyDialogTopPosition: 7em;
 
 .dialog-FileCompletionDialog {
   /* box-shadow */
-  @include base-box-shadow;
+  @include box-shadow-medium;
 
   display: flex;
   flex-direction: column;

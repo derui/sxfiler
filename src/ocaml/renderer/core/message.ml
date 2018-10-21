@@ -42,6 +42,6 @@ type t =
   | Notify_progress of T.Notification.t
   | Timeout_notification_message of string
   | Delete_notification_message of string
-  | Delete_notification_progress of T.Notification.t
+  | Delete_notification_progress of string
 
 type default = Quit

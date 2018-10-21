@@ -25,34 +25,29 @@
 
   padding:  $baseSpace ($baseSpace * 2);
   margin:0;
-  margin-right:$smallSpace;
-  margin-bottom:$smallSpace;
+  margin-right: $smallSpace;
+  margin-bottom: $smallSpace;
 
-  box-shadow: 4px 4px 7px rgba(black, 0.4), -4px 0px 7px rgba(black, 0.4);
+  @include box-shadow-medium();
+  @include base-border-radius();
 }
 
 .fp-NotificationList_Item.fp-NotificationList_Item-info {
-  border: 3px solid darken($sol_blue, 20%);
+  border: $fp-NotificationMessageBorderWidth solid darken($sol_blue, 20%);
   background-color: lighten($sol_blue, 20%);
   color: $sol_base02;
-
-  border-radius: 5px;
 }
 
 .fp-NotificationList_Item.fp-NotificationList_Item-warning {
-  border: 3px solid darken($sol_orange, 20%);
+  border: $fp-NotificationMessageBorderWidth solid darken($sol_orange, 20%);
   background-color: lighten($sol_orange, 20%);
   color: $sol_base03;
-
-  border-radius: 5px;
 }
 
 .fp-NotificationList_Item.fp-NotificationList_Item-error {
-  border: 3px solid darken($sol_red, 30%);
+  border: $fp-NotificationMessageBorderWidth solid darken($sol_red, 30%);
   background-color: $sol_red;
   color: $sol_base2;
-
-  border-radius: 5px;
 }
 
 .fp-NotificationList_ItemAnimation-enter {
@@ -71,4 +66,61 @@
 .fp-NotificationList_ItemAnimation-exit-active {
   opacity: 0.01;
   transition: opacity 200ms ease-out;
+}
+
+// progress bar
+.fp-NotifiedProgressList {
+  margin: 0;
+  padding: 0;
+
+  width: 100%;
+  height: 100%;
+}
+
+.fp-NotifiedProgressItem {
+  display: flex;
+  flex-direction: row;
+
+  list-style: none;
+  background-color: $sol_base02;
+}
+
+.fp-NotifiedProgressItem_Animation-enter-active {
+  opacity: 1;
+}
+
+.fp-NotifiedProgressItem_Animation-exit {
+  opacity: 1;
+}
+
+.fp-NotifiedProgressItem_Animation-exit-active {
+  opacity: 0.01;
+  transition: opacity 200ms ease-out;
+}
+
+.fp-NotifiedProgressItem_ProcessLabel {
+  flex: 0 0 auto;
+  padding: 0 $smallSpace;
+  color: $sol_base2;
+
+  border-right: $fp-NotifiedProgressItem_LabelSeparatorSize solid $sol_base3;
+}
+
+.fp-NotifiedProgressItem_ProgressBar {
+  flex: 1 1 auto;
+  height: $smallSpace;
+
+  margin: $smallSpace;
+
+  background-color: $sol_base2;
+
+  @include base-border-radius();
+}
+
+.fp-NotifiedProgressItem_ProgressIndicator {
+  height: 100%;
+  background-color: $sol_blue;
+
+  transition: width 100ms ease-out;
+  @include base-border-radius();
 }

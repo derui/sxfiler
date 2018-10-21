@@ -19,7 +19,7 @@ $NameInputDialogTopPosition: 7em;
 
 .dialog-NameInputDialog {
   @include layout-dialog-base;
-  @include base-box-shadow;
+  @include box-shadow-medium;
 
   position: relative;
   top: $NameInputDialogTopPosition;

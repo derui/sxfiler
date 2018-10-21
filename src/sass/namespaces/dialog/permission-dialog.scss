@@ -19,7 +19,7 @@ $PermissionDialogTopPosition: 7em;
 
 .dialog-PermissionDialog {
   @include layout-dialog-base;
-  @include base-box-shadow;
+  @include box-shadow-medium;
 
   position: relative;
   top: $PermissionDialogTopPosition;

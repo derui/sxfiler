@@ -32,15 +32,17 @@ module State = struct
         | Progress v ->
           let new_progress = {process = v.process; target = v.targeted; current = v.current} in
           if List.exists (fun p -> v.process = p.process) t.progresses then
-            {t with progresses = new_progress :: t.progresses}
-          else
             { t with
               progresses =
                 List.map
                   (fun p -> if p.process = new_progress.process then new_progress else p)
-                  t.progresses } )
+                  t.progresses }
+          else {t with progresses = new_progress :: t.progresses} )
     | C.Message.Timeout_notification_message id ->
       {t with timeouts = Notification_set.add id t.timeouts}
+    | C.Message.Delete_notification_progress process ->
+      let without_target v = v.process <> process in
+      {t with progresses = List.filter without_target t.progresses}
     | C.Message.Delete_notification_message id ->
       let without_target v = v.T.Notification.id <> id in
       { t with
