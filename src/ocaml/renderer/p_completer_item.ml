@@ -24,4 +24,4 @@ let t =
           Classnames.to_string
             [("sf-CompleterItem", true); ("sf-CompleterItem-selected", Js.to_bool props##.selected)]
         in
-        [%e li ~class_name [(candidate.C.value.I.value) [@txt]]] )
+        [%e li ~class_name [(candidate.C.value.I.value [@txt])]] )

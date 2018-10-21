@@ -80,6 +80,7 @@ module State = struct
     | _ -> t
 
   let equal _ _ = false
+
   (* helper functions of state *)
   let is_current {current; _} ~pos = current = pos
   let current t = match t.current with `Left -> t.left | `Right -> t.right

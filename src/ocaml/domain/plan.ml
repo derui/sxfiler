@@ -28,6 +28,7 @@ type t =
   ; dest : node_plan list }
 
 let make ~workbench_id ~source ~dest = {workbench_id; source; dest}
+
 (* functions to make node plan *)
 let node_to_delete node = {operation = Operation.Delete; node}
 let node_to_append node = {operation = Operation.Append; node}

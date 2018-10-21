@@ -1,6 +1,7 @@
-include Rpc_intf  (** Provides RPC client and server implementation. This implementation only depends on
-                      Jsonrpc_ocaml_jsoo's interface. All modules are purely.
-                  *)
+(** Provides RPC client and server implementation. This implementation only depends on
+    Jsonrpc_ocaml_jsoo's interface. All modules are purely.
+*)
+include Rpc_intf
 
 module Make_client (Rpc : Rpc) : Client = struct
   (* Call api as request with definition and parameter *)

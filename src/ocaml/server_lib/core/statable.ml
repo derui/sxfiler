@@ -20,6 +20,7 @@ module Make (T : Type) : S with type state = T.t = struct
   type t = state ref
 
   let t : t = ref @@ T.empty ()
+
   (* The mutex to synchronize between threads. *)
   let mutex : Lwt_mutex.t = Lwt_mutex.create ()
   let get () = Lwt.return @@ !t
