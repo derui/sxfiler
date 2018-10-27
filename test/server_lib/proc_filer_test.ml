@@ -25,7 +25,7 @@ let test_set =
           let handle _ =
             Lwt.return {filer = Option.some @@ T.Filer.of_domain expected; already_exists = false}
         end in
-        let module Make = S.Proc_filer.Make (Gateway) in
+        let module Make = S.Proc_filer.Make_ctrl (Gateway) in
         let%lwt res = Make.handle {Gateway.initial_location = "/initial"; name = "foo"} in
         Alcotest.(check @@ of_pp @@ Fmt.nop) "created" (T.Filer.of_domain expected) res ;
         Lwt.return_unit )
@@ -35,7 +35,7 @@ let test_set =
 
           let handle _ = Lwt.return {filer = None; already_exists = true}
         end in
-        let module Make = S.Proc_filer.Make (Gateway) in
+        let module Make = S.Proc_filer.Make_ctrl (Gateway) in
         let expected = Jy.(Exception.Jsonrpc_error (R.Errors.Filer.already_exists, None)) in
         Alcotest.check_raises "raised" expected (fun () ->
             Lwt.ignore_result @@ Make.handle {initial_location = "/initial"; name = "foo"} ) ;

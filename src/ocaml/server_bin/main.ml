@@ -11,12 +11,12 @@ exception Fail_load_migemo
 let create_server (module C : Rpc_connection.Instance) =
   let rpc_server = Jsonrpc_server.make () in
   let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_completion) in
-  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_filer) in
   let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_configuration) in
   let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_keymap) in
   let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_plan) in
   let rpc_server =
     let module NS = (val Sxfiler_server_infra.Notification_service.make (module C)) in
+    let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_filer.Make (NS)) in
     Jsonrpc_server.expose rpc_server ~operation:(module Proc_notification.Make (NS))
   in
   rpc_server

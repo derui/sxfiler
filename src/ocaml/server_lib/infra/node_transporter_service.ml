@@ -3,8 +3,6 @@
 open Sxfiler_core
 module D = Sxfiler_domain
 
-type location = Path.t
-
 module M = Map.Make (struct
     type t = string
 
@@ -23,20 +21,33 @@ let dest_name node correction_map =
     in
     correct_name node
 
-let transport ~nodes ~corrections ~_to =
-  let correct_map =
-    let module T = D.Types.Correction in
-    corrections
-    |> List.fold_left
-      (fun map correction ->
-         match M.find_opt correction.T.node_id map with
-         | None -> M.add correction.node_id [correction.method_] map
-         | Some list -> M.add correction.node_id (correction.method_ :: list) map )
-      M.empty
-  in
-  nodes
-  |> Lwt_list.iter_p (fun node ->
-      let name = dest_name node correct_map in
-      let source = Path.to_string node.full_path in
-      let dest = Path.of_list [Path.to_string _to; name] |> Path.to_string in
-      Sys.rename source dest |> Lwt.return )
+module Make (NS : D.Notification_service.S) (Factory : D.Notification.Factory) = struct
+  type location = Path.t
+
+  let transport_process = "move"
+
+  let transport ~nodes ~corrections ~_to =
+    let correct_map =
+      let module T = D.Types.Correction in
+      corrections
+      |> List.fold_left
+        (fun map correction ->
+           match M.find_opt correction.T.node_id map with
+           | None -> M.add correction.node_id [correction.method_] map
+           | Some list -> M.add correction.node_id (correction.method_ :: list) map )
+        M.empty
+    in
+    let targeted = List.length nodes |> float_of_int in
+    let number_of_nodes = Fun.(succ %> float_of_int) in
+    nodes
+    |> Lwt_list.iteri_s (fun i node ->
+        let name = dest_name node correct_map in
+        let source = Path.to_string node.full_path in
+        let dest = Path.of_list [Path.to_string _to; name] |> Path.to_string in
+        let%lwt () = Sys.rename source dest |> Lwt.return in
+        Factory.create ~level:D.Notification.Level.Info
+          ~body:
+            D.Notification.(
+              Progress {process = transport_process; current = number_of_nodes i; targeted})
+        |> NS.send )
+end

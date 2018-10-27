@@ -8,7 +8,7 @@ module T = Sxfiler_rpc.Types
 module Jr = Jsonrpc_ocaml_yojson
 module Tr = Sxfiler_server_translator
 
-module Make (Gateway : G.Filer.Make.S) = struct
+module Make_ctrl (Gateway : G.Filer.Make.S) = struct
   type params = Gateway.params
   type result = T.Filer.t
 
@@ -23,7 +23,7 @@ module Make (Gateway : G.Filer.Make.S) = struct
     | {filer = Some s; _} -> Lwt.return s
 end
 
-module Get (Gateway : G.Filer.Get.S) = struct
+module Get_ctrl (Gateway : G.Filer.Get.S) = struct
   type params = Gateway.params
   type result = T.Filer.t
 
@@ -38,7 +38,7 @@ module Get (Gateway : G.Filer.Get.S) = struct
     | {filer = Some s; _} -> Lwt.return s
 end
 
-module Move_parent (Gateway : G.Filer.Move_parent.S) = struct
+module Move_parent_ctrl (Gateway : G.Filer.Move_parent.S) = struct
   type params = Gateway.params
   type result = T.Filer.t
 
@@ -53,7 +53,7 @@ module Move_parent (Gateway : G.Filer.Move_parent.S) = struct
     | {filer = Some s; _} -> Lwt.return s
 end
 
-module Enter_directory (Gateway : G.Filer.Enter_directory.S) = struct
+module Enter_directory_ctrl (Gateway : G.Filer.Enter_directory.S) = struct
   type params = Gateway.params
   type result = T.Filer.t
 
@@ -72,7 +72,7 @@ module Enter_directory (Gateway : G.Filer.Enter_directory.S) = struct
     | {filer = Some s; _} -> Lwt.return s
 end
 
-module Move_nodes (Gateway : G.Filer.Move_nodes.S) = struct
+module Move_nodes_ctrl (Gateway : G.Filer.Move_nodes.S) = struct
   type params = Gateway.params
   type result = unit
 
@@ -88,43 +88,45 @@ module Move_nodes (Gateway : G.Filer.Move_nodes.S) = struct
     | _ -> Lwt.return_unit
 end
 
-let expose server =
-  let module S = Jsonrpc_ocaml_yojson.Server in
-  let module W = Sxfiler_usecase.Filer in
-  let module I = Sxfiler_server_infra in
-  let module Filer_repo = I.Filer_repo.Make (Global.Root) in
-  let module Conf_repo = I.Configuration_repo.Make (Global.Root) in
-  let module Wb_repo = I.Workbench_repo.Make (Global.Workbench) in
-  let module Wb_factory = I.Workbench_factory.Make (struct
-      let get = Random.get_state
-    end) in
-  let module Make_gateway =
-    G.Filer.Make.Make
-      (System.Real)
-      (U.Filer.Make (Conf_repo) (Filer_repo) (I.Location_scanner_service))
-  in
-  let module Make = Procedure_intf.Make (Make (Make_gateway)) in
-  let module Get_gateway = G.Filer.Get.Make (U.Filer.Get (Filer_repo)) in
-  let module Get = Procedure_intf.Make (Get (Get_gateway)) in
-  let module Move_parent_gateway =
-    G.Filer.Move_parent.Make
-      (U.Filer.Move_parent (Filer_repo) (I.Location_scanner_service) (Global.Clock)) in
-  let module Move_parent = Procedure_intf.Make (Move_parent (Move_parent_gateway)) in
-  let module Enter_directory_gateway =
-    G.Filer.Enter_directory.Make
-      (U.Filer.Enter_directory (Filer_repo) (I.Location_scanner_service) (Global.Clock)) in
-  let module Enter_directory = Procedure_intf.Make (Enter_directory (Enter_directory_gateway)) in
-  let module E = Sxfiler_rpc.Endpoints in
-  let module Move_nodes_gateway =
-    G.Filer.Move_nodes.Make
-      (U.Filer.Move_nodes.Make (Filer_repo) (Wb_repo) (I.Location_scanner_service)
-         (I.Node_transporter_service)) in
-  let module Move_nodes = Procedure_intf.Make (Move_nodes (Move_nodes_gateway)) in
-  List.fold_left
-    (fun server (name, handler) -> S.expose ~_method:name ~handler server)
-    server
-    [ (E.Filer.Make.endpoint, Make.handler)
-    ; (E.Filer.Get.endpoint, Get.handler)
-    ; (E.Filer.Move_parent.endpoint, Move_parent.handler)
-    ; (E.Filer.Enter_directory.endpoint, Enter_directory.handler)
-    ; (E.Filer.Move_nodes.endpoint, Move_nodes.handler) ]
+module Make (NS : D.Notification_service.S) = struct
+  let expose server =
+    let module S = Jsonrpc_ocaml_yojson.Server in
+    let module W = Sxfiler_usecase.Filer in
+    let module I = Sxfiler_server_infra in
+    let module Filer_repo = I.Filer_repo.Make (Global.Root) in
+    let module Conf_repo = I.Configuration_repo.Make (Global.Root) in
+    let module Wb_repo = I.Workbench_repo.Make (Global.Workbench) in
+    let module Wb_factory = I.Workbench_factory.Make (struct
+        let get = Random.get_state
+      end) in
+    let module Make_gateway =
+      G.Filer.Make.Make
+        (System.Real)
+        (U.Filer.Make (Conf_repo) (Filer_repo) (I.Location_scanner_service))
+    in
+    let module Make = Procedure_intf.Make (Make_ctrl (Make_gateway)) in
+    let module Get_gateway = G.Filer.Get.Make (U.Filer.Get (Filer_repo)) in
+    let module Get = Procedure_intf.Make (Get_ctrl (Get_gateway)) in
+    let module Move_parent_gateway =
+      G.Filer.Move_parent.Make
+        (U.Filer.Move_parent (Filer_repo) (I.Location_scanner_service) (Global.Clock)) in
+    let module Move_parent = Procedure_intf.Make (Move_parent_ctrl (Move_parent_gateway)) in
+    let module Enter_directory_gateway =
+      G.Filer.Enter_directory.Make
+        (U.Filer.Enter_directory (Filer_repo) (I.Location_scanner_service) (Global.Clock)) in
+    let module Enter_directory = Procedure_intf.Make (Enter_directory_ctrl (Enter_directory_gateway)) in
+    let module E = Sxfiler_rpc.Endpoints in
+    let module Move_nodes_gateway =
+      G.Filer.Move_nodes.Make
+        (U.Filer.Move_nodes.Make (Filer_repo) (Wb_repo) (I.Location_scanner_service)
+           (I.Node_transporter_service.Make (NS) (I.Notification_factory))) in
+    let module Move_nodes = Procedure_intf.Make (Move_nodes_ctrl (Move_nodes_gateway)) in
+    List.fold_left
+      (fun server (name, handler) -> S.expose ~_method:name ~handler server)
+      server
+      [ (E.Filer.Make.endpoint, Make.handler)
+      ; (E.Filer.Get.endpoint, Get.handler)
+      ; (E.Filer.Move_parent.endpoint, Move_parent.handler)
+      ; (E.Filer.Enter_directory.endpoint, Enter_directory.handler)
+      ; (E.Filer.Move_nodes.endpoint, Move_nodes.handler) ]
+end

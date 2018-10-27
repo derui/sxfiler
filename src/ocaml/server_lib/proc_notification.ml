@@ -22,16 +22,10 @@ end
 
 module Make (NS : T.Notification_service.S) = struct
   let expose server =
+    let module I = Sxfiler_server_infra in
     let module S = Jsonrpc_ocaml_yojson.Server in
-    let module Factory = struct
-      let id_gen = Uuidm.v4_gen (Random.get_state ())
-
-      let create ~level ~body =
-        let id = id_gen () in
-        T.Notification.make ~id ~level ~body
-    end in
     let module Notify_message_gateway =
-      G.Notification.Notify_message.Make (U.Notification.Notify.Make (Factory) (NS)) in
+      G.Notification.Notify_message.Make (U.Notification.Notify.Make (I.Notification_factory) (NS)) in
     let module Notify_message = Procedure_intf.Make (Notify_message (Notify_message_gateway)) in
     let module E = Sxfiler_rpc.Endpoints in
     List.fold_left
