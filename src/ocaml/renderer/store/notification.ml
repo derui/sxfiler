@@ -37,7 +37,8 @@ module State = struct
                 List.map
                   (fun p -> if p.process = new_progress.process then new_progress else p)
                   t.progresses }
-          else {t with progresses = new_progress :: t.progresses} )
+          else if v.targeted <> v.current then {t with progresses = new_progress :: t.progresses}
+          else t )
     | C.Message.Timeout_notification_message id ->
       {t with timeouts = Notification_set.add id t.timeouts}
     | C.Message.Delete_notification_progress process ->
