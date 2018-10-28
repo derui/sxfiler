@@ -8,6 +8,8 @@ module G = Sxfiler_server_gateway
 
 exception Fail_load_migemo
 
+module Log = (val Logger.make ["main"])
+
 let create_server (module C : Rpc_connection.Instance) =
   let rpc_server = Jsonrpc_server.make () in
   let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_completion) in
@@ -24,10 +26,7 @@ let create_server (module C : Rpc_connection.Instance) =
 let handler (conn : Conduit_lwt_unix.flow * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
     (body : Cohttp_lwt.Body.t) =
   let conn_name = Cohttp.Connection.to_string @@ snd conn in
-  let%lwt () =
-    Logs_lwt.info
-    @@ fun m -> m ~tags:(Logger.Tags.module_main ()) "Connection opened: %s" conn_name
-  in
+  let%lwt () = Log.info @@ fun m -> m "Connection opened: %s" conn_name in
   let uri = Cohttp.Request.uri req in
   match Uri.path uri with
   | "/" ->
@@ -79,13 +78,10 @@ let start_server _ port =
   let conn_closed (ch, _) =
     Logs.info
     @@ fun m ->
-    m ~tags:(Logger.Tags.module_main ()) "Connection closed: %s closed"
+    m "Connection closed: %s closed"
       (Sexplib.Sexp.to_string_hum (Conduit_lwt_unix.sexp_of_flow ch))
   in
-  let%lwt () =
-    Logs_lwt.info
-    @@ fun m -> m ~tags:(Logger.Tags.module_main ()) "Listening for HTTP on port %d" port
-  in
+  let%lwt () = Log.info @@ fun m -> m "Listening for HTTP on port %d" port in
   Cohttp_lwt_unix.Server.create
     ~mode:(`TCP (`Port port))
     (Cohttp_lwt_unix.Server.make ~callback:handler ~conn_closed ())
@@ -98,23 +94,23 @@ let load_migemo dict_dir =
   and han_to_zen = "han2zen.dat" in
   let dict_file = Filename.concat dict_dir migemo_dict in
   if not @@ Sys.file_exists dict_file then (
-    Logs.err (fun m -> m ~tags:(Logger.Tags.module_main ()) "Dict file not found: %s\n" dict_file) ;
+    Logs.err (fun m -> m "Dict file not found: %s\n" dict_file) ;
     raise Fail_load_migemo )
   else
     let module M = Migemocaml in
     match M.Dict_tree.load_dict dict_file with
     | None ->
-      Logs.err (fun m -> m ~tags:(Logger.Tags.module_main ()) "Dict can not load: %s" dict_file) ;
+      Logs.err (fun m -> m "Dict can not load: %s" dict_file) ;
       raise Fail_load_migemo
     | Some migemo_dict ->
       let hira_to_kata =
-        Logs.info (fun m -> m ~tags:(Logger.Tags.module_main ()) "Loading %s" hira_to_kata) ;
+        Logs.info (fun m -> m "Loading %s" hira_to_kata) ;
         M.Dict_tree.load_conv @@ Filename.concat dict_dir hira_to_kata
       and romaji_to_hira =
-        Logs.info (fun m -> m ~tags:(Logger.Tags.module_main ()) "Loading %s" roma_to_hira) ;
+        Logs.info (fun m -> m "Loading %s" roma_to_hira) ;
         M.Dict_tree.load_conv @@ Filename.concat dict_dir roma_to_hira
       and han_to_zen =
-        Logs.info (fun m -> m ~tags:(Logger.Tags.module_main ()) "Loading %s" han_to_zen) ;
+        Logs.info (fun m -> m "Loading %s" han_to_zen) ;
         M.Dict_tree.load_conv @@ Filename.concat dict_dir han_to_zen
       in
       M.Migemo.make ~dict:migemo_dict ?hira_to_kata ?romaji_to_hira ?han_to_zen ()
@@ -140,17 +136,19 @@ let get_config f config () = if Sys.file_exists config then f config else None
 
 (* main routine. *)
 let () =
-  Logs.set_level (Some Logs.Info) ;
-  Logs.set_reporter @@ Logger.lwt_reporter Format.std_formatter ;
   Random.init Unix.(gettimeofday () |> int_of_float) ;
   let dict_dir = ref "" in
   let config = ref "config.json" and key_maps = ref "keymap.json" in
+  let debug = ref false in
   let arg_specs =
     [ ("-d", Arg.String (fun v -> dict_dir := v), "Directory of migemo dictionary")
     ; ("--config", Arg.String (fun v -> config := v), "File path for server configuration")
-    ; ("--keymap", Arg.String (fun v -> key_maps := v), "File path for key maps") ]
+    ; ("--keymap", Arg.String (fun v -> key_maps := v), "File path for key maps")
+    ; ("--debug", Arg.Unit (fun () -> debug := true), "Verbose mode") ]
   in
   Arg.parse arg_specs ignore "" ;
+  Logs.set_level (Some (if !debug then Logs.Debug else Logs.Info)) ;
+  Logs.set_reporter @@ Logger.lwt_reporter Format.std_formatter ;
   let module D = Sxfiler_domain in
   let port = 50879 in
   let config = get_config load_configuration !config in

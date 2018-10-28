@@ -1,15 +1,6 @@
 (** {!Logger} defines reporter and tags are used with {!Logs} *)
-open Sxfiler_core
 
-(** {!Tags} defines tag type and tag constructor to add tag to log message. *)
-module Tags = struct
-  let module_tag : string list Logs.Tag.def =
-    Logs.Tag.def "module" ~doc:"Path of module hierarchy"
-    @@ fun _ v -> Printf.printf "%s" (String.concat "." v)
-
-  let module_main () = Logs.Tag.(empty |> add module_tag ["main"])
-  let module_lib c = Logs.Tag.(empty |> add module_tag (["lib"] @ c))
-end
+let base_src = "sxfiler"
 
 (** [lwt_reporter ppf] returns reporter function to be able to assign to {!Logs.set_reporter}. *)
 let lwt_reporter ppf =
@@ -22,7 +13,7 @@ let lwt_reporter ppf =
   in
   let _, app_flush = buf_fmt ~like:Fmt.stdout in
   let _, dst_flush = buf_fmt ~like:Fmt.stderr in
-  let report _ level ~over k msgf =
+  let report src level ~over k msgf =
     let k _ =
       let write () =
         match level with
@@ -34,13 +25,7 @@ let lwt_reporter ppf =
       k ()
     in
     (* custom formater to contains timestamp and module name to log. *)
-    let with_timestamp h tags k ppf fmt =
-      let open Option in
-      let module_path =
-        match tags >>= Logs.Tag.find Tags.module_tag with
-        | None -> "unknown"
-        | Some list -> String.concat "." list
-      in
+    let with_timestamp h src k ppf fmt =
       let now = Unix.gettimeofday () in
       let utc = Unix.gmtime now in
       let timestamp =
@@ -50,8 +35,14 @@ let lwt_reporter ppf =
       in
       Format.kfprintf k ppf
         ("[%s]%a[%s] @[" ^^ fmt ^^ "@]@.")
-        timestamp Logs.pp_header (level, h) module_path
+        timestamp Logs.pp_header (level, h) (Logs.Src.name src)
     in
-    msgf @@ fun ?header ?tags fmt -> with_timestamp header tags k ppf fmt
+    msgf @@ fun ?header ?tags:_ fmt -> with_timestamp header src k ppf fmt
   in
   {Logs.report}
+
+(** make a new logger *)
+let make module_path =
+  let module_path = base_src :: module_path |> String.concat "." in
+  let src = Logs.Src.create module_path in
+  Logs_lwt.src_log src

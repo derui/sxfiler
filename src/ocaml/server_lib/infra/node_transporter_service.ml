@@ -2,6 +2,7 @@
 
 open Sxfiler_core
 module D = Sxfiler_domain
+module C = Sxfiler_server_core
 
 module M = Map.Make (struct
     type t = string
@@ -26,6 +27,8 @@ module Make (NS : D.Notification_service.S) (Factory : D.Notification.Factory) =
 
   let transport_process = "move"
 
+  module Log = (val C.Logger.make ["infra"; "node_transport"])
+
   let transport ~nodes ~corrections ~_to =
     let correct_map =
       let module T = D.Types.Correction in
@@ -45,6 +48,7 @@ module Make (NS : D.Notification_service.S) (Factory : D.Notification.Factory) =
         let source = Path.to_string node.full_path in
         let dest = Path.of_list [Path.to_string _to; name] |> Path.to_string in
         let%lwt () = Sys.rename source dest |> Lwt.return in
+        Log.debug (fun m -> m "Move file: [%s] from [%s]" dest source) ;%lwt
         Factory.create ~level:D.Notification.Level.Info
           ~body:
             D.Notification.(
