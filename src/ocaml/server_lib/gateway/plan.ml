@@ -69,3 +69,38 @@ module Plan_move_nodes = struct
       | Error `Not_found_filer -> Lwt.return {empty with not_found_filer = true}
   end
 end
+
+module Plan_delete_nodes = struct
+  (* gateway for Plan_delete_nodes use case. *)
+  module Types = struct
+    type params =
+      { from : string
+      ; node_ids : string list [@key "nodeIds"] }
+    [@@deriving yojson]
+
+    type result =
+      { plan : T.Plan.t option
+      ; not_found_filer : bool }
+  end
+
+  module type S = sig
+    include module type of Types
+
+    val handle : params -> result Lwt.t
+  end
+
+  module Make (WB : Usecase.Workbench.Make) (U : Usecase.Plan.Filer.Delete_nodes.S) : S = struct
+    include Types
+
+    let handle param =
+      let empty = {plan = None; not_found_filer = false} in
+      let params = {WB.from = param.from; node_ids = param.node_ids; _to = param.from} in
+      match%lwt WB.execute params with
+      | Ok wb -> (
+          match%lwt U.execute {workbench_id = wb.D.Workbench.id} with
+          | Ok plan ->
+            Lwt.return {empty with plan = Fun.(Translator.Plan.of_domain %> Option.some) plan}
+          | Error _ -> assert false )
+      | Error `Not_found_filer -> Lwt.return {empty with not_found_filer = true}
+  end
+end

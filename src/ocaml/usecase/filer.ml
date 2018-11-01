@@ -177,3 +177,43 @@ module Move_nodes = struct
             Lwt.return_ok () )
   end
 end
+
+module Delete_nodes = struct
+  (* delete nodes in filer *)
+  module Type = struct
+    type input = {workbench_id : string}
+    type output = unit
+    type error = [`Not_found_workbench]
+  end
+
+  module type S = sig
+    include module type of Type
+
+    include
+      Common.Usecase with type input := input and type output := output and type error := error
+  end
+
+  module Make
+      (FR : T.Filer.Repository)
+      (WR : T.Workbench.Repository)
+      (Scan : T.Location_scanner_service.S)
+      (Trash : T.Node_trash_service.S) : S = struct
+    include Type
+
+    let execute (params : input) =
+      let open Sxfiler_core.Option in
+      let result =
+        Uuidm.of_string params.workbench_id
+        >|= fun id ->
+        match%lwt WR.resolve id with
+        | None -> Lwt.return_error `Not_found_workbench
+        | Some wb ->
+          let%lwt () = Trash.trash wb.env.nodes in
+          let%lwt from_nodes = Scan.scan wb.env.source.location in
+          let from_filer = T.Filer.update_nodes wb.env.source ~nodes:from_nodes in
+          let%lwt () = FR.store from_filer in
+          Lwt.return_ok ()
+      in
+      get ~default:(fun () -> Lwt.return_error `Not_found_workbench) result
+  end
+end

@@ -8,7 +8,7 @@ type t =
   ; stat : File_stat.t
   ; link_path : string option }
 
-let equal v1 v2 = v1.full_path = v2.full_path
+let equal v1 v2 = v1.id = v2.id
 let make ~id ~full_path ~stat ~link_path = {id; full_path; stat; link_path}
 
 (** [is_directory v] shortcut function to detect node is directory or not *)
