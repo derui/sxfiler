@@ -4,7 +4,9 @@ module Translator = Sxfiler_server_translator
 module T = Sxfiler_rpc.Types
 module D = Sxfiler_domain
 
+(** the gateway for {!module: Usecase.Filer.Make}*)
 module Make = struct
+  (** request and response definition *)
   module Types = struct
     type params =
       { initial_location : string [@key "initialLocation"]
@@ -16,12 +18,14 @@ module Make = struct
       ; already_exists : bool }
   end
 
+  (** The signature of gateway *)
   module type S = sig
     include module type of Types
 
     val handle : params -> result Lwt.t
   end
 
+  (** Return implementation with some dependency modules *)
   module Make (System : System.S) (U : Usecase.Filer.Make) : S = struct
     include Types
 
@@ -38,7 +42,9 @@ module Make = struct
   end
 end
 
+(** the gateway for {!module: Usecase.Filer.Get}*)
 module Get = struct
+  (** request and response for gateway *)
   module Types = struct
     type params = {name : string} [@@deriving yojson]
 
@@ -47,12 +53,14 @@ module Get = struct
       ; not_found : bool }
   end
 
+  (** The signature of gateway *)
   module type S = sig
     include module type of Types
 
     val handle : params -> result Lwt.t
   end
 
+  (** Return implementation with some dependency modules *)
   module Make (U : Usecase.Filer.Get) : S = struct
     include Types
 
@@ -64,8 +72,9 @@ module Get = struct
   end
 end
 
+(** the gateway for {!module: Usecase.Filer.Move_parent} *)
 module Move_parent = struct
-  (* gateway for Move_parent use case. *)
+  (** gateway for Move_parent use case. *)
   module Types = struct
     type params = {name : string} [@@deriving yojson]
 
@@ -74,12 +83,14 @@ module Move_parent = struct
       ; not_found : bool }
   end
 
+  (** The signature of gateway  *)
   module type S = sig
     include module type of Types
 
     val handle : params -> result Lwt.t
   end
 
+  (** Return implementation with some dependency modules *)
   module Make (U : Usecase.Filer.Move_parent) : S = struct
     include Types
 
@@ -91,8 +102,9 @@ module Move_parent = struct
   end
 end
 
-(* gateway for Enter_directory use case. *)
+(** The gateway for {!module: Usecase.Filer.Enter_directory} use case. *)
 module Enter_directory = struct
+  (** Request and response of gateway *)
   module Types = struct
     type params =
       { name : string
@@ -106,12 +118,14 @@ module Enter_directory = struct
       ; not_directory : bool }
   end
 
+  (** The signature of gateway *)
   module type S = sig
     include module type of Types
 
     val handle : params -> result Lwt.t
   end
 
+  (** Return implementation with dependency modules *)
   module Make (U : Usecase.Filer.Enter_directory) : S = struct
     include Types
 
@@ -128,8 +142,9 @@ module Enter_directory = struct
   end
 end
 
+(** The gateway for {!module: Usecase.Plan.Filer.Plan_move_nodes} *)
 module Plan_move_nodes = struct
-  (* gateway for Plan_move_nodes use case. *)
+  (** Request and response of gateway *)
   module Types = struct
     type params =
       { from : string
@@ -142,12 +157,14 @@ module Plan_move_nodes = struct
       ; not_found_filer : bool }
   end
 
+  (** The signature of gateway *)
   module type S = sig
     include module type of Types
 
     val handle : params -> result Lwt.t
   end
 
+  (** Return implementation with dependency modules *)
   module Make (WB : Usecase.Workbench.Make) (U : Usecase.Plan.Filer.Move_nodes.S) : S = struct
     include Types
 
@@ -164,19 +181,22 @@ module Plan_move_nodes = struct
   end
 end
 
+(** The gateway for {!module: Usecase.Filer.Move_nodes} *)
 module Move_nodes = struct
-  (* gateway for Plan_move_nodes use case. *)
+  (** Request and response of gateway *)
   module Types = struct
     type params = {workbench_id : string [@key "workbenchId"]} [@@deriving yojson]
     type result = {not_found_workbench : bool}
   end
 
+  (** The signature of gateway *)
   module type S = sig
     include module type of Types
 
     val handle : params -> result Lwt.t
   end
 
+  (** Return implementation with dependency modules *)
   module Make (U : Usecase.Filer.Move_nodes.S) : S = struct
     include Types
 

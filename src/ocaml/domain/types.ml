@@ -21,7 +21,7 @@ type file_id = string
 (** Base signature of thread. *)
 module type Thread = Sxfiler_core.Monad.S
 
-(** {type!correction} takes method to avoid error in transportation *)
+(** {!type:correction} takes method to avoid error in transportation *)
 module Correction = struct
   type method_ = Name of string
 
