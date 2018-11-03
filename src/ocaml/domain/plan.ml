@@ -5,6 +5,7 @@ module Operation = struct
     | Delete
     | Remained
     | Conflict
+  [@@deriving show]
 
   let to_int = function Append -> 0 | Delete -> 1 | Remained -> 2 | Conflict -> 3
 
@@ -20,12 +21,14 @@ end
 type node_plan =
   { operation : Operation.t
   ; node : Node.t }
+[@@deriving show]
 
 (** [t] is result of plan. *)
 type t =
   { workbench_id : Workbench.id
   ; source : node_plan list
   ; dest : node_plan list }
+[@@deriving show]
 
 let make ~workbench_id ~source ~dest = {workbench_id; source; dest}
 

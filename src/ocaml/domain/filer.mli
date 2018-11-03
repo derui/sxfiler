@@ -2,7 +2,7 @@
 
 open Sxfiler_core
 
-type id = string
+type id = string [@@deriving show]
 
 type t = private
   { id : id
@@ -10,6 +10,7 @@ type t = private
   ; nodes : Node.t list
   ; history : Location_history.t
   ; sort_order : Types.Sort_type.t }
+[@@deriving show]
 
 (* sort nodes with sort_order in [t] *)
 

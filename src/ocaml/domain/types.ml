@@ -8,6 +8,7 @@ module Sort_type = struct
     | Name
     | Size
     | Date
+  [@@deriving show]
 
   (** [to_int t] returns int representation of [t] *)
   let to_int = function Name -> 1 | Size -> 2 | Date -> 3
@@ -23,13 +24,14 @@ module type Thread = Sxfiler_core.Monad.S
 
 (** {!type:correction} takes method to avoid error in transportation *)
 module Correction = struct
-  type method_ = Name of string
+  type method_ = Name of string [@@deriving show]
 
   type t =
     { node_id : string
     ; method_ : method_ }
+  [@@deriving show]
 
   let name id name = {node_id = id; method_ = Name name}
 end
 
-type corrections = Correction.t list
+type corrections = Correction.t list [@@deriving show]

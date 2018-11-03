@@ -35,3 +35,6 @@ val dirname : ?env:env -> t -> string
 
 val dirname_as_path : t -> t
 (** [dirname_as_path path] gets a new path object of dirname of [path]. *)
+
+val pp : Format.formatter -> t -> unit
+(** [pp fmt t] show pretty printed [t]. *)

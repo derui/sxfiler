@@ -1,17 +1,19 @@
 (** Identifier of plan. *)
-type id = Uuidm.t
+type id = Uuidm.t [@@deriving show]
 
 (** [env] holds environment is based on plan. *)
 type env =
   { source : Filer.t
   ; dest : Filer.t
   ; nodes : Node.t list }
+[@@deriving show]
 
 (** type of plan *)
 type t =
   { id : id
   ; env : env
   ; corrections : Types.corrections }
+[@@deriving show]
 
 (** [make ~id ~env] makes instance of plan *)
 let make ~id ~env ~corrections = {id; env; corrections}

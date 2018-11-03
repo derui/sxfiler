@@ -164,3 +164,7 @@ let dirname_as_path path =
 let dirname ?env path =
   let path' = dirname_as_path path in
   match to_string ?env path' with "" -> Filename.current_dir_name | _ as v -> v
+
+let pp fmt t =
+  let path = to_string ~env:`Unix t in
+  Format.fprintf fmt "%s" path

@@ -76,6 +76,7 @@ module Delete_nodes = struct
       | None -> Lwt.return_error `Not_found_wb
       | Some wb ->
         let source = wb.env.source and nodes = wb.env.nodes in
+        let origin = List.map T.Plan.node_to_remain source.nodes in
         let nodes' =
           List.map
             (fun node ->
@@ -83,6 +84,6 @@ module Delete_nodes = struct
                else T.Plan.node_to_remain node )
             source.nodes
         in
-        T.Plan.make ~workbench_id:wb.id ~source:nodes' ~dest:nodes' |> Lwt.return_ok
+        T.Plan.make ~workbench_id:wb.id ~source:origin ~dest:nodes' |> Lwt.return_ok
   end
 end

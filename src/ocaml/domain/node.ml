@@ -4,9 +4,10 @@ open Sxfiler_core
 (** [link_path] will have target of the link if item pointed to full_path is *link. *)
 type t =
   { id : string
-  ; full_path : Path.t
+  ; full_path : Path.t [@printer Path.pp]
   ; stat : File_stat.t
   ; link_path : string option }
+[@@deriving show]
 
 let equal v1 v2 = v1.id = v2.id
 let make ~id ~full_path ~stat ~link_path = {id; full_path; stat; link_path}

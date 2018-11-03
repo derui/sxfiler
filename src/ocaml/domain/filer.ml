@@ -2,7 +2,7 @@
 
 open Sxfiler_core
 
-type id = string
+type id = string [@@deriving show]
 
 type t =
   { id : id
@@ -10,6 +10,7 @@ type t =
   ; nodes : Node.t list
   ; history : Location_history.t
   ; sort_order : Types.Sort_type.t }
+[@@deriving show]
 
 (* convert sort type to sort function *)
 let to_sort_fun = function

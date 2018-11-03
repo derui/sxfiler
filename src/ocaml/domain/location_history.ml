@@ -3,6 +3,7 @@
 type t =
   { records : Location_record.t list
   ; max_records : int }
+[@@deriving show]
 
 (** {[make ?max_records ()]} gets new history.
    Use default value of [max_records] is [100] if it did not give any value.
