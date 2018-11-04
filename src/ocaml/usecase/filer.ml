@@ -178,14 +178,16 @@ module Move_nodes = struct
   end
 end
 
+(** Use case to delete nodes from workbench *)
 module Delete_nodes = struct
-  (* delete nodes in filer *)
+  (** Types for use case *)
   module Type = struct
     type input = {workbench_id : string}
     type output = unit
     type error = [`Not_found_workbench]
   end
 
+  (** The signature of use case *)
   module type S = sig
     include module type of Type
 
@@ -193,6 +195,7 @@ module Delete_nodes = struct
       Common.Usecase with type input := input and type output := output and type error := error
   end
 
+  (** Make module with dependencies *)
   module Make
       (FR : T.Filer.Repository)
       (WR : T.Workbench.Repository)

@@ -4,7 +4,7 @@ open Sxfiler_core
 
 type id = string [@@deriving show]
 
-type t = private
+type t =
   { id : id
   ; location : Path.t
   ; nodes : Node.t list
