@@ -1,7 +1,7 @@
 (** Completer provides simple completion interface via string. *)
-module T = Sxfiler_completion.Domain
+module T = Sxfiler_domain
 
-include Sxfiler_completion.Completer_intf
+include T.Completer
 
 module Core = struct
   (** The type of completer. *)
@@ -20,7 +20,7 @@ module Core = struct
         | None, _ -> failwith "Invalid branch"
         | Some group, v ->
           let start, length = Re.Group.offset group 0 in
-          {T.Candidate.start; length; value = v} )
+          {T.Completion.Candidate.start; length; value = v} )
 end
 
 let make ~migemo =

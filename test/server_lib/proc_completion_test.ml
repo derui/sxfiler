@@ -2,7 +2,7 @@ open Sxfiler_core
 module S = Sxfiler_server
 module C = Sxfiler_server_core
 module G = Sxfiler_server_gateway
-module Co = Sxfiler_completion
+module Co = Sxfiler_domain.Completion
 module Tr = Sxfiler_server_translator
 module T = Sxfiler_rpc.Types
 

@@ -10,7 +10,6 @@
             jsonrpc-ocaml.jsoo
             sxfiler.core
             sxfiler.rpc
-            sxfiler.completion
             sxfiler.renderer.translator
             sxfiler.domain)
  (preprocess (pps js_of_ocaml-ppx)))

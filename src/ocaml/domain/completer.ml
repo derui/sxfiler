@@ -16,7 +16,7 @@ module type S = sig
     -> input:string
     -> collection:'a list
     -> stringify:(module Type with type t = 'a)
-    -> 'a Domain.Candidate.base list
+    -> 'a Completion.Candidate.base list
     (** Match [input] from [candidates] with method specified by [match_type].
 
         This function gives module to stringify a value of type [candidates],

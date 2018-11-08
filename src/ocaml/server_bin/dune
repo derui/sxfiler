@@ -1,10 +1,22 @@
+(library
+ (name sxfiler_server_lib)
+ (public_name sxfiler.server.lib)
+ (libraries sxfiler.domain
+            migemocaml
+            logs
+            re)
+ (modules migemo_completer)
+ (preprocess (pps lwt_ppx)))
+
 (executable
  (name main)
  (public_name sxfiler_server)
  (package sxfiler)
+ (modules main)
  (libraries lwt
             websocket websocket-lwt.cohttp
             logs.fmt
             jsonrpc-ocaml.yojson
-            sxfiler.server)
+            sxfiler.server
+            migemo_completer)
  (preprocess (pps lwt_ppx)))

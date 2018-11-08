@@ -1,5 +1,0 @@
-(library
- (name sxfiler_completion)
- (public_name sxfiler.completion)
- (libraries sxfiler.domain)
- (preprocess (pps lwt_ppx)))

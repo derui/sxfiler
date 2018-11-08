@@ -9,7 +9,6 @@
             sxfiler.domain
             sxfiler.rpc
             sxfiler.usecase
-            sxfiler.completion.migemo
             sxfiler.server.core
             sxfiler.server.task
             sxfiler.server.gateway

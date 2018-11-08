@@ -9,7 +9,7 @@ module Root = C.Statable.Make (struct
   end)
 
 module Completer = struct
-  type t = unit -> (module Sxfiler_completion_migemo.Completer.Instance)
+  type t = unit -> (module D.Completer.Instance)
 
   let instance : t ref = ref @@ fun () -> failwith "Not initialized"
 
@@ -21,7 +21,7 @@ end
 
 (* Cached source to complete in next operation. *)
 module Cached_source = C.Statable.Make (struct
-    type t = Sxfiler_completion.Domain.collection
+    type t = Sxfiler_domain.Completion.collection
 
     let empty () = []
   end)

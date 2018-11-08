@@ -1,4 +1,4 @@
 (library
  (name sxfiler_server_translator)
  (public_name sxfiler.server.translator)
- (libraries sxfiler.rpc sxfiler.completion yojson))
+ (libraries sxfiler.rpc yojson))

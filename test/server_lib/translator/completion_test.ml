@@ -1,4 +1,4 @@
-module D = Sxfiler_completion.Domain
+module D = Sxfiler_domain.Completion
 module Tr = Sxfiler_server_translator.Completion
 module T = Sxfiler_rpc.Types
 

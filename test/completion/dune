@@ -1,9 +1,0 @@
-(alias
-  (name runtest)
-  (deps (:prog test_sxfiler_completion.exe) dict_file.txt)
-  (action (run %{prog})))
-
-(executable
-  (name test_sxfiler_completion)
-  (flags (-safe-string))
-  (libraries alcotest sxfiler.completion.migemo migemocaml))

@@ -3,7 +3,6 @@
  (public_name sxfiler.server.gateway)
  (libraries sxfiler.domain
             sxfiler.usecase
-            sxfiler.completion
             sxfiler.server.translator
             yojson ppx_deriving_yojson.runtime)
  ; to supress warnings are depended on ppx_deriving_yojson

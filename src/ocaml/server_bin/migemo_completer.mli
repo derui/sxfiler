@@ -1,8 +1,8 @@
 (** Completer provides simple completion interface via string. *)
-open Sxfiler_completion
+open Sxfiler_domain
 
 include module type of struct
-  include Completer_intf
+  include Completer
 end
 
 val make : migemo:Migemocaml.Migemo.t -> (module Instance)

@@ -1,6 +1,7 @@
-module C = Sxfiler_completion
+module C = Sxfiler_domain.Completion
 module Translator = Sxfiler_server_translator.Completion
 module T = Sxfiler_rpc.Types
+module Usecase = Sxfiler_usecase
 
 module type Setup = sig
   type params = {source : T.Completion.Item.t list}
@@ -12,7 +13,7 @@ module type Setup = sig
   val handle : params -> result Lwt.t
 end
 
-module Setup (U : C.Usecase.Setup) = struct
+module Setup (U : Usecase.Completion.Setup.S) = struct
   type params = {source : T.Completion.Item.t list}
 
   let params_of_yojson js =
@@ -34,7 +35,8 @@ module Setup (U : C.Usecase.Setup) = struct
 
   let handle param =
     let source = List.map Translator.Item.to_domain param.source in
-    U.execute {U.source}
+    let open Lwt in
+    U.execute {source} >>= fun _ -> Lwt.return_unit
 end
 
 module type Read = sig
@@ -46,13 +48,15 @@ module type Read = sig
   val handle : params -> result Lwt.t
 end
 
-module Read (Usecase : C.Usecase.Read) = struct
+module Read (Usecase : Usecase.Completion.Read.S) = struct
   type params = {input : string} [@@deriving of_yojson]
   type result = T.Completion.Candidate.t list
 
   let result_to_yojson t = `List (List.map Translator.Candidate.to_yojson t)
 
   let handle param =
-    let%lwt result = Usecase.execute {Usecase.input = param.input} in
-    Lwt.return @@ List.map Translator.Candidate.of_domain result
+    let%lwt result = Usecase.execute {input = param.input} in
+    match result with
+    | Ok v -> Lwt.return @@ List.map Translator.Candidate.of_domain v
+    | Error () -> failwith "Unknown error"
 end

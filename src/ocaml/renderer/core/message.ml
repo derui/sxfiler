@@ -1,4 +1,4 @@
-module Co = Sxfiler_completion.Domain
+module Co = Sxfiler_domain.Completion
 module T = Sxfiler_rpc.Types
 
 (* messages for completion operation *)

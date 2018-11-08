@@ -5,7 +5,6 @@
             lwt
             sxfiler.server.gateway
             sxfiler.server.core
-            sxfiler.completion
             sxfiler.server
             sxfiler.core)
  (preprocess (pps lwt_ppx ppx_deriving_yojson)))

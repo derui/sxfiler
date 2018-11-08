@@ -5,6 +5,5 @@
  (libraries js_of_ocaml
   sxfiler.rpc
   sxfiler.kbd
-  sxfiler.completion
   jsoo_node)
  (preprocess (pps js_of_ocaml-ppx)))

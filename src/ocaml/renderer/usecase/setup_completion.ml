@@ -1,5 +1,5 @@
 (** This behavior makes initialization to application. *)
-module Co = Sxfiler_completion.Domain
+module Co = Sxfiler_domain.Completion
 
 module C = Sxfiler_renderer_core
 module S = Sxfiler_renderer_service

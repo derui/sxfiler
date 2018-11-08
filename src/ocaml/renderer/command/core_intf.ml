@@ -1,5 +1,5 @@
 module C = Sxfiler_renderer_core
-module Co = Sxfiler_completion.Domain
+module Co = Sxfiler_domain.Completion
 module S = Sxfiler_renderer_store
 module P = Sxfiler_renderer_background.Planner
 

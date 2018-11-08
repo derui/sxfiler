@@ -1,5 +1,5 @@
 open Sxfiler_core
-module C = Sxfiler_completion.Domain
+module C = Sxfiler_domain.Completion
 module T = Sxfiler_rpc.Types.Completion
 
 module Item = struct
