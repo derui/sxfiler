@@ -31,7 +31,7 @@ struct
 
   let service_registry =
     ( module struct
-      module I = Sxfiler_renderer_service_impl
+      module I = Sxfiler_renderer_service
 
       let configuration () = (module I.Configuration.Make (Client) : Service.Configuration.S)
       let keymap () = (module I.Keymap.Make (Client) : Service.Keymap.S)

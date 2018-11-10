@@ -1,11 +1,83 @@
-(** Interface for completion service *)
+(** this module defines JSON-RPC API utilities.*)
+
+open Sxfiler_core
 open Abbrevs
+module J = Jsonrpc_ocaml_jsoo.Client
+module T = Sxfiler_renderer_translator
+include Completion_intf
 
-(** {!S} provides interface to call RPC providing by server.  *)
-module type S = sig
-  val setup : E.Completion.Setup.params -> E.Completion.Setup.result Lwt.t
-  (** [setup params] calls setup RPC with [params].  *)
+module Setup_api :
+  J.Api_def
+  with type params = E.Completion.Setup.params
+   and type result = E.Completion.Setup.result = struct
+  include E.Completion.Setup
 
-  val read : E.Completion.Read.params -> E.Completion.Read.result Lwt.t
-  (** [read params] calls read RPC with [params].  *)
+  type json = < > Js.t
+
+  let name = endpoint
+
+  let params_to_json params =
+    let open Option in
+    params
+    >|= fun v ->
+    let params =
+      object%js
+        val source = List.map T.Completion.Item.to_js v.source |> Array.of_list |> Js.array
+      end
+    in
+    Js.Unsafe.coerce params
+
+  let result_of_json _ = ()
+end
+
+module Read_api :
+  J.Api_def with type params = E.Completion.Read.params and type result = E.Completion.Read.result =
+struct
+  include E.Completion.Read
+
+  type json = < > Js.t
+
+  let name = endpoint
+
+  let params_to_json params =
+    let open Option in
+    params
+    >|= fun v ->
+    let params =
+      object%js
+        val input = Js.string v.input
+      end
+    in
+    Js.Unsafe.coerce params
+
+  let result_of_json v =
+    let v = Js.Unsafe.coerce v in
+    Array.to_list @@ Js.to_array @@ Js.array_map (fun v -> T.Completion.Candidate.of_js v) v
+end
+
+module Make (Client : C.Rpc.Client) : S = struct
+  let setup params =
+    let waiter, wakener = Lwt.wait () in
+    let%lwt () =
+      Client.request
+        (module Setup_api)
+        (Some params)
+        (function
+          (* TODO: should define original exception *)
+          | Error _ -> Lwt.wakeup_exn wakener Not_found
+          | Ok _ -> Lwt.wakeup wakener ())
+    in
+    waiter
+
+  let read params =
+    let waiter, wakener = Lwt.wait () in
+    let%lwt () =
+      Client.request
+        (module Read_api)
+        (Some params)
+        (function
+          | Error _ | Ok None -> Lwt.wakeup_exn wakener Not_found
+          | Ok (Some v) -> Lwt.wakeup wakener v)
+    in
+    waiter
 end

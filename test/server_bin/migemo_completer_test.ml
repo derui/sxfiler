@@ -1,5 +1,5 @@
 module C = Sxfiler_domain.Completion
-module CM = Sxfiler_server_lib.Migemo_completer
+module CM = Sxfiler_bin_lib.Migemo_completer
 
 let test_set =
   [ ( "can return candidates from collection with input and migemo"

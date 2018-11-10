@@ -3,10 +3,10 @@
  (deps tests.bc.js))
 
 (library
- (name test_sxfiler_renderer_service_impl)
+ (name test_sxfiler_renderer_service)
  (modules (:standard \ tests))
  (modes byte)
- (libraries js_of_ocaml sxfiler.renderer.service.impl mocha_of_ocaml.async)
+ (libraries js_of_ocaml sxfiler.renderer.service mocha_of_ocaml.async)
  (preprocess (pps js_of_ocaml-ppx lwt_ppx)))
 
 ; dummy executable to run test in library
@@ -14,4 +14,4 @@
  (name tests)
  (modules tests)
  (js_of_ocaml)
- (libraries test_sxfiler_renderer_service_impl))
+ (libraries test_sxfiler_renderer_service))

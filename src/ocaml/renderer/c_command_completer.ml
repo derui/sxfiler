@@ -5,13 +5,12 @@ module C = Sxfiler_renderer_core
 module Store = Sxfiler_renderer_store
 module U = Sxfiler_renderer_usecase
 module S = Sxfiler_renderer_service
-module SI = Sxfiler_renderer_service_impl
 module T = Sxfiler_rpc.Types
 module Command = Sxfiler_renderer_command
 
 let complete_command (module L : Locator.S) command =
   let module Ctx = (val L.context) in
-  let module Service = SI.Completion.Make ((val L.client)) in
+  let module Service = S.Completion.Make ((val L.client)) in
   let module B =
     (val C.Usecase.make_instance (module U.Read_completion.Make (Service)) ~param:command)
   in
@@ -26,7 +25,7 @@ let setup_command_source props _ =
   in
   let module Ctx = (val L.context) in
   let param = (commands, "command_completer") in
-  let module Service = SI.Completion.Make ((val L.client)) in
+  let module Service = S.Completion.Make ((val L.client)) in
   let instance = C.Usecase.make_instance (module U.Setup_completion.Make (Service)) ~param in
   let open Lwt in
   ignore_result

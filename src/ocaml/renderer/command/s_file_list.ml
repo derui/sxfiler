@@ -131,6 +131,57 @@ module Move = struct
              {P.plan; execute} ) }
 end
 
+(* the command to delete nodes *)
+module Delete = struct
+  let make (module Reg : Svc.Service_registry.S) =
+    { Core.name = module_prefix ^ "delete"
+    ; executor =
+        With_plan
+          (fun _ (module Ctx : C.Context.Instance) ->
+             let module B = Sxfiler_renderer_background in
+             let module P = B.Planner in
+             let plan _ ~action:(module A : B.Types.Action) =
+               let file_list = S.(A.state () |> App.State.file_list |> File_list.Store.get) in
+               let open Sxfiler_core.Option in
+               let node_ids =
+                 let extract_id =
+                   let module T = Sxfiler_rpc.Types in
+                   List.map (fun node -> node.T.Node.id)
+                 in
+                 S.File_list.(
+                   State.current file_list >>= lift Filer.marked_nodes >>= lift extract_id)
+               in
+               let run_usecase =
+                 node_ids
+                 >|= fun node_ids ->
+                 let from = file_list.current
+                 and _to = S.File_list.State.fellow_position file_list in
+                 let instance =
+                   C.Usecase.make_instance
+                     (module U.Plan_to_delete_nodes.Make ((val Reg.plan ())))
+                     ~param:{from; node_ids; _to}
+                 in
+                 Ctx.(Context.execute this instance)
+               in
+               Sxfiler_core.Option.get
+                 ~default:(fun () -> Lwt.fail_with "Not initialized yet")
+                 run_usecase
+             in
+             let execute ~action:(module A : B.Types.Action) =
+               let command = S.(A.state () |> App.State.command |> Command.Store.get) in
+               match command.plan with
+               | None -> Lwt.return_unit
+               | Some plan ->
+                 let instance =
+                   C.Usecase.make_instance
+                     (module U.Filer_move_nodes.Make ((val Reg.filer ())))
+                     ~param:plan
+                 in
+                 Ctx.(Context.execute this instance)
+             in
+             {P.plan; execute} ) }
+end
+
 let expose registry services =
   List.fold_right
     (fun command registry -> Core.Static_registry.register registry command)

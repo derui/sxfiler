@@ -28,10 +28,12 @@ module Service_stub = struct
     let move_parent _ = assert false
     let enter_directory _ = assert false
     let move_nodes _ = assert false
+    let delete_nodes _ = assert false
   end
 
   module Plan : S.Plan.S = struct
     let reject _ = assert false
     let plan_move_nodes _ = assert false
+    let plan_delete_nodes _ = assert false
   end
 end

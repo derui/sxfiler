@@ -59,6 +59,13 @@ module Filer = struct
 
     let endpoint = "filer/moveNodes"
   end
+
+  module Delete_nodes = struct
+    type params = {workbench_id : string}
+    type result = unit
+
+    let endpoint = "filer/deleteNodes"
+  end
 end
 
 (** endpoints for Configuration *)
@@ -114,6 +121,16 @@ module Plan = struct
       type result = Types.Plan.t
 
       let endpoint = "plan/filer/moveNodes"
+    end
+
+    module Delete_nodes = struct
+      type params =
+        { from : string
+        ; node_ids : string list }
+
+      type result = Types.Plan.t
+
+      let endpoint = "plan/filer/deleteNodes"
     end
   end
 end

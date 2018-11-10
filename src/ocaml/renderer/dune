@@ -13,7 +13,7 @@
             sxfiler.core
             sxfiler.renderer.core
             sxfiler.renderer.usecase
-            sxfiler.renderer.service.impl
+            sxfiler.renderer.service
             sxfiler.virtualized_list
             sxfiler.domain
             sxfiler.renderer.command

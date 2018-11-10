@@ -1,6 +1,6 @@
 (library
- (name sxfiler_server_lib)
- (public_name sxfiler.server.lib)
+ (name sxfiler_bin_lib)
+ (public_name sxfiler.bin.lib)
  (libraries sxfiler.domain
             migemocaml
             logs
@@ -18,5 +18,5 @@
             logs.fmt
             jsonrpc-ocaml.yojson
             sxfiler.server
-            migemo_completer)
+            sxfiler.bin.lib)
  (preprocess (pps lwt_ppx)))

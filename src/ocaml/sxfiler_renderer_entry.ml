@@ -3,7 +3,7 @@ module R = Jsoo_reactjs
 module C = Sxfiler_renderer_core
 module U = Sxfiler_renderer_usecase
 module S = Sxfiler_renderer_store
-module SI = Sxfiler_renderer_service_impl
+module SI = Sxfiler_renderer_service
 
 let container_id = "top-entry"
 let target_port = 50879

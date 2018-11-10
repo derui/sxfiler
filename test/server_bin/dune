@@ -5,4 +5,4 @@
 
 (test
  (name tests)
- (libraries alcotest sxfiler.server.lib sxfiler.core sxfiler.domain migemocaml))
+ (libraries alcotest sxfiler.bin.lib sxfiler.core sxfiler.domain migemocaml))

@@ -3,7 +3,7 @@ open Mocha_of_ocaml_async
 module E = Sxfiler_rpc.Errors
 module T = Sxfiler_rpc.Types
 module C = Sxfiler_renderer_core
-module SI = Sxfiler_renderer_service_impl
+module SI = Sxfiler_renderer_service
 module Tr = Sxfiler_renderer_translator
 
 let () =

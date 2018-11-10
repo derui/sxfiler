@@ -1,7 +1,7 @@
 open Abbrevs
 
 include module type of struct
-  include I.Keymap
+  include Configuration_intf
 end
 
 module Make (Client : C.Rpc.Client) : S

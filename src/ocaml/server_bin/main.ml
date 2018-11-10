@@ -52,7 +52,7 @@ let handler (conn : Conduit_lwt_unix.flow * Cohttp.Connection.t) (req : Cohttp_l
       ()
 
 let initialize_modules ~migemo ~keymap ~config =
-  let completer = Migemo_completer.make ~migemo in
+  let completer = Sxfiler_bin_lib.Migemo_completer.make ~migemo in
   let () = Proc_completion.initialize completer in
   let%lwt () =
     match keymap () with

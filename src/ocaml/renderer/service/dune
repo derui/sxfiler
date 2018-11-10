@@ -2,7 +2,13 @@
  (name sxfiler_renderer_service)
  (public_name sxfiler.renderer.service)
  (modes byte)
- (libraries lwt
+ (libraries js_of_ocaml
+            js_of_ocaml.weak
+            lwt
+            js_of_ocaml-lwt
+            jsonrpc-ocaml.jsoo
             sxfiler.rpc
+            sxfiler.renderer.core
+            sxfiler.renderer.translator
             sxfiler.domain)
- (preprocess (pps js_of_ocaml-ppx)))
+ (preprocess (pps js_of_ocaml-ppx lwt_ppx)))

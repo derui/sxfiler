@@ -3,7 +3,7 @@ open Mocha_of_ocaml_async
 module E = Sxfiler_rpc.Errors
 module T = Sxfiler_rpc.Types
 module C = Sxfiler_renderer_core
-module SI = Sxfiler_renderer_service_impl
+module S = Sxfiler_renderer_service
 module Tr = Sxfiler_renderer_translator
 
 let () =
@@ -18,6 +18,6 @@ let () =
                    R.Response.
                      {empty with id; result = Some (Js.Unsafe.coerce @@ Tr.Configuration.to_js expected)}
                end) in
-             let module S = SI.Configuration.Make (Client) in
+             let module S = S.Configuration.Make (Client) in
              let%lwt actual = S.get () in
              Lwt.return @@ assert_ok (expected = actual) ) ]

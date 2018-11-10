@@ -22,4 +22,4 @@
             sxfiler.renderer.store
             sxfiler.renderer.usecase
             sxfiler.renderer.background
-            sxfiler.renderer.service.impl))
+            sxfiler.renderer.service))

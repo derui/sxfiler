@@ -1,7 +1,7 @@
 module C = Sxfiler_renderer_core
 module S = Sxfiler_renderer_store
 module U = Sxfiler_renderer_usecase
-module SI = Sxfiler_renderer_service_impl
+module SI = Sxfiler_renderer_service
 
 let module_prefix = "global:"
 
