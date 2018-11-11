@@ -4,24 +4,22 @@ module Usecase = Sxfiler_usecase
 module G = Sxfiler_server_gateway
 module I = Sxfiler_server_infra
 module T = Sxfiler_server_translator
+module P = Procedure_intf
+module E = Sxfiler_rpc.Endpoints
 
 (* defines procedure to get current key bindings *)
-module Get (G : G.Configuration.Get) = struct
-  include G
+let get_spec (module G : G.Configuration.Get) =
+  P.to_procedure ~method_:E.Configuration.Get.endpoint
+    ~spec:
+      P.Spec.
+        { params_of_json = `Not_required ()
+        ; result_to_json = T.Configuration.to_yojson
+        ; handle = G.handle }
 
-  let params_of_json = `Not_required ()
-  let result_to_json = T.Configuration.to_yojson
-end
-
-let expose server =
+let make_procedures () =
   let module S = Jsonrpc_ocaml_yojson.Server in
   let module W = Sxfiler_usecase.Configuration in
   let module R = I.Configuration_repo.Make (Global.Root) in
   let module Usecase = Usecase.Configuration.Get.Make (R) in
   let module Gateway = G.Configuration.Get (Usecase) in
-  let module Get = Procedure_intf.Make (Get (Gateway)) in
-  let module E = Sxfiler_rpc.Endpoints in
-  List.fold_left
-    (fun server (name, handler) -> S.expose ~_method:name ~handler server)
-    server
-    [(E.Configuration.Get.endpoint, Get.handler)]
+  [get_spec (module Gateway)]

@@ -25,9 +25,23 @@ let test_set =
           let handle _ =
             Lwt.return {filer = Option.some @@ T.Filer.of_domain expected; already_exists = false}
         end in
-        let module Make = S.Proc_filer.Make_ctrl (Gateway) in
-        let%lwt res = Make.handle {Gateway.initial_location = "/initial"; name = "foo"} in
-        Alcotest.(check @@ of_pp @@ Fmt.nop) "created" (T.Filer.of_domain expected) res ;
+        let proc = S.Proc_filer.make_spec (module Gateway) in
+        let id = Random.int64 Int64.max_int in
+        let%lwt res =
+          proc.S.Procedure_intf.handler
+            Jy.Request.
+              { id = Some id
+              ; _method = ""
+              ; params =
+                  Gateway.params_to_yojson Gateway.{initial_location = "/initial"; name = "foo"}
+                  |> Option.some }
+        in
+        Alcotest.(check @@ of_pp @@ Fmt.nop)
+          "created" res
+          Jy.Response.
+            { id = Some id
+            ; error = None
+            ; result = Some (T.Filer.of_domain expected |> T.Filer.to_yojson) } ;
         Lwt.return_unit )
   ; Alcotest_lwt.test_case "do not create workspace if it exists" `Quick (fun _ () ->
         let module Gateway = struct
@@ -35,8 +49,16 @@ let test_set =
 
           let handle _ = Lwt.return {filer = None; already_exists = true}
         end in
-        let module Make = S.Proc_filer.Make_ctrl (Gateway) in
+        let proc = S.Proc_filer.make_spec (module Gateway) in
         let expected = Jy.(Exception.Jsonrpc_error (R.Errors.Filer.already_exists, None)) in
+        let id = Random.int64 Int64.max_int in
         Alcotest.check_raises "raised" expected (fun () ->
-            Lwt.ignore_result @@ Make.handle {initial_location = "/initial"; name = "foo"} ) ;
+            proc.S.Procedure_intf.handler
+              Jy.Request.
+                { id = Some id
+                ; _method = ""
+                ; params =
+                    Gateway.params_to_yojson Gateway.{initial_location = "/initial"; name = "foo"}
+                    |> Option.some }
+            |> Lwt.ignore_result ) ;
         Lwt.return_unit ) ]

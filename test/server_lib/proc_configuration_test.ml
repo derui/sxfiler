@@ -4,6 +4,7 @@ module C = Sxfiler_server_core
 module G = Sxfiler_server_gateway
 module Tr = Sxfiler_server_translator
 module T = Sxfiler_rpc.Types
+module Jy = Jsonrpc_ocaml_yojson
 
 let test_set =
   [ Alcotest_lwt.test_case "get current configuration" `Quick (fun _ () ->
@@ -19,9 +20,15 @@ let test_set =
 
           let handle () = State.get ()
         end in
-        let module Get = S.Proc_configuration.Get (Gateway) in
-        let%lwt _ = Get.handle () in
-        let%lwt actual = State.get () in
-        Alcotest.(check @@ of_pp @@ Fmt.nop) "current" expected
-        @@ Tr.Configuration.to_domain actual ;
+        let spec = S.Proc_configuration.get_spec (module Gateway) in
+        let id = Random.int64 Int64.max_int in
+        let%lwt res =
+          spec.S.Procedure_intf.handler Jy.Request.{_method = ""; params = None; id = Some id}
+        in
+        Alcotest.(check @@ of_pp @@ Fmt.nop)
+          "current" res
+          Jy.Response.
+            { id = Some id
+            ; error = None
+            ; result = Some (Tr.Configuration.of_domain expected |> Tr.Configuration.to_yojson) } ;
         Lwt.return_unit ) ]

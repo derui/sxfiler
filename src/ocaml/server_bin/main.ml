@@ -11,17 +11,18 @@ exception Fail_load_migemo
 module Log = (val Logger.make ["main"])
 
 let create_server (module C : Rpc_connection.Instance) =
-  let rpc_server = Jsonrpc_server.make () in
-  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_completion) in
-  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_configuration) in
-  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_keymap) in
-  let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_plan) in
-  let rpc_server =
-    let module NS = (val Sxfiler_server_infra.Notification_service.make (module C)) in
-    let rpc_server = Jsonrpc_server.expose rpc_server ~operation:(module Proc_filer.Make (NS)) in
-    Jsonrpc_server.expose rpc_server ~operation:(module Proc_notification.Make (NS))
+  let module NS = (val Sxfiler_server_infra.Notification_service.make (module C)) in
+  let procedures =
+    List.flatten
+      [ Proc_completion.make_procedures ()
+      ; Proc_configuration.make_procedures ()
+      ; Proc_keymap.make_procedures ()
+      ; Proc_notification.make_procedures (module NS)
+      ; Proc_filer.make_procedures (module NS)
+      ; Proc_plan.make_procedures () ]
   in
-  rpc_server
+  let rpc_server = Jsonrpc_server.make () in
+  List.fold_left (fun s procedure -> Jsonrpc_server.expose s ~procedure) rpc_server procedures
 
 let handler (conn : Conduit_lwt_unix.flow * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
     (body : Cohttp_lwt.Body.t) =

@@ -83,16 +83,16 @@ let () =
           ( Lwt_js.yield ()
             >>= fun () ->
             let%lwt () =
-              Lwt_list.iter_p
-                (fun pos ->
-                   let module Service = SI.Filer.Make (Client) in
-                   let instance =
-                     C.Usecase.make_instance
-                       (module U.Initialize_filer.Make (Service))
-                       ~param:{initial_location = "."; pos}
-                   in
-                   Ctx.(Context.execute this instance) )
-                [`Left; `Right]
+              let initialize_filer pos =
+                let module Service = SI.Filer.Make (Client) in
+                let instance =
+                  C.Usecase.make_instance
+                    (module U.Initialize_filer.Make (Service))
+                    ~param:{initial_location = "."; pos}
+                in
+                Ctx.(Context.execute this instance)
+              in
+              Lwt_list.iter_p initialize_filer [`Left; `Right]
             in
             let i = C.Usecase.make_instance (module U.Finish_bootstrap) ~param:() in
             Ctx.(Context.execute this i) ) ;

@@ -27,11 +27,16 @@ let test_set =
 
           let handle () = Lwt.map Tr.Key_map.of_domain @@ State.get ()
         end in
-        let module Get = S.Proc_keymap.Get (Gateway) in
-        let%lwt res = Get.handle () in
+        let spec = S.Proc_keymap.get_spec (module Gateway) in
+        let id = Random.int64 Int64.max_int in
+        let%lwt res =
+          spec.S.Procedure_intf.handler Jy.Request.{_method = ""; params = None; id = Some id}
+        in
         let module G = Sxfiler_server_gateway in
-        Alcotest.(check @@ of_pp Fmt.nop) "current" (Tr.Key_map.of_domain expected) res ;
-        Alcotest.(check bool)
-          "params" true
-          (match Get.params_of_json with `Not_required _ -> true | _ -> false) ;
+        Alcotest.(check @@ of_pp Fmt.nop)
+          "current" res
+          Jy.Response.
+            { id = Some id
+            ; error = None
+            ; result = Some (Tr.Key_map.of_domain expected |> Tr.Key_map.to_yojson) } ;
         Lwt.return_unit ) ]

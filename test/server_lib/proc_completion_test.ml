@@ -5,6 +5,7 @@ module G = Sxfiler_server_gateway
 module Co = Sxfiler_domain.Completion
 module Tr = Sxfiler_server_translator
 module T = Sxfiler_rpc.Types
+module Jy = Jsonrpc_ocaml_yojson
 
 let test_set =
   [ Alcotest_lwt.test_case "can setup common source" `Quick (fun _ () ->
@@ -34,16 +35,23 @@ let test_set =
 
           let handle {source} = State.update source
         end in
-        let module Setup = S.Proc_completion.Setup (Setup_gateway) in
+        let proc = S.Proc_completion.setup_spec (module Setup_gateway) in
         let expected =
           [ {T.Completion.Item.id = "1"; value = "foo"}
           ; {T.Completion.Item.id = "2"; value = "foobar"}
           ; {T.Completion.Item.id = "3"; value = "bar ball"} ]
         in
-        let%lwt _ = Setup.handle {Setup_gateway.source = expected} in
+        let id = Random.int64 Int64.max_int in
+        let%lwt _ =
+          proc.S.Procedure_intf.handler
+            Jy.Request.
+              { id = Some id
+              ; _method = ""
+              ; params =
+                  Some
+                    (`Assoc [("source", `List (List.map Tr.Completion.Item.to_yojson expected))])
+              }
+        in
         let%lwt state = State.get () in
         Alcotest.(check @@ list @@ of_pp @@ Fmt.nop) "created" expected state ;
-        Alcotest.(check bool)
-          "param" true
-          (match Setup.params_of_json with `Required _ -> true | _ -> false) ;
         Lwt.return_unit ) ]

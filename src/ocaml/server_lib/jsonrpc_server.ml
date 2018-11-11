@@ -8,9 +8,9 @@ let make () =
   let method_handler = J.Server.make () in
   {method_handler}
 
-let expose t ~operation =
-  let module S = (val operation : Operation_intf.S) in
-  {method_handler = S.expose t.method_handler}
+let expose t ~procedure =
+  let _method = procedure.Procedure_intf.method_ and handler = procedure.handler in
+  {method_handler = J.Server.expose ~_method ~handler t.method_handler}
 
 let res_to_frame res =
   let json = J.Response.to_json res in

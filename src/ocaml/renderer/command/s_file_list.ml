@@ -154,12 +154,11 @@ module Delete = struct
                let run_usecase =
                  node_ids
                  >|= fun node_ids ->
-                 let from = file_list.current
-                 and _to = S.File_list.State.fellow_position file_list in
+                 let from = file_list.current in
                  let instance =
                    C.Usecase.make_instance
                      (module U.Plan_to_delete_nodes.Make ((val Reg.plan ())))
-                     ~param:{from; node_ids; _to}
+                     ~param:{from; node_ids}
                  in
                  Ctx.(Context.execute this instance)
                in
@@ -174,7 +173,7 @@ module Delete = struct
                | Some plan ->
                  let instance =
                    C.Usecase.make_instance
-                     (module U.Filer_move_nodes.Make ((val Reg.filer ())))
+                     (module U.Filer_delete_nodes.Make ((val Reg.filer ())))
                      ~param:plan
                  in
                  Ctx.(Context.execute this instance)
@@ -191,5 +190,6 @@ let expose registry services =
     ; Move_parent.make services
     ; Toggle_mark.make ()
     ; Enter_directory.make services
-    ; Move.make services ]
+    ; Move.make services
+    ; Delete.make services ]
     registry

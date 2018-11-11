@@ -208,3 +208,69 @@ module Move_nodes = struct
       | Error `Not_found_workbench -> Lwt.return {not_found_workbench = true}
   end
 end
+
+(** The gateway for {!module: Usecase.Plan.Filer.Plan_delete_nodes} *)
+module Plan_delete_nodes = struct
+  (** Request and response of gateway *)
+  module Types = struct
+    type params =
+      { from : string
+      ; node_ids : string list [@key "nodeIds"] }
+    [@@deriving yojson]
+
+    type result =
+      { plan : T.Plan.t option
+      ; not_found_filer : bool }
+  end
+
+  (** The signature of gateway *)
+  module type S = sig
+    include module type of Types
+
+    val handle : params -> result Lwt.t
+  end
+
+  (** Return implementation with dependency modules *)
+  module Make (WB : Usecase.Workbench.Make) (U : Usecase.Plan.Filer.Delete_nodes.S) : S = struct
+    include Types
+
+    let handle param =
+      let empty = {plan = None; not_found_filer = false} in
+      let params = {WB.from = param.from; node_ids = param.node_ids; _to = param.from} in
+      match%lwt WB.execute params with
+      | Ok wb -> (
+          match%lwt U.execute {workbench_id = wb.D.Workbench.id} with
+          | Ok plan ->
+            Lwt.return {empty with plan = Fun.(Translator.Plan.of_domain %> Option.some) plan}
+          | Error _ -> assert false )
+      | Error `Not_found_filer -> Lwt.return {empty with not_found_filer = true}
+  end
+end
+
+(** The gateway for {!module: Usecase.Filer.Delete_nodes} *)
+module Delete_nodes = struct
+  (** Request and response of gateway *)
+  module Types = struct
+    type params = {workbench_id : string [@key "workbenchId"]} [@@deriving yojson]
+    type result = {not_found_workbench : bool}
+  end
+
+  (** The signature of gateway *)
+  module type S = sig
+    include module type of Types
+
+    val handle : params -> result Lwt.t
+  end
+
+  (** Return implementation with dependency modules *)
+  module Make (U : Usecase.Filer.Delete_nodes.S) : S = struct
+    include Types
+
+    let handle param =
+      let params = {U.workbench_id = param.workbench_id} in
+      let empty = {not_found_workbench = false} in
+      match%lwt U.execute params with
+      | Ok () -> Lwt.return empty
+      | Error `Not_found_workbench -> Lwt.return {not_found_workbench = true}
+  end
+end
