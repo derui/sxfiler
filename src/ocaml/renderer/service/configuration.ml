@@ -2,6 +2,7 @@
 open Abbrevs
 
 include Configuration_intf
+open Sxfiler_core
 module J = Jsonrpc_ocaml_jsoo.Client
 module T = Sxfiler_renderer_translator
 
@@ -14,20 +15,12 @@ module Get_api :
   type json = < > Js.t
 
   let name = endpoint
-  let params_to_json _ = None
+  let params_to_json _ = raise Error.(create "Do not call with parameter" |> to_exn)
   let result_of_json v = T.Configuration.of_js @@ Js.Unsafe.coerce v
 end
 
-module Make (Client : C.Rpc.Client) : S = struct
+module Make (Client : C.Rpc_client.S) : S = struct
   let get _ =
-    let waiter, wakener = Lwt.wait () in
-    let%lwt () =
-      Client.request
-        (module Get_api)
-        None
-        (function
-          | Error _ | Ok None -> Lwt.wakeup_exn wakener Not_found
-          | Ok (Some v) -> Lwt.wakeup wakener v)
-    in
-    waiter
+    let%lwt response = Client.call ~api:(module Get_api) () in
+    match response with Error _ | Ok None -> Lwt.fail Not_found | Ok (Some v) -> Lwt.return v
 end

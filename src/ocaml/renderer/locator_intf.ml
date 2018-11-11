@@ -2,7 +2,7 @@ open Locator_abbrevs
 open C
 
 module type S = sig
-  val client : (module Rpc.Client)
+  val client : (module Rpc_client.S)
   val context : (module Context.Instance)
   val store : S.App.Store.t
 

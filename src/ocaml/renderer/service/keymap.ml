@@ -12,11 +12,8 @@ module Get_api :
   type json = < > Js.t
 
   let name = endpoint
-  let params_to_json _ = None
-
-  let result_of_json v =
-    let v = Js.Unsafe.coerce v in
-    T.Key_map.of_js v
+  let params_to_json _ = failwith "Do not pass parameters"
+  let result_of_json v = Js.Unsafe.coerce v |> T.Key_map.of_js
 end
 
 module Add_context_api :
@@ -30,15 +27,12 @@ module Add_context_api :
   let name = endpoint
 
   let params_to_json param =
-    let open Sxfiler_core.Option in
-    param
-    >|= fun param ->
     Js.Unsafe.coerce
       (object%js
         val context = Js.string param.context
       end)
 
-  let result_of_json js = T.Key_map.of_js @@ Js.Unsafe.coerce js
+  let result_of_json js = Js.Unsafe.coerce js |> T.Key_map.of_js
 end
 
 module Delete_context_api :
@@ -52,51 +46,36 @@ module Delete_context_api :
   let name = endpoint
 
   let params_to_json param =
-    let open Sxfiler_core.Option in
-    param
-    >|= fun param ->
     Js.Unsafe.coerce
       (object%js
         val context = Js.string param.context
       end)
 
-  let result_of_json js = T.Key_map.of_js @@ Js.Unsafe.coerce js
+  let result_of_json js = Js.Unsafe.coerce js |> T.Key_map.of_js
 end
 
-module Make (Client : C.Rpc.Client) : S = struct
+module Make (Client : C.Rpc_client.S) : S = struct
   let get _ =
     let waiter, wakener = Lwt.wait () in
-    let%lwt () =
-      Client.request
-        (module Get_api)
-        None
-        (function
-          | Error _ | Ok None -> Lwt.wakeup_exn wakener Not_found
-          | Ok (Some v) -> Lwt.wakeup wakener v)
-    in
+    let%lwt response = Client.call ~api:(module Get_api) () in
+    ( match response with
+      | Error _ | Ok None -> Lwt.wakeup_exn wakener Not_found
+      | Ok (Some v) -> Lwt.wakeup wakener v ) ;
     waiter
 
-  let add_context param =
+  let add_context params =
     let waiter, wakener = Lwt.wait () in
-    let%lwt () =
-      Client.request
-        (module Add_context_api)
-        (Some param)
-        (function
-          | Error _ | Ok None -> Lwt.wakeup_exn wakener Not_found
-          | Ok (Some v) -> Lwt.wakeup wakener v)
-    in
+    let%lwt response = Client.call ~api:(module Add_context_api) ~params () in
+    ( match response with
+      | Error _ | Ok None -> Lwt.wakeup_exn wakener Not_found
+      | Ok (Some v) -> Lwt.wakeup wakener v ) ;
     waiter
 
-  let delete_context param =
+  let delete_context params =
     let waiter, wakener = Lwt.wait () in
-    let%lwt () =
-      Client.request
-        (module Delete_context_api)
-        (Some param)
-        (function
-          | Error _ | Ok None -> Lwt.wakeup_exn wakener Not_found
-          | Ok (Some v) -> Lwt.wakeup wakener v)
-    in
+    let%lwt response = Client.call ~api:(module Delete_context_api) ~params () in
+    ( match response with
+      | Error _ | Ok None -> Lwt.wakeup_exn wakener Not_found
+      | Ok (Some v) -> Lwt.wakeup wakener v ) ;
     waiter
 end

@@ -13,6 +13,6 @@ val make_store : unit -> S.App.Store.t
 (** [make_store ()] gets initial store of application  *)
 
 module Make
-    (Client : C.Rpc.Client)
+    (Client : C.Rpc_client.S)
     (Context : Sxfiler_renderer_core.Context.Instance)
     (Store : Store_instance) : S

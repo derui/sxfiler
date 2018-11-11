@@ -24,12 +24,12 @@ let message_notification_handler (module Ctx : Context.Instance) req =
 
 let expose ~context server =
   let server =
-    C.Rpc.Server.expose ~_method:R.Endpoints.Notification.Notify.endpoint
+    C.Rpc_server.expose ~_method:R.Endpoints.Notification.Notify.endpoint
       ~handler:(message_notification_handler context)
       server
   in
   let server =
-    C.Rpc.Server.expose ~_method:R.Endpoints.Notification.Progress.endpoint
+    C.Rpc_server.expose ~_method:R.Endpoints.Notification.Progress.endpoint
       ~handler:(message_notification_handler context)
       server
   in

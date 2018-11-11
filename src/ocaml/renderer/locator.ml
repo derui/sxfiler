@@ -21,9 +21,9 @@ let make_store () =
   in
   S.App.Store.make state
 
-module Make (Client : C.Rpc.Client) (Ctx : C.Context.Instance) (Store : Store_instance) : S =
+module Make (Client : C.Rpc_client.S) (Ctx : C.Context.Instance) (Store : Store_instance) : S =
 struct
-  let client = (module Client : C.Rpc.Client)
+  let client = (module Client : C.Rpc_client.S)
   let context = (module Ctx : C.Context.Instance)
   let store = Store.this
   let command_registry = Command.Static_registry.make ()

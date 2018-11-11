@@ -1,6 +1,5 @@
 (** this module defines JSON-RPC API utilities.*)
 
-open Sxfiler_core
 open Abbrevs
 module J = Jsonrpc_ocaml_jsoo.Client
 module T = Sxfiler_renderer_translator
@@ -16,10 +15,7 @@ module Setup_api :
 
   let name = endpoint
 
-  let params_to_json params =
-    let open Option in
-    params
-    >|= fun v ->
+  let params_to_json v =
     let params =
       object%js
         val source = List.map T.Completion.Item.to_js v.source |> Array.of_list |> Js.array
@@ -39,10 +35,7 @@ struct
 
   let name = endpoint
 
-  let params_to_json params =
-    let open Option in
-    params
-    >|= fun v ->
+  let params_to_json v =
     let params =
       object%js
         val input = Js.string v.input
@@ -55,29 +48,15 @@ struct
     Array.to_list @@ Js.to_array @@ Js.array_map (fun v -> T.Completion.Candidate.of_js v) v
 end
 
-module Make (Client : C.Rpc.Client) : S = struct
+module Make (Client : C.Rpc_client.S) : S = struct
   let setup params =
-    let waiter, wakener = Lwt.wait () in
-    let%lwt () =
-      Client.request
-        (module Setup_api)
-        (Some params)
-        (function
-          (* TODO: should define original exception *)
-          | Error _ -> Lwt.wakeup_exn wakener Not_found
-          | Ok _ -> Lwt.wakeup wakener ())
-    in
-    waiter
+    let%lwt response = Client.call ~api:(module Setup_api) ~params () in
+    match response with
+    (* TODO: should define original exception *)
+    | Error _ -> Lwt.fail Not_found
+    | Ok _ -> Lwt.return_unit
 
   let read params =
-    let waiter, wakener = Lwt.wait () in
-    let%lwt () =
-      Client.request
-        (module Read_api)
-        (Some params)
-        (function
-          | Error _ | Ok None -> Lwt.wakeup_exn wakener Not_found
-          | Ok (Some v) -> Lwt.wakeup wakener v)
-    in
-    waiter
+    let%lwt response = Client.call ~api:(module Read_api) ~params () in
+    match response with Error _ | Ok None -> Lwt.fail Not_found | Ok (Some v) -> Lwt.return v
 end

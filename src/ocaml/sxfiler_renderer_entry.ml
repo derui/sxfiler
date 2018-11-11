@@ -14,7 +14,7 @@ let notification_handler server message =
   let request = R.Request.of_json (Js._JSON##parse message##.data) in
   let thread =
     match request with
-    | Ok req -> C.Rpc.Server.handle_request ~request:req server
+    | Ok req -> C.Rpc_server.handle_request ~request:req server
     | Error _ -> Lwt.return @@ Jsonrpc_ocaml_jsoo.Response.empty
   in
   Lwt.ignore_result thread
@@ -51,8 +51,9 @@ let () =
   Websocket_handler.init websocket_handler ;
   let rpc = Rpc.make websocket websocket_handler in
   let store = Locator.make_store () in
+  let module Jo = Jsonrpc_ocaml_jsoo in
   let module Ctx = (val C.Context.make_instance (module Context) store) in
-  let module Client = C.Rpc.Make_client ((val rpc)) in
+  let module Client = Jo.Client.Make ((val rpc)) in
   let module L =
     Locator.Make (Client) (Ctx)
       (struct
@@ -60,7 +61,7 @@ let () =
       end)
   in
   let module D = (val Ctx.(Context.dispatcher this)) in
-  let rpc_notification_server = C.Rpc.Server.make () in
+  let rpc_notification_server = C.Rpc_server.make () in
   let rpc_notification_server =
     Notification_reducer.expose ~context:(module Ctx) rpc_notification_server
   in

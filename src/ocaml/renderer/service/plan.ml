@@ -14,10 +14,7 @@ module Reject_api :
 
   let name = endpoint
 
-  let params_to_json params =
-    let open Option in
-    params
-    >|= fun v ->
+  let params_to_json v =
     Js.Unsafe.coerce
       (object%js
         val workbenchId = Js.string v.workbench_id
@@ -36,10 +33,7 @@ module Plan_move_nodes_api :
 
   let name = endpoint
 
-  let params_to_json params =
-    let open Option in
-    params
-    >|= fun v ->
+  let params_to_json v =
     Js.Unsafe.coerce
       (object%js
         val from = Js.string v.from
@@ -62,10 +56,7 @@ module Plan_delete_nodes_api :
 
   let name = endpoint
 
-  let params_to_json params =
-    let open Option in
-    params
-    >|= fun v ->
+  let params_to_json v =
     Js.Unsafe.coerce
       (object%js
         val from = Js.string v.from
@@ -76,43 +67,23 @@ module Plan_delete_nodes_api :
   let result_of_json v = T.Plan.of_js @@ Js.Unsafe.coerce v
 end
 
-module Make (Client : C.Rpc.Client) : S = struct
-  let reject params =
-    let waiter, wakener = Lwt.wait () in
-    let module R = Sxfiler_rpc in
-    let%lwt () =
-      Client.request
-        (module Reject_api)
-        (Some params)
-        (function
-          | Ok (Some v) -> Lwt.wakeup wakener v
-          | Ok None -> assert false
-          | Error e ->
-            let module Jr = Jsonrpc_ocaml_jsoo in
-            let message = Jr.Types.Error_code.to_message e.code in
-            Lwt.wakeup_exn wakener Error.(to_exn @@ create message))
-    in
-    waiter
-
+module Make (Client : C.Rpc_client.S) : S = struct
   (* commonly call API *)
   let call_api_only (type params result) (params : params)
       (module Api : J.Api_def with type params = params and type result = result) =
     let waiter, wakener = Lwt.wait () in
     let module R = Sxfiler_rpc in
-    let%lwt () =
-      Client.request
-        (module Api)
-        (Some params)
-        (function
-          | Ok (Some v) -> Lwt.wakeup wakener v
-          | Ok None -> assert false
-          | Error e ->
-            let module Jr = Jsonrpc_ocaml_jsoo in
-            let message = Jr.Types.Error_code.to_message e.code in
-            Lwt.wakeup_exn wakener Error.(to_exn @@ create message))
-    in
+    let%lwt response = Client.call ~api:(module Api) ~params () in
+    ( match response with
+      | Ok (Some v) -> Lwt.wakeup wakener v
+      | Ok None -> assert false
+      | Error e ->
+        let module Jr = Jsonrpc_ocaml_jsoo in
+        let message = Jr.Types.Error_code.to_message e.code in
+        Lwt.wakeup_exn wakener Error.(to_exn @@ create message) ) ;
     waiter
 
+  let reject params = call_api_only params (module Reject_api)
   let plan_move_nodes params = call_api_only params (module Plan_move_nodes_api)
   let plan_delete_nodes params = call_api_only params (module Plan_delete_nodes_api)
 end
