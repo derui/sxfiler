@@ -28,7 +28,7 @@ let test_set =
         let proc = S.Proc_filer.make_spec (module Gateway) in
         let id = Random.int64 Int64.max_int in
         let%lwt res =
-          proc.S.Procedure_intf.handler
+          proc.S.Procedure.handler
             Jy.Request.
               { id = Some id
               ; _method = ""
@@ -53,7 +53,7 @@ let test_set =
         let expected = Jy.(Exception.Jsonrpc_error (R.Errors.Filer.already_exists, None)) in
         let id = Random.int64 Int64.max_int in
         Alcotest.check_raises "raised" expected (fun () ->
-            proc.S.Procedure_intf.handler
+            proc.S.Procedure.handler
               Jy.Request.
                 { id = Some id
                 ; _method = ""

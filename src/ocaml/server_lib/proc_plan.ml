@@ -6,7 +6,7 @@ module G = Sxfiler_server_gateway
 module T = Sxfiler_rpc.Types
 module Jr = Jsonrpc_ocaml_yojson
 module Tr = Sxfiler_server_translator
-module P = Procedure_intf
+module P = Procedure
 module E = Sxfiler_rpc.Endpoints
 
 let reject_spec (module Gateway : G.Plan.Reject.S) =

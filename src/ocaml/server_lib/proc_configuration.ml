@@ -4,7 +4,7 @@ module Usecase = Sxfiler_usecase
 module G = Sxfiler_server_gateway
 module I = Sxfiler_server_infra
 module T = Sxfiler_server_translator
-module P = Procedure_intf
+module P = Procedure
 module E = Sxfiler_rpc.Endpoints
 
 (* defines procedure to get current key bindings *)

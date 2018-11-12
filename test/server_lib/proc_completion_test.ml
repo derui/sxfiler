@@ -43,7 +43,7 @@ let test_set =
         in
         let id = Random.int64 Int64.max_int in
         let%lwt _ =
-          proc.S.Procedure_intf.handler
+          proc.S.Procedure.handler
             Jy.Request.
               { id = Some id
               ; _method = ""

@@ -5,7 +5,7 @@ module Jr = Jsonrpc_ocaml_yojson
 module T = Sxfiler_domain
 module U = Sxfiler_usecase
 module G = Sxfiler_server_gateway
-module P = Procedure_intf
+module P = Procedure
 module E = Sxfiler_rpc.Endpoints
 
 let notify_message_spec (module G : G.Notification.Notify_message.S) =

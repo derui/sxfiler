@@ -9,7 +9,7 @@ let make () =
   {method_handler}
 
 let expose t ~procedure =
-  let _method = procedure.Procedure_intf.method_ and handler = procedure.handler in
+  let _method = procedure.Procedure.method_ and handler = procedure.handler in
   {method_handler = J.Server.expose ~_method ~handler t.method_handler}
 
 let res_to_frame res =

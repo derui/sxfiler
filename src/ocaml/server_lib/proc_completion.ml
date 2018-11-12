@@ -5,7 +5,7 @@ module T = Sxfiler_domain
 module Usecase = Sxfiler_usecase
 module C = T.Completion
 module G = Sxfiler_server_gateway
-module P = Procedure_intf
+module P = Procedure
 module E = Sxfiler_rpc.Endpoints
 
 let setup_spec (module G : G.Completion.Setup) =

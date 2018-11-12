@@ -30,7 +30,7 @@ let test_set =
         let spec = S.Proc_keymap.get_spec (module Gateway) in
         let id = Random.int64 Int64.max_int in
         let%lwt res =
-          spec.S.Procedure_intf.handler Jy.Request.{_method = ""; params = None; id = Some id}
+          spec.S.Procedure.handler Jy.Request.{_method = ""; params = None; id = Some id}
         in
         let module G = Sxfiler_server_gateway in
         Alcotest.(check @@ of_pp Fmt.nop)
