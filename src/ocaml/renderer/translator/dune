@@ -1,9 +1,0 @@
-(library
- (name sxfiler_renderer_translator)
- (public_name sxfiler.renderer.translator)
- (modes byte)
- (libraries js_of_ocaml
-  sxfiler.rpc
-  sxfiler.kbd
-  jsoo_node)
- (preprocess (pps js_of_ocaml-ppx)))

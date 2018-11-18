@@ -1,6 +1,0 @@
-{
-  "name": "sxfiler",
-  "version": "1.0.0",
-  "description": "Simple and Extensible two screen filer by Electron",
-  "main": "index.js"
-}
