@@ -132,8 +132,13 @@ let make_procedures (module NS : D.Notification_service.S) : P.procedure list =
     G.Filer.Move_nodes.Make
       (U.Filer.Move_nodes.Make (Filer_repo) (Wb_repo) (I.Location_scanner_service)
          (I.Node_transporter_service.Make (NS) (I.Notification_factory))) in
+  let module Delete_nodes_gateway =
+    G.Filer.Delete_nodes.Make
+      (U.Filer.Delete_nodes.Make (Filer_repo) (Wb_repo) (I.Location_scanner_service)
+         (I.Node_trash_service)) in
   [ make_spec (module Make_gateway)
   ; get_spec (module Get_gateway)
   ; move_parent_spec (module Move_parent_gateway)
   ; enter_directory_spec (module Enter_directory_gateway)
-  ; move_nodes_spec (module Move_nodes_gateway) ]
+  ; move_nodes_spec (module Move_nodes_gateway)
+  ; delete_nodes_spec (module Delete_nodes_gateway) ]

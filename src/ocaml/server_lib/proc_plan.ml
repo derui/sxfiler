@@ -51,7 +51,7 @@ let plan_delete_nodes_spec (module Gateway : G.Filer.Plan_delete_nodes.S) =
     | {plan = None; _} -> J.(Exception.raise_error Types.Error_code.Internal_error)
     | {plan = Some s; _} -> Lwt.return s
   in
-  P.to_procedure ~method_:E.Plan.Filer.Move_nodes.endpoint
+  P.to_procedure ~method_:E.Plan.Filer.Delete_nodes.endpoint
     ~spec:P.Spec.{params_of_json; result_to_json; handle}
 
 let make_procedures () =
@@ -65,9 +65,13 @@ let make_procedures () =
       let get = Random.get_state
     end) in
   let module Reject_gateway = G.Plan.Reject.Make (U.Plan.Reject.Make (Wb_repo)) in
+  let module Workbench_make = U.Workbench.Make (Filer_repo) (Wb_factory) (Wb_repo) in
   let module Plan_move_nodes_gateway =
-    G.Filer.Plan_move_nodes.Make
-      (U.Workbench.Make (Filer_repo) (Wb_factory) (Wb_repo))
-      (U.Plan.Filer.Move_nodes.Make (Wb_repo))
+    G.Filer.Plan_move_nodes.Make (Workbench_make) (U.Plan.Filer.Move_nodes.Make (Wb_repo))
   in
-  [reject_spec (module Reject_gateway); plan_move_nodes_spec (module Plan_move_nodes_gateway)]
+  let module Plan_delete_nodes_gateway =
+    G.Filer.Plan_delete_nodes.Make (Workbench_make) (U.Plan.Filer.Delete_nodes.Make (Wb_repo))
+  in
+  [ reject_spec (module Reject_gateway)
+  ; plan_move_nodes_spec (module Plan_move_nodes_gateway)
+  ; plan_delete_nodes_spec (module Plan_delete_nodes_gateway) ]
