@@ -27,6 +27,22 @@ execFileSync(
   { stdio: 'inherit' }
 );
 
+execFileSync(
+  'tslint',
+  [
+    '-c',
+    './tslint.json',
+    '--project',
+    '.',
+    '--fix',
+    'src/ts/**/*.ts',
+    'src/ts/**/*.tsx',
+  ],
+  {
+    stdio: 'inherit',
+  }
+);
+
 execFileSync('prettier', ['--write', 'src/sass/**/*.scss'], {
   stdio: 'inherit',
 });
