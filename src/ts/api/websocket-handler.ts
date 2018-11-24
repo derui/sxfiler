@@ -1,8 +1,11 @@
-type handlerFunction = (ev: MessageEvent) => void;
+// handler definition
+export interface Handler {
+  handle(ev: MessageEvent): void;
+}
 
 // This module defines handler of WebSocket.
-export default class WebSocketHandler {
-  private handlers: handlerFunction[];
+export class WebSocketHandler {
+  private handlers: Handler[];
   constructor(private readonly ws: WebSocket) {
     this.handlers = [];
   }
@@ -11,7 +14,7 @@ export default class WebSocketHandler {
    *  initialize message handler for WebSocket.
    */
   public initialize() {
-    this.ws.onmessage = ev => this.handlers.forEach(handler => handler(ev));
+    this.ws.onmessage = ev => this.handlers.forEach(handler => handler.handle(ev));
   }
 
   /**
@@ -19,7 +22,7 @@ export default class WebSocketHandler {
    *
    *  @param handler a function to handle message.
    */
-  public addHandler(handler: handlerFunction) {
+  public addHandler(handler: Handler) {
     this.handlers.push(handler);
   }
 }

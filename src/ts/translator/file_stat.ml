@@ -29,16 +29,16 @@ class type js =
 
 let of_js : js Js.t -> t =
   fun js ->
-    { mode = Js.to_string js##.mode
-    ; uid = js##.uid
-    ; gid = js##.gid
-    ; atime = Js.to_string js##.atime
-    ; ctime = Js.to_string js##.ctime
-    ; mtime = Js.to_string js##.mtime
-    ; size = Js.to_string js##.size
-    ; is_directory = Js.to_bool js##.isDirectory
-    ; is_file = Js.to_bool js##.isFile
-    ; is_symlink = Js.to_bool js##.isSymlink }
+  { mode = Js.to_string js##.mode
+  ; uid = js##.uid
+  ; gid = js##.gid
+  ; atime = Js.to_string js##.atime
+  ; ctime = Js.to_string js##.ctime
+  ; mtime = Js.to_string js##.mtime
+  ; size = Js.to_string js##.size
+  ; is_directory = Js.to_bool js##.isDirectory
+  ; is_file = Js.to_bool js##.isFile
+  ; is_symlink = Js.to_bool js##.isSymlink }
 
 let to_js t : js Js.t =
   object%js

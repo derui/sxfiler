@@ -1,26 +1,19 @@
 import * as Common from "./jsonrpc";
 
-// interface to request to server.
-// first argument is method of JSON-RPC
-type Requester = (request: Common.Request) => Promise<Common.Response>;
-
-// Simple interface for Generator for request
-type IDGenerator = () => string;
-
 /**
  * The client of JSON-RPC
  */
 export class Client {
-  constructor(private readonly requester: Requester, private readonly idGenerator: IDGenerator) {}
+  constructor(private readonly requester: Common.Requester, private readonly idGenerator: Common.IDGenerator) {}
 
   /**
-   * send a request to method .
+   * call a method with or without request.
    *
    * @param method name of RPC
    * @param request object for RPC
    * @return promise to handling result of RPC
    */
-  public send<Req, Res>(method: string, request?: Req): Promise<Res> {
+  public call<Req, Res>(method: string, request?: Req): Promise<Res> {
     const rpcRequest: Common.Request = {
       jsonrpc: "2.0",
       method,
@@ -28,11 +21,21 @@ export class Client {
       id: this.idGenerator(),
     };
 
-    return this.requester(rpcRequest).then(req => {
+    return this.requester.call(rpcRequest).then(req => {
       if (req.error) {
         return Promise.reject(new Common.RPCError(req.error.message, req.error));
       }
       return req.result;
     });
+  }
+
+  public notify<Req>(method: string, request?: Req): void {
+    const rpcRequest: Common.Request = {
+      jsonrpc: "2.0",
+      method,
+      params: request,
+    };
+
+    return this.requester.notify(rpcRequest);
   }
 }

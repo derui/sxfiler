@@ -12,11 +12,11 @@ module Item = struct
 
   let to_js : t -> js Js.t =
     fun t ->
-      object%js
-        val id = Js.string t.id
+    object%js
+      val id = Js.string t.id
 
-        val value = Js.string t.value
-      end
+      val value = Js.string t.value
+    end
 
   let of_js : js Js.t -> t = fun js -> {id = Js.to_string js##.id; value = Js.to_string js##.value}
 end
@@ -35,13 +35,13 @@ module Candidate = struct
 
   let to_js : t -> js Js.t =
     fun t ->
-      object%js
-        val start = t.start
+    object%js
+      val start = t.start
 
-        val length = t.length
+      val length = t.length
 
-        val value = Item.to_js t.value
-      end
+      val value = Item.to_js t.value
+    end
 
   let of_js : js Js.t -> t =
     fun js -> {start = js##.start; length = js##.length; value = Item.of_js js##.value}

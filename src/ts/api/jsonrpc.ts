@@ -31,3 +31,21 @@ export class RPCError extends Error {
     this.error = error;
   }
 }
+
+// interface to request to server.
+export interface Requester {
+  /**
+   * call a method of server
+   * @param request request object
+   */
+  call(request: Request): Promise<Response>;
+
+  /**
+   * send notification to server.
+   * @param request request object
+   */
+  notify(request: Request): void;
+}
+
+// Simple interface for Generator for request
+export type IDGenerator = () => string;
