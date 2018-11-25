@@ -10,5 +10,8 @@ export default class Context {
    * @param dispatcher dispatcher
    * @param store store
    */
-  constructor(public readonly dispatcher: types.Dispatcher<actions.Action>, public readonly store: Store) {}
+  constructor(
+    public readonly dispatcher: types.Dispatcher<actions.Action>,
+    public readonly store: Store<any, actions.Action>
+  ) {}
 }
