@@ -20,7 +20,8 @@ export class FilerFactory {
       arg.nodes.map(v => ({
         node: v,
         marked: false,
-      }))
+      })),
+      0
     );
   }
 }
