@@ -12,6 +12,6 @@ export default class Context {
    */
   constructor(
     public readonly dispatcher: types.Dispatcher<actions.Action>,
-    public readonly store: Store<any, actions.Action>
+    public readonly store: Store<types.StoreState, actions.Action>
   ) {}
 }

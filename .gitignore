@@ -1,9 +1,6 @@
 node_modules/
 dist/
-*.css
 *.map
-test-bundled/*
-!test-bundled/.gitkeep
 *.exe
 *.obj
 *.out

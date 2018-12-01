@@ -32,3 +32,5 @@ export interface UseCase<Param, Result> {
    */
   execute(param: Param): Promise<Result>;
 }
+
+export { StoreState } from "./store-state";
