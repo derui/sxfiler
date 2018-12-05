@@ -6,3 +6,5 @@ export interface StoreState {
   config: ConfigState;
   fileList: FileList.State;
 }
+
+export { State as FileListState } from "./store-state/file-list";

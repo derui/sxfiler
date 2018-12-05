@@ -14,14 +14,14 @@ export enum Direction {
 // Filer domain to handle nodes in the location
 export class Filer {
   constructor(
-    private id: string,
-    private location: string,
-    private nodes: NodeMarker[],
-    private currentCursor: number
+    public readonly id: string,
+    public readonly location: string,
+    public readonly nodes: NodeMarker[],
+    public readonly currentCursorIndex: number
   ) {}
 
   get currentNode(): Node {
-    return this.nodes[this.currentCursor].node;
+    return this.nodes[this.currentCursorIndex].node;
   }
 
   /**
@@ -33,10 +33,10 @@ export class Filer {
 
     switch (direction) {
       case Direction.Down:
-        index = Math.min(this.nodes.length - 1, this.currentCursor + 1);
+        index = Math.min(this.nodes.length - 1, this.currentCursorIndex + 1);
         break;
       case Direction.Up:
-        index = Math.max(0, this.currentCursor - 1);
+        index = Math.max(0, this.currentCursorIndex - 1);
         break;
     }
 
@@ -57,7 +57,7 @@ export class Filer {
         }
         return v;
       }),
-      this.currentCursor
+      this.currentCursorIndex
     );
   }
 

@@ -1,11 +1,4 @@
-import { Node } from "../../domain/node";
-
-interface Filer {
-  id: string;
-  location: string;
-  nodes: Node[];
-  selectedItemIndex: number;
-}
+import { Filer} from "../../domain/filer";
 
 export enum Side {
   Left = "left",
@@ -18,28 +11,28 @@ export interface StateArg {
   currentSide?: Side;
 }
 
+export interface State {
+  left?: Filer;
+  // filer of right side
+  right?: Filer;
+  // current selected side
+  currentSide: Side;
+  // filer initialized or not
+  initialized : boolean;
+}
+
 export class State {
   // filer of left side
-  public left?: Filer;
-  // filer of right side
-  public right?: Filer;
-  // current selected side
-  public currentSide: Side;
-
-  public constructor({ left, right, currentSide = Side.Left }: StateArg = {}) {
-    this.left = left;
-    this.right = right;
-    this.currentSide = currentSide;
-  }
 
   /**
    * Compare specific position is current or not.
    *
+   * @param state state to operate
    * @param pos check position
    * @return state has same position
    */
-  public isCurrent(pos: Side): boolean {
-    return this.currentSide === pos;
+  public static isCurrent(state:State, pos: Side): boolean {
+    return state.currentSide === pos;
   }
 
   /**
@@ -47,12 +40,12 @@ export class State {
    * @param state operation target
    * @return side swapped instance
    */
-  public fellowPosition(): State {
-    switch (this.currentSide) {
+  public static fellowPosition(state:State): State {
+    switch (state.currentSide) {
       case Side.Left:
-        return new State(Object.assign({}, this, { currentSide: Side.Right }));
+        return {...state , currentSide: Side.Right};
       case Side.Right:
-        return new State(Object.assign({}, this, { currentSide: Side.Left }));
+        return {...state , currentSide: Side.Left};
     }
   }
 }
