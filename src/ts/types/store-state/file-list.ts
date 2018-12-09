@@ -5,12 +5,6 @@ export enum Side {
   Right = "right",
 }
 
-export interface StateArg {
-  left?: Filer;
-  right?: Filer;
-  currentSide?: Side;
-}
-
 export interface State {
   left?: Filer;
   // filer of right side
