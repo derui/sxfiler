@@ -1,6 +1,0 @@
-(library
- (name sxfiler_kbd_jsoo)
- (public_name sxfiler.kbd.jsoo)
- (libraries js_of_ocaml sxfiler.kbd)
- (modes byte)
- (preprocess (pps js_of_ocaml-ppx)))
