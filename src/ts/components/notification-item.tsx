@@ -51,7 +51,7 @@ export default class NotificationItem extends React.Component<Prop, State> {
       <CSSTransition in={this.state.mounted && this.props.timeouted}
                      onExited={() => this.props.onItemTimeouted(item.id) }
                      timeout={200}
-                     className="fp-NotificationList_ItemAnimation">
+                     classNames="fp-NotificationList_ItemAnimation">
         {renderer}
       </CSSTransition>
     );
