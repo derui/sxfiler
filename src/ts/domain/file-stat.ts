@@ -10,7 +10,7 @@ export interface Capability {
 export interface Mode {
   readonly owner: Capability;
   readonly group: Capability;
-  readonly others: Capability;
+  readonly other: Capability;
 }
 
 // information object of file
