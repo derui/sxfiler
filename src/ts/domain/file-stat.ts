@@ -1,3 +1,5 @@
+import * as bigInt from "big-integer";
+
 // define type and class of file stat
 export interface Capability {
   readonly writable: boolean;
@@ -25,4 +27,8 @@ export class FileStat {
     public readonly isFile: boolean,
     public readonly isSymlink: boolean
   ) {}
+
+  get sizeAsBigInt(): bigInt.BigInteger {
+    return bigInt(this.size);
+  }
 }

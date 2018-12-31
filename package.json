@@ -59,6 +59,7 @@
   "homepage": "https://github.com/derui/sxfiler#readme",
   "dependencies": {
     "@types/classnames": "^2.2.6",
-    "@types/react-transition-group": "^2.0.14"
+    "@types/react-transition-group": "^2.0.14",
+    "big-integer": "^1.6.40"
   }
 }
