@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Capability, FileStat} from "../domain/file-stat";
+import {Mode, Capability} from "../domain/file-stat";
 
 function capabilityToString(cap: Capability) {
   const readable = cap.readable ? "r" : "-";
@@ -12,31 +12,32 @@ function capabilityToString(cap: Capability) {
 /**
  * convert mode to string
  */
-function modeToString(stat: FileStat) : string {
+function modeToString(mode: Mode, isDirectory: boolean, isSymlink: boolean) : string {
   var state = "=";
 
-  if (stat.isDirectory) {
+  if (isDirectory) {
     state = "d";
-  } else if (stat.isSymlink) {
+  } else if (isSymlink) {
     state = "l";
   }
 
-  const owner = capabilityToString(stat.mode.owner);
-  const group = capabilityToString(stat.mode.group);
-  const other = capabilityToString(stat.mode.other);
+  const owner = capabilityToString(mode.owner);
+  const group = capabilityToString(mode.group);
+  const others = capabilityToString(mode.others);
 
-  return `${state}${owner}${group}${other}`;
+  return `${state}${owner}${group}${others}`;
 }
 
 interface Prop {
-  stat: FileStat;
-  className: string;
+  mode: Mode;
+  isDirectory: boolean;
+  isSymlink: boolean;
 }
 
-const FileItemMode : React.SFC<Prop> = prop => {
-  const data = modeToString(prop.stat);
+const FileItemMode : React.FC<Prop> = prop => {
+  const data = modeToString(prop.mode, prop.isDirectory, prop.isSymlink);
 
-  return (<span className={prop.className}>{data}</span>);
+  return (<span className="fp-FileItem_FileMode">{data}</span>);
 };
 
 export default FileItemMode;

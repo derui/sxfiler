@@ -1,6 +1,7 @@
-const electron = require('electron');
-const crashReporter = electron.crashReporter;
-const path = require('path');
+import * as electron from "electron";
+import * as path from "path";
+import * as url from "url";
+
 
 if (require.main !== module) {
   process.exit(1);
@@ -23,10 +24,10 @@ app.on('ready', () => {
   }
 
   const startUrl = process.env.ELECTRON_START_URL || url.format({
-            pathname: path.join(__dirname, '/../build/index.html'),
-            protocol: 'file:',
-            slashes: true
-        });
+    pathname: path.join(__dirname, '/../build/index.html'),
+    protocol: 'file:',
+    slashes: true
+  });
   browserWindow.loadURL(startUrl);
   browserWindow.focusOnWebView();
 });

@@ -19,7 +19,7 @@ function toComponent(notification: Notification, timeouts: string[], onItemTimeo
   );
 }
 
-const NotificationList : React.SFC<Prop> = prop => {
+const NotificationList : React.FC<Prop> = prop => {
   const {notifications, timeouts, onItemTimeouted} = prop;
 
   const components = notifications.map(v => toComponent(v, timeouts, onItemTimeouted))

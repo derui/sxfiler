@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as bigInt from "big-integer";
+import bigInt from "big-integer";
 
 enum SizeUnit {
   Byte = "byte",
@@ -86,13 +86,12 @@ class Size {
 
 interface Prop {
   size: string;
-  className: string;
 }
 
-const FileItemSize : React.SFC<Prop> = prop => {
+const FileItemSize : React.FC<Prop> = prop => {
   const size = new Size(prop.size);
 
-  return (<span className={prop.className}>{size.toString()}</span>)
+  return (<span className="fp-FileItem_FileSize">{size.toString()}</span>)
 }
 
 export default FileItemSize;

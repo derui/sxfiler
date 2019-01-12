@@ -1,4 +1,4 @@
-import * as bigInt from "big-integer";
+import bigInt from "big-integer";
 
 // define type and class of file stat
 export interface Capability {
@@ -7,10 +7,29 @@ export interface Capability {
   readonly executable: boolean;
 }
 
+function emptyCapability(): Capability {
+  return {
+    writable: false,
+    readable: false,
+    executable: false
+  };
+}
+
 export interface Mode {
   readonly owner: Capability;
   readonly group: Capability;
-  readonly other: Capability;
+  readonly others: Capability;
+}
+
+/**
+ * get the new mode instance that is all capabilities disabled.
+ */
+export function emptyMode() : Mode {
+  return {
+    owner: emptyCapability(),
+    group: emptyCapability(),
+    others: emptyCapability(),
+  };
 }
 
 // information object of file
@@ -28,6 +47,9 @@ export class FileStat {
     public readonly isSymlink: boolean
   ) {}
 
+  /**
+   *  get size of file as BigInt
+   */
   get sizeAsBigInt(): bigInt.BigInteger {
     return bigInt(this.size);
   }

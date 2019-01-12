@@ -9,22 +9,24 @@ interface Prop {
 }
 
 /* create filer from state and key */
-function createFiler(key:string, filer : Filer.Filer) {
+function createFiler(key:string, currentSide: Side, filer : Filer.Filer) {
+  const focused = key === currentSide;
   return (
-    <FileList key={key} nodes={filer.nodes} cursor={filer.currentCursorIndex} location={filer.location} />
+    <FileList key={key} nodes={filer.nodes} cursor={filer.currentCursorIndex} location={filer.location}
+              focused={focused} />
   );
 }
 
 // Stateless container to render filer
-const FileListContainer : React.SFC<Prop> = props => {
+const FileListContainer : React.FC<Prop> = props => {
   // can not render anything if filer is not initialized
   if (!props.state.initialized) {
     return null;
   }
 
   const filers = [
-    createFiler(Side.Left, props.state.left!),
-    createFiler(Side.Right, props.state.right!)
+    createFiler(Side.Left, props.state.currentSide, props.state.left!),
+    createFiler(Side.Right, props.state.currentSide, props.state.right!)
   ];
 
     return (

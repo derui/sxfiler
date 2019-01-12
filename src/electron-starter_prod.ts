@@ -1,13 +1,17 @@
-const electron = require('electron');
-const crashReporter = electron.crashReporter;
-const path = require('path');
-const { spawn } = require('child_process');
+import * as electron from "electron";
+import * as path from "path";
+import {spawn} from "child_process";
 
 if (require.main !== module) {
   process.exit(1);
 }
 
 const app = electron.app;
+const server = spawn(path.join(__dirname, "sxfiler-server")).on("error", (error: undefined | Error) => {
+  if (error) {
+    throw error;
+  }
+});
 
 app.on('ready', () => {
   const browserWindow = new electron.BrowserWindow({
@@ -22,12 +26,6 @@ app.on('ready', () => {
     console.error("Can not open window");
     process.exit(1);
   }
-
-  const server = spawn(path.join(__dirname, "sxfiler-server"), (error, stdout, stderr) => {
-    if (error) {
-      throw error;
-    }
-  });
 
   browserWindow.loadURL(`file://${path.join(__dirname, "index.html")}`);
   browserWindow.focusOnWebView();
