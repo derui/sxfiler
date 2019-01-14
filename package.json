@@ -6,6 +6,11 @@
   "directories": {
     "test": "test"
   },
+  "jest": {
+    "watchPathIgnorePatterns": [
+      "node_modules"
+    ]
+  },
   "devDependencies": {
     "@types/jest": "^23.3.9",
     "@types/node": "^10.12.9",

@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import * as kbd from "../kbd";
 import {KeymapState} from "../types/store-state";
 
 type ActionCallback = (action: string) => void
@@ -22,7 +23,8 @@ function handleKeyDown(props: Prop) : (ev:React.KeyboardEvent<any>) => void {
   return ev => {
     switch (ev.type) {
       case "keydown": {
-        const binding = findBinding(props.keymap, ev.key);
+        const key = kbd.make(ev.key, {meta: ev.metaKey, ctrl: ev.ctrlKey});
+        const binding = findBinding(props.keymap, kbd.toKeySeq(key));
 
         if (binding === null) {
           break ;
