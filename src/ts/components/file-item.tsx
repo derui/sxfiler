@@ -1,5 +1,5 @@
-import * as React from "react";
 import classNames from "classnames";
+import * as React from "react";
 import * as Domain from "../domain/node";
 import FileMode from "./file-item-mode";
 import FileName from "./file-item-name";
@@ -13,9 +13,8 @@ interface Prop {
 }
 
 export default class FileItem extends React.PureComponent<Prop> {
-
-  render() {
-    const {item} = this.props;
+  public render() {
+    const { item } = this.props;
     const className = classNames("fp-FileItem", {
       "fp-FileItem-selected": this.props.selected,
       "fp-FileItem-marked": this.props.marked,
@@ -23,16 +22,16 @@ export default class FileItem extends React.PureComponent<Prop> {
 
     return (
       <li className={className}>
-        <FileMode key="mode" mode={item.stat.mode}
-                  isDirectory={item.stat.isDirectory}
-                  isSymlink={item.stat.isSymlink}/>
+        <FileMode
+          key="mode"
+          mode={item.stat.mode}
+          isDirectory={item.stat.isDirectory}
+          isSymlink={item.stat.isSymlink}
+        />
         <FileTimestamp key="timestamp" timestamp={item.stat.mtime} />
         <FileSize key="size" size={item.stat.size} />
-        <FileName key="name" name={item.name}
-                  isDirectory={item.stat.isDirectory}
-                  isSymlink={item.stat.isSymlink} />
+        <FileName key="name" name={item.name} isDirectory={item.stat.isDirectory} isSymlink={item.stat.isSymlink} />
       </li>
-
     );
   }
 }

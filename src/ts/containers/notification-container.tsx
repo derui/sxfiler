@@ -1,8 +1,6 @@
 import * as React from "react";
 
-interface Prop {
-
-}
+interface Prop {}
 
 const NotificationContainer: React.FC<Prop> = props => {
   return null;

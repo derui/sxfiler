@@ -1,9 +1,8 @@
-import * as React from "react";
 import classNames from "classnames";
+import * as React from "react";
 
 import * as Domain from "../domain/filer";
 import FileItem from "./file-item";
-
 
 interface HeaderProp {
   directory: string;
@@ -13,12 +12,12 @@ interface HeaderProp {
 /**
  * component definition for header of file list
  */
-const Header : React.FunctionComponent<HeaderProp> = ({directory, focused}) => {
+const Header: React.FunctionComponent<HeaderProp> = ({ directory, focused }) => {
   const className = classNames("fp-FileList_Header", {
     "fp-FileList_Header-focused": focused,
   });
 
-  return (<header className={className}>{directory}</header>);
+  return <header className={className}>{directory}</header>;
 };
 
 interface BodyProp {
@@ -31,17 +30,14 @@ interface BodyProp {
  * component definition for body of file list
  */
 class Body extends React.Component<BodyProp> {
-  render() {
-    const {nodes, cursor, focused} = this.props;
+  public render() {
+    const { nodes, cursor, focused } = this.props;
 
-    const items = nodes.map((node, index) =>
-      (<FileItem key={index} item={node.node} marked={node.marked}
-                 selected={index === cursor && focused} />)
-    );
+    const items = nodes.map((node, index) => (
+      <FileItem key={index} item={node.node} marked={node.marked} selected={index === cursor && focused} />
+    ));
 
-    return (
-      <ul className="fp-FileList_Content">{items}</ul>
-    );
+    return <ul className="fp-FileList_Content">{items}</ul>;
   }
 }
 
@@ -52,13 +48,13 @@ interface Prop {
   focused: boolean;
 }
 
-const FileList : React.FunctionComponent<Prop> = (props) => {
+const FileList: React.FunctionComponent<Prop> = props => {
   return (
     <div>
       <Header key="header" directory={props.location} focused={props.focused} />
-      <Body key="body" nodes={props.nodes} cursor={props.cursor}
-            focused={props.focused} />
-    </div>)
+      <Body key="body" nodes={props.nodes} cursor={props.cursor} focused={props.focused} />
+    </div>
+  );
 };
 
 export default FileList;

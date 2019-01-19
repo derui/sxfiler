@@ -1,5 +1,5 @@
 import * as React from "react";
-import {StoreState} from "../types/index";
+import { StoreState } from "../types/index";
 import FileListContainer from "./file-list-container";
 import "./workspace.css";
 
@@ -8,9 +8,9 @@ interface Prop {
 }
 
 export default class Workspace extends React.Component<Prop> {
-  private layoutRef : React.RefObject<any>;
+  private layoutRef: React.RefObject<any>;
 
-  public constructor(props : Prop) {
+  public constructor(props: Prop) {
     super(props);
     this.layoutRef = React.createRef();
   }
@@ -30,7 +30,7 @@ export default class Workspace extends React.Component<Prop> {
   public render() {
     return (
       <div key="layout" className="fp-Workspace" tabIndex={0} ref={this.layoutRef}>
-        <FileListContainer key="filer" state={this.props.state.fileList}  />
+        <FileListContainer key="filer" state={this.props.state.fileList} />
       </div>
     );
   }

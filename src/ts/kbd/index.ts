@@ -1,14 +1,14 @@
 /**
-   implement for TypeScript version sxfiler_kbd.
+ * implement for TypeScript version sxfiler_kbd.
  */
 
 interface Key {
   ctrl: boolean;
   meta: boolean;
   key: string;
-};
+}
 
-type MakeOption = {
+interface MakeOption {
   ctrl?: boolean;
   meta?: boolean;
 }
@@ -18,7 +18,7 @@ type MakeOption = {
  * @param key A key that input from keyborad event
  * @param option option to make key
  */
-export function make(key: string, option: MakeOption = {ctrl: false, meta: false}): Key {
+export function make(key: string, option: MakeOption = { ctrl: false, meta: false }): Key {
   return {
     key,
     ctrl: option.ctrl || false,

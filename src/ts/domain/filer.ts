@@ -1,7 +1,7 @@
 // define filer state type and operations.
 import { Node } from "./node";
 
-export type NodeMarker = {
+export interface NodeMarker {
   node: Node;
   marked: boolean;
 }

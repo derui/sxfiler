@@ -19,7 +19,7 @@ export class Keymap {
    * find the binding of the key
    * @param key the key to find the binding
    */
-  find(key: string) : Binding | null {
+  public find(key: string): Binding | null {
     const filtered = this._bindings.filter(v => v.key === key);
 
     if (filtered.length === 0) {

@@ -1,5 +1,3 @@
-
-
 // UIContext defines current context of UI.
 enum UIContext {
   OnFileTree = "onFileTree",

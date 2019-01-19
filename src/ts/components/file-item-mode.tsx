@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Mode, Capability} from "../domain/file-stat";
+import { Capability, Mode } from "../domain/file-stat";
 
 function capabilityToString(cap: Capability) {
   const readable = cap.readable ? "r" : "-";
@@ -12,8 +12,8 @@ function capabilityToString(cap: Capability) {
 /**
  * convert mode to string
  */
-function modeToString(mode: Mode, isDirectory: boolean, isSymlink: boolean) : string {
-  var state = "=";
+function modeToString(mode: Mode, isDirectory: boolean, isSymlink: boolean): string {
+  let state = "=";
 
   if (isDirectory) {
     state = "d";
@@ -34,10 +34,10 @@ interface Prop {
   isSymlink: boolean;
 }
 
-const FileItemMode : React.FC<Prop> = prop => {
+const FileItemMode: React.FC<Prop> = prop => {
   const data = modeToString(prop.mode, prop.isDirectory, prop.isSymlink);
 
-  return (<span className="fp-FileItem_FileMode">{data}</span>);
+  return <span className="fp-FileItem_FileMode">{data}</span>;
 };
 
 export default FileItemMode;

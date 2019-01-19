@@ -1,6 +1,6 @@
 import * as React from "react";
-import {Notification} from "../domain/notification";
-import NotificationItem, {TimeoutCallback} from "./notification-item";
+import { Notification } from "../domain/notification";
+import NotificationItem, { TimeoutCallback } from "./notification-item";
 
 interface Prop {
   // notifications given from server
@@ -12,19 +12,17 @@ interface Prop {
 }
 
 // make item
-function toComponent(notification: Notification, timeouts: string[], onItemTimeouted:TimeoutCallback) {
+function toComponent(notification: Notification, timeouts: string[], onItemTimeouted: TimeoutCallback) {
   const timeouted = timeouts.find(v => v === notification.id) !== undefined;
-  return (
-    <NotificationItem item={notification} timeouted={timeouted} onItemTimeouted={onItemTimeouted}/>
-  );
+  return <NotificationItem item={notification} timeouted={timeouted} onItemTimeouted={onItemTimeouted} />;
 }
 
-const NotificationList : React.FC<Prop> = prop => {
-  const {notifications, timeouts, onItemTimeouted} = prop;
+const NotificationList: React.FC<Prop> = prop => {
+  const { notifications, timeouts, onItemTimeouted } = prop;
 
-  const components = notifications.map(v => toComponent(v, timeouts, onItemTimeouted))
+  const components = notifications.map(v => toComponent(v, timeouts, onItemTimeouted));
 
-  return (<ul className="fp-NotificationList">{components}</ul>);
-}
+  return <ul className="fp-NotificationList">{components}</ul>;
+};
 
 export default NotificationList;

@@ -1,16 +1,16 @@
 /**
  * This component provides dummy element to be able to measure size of item in list anytime.
  */
-import * as React from "react";
 import classNames from "classnames";
+import * as React from "react";
 
-import {emptyMode} from "../domain/file-stat";
+import { emptyMode } from "../domain/file-stat";
 import FileMode from "./file-item-mode";
 import FileName from "./file-item-name";
 import FileSize from "./file-item-size";
 import FileTimestamp from "./file-item-timestamp";
 
-const DummyItem : React.FC = () => {
+const DummyItem: React.FC = () => {
   const className = classNames("fp-FileItem", "fp-FileItem-dummy");
 
   return (

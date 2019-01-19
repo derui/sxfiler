@@ -1,14 +1,13 @@
-
 // type of notification
 export enum NotificationType {
-  OneShot = 'oneshot',
-  Progress = 'progress',
+  OneShot = "oneshot",
+  Progress = "progress",
 }
 
 export enum Level {
-  Info = 'info',
-  Warning = 'warning',
-  Error = 'error'
+  Info = "info",
+  Warning = "warning",
+  Error = "error",
 }
 
 export interface OneShotBody {
@@ -23,13 +22,33 @@ export interface ProgressBody {
   target: number;
 }
 
-export type Body = OneShotBody | ProgressBody
+export type Body = OneShotBody | ProgressBody;
+
+/**
+ * factory function to create one-shot notification
+ * @param id
+ * @param level
+ * @param message
+ */
+export function createOneShot(id: string, level: Level, message: string) {
+  return new Notification(id, level, { kind: NotificationType.OneShot, message });
+}
+
+/**
+ * factory function to create progress notification
+ * @param id
+ * @param level
+ * @param progress
+ */
+export function createProgress(
+  id: string,
+  level: Level,
+  progress: { process: string; current: number; target: number }
+) {
+  return new Notification(id, level, { kind: NotificationType.Progress, ...progress });
+}
 
 // notification from server
 export class Notification {
-  constructor(
-    public readonly id: string,
-    public readonly level: Level,
-    public readonly body: Body
-  ) {}
+  constructor(public readonly id: string, public readonly level: Level, public readonly body: Body) {}
 }

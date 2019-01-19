@@ -1,2 +1,4 @@
-// all actions in this application
-export type Action = any;
+import { Actions as NotificationActions } from "./notification";
+
+// merged all actions in application
+export type Actions = NotificationActions;

@@ -11,7 +11,7 @@ function emptyCapability(): Capability {
   return {
     writable: false,
     readable: false,
-    executable: false
+    executable: false,
   };
 }
 
@@ -24,7 +24,7 @@ export interface Mode {
 /**
  * get the new mode instance that is all capabilities disabled.
  */
-export function emptyMode() : Mode {
+export function emptyMode(): Mode {
   return {
     owner: emptyCapability(),
     group: emptyCapability(),

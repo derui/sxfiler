@@ -7,7 +7,7 @@ interface Prop {
 /**
  * format Date to display in item
  */
-function format(timestamp:Date) : String {
+function format(timestamp: Date): string {
   const year = `${timestamp.getFullYear()}`.padStart(4, "0");
   const month = `${timestamp.getMonth() + 1}`.padStart(2, "0");
   const date = `${timestamp.getDate()}`.padStart(2, "0");
@@ -15,11 +15,9 @@ function format(timestamp:Date) : String {
   return `${year}/${month}/${date}`;
 }
 
-const FileItemTimestamp : React.FC<Prop> = prop => {
+const FileItemTimestamp: React.FC<Prop> = prop => {
   const date = format(prop.timestamp);
-  return (
-    <span className="fp-FileItem_Timestamp">{date}</span>
-  );
+  return <span className="fp-FileItem_Timestamp">{date}</span>;
 };
 
 export default FileItemTimestamp;

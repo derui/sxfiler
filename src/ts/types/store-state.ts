@@ -1,5 +1,6 @@
 import * as FileList from "./store-state/file-list";
 import * as Keymap from "./store-state/keymap";
+import * as Notification from "./store-state/notification";
 import UIContext from "./ui-context";
 
 export interface ConfigState {}
@@ -9,7 +10,5 @@ export interface StoreState {
   config: ConfigState;
   fileList: FileList.State;
   keymap: Keymap.State;
+  notification: Notification.State;
 }
-
-export { State as FileListState } from "./store-state/file-list";
-export { State as KeymapState } from "./store-state/keymap";
