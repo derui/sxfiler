@@ -1,4 +1,4 @@
-import { Notifications } from "../../domain/notification";
+import Notifications from "../../domain/notifications";
 
 export interface State {
   // all notification not finished yet

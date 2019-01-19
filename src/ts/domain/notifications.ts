@@ -24,7 +24,7 @@ export default class Notifications {
    * @param id the id of notification to want to remove
    */
   public remove(id: string): Notifications {
-    const data = {...this._items};
+    const data = { ...this._items };
     delete data[id];
 
     return new Notifications(Object.values(data));
