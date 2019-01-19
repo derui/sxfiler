@@ -1,13 +1,13 @@
-import * as electron from "electron";
-import * as path from "path";
-import {spawn} from "child_process";
+const electron = require("electron");
+const path = require("path");
+const spawn = require("child_process").spawn;
 
 if (require.main !== module) {
   process.exit(1);
 }
 
 const app = electron.app;
-const server = spawn(path.join(__dirname, "sxfiler-server")).on("error", (error: undefined | Error) => {
+const server = spawn(path.join(__dirname, "sxfiler-server")).on("error", error => {
   if (error) {
     throw error;
   }

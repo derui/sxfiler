@@ -31,7 +31,7 @@ export default class NotificationItem extends React.Component<Prop, State> {
   }
 
   public handleItemTimeouted() {
-    this.props.onItemTimeouted(this.props.item);
+    this.props.onItemTimeouted(this.props.item.id);
   }
 
   public render() {
@@ -57,7 +57,7 @@ export default class NotificationItem extends React.Component<Prop, State> {
     return (
       <CSSTransition
         in={this.state.mounted && this.props.timeouted}
-        onExited={this.onItemTimeouted}
+        onExited={this.handleItemTimeouted}
         timeout={200}
         classNames="fp-NotificationList_ItemAnimation"
       >

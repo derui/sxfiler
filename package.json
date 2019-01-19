@@ -2,7 +2,7 @@
   "name": "sxfiler",
   "version": "1.0.0",
   "description": "This is a **Simple** and **Extensible** , and having *Two screen* filer created by Electron.",
-  "main": "index.js",
+  "main": "src/electron-starter.js",
   "directories": {
     "test": "test"
   },
@@ -23,7 +23,7 @@
     "create-react-app": "^2.1.1",
     "electron": "^3.0.0-beta.5",
     "electron-packager": "^12.1.0",
-    "karma": "^2.0.4",
+    "karma": "^3.1.4",
     "karma-chrome-launcher": "^2.2.0",
     "karma-mocha": "^1.3.0",
     "lodash.isequal": "^4.5.0",
@@ -31,7 +31,7 @@
     "node-sass-glob-importer": "^5.1.3",
     "npm-run-all": "^4.1.3",
     "prettier": "1.15.2",
-    "puppeteer": "^1.5.0",
+    "puppeteer": "^1.11.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-test-renderer": "^16.4.1",
@@ -44,14 +44,15 @@
     "typescript": "^3.1.6"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "BROWSER=none react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "electron": "ELECTRON_START_URL=http://localhost:3000 electron .",
     "package": "node ./scripts/package-electron.js",
     "format": "node ./scripts/format.js",
-    "clean": "node ./scripts/clean.js"
+    "clean": "node ./scripts/clean.js",
+    "dev": "npm-run-all -p start electron"
   },
   "repository": {
     "type": "git",
@@ -62,7 +63,7 @@
   "bugs": {
     "url": "https://github.com/derui/sxfiler/issues"
   },
-  "homepage": "https://github.com/derui/sxfiler#readme",
+  "homepage": "./",
   "dependencies": {
     "@types/classnames": "^2.2.6",
     "@types/react-transition-group": "^2.0.14",

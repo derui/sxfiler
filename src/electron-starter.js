@@ -1,7 +1,6 @@
-import * as electron from "electron";
-import * as path from "path";
-import * as url from "url";
-
+const electron = require("electron");
+const path = require("path");
+const url = require("url");
 
 if (require.main !== module) {
   process.exit(1);

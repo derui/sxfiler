@@ -1,5 +1,5 @@
 // reducers for notification
-import { Actions } from "../actions";
+import Actions from "../actions";
 import ActionTypes from "../actions/types/notification";
 import { empty, State } from "../types/store-state/notification";
 

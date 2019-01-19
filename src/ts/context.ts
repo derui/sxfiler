@@ -1,7 +1,8 @@
 import { Store } from "redux";
 
-import * as actions from "./actions/index";
+import Actions from "./actions/types";
 import * as types from "./types/index";
+import {StoreState} from "./types/store-state";
 
 // Context for application
 export default class Context {
@@ -11,7 +12,7 @@ export default class Context {
    * @param store store
    */
   constructor(
-    public readonly dispatcher: types.Dispatcher<actions.Action>,
-    public readonly store: Store<types.StoreState, actions.Action>
+    public readonly dispatcher: types.Dispatcher<Actions>,
+    public readonly store: Store<StoreState>
   ) {}
 }

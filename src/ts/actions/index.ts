@@ -1,4 +1,5 @@
-import { Actions as NotificationActions } from "./notification";
+import {Actions as NotificationActions} from "./notification";
 
-// merged all actions in application
-export type Actions = NotificationActions;
+type Actions = NotificationActions;
+
+export default Actions;

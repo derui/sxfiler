@@ -1,7 +1,6 @@
 import * as React from "react";
-import { StoreState } from "../types/index";
+import { StoreState } from "../types/store-state";
 import FileListContainer from "./file-list-container";
-import "./workspace.css";
 
 interface Prop {
   state: StoreState;

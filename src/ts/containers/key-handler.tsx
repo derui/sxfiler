@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import * as kbd from "../kbd";
-import { KeymapState } from "../types/store-state";
+import { State as KeymapState } from "../types/store-state/keymap";
 
 type ActionCallback = (action: string) => void;
 
