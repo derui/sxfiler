@@ -1,6 +1,6 @@
 import * as types from "./types/index";
 
-export class Dispatcher<P> implements types.Dispatcher<P>, types.Observer<P> {
+export default class Dispatcher<P> implements types.Dispatcher<P>, types.Observer<P> {
   private handlers: Array<types.Subscriber<P>>;
 
   constructor() {

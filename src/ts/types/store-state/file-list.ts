@@ -1,4 +1,4 @@
-import { Filer } from "../../domain/filer";
+import { Filer } from "../../domains/filer";
 
 export enum Side {
   Left = "left",
@@ -15,31 +15,35 @@ export interface State {
   initialized: boolean;
 }
 
-export class State {
-  // filer of left side
+/** factory function create empty state */
+export function empty(): State {
+  return {
+    currentSide: Side.Left,
+    initialized: false,
+  };
+}
 
-  /**
-   * Compare specific position is current or not.
-   *
-   * @param state state to operate
-   * @param pos check position
-   * @return state has same position
-   */
-  public static isCurrent(state: State, pos: Side): boolean {
-    return state.currentSide === pos;
-  }
+/**
+ * Compare specific position is current or not.
+ *
+ * @param state state to operate
+ * @param pos check position
+ * @return state has same position
+ */
+export function isCurrent(state: State, pos: Side): boolean {
+  return state.currentSide === pos;
+}
 
-  /**
-   * Get side swapped state.
-   * @param state operation target
-   * @return side swapped instance
-   */
-  public static fellowPosition(state: State): State {
-    switch (state.currentSide) {
-      case Side.Left:
-        return { ...state, currentSide: Side.Right };
-      case Side.Right:
-        return { ...state, currentSide: Side.Left };
-    }
+/**
+ * Get side swapped state.
+ * @param state operation target
+ * @return side swapped instance
+ */
+export function fellowPosition(state: State): State {
+  switch (state.currentSide) {
+    case Side.Left:
+      return { ...state, currentSide: Side.Right };
+    case Side.Right:
+      return { ...state, currentSide: Side.Left };
   }
 }

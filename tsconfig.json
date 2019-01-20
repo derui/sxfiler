@@ -22,6 +22,8 @@
     "jsx": "preserve"
   },
   "include": [
-    "src"
+    "src/ts/**/*.ts",
+    "src/ts/**/*.tsx",
+    "src/index.tsx"
   ]
 }

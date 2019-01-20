@@ -1,10 +1,6 @@
 // define filer state type and operations.
 import { Node } from "./node";
-
-export interface NodeMarker {
-  node: Node;
-  marked: boolean;
-}
+import { NodeMarkers } from "./node-markers";
 
 export enum Direction {
   Up = "up",
@@ -16,12 +12,15 @@ export class Filer {
   constructor(
     public readonly id: string,
     public readonly location: string,
-    public readonly nodes: NodeMarker[],
+    public readonly nodes: NodeMarkers,
     public readonly currentCursorIndex: number
   ) {}
 
-  get currentNode(): Node {
-    return this.nodes[this.currentCursorIndex].node;
+  get currentNode(): Node | null {
+    if (this.nodes.isEmpty()) {
+      return null;
+    }
+    return this.nodes.value[this.currentCursorIndex].node;
   }
 
   /**
@@ -33,7 +32,7 @@ export class Filer {
 
     switch (direction) {
       case Direction.Down:
-        index = Math.min(this.nodes.length - 1, this.currentCursorIndex + 1);
+        index = Math.min(this.nodes.size() - 1, this.currentCursorIndex + 1);
         break;
       case Direction.Up:
         index = Math.max(0, this.currentCursorIndex - 1);
@@ -48,23 +47,13 @@ export class Filer {
    * @param nodeId
    */
   public toggleMark(nodeId: string): Filer {
-    return new Filer(
-      this.id,
-      this.location,
-      this.nodes.map(v => {
-        if (v.node.id === nodeId) {
-          return { node: v.node, marked: !v.marked };
-        }
-        return v;
-      }),
-      this.currentCursorIndex
-    );
+    return new Filer(this.id, this.location, this.nodes.toggleMarkById(nodeId), this.currentCursorIndex);
   }
 
   /**
    * @returns marked nodes
    */
   get markedNodes(): Node[] {
-    return this.nodes.filter(v => v.marked).map(v => v.node);
+    return this.nodes.markedNodes;
   }
 }

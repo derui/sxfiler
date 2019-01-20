@@ -8,7 +8,10 @@ export interface Binding {
 }
 
 export class Keymap {
-  constructor(private _bindings: Binding[]) {}
+  private _bindings: Binding[] = [];
+  constructor(bindings: Binding[] = []) {
+    this._bindings = bindings.map(v => v);
+  }
 
   // getter for bindings
   get bindings() {

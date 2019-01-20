@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Notification } from "../domain/notification";
+import { Notification } from "../domains/notification";
 import NotificationItem, { TimeoutCallback } from "./notification-item";
 
 interface Prop {

@@ -1,6 +1,6 @@
 import * as React from "react";
 import FileList from "../components/file-list";
-import * as Filer from "../domain/filer";
+import * as Filer from "../domains/filer";
 import { Side, State } from "../types/store-state/file-list";
 import "./workspace.css";
 
@@ -14,7 +14,7 @@ function createFiler(key: string, currentSide: Side, filer: Filer.Filer) {
   return (
     <FileList
       key={key}
-      nodes={filer.nodes}
+      nodes={filer.nodes.value}
       cursor={filer.currentCursorIndex}
       location={filer.location}
       focused={focused}

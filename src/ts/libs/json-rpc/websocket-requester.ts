@@ -1,9 +1,9 @@
-import * as Common from "./jsonrpc";
+import * as Common from "./type";
 import { Handler } from "./websocket-handler";
 
 type responser = (response: Common.Response) => void;
 
-export default class WebsocketRequester implements Common.Requester, Handler {
+export default class WebSocketRequester implements Common.Requester, Handler {
   private requestIdMap: { [key: string]: responser } = {};
 
   /**
@@ -34,7 +34,7 @@ export default class WebsocketRequester implements Common.Requester, Handler {
    * call RPC via Websocket
    * @param request request object
    */
-  public call(request: Common.Request): Promise<Common.Response> {
+  public async call(request: Common.Request): Promise<Common.Response> {
     let promise: Promise<Common.Response>;
     if (request.id) {
       promise = new Promise(resolve => {

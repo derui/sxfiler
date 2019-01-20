@@ -1,9 +1,19 @@
-import * as Common from "./jsonrpc";
+import * as Common from "./type";
+
+export interface Request<M extends string, P extends {} = {}> {
+  method: M;
+  params?: P;
+}
+
+export interface Client<M extends string> {
+  call<P, Res>(request: Request<M, P>): Promise<Res>;
+  notify<P>(request: Request<M, P>): void;
+}
 
 /**
  * The client of JSON-RPC
  */
-export class Client {
+export class ClientImpl<M extends string> implements Client<M> {
   constructor(private readonly requester: Common.Requester, private readonly idGenerator: Common.IDGenerator) {}
 
   /**
@@ -13,11 +23,11 @@ export class Client {
    * @param request object for RPC
    * @return promise to handling result of RPC
    */
-  public call<Req, Res>(method: string, request?: Req): Promise<Res> {
+  public async call<P, Res>(request: Request<M, P>): Promise<Res> {
     const rpcRequest: Common.Request = {
       jsonrpc: "2.0",
-      method,
-      params: request,
+      method: request.method,
+      params: request.params,
       id: this.idGenerator(),
     };
 
@@ -29,13 +39,13 @@ export class Client {
     });
   }
 
-  public notify<Req>(method: string, request?: Req): void {
+  public notify<P>(request: Request<M, P>): void {
     const rpcRequest: Common.Request = {
       jsonrpc: "2.0",
-      method,
-      params: request,
+      method: request.method,
+      params: request.params,
     };
 
-    return this.requester.notify(rpcRequest);
+    this.requester.notify(rpcRequest);
   }
 }

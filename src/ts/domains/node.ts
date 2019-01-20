@@ -1,7 +1,31 @@
 // define type and operations for node
 import { FileStat } from "./file-stat";
 
-export class Node {
+interface FactoryArg {
+  id: string;
+  name: string;
+  stat: FileStat;
+  parentDirectory: string;
+  linkPath?: string;
+}
+
+/**
+ * create node
+ * @param args
+ */
+export function create(args: FactoryArg) {
+  return new NodeImpl(args.id, args.name, args.stat, args.parentDirectory, args.linkPath);
+}
+
+export interface Node {
+  readonly id: string;
+  readonly name: string;
+  readonly stat: FileStat;
+  readonly parentDirectory: string;
+  readonly linkPath?: string;
+}
+
+class NodeImpl implements Node {
   /**
    * create new Node
    * @param id id of node

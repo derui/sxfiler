@@ -1,5 +1,4 @@
-import {Actions as NotificationActions} from "./notification";
+import { Actions as NotificationActions } from "./notification";
+import { Actions as UIContextActions } from "./ui-context";
 
-type Actions = NotificationActions;
-
-export default Actions;
+export type Actions = NotificationActions | UIContextActions;

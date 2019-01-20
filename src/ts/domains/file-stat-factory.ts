@@ -34,7 +34,7 @@ function bitsToCapability(bits: number): Capability {
  */
 function toMode(str: string): Mode {
   const capabilities = Number(str);
-  if (Number.isInteger(capabilities)) {
+  if (!Number.isInteger(capabilities)) {
     throw new Error(`Invalid number format: ${str}`);
   }
 
@@ -52,7 +52,7 @@ function toMode(str: string): Mode {
 }
 
 // Factory of FileStat
-export class FileStatFactory {
+export default class FileStatFactory {
   /**
    * create Filer
    * @param arg arguments of factory

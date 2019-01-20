@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import * as React from "react";
 
-import * as Domain from "../domain/filer";
+import {NodeMarker} from "../domains/node-markers";
 import FileItem from "./file-item";
 
 interface HeaderProp {
@@ -21,7 +21,7 @@ const Header: React.FunctionComponent<HeaderProp> = ({ directory, focused }) => 
 };
 
 interface BodyProp {
-  nodes: Domain.NodeMarker[];
+  nodes: NodeMarker[];
   cursor: number;
   focused: boolean;
 }
@@ -43,7 +43,7 @@ class Body extends React.Component<BodyProp> {
 
 interface Prop {
   location: string;
-  nodes: Domain.NodeMarker[];
+  nodes: NodeMarker[];
   cursor: number;
   focused: boolean;
 }
