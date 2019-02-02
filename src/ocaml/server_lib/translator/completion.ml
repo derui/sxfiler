@@ -5,9 +5,9 @@ module T = Sxfiler_rpc.Types.Completion
 module Item = struct
   open T.Item
 
-  let to_yojson t : Yojson.Safe.json = `Assoc [("id", `String t.id); ("value", `String t.value)]
+  let to_yojson t : Yojson.Safe.t = `Assoc [("id", `String t.id); ("value", `String t.value)]
 
-  let of_yojson (js : Yojson.Safe.json) : (t, string) result =
+  let of_yojson (js : Yojson.Safe.t) : (t, string) result =
     try
       let open Yojson.Safe.Util in
       let id = js |> member "id" |> to_string and value = js |> member "value" |> to_string in
@@ -21,7 +21,7 @@ end
 module Candidate = struct
   open T.Candidate
 
-  let to_yojson t : Yojson.Safe.json =
+  let to_yojson t : Yojson.Safe.t =
     `Assoc [("start", `Int t.start); ("length", `Int t.length); ("value", Item.to_yojson t.value)]
 
   let of_yojson js : (t, string) result =

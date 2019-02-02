@@ -9,6 +9,7 @@ type t =
   ; location : Path.t
   ; nodes : Node.t list
   ; history : Location_history.t
+  ; selected_nodes : Node.id list
   ; sort_order : Types.Sort_type.t }
 [@@deriving show]
 
@@ -36,7 +37,7 @@ let move_location t ~location ~nodes clock =
 
 (** [make ~id ~location ~nodes ~history ~sort_order] gets new instance of filer. *)
 let make ~id ~location ~nodes ~history ~sort_order =
-  let t = {id; location; nodes; history; sort_order} in
+  let t = {id; location; nodes; history; sort_order; selected_nodes = []} in
   sort_nodes t
 
 (** [update_nodes t ~nodes] get new filer is based on [t] and updated nodes from parameter. *)
@@ -46,6 +47,24 @@ let update_nodes t ~nodes =
 
 (** [find_node t ~id] search node having [id] in filer [t] *)
 let find_node t ~id = List.find_opt (fun (v : Node.t) -> v.id = id) t.nodes
+
+module Node_id_set = Set.Make (struct
+    type t = Node.id
+
+    let compare = Stdlib.compare
+  end)
+
+let select_nodes t ~ids =
+  let selected_set = Node_id_set.of_list t.selected_nodes in
+  let selected_nodes =
+    List.fold_left (fun set id -> Node_id_set.add id set) selected_set ids
+    |> Node_id_set.to_seq |> List.of_seq
+  in
+  {t with selected_nodes}
+
+let deselect_nodes t ~ids =
+  let selected_nodes = List.filter (fun id -> not @@ List.mem id ids) t.selected_nodes in
+  {t with selected_nodes}
 
 (** Signature for repository of scanner. *)
 module type Repository = sig

@@ -1,7 +1,7 @@
 module D = Sxfiler_domain.Condition
 open Sxfiler_rpc.Types.Condition
 
-let to_yojson t : Yojson.Safe.json = `List (List.map (fun v -> `String v) t)
+let to_yojson t : Yojson.Safe.t = `List (List.map (fun v -> `String v) t)
 
 let of_yojson js : (t, string) result =
   let open Yojson.Safe.Util in

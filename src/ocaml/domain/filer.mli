@@ -9,6 +9,7 @@ type t =
   ; location : Path.t
   ; nodes : Node.t list
   ; history : Location_history.t
+  ; selected_nodes : Node.id list
   ; sort_order : Types.Sort_type.t }
 [@@deriving show]
 
@@ -34,6 +35,12 @@ val update_nodes : t -> nodes:Node.t list -> t
 
 val find_node : t -> id:id -> Node.t option
 (** [find_node t ~id] search node having [id] in filer [t] *)
+
+val select_nodes : t -> ids:Node.id list -> t
+(** [select_nodes t ~ids] return new filer that selected nodes specified from [ids]. *)
+
+val deselect_nodes : t -> ids:Node.id list -> t
+(** [deselect_nodes t ~ids] return new filer that deselected nodes specified from [ids]. *)
 
 (** Signature for repository of scanner. *)
 module type Repository = sig

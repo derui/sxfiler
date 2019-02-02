@@ -56,4 +56,42 @@ let test_set =
             let unixtime () = Int64.zero
           end )
       in
-      Alcotest.(check @@ of_pp Fmt.nop) "subset" expected F.(filer.nodes) ) ]
+      Alcotest.(check @@ of_pp Fmt.nop) "subset" expected F.(filer.nodes) )
+  ; ( "should be able to select nodes"
+    , `Quick
+    , fun () ->
+      let node_1 =
+        D.Node.make ~id:"id1"
+          ~full_path:(Path.of_string ~env:`Unix "/foo")
+          ~stat:stat_base ~link_path:None
+      and node_2 =
+        D.Node.make ~id:"id2"
+          ~full_path:(Path.of_string ~env:`Unix "/bar")
+          ~stat:stat_base ~link_path:None
+      in
+      let filer =
+        F.make ~id:"id" ~location:(Path.of_string "/") ~nodes:[node_1; node_2]
+          ~history:D.Location_history.(make ())
+          ~sort_order:D.Types.Sort_type.Name
+      in
+      let filer = F.select_nodes filer ~ids:["id1"] in
+      Alcotest.(check @@ list @@ string) "subset" ["id1"] F.(filer.selected_nodes) )
+  ; ( "should be able to deselect nodes"
+    , `Quick
+    , fun () ->
+      let node_1 =
+        D.Node.make ~id:"id1"
+          ~full_path:(Path.of_string ~env:`Unix "/foo")
+          ~stat:stat_base ~link_path:None
+      and node_2 =
+        D.Node.make ~id:"id2"
+          ~full_path:(Path.of_string ~env:`Unix "/bar")
+          ~stat:stat_base ~link_path:None
+      in
+      let filer =
+        F.make ~id:"id" ~location:(Path.of_string "/") ~nodes:[node_1; node_2]
+          ~history:D.Location_history.(make ())
+          ~sort_order:D.Types.Sort_type.Name
+      in
+      let filer = F.select_nodes filer ~ids:["id1"; "id2"] |> F.deselect_nodes ~ids:["id2"] in
+      Alcotest.(check @@ list @@ string) "subset" ["id1"] F.(filer.selected_nodes) ) ]

@@ -5,10 +5,10 @@ module Log = (val Sxfiler_server_core.Logger.make ["rpc"])
 *)
 module Spec = struct
   type 'params param_conv =
-    [ `Required of Yojson.Safe.json -> ('params, string) Pervasives.result
+    [ `Required of Yojson.Safe.t -> ('params, string) Pervasives.result
     | `Not_required of 'params ]
 
-  type 'result result_conv = 'result -> Yojson.Safe.json
+  type 'result result_conv = 'result -> Yojson.Safe.t
 
   type ('params, 'result) t =
     { params_of_json : 'params param_conv

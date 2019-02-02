@@ -22,7 +22,7 @@ module Sort_type = struct
     | D.Types.Sort_type.Size -> 3
 end
 
-let to_yojson t : Yojson.Safe.json =
+let to_yojson t : Yojson.Safe.t =
   `Assoc [("defaultSortOrder", Sort_type.to_yojson t.T.Configuration.default_sort_order)]
 
 let of_yojson js =
