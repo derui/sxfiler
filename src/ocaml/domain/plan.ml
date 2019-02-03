@@ -25,12 +25,11 @@ type node_plan =
 
 (** [t] is result of plan. *)
 type t =
-  { workbench_id : Workbench.id
-  ; source : node_plan list
+  { source : node_plan list
   ; dest : node_plan list }
 [@@deriving show]
 
-let make ~workbench_id ~source ~dest = {workbench_id; source; dest}
+let make ~source ~dest = {source; dest}
 
 (* functions to make node plan *)
 let node_to_delete node = {operation = Operation.Delete; node}

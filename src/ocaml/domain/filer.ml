@@ -66,6 +66,12 @@ let deselect_nodes t ~ids =
   let selected_nodes = List.filter (fun id -> not @@ List.mem id ids) t.selected_nodes in
   {t with selected_nodes}
 
+let node_subset t ~ids =
+  List.fold_left
+    (fun (nodes, ids) id ->
+       match find_node t ~id with None -> (nodes, id :: ids) | Some node -> (node :: nodes, ids) )
+    ([], []) ids
+
 (** Signature for repository of scanner. *)
 module type Repository = sig
   val resolve : string -> t option Lwt.t

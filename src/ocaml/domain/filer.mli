@@ -42,6 +42,9 @@ val select_nodes : t -> ids:Node.id list -> t
 val deselect_nodes : t -> ids:Node.id list -> t
 (** [deselect_nodes t ~ids] return new filer that deselected nodes specified from [ids]. *)
 
+val node_subset : t -> ids:Node.id list -> Node.t list * Node.id list
+(** [node_subset t ~ids] returns subset of nodes of [t] that are found in [t] and ids that are not found in [t] *)
+
 (** Signature for repository of scanner. *)
 module type Repository = sig
   val resolve : string -> t option Lwt.t

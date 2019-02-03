@@ -1,31 +1,14 @@
 open Sxfiler_core
+module F = Test_fixtures
 module D = Sxfiler_domain
 module U = Sxfiler_usecase
-
-let stat_base =
-  D.File_stat.make ~mode:(Int32.of_int 0o775) ~uid:1000 ~gid:1000 ~atime:(Int64.of_int 100)
-    ~mtime:(Int64.of_int 1000) ~ctime:(Int64.of_int 10000) ~size:Int64.max_int ~is_directory:false
-    ~is_file:true ~is_symlink:true
-
-let dir_stat =
-  D.File_stat.make ~mode:(Int32.of_int 0o775) ~uid:1000 ~gid:1000 ~atime:(Int64.of_int 100)
-    ~mtime:(Int64.of_int 1000) ~ctime:(Int64.of_int 10000) ~size:Int64.max_int ~is_directory:true
-    ~is_file:false ~is_symlink:true
-
-let file_stat =
-  D.File_stat.make ~mode:(Int32.of_int 0o775) ~uid:1000 ~gid:1000 ~atime:(Int64.of_int 100)
-    ~mtime:(Int64.of_int 1000) ~ctime:(Int64.of_int 10000) ~size:Int64.max_int ~is_directory:false
-    ~is_file:true ~is_symlink:false
-
-let node_base ~id ?(full_path = Path.of_string "foo") ?(stat = stat_base) ?(link_path = None) () =
-  D.Node.make ~id ~full_path ~stat ~link_path
 
 let delete_nodes_test_set =
   [ Alcotest_lwt.test_case "issue error if workbench not found" `Quick (fun _ () ->
         let filer =
           D.Filer.make ~id:"foo"
             ~location:Path.(of_string "/bar")
-            ~nodes:[node_base ~id:"bar" ~stat:file_stat ()]
+            ~nodes:[F.Node.fixture F.File_stat.(fixture ())]
             ~history:D.Location_history.(make ())
             ~sort_order:D.Types.Sort_type.Name
         in
@@ -63,7 +46,7 @@ let delete_nodes_test_set =
         let filer =
           D.Filer.make ~id:"foo"
             ~location:Path.(of_string "/bar")
-            ~nodes:[node_base ~id:"bar" ~stat:file_stat ()]
+            ~nodes:[F.Node.fixture F.File_stat.(fixture ())]
             ~history:D.Location_history.(make ())
             ~sort_order:D.Types.Sort_type.Name
         in
@@ -74,12 +57,8 @@ let delete_nodes_test_set =
         in
         let wb = D.Workbench.make ~id:wb_id ~env:wb_env ~corrections:[] in
         let module FR = struct
-          let data = ref filer
           let resolve _ = assert false
-
-          let store v =
-            data := v ;
-            Lwt.return_unit
+          let spy, store = Spy.wrap (fun _ -> Lwt.return_unit)
         end in
         let module WR : D.Workbench.Repository = struct
           let resolve _ = Lwt.return_some wb
@@ -89,8 +68,7 @@ let delete_nodes_test_set =
         let module Svc = struct
           type location = Path.t
 
-          let spy, f = Spy.wrap (fun _ -> Lwt.return_unit)
-          let trash = f
+          let spy, trash = Spy.wrap (fun _ -> Lwt.return_unit)
         end in
         let module Scan = struct
           let scan _ = Lwt.return []
@@ -98,7 +76,9 @@ let delete_nodes_test_set =
         let module E = U.Filer.Delete_nodes.Make (FR) (WR) (Scan) (Svc) in
         let%lwt result = E.execute {workbench_id = Uuidm.to_string wb_id} in
         Alcotest.(check @@ result unit (of_pp Fmt.nop)) "delete nodes" (Ok ()) result ;
-        Alcotest.(check @@ of_pp D.Filer.pp) "new filer" !FR.data D.Filer.{filer with nodes = []} ;
+        Alcotest.(check @@ list @@ of_pp D.Filer.pp)
+          "new filer" (Spy.Wrap.called_args FR.spy)
+          [D.Filer.{filer with nodes = []}] ;
         Alcotest.(check @@ list @@ list @@ of_pp D.Node.pp)
           "called" (Spy.Wrap.called_args Svc.spy) [wb_env.nodes] ;
         Lwt.return_unit ) ]
@@ -128,7 +108,7 @@ let test_set =
       let module Clock = struct
         let unixtime () = Int64.min_int
       end in
-      let module Usecase = U.Filer.Enter_directory (SR) (Svc) (Clock) in
+      let module Usecase = U.Filer.Enter_directory.Make (SR) (Svc) (Clock) in
       let%lwt result = Usecase.execute {name = "foo"; node_id = "bar"} in
       Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
         "renew filer" (Ok !SR.data) result ;
@@ -151,7 +131,7 @@ let test_set =
           let module Clock = struct
             let unixtime () = Int64.min_int
           end in
-          let module Usecase = U.Filer.Enter_directory (SR) (Svc) (Clock) in
+          let module Usecase = U.Filer.Enter_directory.Make (SR) (Svc) (Clock) in
           let%lwt result = Usecase.execute {name = "foo"; node_id = "bar"} in
           Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
             "not found filer"
@@ -176,7 +156,7 @@ let test_set =
           let module Clock = struct
             let unixtime () = Int64.min_int
           end in
-          let module Usecase = U.Filer.Enter_directory (SR) (Svc) (Clock) in
+          let module Usecase = U.Filer.Enter_directory.Make (SR) (Svc) (Clock) in
           let%lwt result = Usecase.execute {name = "foo"; node_id = "not found"} in
           Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
             "not found node"

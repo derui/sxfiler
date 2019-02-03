@@ -4,9 +4,7 @@
 open Sxfiler_core
 
 module type S = sig
-  type location = Path.t
-
-  val transport : nodes:Node.t list -> corrections:Types.corrections -> _to:location -> unit Lwt.t
+  val transport : nodes:Node.t list -> corrections:Types.corrections -> _to:Filer.t -> unit Lwt.t
   (** [transport ~nodes ~corrections ~_to] do move [nodes] to the location [_to].
       When valid [corrections] gives this function, apply it to each node before transport.
   *)
