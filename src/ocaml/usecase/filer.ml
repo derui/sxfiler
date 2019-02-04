@@ -281,7 +281,6 @@ module Delete_nodes = struct
     include Type
 
     let execute (params : input) =
-      let open Sxfiler_core.Option in
       match%lwt FR.resolve params.filer_id with
       | None -> Lwt.return_error `Not_found
       | Some filer ->

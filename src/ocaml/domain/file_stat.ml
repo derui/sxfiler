@@ -1,8 +1,20 @@
+type capability =
+  { writable : bool
+  ; readable : bool
+  ; executable : bool }
+[@@deriving show]
+
+type mode =
+  { owner : capability
+  ; group : capability
+  ; others : capability }
+[@@deriving show]
+
 (** Type of stat of file. Note: The value of *time (atime, ctime, mtime) fields has time value
     in term of milliseconds, not seconds.
 *)
 type t =
-  { mode : int32
+  { mode : mode
   ; uid : int
   ; gid : int
   ; atime : int64
