@@ -1,12 +1,11 @@
 type id = string [@@deriving show]
 
-(** This type defines operations in simulation. *)
 module Operation = struct
   type t =
-    | Move of string option
-    | Copy of string option
-    | Change_mode of File_stat.mode
-    | Delete
+    | Move of {source : Filer.t; dest : Filer.t}
+    | Copy of {source : Filer.t; dest : Filer.t}
+    | Delete of {target : Filer.t}
+    | Change_mode of {target : Filer.t}
   [@@deriving show]
 end
 
@@ -19,15 +18,26 @@ type node_plan =
 (** [t] is result of plan. *)
 type t =
   { id : id
-  ; source : Filer.t
-  ; dest : Filer.t
-  ; plans : node_plan list }
+  ; operation : Operation.t
+  ; nodes : Node.t list }
 [@@deriving show]
 
-let make ~id ~source ~dest ~plans = {id; source; dest; plans}
+(** [make ~id ~operation ~nodes] makes new plan [t] instance from. *)
+let make ~id ~operation ~nodes = {id; operation; nodes}
 
-(* functions to make node plan *)
-let plan_delete node = {operation = Operation.Delete; node}
-let plan_move ?new_name node = {operation = Operation.Move new_name; node}
-let plan_copy ?new_name node = {operation = Operation.Copy new_name; node}
-let plan_change_mode ~mode node = {operation = Operation.Change_mode mode; node}
+(** Factory interface for [type: t] *)
+module Factory = struct
+  module type Id_generator = sig
+    val generate : unit -> id
+  end
+
+  module type S = sig
+    val create : operation:Operation.t -> nodes:Node.t list -> t
+  end
+
+  module Make (G : Id_generator) : S = struct
+    let create ~operation ~nodes =
+      let id = G.generate () in
+      make ~operation ~id ~nodes
+  end
+end
