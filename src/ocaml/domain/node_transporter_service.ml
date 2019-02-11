@@ -3,8 +3,9 @@
 *)
 
 module type S = sig
-  val transport : nodes:Node.t list -> corrections:Types.corrections -> _to:Filer.t -> unit Lwt.t
-  (** [transport ~nodes ~corrections ~_to] do move [nodes] to the location [_to].
-      When valid [corrections] gives this function, apply it to each node before transport.
+  val transport : ?new_name:string -> node:Node.t -> _to:File_tree.t -> unit -> unit Lwt.t
+  (** [transport ?new_name ~node ~_to ()] do move [node] to the location [_to].
+      When [new_name] gives to this function, move as [new_name] to the location. If [new_name] not given and
+      node that has same name of [node] exists in the location [_to], overwrite it.
   *)
 end

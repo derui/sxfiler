@@ -6,6 +6,6 @@ open Sxfiler_core
 type location = Path.t
 
 module type S = sig
-  val scan : location -> Node.t list Lwt.t
-  (** [scan path] returns nodes scanned from location [path]. *)
+  val scan : location -> File_tree.t Lwt.t
+  (** [scan path] returns new [File_tree.t] scanned from location [path]. *)
 end

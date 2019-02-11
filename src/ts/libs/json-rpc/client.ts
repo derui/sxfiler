@@ -1,13 +1,13 @@
 import * as Common from "./type";
 
-export interface Request<M extends string, P extends {} = {}> {
-  method: M;
-  params?: P;
+// P and Res only use to define api
+export interface Api<T extends string, P extends {} = {}, Res extends {} = {}> {
+  method: T;
 }
 
 export interface Client<M extends string> {
-  call<P, Res>(request: Request<M, P>): Promise<Res>;
-  notify<P>(request: Request<M, P>): void;
+  call<P, Res>(api: Api<M, P, Res>, params?: P): Promise<Res>;
+  notify<P>(api: Api<M, P, any>, params?: P): void;
 }
 
 /**
@@ -19,15 +19,15 @@ export class ClientImpl<M extends string> implements Client<M> {
   /**
    * call a method with or without request.
    *
-   * @param method name of RPC
-   * @param request object for RPC
+   * @param api API definition to call
+   * @param params object for RPC
    * @return promise to handling result of RPC
    */
-  public async call<P, Res>(request: Request<M, P>): Promise<Res> {
+  public async call<P, Res>(api: Api<M, P, Res>, params?: P): Promise<Res> {
     const rpcRequest: Common.Request = {
       jsonrpc: "2.0",
-      method: request.method,
-      params: request.params,
+      method: api.method,
+      params,
       id: this.idGenerator(),
     };
 
@@ -39,11 +39,11 @@ export class ClientImpl<M extends string> implements Client<M> {
     });
   }
 
-  public notify<P>(request: Request<M, P>): void {
+  public notify<P>(api: Api<M, P, any>, params?: P): void {
     const rpcRequest: Common.Request = {
       jsonrpc: "2.0",
-      method: request.method,
-      params: request.params,
+      method: api.method,
+      params,
     };
 
     this.requester.notify(rpcRequest);

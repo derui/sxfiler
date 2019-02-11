@@ -1,6 +1,7 @@
 (** Node is a domain in a file tree. *)
 open Sxfiler_core
 
+(** identifier in file tree.  *)
 type id = string [@@deriving show]
 
 (** [link_path] will have target of the link if item pointed to full_path is *link. *)
@@ -8,8 +9,8 @@ type t =
   { id : id
   ; full_path : Path.t [@printer Path.pp]
   ; stat : File_stat.t
-  ; link_path : string option }
-[@@deriving show]
+  ; link_path : Path.t option }
+[@@deriving show, fields]
 
 let equal v1 v2 = v1.id = v2.id
 let make ~id ~full_path ~stat ~link_path = {id; full_path; stat; link_path}

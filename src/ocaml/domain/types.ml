@@ -21,17 +21,3 @@ type file_id = string
 
 (** Base signature of thread. *)
 module type Thread = Sxfiler_core.Monad.S
-
-(** {!type:correction} takes method to avoid error in transportation *)
-module Correction = struct
-  type method_ = Name of string [@@deriving show]
-
-  type t =
-    { node_id : string
-    ; method_ : method_ }
-  [@@deriving show]
-
-  let name id name = {node_id = id; method_ = Name name}
-end
-
-type corrections = Correction.t list [@@deriving show]
