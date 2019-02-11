@@ -1,6 +1,5 @@
 module D = Sxfiler_domain
 module Usecase = Sxfiler_usecase
-module T = Sxfiler_rpc.Types
 
 module Notify_message = struct
   module type S = sig

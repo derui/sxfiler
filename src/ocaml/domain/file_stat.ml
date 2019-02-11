@@ -10,6 +10,11 @@ type mode =
   ; others : capability }
 [@@deriving show]
 
+let empty_mode =
+  { owner = {writable = true; readable = true; executable = true}
+  ; group = {writable = true; readable = true; executable = true}
+  ; others = {writable = true; readable = true; executable = true} }
+
 (** Type of stat of file. Note: The value of *time (atime, ctime, mtime) fields has time value
     in term of milliseconds, not seconds.
 *)

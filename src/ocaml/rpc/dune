@@ -1,6 +1,0 @@
-; copy type module to build with ppx
-
-(library
- (name sxfiler_rpc)
- (public_name sxfiler.rpc)
- (libraries sxfiler.domain jsonrpc-ocaml))

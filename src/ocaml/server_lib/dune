@@ -7,7 +7,6 @@
             logs.fmt
             jsonrpc-ocaml.yojson
             sxfiler.domain
-            sxfiler.rpc
             sxfiler.usecase
             sxfiler.server.core
             sxfiler.server.task

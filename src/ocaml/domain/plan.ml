@@ -48,6 +48,11 @@ let execute t =
   let module E = (val t.executor) in
   E.do_plan t.target_nodes
 
+let is_all_target_allowed {target_nodes; _} =
+  List.for_all
+    (fun node -> match node.Target_node.prediction with Prediction.Need_fix -> false | _ -> true)
+    target_nodes
+
 module type Repository = sig
   val store : t -> unit Lwt.t
   (** [store t] saves instance [t] *)
