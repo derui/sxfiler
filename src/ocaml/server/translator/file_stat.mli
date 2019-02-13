@@ -4,13 +4,11 @@ type capability =
   { writable : bool
   ; readable : bool
   ; executable : bool }
-[@@deriving yojson]
 
 type mode =
   { owner : capability
   ; group : capability
   ; others : capability }
-[@@deriving yojson]
 
 type t =
   { mode : mode
@@ -23,4 +21,9 @@ type t =
   ; is_directory : bool
   ; is_file : bool
   ; is_symlink : bool }
-[@@deriving yojson]
+
+(** Define translator for between domain object and gateway object  *)
+module Domain : Core.Translator with type t = t and type target = Sxfiler_domain.File_stat.t
+
+(** Define translator for between JSON and gateway object  *)
+module Json : Core.Translator with type t = t and type target = Yojson.Safe.t
