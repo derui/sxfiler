@@ -13,7 +13,7 @@ end
 
 (** [body] describes body of the notification. *)
 type body =
-  | OneShot of {message : string}
+  | Message of string
   | Progress of {process : string; current : float; targeted : float}
 
 (** Identifier of the notification. Each notifications has global unique identifier.  *)
