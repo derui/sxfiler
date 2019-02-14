@@ -12,16 +12,11 @@ module Body : sig
     | Progress of {process : string; current : float; targeted : float}
 end
 
-(** Identifier of the notification. Each notifications has global unique identifier.  *)
-type id = string
-
+(** the type that is JSON friendly for {!Sxfiler_domain.Notification.t} *)
 type t =
-  { id : id
+  { id : string
   ; level : Level.t
   ; body : Body.t }
+[@@deriving yojson]
 
-(** The module to translate between {!t} and {!Sxfiler_domain.Notification.t} *)
-module Domain : Core.Translator with type t = t and type target = Sxfiler_domain.Notification.t
-
-(** The module to translate between {!t} and {!Yojson.Safe.t} *)
-module Json : Core.Translator with type t = t and type target = Yojson.Safe.t
+include Core.Domain_translator with type t := t and type domain := Sxfiler_domain.Notification.t

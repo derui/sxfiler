@@ -5,16 +5,16 @@ module Item = struct
   type t =
     { id : string
     ; value : string }
+  [@@deriving show]
 end
 
 (** {!Candidate} defines type of result of completion. *)
 module Candidate = struct
-  type 'a base =
+  type t =
     { start : int
     ; length : int
-    ; value : 'a }
-
-  type t = Item.t base
+    ; value : Item.t }
+  [@@deriving show]
 
   (* shortcut functions for {!t} *)
 
@@ -29,7 +29,7 @@ end
 type collection = Item.t list
 
 (** Result of completion. *)
-type result = Candidate.t list
+type candidates = Candidate.t list
 
 (** Repository interface *)
 module type Repository = sig

@@ -1,39 +1,37 @@
-open Sxfiler_core
 module C = Sxfiler_domain.Completion
-module T = Sxfiler_rpc.Types.Completion
 
 module Item = struct
-  open T.Item
+  type t =
+    { id : string
+    ; value : string }
+  [@@deriving yojson]
 
-  let to_yojson t : Yojson.Safe.t = `Assoc [("id", `String t.id); ("value", `String t.value)]
-
-  let of_yojson (js : Yojson.Safe.t) : (t, string) result =
-    try
-      let open Yojson.Safe.Util in
-      let id = js |> member "id" |> to_string and value = js |> member "value" |> to_string in
-      Ok {id; value}
-    with Yojson.Safe.Util.Type_error (s, _) -> Error s
-
-  let to_domain t = {C.Item.id = t.id; value = t.value}
-  let of_domain t = {id = t.C.Item.id; value = t.value}
+  let to_domain (t : t) = {C.Item.id = t.id; value = t.value}
+  let of_domain (t : C.Item.t) = {id = t.C.Item.id; value = t.value}
 end
 
-module Candidate = struct
-  open T.Candidate
+module Candidates = struct
+  type candidate =
+    { start : int
+    ; length : int
+    ; value : Item.t }
+  [@@deriving yojson]
 
-  let to_yojson t : Yojson.Safe.t =
-    `Assoc [("start", `Int t.start); ("length", `Int t.length); ("value", Item.to_yojson t.value)]
+  type t = candidate list [@@deriving yojson]
 
-  let of_yojson js : (t, string) result =
-    let open Yojson.Safe.Util in
-    try
-      let start = js |> member "start" |> to_int
-      and length = js |> member "length" |> to_int
-      and value = js |> member "value" in
-      let open Result in
-      Item.of_yojson value >>= fun value -> Ok {start; length; value}
-    with Type_error (s, _) -> Error s
+  let candidate_to_domain t =
+    {C.Candidate.start = t.start; length = t.length; value = Item.to_domain t.value}
 
-  let to_domain t = {C.Candidate.start = t.start; length = t.length; value = Item.to_domain t.value}
-  let of_domain t = {start = t.C.Candidate.start; length = t.length; value = Item.of_domain t.value}
+  let candidate_of_domain t =
+    {start = t.C.Candidate.start; length = t.length; value = Item.of_domain t.value}
+
+  let to_domain t = List.map candidate_to_domain t
+  let of_domain t = List.map candidate_of_domain t
+end
+
+module Collection = struct
+  type t = Item.t list [@@deriving yojson]
+
+  let to_domain t = List.map Item.to_domain t
+  let of_domain t = List.map Item.of_domain t
 end

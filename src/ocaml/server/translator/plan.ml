@@ -1,43 +1,64 @@
 open Sxfiler_core
-open Sxfiler_rpc.Types.Plan
 module D = Sxfiler_domain.Plan
 
-let node_list_to_yojson t =
-  `Assoc [("operation", `Int (Operation.to_int t.operation)); ("node", Node.to_yojson t.node)]
+module Correction = struct
+  (** {!type:t} takes method to avoid error in transportation *)
+  type t =
+    | Rename of string
+    | Overwrite
 
-let node_list_of_yojson js =
-  let open Yojson.Safe.Util in
-  try
-    let operation = js |> member "operation" |> to_int |> Operation.of_int |> Option.get_exn
-    and node = js |> member "node" |> Node.of_yojson in
-    let open Result in
-    node >|= fun node -> {operation; node}
-  with Type_error (s, _) -> Error s
+  let to_yojson = function
+    | Rename v -> `Assoc [("type", `String "rename"); ("payload", `String v)]
+    | Overwrite -> `Assoc [("type", `String "overwrite")]
 
-let node_list_of_domain t = {operation = t.D.operation; node = Node.of_domain t.D.node}
+  let of_yojson js =
+    let open Yojson.Safe.Util in
+    try
+      let typ = js |> member "type" |> to_string in
+      match typ with
+      | "rename" ->
+        let payload = js |> member "payload" |> to_string in
+        Ok (Rename payload)
+      | "overwrite" -> Ok Overwrite
+      | _ -> raise (Type_error (Printf.(sprintf "Unknown correction: %s" typ), js))
+    with Type_error (s, _) -> Error s
+end
 
-let to_yojson t =
-  `Assoc
-    [ ("workbenchId", `String t.workbench_id)
-    ; ("source", `List (List.map node_list_to_yojson t.source))
-    ; ("dest", `List (List.map node_list_to_yojson t.dest)) ]
+module Prediction = struct
+  type t =
+    | Need_fix
+    | Fix of Correction.t
+    | No_problem
 
-let of_yojson js =
-  let open Yojson.Safe.Util in
-  try
-    let workbench_id = js |> member "workbenchId" |> to_string
-    and source = js |> member "source" |> convert_each node_list_of_yojson
-    and dest = js |> member "dest" |> convert_each node_list_of_yojson in
-    let open Result in
-    let conv_list list =
-      List.fold_left (fun list v -> list >>= fun list -> v >|= fun v -> v :: list) (Ok []) list
-      >>= Result.lift List.rev
-    in
-    conv_list source
-    >>= fun source -> conv_list dest >>= fun dest -> Ok {workbench_id; source; dest}
-  with Type_error (s, _) -> Error s
+  let to_yojson = function
+    | Need_fix -> `Assoc [("type", `String "need-fix")]
+    | Fix v -> `Assoc [("type", `String "fix"); ("payload", Correction.to_yojson v)]
+    | No_problem -> `Assoc [("type", `String "no-problem")]
 
-let of_domain t =
-  { workbench_id = Uuidm.to_string t.D.workbench_id
-  ; source = List.map node_list_of_domain t.D.source
-  ; dest = List.map node_list_of_domain t.D.dest }
+  let of_yojson js =
+    let open Yojson.Safe.Util in
+    try
+      let typ = js |> member "type" |> to_string in
+      match typ with
+      | "fix" ->
+        let payload = js |> member "payload" in
+        Result.(Correction.of_yojson payload >|= fun v -> Fix v)
+      | "no-problem" -> Ok No_problem
+      | "need-fix" -> Ok Need_fix
+      | _ -> raise (Type_error (Printf.(sprintf "Unknown prediction: %s" typ), js))
+    with Type_error (s, _) -> Error s
+end
+
+(** {!Target_node} defines a target node of the plan. *)
+module Target_node = struct
+  type t =
+    { node_id : string [@key "nodeId"]
+    ; prediction : Prediction.t }
+  [@@deriving yojson]
+end
+
+(** [!t] is result of plan. *)
+type t =
+  { id : string
+  ; target_nodes : Target_node.t list [@key "targetNodes"] }
+[@@deriving yojson]

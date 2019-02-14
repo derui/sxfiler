@@ -1,16 +1,16 @@
 (**
-   Base signature of translator. All translator aligns this signature.
+   Base signature of translator for domain and a type.
 *)
-module type Translator = sig
+module type Domain_translator = sig
   (** base type of translator  *)
   type t
 
   (** Target type of conversion each way *)
-  type target
+  type domain
 
-  val of_target : target -> (t, string) result
-  (** [of_target target] convert [target] to type [t]. *)
+  val of_domain : domain -> t
+  (** [of_domain domain] get the instance {!t} from [domain] *)
 
-  val to_target : t -> target
-  (** [to_target t] convert [t] to [target]  *)
+  val to_domain : t -> domain
+  (** [to_domain t] get the instance {!Sxfiler_domain.File_stat.t} from [t] *)
 end

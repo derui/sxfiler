@@ -8,7 +8,7 @@ type t = private
   ; history : Location_history.t
   ; selected_nodes : Node.id list
   ; sort_order : Types.Sort_type.t }
-[@@deriving show]
+[@@deriving show, make]
 
 (* sort nodes with sort_order in [t] *)
 

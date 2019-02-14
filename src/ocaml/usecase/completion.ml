@@ -29,7 +29,7 @@ end
 module Read = struct
   module Type = struct
     type input = {input : string}
-    type output = D.Completion.result
+    type output = D.Completion.candidates
     type error = unit
   end
 
@@ -44,16 +44,7 @@ module Read = struct
 
     let execute (input : input) =
       let%lwt collection = Repo.resolve () in
-      let candidates =
-        I.(
-          Completer.read this ~input:input.input ~collection
-            ~stringify:
-              ( module struct
-                type t = D.Completion.Item.t
-
-                let to_string (t : t) = t.value
-              end ))
-      in
+      let candidates = I.(Completer.read this ~input:input.input ~collection) in
       Lwt.return_ok candidates
   end
 end

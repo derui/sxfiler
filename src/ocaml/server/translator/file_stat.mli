@@ -1,4 +1,4 @@
-(** Define objects for JSON friendly  *)
+(** Define objects for JSON friendly that is to use in gateway to convert two-way *)
 
 type capability =
   { writable : bool
@@ -21,9 +21,6 @@ type t =
   ; is_directory : bool
   ; is_file : bool
   ; is_symlink : bool }
+[@@deriving yojson]
 
-(** Define translator for between domain object and gateway object  *)
-module Domain : Core.Translator with type t = t and type target = Sxfiler_domain.File_stat.t
-
-(** Define translator for between JSON and gateway object  *)
-module Json : Core.Translator with type t = t and type target = Yojson.Safe.t
+include Core.Domain_translator with type t := t and type domain := Sxfiler_domain.File_stat.t

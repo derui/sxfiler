@@ -8,7 +8,7 @@ type t =
   ; history : Location_history.t
   ; selected_nodes : Node.id list
   ; sort_order : Types.Sort_type.t }
-[@@deriving show]
+[@@deriving show, make]
 
 let find_node t = File_tree.find_node t.file_tree
 

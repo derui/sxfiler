@@ -4,7 +4,7 @@ module Get = struct
   (** Module to share interface and structure. *)
   module Type = struct
     type input = unit
-    type output = string Key_map.t
+    type output = Key_map.t
     type error = unit
   end
 
@@ -17,8 +17,7 @@ module Get = struct
   (** This module defines usecase interface to get current key bindings.
       Replace [json] on implementation to match rpc.
   *)
-  module Make (C : Condition.Repository) (R : Key_map_repository.S with type value = string) : S =
-  struct
+  module Make (C : Condition.Repository) (R : Key_map_repository.S) : S = struct
     include Type
 
     let execute () =
@@ -32,7 +31,7 @@ end
 module Store = struct
   (** Module to share interface and structure. *)
   module Type = struct
-    type input = string Key_map.t
+    type input = Key_map.t
     type output = unit
     type error = unit
   end
@@ -44,7 +43,7 @@ module Store = struct
      and type error = Type.error
 
   (** This module defines usecase interface to store key map with repository *)
-  module Make (R : Key_map_repository.S with type value = string) : S = struct
+  module Make (R : Key_map_repository.S) : S = struct
     include Type
 
     let execute input =
@@ -56,7 +55,7 @@ end
 (** Module to share interface and structure. *)
 module Context_type = struct
   type input = {context : string}
-  type output = string Key_map.t
+  type output = Key_map.t
   type error = unit
 end
 
@@ -68,8 +67,7 @@ module Add_context = struct
      and type error = Context_type.error
 
   (** This module defines rpc interface to enable context in this application. *)
-  module Make (C : Condition.Repository) (R : Key_map_repository.S with type value = string) : S =
-  struct
+  module Make (C : Condition.Repository) (R : Key_map_repository.S) : S = struct
     include Context_type
 
     let execute input =
@@ -90,8 +88,7 @@ module Delete_context = struct
      and type error = Context_type.error
 
   (** This module defines rpc interface to disable context in this application. *)
-  module Make (C : Condition.Repository) (R : Key_map_repository.S with type value = string) : S =
-  struct
+  module Make (C : Condition.Repository) (R : Key_map_repository.S) : S = struct
     include Context_type
 
     let execute input =

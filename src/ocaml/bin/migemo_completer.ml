@@ -10,11 +10,9 @@ module Core = struct
   let make ~migemo = {migemo}
   let is_some = function Some _ -> true | None -> false
 
-  let read (type v) t ~input ~collection ~(stringify : (module Type with type t = v)) =
-    let module S = (val stringify : Type with type t = v) in
+  let read t ~input ~collection =
     let regexp = Migemocaml.Migemo.query ~query:input t.migemo |> Re.Posix.compile_pat in
-    let collection = List.map (fun v -> (S.to_string v, v)) collection in
-    List.map (fun s -> (Re.exec_opt regexp @@ fst s, snd s)) collection
+    List.map (fun s -> (Re.exec_opt regexp s.T.Completion.Item.value, s)) collection
     |> List.filter (fun v -> is_some @@ fst v)
     |> List.map (function
         | None, _ -> failwith "Invalid branch"

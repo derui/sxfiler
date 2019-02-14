@@ -1,5 +1,4 @@
 open Sxfiler_core
-include Key_map_intf
 
 module Binding_map = Map.Make (struct
     type t = string
@@ -8,12 +7,12 @@ module Binding_map = Map.Make (struct
   end)
 
 module Original_key_binding = struct
-  type 'a t =
-    { value : 'a
+  type t =
+    { value : string
     ; condition : Condition.t }
 end
 
-type 'a t = {keymap : 'a Original_key_binding.t list Binding_map.t}
+type t = {keymap : Original_key_binding.t list Binding_map.t}
 
 let make () = {keymap = Binding_map.empty}
 
