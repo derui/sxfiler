@@ -14,7 +14,7 @@ let make (module Conn : C.Rpc_connection.Instance) =
     let send t =
       let _method =
         match t.D.Notification.body with
-        | D.Notification.OneShot _ -> "notification/message"
+        | D.Notification.Message _ -> "notification/message"
         | D.Notification.Progress _ -> "notification/progress"
       in
       let params = Tr.Notification.of_domain t |> Tr.Notification.to_yojson in

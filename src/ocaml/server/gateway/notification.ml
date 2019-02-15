@@ -22,7 +22,7 @@ module Notify_message = struct
     type result = {invalid_level : bool}
 
     let handle param =
-      let notification = D.Notification.OneShot {message = param.message} in
+      let notification = D.Notification.Message param.message in
       let level = D.Notification.Level.of_int param.level in
       match level with
       | None -> Lwt.return {invalid_level = true}
