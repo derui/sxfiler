@@ -8,6 +8,13 @@ module Level = struct
         | Warning [@name "warning"]
         | Error [@name "error"]
   [@@deriving yojson]
+
+  let of_domain = function D.Level.Info -> Info | Warning -> Warning | Error -> Error
+
+  let to_domain = function
+    | Info -> D.Level.Info
+    | Warning -> D.Level.Warning
+    | Error -> D.Level.Error
 end
 
 (** body describes body of the notification. *)
@@ -57,14 +64,10 @@ type t =
 [@@deriving yojson]
 
 let of_domain t =
-  let level =
-    match t.D.level with Info -> Level.Info | Warning -> Level.Warning | Error -> Level.Error
-  in
+  let level = Level.of_domain t.D.level in
   {id = Uuidm.to_string t.D.id; body = Body.of_domain t.body; level}
 
 let to_domain t =
-  let level =
-    match t.level with Info -> D.Level.Info | Warning -> D.Level.Warning | Error -> D.Level.Error
-  in
+  let level = Level.to_domain t.level in
   let body = Body.to_domain t.body in
   D.make ~id:(Uuidm.of_string t.id |> Option.get_exn) ~body ~level

@@ -18,5 +18,7 @@ let trash nodes =
   Lwt_list.iter_p
     (fun node ->
        let path = node.D.Node.full_path |> Path.to_string in
-       File.remove path |> Lwt.return )
+       match node.D.Node.stat.is_directory with
+       | true -> delete_dir path
+       | false -> File.remove path |> Lwt.return )
     nodes

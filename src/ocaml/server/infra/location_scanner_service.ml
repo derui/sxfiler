@@ -1,6 +1,8 @@
 (** This module provides implementation of node repository.*)
 open Sxfiler_core
 
+module D = Sxfiler_domain
+
 let get_node parent path =
   let path = Filename.concat parent path in
   if not @@ Sys.file_exists path then None
@@ -16,4 +18,4 @@ let scan dir =
   let items = Sys.readdir path |> Array.to_list in
   let%lwt nodes = Lwt_list.map_p (fun v -> Lwt.return @@ get_node path v) items in
   let%lwt nodes = Lwt.return @@ List.map Option.get_exn @@ List.filter Option.is_some nodes in
-  Lwt.return nodes
+  D.File_tree.make ~location:dir ~nodes |> Lwt.return

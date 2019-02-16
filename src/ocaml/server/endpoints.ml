@@ -2,158 +2,34 @@
 
 (** endpoints for Completion *)
 module Completion = struct
-  module Setup = struct
-    type params = {source : Types.Completion.Item.t list}
-    type result = unit
-
-    let endpoint = "completion/setup"
-  end
-
-  module Read = struct
-    type params = {input : string}
-    type result = Types.Completion.Candidate.t list
-
-    let endpoint = "completion/read"
-  end
+  let setup = "completion/setup"
+  let read = "completion/read"
 end
 
 (** endpoints for Filer *)
 module Filer = struct
-  module Make = struct
-    type params =
-      { initial_location : string
-      ; name : string }
-
-    type result = Types.Filer.t
-
-    let endpoint = "filer/make"
-  end
-
-  module Get = struct
-    type params = {name : string}
-    type result = Types.Filer.t
-
-    let endpoint = "filer/get"
-  end
-
-  module Move_parent = struct
-    type params = {name : string}
-    type result = Types.Filer.t
-
-    let endpoint = "filer/moveParent"
-  end
-
-  module Enter_directory = struct
-    type params =
-      { name : string
-      ; node_id : string }
-
-    type result = Types.Filer.t
-
-    let endpoint = "filer/enterDirectory"
-  end
-
-  module Move_nodes = struct
-    type params = {workbench_id : string}
-    type result = unit
-
-    let endpoint = "filer/moveNodes"
-  end
-
-  module Delete_nodes = struct
-    type params = {workbench_id : string}
-    type result = unit
-
-    let endpoint = "filer/deleteNodes"
-  end
+  let make = "filer/make"
+  let get = "filer/get"
+  let move_parent = "filer/moveParent"
+  let enter_directory = "filer/enterDirectory"
 end
 
 (** endpoints for Configuration *)
 module Configuration = struct
-  module Get = struct
-    type params = unit
-    type result = Types.Configuration.t
-
-    let endpoint = "configuration/get"
-  end
-end
-
-(** endpoints for Keymap *)
-module Keymap = struct
-  module Get = struct
-    type params = unit
-    type result = Types.Key_map.t
-
-    let endpoint = "keymap/get"
-  end
-
-  module Add_context = struct
-    type params = {context : string}
-    type result = Types.Key_map.t
-
-    let endpoint = "keymap/addContext"
-  end
-
-  module Delete_context = struct
-    type params = {context : string}
-    type result = Types.Key_map.t
-
-    let endpoint = "keymap/deleteContext"
-  end
+  let get = "configuration/get"
 end
 
 (** endpoint for plan *)
 module Plan = struct
-  module Reject = struct
-    type params = {workbench_id : string}
-    type result = unit
-
-    let endpoint = "plan/reject"
-  end
+  let reject = "plan/reject"
 
   module Filer = struct
-    module Move_nodes = struct
-      type params =
-        { from : string
-        ; node_ids : string list
-        ; _to : string }
-
-      type result = Types.Plan.t
-
-      let endpoint = "plan/filer/moveNodes"
-    end
-
-    module Delete_nodes = struct
-      type params =
-        { from : string
-        ; node_ids : string list }
-
-      type result = Types.Plan.t
-
-      let endpoint = "plan/filer/deleteNodes"
-    end
+    let move_nodes = "plan/filer/moveNodes"
+    let delete_nodes = "plan/filer/deleteNodes"
   end
 end
 
 module Notification = struct
-  module Notify = struct
-    type params =
-      { message : string
-      ; level : Types.Notification.level }
-
-    type result = unit
-
-    let endpoint = "notification/message"
-  end
-
-  module Progress = struct
-    type params =
-      { process : string
-      ; current : float
-      ; targeted : float }
-
-    type result = unit
-
-    let endpoint = "notification/progress"
-  end
+  let notify = "notification/message"
+  let progress = "notification/progress"
 end

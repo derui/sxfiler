@@ -41,7 +41,7 @@ end = struct
 end
 
 module Keymap = C.Statable.Make (struct
-    type t = string D.Key_map.t
+    type t = D.Key_map.t
 
     let empty () = D.Key_map.make ()
   end)
@@ -62,9 +62,3 @@ module Condition = C.Statable.Make (struct
 module Clock : D.Location_record.Clock = struct
   let unixtime () = Int64.of_float @@ Unix.gettimeofday ()
 end
-
-module Workbench = C.Statable.Make (struct
-    type t = C.Workbench_state.t
-
-    let empty () = C.Workbench_state.empty
-  end)

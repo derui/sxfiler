@@ -4,17 +4,17 @@ module Usecase = Sxfiler_usecase.Completion
 
 module Setup (U : Usecase.Setup.S) : sig
   type params = {source : T.Collection.t} [@@deriving of_yojson]
-  type result = unit
 
-  val handle : params -> result Lwt.t
+  val handle : params -> unit Lwt.t
 end = struct
   type params = {source : T.Collection.t} [@@deriving of_yojson]
   type result = unit [@@deriving to_yojson]
 
   let handle param =
     let source = T.Collection.to_domain param.source in
-    let open Lwt in
-    U.execute {source} >>= fun _ -> Lwt.return_unit
+    match%lwt U.execute {source} with
+    | Ok () -> Lwt.return_unit
+    | Error () -> Lwt.fail Errors.(Gateway_error (unknown_error "unknown error"))
 end
 
 module Read (Usecase : Usecase.Read.S) : sig
@@ -30,5 +30,5 @@ end = struct
     let%lwt result = Usecase.execute {input = param.input} in
     match result with
     | Ok v -> Lwt.return @@ T.Candidates.of_domain v
-    | Error () -> failwith "Unknown error"
+    | Error () -> Lwt.fail Errors.(Gateway_error (unknown_error "unknown error"))
 end
