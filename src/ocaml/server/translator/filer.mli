@@ -5,6 +5,6 @@ type t =
   ; history : Location_history.t
   ; selected_nodes : string list
   ; sort_order : Types.Sort_type.t }
-[@@deriving yojson]
+[@@deriving show, yojson]
 
 include Core.Domain_translator with type t := t and type domain := Sxfiler_domain.Filer.t

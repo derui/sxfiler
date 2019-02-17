@@ -6,7 +6,7 @@ type t =
   ; history : Location_history.t
   ; selected_nodes : string list
   ; sort_order : Types.Sort_type.t }
-[@@deriving yojson]
+[@@deriving show, yojson]
 
 let of_domain t =
   { id = t.D.id

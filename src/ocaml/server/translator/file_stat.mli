@@ -4,11 +4,13 @@ type capability =
   { writable : bool
   ; readable : bool
   ; executable : bool }
+[@@deriving show]
 
 type mode =
   { owner : capability
   ; group : capability
   ; others : capability }
+[@@deriving show]
 
 type t =
   { mode : mode
@@ -21,6 +23,6 @@ type t =
   ; is_directory : bool
   ; is_file : bool
   ; is_symlink : bool }
-[@@deriving yojson]
+[@@deriving show, yojson]
 
 include Core.Domain_translator with type t := t and type domain := Sxfiler_domain.File_stat.t

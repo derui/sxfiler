@@ -7,7 +7,7 @@ type t =
   ; name : string
   ; stat : File_stat.t
   ; link_path : string option [@key "linkPath"] }
-[@@deriving yojson]
+[@@deriving show, yojson]
 
 module Domain = struct
   let of_domain t =

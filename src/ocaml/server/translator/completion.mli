@@ -2,22 +2,26 @@ module Item : sig
   type t =
     { id : string
     ; value : string }
+  [@@deriving show]
 end
 
-module Candidates : sig
-  type candidate =
+module Candidate : sig
+  type t =
     { start : int
     ; length : int
     ; value : Item.t }
+  [@@deriving show]
+end
 
-  type t = candidate list [@@deriving yojson]
+module Candidates : sig
+  type t = Candidate.t list [@@deriving show, yojson]
 
   include
     Core.Domain_translator with type t := t and type domain := Sxfiler_domain.Completion.candidates
 end
 
 module Collection : sig
-  type t = Item.t list [@@deriving yojson]
+  type t = Item.t list [@@deriving show, yojson]
 
   include
     Core.Domain_translator with type t := t and type domain := Sxfiler_domain.Completion.collection

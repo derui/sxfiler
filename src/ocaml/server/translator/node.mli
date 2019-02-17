@@ -5,6 +5,6 @@ type t =
   ; name : string
   ; stat : File_stat.t
   ; link_path : string option [@key "linkPath"] }
-[@@deriving yojson]
+[@@deriving show, yojson]
 
 include Core.Domain_translator with type t := t and type domain := Sxfiler_domain.Node.t

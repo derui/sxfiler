@@ -1,6 +1,6 @@
 module D = Sxfiler_domain.Condition
 
-type t = {contexts : string list} [@@deriving yojson]
+type t = {contexts : string list} [@@deriving show, yojson]
 
 let of_domain t =
   let module T = Sxfiler_domain in

@@ -5,7 +5,7 @@ module Sort_type = struct
     | Name [@name "name"]
         | Size [@name "size"]
         | Date [@name "date"]
-  [@@deriving yojson]
+  [@@deriving show, yojson]
 
   let to_domain = function
     | Name -> D.Sort_type.Name

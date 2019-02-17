@@ -4,9 +4,9 @@ type key =
   { key : string
   ; action : string
   ; when_ : Condition.t [@key "when"] }
-[@@deriving yojson]
+[@@deriving show, yojson]
 
-type t = {bindings : key list} [@@deriving yojson]
+type t = {bindings : key list} [@@deriving show, yojson]
 
 (* translator between domain and response/request type *)
 let of_domain t =

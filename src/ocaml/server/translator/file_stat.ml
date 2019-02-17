@@ -4,13 +4,13 @@ type capability =
   { writable : bool
   ; readable : bool
   ; executable : bool }
-[@@deriving yojson]
+[@@deriving show, yojson]
 
 type mode =
   { owner : capability
   ; group : capability
   ; others : capability }
-[@@deriving yojson]
+[@@deriving show, yojson]
 
 type t =
   { mode : mode
@@ -23,7 +23,7 @@ type t =
   ; is_directory : bool
   ; is_file : bool
   ; is_symlink : bool }
-[@@deriving yojson]
+[@@deriving show, yojson]
 
 module Domain = struct
   module D = Sxfiler_domain.File_stat

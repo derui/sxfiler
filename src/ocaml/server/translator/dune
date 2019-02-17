@@ -4,4 +4,4 @@
  (libraries sxfiler.domain yojson)
  ; avoid deprecation warning for ppx_deriving_yojson
  (flags (:standard -w -3))
- (preprocess (pps ppx_deriving_yojson)))
+ (preprocess (pps ppx_deriving.std ppx_deriving_yojson)))

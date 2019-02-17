@@ -3,4 +3,5 @@
  (libraries alcotest
              sxfiler.server.translator
              sxfiler.domain
-             sxfiler.core))
+             sxfiler.core
+             test_fixtures))

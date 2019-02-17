@@ -15,10 +15,11 @@ let subset_test =
         ; TF.Node.fixture ~full_path:Path.(of_string "baz") stat
         ; TF.Node.fixture ~full_path:Path.(of_string "foobar") stat ]
       in
+      let file_tree = D.File_tree.make ~location:(Path.of_string "/") ~nodes in
       let filer =
-        F.make ~id:"id" ~location:(Path.of_string "/") ~nodes
+        F.make ~id:"id" ~file_tree ~selected_nodes:[]
           ~history:D.Location_history.(make ())
-          ~sort_order:D.Types.Sort_type.Name
+          ~sort_order:D.Types.Sort_type.Name ()
       in
       let node index = List.nth nodes index in
       let subset, _ = F.node_subset filer ~ids:[(node 1).id; (node 2).id] in
@@ -34,10 +35,11 @@ let subset_test =
         ; TF.Node.fixture ~full_path:Path.(of_string "baz") stat
         ; TF.Node.fixture ~full_path:Path.(of_string "foobar") stat ]
       in
+      let file_tree = D.File_tree.make ~location:(Path.of_string "/") ~nodes in
       let filer =
-        F.make ~id:"id" ~location:(Path.of_string "/") ~nodes
+        F.make ~id:"id" ~file_tree ~selected_nodes:[]
           ~history:D.Location_history.(make ())
-          ~sort_order:D.Types.Sort_type.Name
+          ~sort_order:D.Types.Sort_type.Name ()
       in
       let node index = List.nth nodes index in
       let subset, rest = F.node_subset filer ~ids:[(node 1).id; (node 2).id; "not found"] in
@@ -55,46 +57,55 @@ let test_set =
       , fun () ->
         let data = [node_1; node_2] in
         let expected = [node_2; node_1] in
+        let file_tree = D.File_tree.make ~location:(Path.of_string "/") ~nodes:data in
         let data =
-          F.make ~id:"id" ~location:(Path.of_string "/") ~nodes:data
+          F.make ~id:"id" ~file_tree ~selected_nodes:[]
             ~history:D.Location_history.(make ())
-            ~sort_order:D.Types.Sort_type.Name
+            ~sort_order:D.Types.Sort_type.Name ()
         in
-        Alcotest.(check @@ of_pp Fmt.nop) "subset" expected F.(data.nodes) )
+        Alcotest.(check @@ of_pp Fmt.nop) "subset" expected F.(data.file_tree.nodes) )
     ; ( "should be sorted when moved filer's location"
       , `Quick
       , fun () ->
         let expected = [node_2; node_1] in
+        let file_tree = D.File_tree.make ~location:(Path.of_string "/") ~nodes:data in
         let filer =
-          F.make ~id:"id" ~location:(Path.of_string "/") ~nodes:[]
+          F.make ~id:"id" ~file_tree
             ~history:D.Location_history.(make ())
-            ~sort_order:D.Types.Sort_type.Name
+            ~sort_order:D.Types.Sort_type.Name ()
         in
         let data = [node_1; node_2] in
         let filer =
-          F.move_location filer ~location:(Path.of_string "/new") ~nodes:data
+          F.move_location filer
+            ~file_tree:D.File_tree.(make ~location:(Path.of_string "/new") ~nodes:data)
             ( module struct
               let unixtime () = Int64.zero
             end )
         in
-        Alcotest.(check @@ of_pp Fmt.nop) "subset" expected F.(filer.nodes) )
+        Alcotest.(check @@ of_pp Fmt.nop) "subset" expected F.(filer.file_tree.nodes) )
     ; ( "should be able to select nodes"
       , `Quick
       , fun () ->
+        let file_tree =
+          D.File_tree.make ~location:(Path.of_string "/") ~nodes:[node_1; node_2]
+        in
         let filer =
-          F.make ~id:"id" ~location:(Path.of_string "/") ~nodes:[node_1; node_2]
+          F.make ~id:"id" ~file_tree
             ~history:D.Location_history.(make ())
-            ~sort_order:D.Types.Sort_type.Name
+            ~sort_order:D.Types.Sort_type.Name ()
         in
         let filer = F.select_nodes filer ~ids:["id1"] in
         Alcotest.(check @@ list @@ string) "subset" ["id1"] F.(filer.selected_nodes) )
     ; ( "should be able to deselect nodes"
       , `Quick
       , fun () ->
+        let file_tree =
+          D.File_tree.make ~location:(Path.of_string "/") ~nodes:[node_1; node_2]
+        in
         let filer =
-          F.make ~id:"id" ~location:(Path.of_string "/") ~nodes:[node_1; node_2]
+          F.make ~id:"id" ~file_tree
             ~history:D.Location_history.(make ())
-            ~sort_order:D.Types.Sort_type.Name
+            ~sort_order:D.Types.Sort_type.Name ()
         in
         let filer = F.select_nodes filer ~ids:["id1"; "id2"] |> F.deselect_nodes ~ids:["id2"] in
         Alcotest.(check @@ list @@ string) "subset" ["id1"] F.(filer.selected_nodes) ) ]

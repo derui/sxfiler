@@ -6,6 +6,7 @@ module Correction = struct
   type t =
     | Rename of string
     | Overwrite
+  [@@deriving show]
 
   let to_yojson = function
     | Rename v -> `Assoc [("type", `String "rename"); ("payload", `String v)]
@@ -32,6 +33,7 @@ module Prediction = struct
     | Need_fix
     | Fix of Correction.t
     | No_problem
+  [@@deriving show]
 
   let to_yojson = function
     | Need_fix -> `Assoc [("type", `String "need-fix")]
@@ -67,7 +69,7 @@ module Target_node = struct
   type t =
     { node_id : string [@key "nodeId"]
     ; prediction : Prediction.t }
-  [@@deriving yojson]
+  [@@deriving show, yojson]
 
   let to_domain t =
     {D.Target_node.node_id = t.node_id; prediction = Prediction.to_domain t.prediction}
@@ -80,7 +82,7 @@ end
 type t =
   { id : string
   ; target_nodes : Target_node.t list [@key "targetNodes"] }
-[@@deriving yojson]
+[@@deriving show, yojson]
 
 module Empty_executor : D.Executor = struct
   let do_plan _ = assert false

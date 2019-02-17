@@ -7,7 +7,7 @@ module Level = struct
     | Info [@name "info"]
         | Warning [@name "warning"]
         | Error [@name "error"]
-  [@@deriving yojson]
+  [@@deriving show, yojson]
 
   let of_domain = function D.Level.Info -> Info | Warning -> Warning | Error -> Error
 
@@ -22,6 +22,7 @@ module Body = struct
   type t =
     | Message of string
     | Progress of {process : string; current : float; targeted : float}
+  [@@deriving show]
 
   let of_domain = function
     | D.Message message -> Message message
@@ -61,7 +62,7 @@ type t =
   { id : string
   ; level : Level.t
   ; body : Body.t }
-[@@deriving yojson]
+[@@deriving show, yojson]
 
 let of_domain t =
   let level = Level.of_domain t.D.level in

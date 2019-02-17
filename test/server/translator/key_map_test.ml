@@ -1,11 +1,7 @@
 module D = Sxfiler_domain
 module T = Sxfiler_server_translator.Key_map
 
-let data =
-  List.fold_left
-    (fun keymap (key, value) -> D.Key_map.add ~condition:D.Condition.empty ~key ~value keymap)
-    (D.Key_map.make ())
-    [(Sxfiler_kbd.make "j", "foo"); (Sxfiler_kbd.make "k", "bar")]
+let data = Test_fixtures.Key_map.fixture [("j", "foo"); ("k", "bar")]
 
 let test_set =
   [ ( "can translate to/from domain"
@@ -16,6 +12,6 @@ let test_set =
     , `Quick
     , fun () ->
       let data = T.of_domain data in
-      Alcotest.(check @@ result (of_pp Fmt.nop) string)
+      Alcotest.(check @@ result (of_pp T.pp) string)
         "yojson" (Ok data)
         (T.of_yojson @@ T.to_yojson data) ) ]

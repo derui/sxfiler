@@ -4,6 +4,7 @@ module D = Sxfiler_domain.Location_record
 type t =
   { location : string
   ; timestamp : string }
+[@@deriving show]
 
 let to_yojson t = `Assoc [("location", `String t.location); ("timestamp", `String t.timestamp)]
 

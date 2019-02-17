@@ -3,7 +3,7 @@ module Sort_type : sig
     | Name [@name "name"]
         | Size [@name "size"]
         | Date [@name "date"]
-  [@@deriving yojson]
+  [@@deriving show, yojson]
 
   include
     Core.Domain_translator with type t := t and type domain := Sxfiler_domain.Types.Sort_type.t
