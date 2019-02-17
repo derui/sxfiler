@@ -1,3 +1,5 @@
+module G = Sxfiler_server_gateway
+module Rpc = Jsonrpc_ocaml_yojson
 module Log = (val Sxfiler_server_core.Logger.make ["rpc"])
 
 (** Types of spec of RPC to create procedure handler.
@@ -20,9 +22,16 @@ type procedure =
   { method_ : string
   ; handler : Jsonrpc_ocaml_yojson.Request.t -> Jsonrpc_ocaml_yojson.Response.t Lwt.t }
 
+let handle_error = function
+  | G.Errors.Unknown_error v -> Rpc.Exception.raise_error (Errors.unknown_error v)
+  | G.Errors.Filer_already_exists -> Rpc.Exception.raise_error Errors.filer_already_exists
+  | Filer_not_found -> Rpc.Exception.raise_error Errors.filer_not_found
+  | Filer_not_directory -> Rpc.Exception.raise_error Errors.filer_not_directory
+  | Node_not_found -> Rpc.Exception.raise_error Errors.node_not_found
+  | Plan_not_found -> Rpc.Exception.raise_error Errors.plan_not_found
+
 let to_procedure (type p r) ~method_ ~(spec : (p, r) Spec.t) =
   let handler req =
-    let module Rpc = Jsonrpc_ocaml_yojson in
     let module Req = Rpc.Request in
     let module Res = Rpc.Response in
     let open Sxfiler_core in
@@ -53,8 +62,11 @@ let to_procedure (type p r) ~method_ ~(spec : (p, r) Spec.t) =
             (Option.get ~default:Fun.(const 0L) req.id) ) ;%lwt
       let result = spec.result_to_json result |> Option.some in
       Lwt.return {Res.result; id = req.Req.id; error = None}
-    with Rpc.Exception.Jsonrpc_error (code, _) as e ->
-      Log.err (fun m -> m "Error occurred: %s" (Rpc.Types.Error_code.to_message code)) ;%lwt
-      raise e
+    with
+    | G.Errors.Gateway_error e -> handle_error e
+    | _ as e ->
+      let exn = Stdlib.Printexc.to_string e in
+      let%lwt () = Log.err (fun m -> m "Error occurred: %s" exn) in
+      Rpc.(Exception.raise_error (Types.Error_code.Server_error (-32000)))
   in
   {method_; handler}

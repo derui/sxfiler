@@ -5,8 +5,8 @@ type error =
   | Filer_not_found
   | Filer_already_exists
   | Filer_not_directory
-  | Filer_not_found_node
-  | Plan_not_found_filer
+  | Node_not_found
+  | Plan_not_found
 [@@deriving variants]
 
 exception Gateway_error of error

@@ -26,55 +26,57 @@ module Reject = struct
   end
 end
 
-module Plan_move_nodes = struct
-  (* gateway for Plan_move_nodes use case. *)
-  module Types = struct
-    type params =
-      { source : string
-      ; node_ids : string list [@key "nodeIds"]
-      ; dest : string }
-    [@@deriving of_yojson]
+module Filer = struct
+  module Make_move_plan = struct
+    (* gateway for Plan_move_nodes use case. *)
+    module Types = struct
+      type params =
+        { source : string
+        ; node_ids : string list [@key "nodeIds"]
+        ; dest : string }
+      [@@deriving of_yojson]
+    end
+
+    module type S = sig
+      include module type of Types
+
+      val handle : params -> T.Plan.t Lwt.t
+    end
+
+    module Make (U : Usecase.Plan.Filer.Make_move_plan.S) : S = struct
+      include Types
+
+      let handle param =
+        match%lwt
+          U.execute {source = param.source; node_ids = param.node_ids; dest = param.dest}
+        with
+        | Ok plan -> T.Plan.of_domain plan |> Lwt.return
+        | Error (`Not_found _) -> Lwt.fail Errors.(Gateway_error filer_not_found)
+    end
   end
 
-  module type S = sig
-    include module type of Types
+  module Make_delete_plan = struct
+    (* gateway for Plan_delete_nodes use case. *)
+    module Types = struct
+      type params =
+        { source : string
+        ; node_ids : string list [@key "nodeIds"] }
+      [@@deriving of_yojson]
+    end
 
-    val handle : params -> T.Plan.t Lwt.t
-  end
+    module type S = sig
+      include module type of Types
 
-  module Make (U : Usecase.Plan.Filer.Make_move_plan.S) : S = struct
-    include Types
+      val handle : params -> T.Plan.t Lwt.t
+    end
 
-    let handle param =
-      match%lwt
-        U.execute {source = param.source; node_ids = param.node_ids; dest = param.dest}
-      with
-      | Ok plan -> T.Plan.of_domain plan |> Lwt.return
-      | Error (`Not_found _) -> Lwt.fail Errors.(Gateway_error plan_not_found_filer)
-  end
-end
+    module Make (U : Usecase.Plan.Filer.Make_delete_plan.S) : S = struct
+      include Types
 
-module Plan_delete_nodes = struct
-  (* gateway for Plan_delete_nodes use case. *)
-  module Types = struct
-    type params =
-      { source : string
-      ; node_ids : string list [@key "nodeIds"] }
-    [@@deriving of_yojson]
-  end
-
-  module type S = sig
-    include module type of Types
-
-    val handle : params -> T.Plan.t Lwt.t
-  end
-
-  module Make (U : Usecase.Plan.Filer.Make_delete_plan.S) : S = struct
-    include Types
-
-    let handle param =
-      match%lwt U.execute {source = param.source; node_ids = param.node_ids} with
-      | Ok plan -> Fun.(T.Plan.of_domain %> Lwt.return) plan
-      | Error (`Not_found _) -> Lwt.fail Errors.(Gateway_error plan_not_found_filer)
+      let handle param =
+        match%lwt U.execute {source = param.source; node_ids = param.node_ids} with
+        | Ok plan -> Fun.(T.Plan.of_domain %> Lwt.return) plan
+        | Error (`Not_found _) -> Lwt.fail Errors.(Gateway_error filer_not_found)
+    end
   end
 end

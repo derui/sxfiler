@@ -21,7 +21,7 @@ module Make = struct
   end
 
   (** Return implementation with some dependency modules *)
-  module Make (System : System.S) (U : Usecase.Filer.Make) : S = struct
+  module Make (System : System.S) (U : Usecase.Filer.Make.S) : S = struct
     include Types
 
     let handle param =
@@ -50,7 +50,7 @@ module Get = struct
   end
 
   (** Return implementation with some dependency modules *)
-  module Make (U : Usecase.Filer.Get) : S = struct
+  module Make (U : Usecase.Filer.Get.S) : S = struct
     include Types
 
     let handle param =
@@ -113,7 +113,7 @@ module Enter_directory = struct
       match%lwt U.execute params with
       | Ok s -> Lwt.return @@ T.Filer.of_domain s
       | Error `Not_found_filer -> Lwt.fail Errors.(Gateway_error filer_not_found)
-      | Error `Not_found_node -> Lwt.fail Errors.(Gateway_error filer_not_found_node)
+      | Error `Not_found_node -> Lwt.fail Errors.(Gateway_error node_not_found)
       | Error `Not_directory -> Lwt.fail Errors.(Gateway_error filer_not_directory)
   end
 end

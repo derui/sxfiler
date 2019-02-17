@@ -3,62 +3,70 @@ open Sxfiler_core
 
 module T = Sxfiler_domain
 
-module Make_type = struct
-  type input =
-    { initial_location : Path.t
-    ; name : string }
+module Make = struct
+  module Type = struct
+    type input =
+      { initial_location : Path.t
+      ; name : string }
 
-  type output = T.Filer.t
-  type error = [`Already_exists]
+    type output = T.Filer.t
+    type error = [`Already_exists]
+  end
+
+  (** {!Make_sync} module defines interface to make filer. *)
+  module type S = sig
+    (* trick to remove dependency for Make_type *)
+
+    include module type of Type
+
+    include
+      Common.Usecase with type input := input and type output := output and type error := error
+  end
+
+  module Make
+      (CR : T.Configuration.Repository)
+      (Factory : T.Filer.Factory.S)
+      (SR : T.Filer.Repository)
+      (Svc : T.Location_scanner_service.S) : S = struct
+    include Type
+
+    let execute (params : input) =
+      (* Create filer if it is not exists *)
+      let%lwt config = CR.resolve () in
+      let%lwt v = SR.resolve params.name in
+      match v with
+      | None ->
+        let sort_order = config.T.Configuration.default_sort_order in
+        let%lwt file_tree = Svc.scan params.initial_location in
+        let t = Factory.create ~file_tree ~history:(T.Location_history.make ()) ~sort_order in
+        let%lwt () = SR.store t in
+        Lwt.return @@ Ok t
+      | Some _ -> Lwt.return @@ Error `Already_exists
+  end
 end
 
-(** {!Make_sync} module defines interface to make filer. *)
-module type Make = sig
-  (* trick to remove dependency for Make_type *)
+module Get = struct
+  module Type = struct
+    type input = {name : string}
+    type output = T.Filer.t
+    type error = [`Not_found]
+  end
 
-  include module type of Make_type
-  include Common.Usecase with type input := input and type output := output and type error := error
-end
+  module type S = sig
+    include module type of Type
 
-module Make
-    (CR : T.Configuration.Repository)
-    (Factory : T.Filer.Factory.S)
-    (SR : T.Filer.Repository)
-    (Svc : T.Location_scanner_service.S) : Make = struct
-  include Make_type
+    include
+      Common.Usecase with type input := input and type output := output and type error := error
+  end
 
-  let execute (params : input) =
-    (* Create filer if it is not exists *)
-    let%lwt config = CR.resolve () in
-    let%lwt v = SR.resolve params.name in
-    match v with
-    | None ->
-      let sort_order = config.T.Configuration.default_sort_order in
-      let%lwt file_tree = Svc.scan params.initial_location in
-      let t = Factory.create ~file_tree ~history:(T.Location_history.make ()) ~sort_order in
-      let%lwt () = SR.store t in
-      Lwt.return @@ Ok t
-    | Some _ -> Lwt.return @@ Error `Already_exists
-end
+  module Make (SR : T.Filer.Repository) : S = struct
+    include Type
 
-module Get_type = struct
-  type input = {name : string}
-  type output = T.Filer.t
-  type error = [`Not_found]
-end
-
-module type Get = sig
-  include module type of Get_type
-  include Common.Usecase with type input := input and type output := output and type error := error
-end
-
-module Get (SR : T.Filer.Repository) : Get = struct
-  include Get_type
-
-  let execute (params : input) =
-    match%lwt SR.resolve params.name with
-    | None -> Lwt.return_error `Not_found
-    | Some filer -> Lwt.return_ok filer
+    let execute (params : input) =
+      match%lwt SR.resolve params.name with
+      | None -> Lwt.return_error `Not_found
+      | Some filer -> Lwt.return_ok filer
+  end
 end
 
 module Move_parent = struct

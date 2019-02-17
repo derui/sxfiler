@@ -11,15 +11,14 @@ exception Fail_load_migemo
 module Log = (val Logger.make ["main"])
 
 let create_server (module C : Rpc_connection.Instance) =
-  let module NS = (val Sxfiler_server_infra.Notification_service.make (module C)) in
+  let module Dep = Dependencies.Make (C) ((val Global.Completer.get ())) in
   let procedures =
     List.flatten
-      [ Proc_completion.make_procedures ()
-      ; Proc_configuration.make_procedures ()
-      ; Proc_keymap.make_procedures ()
-      ; Proc_notification.make_procedures (module NS)
-      ; Proc_filer.make_procedures (module NS)
-      ; Proc_plan.make_procedures () ]
+      [ Proc_completion.make_procedures (module Dep)
+      ; Proc_configuration.make_procedures (module Dep)
+      ; Proc_keymap.make_procedures (module Dep)
+      ; Proc_filer.make_procedures (module Dep)
+      ; Proc_plan.make_procedures (module Dep) ]
   in
   let rpc_server = Jsonrpc_server.make () in
   List.fold_left (fun s procedure -> Jsonrpc_server.expose s ~procedure) rpc_server procedures
@@ -60,21 +59,13 @@ let initialize_modules ~migemo ~keymap ~config =
     | None ->
       Logs.warn (fun m -> m "Detect errors when load keymap. Use default keymap.") ;
       Lwt.return_unit
-    | Some keymap ->
-      let module R = I.Key_map_repo.Make (Global.Keymap) in
-      let module Usecase = U.Keymap.Store.Make (R) in
-      let module Gateway = G.Keymap.Store (Usecase) in
-      Gateway.handle keymap
+    | Some keymap -> Global.Keymap.update keymap
   in
   match config () with
   | None ->
     Logs.warn (fun m -> m "Detect errors when load configuration. Use default configuration.") ;
     Lwt.return_unit
-  | Some config ->
-    let module R = I.Configuration_repo.Make (Global.Root) in
-    let module Usecase = U.Configuration.Store.Make (R) in
-    let module Gateway = G.Configuration.Store (Usecase) in
-    Gateway.handle config
+  | Some config -> Global.Configuration.update config
 
 let start_server _ port =
   let conn_closed (ch, _) =
@@ -121,7 +112,7 @@ let load_migemo dict_dir =
 let load_configuration config =
   let module Y = Sxfiler_server_translator.Configuration in
   let config = Yojson.Safe.from_file config in
-  match Y.of_yojson config with Error _ -> None | Ok v -> Some v
+  match Y.of_yojson config with Error _ -> None | Ok v -> Some (Y.to_domain v)
 
 (* Load keymaps from specified file *)
 let load_keymap file =
@@ -131,7 +122,7 @@ let load_keymap file =
   | Error err ->
     Logs.warn (fun m -> m "Error occurred: %s" err) ;
     None
-  | Ok v -> Some v
+  | Ok v -> Some (Y.to_domain v)
 
 (* Get config from file, but get default when some error happenned  *)
 let get_config f config () = if Sys.file_exists config then f config else None
@@ -156,7 +147,7 @@ let () =
   let config = get_config load_configuration !config in
   let keymap = get_config load_keymap !key_maps in
   let migemo = load_migemo !dict_dir in
-  (* setup task runner and finalizer *)
+  (* setup task runner and finalize *)
   let module I = (val Global.Task_runner.get () : T.Runner.Instance) in
   let runner_thread = I.Runner.start I.instance in
   Lwt_main.at_exit (fun () -> I.Runner.stop I.instance ; runner_thread) ;
