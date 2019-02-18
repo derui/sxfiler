@@ -20,7 +20,6 @@ depends: [
   "ppx_fields_conv" {build & >= "v0.11.0"}
   "fieldslib" { >= "v0.11.0"}
   "ppx_deriving" {>= "4.2.1"}
-  "mocha_of_ocaml" {with-test}
   "lwt" {>= "3.0.0"}
   "lwt_ppx" {build}
   "cohttp-lwt-unix"

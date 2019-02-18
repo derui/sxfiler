@@ -2,6 +2,7 @@ type key =
   { key : string
   ; action : string
   ; when_ : Condition.t }
+[@@deriving show]
 
 (** the type that is JSON friendly for {!Sxfiler_domain.Key_map.t} *)
 type t = {bindings : key list} [@@deriving show, yojson]
