@@ -3,8 +3,6 @@ open Sxfiler_core
 
 module D = Sxfiler_domain
 
-type location = Path.t
-
 (* delete whole directory *)
 let rec delete_dir path =
   let paths = Sys.readdir path |> Array.to_list in

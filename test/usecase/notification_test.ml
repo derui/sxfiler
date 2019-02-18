@@ -13,7 +13,7 @@ let test_set =
           let create ~level ~body = D.Notification.make ~id ~level ~body
         end in
         let module Usecase = U.Notification.Notify.Make (F) (Service) in
-        let notification = D.Notification.(OneShot {message = "foo"}) in
+        let notification = D.Notification.(Message "foo") in
         let%lwt ret = Usecase.execute {notification; level = Info} in
         Alcotest.(check @@ result unit unit) "result" (Ok ()) ret ;
         Alcotest.(check int) "count" 1 Spy.Wrap.(called_count s) ;
