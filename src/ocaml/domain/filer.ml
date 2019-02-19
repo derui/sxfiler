@@ -1,6 +1,6 @@
 (** Scanner module provides type to scan file tree. *)
 
-type id = string [@@deriving show]
+type id = string [@@deriving eq, show]
 
 type t =
   { id : id
@@ -8,8 +8,9 @@ type t =
   ; history : Location_history.t
   ; selected_nodes : Node.id list
   ; sort_order : Types.Sort_type.t }
-[@@deriving show, make]
+[@@deriving eq, show, make]
 
+let has_same_id {id = id1; _} {id = id2; _} = equal_id id1 id2
 let find_node t = File_tree.find_node t.file_tree
 
 let move_location t ~file_tree clock =

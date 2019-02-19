@@ -52,6 +52,7 @@ module Filer = struct
         with
         | Ok plan -> T.Plan.of_domain plan |> Lwt.return
         | Error (`Not_found _) -> Lwt.fail Errors.(Gateway_error filer_not_found)
+        | Error `Same_filer -> Lwt.fail Errors.(Gateway_error plan_same_filer)
     end
   end
 

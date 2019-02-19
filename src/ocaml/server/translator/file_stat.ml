@@ -4,13 +4,13 @@ type capability =
   { writable : bool
   ; readable : bool
   ; executable : bool }
-[@@deriving show, yojson]
+[@@deriving eq, show, yojson]
 
 type mode =
   { owner : capability
   ; group : capability
   ; others : capability }
-[@@deriving show, yojson]
+[@@deriving eq, show, yojson]
 
 type t =
   { mode : mode
@@ -23,7 +23,7 @@ type t =
   ; is_directory : bool
   ; is_file : bool
   ; is_symlink : bool }
-[@@deriving show, yojson]
+[@@deriving eq, show, yojson]
 
 module Domain = struct
   module D = Sxfiler_domain.File_stat
@@ -34,13 +34,13 @@ module Domain = struct
         ; readable = t.D.owner.readable
         ; executable = t.D.owner.executable }
     ; group =
-        { writable = t.D.owner.writable
-        ; readable = t.D.owner.readable
-        ; executable = t.D.owner.executable }
+        { writable = t.D.group.writable
+        ; readable = t.D.group.readable
+        ; executable = t.D.group.executable }
     ; others =
-        { writable = t.D.owner.writable
-        ; readable = t.D.owner.readable
-        ; executable = t.D.owner.executable } }
+        { writable = t.D.others.writable
+        ; readable = t.D.others.readable
+        ; executable = t.D.others.executable } }
 
   let mode_to_domain (t : mode) =
     { D.owner =
@@ -48,10 +48,11 @@ module Domain = struct
         ; readable = t.owner.readable
         ; executable = t.owner.executable }
     ; group =
-        {writable = t.owner.writable; readable = t.owner.readable; executable = t.owner.executable}
+        {writable = t.group.writable; readable = t.group.readable; executable = t.group.executable}
     ; others =
-        {writable = t.owner.writable; readable = t.owner.readable; executable = t.owner.executable}
-    }
+        { writable = t.others.writable
+        ; readable = t.others.readable
+        ; executable = t.others.executable } }
 
   let of_domain (t : D.t) =
     { mode = mode_of_domain t.mode

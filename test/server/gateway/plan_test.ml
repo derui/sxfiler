@@ -1,48 +1,26 @@
-open Sxfiler_core
 module D = Sxfiler_domain
-module S = Sxfiler_server
 module U = Sxfiler_usecase
-module C = Sxfiler_server_core
 module G = Sxfiler_server_gateway
 module T = Sxfiler_server_translator
 
-module Dummy_system = struct
-  let getcwd () = "/foo"
+module Dummy : D.Plan.Executor = struct
+  let do_plan _ = Lwt.return_ok ()
 end
 
 let test_set =
   [ Alcotest_lwt.test_case "make plan to move nodes" `Quick (fun _ () ->
-        let id = Uuidm.v4_gen (Random.get_state ()) () in
-        let plan = D.Plan.make ~workbench_id:id ~source:[] ~dest:[] in
-        let filer =
-          D.Filer.make ~id:"foo"
-            ~location:(Path.of_string ~env:`Unix "/initial")
-            ~nodes:[] ~sort_order:D.Types.Sort_type.Date
-            ~history:D.Location_history.(make ())
-        in
+        let id = Uuidm.v4_gen (Random.get_state ()) () |> Uuidm.to_bytes in
+        let plan = D.Plan.make ~id ~executor:(module Dummy) ~target_nodes:[] in
         let module Usecase = struct
-          include U.Plan.Filer.Move_nodes.Type
+          include U.Plan.Filer.Make_move_plan.Type
 
-          let execute {workbench_id} =
-            Alcotest.(check @@ of_pp Fmt.nop) "id" id workbench_id ;
+          let execute {source; dest; node_ids} =
+            Alcotest.(check string) "source" source "from" ;
+            Alcotest.(check string) "dest" dest "to" ;
+            Alcotest.(check @@ list string) "node_ids" node_ids ["id"] ;
             Lwt.return_ok plan
         end in
-        let module Wb = struct
-          include U.Workbench.Make_type
-
-          let execute {from; node_ids; _to} =
-            Alcotest.(check string) "from" "from" from ;
-            Alcotest.(check @@ list string) "ids" ["id"] node_ids ;
-            Alcotest.(check string) "to" "to" _to ;
-            Lwt.return_ok
-            @@ D.Workbench.make ~id
-              ~env:{D.Workbench.source = filer; nodes = []; dest = filer}
-              ~corrections:[]
-        end in
-        let module Gateway = G.Filer.Plan_move_nodes.Make (Wb) (Usecase) in
-        let%lwt res = Gateway.handle {from = "from"; node_ids = ["id"]; _to = "to"} in
-        Alcotest.(check @@ option @@ of_pp @@ Fmt.nop)
-          "created"
-          (Option.some @@ T.Plan.of_domain plan)
-          res.plan ;
+        let module Gateway = G.Plan.Filer.Make_move_plan.Make (Usecase) in
+        let%lwt res = Gateway.handle {source = "from"; node_ids = ["id"]; dest = "to"} in
+        Alcotest.(check @@ of_pp T.Plan.pp) "created" (T.Plan.of_domain plan) res ;
         Lwt.return_unit ) ]

@@ -29,6 +29,7 @@ let handle_error = function
   | Filer_not_directory -> Rpc.Exception.raise_error Errors.filer_not_directory
   | Node_not_found -> Rpc.Exception.raise_error Errors.node_not_found
   | Plan_not_found -> Rpc.Exception.raise_error Errors.plan_not_found
+  | Plan_same_filer -> Rpc.Exception.raise_error Errors.plan_same_filer
 
 let to_procedure (type p r) ~method_ ~(spec : (p, r) Spec.t) =
   let handler req =

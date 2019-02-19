@@ -5,5 +5,5 @@
 
 (executable
   (name tests)
-  (libraries alcotest alcotest-lwt sxfiler.core sxfiler.server.infra)
+  (libraries alcotest alcotest-lwt sxfiler.core sxfiler.server.infra test_fixtures)
   (preprocess (pps lwt_ppx)))

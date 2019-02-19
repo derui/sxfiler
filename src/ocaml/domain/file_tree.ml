@@ -2,9 +2,9 @@ open Sxfiler_core
 
 (** [t] defines flat file tree of the location. File tree is entity in system *)
 type t =
-  { location : Path.t [@printer Path.pp]
+  { location : Path.t
   ; nodes : Node.t list }
-[@@deriving show]
+[@@deriving eq, show]
 
 (** [make ~location ~nodes] returns new instance of [t] *)
 let make ~location ~nodes = {location; nodes}

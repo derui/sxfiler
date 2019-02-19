@@ -8,9 +8,12 @@ type t = private
   ; history : Location_history.t
   ; selected_nodes : Node.id list
   ; sort_order : Types.Sort_type.t }
-[@@deriving show, make]
+[@@deriving eq, show, make]
 
 (* sort nodes with sort_order in [t] *)
+
+val has_same_id : t -> t -> bool
+(** [has_same_id t1 t2] return having same id between [t1] and [t2]. *)
 
 val move_location : t -> file_tree:File_tree.t -> (module Location_record.Clock) -> t
 (** [move_location t ~file_tree  (module Clock)] returns updated [t] with

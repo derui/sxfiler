@@ -125,13 +125,13 @@ module Enter_directory = struct
   end
 
   module Make
-      (SR : T.Filer.Repository)
+      (FR : T.Filer.Repository)
       (Svc : T.Location_scanner_service.S)
       (Clock : T.Location_record.Clock) : S = struct
     include Type
 
     let execute (params : input) =
-      let%lwt filer = SR.resolve params.name in
+      let%lwt filer = FR.resolve params.name in
       let node = Option.(filer >>= T.Filer.find_node ~id:params.node_id) in
       match (filer, node) with
       | None, _ -> Lwt.return_error `Not_found_filer
@@ -141,7 +141,7 @@ module Enter_directory = struct
         else
           let%lwt new_file_tree = Svc.scan node.full_path in
           let filer' = T.Filer.move_location filer (module Clock) ~file_tree:new_file_tree in
-          let%lwt () = SR.store filer' in
+          let%lwt () = FR.store filer' in
           Lwt.return_ok filer'
   end
 end

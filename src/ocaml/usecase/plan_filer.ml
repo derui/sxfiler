@@ -13,7 +13,10 @@ module Make_move_plan = struct
       ; node_ids : T.Node.id list }
 
     type output = T.Plan.t
-    type error = [`Not_found of T.Filer.id]
+
+    type error =
+      [ `Not_found of T.Filer.id
+      | `Same_filer ]
   end
 
   module type S = sig
@@ -67,33 +70,48 @@ module Make_move_plan = struct
       (Scan : T.Location_scanner_service.S) : S = struct
     include Type
 
+    module Node_name_set = Set.Make (struct
+        type t = string
+
+        let compare = Stdlib.compare
+      end)
+
     let execute (params : input) =
       let is_same_filer = params.source = params.dest in
-      let%lwt source = FR.resolve params.source and dest = FR.resolve params.dest in
-      match (source, dest) with
-      | None, _ -> Lwt.return_error (`Not_found params.source)
-      | _, None -> Lwt.return_error (`Not_found params.dest)
-      | Some source', Some dest' ->
-        let target_nodes =
-          params.node_ids
-          |> List.map (fun id ->
-              Option.(
-                T.Filer.find_node source' ~id
-                >|= Fun.(
-                    match is_same_filer with
-                    | true -> T.Node.id %> T.Plan.Target_node.need_fix
-                    | false -> T.Node.id %> T.Plan.Target_node.no_problem)) )
-          |> List.filter Option.is_some |> List.map Option.get_exn
-        in
-        let module Executor =
-          Executor (struct
-            let value = (source'.id, dest'.id)
-          end)
-            (FR)
-            (Transport)
-            (Scan)
-        in
-        PF.create ~executor:(module Executor) ~target_nodes |> Lwt.return_ok
+      if is_same_filer then Lwt.return_error `Same_filer
+      else
+        let%lwt source = FR.resolve params.source and dest = FR.resolve params.dest in
+        match (source, dest) with
+        | None, _ -> Lwt.return_error (`Not_found params.source)
+        | _, None -> Lwt.return_error (`Not_found params.dest)
+        | Some source', Some dest' ->
+          let node_name_set =
+            List.fold_left
+              (fun set node ->
+                 let name = Path.basename node.T.Node.full_path in
+                 Node_name_set.add name set )
+              Node_name_set.empty dest'.file_tree.nodes
+          in
+          (* do prediction for target nodes *)
+          let predict node =
+            if Node_name_set.mem Path.(basename node.T.Node.full_path) node_name_set then
+              T.Node.id node |> T.Plan.Target_node.need_fix
+            else T.Node.id node |> T.Plan.Target_node.no_problem
+          in
+          let target_nodes =
+            params.node_ids
+            |> List.map (fun id -> Option.(T.Filer.find_node source' ~id >|= predict))
+            |> List.filter Option.is_some |> List.map Option.get_exn
+          in
+          let module Executor =
+            Executor (struct
+              let value = (source'.id, dest'.id)
+            end)
+              (FR)
+              (Transport)
+              (Scan)
+          in
+          PF.create ~executor:(module Executor) ~target_nodes |> Lwt.return_ok
   end
 end
 

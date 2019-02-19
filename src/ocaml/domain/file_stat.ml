@@ -2,13 +2,13 @@ type capability =
   { writable : bool
   ; readable : bool
   ; executable : bool }
-[@@deriving show]
+[@@deriving eq, show]
 
 type mode =
   { owner : capability
   ; group : capability
   ; others : capability }
-[@@deriving show]
+[@@deriving eq, show]
 
 let empty_mode =
   { owner = {writable = true; readable = true; executable = true}
@@ -29,7 +29,4 @@ type t =
   ; is_directory : bool
   ; is_file : bool
   ; is_symlink : bool }
-[@@deriving show]
-
-let make ~mode ~uid ~gid ~atime ~ctime ~mtime ~size ~is_directory ~is_file ~is_symlink =
-  {mode; uid; gid; atime; ctime; mtime; size; is_directory; is_file; is_symlink}
+[@@deriving eq, make, show]

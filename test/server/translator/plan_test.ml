@@ -13,7 +13,8 @@ let test_set =
         { Tr.Plan.id = actual.id
         ; target_nodes =
             [ {Tr.Plan.Target_node.node_id = "id"; prediction = Tr.Plan.Prediction.No_problem}
-            ; {Tr.Plan.Target_node.node_id = "id"; prediction = Tr.Plan.Prediction.Need_fix} ] }
+            ; {Tr.Plan.Target_node.node_id = "id2"; prediction = Tr.Plan.Prediction.Need_fix} ]
+        }
       in
       Alcotest.(check @@ of_pp Tr.Plan.pp) "domain" expected (Tr.Plan.of_domain actual) )
   ; ( "can translate to domain without executor"

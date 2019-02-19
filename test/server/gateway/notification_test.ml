@@ -14,12 +14,10 @@ let test_set =
           let execute = f
         end in
         let module Gateway = G.Notification.Notify_message.Make (Usecase) in
-        let%lwt _ =
-          Gateway.handle {message = "message"; level = D.Notification.Level.to_int Info}
-        in
+        let%lwt _ = Gateway.handle {message = "message"; level = Tr.Notification.Level.Info} in
         Alcotest.(check @@ list @@ of_pp Fmt.nop)
           "message"
-          [ { U.Notification.Notify.Type.notification = D.Notification.OneShot {message = "message"}
+          [ { U.Notification.Notify.Type.notification = D.Notification.Message "message"
             ; level = Info } ]
           (Spy.Wrap.called_args spy) ;
         Lwt.return_unit ) ]

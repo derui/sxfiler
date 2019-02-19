@@ -27,12 +27,12 @@ let move_plan_test_set =
         let source_file_tree = D.File_tree.make ~location:(Path.of_string "/foo") ~nodes in
         let dest_file_tree = D.File_tree.make ~location:(Path.of_string "/bar") ~nodes in
         let source_filer =
-          D.Filer.make ~id:"id" ~file_tree:source_file_tree ~selected_nodes:[]
+          D.Filer.make ~id:"src" ~file_tree:source_file_tree ~selected_nodes:[]
             ~history:D.Location_history.(make ())
             ~sort_order:D.Types.Sort_type.Name ()
         in
         let dest_filer =
-          D.Filer.make ~id:"id" ~file_tree:dest_file_tree ~selected_nodes:[]
+          D.Filer.make ~id:"dest" ~file_tree:dest_file_tree ~selected_nodes:[]
             ~history:D.Location_history.(make ())
             ~sort_order:D.Types.Sort_type.Name ()
         in
@@ -57,7 +57,7 @@ let move_plan_test_set =
           let source_file_tree = D.File_tree.make ~location:(Path.of_string "/foo") ~nodes in
           let dest_file_tree = D.File_tree.make ~location:(Path.of_string "/bar") ~nodes in
           let source_filer =
-            D.Filer.make ~id:"source" ~file_tree:source_file_tree
+            D.Filer.make ~id:"src" ~file_tree:source_file_tree
               ~history:D.Location_history.(make ())
               ~sort_order:D.Types.Sort_type.Name ()
           in
@@ -78,7 +78,7 @@ let move_plan_test_set =
           match%lwt Usecase.execute param with
           | Error _ -> Alcotest.fail "Unknown error"
           | Ok plan ->
-            let expected = [D.Plan.Target_node.need_fix ""] in
+            let expected = [D.Plan.Target_node.need_fix @@ D.Node.id @@ List.hd nodes] in
             Alcotest.(check @@ list @@ of_pp D.Plan.Target_node.pp)
               "plan" expected plan.target_nodes ;
             Lwt.return_unit ) ]

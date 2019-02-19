@@ -5,7 +5,7 @@ module Correction = struct
   type t =
     | Rename of string
     | Overwrite
-  [@@deriving show]
+  [@@deriving eq, show]
 end
 
 module Prediction = struct
@@ -13,7 +13,7 @@ module Prediction = struct
     | Need_fix
     | Fix of Correction.t
     | No_problem
-  [@@deriving show]
+  [@@deriving eq, show]
 end
 
 (** {!Target_node} defines a target node of the plan. *)
@@ -21,7 +21,7 @@ module Target_node = struct
   type t =
     { node_id : Node.id
     ; prediction : Prediction.t }
-  [@@deriving show, fields]
+  [@@deriving eq, show, fields]
 
   let need_fix id = {node_id = id; prediction = Prediction.Need_fix}
   let fix id correction = {node_id = id; prediction = Prediction.Fix correction}

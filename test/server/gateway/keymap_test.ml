@@ -1,7 +1,5 @@
 module D = Sxfiler_domain
-module S = Sxfiler_server
 module U = Sxfiler_usecase
-module C = Sxfiler_server_core
 module G = Sxfiler_server_gateway
 module Tr = Sxfiler_server_translator
 
@@ -16,7 +14,7 @@ let test_set =
         in
         let module Usecase = struct
           type input = unit
-          type output = string D.Key_map.t
+          type output = D.Key_map.t
           type error = unit
 
           let execute () = Lwt.return_ok expected

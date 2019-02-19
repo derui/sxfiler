@@ -3,9 +3,9 @@
 open Sxfiler_core
 
 type t =
-  { location : Path.t [@printer Path.pp]
+  { location : Path.t
   ; timestamp : int64 }
-[@@deriving show]
+[@@deriving eq, show]
 
 (** Signature to get current clock to make record with current time. *)
 module type Clock = sig

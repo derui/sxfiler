@@ -19,8 +19,7 @@ let test_set =
         let module FR =
           (val Test_fixtures.Memory_repository.filer_repository ~initial:[filer] ())
         in
-        let new_nodes = [TF.Node.fixture dir_stat] in
-        let new_location = Path.(of_string "/bar") in
+        let new_nodes = [TF.Node.fixture ~full_path:Path.(of_string "new") dir_stat] in
         let module Svc =
           (val TF.Service.location_scanner_service Path.(of_string "/bar") new_nodes)
         in
@@ -28,14 +27,12 @@ let test_set =
           let unixtime () = Int64.min_int
         end in
         let module Usecase = U.Filer.Enter_directory.Make (FR) (Svc) (Clock) in
-        let%lwt result = Usecase.execute {name = "foo"; node_id = "bar"} in
+        let%lwt result =
+          Usecase.execute {name = "foo"; node_id = List.hd file_tree.nodes |> D.Node.id}
+        in
         let%lwt data = Lwt.(FR.resolve "foo" >|= Option.get_exn) in
         Alcotest.(check @@ result (of_pp D.Filer.pp) (of_pp Fmt.nop))
           "renew filer" (Ok data) result ;
-        Alcotest.(check @@ result (of_pp D.File_tree.pp) (of_pp Fmt.nop))
-          "renew location"
-          (Ok D.File_tree.(make ~location:new_location ~nodes:new_nodes))
-          Result.(result >|= fun v -> v.file_tree) ;
         Lwt.return_unit )
   ; Alcotest_lwt.test_case "error when filer not found" `Quick (fun _ () ->
         let module FR = (val TF.Memory_repository.filer_repository ()) in

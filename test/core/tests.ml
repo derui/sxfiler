@@ -69,6 +69,7 @@ let result_tests =
       Alcotest.(check @@ option string) "result" (Result.to_option (Error "bar")) None ) ]
 
 let path_tests =
+  let path_test = Alcotest.testable Path.pp Path.equal in
   [ ( "separator of path on unix"
     , `Quick
     , fun () ->
@@ -174,7 +175,21 @@ let path_tests =
       let to_path v = Path.resolve ~env:`Unix (module S) @@ Path.of_string ~env:`Unix v in
       Alcotest.(check string) "current" "/var" @@ Path.dirname @@ to_path "foo" ;
       Alcotest.(check string) "parent" "/" @@ Path.dirname @@ to_path "../bar" ;
-      Alcotest.(check string) "dir" "/var/foo" @@ Path.dirname @@ to_path "foo/bar" ) ]
+      Alcotest.(check string) "dir" "/var/foo" @@ Path.dirname @@ to_path "foo/bar" )
+  ; ( "equal same location"
+    , `Quick
+    , fun () ->
+      let p path = Path.of_string ~env:`Unix path in
+      Alcotest.(check path_test) "same path" (p "foo") (p "./foo") )
+  ; ( "not equal between resolved and unresolved path"
+    , `Quick
+    , fun () ->
+      let p path = Path.of_string ~env:`Unix path in
+      let module S = struct
+        let getcwd () = "/var"
+      end in
+      let resolved p = Path.resolve ~env:`Unix (module S) p in
+      Alcotest.(check @@ neg @@ path_test) "same path" (p "foo" |> resolved) (p "foo") ) ]
 
 let fun_tests =
   [ ( "get identity"

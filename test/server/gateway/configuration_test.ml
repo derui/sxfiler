@@ -15,7 +15,7 @@ let test_set =
 
           let execute () = Lwt.return @@ Ok expected
         end in
-        let module Gateway = G.Configuration.Get (Usecase) in
+        let module Gateway = G.Configuration.Get.Make (Usecase) in
         let%lwt res = Gateway.handle () in
         Alcotest.(check @@ of_pp Fmt.nop) "current" (T.Configuration.of_domain expected) res ;
         Lwt.return_unit ) ]

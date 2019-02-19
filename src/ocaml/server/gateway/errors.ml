@@ -7,6 +7,7 @@ type error =
   | Filer_not_directory
   | Node_not_found
   | Plan_not_found
+  | Plan_same_filer
 [@@deriving variants]
 
 exception Gateway_error of error

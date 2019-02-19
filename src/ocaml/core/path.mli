@@ -11,6 +11,9 @@ type env =
   [ `Unix
   | `Win ]
 
+val equal : t -> t -> bool
+(** [equal v1 v2] compares between [t]. *)
+
 val of_string : ?env:env -> string -> t
 (** [of_string ?env path] converts [path] to Path object. *)
 
