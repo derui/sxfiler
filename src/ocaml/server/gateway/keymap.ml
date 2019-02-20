@@ -1,82 +1,82 @@
 module Usecase = Sxfiler_usecase
 module T = Sxfiler_server_translator
 
-module type Get = sig
-  type params = unit [@@deriving of_yojson]
-  type result = T.Key_map.t [@@deriving to_yojson]
+module Get = struct
+  module Type = struct
+    type params = unit [@@deriving of_yojson]
+    type result = T.Key_map.t [@@deriving to_yojson]
+  end
 
-  val handle : params -> result Lwt.t
+  module type S = Core.Gateway with type params = Type.params and type result = Type.result
+
+  (** This module defines rpc interface to get current key bindings.
+      Replace [json] on implementation to match rpc.
+  *)
+  module Make (Usecase : Usecase.Keymap.Get.S) : S = struct
+    include Type
+
+    let handle () =
+      match%lwt Usecase.execute () with
+      | Ok result -> Lwt.return @@ T.Key_map.of_domain result
+      | Error () -> Lwt.fail Gateway_error.(Gateway_error (unknown_error "unknown error"))
+  end
 end
 
-(** This module defines rpc interface to get current key bindings.
-    Replace [json] on implementation to match rpc.
-*)
-module Get (Usecase : Usecase.Keymap.Get.S) : Get = struct
-  type params = unit [@@deriving of_yojson]
-  type result = T.Key_map.t [@@deriving to_yojson]
+module Store = struct
+  module Type = struct
+    type params = T.Key_map.t [@@deriving of_yojson]
+    type result = unit [@@deriving to_yojson]
+  end
 
-  let handle () =
-    match%lwt Usecase.execute () with
-    | Ok result -> Lwt.return @@ T.Key_map.of_domain result
-    | Error () -> Lwt.fail Errors.(Gateway_error (unknown_error "unknown error"))
-end
+  module type S = Core.Gateway with type params = Type.params and type result = Type.result
 
-module type Store = sig
-  type params = T.Key_map.t [@@deriving of_yojson]
-  type result = unit [@@deriving to_yojson]
+  (** This module defines rpc interface to get current key bindings.
+      Replace [json] on implementation to match rpc.
+  *)
+  module Make (Usecase : Usecase.Keymap.Store.S) : S = struct
+    include Type
 
-  val handle : params -> result Lwt.t
-end
-
-(** This module defines rpc interface to get current key bindings.
-    Replace [json] on implementation to match rpc.
-*)
-module Store (Usecase : Usecase.Keymap.Store.S) : Store = struct
-  type params = T.Key_map.t [@@deriving of_yojson]
-  type result = unit [@@deriving to_yojson]
-
-  let handle param =
-    match%lwt Usecase.execute @@ T.Key_map.to_domain param with
-    | Ok () -> Lwt.return_unit
-    | Error () -> Lwt.fail Errors.(Gateway_error (unknown_error "unknown error"))
+    let handle param =
+      match%lwt Usecase.execute @@ T.Key_map.to_domain param with
+      | Ok () -> Lwt.return_unit
+      | Error () -> Lwt.fail Gateway_error.(Gateway_error (unknown_error "unknown error"))
+  end
 end
 
 module Add_context = struct
-  module type S = sig
+  module Type = struct
     type params = {context : string} [@@deriving of_yojson]
     type result = T.Key_map.t [@@deriving to_yojson]
-
-    val handle : params -> result Lwt.t
   end
+
+  module type S = Core.Gateway with type params = Type.params and type result = Type.result
 
   (** The gateway for Use Case of {!Usecase.Keymap.Enable_context} *)
   module Make (Usecase : Usecase.Keymap.Add_context.S) : S = struct
-    type params = {context : string} [@@deriving of_yojson]
-    type result = T.Key_map.t [@@deriving to_yojson]
+    include Type
 
     let handle param =
       match%lwt Usecase.execute {context = param.context} with
       | Ok keymap -> Lwt.return @@ T.Key_map.of_domain keymap
-      | Error () -> Lwt.fail Errors.(Gateway_error (unknown_error "unknown error"))
+      | Error () -> Lwt.fail Gateway_error.(Gateway_error (unknown_error "unknown error"))
   end
 end
 
 module Delete_context = struct
-  module type S = sig
+  module Type = struct
     type params = {context : string} [@@deriving of_yojson]
     type result = T.Key_map.t [@@deriving to_yojson]
-
-    val handle : params -> result Lwt.t
   end
+
+  module type S = Core.Gateway with type params = Type.params and type result = Type.result
 
   (** The gateway for Use Case of {!Usecase.Keymap.Disable_context} *)
   module Make (Usecase : Usecase.Keymap.Delete_context.S) : S = struct
-    type params = {context : string} [@@deriving of_yojson]
-    type result = T.Key_map.t [@@deriving to_yojson]
+    include Type
 
     let handle param =
       match%lwt Usecase.execute {context = param.context} with
       | Ok keymap -> Lwt.return @@ T.Key_map.of_domain keymap
-      | Error () -> Lwt.fail Errors.(Gateway_error (unknown_error "unknown error"))
+      | Error () -> Lwt.fail Gateway_error.(Gateway_error (unknown_error "unknown error"))
   end
 end

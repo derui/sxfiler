@@ -2,7 +2,6 @@ open Sxfiler_core
 module D = Sxfiler_domain
 module S = Sxfiler_server
 module U = Sxfiler_usecase
-module R = Sxfiler_rpc
 module Jy = Jsonrpc_ocaml_yojson
 module G = Sxfiler_server_gateway
 module T = Sxfiler_server_translator
@@ -13,17 +12,18 @@ end
 
 let test_set =
   [ Alcotest_lwt.test_case "create new filer if it does not exists" `Quick (fun _ () ->
+        let file_tree =
+          D.File_tree.make ~location:(Path.of_string ~env:`Unix "/initial") ~nodes:[]
+        in
         let expected =
-          D.Filer.make ~id:"foo"
-            ~location:(Path.of_string ~env:`Unix "/initial")
-            ~nodes:[] ~sort_order:D.Types.Sort_type.Date
+          D.Filer.make ~id:"foo" ~file_tree ~sort_order:D.Types.Sort_type.Date
             ~history:D.Location_history.(make ())
+            ()
         in
         let module Gateway = struct
           include G.Filer.Make.Types
 
-          let handle _ =
-            Lwt.return {filer = Option.some @@ T.Filer.of_domain expected; already_exists = false}
+          let handle _ = Lwt.return @@ T.Filer.of_domain expected
         end in
         let proc = S.Proc_filer.make_spec (module Gateway) in
         let id = Random.int64 Int64.max_int in

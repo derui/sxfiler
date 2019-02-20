@@ -7,15 +7,9 @@ module T = Sxfiler_server_translator
 module P = Procedure
 
 (* defines procedure to get current key bindings *)
-let get_spec (module G : G.Configuration.Get.S) =
-  P.to_procedure ~method_:"configuration/get"
-    ~spec:
-      P.Spec.
-        { params_of_json = `Not_required ()
-        ; result_to_json = T.Configuration.to_yojson
-        ; handle = G.handle }
+module Get_spec (G : G.Configuration.Get.S) : P.Spec = struct
+  module Gateway = G
 
-let make_procedures (module Dep : Dependencies.S) =
-  let module S = Jsonrpc_ocaml_yojson.Server in
-  let module Gateway = G.Configuration.Get.Make (Dep.Usecase.Configuration_get) in
-  [get_spec (module Gateway)]
+  let method_ = "configuration/get"
+  let param_requirement = `Not_required ()
+end

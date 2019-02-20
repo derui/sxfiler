@@ -3,26 +3,24 @@ module Usecase = Sxfiler_usecase
 module T = Sxfiler_server_translator
 
 module Notify_message = struct
-  module type S = sig
+  module Type = struct
     type params =
       { message : string
       ; level : T.Notification.Level.t }
-    [@@deriving yojson]
+    [@@deriving of_yojson]
 
-    val handle : params -> unit Lwt.t
+    type result = unit [@@deriving to_yojson]
   end
 
-  module Make (Usecase : Usecase.Notification.Notify.S) : S = struct
-    type params =
-      { message : string
-      ; level : T.Notification.Level.t }
-    [@@deriving yojson]
+  module Make (Usecase : Usecase.Notification.Notify.S) :
+    Core.Gateway with type params = Type.params and type result = Type.result = struct
+    include Type
 
     let handle param =
       let notification = D.Notification.Message param.message in
       let level = T.Notification.Level.to_domain param.level in
       match%lwt Usecase.execute {notification; level} with
       | Ok () -> Lwt.return_unit
-      | Error () -> Lwt.fail Errors.(Gateway_error (unknown_error "unknown error"))
+      | Error () -> Lwt.fail Gateway_error.(Gateway_error (unknown_error "unknown error"))
   end
 end

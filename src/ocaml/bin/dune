@@ -12,7 +12,7 @@
  (name main)
  (public_name sxfiler_server)
  (package sxfiler)
- (modules main)
+ (modules main dependencies jsonrpc_server global procedures)
  (libraries lwt
             websocket websocket-lwt.cohttp
             logs.fmt

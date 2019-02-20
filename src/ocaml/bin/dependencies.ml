@@ -6,6 +6,7 @@ module D = Sxfiler_domain
 module I = Sxfiler_server_infra
 
 module type S = sig
+  module System : Sxfiler_core.System.S
   module Clock : D.Location_record.Clock
   module Key_map_repo : D.Key_map_repository.S
   module Condition_repo : D.Condition.Repository
@@ -39,6 +40,7 @@ module type S = sig
 end
 
 module Make (Conn : C.Rpc_connection.Instance) (Completer : D.Completer.Instance) : S = struct
+  module System = Sxfiler_core.System.Real
   module Clock = Global.Clock
   module Key_map_repo : D.Key_map_repository.S = I.Key_map_repo.Make (Global.Keymap)
   module Condition_repo : D.Condition.Repository = I.Condition_repo.Make (Global.Condition)

@@ -1,4 +1,4 @@
-open Sxfiler_server_core
+open Sxfiler_server
 module W = Websocket_cohttp_lwt
 module J = Jsonrpc_ocaml_yojson
 
@@ -9,7 +9,8 @@ let make () =
   {method_handler}
 
 let expose t ~procedure =
-  let _method = procedure.Procedure.method_ and handler = procedure.handler in
+  let module P = (val procedure : Procedure.S) in
+  let _method = P.method_ and handler = P.handle in
   {method_handler = J.Server.expose ~_method ~handler t.method_handler}
 
 let res_to_frame res =
@@ -19,6 +20,7 @@ let res_to_frame res =
 
 (** handle response as JSON-RPC payload. This handler limits handling unfragment frames.  *)
 let request_handler t conn =
+  let open Sxfiler_server_core in
   let open Websocket_cohttp_lwt in
   let module C = (val conn : Rpc_connection.Instance) in
   let conn = C.instance in

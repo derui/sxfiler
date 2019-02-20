@@ -1,5 +1,4 @@
 open Lwt
-open Sxfiler_server
 open Sxfiler_server_core
 module T = Sxfiler_server_task
 module I = Sxfiler_server_infra
@@ -12,14 +11,7 @@ module Log = (val Logger.make ["main"])
 
 let create_server (module C : Rpc_connection.Instance) =
   let module Dep = Dependencies.Make (C) ((val Global.Completer.get ())) in
-  let procedures =
-    List.flatten
-      [ Proc_completion.make_procedures (module Dep)
-      ; Proc_configuration.make_procedures (module Dep)
-      ; Proc_keymap.make_procedures (module Dep)
-      ; Proc_filer.make_procedures (module Dep)
-      ; Proc_plan.make_procedures (module Dep) ]
-  in
+  let procedures = [] in
   let rpc_server = Jsonrpc_server.make () in
   List.fold_left (fun s procedure -> Jsonrpc_server.expose s ~procedure) rpc_server procedures
 
@@ -53,7 +45,7 @@ let handler (conn : Conduit_lwt_unix.flow * Cohttp.Connection.t) (req : Cohttp_l
 
 let initialize_modules ~migemo ~keymap ~config =
   let completer = Sxfiler_bin_lib.Migemo_completer.make ~migemo in
-  let () = Proc_completion.initialize completer in
+  let () = Global.Completer.set @@ fun () -> completer in
   let%lwt () =
     match keymap () with
     | None ->

@@ -1,7 +1,7 @@
 (library
  (name sxfiler_server)
  (public_name sxfiler.server)
- (libraries lwt websocket websocket-lwt.cohttp
+ (libraries lwt
             uuidm
             logs.lwt
             logs.fmt
