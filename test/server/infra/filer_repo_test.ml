@@ -5,8 +5,7 @@ module I = Sxfiler_server_infra
 
 let data =
   let file_tree = D.File_tree.make ~location:(Path.of_string "/var") ~nodes:[] in
-  D.Filer.make ~id:"foo" ~file_tree ~sort_order:D.Types.Sort_type.Date
-    ~history:(D.Location_history.make ()) ()
+  Test_fixtures.Filer.fixture "foo" ~file_tree ~sort_order:D.Types.Sort_type.Date
 
 let test_set =
   [ Alcotest_lwt.test_case "can store filer to state" `Quick (fun _ () ->

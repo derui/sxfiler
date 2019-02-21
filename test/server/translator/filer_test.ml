@@ -3,9 +3,9 @@ module D = Sxfiler_domain
 module Tr = Sxfiler_server_translator
 
 let data =
-  D.Filer.make ~id:"id"
+  Test_fixtures.Filer.fixture "id"
     ~file_tree:Test_fixtures.(File_tree.empty_tree (Path.of_string "/bar"))
-    ~sort_order:D.Types.Sort_type.Date ~history:(D.Location_history.make ()) ()
+    ~sort_order:D.Types.Sort_type.Date
 
 let test_set =
   [ ( "can translate to/from domain"

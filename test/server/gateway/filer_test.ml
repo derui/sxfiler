@@ -16,9 +16,7 @@ let test_set =
           D.File_tree.make ~location:(Path.of_string ~env:`Unix "/initial") ~nodes:[]
         in
         let expected =
-          D.Filer.make ~id:"foo" ~file_tree ~sort_order:D.Types.Sort_type.Date
-            ~history:D.Location_history.(make ())
-            ()
+          Test_fixtures.Filer.fixture "foo" ~file_tree ~sort_order:D.Types.Sort_type.Date
         in
         let module Usecase = struct
           include U.Filer.Make.Type
@@ -40,7 +38,7 @@ let test_set =
           let%lwt _ = Gateway.handle {initial_location = "/initial"; name = "foo"} in
           Alcotest.fail "not thrown any exception" |> Lwt.return
         with
-        | G.Errors.(Gateway_error Filer_already_exists) -> Lwt.return_unit
+        | G.Gateway_error.(Gateway_error Filer_already_exists) -> Lwt.return_unit
         | _ -> Alcotest.fail "catch different exception" )
   ; Alcotest_lwt.test_case "move_parent raise error if filer is not found" `Quick (fun _ () ->
         let module Usecase = struct
@@ -53,5 +51,5 @@ let test_set =
           let%lwt _ = Gateway.handle {name = "foo"} in
           Alcotest.fail "not thrown any exception" |> Lwt.return
         with
-        | G.Errors.(Gateway_error Filer_not_found) -> Lwt.return_unit
+        | G.Gateway_error.(Gateway_error Filer_not_found) -> Lwt.return_unit
         | _ -> Alcotest.fail "catch different exception" ) ]

@@ -27,14 +27,10 @@ let move_plan_test_set =
         let source_file_tree = D.File_tree.make ~location:(Path.of_string "/foo") ~nodes in
         let dest_file_tree = D.File_tree.make ~location:(Path.of_string "/bar") ~nodes in
         let source_filer =
-          D.Filer.make ~id:"src" ~file_tree:source_file_tree ~selected_nodes:[]
-            ~history:D.Location_history.(make ())
-            ~sort_order:D.Types.Sort_type.Name ()
+          TF.Filer.fixture "src" ~file_tree:source_file_tree ~sort_order:D.Types.Sort_type.Name
         in
         let dest_filer =
-          D.Filer.make ~id:"dest" ~file_tree:dest_file_tree ~selected_nodes:[]
-            ~history:D.Location_history.(make ())
-            ~sort_order:D.Types.Sort_type.Name ()
+          TF.Filer.fixture "dest" ~file_tree:dest_file_tree ~sort_order:D.Types.Sort_type.Name
         in
         let module FR =
           (val TF.Memory_repository.filer_repository ~initial:[source_filer; dest_filer] ())
@@ -57,14 +53,10 @@ let move_plan_test_set =
           let source_file_tree = D.File_tree.make ~location:(Path.of_string "/foo") ~nodes in
           let dest_file_tree = D.File_tree.make ~location:(Path.of_string "/bar") ~nodes in
           let source_filer =
-            D.Filer.make ~id:"src" ~file_tree:source_file_tree
-              ~history:D.Location_history.(make ())
-              ~sort_order:D.Types.Sort_type.Name ()
+            TF.Filer.fixture "src" ~file_tree:source_file_tree ~sort_order:D.Types.Sort_type.Name
           in
           let dest_filer =
-            D.Filer.make ~id:"dest" ~file_tree:dest_file_tree
-              ~history:D.Location_history.(make ())
-              ~sort_order:D.Types.Sort_type.Name ()
+            TF.Filer.fixture "dest" ~file_tree:dest_file_tree ~sort_order:D.Types.Sort_type.Name
           in
           let pf = TF.Plan.dummy_factory "id" in
           let module FR =
@@ -103,9 +95,7 @@ let delete_plan_test_set =
         let nodes = [TF.Node.fixture ~full_path:Path.(of_string "foo") dir_stat] in
         let source_file_tree = D.File_tree.make ~location:(Path.of_string "/foo") ~nodes in
         let source_filer =
-          D.Filer.make ~id:"source" ~file_tree:source_file_tree
-            ~history:D.Location_history.(make ())
-            ~sort_order:D.Types.Sort_type.Name ()
+          TF.Filer.fixture "source" ~file_tree:source_file_tree ~sort_order:D.Types.Sort_type.Name
         in
         let pf = TF.Plan.dummy_factory "id" in
         let module FR = (val TF.Memory_repository.filer_repository ~initial:[source_filer] ()) in

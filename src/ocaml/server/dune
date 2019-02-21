@@ -11,6 +11,5 @@
             sxfiler.server.core
             sxfiler.server.task
             sxfiler.server.gateway
-            sxfiler.server.infra
-            ppx_deriving_yojson.runtime)
- (preprocess (pps lwt_ppx ppx_deriving.std ppx_deriving_yojson)))
+            sxfiler.server.infra)
+ (preprocess (pps lwt_ppx)))

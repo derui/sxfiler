@@ -27,7 +27,9 @@ type env =
 let equal p1 p2 =
   match (p1.resolved, p2.resolved) with
   | true, false | false, true -> false (* can not compare between resolved and unresolved *)
-  | _, _ -> p1.root = p2.root && p1.components = p2.components
+  | _, _ ->
+    let drop_current_comp = List.filter (function Comp_current -> false | _ -> true) in
+    p1.root = p2.root && drop_current_comp p1.components = drop_current_comp p2.components
 
 let resolve_sep env =
   let sep_of_env = function `Unix -> '/' | `Win -> '\\' in
@@ -85,14 +87,9 @@ let normalize_path ?env path =
       else remove_duplicated_cwd rest true (v :: accum)
     | head :: rest -> remove_duplicated_cwd rest false (head :: accum)
   in
-  let apply_current_dir comps =
-    match comps with
-    | Comp_parent :: _ | Comp_filename _ :: _ -> Comp_current :: comps
-    | _ -> comps
-  in
   let initial, rest = ([], path) in
   let components = split_by_sep (split_path_sep ?env rest) initial in
-  remove_duplicated_cwd (apply_current_dir components) false []
+  remove_duplicated_cwd components false []
 
 (* Resolve root of components if pattern found. *)
 let find_root ?env components =

@@ -15,7 +15,10 @@ module Make = struct
     type result = T.Filer.t [@@deriving to_yojson]
   end
 
-  module type S = Core.Gateway with type params = Type.params and type result = Type.result
+  module type S = sig
+    include module type of Type
+    include Core.Gateway with type params := params and type result := result
+  end
 
   (** Return implementation with some dependency modules *)
   module Make (System : System.S) (U : Usecase.Filer.Make.S) : S = struct
@@ -40,7 +43,10 @@ module Get = struct
     type result = T.Filer.t [@@deriving to_yojson]
   end
 
-  module type S = Core.Gateway with type params = Type.params and type result = Type.result
+  module type S = sig
+    include module type of Type
+    include Core.Gateway with type params := params and type result := result
+  end
 
   (** Return implementation with some dependency modules *)
   module Make (U : Usecase.Filer.Get.S) : S = struct
@@ -62,7 +68,10 @@ module Move_parent = struct
     type result = T.Filer.t [@@deriving to_yojson]
   end
 
-  module type S = Core.Gateway with type params = Type.params and type result = Type.result
+  module type S = sig
+    include module type of Type
+    include Core.Gateway with type params := params and type result := result
+  end
 
   (** Return implementation with some dependency modules *)
   module Make (U : Usecase.Filer.Move_parent.S) : S = struct
@@ -88,7 +97,10 @@ module Enter_directory = struct
     type result = T.Filer.t [@@deriving to_yojson]
   end
 
-  module type S = Core.Gateway with type params = Type.params and type result = Type.result
+  module type S = sig
+    include module type of Type
+    include Core.Gateway with type params := params and type result := result
+  end
 
   (** Return implementation with dependency modules *)
   module Make (U : Usecase.Filer.Enter_directory.S) : S = struct

@@ -2,6 +2,7 @@
  (name tests)
  (libraries alcotest alcotest-lwt
             spy
+            test_fixtures
             lwt
             sxfiler.server.gateway
             sxfiler.server.core

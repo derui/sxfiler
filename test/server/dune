@@ -1,4 +1,6 @@
 (test
  (name tests)
- (libraries alcotest alcotest-lwt sxfiler_server)
- (preprocess (pps lwt_ppx)))
+ (libraries alcotest alcotest-lwt sxfiler_server spy)
+ ; avoid deprecation warning for ppx_deriving_yojson
+ (flags (:standard -w -3))
+ (preprocess (pps lwt_ppx ppx_deriving_yojson)))
