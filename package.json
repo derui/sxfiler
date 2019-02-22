@@ -12,12 +12,16 @@
     ]
   },
   "devDependencies": {
+    "@storybook/addon-info": "^4.1.13",
+    "@storybook/react": "^4.1.13",
     "@types/jest": "^23.3.9",
     "@types/node": "^10.12.9",
     "@types/node-int64": "^0.4.29",
     "@types/react": "^16.7.6",
     "@types/react-dom": "^16.0.9",
+    "@types/storybook__react": "^4.0.1",
     "ajv": "^5.5.2",
+    "babel-loader": "^8.0.5",
     "chokidar": "^2.0.4",
     "classnames": "^2.2.6",
     "cpx": "^1.5.0",
@@ -54,7 +58,8 @@
     "package": "node ./scripts/package-electron.js",
     "format": "node ./scripts/format.js",
     "clean": "node ./scripts/clean.js",
-    "dev": "npm-run-all -p start electron"
+    "dev": "npm-run-all -p start electron",
+    "storybook": "start-storybook -p 9001 -c .storybook"
   },
   "repository": {
     "type": "git",
