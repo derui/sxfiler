@@ -4,6 +4,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { createStore } from "redux";
 
+import { Actions } from "./ts/actions";
 import { ApiMethod } from "./ts/apis";
 import App from "./ts/app";
 import { Context } from "./ts/context";
@@ -12,11 +13,10 @@ import * as jrpc from "./ts/libs/json-rpc";
 import { Client } from "./ts/libs/json-rpc/client";
 import { setLocator } from "./ts/locator";
 import reducer from "./ts/reducers";
-import {Actions} from "./ts/actions";
 
 const url = process.env.NODE_ENV === "production" ? process.env.REACT_APP_SERVER : "ws://localhost:50879";
 
-const ws = new WebSocket(url || '');
+const ws = new WebSocket(url || "");
 const jsonrpc = jrpc.initialize(ws);
 
 const client: Client<ApiMethod> = jrpc.createClient(jsonrpc, () => {

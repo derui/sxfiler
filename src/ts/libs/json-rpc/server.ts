@@ -1,16 +1,17 @@
 import * as Common from "./type";
 import { Handler } from "./websocket-handler";
 
-export type NotificationMethod = (params: any) => void
-export type NotificationMethodMap = {[key: string]: NotificationMethod}
+export type NotificationMethod = (params: any) => void;
+export interface NotificationMethodMap {
+  [key: string]: NotificationMethod;
+}
 
 export default class Server implements Handler {
-
   /**
    * constructor
    * @param methodMap available websocket
    */
-  constructor(private methodMap : NotificationMethodMap) {}
+  constructor(private methodMap: NotificationMethodMap) {}
 
   /**
    * handle websocket event to handle notification.

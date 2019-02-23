@@ -1,7 +1,7 @@
 import * as React from "react";
-import FileList from "../project/file-list";
 import * as Filer from "../../domains/filer";
 import { Side, State } from "../../types/store-state/file-list";
+import FileList from "../project/file-list";
 import "./workspace.css";
 
 interface Prop {

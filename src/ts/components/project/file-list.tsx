@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import * as React from "react";
 
-import {NodeMarker} from "../../domains/node-markers";
+import { NodeMarker } from "../../domains/node-markers";
 import FileItem from "./file-item";
 
 interface HeaderProp {
