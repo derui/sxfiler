@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StoreState } from "../types/store-state";
+import { StoreState } from "../../types/store-state";
 import FileListContainer from "./file-list-container";
 
 interface Prop {

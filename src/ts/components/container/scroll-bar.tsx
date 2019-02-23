@@ -10,7 +10,7 @@ const ScrollBar: React.FC<Prop> = ({ start, windowSize }) => {
   const height = `${windowSize * 100.0}%`;
 
   return (
-    <div className="fp-ScrollBar">
+    <div className="fp-ScrollBar" style={{top, height}}>
       <span className="fp-ScrollBar_VisibleWindow" />
     </div>
   );

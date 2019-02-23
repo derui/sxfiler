@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import * as React from "react";
-import * as Domain from "../domains/node";
+import * as Domain from "../../domains/node";
 import FileMode from "./file-item-mode";
 import FileName from "./file-item-name";
 import FileSize from "./file-item-size";

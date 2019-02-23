@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Capability, Mode } from "../domains/file-stat";
+import { Capability, Mode } from "../../domains/file-stat";
 
 function capabilityToString(cap: Capability) {
   const readable = cap.readable ? "r" : "-";

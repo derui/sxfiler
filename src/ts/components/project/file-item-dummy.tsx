@@ -4,7 +4,7 @@
 import classNames from "classnames";
 import * as React from "react";
 
-import { emptyMode } from "../domains/file-stat";
+import { emptyMode } from "../../domains/file-stat";
 import FileMode from "./file-item-mode";
 import FileName from "./file-item-name";
 import FileSize from "./file-item-size";

@@ -1,0 +1,12 @@
+.base {
+  compose: list from "../components/ui/list-item/list-item.module.scss";
+}
+
+.padding {
+
+  padding: 1em;
+}
+
+.border {
+  border: 1px solid;
+}

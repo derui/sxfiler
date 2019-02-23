@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import * as React from "react";
 import { CSSTransition } from "react-transition-group";
-import { Level, Notification } from "../domains/notification";
+import { Level, Notification } from "../../domains/notification";
 
 export type TimeoutCallback = (id: string) => void;
 
