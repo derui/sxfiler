@@ -1,5 +1,5 @@
 .base {
-  compose: list from "../components/ui/list-item/list-item.module.scss";
+  composes: listItem from "../components/ui/list-item/list-item.module.scss";
 }
 
 .padding {

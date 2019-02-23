@@ -1,0 +1,29 @@
+@import "../../ui/commom-style/_variables.scss";
+@import "../../ui/commom-style/reset.module.css";
+
+.root {
+  composes: listItem from "../../ui/list-item/list-item.module.scss";
+
+  padding-bottom: $baseSpace;
+
+  &:first-of-type {
+    padding-top: $baseSpace;
+  }
+}
+
+.rootSelected {
+}
+
+.rootMarked {
+}
+
+.timestamp {
+
+}
+
+.name {
+}
+.size {
+}
+.mode {
+}

@@ -9,7 +9,7 @@ interface Prop {
 
 const baseName = "fp-FileItem_FileName";
 
-const FileItemName: React.FC<Prop> = ({ isDirectory, name, isSymlink }) => {
+const NodeName: React.FC<Prop> = ({ isDirectory, name, isSymlink }) => {
   const className = classNames(baseName, {
     ["${baseName}-directory"]: isDirectory,
     ["${baseName}-symlink"]: isSymlink,
@@ -18,4 +18,4 @@ const FileItemName: React.FC<Prop> = ({ isDirectory, name, isSymlink }) => {
   return <span className={className}>{name}</span>;
 };
 
-export default FileItemName;
+export default NodeName;

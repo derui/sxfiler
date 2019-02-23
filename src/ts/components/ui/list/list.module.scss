@@ -1,5 +1,8 @@
+@import "../commom-style/reset.module.css";
 
 .list {
   display: flex;
   flex-direction: column;
+
+  flex: 1 1 auto;
 }

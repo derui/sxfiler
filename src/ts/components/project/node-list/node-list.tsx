@@ -2,7 +2,11 @@ import classNames from "classnames";
 import * as React from "react";
 
 import { NodeMarker } from "../../domains/node-markers";
+import List from "../ui/list/list";
 import FileItem from "./file-item";
+
+// tslint:disable-next-line
+const styles = require('./file-list.module.scss');
 
 interface HeaderProp {
   directory: string;
@@ -20,27 +24,6 @@ const Header: React.FunctionComponent<HeaderProp> = ({ directory, focused }) => 
   return <header className={className}>{directory}</header>;
 };
 
-interface BodyProp {
-  nodes: NodeMarker[];
-  cursor: number;
-  focused: boolean;
-}
-
-/**
- * component definition for body of file list
- */
-class Body extends React.Component<BodyProp> {
-  public render() {
-    const { nodes, cursor, focused } = this.props;
-
-    const items = nodes.map((node, index) => (
-      <FileItem key={index} item={node.node} marked={node.marked} selected={index === cursor && focused} />
-    ));
-
-    return <ul className="fp-FileList_Content">{items}</ul>;
-  }
-}
-
 interface Prop {
   location: string;
   nodes: NodeMarker[];
@@ -49,10 +32,17 @@ interface Prop {
 }
 
 const FileList: React.FunctionComponent<Prop> = props => {
+  const { nodes, cursor, focused } = props;
+  const items = nodes.map((node, index) => (
+    <FileItem key={index} item={node.node} marked={node.marked} selected={index === cursor && focused} />
+  ));
+
   return (
     <div>
       <Header key="header" directory={props.location} focused={props.focused} />
-      <Body key="body" nodes={props.nodes} cursor={props.cursor} focused={props.focused} />
+      <List classes={[styles.list]} key="body">
+        {items}{" "}
+      </List>
     </div>
   );
 };

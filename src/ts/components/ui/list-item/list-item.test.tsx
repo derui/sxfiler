@@ -52,7 +52,7 @@ describe("UI kit", () => {
       const onClick = () => null;
       const tree = renderer
         .create(
-          <ListItem classes={["a", "b"]} hidden onClick={onClick}>
+          <ListItem classes={["a", "b"]} hidden={true} onClick={onClick}>
             <span className="foo">foo</span>
           </ListItem>
         )

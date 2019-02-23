@@ -102,10 +102,10 @@ interface Prop {
   size: string;
 }
 
-const FileItemSize: React.FC<Prop> = prop => {
+const NodeSize: React.FC<Prop> = prop => {
   const size = new Size(prop.size);
 
   return <span className="fp-FileItem_FileSize">{size.toString()}</span>;
 };
 
-export default FileItemSize;
+export default NodeSize;

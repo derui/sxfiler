@@ -15,9 +15,9 @@ function format(timestamp: Date): string {
   return `${year}/${month}/${date}`;
 }
 
-const FileItemTimestamp: React.FC<Prop> = prop => {
+const NodeTimestamp: React.FC<Prop> = prop => {
   const date = format(prop.timestamp);
   return <span className="fp-FileItem_Timestamp">{date}</span>;
 };
 
-export default FileItemTimestamp;
+export default NodeTimestamp;
