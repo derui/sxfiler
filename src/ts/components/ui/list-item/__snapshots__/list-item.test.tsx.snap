@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UI kit List Item can pass names of class to apply style 1`] = `
+<li
+  className="a b"
+>
+  <span
+    className="foo"
+  >
+    foo
+  </span>
+</li>
+`;
+
+exports[`UI kit List Item can pass props directly 1`] = `
+<li
+  className="a b"
+  hidden={true}
+  onClick={[Function]}
+>
+  <span
+    className="foo"
+  >
+    foo
+  </span>
+</li>
+`;
+
+exports[`UI kit List Item render as specified component 1`] = `
+<a
+  className="listItem"
+>
+  test
+</a>
+`;
+
+exports[`UI kit List Item render with empty nodes 1`] = `
+<li
+  className="listItem"
+/>
+`;
+
+exports[`UI kit List Item render with single nodes 1`] = `
+<li
+  className="listItem"
+>
+  test
+</li>
+`;
+
+exports[`UI kit List Item render with single nodes 2`] = `
+<li
+  className="listItem"
+>
+  <span
+    className="foo"
+  >
+    foo
+  </span>
+  <a
+    href=""
+  >
+    link
+  </a>
+</li>
+`;
