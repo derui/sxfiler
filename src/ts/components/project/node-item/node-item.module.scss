@@ -1,3 +1,4 @@
+@import "../../ui/commom-style/_colors.scss";
 @import "../../ui/commom-style/_variables.scss";
 @import "../../ui/commom-style/reset.module.css";
 
@@ -9,21 +10,57 @@
   &:first-of-type {
     padding-top: $baseSpace;
   }
+
+  font-family: monospace;
+  color: $sol_base1;
+  white-space: nowrap;
+
+  font-size: 1rem;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
 }
 
 .rootSelected {
+  border-bottom: 1px solid $sol_red;
 }
 
 .rootMarked {
+  background-color: rgba($sol_blue, 0.25);
 }
 
 .timestamp {
+  flex: 0 1 auto;
+  padding: 0 $smallSpace;
+  text-align: right;
 
+  white-space: nowrap;
 }
 
 .name {
+  flex: 1 0 auto;
+  padding: 0;
+  font-weight: bold;
 }
+
+.name.nameDirectory {
+  color: $sol_yellow;
+}
+
+.name.nameSymlink {
+  color: $sol_orange;
+}
+
 .size {
+  flex: 0 1 auto;
+  padding: 0 $baseSpace;
+  text-align: right;
+
+  white-space: pre;
 }
+
 .mode {
+  flex: 0 1 auto;
+  padding: 0 $smallSpace;
+
+  white-space: nowrap;
 }

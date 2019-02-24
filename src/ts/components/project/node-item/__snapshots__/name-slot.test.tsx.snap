@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Project Node Item Name slot should print name as directory 1`] = `
+<span
+  className="name nameDirectory"
+>
+  name
+</span>
+`;
+
+exports[`Project Node Item Name slot should print name as symlink 1`] = `
+<span
+  className="name nameSymlink"
+>
+  name
+</span>
+`;
+
+exports[`Project Node Item Name slot should print name as symlink when directory and symlink flag are enabled 1`] = `
+<span
+  className="name nameSymlink"
+>
+  name
+</span>
+`;
+
+exports[`Project Node Item Name slot should print name simply 1`] = `
+<span
+  className="name"
+>
+  name
+</span>
+`;

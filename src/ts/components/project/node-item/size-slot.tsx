@@ -1,6 +1,9 @@
 import bigInt from "big-integer";
 import * as React from "react";
 
+// tslint:disable-next-line
+const styles = require("./node-item.module.scss");
+
 enum SizeUnit {
   Byte = "byte",
   KByte = "kbyte",
@@ -53,7 +56,7 @@ function sizeUnitToString(sizeUnit: SizeUnit): string {
 class Size {
   private data: SizeData;
 
-  constructor(size: string) {
+  constructor(size: bigInt.BigInteger) {
     this.data = this.toData(size);
   }
   /**
@@ -70,7 +73,7 @@ class Size {
    * @param size string representation of size
    * @return size data
    */
-  private toData(size: string): SizeData {
+  private toData(size: bigInt.BigInteger): SizeData {
     function calcUnit(
       fileSize: bigInt.BigInteger,
       current: SizeUnit,
@@ -99,13 +102,13 @@ class Size {
 }
 
 interface Prop {
-  size: string;
+  size: bigInt.BigInteger;
 }
 
 const NodeSize: React.FC<Prop> = prop => {
   const size = new Size(prop.size);
 
-  return <span className="fp-FileItem_FileSize">{size.toString()}</span>;
+  return <span className={styles.size}>{size.toString()}</span>;
 };
 
 export default NodeSize;

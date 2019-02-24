@@ -1,6 +1,9 @@
 import * as React from "react";
 import { Capability, Mode } from "../../../domains/file-stat";
 
+// tslint:disable-next-line
+const styles = require("./node-item.module.scss");
+
 function capabilityToString(cap: Capability) {
   const readable = cap.readable ? "r" : "-";
   const writable = cap.writable ? "w" : "-";
@@ -15,7 +18,7 @@ function capabilityToString(cap: Capability) {
 function modeToString(mode: Mode, isDirectory: boolean, isSymlink: boolean): string {
   let state = "=";
 
-  if (isDirectory) {
+  if (isDirectory && !isSymlink) {
     state = "d";
   } else if (isSymlink) {
     state = "l";
@@ -37,7 +40,7 @@ interface Prop {
 const NodeMode: React.FC<Prop> = prop => {
   const data = modeToString(prop.mode, prop.isDirectory, prop.isSymlink);
 
-  return <span className="fp-FileItem_FileMode">{data}</span>;
+  return <span className={styles.mode}>{data}</span>;
 };
 
 export default NodeMode;

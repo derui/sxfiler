@@ -1,35 +1,85 @@
 import bigInt from "big-integer";
 
-// define type and class of file stat
-export interface Capability {
+// Argument for Capability constructor
+type CapabilityArg = {
+  writable?: boolean;
+  readable?: boolean;
+  executable?: boolean;
+}
+
+// Capability of a target
+export class Capability {
   readonly writable: boolean;
   readonly readable: boolean;
   readonly executable: boolean;
+
+  constructor(arg: CapabilityArg = {}) {
+    this.writable = arg.writable || false;
+    this.readable = arg.readable || false;
+    this.executable = arg.executable || false;
+  }
+
+  /** Return new capability that allows to write */
+  allowToWrite(): Capability {
+    return new Capability({ ...this, writable: true });
+  }
+
+  /** Return new capability that allows to read */
+  allowToRead(): Capability {
+    return new Capability({ ...this, readable: true });
+  }
+
+  /** Return new capability that allows to execute */
+  allowToExecute(): Capability {
+    return new Capability({ ...this, executable: true });
+  }
+
+  /** Return new capability that disallows to write */
+  disallowToWrite() {
+    return new Capability({ ...this, writable: false });
+  }
+
+  /** Return new capability that disallows to read */
+  disallowToRead() {
+    return new Capability({ ...this, readable: false });
+  }
+
+  /** Return new capability that disallows to execute */
+  disallowToExecute() {
+    return new Capability({ ...this, executable: false });
+  }
 }
 
-function emptyCapability(): Capability {
-  return {
-    writable: false,
-    readable: false,
-    executable: false,
-  };
+// argument for Mode constructor
+type ModeArg = {
+  owner?: Capability;
+  group?: Capability;
+  others?: Capability;
 }
 
-export interface Mode {
+// Mode of a FileStat
+export class Mode {
   readonly owner: Capability;
   readonly group: Capability;
   readonly others: Capability;
-}
 
-/**
- * get the new mode instance that is all capabilities disabled.
- */
-export function emptyMode(): Mode {
-  return {
-    owner: emptyCapability(),
-    group: emptyCapability(),
-    others: emptyCapability(),
-  };
+  constructor(arg: ModeArg = {}) {
+    this.owner = arg.owner || new Capability();
+    this.group = arg.group || new Capability();
+    this.others = arg.others || new Capability();
+  }
+
+  changeOwner(cap: Capability): Mode {
+    return new Mode({ ...this, owner: cap });
+  }
+
+  changeGroup(cap: Capability): Mode {
+    return new Mode({ ...this, group: cap });
+  }
+
+  changeOthers(cap: Capability): Mode {
+    return new Mode({ ...this, others: cap });
+  }
 }
 
 // information object of file
@@ -45,7 +95,7 @@ export class FileStat {
     public readonly isDirectory: boolean,
     public readonly isFile: boolean,
     public readonly isSymlink: boolean
-  ) {}
+  ) { }
 
   /**
    *  get size of file as BigInt

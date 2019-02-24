@@ -1,5 +1,8 @@
 import * as React from "react";
 
+// tslint:disable-next-line
+const styles = require("./node-item.module.scss");
+
 interface Prop {
   timestamp: Date;
 }
@@ -17,7 +20,7 @@ function format(timestamp: Date): string {
 
 const NodeTimestamp: React.FC<Prop> = prop => {
   const date = format(prop.timestamp);
-  return <span className="fp-FileItem_Timestamp">{date}</span>;
+  return <span className={styles.timestamp}>{date}</span>;
 };
 
 export default NodeTimestamp;
