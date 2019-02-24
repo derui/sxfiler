@@ -1,56 +1,57 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`UI kit List Item can pass names of class to apply style 1`] = `
-<ul
-  className="a b"
+<div
+  role="list"
 >
   <span
     className="foo"
   >
     foo
   </span>
-</ul>
+</div>
 `;
 
 exports[`UI kit List Item can pass props directly 1`] = `
-<ul
-  className="a b"
+<div
   id="foo"
   onClick={[Function]}
+  role="list"
 >
   <span
     className="foo"
   >
     foo
   </span>
-</ul>
+</div>
 `;
 
 exports[`UI kit List Item can render with other container 1`] = `
-<span
-  className="list"
+<div
+  container="span"
+  role="list"
 >
   test
-</span>
+</div>
 `;
 
 exports[`UI kit List Item render with empty nodes 1`] = `
-<ul
-  className="list"
+<div
+  role="list"
 />
 `;
 
 exports[`UI kit List Item render with single nodes 1`] = `
-<ul
-  className="list"
+<div
+  role="list"
 >
   test
-</ul>
+</div>
 `;
 
 exports[`UI kit List Item render with single nodes 2`] = `
-<ul
-  className="list"
+<div
+  role="list"
 >
   <span
     className="foo"
@@ -62,5 +63,5 @@ exports[`UI kit List Item render with single nodes 2`] = `
   >
     link
   </a>
-</ul>
+</div>
 `;

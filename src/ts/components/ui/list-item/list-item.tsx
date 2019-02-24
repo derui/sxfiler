@@ -1,19 +1,14 @@
-import classNames from "classnames";
 import * as React from "react";
+import { Element, ElementProp } from "../element/element";
 
-// tslint:disable-next-line
-const styles = require("./list-item.module.scss");
-
-interface Prop extends React.HTMLAttributes<HTMLElement> {
-  classes?: string[];
-  container?: string;
+interface Prop extends ElementProp {
+  selected?: boolean;
 }
 
 const ListItem: React.SFC<Prop> = props => {
-  const { children, classes, container = "li", ...rest } = props;
-  const className = classes ? classNames(classes) : styles.listItem;
+  const { children, selected = false, aria, ...rest } = props;
 
-  return React.createElement(container, { ...rest, className }, children);
+  return (<Element role="listitem" aria={{ ...aria, selected }} {...rest}>{children}</Element>)
 };
 
 export default ListItem;

@@ -17,12 +17,6 @@ describe("UI kit", () => {
       expect(tree).toMatchSnapshot();
     });
 
-    it("render as specified component", () => {
-      const tree = renderer.create(<ListItem container="a">test</ListItem>).toJSON();
-
-      expect(tree).toMatchSnapshot();
-    });
-
     it("render with single nodes", () => {
       const tree = renderer
         .create(
@@ -39,7 +33,7 @@ describe("UI kit", () => {
     it("can pass names of class to apply style", () => {
       const tree = renderer
         .create(
-          <ListItem classes={["a", "b"]}>
+          <ListItem className="item">
             <span className="foo">foo</span>
           </ListItem>
         )
@@ -52,7 +46,7 @@ describe("UI kit", () => {
       const onClick = () => null;
       const tree = renderer
         .create(
-          <ListItem classes={["a", "b"]} hidden={true} onClick={onClick}>
+          <ListItem selected={false} onClick={onClick}>
             <span className="foo">foo</span>
           </ListItem>
         )

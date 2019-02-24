@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Project Node Item should add class correctly when marked 1`] = `
+<div
+  aria-selected={false}
+  role="listitem"
+>
+  <span
+    className="mode"
+  >
+    =-w----r--
+  </span>
+  <span
+    className="timestamp"
+  >
+    2000/01/01
+  </span>
+  <span
+    className="size"
+  >
+    10.0B
+  </span>
+  <span
+    className="name"
+  >
+    file.ext
+  </span>
+</div>
+`;
+
+exports[`Project Node Item should add class correctly when selected 1`] = `
+<div
+  aria-selected={false}
+  role="listitem"
+>
+  <span
+    className="mode"
+  >
+    =-w----r--
+  </span>
+  <span
+    className="timestamp"
+  >
+    2000/01/01
+  </span>
+  <span
+    className="size"
+  >
+    10.0B
+  </span>
+  <span
+    className="name"
+  >
+    file.ext
+  </span>
+</div>
+`;
+
+exports[`Project Node Item should add class correctly when selected and marked 1`] = `
+<div
+  aria-selected={false}
+  role="listitem"
+>
+  <span
+    className="mode"
+  >
+    =-w----r--
+  </span>
+  <span
+    className="timestamp"
+  >
+    2000/01/01
+  </span>
+  <span
+    className="size"
+  >
+    10.0B
+  </span>
+  <span
+    className="name"
+  >
+    file.ext
+  </span>
+</div>
+`;
+
+exports[`Project Node Item should print correctly 1`] = `
+<div
+  aria-selected={false}
+  role="listitem"
+>
+  <span
+    className="mode"
+  >
+    =-w----r--
+  </span>
+  <span
+    className="timestamp"
+  >
+    2000/01/01
+  </span>
+  <span
+    className="size"
+  >
+    10.0B
+  </span>
+  <span
+    className="name"
+  >
+    file.ext
+  </span>
+</div>
+`;

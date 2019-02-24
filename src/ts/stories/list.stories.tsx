@@ -17,16 +17,16 @@ storiesOf("List", module)
   .add("with ListItem component", () => {
     return (
       <List>
-        <ListItem classes={[styles.item]}>Item 1</ListItem>
-        <ListItem classes={[styles.item]}>Item 2</ListItem>
-        <ListItem classes={[styles.item]}>Item 3</ListItem>
-        <ListItem classes={[styles.item]}>Item 4</ListItem>
+        <ListItem className={styles.item}>Item 1</ListItem>
+        <ListItem className={styles.item}>Item 2</ListItem>
+        <ListItem className={styles.item}>Item 3</ListItem>
+        <ListItem className={styles.item}>Item 4</ListItem>
       </List>
     );
   })
   .add("with style", () => {
     return (
-      <List classes={[styles.base]}>
+      <List className={styles.base}>
         <ListItem>Item 1</ListItem>
       </List>
     );

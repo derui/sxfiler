@@ -1,12 +1,12 @@
 import classNames from "classnames";
 import * as React from "react";
 
-import { NodeMarker } from "../../domains/node-markers";
-import List from "../ui/list/list";
-import FileItem from "./file-item";
+import { NodeMarker } from "../../../domains/node-markers";
+import List from "../../ui/list/list";
+import FileItem from "./../node-item/node-item";
 
 // tslint:disable-next-line
-const styles = require('./file-list.module.scss');
+const styles = require('./node-list.module.scss');
 
 interface HeaderProp {
   directory: string;

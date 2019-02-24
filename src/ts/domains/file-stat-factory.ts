@@ -20,11 +20,11 @@ export interface FactoryArg {
 function bitsToCapability(bits: number): Capability {
   // tslint:disable:no-bitwise
   const writable = (bits & 0o2) === 0o2;
-  return {
+  return new Capability({
     writable,
     readable: (bits & 0o4) === 0o4,
     executable: (bits & 0o1) === 0o1,
-  };
+  });
   // tslint:enable:no-bitwise
 }
 
@@ -44,11 +44,11 @@ function toMode(str: string): Mode {
   const othersBits = capabilities & 0o7;
   // tslint:enable:no-bitwise
 
-  return {
+  return new Mode({
     owner: bitsToCapability(ownerBits),
     group: bitsToCapability(groupBits),
     others: bitsToCapability(othersBits),
-  };
+  });
 }
 
 // Factory of FileStat

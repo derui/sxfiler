@@ -19,9 +19,9 @@ storiesOf("List Item", module)
       </ListItem>
     );
   })
-  .add("with class names", () => {
-    return <ListItem classes={[styles.base, styles.padding, styles.border]}>Item</ListItem>;
+  .add("with className", () => {
+    return <ListItem className={`${styles.base} ${styles.padding} ${styles.border}`}>Item</ListItem >;
   })
-  .add("with other container", () => {
-    return <ListItem container="a">Link is container</ListItem>;
+  .add("with other tagName", () => {
+    return <ListItem tagName="a">Link is container</ListItem>;
   });

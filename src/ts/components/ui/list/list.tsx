@@ -1,19 +1,13 @@
-import classNames from "classnames";
 import * as React from "react";
+import { Element, ElementProp } from "../element/element";
 
-// tslint:disable-next-line
-const styles = require("./list.module.scss");
-
-interface Prop extends React.HTMLAttributes<HTMLElement> {
-  classes?: string[];
-  container?: string;
+interface Prop extends ElementProp {
 }
 
 const FileList: React.FC<Prop> = props => {
-  const { classes, container = "ul", children, ...rest } = props;
-  const className = classes ? classNames(classes) : styles.list;
+  const { className, children, ...rest } = props;
 
-  return React.createElement(container, { ...rest, className }, children);
+  return (<Element className={className} role="list" {...rest}>{children}</Element>);
 };
 
 export default FileList;
