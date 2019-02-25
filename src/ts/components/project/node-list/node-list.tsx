@@ -1,14 +1,15 @@
-import classNames from "classnames";
 import * as React from "react";
 
 import { NodeMarker } from "../../../domains/node-markers";
 import List from "../../ui/list/list";
+import { Element } from "../../ui/element/element";
 import FileItem from "./../node-item/node-item";
 
 // tslint:disable-next-line
 const styles = require('./node-list.module.scss');
 
 interface HeaderProp {
+  className: string;
   directory: string;
   focused: boolean;
 }
@@ -16,12 +17,8 @@ interface HeaderProp {
 /**
  * component definition for header of file list
  */
-const Header: React.FunctionComponent<HeaderProp> = ({ directory, focused }) => {
-  const className = classNames("fp-FileList_Header", {
-    "fp-FileList_Header-focused": focused,
-  });
-
-  return <header className={className}>{directory}</header>;
+const Header: React.FunctionComponent<HeaderProp> = ({ className, directory, focused }) => {
+  return <Element tagName="header" className={className} data={{ focused }}>{directory}</Element>;
 };
 
 interface Prop {
@@ -38,12 +35,12 @@ const FileList: React.FunctionComponent<Prop> = props => {
   ));
 
   return (
-    <div>
-      <Header key="header" directory={props.location} focused={props.focused} />
-      <List classes={[styles.list]} key="body">
-        {items}{" "}
+    <Element className={styles.container}>
+      <Header key="header" className={styles.header} directory={props.location} focused={props.focused} />
+      <List className={styles.nodeList} key="body">
+        {items}
       </List>
-    </div>
+    </Element>
   );
 };
 
