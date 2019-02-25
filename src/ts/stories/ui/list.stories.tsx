@@ -2,13 +2,13 @@ import { withInfo } from "@storybook/addon-info";
 import { storiesOf } from "@storybook/react";
 import * as React from "react";
 
-import ListItem from "../components/ui/list-item/list-item";
-import List from "../components/ui/list/list";
+import ListItem from "../../components/ui/list-item/list-item";
+import List from "../../components/ui/list/list";
 
 // tslint:disable-next-line
 const styles = require("./list.stories.module.scss");
 
-storiesOf("List", module)
+storiesOf("UI Kit/List", module)
   .addDecorator(withInfo)
   .addParameters({ info: { inline: true } })
   .add("empty", () => {

@@ -1,4 +1,3 @@
-import classNames from "classnames";
 import * as React from "react";
 import * as Domain from "../../../domains/node";
 import ListItem from "../../ui/list-item/list-item";
@@ -20,13 +19,9 @@ interface Prop {
 export default class NodeItem extends React.PureComponent<Prop> {
   public render() {
     const { item } = this.props;
-    const className = classNames(styles.root, {
-      [styles.selected]: this.props.selected,
-      [styles.marked]: this.props.marked,
-    });
 
     return (
-      <ListItem classes={[className]}>
+      <ListItem className={styles.nodeItem} selected={this.props.selected} data={{ marked: this.props.marked }}>
         <Mode key="mode" mode={item.stat.mode} isDirectory={item.stat.isDirectory} isSymlink={item.stat.isSymlink} />
         <Timestamp key="timestamp" timestamp={item.stat.mtime} />
         <Size key="size" size={item.stat.sizeAsBigInt} />

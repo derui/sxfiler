@@ -2,11 +2,12 @@ import { withInfo } from "@storybook/addon-info";
 import { storiesOf } from "@storybook/react";
 import * as React from "react";
 
-import ListItem from "../components/ui/list-item/list-item";
+import ListItem from "../../components/ui/list-item/list-item";
+
 // tslint:disable-next-line
 const styles = require('./list-item.stories.module.scss');
 
-storiesOf("List Item", module)
+storiesOf("UI Kit/List Item", module)
   .addDecorator(withInfo)
   .addParameters({ info: { inline: true } })
   .add("with text", () => {
