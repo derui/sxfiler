@@ -1,13 +1,24 @@
 import * as React from "react";
-import { Element, ElementProp } from "../element/element";
+import * as Element from "../element/element";
 
-interface Prop extends ElementProp {
+export type Props<
+  T extends { className?: string } = Element.Props,
+  H extends HTMLElement = HTMLElement>
+  = T & React.HTMLAttributes<H>
+
+export type Component = React.FC<Props>;
+
+export function createComponent<
+  T extends { className?: string } = Element.Props,
+  H extends HTMLElement = HTMLElement
+>(context: {
+  container?: React.ComponentType<T & React.HTMLAttributes<H>>;
+} = {}
+): React.ComponentType<Props<T, H>> {
+  const Container = context.container || Element.createComponent();
+
+  return (props: Props<T, H>) => {
+
+    return (<Container role="list" {...props} />);
+  };
 }
-
-const FileList: React.FC<Prop> = props => {
-  const { className, children, ...rest } = props;
-
-  return (<Element className={className} role="list" {...rest}>{children}</Element>);
-};
-
-export default FileList;

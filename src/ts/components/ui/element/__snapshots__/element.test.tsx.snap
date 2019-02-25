@@ -14,16 +14,16 @@ exports[`UI kit Element render element as specified tag name 1`] = `
 />
 `;
 
+exports[`UI kit Element render element with content 1`] = `
+<div>
+  test
+</div>
+`;
+
 exports[`UI kit Element render with data and aria 1`] = `
 <div
   aria-hidden={true}
   className="base"
   data-test="next"
-/>
-`;
-
-exports[`UI kit Element render without classes 1`] = `
-<div
-  className="base"
 />
 `;

@@ -1,14 +1,30 @@
 import * as React from "react";
-import { Element, ElementProp } from "../element/element";
+import * as Element from "../element/element";
 
-interface Prop extends ElementProp {
+type ComponentProps = {
   selected?: boolean;
 }
 
-const ListItem: React.SFC<Prop> = props => {
-  const { children, selected = false, aria, ...rest } = props;
+export type Props<
+  T extends { className?: string } = Element.Props,
+  H extends HTMLElement = HTMLElement>
+  = T & React.HTMLAttributes<H> & ComponentProps;
 
-  return (<Element role="listitem" aria={{ ...aria, selected }} {...rest}>{children}</Element>)
-};
+export type Component = React.FC<Props>;
 
-export default ListItem;
+export function createComponent<
+  T extends { className?: string } = Element.Props,
+  H extends HTMLElement = HTMLElement
+>(context: {
+  container?: React.ComponentType<T & React.HTMLAttributes<H>>;
+} = {}
+): React.ComponentType<Props<T, H>> {
+  const Container = context.container || Element.createComponent();
+
+  return ({
+    selected = false,
+    ...props }: Props<T, H>) => {
+
+    return (<Container role="listitem" aria-selected={selected} {...props} />);
+  };
+}

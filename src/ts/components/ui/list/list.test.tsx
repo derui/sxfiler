@@ -1,35 +1,41 @@
 import * as React from "react";
 import renderer from "react-test-renderer";
 
-import List from "./list";
+import * as Element from "../element/element";
+import * as List from "./list";
 
 describe("UI kit", () => {
   describe("List Item", () => {
     it("render with empty nodes", () => {
-      const tree = renderer.create(<List />).toJSON();
+      const C = List.createComponent();
+      const tree = renderer.create(<C />).toJSON();
 
       expect(tree).toMatchSnapshot();
     });
 
     it("render with single nodes", () => {
-      const tree = renderer.create(<List>test</List>).toJSON();
+      const C = List.createComponent();
+      const tree = renderer.create(<C>test</C>).toJSON();
 
       expect(tree).toMatchSnapshot();
     });
 
     it("can render with other container", () => {
-      const tree = renderer.create(<List container="span">test</List>).toJSON();
+      const E = Element.createComponent({ tagName: "span" });
+      const C = List.createComponent({ container: E });
+      const tree = renderer.create(<C>test</C>).toJSON();
 
       expect(tree).toMatchSnapshot();
     });
 
     it("render with single nodes", () => {
+      const C = List.createComponent();
       const tree = renderer
         .create(
-          <List>
+          <C>
             <span className="foo">foo</span>
             <a href="">link</a>
-          </List>
+          </C>
         )
         .toJSON();
 
@@ -37,11 +43,12 @@ describe("UI kit", () => {
     });
 
     it("can pass names of class to apply style", () => {
+      const C = List.createComponent();
       const tree = renderer
         .create(
-          <List classes={["a", "b"]}>
+          <C className="a b">
             <span className="foo">foo</span>
-          </List>
+          </C>
         )
         .toJSON();
 
@@ -49,12 +56,13 @@ describe("UI kit", () => {
     });
 
     it("can pass props directly", () => {
+      const C = List.createComponent();
       const onClick = () => null;
       const tree = renderer
         .create(
-          <List classes={["a", "b"]} id="foo" onClick={onClick}>
+          <C className="a b" id="foo" onClick={onClick}>
             <span className="foo">foo</span>
-          </List>
+          </C>
         )
         .toJSON();
 

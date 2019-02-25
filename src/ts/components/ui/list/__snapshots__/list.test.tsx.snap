@@ -2,6 +2,7 @@
 
 exports[`UI kit List Item can pass names of class to apply style 1`] = `
 <div
+  className="a b"
   role="list"
 >
   <span
@@ -14,6 +15,7 @@ exports[`UI kit List Item can pass names of class to apply style 1`] = `
 
 exports[`UI kit List Item can pass props directly 1`] = `
 <div
+  className="a b"
   id="foo"
   onClick={[Function]}
   role="list"
@@ -27,12 +29,11 @@ exports[`UI kit List Item can pass props directly 1`] = `
 `;
 
 exports[`UI kit List Item can render with other container 1`] = `
-<div
-  container="span"
+<span
   role="list"
 >
   test
-</div>
+</span>
 `;
 
 exports[`UI kit List Item render with empty nodes 1`] = `

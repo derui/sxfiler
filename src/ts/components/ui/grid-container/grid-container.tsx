@@ -1,5 +1,5 @@
-import classNames from "classnames";
 import * as React from "react";
+import * as Element from "../element/element";
 
 // tslint:disable-next-line
 const styles = require("./grid-container.test.module.scss");
@@ -30,28 +30,31 @@ enum DirectionProperty {
 
 type Spacing = 0 | 8 | 16 | 24 | 32 | 40;
 
-interface Prop extends React.HTMLAttributes<HTMLElement> {
-  classes?: string[];
-  component?: string;
+export interface Props extends ElementProps {
   direction?: DirectionProperty;
   justify?: JustifyProperty;
   alignItems?: AlignItemsProperty;
   spacing?: Spacing;
 }
 
-const FileList: React.FC<Prop> = props => {
+export const Component: React.FC<Prop> = props => {
   const {
-    classes,
-    component = "div",
+    tagName = "div",
     direction = DirectionProperty.Row,
     justify = JustifyProperty.FlexStart,
     alignItems = AlignItemsProperty.FlexStart,
     spacing = 0,
-    children, ...rest
+    children,
+    ...rest
   } = props;
-  const className = classes ? classNames(classes) : styles.list;
 
-  return React.createElement(component, { ...rest, className }, children);
+  const style = {
+    display: "grid",
+    gridDirection: direction,
+    justifyContent: justify,
+    alignItems: alignItems,
+    gridGap: `${spacing}px`,
+  };
+
+  return (<Element tagName={tagName} style={style} {...rest}>{children}</Element>)
 };
-
-export default FileList;
