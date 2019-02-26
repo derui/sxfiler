@@ -22,6 +22,7 @@ describe("Node value object", () => {
       stat,
       parentDirectory: "parent",
       linkPath: "foo",
+      marked: false
     });
 
     expect(node.id).toBe("id");
@@ -29,5 +30,6 @@ describe("Node value object", () => {
     expect(node.stat).toBe(stat);
     expect(node.parentDirectory).toBe("parent");
     expect(node.linkPath).toBe("foo");
+    expect(node.marked).toBeFalsy();
   });
 });

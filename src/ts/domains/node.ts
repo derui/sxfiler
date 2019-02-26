@@ -7,6 +7,7 @@ interface FactoryArg {
   stat: FileStat;
   parentDirectory: string;
   linkPath?: string;
+  marked: boolean;
 }
 
 /**
@@ -14,7 +15,7 @@ interface FactoryArg {
  * @param args
  */
 export function create(args: FactoryArg) {
-  return new NodeImpl(args.id, args.name, args.stat, args.parentDirectory, args.linkPath);
+  return new NodeImpl(args.id, args.name, args.stat, args.parentDirectory, args.marked, args.linkPath);
 }
 
 export interface Node {
@@ -22,6 +23,7 @@ export interface Node {
   readonly name: string;
   readonly stat: FileStat;
   readonly parentDirectory: string;
+  readonly marked: boolean;
   readonly linkPath?: string;
 }
 
@@ -39,6 +41,7 @@ class NodeImpl implements Node {
     public readonly name: string,
     public readonly stat: FileStat,
     public readonly parentDirectory: string,
-    public readonly linkPath?: string
-  ) {}
+    public readonly marked: boolean,
+    public readonly linkPath?: string,
+  ) { }
 }

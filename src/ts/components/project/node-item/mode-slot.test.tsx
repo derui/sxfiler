@@ -2,7 +2,7 @@ import * as React from "react";
 import renderer from "react-test-renderer";
 import T from "./mode-slot";
 
-import { Mode, Capability } from "../../../domains/file-stat";
+import { Capability, Mode } from "../../../domains/file-stat";
 
 describe("Project", () => {
   describe("Node Item", () => {

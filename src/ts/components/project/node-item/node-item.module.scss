@@ -5,11 +5,7 @@
 .nodeItem {
   composes: listItem-base from "../../ui/list-item/list-item.module.scss";
 
-  padding-bottom: $baseSpace;
-
-  &:first-of-type {
-    padding-top: $baseSpace;
-  }
+  padding: $baseSpace 0;
 
   background-color: $sol_base02;
 

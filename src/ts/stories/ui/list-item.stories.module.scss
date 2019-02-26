@@ -1,5 +1,9 @@
 .base {
   composes: listItem-base from "../../components/ui/list-item/list-item.module.scss";
+
+  &[aria-selected="true"] {
+    background-color: aqua;
+  }
 }
 
 .padding {

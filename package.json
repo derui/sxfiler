@@ -15,6 +15,7 @@
     "@storybook/addon-info": "^4.1.13",
     "@storybook/addon-knobs": "^4.1.13",
     "@storybook/react": "^4.1.13",
+    "@types/enzyme": "^3.9.0",
     "@types/jest": "^23.3.9",
     "@types/node": "^10.12.9",
     "@types/node-int64": "^0.4.29",
@@ -59,7 +60,7 @@
   "scripts": {
     "start": "BROWSER=none react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "test": "react-scripts test --env=node",
     "eject": "react-scripts eject",
     "electron": "ELECTRON_START_URL=http://localhost:3000 electron .",
     "package": "node ./scripts/package-electron.js",

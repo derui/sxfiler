@@ -12,7 +12,6 @@ const styles = require("./node-item.module.scss");
 
 interface Prop {
   item: Domain.Node;
-  marked: boolean;
   selected: boolean;
 }
 
@@ -20,15 +19,15 @@ const Element = ListItem.createComponent();
 
 export default class NodeItem extends React.PureComponent<Prop> {
   public render() {
-    const { item, marked, selected } = this.props;
+    const { item, selected } = this.props;
 
     return (
-      <Element className={styles.nodeItem} aria-selected={selected} data-marked={marked}>
+      <Element className={styles.nodeItem} aria-selected={selected} data-marked={item.marked}>
         <Mode key="mode" mode={item.stat.mode} isDirectory={item.stat.isDirectory} isSymlink={item.stat.isSymlink} />
         <Timestamp key="timestamp" timestamp={item.stat.mtime} />
         <Size key="size" size={item.stat.sizeAsBigInt} />
         <Name key="name" name={item.name} isDirectory={item.stat.isDirectory} isSymlink={item.stat.isSymlink} />
-      </Element >
+      </Element>
     );
   }
 }

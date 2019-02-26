@@ -2,10 +2,9 @@
 @import "../../ui/commom-style/_variables.scss";
 @import "../../ui/commom-style/reset.module.css";
 
-.container {
+.root {
   display: grid;
-  grid-template-rows: 100%;
-  grid-template-columns: 50% 50%;
+  grid-template-rows: calc($baseSpace * 2 + 1rem) 1fr;
 
   width: 100%;
   height: 100%;
@@ -19,9 +18,9 @@
   font-size: 1rem;
 }
 
-.fp-FileList_Header {
+.header {
   flex: 0 0 auto;
-  padding: $smallSpace 0;
+  padding: $baseSpace 0;
   margin: 0;
 
   font-weight: bold;
@@ -30,22 +29,17 @@
   font-family: monospace;
 
   border-bottom: 1px solid $sol_base01;
+
+  &[data-focused="true"] {
+    color: $sol_yellow;
+  }
+
 }
 
-.fp-FileList_Header-selected {
-  color: $sol_yellow;
-}
-
-.fp-FileList {
-  display: flex;
-  flex-direction: column;
+.list {
+  composes: list-base from "../../ui/list/list.module.scss";
 
   font-size: 1rem;
-  height: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding: 0;
-
   border-right: 1px solid $sol_base0;
 
   &:last-of-type {
@@ -53,19 +47,15 @@
   }
 }
 
-.fp-FileList_Content {
-  position: relative;
+.empty {
   flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
+  margin: auto 0;
+  text-align: center;
 
-  border-bottom: 1px solid $sol_base2;
+  color: $sol_red;
 
-  background-color: $sol_base03;
-  font-size: 1rem;
+  &:after {
+    content: "no any node";
+    font-family: monospace;
+  }
 }

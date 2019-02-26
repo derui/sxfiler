@@ -1,4 +1,6 @@
-import { Capability, FileStat, Mode } from "./file-stat";
+import { FileStat } from "./file-stat";
+import { Capability } from "./capability";
+import { Mode } from "./mode";
 
 export interface FactoryArg {
   mode: string;
