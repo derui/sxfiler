@@ -8,7 +8,7 @@ import NodeItem from "./../node-item/node-item";
 // tslint:disable-next-line
 const styles: ClassNames = require('./node-list.module.scss');
 
-export type ClassNames = {
+export interface ClassNames {
   root?: string;
   header?: string;
   list?: string;
@@ -43,18 +43,18 @@ interface Prop {
 
 const FileList: React.FunctionComponent<Prop> = props => {
   const { nodes, cursor, focused } = props;
-  const items = nodes.map((node, index) => (
-    <NodeItem key={index} item={node} selected={index === cursor && focused} />
-  ));
+  const items = nodes.map((node, index) => <NodeItem key={index} item={node} selected={index === cursor && focused} />);
 
   return (
     <Element.Component className={styles.root}>
       <Header key="header" className={styles.header} directory={props.location} focused={props.focused} />
-      {items.length === 0 ? (<div className={styles.empty} />) :
-        (<List.Component className={styles.list} key="body">
+      {items.length === 0 ? (
+        <div className={styles.empty} />
+      ) : (
+        <List.Component className={styles.list} key="body">
           {items}
-        </List.Component>)
-      }
+        </List.Component>
+      )}
     </Element.Component>
   );
 };

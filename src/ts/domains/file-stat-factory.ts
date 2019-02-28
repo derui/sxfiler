@@ -1,5 +1,5 @@
-import { FileStat } from "./file-stat";
 import { Capability } from "./capability";
+import { FileStat } from "./file-stat";
 import { Mode } from "./mode";
 
 export interface FactoryArg {
@@ -64,9 +64,9 @@ export default class FileStatFactory {
       toMode(arg.mode),
       arg.uid,
       arg.gid,
-      new Date(arg.atime),
-      new Date(arg.ctime),
-      new Date(arg.mtime),
+      new Date(Number(arg.atime)),
+      new Date(Number(arg.ctime)),
+      new Date(Number(arg.mtime)),
       arg.size,
       arg.isDirectory,
       arg.isFile,

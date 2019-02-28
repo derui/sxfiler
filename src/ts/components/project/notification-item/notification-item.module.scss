@@ -1,0 +1,56 @@
+@import "../../ui/commom-style/_colors.scss";
+@import "../../ui/commom-style/_variables.scss";
+@import "../../ui/commom-style/reset.module.css";
+
+$messageWidth: 150px;
+
+$borderWidth: 3px;
+
+.root {
+  composes: listItem-base from "../../ui/list-item/list-item.module.scss";
+
+  padding: $baseSpace ($baseSpace * 2);
+  margin-right: $smallSpace;
+  margin-bottom: $smallSpace;
+
+  &[data-level="info"] {
+    border: $borderWidth solid darken($sol_blue, 20%);
+    background-color: lighten($sol_blue, 20%);
+    color: $sol_base02;
+  }
+
+  &[data-level="warning"]{
+
+  border: $borderWidth solid darken($sol_orange, 20%);
+  background-color: lighten($sol_orange, 20%);
+  color: $sol_base03;
+}
+
+  &[data-level="error"] {
+    border: $borderWidth solid darken($sol_red, 30%);
+    background-color: $sol_red;
+    color: $sol_base2;
+  }
+}
+
+.animation{
+  /*!*/
+}
+
+.animation-enter {
+  opacity: 0.01;
+}
+
+.animation-enter-active {
+  opacity: 1;
+  transition: opacity 200ms ease-out;
+}
+
+.animation-exit {
+  opacity: 1;
+}
+
+.animation-exit-active {
+  opacity: 0.01;
+  transition: opacity 200ms ease-out;
+}

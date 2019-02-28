@@ -1,5 +1,5 @@
 import { withInfo } from "@storybook/addon-info";
-import { boolean, withKnobs, number } from "@storybook/addon-knobs";
+import { boolean, number, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
 import * as React from "react";
 
@@ -37,10 +37,6 @@ storiesOf("Project/Node List", module)
     return <NodeList nodes={[]} location="loc" cursor={number("cursor", 0)} focused={boolean("focused", false)} />;
   })
   .add("with some nodes", () => {
-    const nodes = [
-      makeNode("file.txt", true),
-      makeNode("dir", false, true),
-      makeNode("link.txt", false, false, false),
-    ]
+    const nodes = [makeNode("file.txt", true), makeNode("dir", false, true), makeNode("link.txt", false, false, false)];
     return <NodeList nodes={nodes} location="loc" cursor={number("cursor", 0)} focused={boolean("focused", false)} />;
   });

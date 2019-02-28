@@ -22,7 +22,7 @@ describe("Node value object", () => {
       stat,
       parentDirectory: "parent",
       linkPath: "foo",
-      marked: false
+      marked: false,
     });
 
     expect(node.id).toBe("id");

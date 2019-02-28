@@ -42,6 +42,6 @@ class NodeImpl implements Node {
     public readonly stat: FileStat,
     public readonly parentDirectory: string,
     public readonly marked: boolean,
-    public readonly linkPath?: string,
-  ) { }
+    public readonly linkPath?: string
+  ) {}
 }

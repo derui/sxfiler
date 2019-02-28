@@ -1,5 +1,5 @@
-import * as React from "react";
 import { shallow } from "enzyme";
+import * as React from "react";
 import renderer from "react-test-renderer";
 
 import NodeItem from "../node-item/node-item";
@@ -34,7 +34,7 @@ describe("Project", () => {
   describe("Node List", () => {
     it("should print correctly", () => {
       const nodes = [makeNode("file.txt")];
-      const wrapper = shallow(<T nodes={nodes} location="loc" cursor={0} focused={false} />)
+      const wrapper = shallow(<T nodes={nodes} location="loc" cursor={0} focused={false} />);
 
       expect(wrapper.find(NodeItem)).toHaveLength(1);
     });
