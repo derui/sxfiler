@@ -15,7 +15,7 @@ let empty_mode =
   ; group = {writable = true; readable = true; executable = true}
   ; others = {writable = true; readable = true; executable = true} }
 
-(** Type of stat of file. Note: The value of *time (atime, ctime, mtime) fields has time value
+(** Type of stat of file. Note: The value of *time (atime, ctime, mtime) fields has time resolution
     in term of milliseconds, not seconds.
 *)
 type t =
