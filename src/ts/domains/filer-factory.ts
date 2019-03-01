@@ -1,6 +1,5 @@
 import { Filer } from "./filer";
 import { Node } from "./node";
-import { NodeMarkers } from "./node-markers";
 
 export interface FactoryArg {
   id: string;
@@ -18,12 +17,7 @@ export default class FilerFactory {
     return new Filer(
       arg.id,
       arg.location,
-      new NodeMarkers(
-        arg.nodes.map(v => ({
-          node: v,
-          marked: false,
-        }))
-      ),
+      arg.nodes,
       0
     );
   }

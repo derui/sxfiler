@@ -16,7 +16,7 @@ const stat = FileStatFactory.create({
   isSymlink: false,
 });
 
-describe("Filer value object", () => {
+describe("Filer domain", () => {
   describe("getting current node", () => {
     it("should return if do not have any nodes", () => {
       const filer = Factory.create({ id: "id", location: "/loc", nodes: [] });
@@ -30,6 +30,7 @@ describe("Filer value object", () => {
         name: "name",
         stat,
         parentDirectory: "/",
+        marked: false
       });
       const filer = Factory.create({ id: "id", location: "/loc", nodes: [node] });
 
@@ -39,8 +40,8 @@ describe("Filer value object", () => {
 
   describe("moving index", () => {
     it("can move index to next node that are sorted on create", () => {
-      const node1 = createNode({ id: "node1", name: "name", stat, parentDirectory: "/" });
-      const node2 = createNode({ id: "node2", name: "name2", stat, parentDirectory: "/" });
+      const node1 = createNode({ id: "node1", name: "name", stat, parentDirectory: "/", marked: false });
+      const node2 = createNode({ id: "node2", name: "name2", stat, parentDirectory: "/", marked: false });
       const filer = Factory.create({ id: "id", location: "/loc", nodes: [node1, node2] });
 
       const nextFiler = filer.moveIndex(Direction.Down);
@@ -48,8 +49,8 @@ describe("Filer value object", () => {
     });
 
     it("should not move to up direction if current is the first of nodes", () => {
-      const node1 = createNode({ id: "node1", name: "name", stat, parentDirectory: "/" });
-      const node2 = createNode({ id: "node2", name: "name2", stat, parentDirectory: "/" });
+      const node1 = createNode({ id: "node1", name: "name", stat, parentDirectory: "/", marked: false });
+      const node2 = createNode({ id: "node2", name: "name2", stat, parentDirectory: "/", marked: false });
       const filer = Factory.create({ id: "id", location: "/loc", nodes: [node1, node2] });
 
       const nextFiler = filer.moveIndex(Direction.Up);
@@ -57,8 +58,8 @@ describe("Filer value object", () => {
     });
 
     it("should not move to down direction if current is the last of nodes", () => {
-      const node1 = createNode({ id: "node1", name: "name", stat, parentDirectory: "/" });
-      const node2 = createNode({ id: "node2", name: "name2", stat, parentDirectory: "/" });
+      const node1 = createNode({ id: "node1", name: "name", stat, parentDirectory: "/", marked: false });
+      const node2 = createNode({ id: "node2", name: "name2", stat, parentDirectory: "/", marked: false });
       const filer = Factory.create({ id: "id", location: "/loc", nodes: [node1, node2] });
 
       const nextFiler = filer.moveIndex(Direction.Down).moveIndex(Direction.Down);
@@ -66,24 +67,13 @@ describe("Filer value object", () => {
     });
   });
 
-  describe("toggling mark", () => {
-    it("can enable mark with specified node", () => {
-      const node1 = createNode({ id: "node1", name: "name", stat, parentDirectory: "/" });
-      const node2 = createNode({ id: "node2", name: "name2", stat, parentDirectory: "/" });
+  describe("property", () => {
+    it("should be able to retrieve marked node ", () => {
+      const node1 = createNode({ id: "node1", name: "name", stat, parentDirectory: "/", marked: true });
+      const node2 = createNode({ id: "node2", name: "name2", stat, parentDirectory: "/", marked: false });
       const filer = Factory.create({ id: "id", location: "/loc", nodes: [node1, node2] });
 
-      const nextFiler = filer.toggleMark("node1");
-      expect(nextFiler.markedNodes).toEqual([node1]);
-    });
-
-    it("should be mark disabled when call method twice to the node", () => {
-      const node1 = createNode({ id: "node1", name: "name", stat, parentDirectory: "/" });
-      const node2 = createNode({ id: "node2", name: "name2", stat, parentDirectory: "/" });
-      const filer = Factory.create({ id: "id", location: "/loc", nodes: [node1, node2] });
-
-      const nextFiler = filer.toggleMark("node1").toggleMark("node1");
-      expect(nextFiler).not.toBe(filer);
-      expect(nextFiler.markedNodes).toEqual([]);
+      expect(filer.markedNodes).toEqual([node1]);
     });
   });
 });

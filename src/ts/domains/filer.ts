@@ -12,15 +12,15 @@ export class Filer {
   constructor(
     public readonly id: string,
     public readonly location: string,
-    public readonly nodes: NodeMarkers,
+    public readonly nodes: Node[],
     public readonly currentCursorIndex: number
-  ) {}
+  ) { }
 
   get currentNode(): Node | null {
-    if (this.nodes.isEmpty()) {
+    if (this.nodes.length === 0) {
       return null;
     }
-    return this.nodes.value[this.currentCursorIndex].node;
+    return this.nodes[this.currentCursorIndex];
   }
 
   /**
@@ -32,7 +32,7 @@ export class Filer {
 
     switch (direction) {
       case Direction.Down:
-        index = Math.min(this.nodes.size() - 1, this.currentCursorIndex + 1);
+        index = Math.min(this.nodes.length - 1, this.currentCursorIndex + 1);
         break;
       case Direction.Up:
         index = Math.max(0, this.currentCursorIndex - 1);
@@ -43,17 +43,9 @@ export class Filer {
   }
 
   /**
-   * Mark specified node
-   * @param nodeId
-   */
-  public toggleMark(nodeId: string): Filer {
-    return new Filer(this.id, this.location, this.nodes.toggleMarkById(nodeId), this.currentCursorIndex);
-  }
-
-  /**
    * @returns marked nodes
    */
   get markedNodes(): Node[] {
-    return this.nodes.markedNodes;
+    return this.nodes.filter(v => v.marked);
   }
 }
