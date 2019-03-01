@@ -1,8 +1,16 @@
 import * as React from "react";
-import { Notification } from "../../domains/notification";
-import NotificationItem, { TimeoutCallback } from "./notification-item";
+import { Notification } from "../../../domains/notification";
+import * as List from "../../ui/list/list";
+import NotificationItem, { TimeoutCallback } from "../notification-item/notification-item";
 
-interface Prop {
+// tslint:disable-next-line
+const styles: ClassNames = require("./notification-list.module.scss");
+
+type ClassNames = {
+  root: string;
+}
+
+interface Props {
   // notifications given from server
   notifications: Notification[];
   // list of timeouted notification id
@@ -14,15 +22,15 @@ interface Prop {
 // make item
 function toComponent(notification: Notification, timeouts: string[], onItemTimeouted: TimeoutCallback) {
   const timeouted = timeouts.find(v => v === notification.id) !== undefined;
-  return <NotificationItem item={notification} timeouted={timeouted} onItemTimeouted={onItemTimeouted} />;
+  return <NotificationItem key={notification.id} item={notification} timeouted={timeouted} onItemTimeouted={onItemTimeouted} />;
 }
 
-const NotificationList: React.FC<Prop> = prop => {
-  const { notifications, timeouts, onItemTimeouted } = prop;
+export const NotificationList: React.FC<Props> = props => {
+  const { notifications, timeouts, onItemTimeouted } = props;
 
   const components = notifications.map(v => toComponent(v, timeouts, onItemTimeouted));
 
-  return <ul className="fp-NotificationList">{components}</ul>;
+  return <List.Component className={styles.root}>{components}</List.Component>;
 };
 
 export default NotificationList;
