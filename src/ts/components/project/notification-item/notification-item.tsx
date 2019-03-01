@@ -9,7 +9,10 @@ const styles: ClassNames = require("./notification-item.module.scss");
 
 interface ClassNames {
   root: string;
-  animation: string;
+  animationExit: string;
+  animationExitActive: string;
+  animationEnter: string;
+  animationEnterActive: string;
 }
 
 export type TimeoutCallback = (id: string) => void;
@@ -64,7 +67,12 @@ export default class NotificationItem extends React.Component<Props, State> {
         onExited={this.handleItemTimeouted}
         timeout={200}
         unmountOnExit={true}
-        classNames={styles.animation}
+        classNames={{
+          enter: styles.animationEnter,
+          enterActive: styles.animationEnterActive,
+          exit: styles.animationExit,
+          exitActive: styles.animationExitActive,
+        }}
       >
         {renderer}
       </CSSTransition>

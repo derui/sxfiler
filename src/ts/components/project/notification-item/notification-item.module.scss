@@ -33,24 +33,20 @@ $borderWidth: 3px;
   }
 }
 
-.animation{
-  /*!*/
-}
-
-.animation-enter {
+.animationEnter {
   opacity: 0.01;
 }
 
-.animation-enter-active {
+.animationEnterActive {
   opacity: 1;
   transition: opacity 200ms ease-out;
 }
 
-.animation-exit {
+.animationExit {
   opacity: 1;
 }
 
-.animation-exit-active {
+.animationExitActive {
   opacity: 0.01;
   transition: opacity 200ms ease-out;
 }
