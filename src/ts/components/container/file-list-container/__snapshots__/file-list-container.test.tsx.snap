@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Container File List Container should render correctly 1`] = `
+<div
+  className="root"
+>
+  <div
+    className="root"
+  >
+    <header
+      className="header"
+      data-focused={true}
+    >
+      /left
+    </header>
+    <div
+      className="empty"
+    />
+  </div>
+  <div
+    className="root"
+  >
+    <header
+      className="header"
+      data-focused={false}
+    >
+      /right
+    </header>
+    <div
+      className="empty"
+    />
+  </div>
+</div>
+`;

@@ -1,20 +1,26 @@
 import * as React from "react";
-import * as Filer from "../../domains/filer";
-import { Side, State } from "../../types/store-state/file-list";
-import FileList from "../project/file-list";
-import "./workspace.css";
+import { Filer } from "../../../domains/filer";
+import { Side, State } from "../../../types/store-state/file-list";
+import NodeList from "../../project/node-list/node-list";
 
-interface Prop {
+// tslint:disable-next-line
+const styles: ClassNames = require("./file-list-container.module.scss");
+
+type ClassNames = {
+  root: string;
+}
+
+export interface Props {
   state: State;
 }
 
 /* create filer from state and key */
-function createFiler(key: string, currentSide: Side, filer: Filer.Filer) {
+function createFiler(key: string, currentSide: Side, filer: Filer) {
   const focused = key === currentSide;
   return (
-    <FileList
+    <NodeList
       key={key}
-      nodes={filer.nodes.value}
+      nodes={filer.nodes}
       cursor={filer.currentCursorIndex}
       location={filer.location}
       focused={focused}
@@ -23,7 +29,7 @@ function createFiler(key: string, currentSide: Side, filer: Filer.Filer) {
 }
 
 // Stateless container to render filer
-const FileListContainer: React.FC<Prop> = props => {
+export const Component: React.FC<Props> = props => {
   // can not render anything if filer is not initialized
   if (!props.state.initialized) {
     return null;
@@ -34,7 +40,7 @@ const FileListContainer: React.FC<Prop> = props => {
     createFiler(Side.Right, props.state.currentSide, props.state.right!),
   ];
 
-  return <div className="fp-FileListContainer">{filers}</div>;
+  return <div className={styles.root}>{filers}</div>;
 };
 
-export default FileListContainer;
+export default Component;

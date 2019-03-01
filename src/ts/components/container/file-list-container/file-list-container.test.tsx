@@ -1,0 +1,52 @@
+import * as React from "react";
+import { shallow } from "enzyme";
+import renderer from "react-test-renderer";
+
+import { Component } from "./file-list-container";
+import { State, Side } from "../../../types/store-state/file-list";
+import FilerFactory from "../../../domains/filer-factory";
+
+describe('Container', () => {
+  describe('File List Container', () => {
+    it('should render correctly', () => {
+      const state: State = {
+        initialized: true,
+        left: FilerFactory.create({
+          id: "left",
+          location: "/left",
+          nodes: []
+        }),
+        right: FilerFactory.create({
+          id: "right",
+          location: "/right",
+          nodes: []
+        }),
+        currentSide: Side.Left
+      };
+      const tree = renderer.create(<Component state={state} />).toJSON();
+
+      expect(tree).toMatchSnapshot();
+    });
+
+    it('should mark current side of filer', () => {
+      const state: State = {
+        initialized: true,
+        left: FilerFactory.create({
+          id: "left",
+          location: "/left",
+          nodes: []
+        }),
+        right: FilerFactory.create({
+          id: "right",
+          location: "/right",
+          nodes: []
+        }),
+        currentSide: Side.Right
+      };
+      const wrapper = shallow(<Component state={state} />);
+
+      const focused = wrapper.findWhere(child => child.key() === Side.Right).prop("focused");
+      expect(focused).toStrictEqual(true);
+    });
+  });
+});
