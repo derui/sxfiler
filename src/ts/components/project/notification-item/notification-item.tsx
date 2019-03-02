@@ -1,6 +1,6 @@
 import * as React from "react";
 import { CSSTransition } from "react-transition-group";
-import { Level, Notification } from "../../../domains/notification";
+import { Level, MessageBody } from "../../../domains/notification";
 
 import * as ListItem from "../../ui/list-item/list-item";
 
@@ -15,56 +15,46 @@ interface ClassNames {
   animationEnterActive: string;
 }
 
-export type TimeoutCallback = (id: string) => void;
-
 export interface Props {
-  item: Notification;
+  body: MessageBody;
+  level: Level;
   timeouted: boolean;
-  onItemTimeouted: TimeoutCallback;
+  onExited: () => void;
 }
 
-interface State {
-  mounted: boolean;
-}
-
-export default class NotificationItem extends React.Component<Props, State> {
+export class Component extends React.PureComponent<Props> {
   constructor(props: Props) {
     super(props);
   }
 
   public render() {
-    const { item } = this.props;
+    const { body, level } = this.props;
 
     const renderer = () => {
-      let level = "";
-      switch (item.level) {
+      let levelStyle = "";
+      switch (level) {
         case Level.Info:
-          level = "info";
+          levelStyle = "info";
           break;
         case Level.Warning:
-          level = "warning";
+          levelStyle = "warning";
           break;
         case Level.Error:
-          level = "error";
+          levelStyle = "error";
           break;
       }
 
-      switch (item.body.kind) {
-        case "oneshot":
-          return (
-            <ListItem.Component className={styles.root} data-level={level}>
-              {item.body.message}
-            </ListItem.Component>
-          );
-        case "progress":
-          return null;
-      }
+      return (
+        <ListItem.Component className={styles.root} data-level={levelStyle}>
+          {body.message}
+        </ListItem.Component>
+      );
     };
 
     return (
       <CSSTransition
         in={!this.props.timeouted}
-        onExited={this.handleItemTimeouted}
+        onExited={this.handleExited}
         timeout={200}
         unmountOnExit={true}
         classNames={{
@@ -79,7 +69,7 @@ export default class NotificationItem extends React.Component<Props, State> {
     );
   }
 
-  private handleItemTimeouted = () => {
-    this.props.onItemTimeouted(this.props.item.id);
+  private handleExited = () => {
+    this.props.onExited();
   };
 }

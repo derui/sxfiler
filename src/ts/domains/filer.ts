@@ -14,7 +14,7 @@ export class Filer {
     public readonly location: string,
     public readonly nodes: Node[],
     public readonly currentCursorIndex: number
-  ) { }
+  ) {}
 
   get currentNode(): Node | null {
     if (this.nodes.length === 0) {

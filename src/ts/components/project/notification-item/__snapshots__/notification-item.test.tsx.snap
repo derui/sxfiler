@@ -11,8 +11,6 @@ exports[`Project Notification Item should be able to render warning message 1`] 
 </div>
 `;
 
-exports[`Project Notification Item should ignore progress type notification 1`] = `null`;
-
 exports[`Project Notification Item should print correctly 1`] = `
 <div
   aria-selected={false}

@@ -1,0 +1,7 @@
+@import "../../ui/commom-style/_colors.scss";
+@import "../../ui/commom-style/_variables.scss";
+@import "../../ui/commom-style/reset.module.css";
+
+.root {
+  composes: list-base from "../../ui/list/list.module.scss";
+}

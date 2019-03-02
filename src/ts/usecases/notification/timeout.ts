@@ -7,7 +7,7 @@ interface Arg {
   notificationId: string;
 }
 
-export default class UseCase implements UseCaseLike<Actions, Arg> {
+export default class TimeoutUseCase implements UseCaseLike<Actions, Arg> {
   public execute(dispatcher: Dispatcher<Actions>, arg: Arg) {
     const { notificationId } = arg;
     dispatcher.dispatch(actions.timeout(notificationId));

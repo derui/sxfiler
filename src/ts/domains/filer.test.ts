@@ -30,7 +30,7 @@ describe("Filer domain", () => {
         name: "name",
         stat,
         parentDirectory: "/",
-        marked: false
+        marked: false,
       });
       const filer = Factory.create({ id: "id", location: "/loc", nodes: [node] });
 

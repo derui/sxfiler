@@ -1,4 +1,4 @@
-import { Notification } from "./notification";
+import { Notification, NotificationType } from "./notification";
 
 /**
  * list implementation of Notification entity.
@@ -7,8 +7,17 @@ import { Notification } from "./notification";
 export default class Notifications {
   private _items: { [id: string]: Notification } = {};
   constructor(items: Notification[] = []) {
-    const self = this;
-    items.forEach(v => (self._items[v.id] = v));
+    items.forEach(v => {
+      this._items[v.id] = v;
+    });
+  }
+
+  // get notifications as array
+  get messages() {
+    return Object.values(this._items).filter(v => v.bodyKind === NotificationType.Message);
+  }
+  get progresses() {
+    return Object.values(this._items).filter(v => v.bodyKind === NotificationType.Progress);
   }
 
   /**

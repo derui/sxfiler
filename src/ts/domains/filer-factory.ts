@@ -14,11 +14,6 @@ export default class FilerFactory {
    * @param arg arguments of factory
    */
   public static create(arg: FactoryArg) {
-    return new Filer(
-      arg.id,
-      arg.location,
-      arg.nodes,
-      0
-    );
+    return new Filer(arg.id, arg.location, arg.nodes, 0);
   }
 }

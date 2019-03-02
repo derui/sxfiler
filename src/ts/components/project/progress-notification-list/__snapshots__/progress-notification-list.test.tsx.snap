@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Project Progress Notification List can render correctly 1`] = `
+<div
+  className="root"
+  role="list"
+>
+  <div
+    aria-selected={false}
+    className="root"
+    role="listitem"
+  >
+    <span
+      className="processLabel"
+    >
+      process
+    </span>
+    <div
+      className="progressBar"
+    >
+      <div
+        className="progressIndicator"
+        style={
+          Object {
+            "width": "10%",
+          }
+        }
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Project Progress Notification List can render with empty list of notification 1`] = `
+<div
+  className="root"
+  role="list"
+/>
+`;
+
+exports[`Project Progress Notification List should render progresses 1`] = `
+<div
+  className="root"
+  role="list"
+>
+  <div
+    aria-selected={false}
+    className="root"
+    role="listitem"
+  >
+    <span
+      className="processLabel"
+    >
+      foo
+    </span>
+    <div
+      className="progressBar"
+    >
+      <div
+        className="progressIndicator"
+        style={
+          Object {
+            "width": "90%",
+          }
+        }
+      />
+    </div>
+  </div>
+  <div
+    aria-selected={false}
+    className="root"
+    role="listitem"
+  >
+    <span
+      className="processLabel"
+    >
+      bar
+    </span>
+    <div
+      className="progressBar"
+    >
+      <div
+        className="progressIndicator"
+        style={
+          Object {
+            "width": "90.9090909090909%",
+          }
+        }
+      />
+    </div>
+  </div>
+</div>
+`;

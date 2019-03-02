@@ -1,0 +1,42 @@
+@import "../../ui/commom-style/_colors.scss";
+@import "../../ui/commom-style/_variables.scss";
+@import "../../ui/commom-style/reset.module.css";
+
+.root {
+  composes: listItem-base from "../../ui/list-item/list-item.module.scss";
+
+  background-color: $sol_base02;
+}
+
+.processLabel {
+  flex: 0 0 20%;
+  padding: 0 $smallSpace;
+  color: $sol_base2;
+
+  border-right: $smallSpace solid $sol_base3;
+  max-width: 20%;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.progressBar {
+  flex: 1 1 auto;
+  height: $smallSpace;
+
+  margin: auto $smallSpace;
+
+  background-color: $sol_base2;
+
+  border-radius: $smallSpace;
+}
+
+.progressIndicator {
+  height: 100%;
+  background-color: $sol_blue;
+
+  transition: width 100ms ease-out;
+
+  border-radius: $smallSpace;
+}

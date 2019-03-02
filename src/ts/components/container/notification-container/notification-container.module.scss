@@ -1,0 +1,10 @@
+@import "../../ui/commom-style/_colors.scss";
+@import "../../ui/commom-style/_variables.scss";
+@import "../../ui/commom-style/reset.module.css";
+
+.root {
+  position: relative;
+
+  width: 100%;
+  max-width: 100%;
+}

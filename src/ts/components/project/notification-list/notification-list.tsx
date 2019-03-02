@@ -1,36 +1,44 @@
 import * as React from "react";
 import { Notification } from "../../../domains/notification";
 import * as List from "../../ui/list/list";
-import NotificationItem, { TimeoutCallback } from "../notification-item/notification-item";
+import * as NotificationItem from "../notification-item/notification-item";
 
 // tslint:disable-next-line
 const styles: ClassNames = require("./notification-list.module.scss");
 
-type ClassNames = {
+interface ClassNames {
   root: string;
 }
 
-interface Props {
+export interface Props {
   // notifications given from server
   notifications: Notification[];
-  // list of timeouted notification id
-  timeouts: string[];
-  // callback to timeout item
-  onItemTimeouted: TimeoutCallback;
+  onNotificationHidden: (id: string) => void;
+
+  // notification ids that are timeouted and not yet removed.
+  timeouted: string[];
 }
 
 // make item
-function toComponent(notification: Notification, timeouts: string[], onItemTimeouted: TimeoutCallback) {
-  const timeouted = timeouts.find(v => v === notification.id) !== undefined;
-  return <NotificationItem key={notification.id} item={notification} timeouted={timeouted} onItemTimeouted={onItemTimeouted} />;
+function toComponent(notification: Notification, timeouts: string[], handle: (id: string) => void) {
+  const C = NotificationItem.Component;
+  const timeouted = timeouts.includes(notification.id);
+  const handleExited = () => handle(notification.id);
+  return (
+    <C
+      key={notification.id}
+      body={notification.getMessageBody()}
+      level={notification.level}
+      onExited={handleExited}
+      timeouted={timeouted}
+    />
+  );
 }
 
-export const NotificationList: React.FC<Props> = props => {
-  const { notifications, timeouts, onItemTimeouted } = props;
+export const Component: React.FC<Props> = props => {
+  const { notifications, timeouted } = props;
 
-  const components = notifications.map(v => toComponent(v, timeouts, onItemTimeouted));
+  const components = notifications.map(v => toComponent(v, timeouted, props.onNotificationHidden));
 
   return <List.Component className={styles.root}>{components}</List.Component>;
 };
-
-export default NotificationList;

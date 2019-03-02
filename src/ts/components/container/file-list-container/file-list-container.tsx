@@ -6,7 +6,7 @@ import NodeList from "../../project/node-list/node-list";
 // tslint:disable-next-line
 const styles: ClassNames = require("./file-list-container.module.scss");
 
-type ClassNames = {
+interface ClassNames {
   root: string;
 }
 
