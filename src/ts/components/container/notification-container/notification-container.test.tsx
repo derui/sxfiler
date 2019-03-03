@@ -29,7 +29,7 @@ describe("Container", () => {
             current: 10,
           }),
         ]),
-        timeouted: new Notifications(),
+        timeouts: new Notifications(),
       };
       const tree = renderer.create(<Component context={context()} state={state} />).toJSON();
 
@@ -46,7 +46,7 @@ describe("Container", () => {
             current: 10,
           }),
         ]),
-        timeouted: new Notifications(),
+        timeouts: new Notifications(),
       };
       const stub = (arg: any) => {
         expect(arg).toEqual({ notificationId: "id" });

@@ -3,26 +3,26 @@ import { AppAction } from "./type";
 
 export enum ActionTypes {
   timeout = "notification_timeout",
-  notify = "notification_notify",
+  receiveNotification = "notification_receive_notification",
   remove = "notification_remove",
 }
 
 type TimeoutAction = AppAction<ActionTypes.timeout, { notificationId: string }>;
-type NotifyAction = AppAction<ActionTypes.notify, { notification: Notification }>;
+type ReceiveNotificationAction = AppAction<ActionTypes.receiveNotification, { notification: Notification }>;
 type RemoveAction = AppAction<ActionTypes.remove, { notificationId: string }>;
 
-export type Actions = TimeoutAction | NotifyAction | RemoveAction;
+export type Actions = TimeoutAction | ReceiveNotificationAction | RemoveAction;
 
 const timeout = (notificationId: string): TimeoutAction => {
   return { type: ActionTypes.timeout, notificationId };
 };
 
-const notify = (notification: Notification): NotifyAction => {
-  return { type: ActionTypes.notify, notification };
+const receiveNotification = (notification: Notification): ReceiveNotificationAction => {
+  return { type: ActionTypes.receiveNotification, notification };
 };
 
 const remove = (notificationId: string): RemoveAction => {
   return { type: ActionTypes.remove, notificationId };
 };
 
-export const actions = { timeout, notify, remove };
+export const actions = { timeout, receiveNotification, remove };

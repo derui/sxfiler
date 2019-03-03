@@ -14,7 +14,7 @@ storiesOf("Project/Notification List", module)
     const handle = () => {
       return;
     };
-    return <L notifications={[]} onNotificationHidden={handle} timeouted={[]} />;
+    return <L notifications={[]} onNotificationHidden={handle} timeouts={[]} />;
   })
   .add("with notifications", () => {
     const handle = () => {
@@ -25,5 +25,5 @@ storiesOf("Project/Notification List", module)
     const info = N.createMessage("id", N.Level.Info, "id: message");
     const warning = N.createMessage("id2", N.Level.Warning, "id2: warning");
     const error = N.createMessage("id3", N.Level.Error, "id3: error");
-    return <L notifications={[info, warning, error]} timeouted={timeouts} onNotificationHidden={handle} />;
+    return <L notifications={[info, warning, error]} timeouts={timeouts} onNotificationHidden={handle} />;
   });

@@ -15,13 +15,13 @@ export interface Props {
 export class Component extends React.PureComponent<Props> {
   public render() {
     const { state } = this.props;
-    const timeouted = state.timeouted.messages.map(v => v.id);
+    const timeouts = state.timeouts.messages.map(v => v.id);
 
     return (
       <div className={styles.root}>
         <NotificationList.Component
           notifications={state.notifications.messages}
-          timeouted={timeouted}
+          timeouts={timeouts}
           onNotificationHidden={this.handleNotificationHidden}
         />
       </div>

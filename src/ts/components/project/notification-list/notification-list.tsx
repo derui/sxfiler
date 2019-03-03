@@ -16,7 +16,7 @@ export interface Props {
   onNotificationHidden: (id: string) => void;
 
   // notification ids that are timeouted and not yet removed.
-  timeouted: string[];
+  timeouts: string[];
 }
 
 // make item
@@ -36,9 +36,9 @@ function toComponent(notification: Notification, timeouts: string[], handle: (id
 }
 
 export const Component: React.FC<Props> = props => {
-  const { notifications, timeouted } = props;
+  const { notifications, timeouts } = props;
 
-  const components = notifications.map(v => toComponent(v, timeouted, props.onNotificationHidden));
+  const components = notifications.map(v => toComponent(v, timeouts, props.onNotificationHidden));
 
   return <List.Component className={styles.root}>{components}</List.Component>;
 };
