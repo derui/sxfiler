@@ -7,8 +7,13 @@ import * as types from "./types/index";
 import { StoreState } from "./types/store-state";
 import { UseCaseLike } from "./usecases/type";
 
+// interface of context
+export interface ContextLike {
+  execute<Param>(usecase: UseCaseLike<Actions, Param>, arg: Param): void;
+}
+
 // Context for application
-export class Context {
+export class Context implements ContextLike {
   /**
    * constructor of context
    * @param dispatcher dispatcher

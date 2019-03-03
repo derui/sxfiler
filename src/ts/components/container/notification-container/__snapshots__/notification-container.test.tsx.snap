@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Container Notification Container should render correctly 1`] = `
+<div
+  className="root"
+>
+  <div
+    className="root"
+    role="list"
+  >
+    <div
+      aria-selected={false}
+      className="root"
+      data-level="info"
+      role="listitem"
+    >
+      message
+    </div>
+  </div>
+</div>
+`;

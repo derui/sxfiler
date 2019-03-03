@@ -1,32 +1,33 @@
 import * as React from "react";
-import { Context } from "../../../context";
+import { ContextLike } from "../../../context";
 import { State } from "../../../types/store-state/notification";
 import TimeoutUseCase from "../../../usecases/notification/timeout";
-import { TimeoutCallback } from "../../project/notification-item/notification-item";
 import * as NotificationList from "../../project/notification-list/notification-list";
 
 // tslint:disable-next-line
 const styles = require("./notification-container.module.scss");
 
 export interface Props {
-  context: Context;
+  context: ContextLike;
   state: State;
 }
 
 export class Component extends React.PureComponent<Props> {
   public render() {
     const { state } = this.props;
+    const timeouted = state.timeouted.messages.map(v => v.id);
 
     return (
       <div className={styles.root}>
-        <NotificationList.Conmonent
-          notifications={state.notifications.items}
-          onItemTimeouted={this.handleItemTimeouted}
+        <NotificationList.Component
+          notifications={state.notifications.messages}
+          timeouted={timeouted}
+          onNotificationHidden={this.handleNotificationHidden}
         />
       </div>
     );
   }
-  private handleItemTimeouted: TimeoutCallback = (id: string) => {
+  private handleNotificationHidden = (id: string) => {
     this.props.context.execute(new TimeoutUseCase(), {
       notificationId: id,
     });
