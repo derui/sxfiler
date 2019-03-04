@@ -1,6 +1,6 @@
 // reducers for notification
-import { actions } from "../actions/ui-context";
 import { actions as otherActions } from "../actions/notification";
+import { actions } from "../actions/ui-context";
 import UIContext from "../types/ui-context";
 import reducer from "./ui-context";
 

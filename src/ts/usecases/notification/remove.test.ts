@@ -1,11 +1,11 @@
-import UseCase from "./remove";
-import { Dispatcher } from "../../dispatcher";
 import { actions } from "../../actions/notification";
+import { Dispatcher } from "../../dispatcher";
+import UseCase from "./remove";
 
 describe("UseCases", () => {
-  describe('Notification', () => {
-    describe('Remove', () => {
-      it('dispatchs remove action', () => {
+  describe("Notification", () => {
+    describe("Remove", () => {
+      it("dispatchs remove action", () => {
         const dispatcher = new Dispatcher();
         const fn = jest.fn();
 

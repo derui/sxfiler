@@ -1,12 +1,12 @@
-import UseCase from "./receive-notification";
-import { Dispatcher } from "../../dispatcher";
 import { actions } from "../../actions/notification";
+import { Dispatcher } from "../../dispatcher";
 import { createMessage, Level } from "../../domains/notification";
+import UseCase from "./receive-notification";
 
 describe("UseCases", () => {
-  describe('Notification', () => {
-    describe('Receive Notification', () => {
-      it('dispatchs action', () => {
+  describe("Notification", () => {
+    describe("Receive Notification", () => {
+      it("dispatchs action", () => {
         const dispatcher = new Dispatcher();
         const fn = jest.fn();
 

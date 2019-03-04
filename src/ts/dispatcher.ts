@@ -1,6 +1,6 @@
 import * as types from "./types/index";
 
-export interface DispatcherLike<P> extends types.Dispatcher<P>, types.Observer<P> { }
+export interface DispatcherLike<P> extends types.Dispatcher<P>, types.Observer<P> {}
 
 export class Dispatcher<P> implements DispatcherLike<P> {
   private handlers: Array<types.Subscriber<P>>;

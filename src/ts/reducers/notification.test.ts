@@ -3,22 +3,22 @@ import { actions } from "../actions/notification";
 import { actions as otherActions } from "../actions/ui-context";
 import { createMessage, Level } from "../domains/notification";
 import Notifications from "../domains/notifications";
-import reducer from "./notification";
 import { empty, State } from "../types/store-state/notification";
+import reducer from "./notification";
 
 describe("reducers", () => {
   describe("Notification state", () => {
     it("remove the notification specified id in Timeout action", () => {
       const state: State = {
         notifications: new Notifications([createMessage("id", Level.Info, "message")]),
-        timeouts: new Notifications()
+        timeouts: new Notifications(),
       };
 
       const ret = reducer(state, actions.timeout("id"));
 
       expect(ret).toEqual({
         notifications: state.notifications,
-        timeouts: state.notifications
+        timeouts: state.notifications,
       });
     });
 
@@ -45,7 +45,7 @@ describe("reducers", () => {
     it("should not append to list of timeouts if unknown id given", () => {
       const state: State = {
         notifications: new Notifications([createMessage("id", Level.Info, "message")]),
-        timeouts: new Notifications()
+        timeouts: new Notifications(),
       };
 
       const ret = reducer(state, actions.timeout("unknown"));
@@ -56,13 +56,12 @@ describe("reducers", () => {
     it("should through unhandle action", () => {
       const state: State = {
         notifications: new Notifications([createMessage("id", Level.Info, "message")]),
-        timeouts: new Notifications()
+        timeouts: new Notifications(),
       };
 
       const ret = reducer(state, otherActions.enableFileTree());
 
       expect(ret).toStrictEqual(state);
     });
-
   });
 });

@@ -7,8 +7,9 @@ export function reducer(state: State = empty(), action: Actions): State {
   switch (action.type) {
     case ActionTypes.remove:
       return {
-        ...state, notifications: state.notifications.remove(action.notificationId),
-        timeouts: state.timeouts.remove(action.notificationId)
+        ...state,
+        notifications: state.notifications.remove(action.notificationId),
+        timeouts: state.timeouts.remove(action.notificationId),
       };
     case ActionTypes.timeout:
       const notification = state.notifications.findById(action.notificationId);
