@@ -8,7 +8,7 @@ import { Actions } from "./ts/actions";
 import { ApiMethod } from "./ts/apis";
 import App from "./ts/app";
 import { Context } from "./ts/context";
-import Dispatcher from "./ts/dispatcher";
+import { Dispatcher } from "./ts/dispatcher";
 import * as jrpc from "./ts/libs/json-rpc";
 import { Client } from "./ts/libs/json-rpc/client";
 import { setLocator } from "./ts/locator";
