@@ -5,7 +5,7 @@ import { State as KeymapState } from "../../types/store-state/keymap";
 
 type ActionCallback = (action: string) => void;
 
-interface Prop {
+export interface Props {
   className: string;
   keymap: KeymapState;
   onAction: ActionCallback;
@@ -19,7 +19,7 @@ function findBinding(keymap: KeymapState, key: string) {
  * handle keyboard event that all keydown event on application
  * @param props properties of component
  */
-function handleKeyDown(props: Prop): (ev: React.KeyboardEvent<any>) => void {
+function handleKeyDown(props: Props): (ev: React.KeyboardEvent<any>) => void {
   return ev => {
     switch (ev.type) {
       case "keydown": {
@@ -43,12 +43,10 @@ function handleKeyDown(props: Prop): (ev: React.KeyboardEvent<any>) => void {
   };
 }
 
-const KeyHandler: React.FC<Prop> = props => {
+export const Component: React.FC<Props> = props => {
   return (
     <div className={props.className} onKeyDown={handleKeyDown(props)}>
       {props.children}
     </div>
   );
 };
-
-export default KeyHandler;
