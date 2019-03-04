@@ -7,7 +7,7 @@ import * as Element from "../../components/ui/element/element";
 import * as ListItem from "../../components/ui/list-item/list-item";
 
 // tslint:disable-next-line
-const styles = require('./list-item.stories.module.scss');
+const styles = require("./list-item.stories.module.scss");
 
 storiesOf("UI Kit/List Item", module)
   .addDecorator(withInfo)

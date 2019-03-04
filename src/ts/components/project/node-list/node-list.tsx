@@ -6,7 +6,7 @@ import * as List from "../../ui/list/list";
 import NodeItem from "./../node-item/node-item";
 
 // tslint:disable-next-line
-const styles: ClassNames = require('./node-list.module.scss');
+const styles: ClassNames = require("./node-list.module.scss");
 
 export interface ClassNames {
   root?: string;
@@ -15,7 +15,7 @@ export interface ClassNames {
   empty?: string;
 }
 
-interface HeaderProp {
+interface HeaderProps {
   className?: string;
   directory: string;
   focused: boolean;
@@ -26,7 +26,7 @@ const HeaderElement = Element.createComponent({ tagName: "header" });
 /**
  * component definition for header of file list
  */
-const Header: React.FunctionComponent<HeaderProp> = ({ className, directory, focused }) => {
+const Header: React.FunctionComponent<HeaderProps> = ({ className, directory, focused }) => {
   return (
     <HeaderElement className={className} data-focused={focused}>
       {directory}
@@ -34,14 +34,16 @@ const Header: React.FunctionComponent<HeaderProp> = ({ className, directory, foc
   );
 };
 
-interface Prop {
+interface Props {
   location: string;
   nodes: Node[];
   cursor: number;
   focused: boolean;
 }
 
-const FileList: React.FunctionComponent<Prop> = props => {
+export type ElementType = React.ReactElement<Props, React.FunctionComponent<Props>>;
+
+export const Component: React.FunctionComponent<Props> = props => {
   const { nodes, cursor, focused } = props;
   const items = nodes.map((node, index) => <NodeItem key={index} item={node} selected={index === cursor && focused} />);
 
@@ -58,5 +60,3 @@ const FileList: React.FunctionComponent<Prop> = props => {
     </Element.Component>
   );
 };
-
-export default FileList;

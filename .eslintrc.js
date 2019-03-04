@@ -3,8 +3,7 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   extends:  [
     'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',
-    'plugin:react/recommended',
+    'plugin:prettier/recommended'
   ],
   parserOptions:  {
     ecmaVersion:  2018,  // Allows for the parsing of modern ECMAScript features
@@ -16,6 +15,7 @@ module.exports = {
   // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
   // e.g. "@typescript-eslint/explicit-function-return-type": "off",
   rules: {
+    "@typescript-eslint/indent": "2",
     "@typescript-eslint/interface-name": false,
     "@typescript-eslint/no-empty-interface": false,
     "@typescript-eslint/object-literal-sort-keys": false,
