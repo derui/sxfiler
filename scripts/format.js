@@ -21,17 +21,11 @@ glob('{src,test}/**/*.{ml,mli}', (er, files) => {
   Promise.all(files.map(formatting));
 });
 
-execFileSync(
-  'prettier',
-  ['--single-quote', '--trailing-comma', 'es5', '--write', 'scripts/*.js'],
-  { stdio: 'inherit' }
-);
+execFileSync('prettier', ['--single-quote', '--trailing-comma', 'es5', '--write', 'scripts/*.js'], {
+  stdio: 'inherit',
+});
 
-execFileSync(
-  'prettier',
-  ['--parser','typescript', '--write', 'src/ts/**/*.{ts,tsx}'],
-  { stdio: 'inherit' }
-);
+execFileSync('prettier', ['--parser', 'typescript', '--write', 'src/ts/**/*.{ts,tsx}'], { stdio: 'inherit' });
 
 execFileSync('prettier', ['--write', 'src/sass/**/*.scss'], {
   stdio: 'inherit',
