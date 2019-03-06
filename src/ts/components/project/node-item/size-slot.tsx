@@ -1,7 +1,7 @@
 import bigInt from "big-integer";
 import * as React from "react";
 
-// tslint:disable-next-line
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const styles = require("./node-item.module.scss");
 
 enum SizeUnit {

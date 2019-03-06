@@ -20,14 +20,12 @@ export interface FactoryArg {
  * @param bits
  */
 function bitsToCapability(bits: number): Capability {
-  // tslint:disable:no-bitwise
   const writable = (bits & 0o2) === 0o2;
   return new Capability({
     writable,
     readable: (bits & 0o4) === 0o4,
     executable: (bits & 0o1) === 0o1,
   });
-  // tslint:enable:no-bitwise
 }
 
 /**
@@ -40,11 +38,9 @@ function toMode(str: string): Mode {
     throw new Error(`Invalid number format: ${str}`);
   }
 
-  // tslint:disable:no-bitwise
   const ownerBits = (capabilities & 0o700) >> 6;
   const groupBits = (capabilities & 0o70) >> 3;
   const othersBits = capabilities & 0o7;
-  // tslint:enable:no-bitwise
 
   return new Mode({
     owner: bitsToCapability(ownerBits),

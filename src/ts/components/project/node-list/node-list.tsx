@@ -5,7 +5,7 @@ import * as Element from "../../ui/element/element";
 import * as List from "../../ui/list/list";
 import NodeItem from "./../node-item/node-item";
 
-// tslint:disable-next-line
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const styles: ClassNames = require("./node-list.module.scss");
 
 export interface ClassNames {

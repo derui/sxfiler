@@ -3,7 +3,7 @@ import { ProgressBody } from "../../../domains/notification";
 import * as Element from "../../ui/element/element";
 import * as ListItem from "../../ui/list-item/list-item";
 
-// tslint:disable-next-line
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const styles = require("./progress-notification-item.module.scss");
 
 // make a progress bar

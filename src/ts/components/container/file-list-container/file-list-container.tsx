@@ -3,9 +3,8 @@ import { Filer } from "../../../domains/filer";
 import { Side, State } from "../../../types/store-state/file-list";
 import * as NodeList from "../../project/node-list/node-list";
 
-/* eslint-disable @typescript-eslint/no-var-requires */
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const styles: ClassNames = require("./file-list-container.module.scss");
-/* eslint-enable @typescript-eslint/no-var-requires */
 
 interface ClassNames {
   root: string;

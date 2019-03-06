@@ -4,7 +4,7 @@ import { Notification } from "../../../domains/notification";
 import * as List from "../../ui/list/list";
 import { Component as Item } from "../progress-notification-item/progress-notification-item";
 
-// tslint:disable-next-line
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const styles = require("./progress-notification-list.module.scss");
 
 export interface Props {

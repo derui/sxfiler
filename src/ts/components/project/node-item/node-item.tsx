@@ -7,7 +7,7 @@ import Name from "./name-slot";
 import Size from "./size-slot";
 import Timestamp from "./timestamp-slot";
 
-// tslint:disable-next-line
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const styles = require("./node-item.module.scss");
 
 interface Prop {

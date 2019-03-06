@@ -3,7 +3,7 @@ import { Notification } from "../../../domains/notification";
 import * as List from "../../ui/list/list";
 import * as NotificationItem from "../notification-item/notification-item";
 
-// tslint:disable-next-line
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const styles: ClassNames = require("./notification-list.module.scss");
 
 interface ClassNames {

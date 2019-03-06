@@ -4,7 +4,7 @@ import { Level, MessageBody } from "../../../domains/notification";
 
 import * as ListItem from "../../ui/list-item/list-item";
 
-// tslint:disable-next-line
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const styles: ClassNames = require("./notification-item.module.scss");
 
 interface ClassNames {

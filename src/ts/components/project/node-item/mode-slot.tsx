@@ -1,7 +1,8 @@
 import * as React from "react";
-import { Capability, Mode } from "../../../domains/file-stat";
+import { Capability } from "../../../domains/capability";
+import { Mode } from "../../../domains/mode";
 
-// tslint:disable-next-line
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const styles = require("./node-item.module.scss");
 
 function capabilityToString(cap: Capability) {

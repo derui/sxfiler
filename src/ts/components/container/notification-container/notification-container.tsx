@@ -4,7 +4,7 @@ import { State } from "../../../types/store-state/notification";
 import TimeoutUseCase from "../../../usecases/notification/timeout";
 import * as NotificationList from "../../project/notification-list/notification-list";
 
-// tslint:disable-next-line
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const styles = require("./notification-container.module.scss");
 
 export interface Props {

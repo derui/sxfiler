@@ -5,7 +5,7 @@ import * as React from "react";
 import * as ListItem from "../../components/ui/list-item/list-item";
 import * as List from "../../components/ui/list/list";
 
-// tslint:disable-next-line
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const styles = require("./list.stories.module.scss");
 
 storiesOf("UI Kit/List", module)
