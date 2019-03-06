@@ -3,7 +3,7 @@ import * as React from "react";
 import renderer from "react-test-renderer";
 
 import NodeItem from "../node-item/node-item";
-import T from "./node-list";
+import { Component as T } from "./node-list";
 
 import { create } from "../../../domains/node";
 
