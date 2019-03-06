@@ -1,0 +1,25 @@
+@import "../../ui/commom-style/_colors.scss";
+@import "../../ui/commom-style/_variables.scss";
+@import "../../ui/commom-style/reset.module.css";
+
+.root {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  top: 0;
+
+  width: $smallSpace;
+  height: 100%;
+
+  background-color: transparent;
+
+  padding: $baseSpace;
+}
+
+.bar {
+  position: relative;
+  display: inline-block;
+
+  border-radius: $smallSpace;
+  background-color: $sol_base01;
+}
