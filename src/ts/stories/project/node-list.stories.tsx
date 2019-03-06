@@ -5,7 +5,7 @@ import * as React from "react";
 
 import { create } from "../../domains/node";
 
-import NodeList from "../../components/project/node-list/node-list";
+import { Component as NodeList } from "../../components/project/node-list/node-list";
 import FileStatFactory from "../../domains/file-stat-factory";
 
 function makeNode(name: string, marked: boolean, isDirectory = false, isSymlink = false) {
