@@ -11,11 +11,13 @@ export type Component = React.FC<Props>;
 /**
  * Create element for base element
  */
-export function createComponent(context: { tagName?: string } = {}): React.ComponentType<Props> {
+export function createComponent<H extends HTMLElement = HTMLElement>(
+  context: { tagName?: string } = {}
+): React.ComponentType<Props<H>> {
   const { tagName = "div" } = context;
 
-  return applyDisplayName("Element", ({ className, ...props }: Props) => {
-    return React.createElement(tagName, { className, ...props });
+  return applyDisplayName("Element", (props: Props<H>) => {
+    return React.createElement(tagName, props);
   });
 }
 

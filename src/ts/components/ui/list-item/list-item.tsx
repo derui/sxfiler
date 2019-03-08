@@ -17,7 +17,8 @@ export function createComponent<T extends { className?: string } = Element.Props
 ): React.ComponentType<Props<T, H>> {
   const Container = context.container || Element.createComponent();
 
-  return applyDisplayName("ListItem", ({ selected = false, ...props }: Props<T, H>) => {
+  return applyDisplayName("ListItem", (props: Props<T, H>) => {
+    const { selected = false } = props;
     return <Container role="listitem" aria-selected={selected} {...props} />;
   });
 }
