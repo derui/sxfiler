@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Observer Manager throws if rootMargin is invalid 1`] = `"rootMargin must be specified in pixels or percent"`;
