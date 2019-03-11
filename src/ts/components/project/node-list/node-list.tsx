@@ -5,7 +5,7 @@ import * as Element from "../../ui/element/element";
 import * as List from "../../ui/list/list";
 import NodeItem from "../node-item/node-item";
 import { Component as RootRef } from "../../ui/root-ref/root-ref";
-import { ObserverRoot, ObserverManager } from "../../../libs/intersection-observer";
+import { Observer, ObserverRoot, ObserverManager } from "../../../libs/intersection-observer";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const styles: ClassNames = require("./node-list.module.scss");
@@ -52,22 +52,28 @@ function registerObserverRoot(rootId: string): (element: Element | null) => void
     });
 }
 
+function makeItem(node: Node, index: number, rootId: string, selected: boolean) {
+  return (
+    <Observer key={index} rootId={rootId}>
+      <NodeItem item={node} selected={selected} />
+    </Observer>
+  );
+}
+
 export const Component: React.FunctionComponent<Props> = props => {
   const { nodes, cursor, focused } = props;
-  const items = nodes.map((node, index) => <NodeItem key={index} item={node} selected={index === cursor && focused} />);
-
   return (
     <ObserverRoot>
       {rootId => {
         return (
           <Element.Component className={styles.root}>
             <Header key="header" className={styles.header} directory={props.location} focused={props.focused} />
-            {items.length === 0 ? (
+            {nodes.length === 0 ? (
               <div className={styles.empty} />
             ) : (
               <RootRef rootRef={registerObserverRoot(rootId)}>
                 <List.Component className={styles.list} key="body">
-                  {items}
+                  {nodes.map((node, index) => makeItem(node, index, rootId, cursor === index && focused))}
                 </List.Component>
               </RootRef>
             )}

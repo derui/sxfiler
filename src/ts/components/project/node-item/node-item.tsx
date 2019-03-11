@@ -10,14 +10,14 @@ import Timestamp from "./timestamp-slot";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const styles = require("./node-item.module.scss");
 
-interface Prop {
+interface Props {
   item: Domain.Node;
   selected: boolean;
 }
 
 const Element = ListItem.createComponent();
 
-export default class NodeItem extends React.PureComponent<Prop> {
+export class Component extends React.PureComponent<Props> {
   public render() {
     const { item, selected } = this.props;
 
