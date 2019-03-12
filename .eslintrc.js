@@ -1,28 +1,30 @@
 module.exports = {
-  // parserに'vue-eslint-parser'を指定し、'@typescript-eslint/parser'はparserOptionsに指定する
+  plugins: ["@typescript-eslint"],
   parser: '@typescript-eslint/parser',
   extends:  [
-    'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended'
+    'plugin:prettier/recommended',
+    "plugin:react/recommended",
   ],
+  env: {
+    es6: true,
+    browser: true,
+  },
   parserOptions:  {
     ecmaVersion:  2018,  // Allows for the parsing of modern ECMAScript features
     sourceType:  'module',  // Allows for the use of imports
     ecmaFeatures:  {
       jsx: true,  // Allows for the parsing of JSX
     },
+    project: "./tsconfig.json",
   },
-  // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
-  // e.g. "@typescript-eslint/explicit-function-return-type": "off",
   rules: {
-    "@typescript-eslint/indent": "2",
-    "@typescript-eslint/interface-name": false,
-    "@typescript-eslint/no-empty-interface": false,
-    "@typescript-eslint/object-literal-sort-keys": false,
-    "@typescript-eslint/object-literal-shorthand": false,
-    "@typescript-eslint/variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore", "allow-pascal-case"],
 
-    'prettier/prettier': ['error']
+    "react/jsx-uses-vars": ["warn", {
+      "extensions": [".tsx"]
+    }],
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/no-unnecessary-type-assertion": "error",
+    "prettier/prettier": ['error'],
   },
   settings:  {
     react:  {
