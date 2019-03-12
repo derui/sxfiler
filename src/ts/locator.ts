@@ -12,7 +12,7 @@ let locator: Locator = {};
  * Set new locator to global context
  * @param newLocator
  */
-export function setLocator(newLocator: Locator) {
+export function setLocator(newLocator: Locator): void {
   locator = newLocator;
 }
 

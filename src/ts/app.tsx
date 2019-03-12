@@ -1,7 +1,7 @@
 import * as React from "react";
 
 class App extends React.Component {
-  public render() {
+  public render(): React.ReactElement {
     return (
       <div className="App">
         <header className="App-header">

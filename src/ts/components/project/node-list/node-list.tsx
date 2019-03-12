@@ -3,7 +3,7 @@ import * as React from "react";
 import { Node } from "../../../domains/node";
 import * as Element from "../../ui/element/element";
 import * as List from "../../ui/list/list";
-import NodeItem from "../node-item/node-item";
+import { Component as NodeItem } from "../node-item/node-item";
 import { Component as RootRef } from "../../ui/root-ref/root-ref";
 import { Observer, ObserverRoot, ObserverManager } from "../../../libs/intersection-observer";
 
@@ -52,15 +52,11 @@ function registerObserverRoot(rootId: string): (element: Element | null) => void
     });
 }
 
-function makeItem(node: Node, index: number, rootId: string, selected: boolean) {
-  return (
-    <Observer key={index} rootId={rootId}>
-      <NodeItem item={node} selected={selected} />
-    </Observer>
-  );
+function makeItem(node: Node, index: number, rootId: string, selected: boolean): React.JSX.Element {
+  return <NodeItem item={node} selected={selected} />;
 }
 
-export const Component: React.FunctionComponent<Props> = props => {
+export const Component: React.FunctionComponent<Props> = (props): JSX.Element => {
   const { nodes, cursor, focused } = props;
   return (
     <ObserverRoot>
@@ -72,9 +68,11 @@ export const Component: React.FunctionComponent<Props> = props => {
               <div className={styles.empty} />
             ) : (
               <RootRef rootRef={registerObserverRoot(rootId)}>
-                <List.Component className={styles.list} key="body">
-                  {nodes.map((node, index) => makeItem(node, index, rootId, cursor === index && focused))}
-                </List.Component>
+                <Observer>
+                  <List.Component className={styles.list} key="body">
+                    {nodes.map((node, index) => makeItem(node, index, rootId, cursor === index && focused))}
+                  </List.Component>
+                </Observer>
               </RootRef>
             )}
           </Element.Component>

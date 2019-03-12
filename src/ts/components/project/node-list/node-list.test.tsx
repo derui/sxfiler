@@ -2,7 +2,7 @@ import { shallow } from "enzyme";
 import * as React from "react";
 import renderer from "react-test-renderer";
 
-import NodeItem from "../node-item/node-item";
+import { Component as NodeItem } from "../node-item/node-item";
 import { Component as T } from "./node-list";
 
 import { create } from "../../../domains/node";

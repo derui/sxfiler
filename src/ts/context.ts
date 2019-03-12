@@ -14,23 +14,31 @@ export interface ContextLike {
 
 // Context for application
 export class Context implements ContextLike {
+  public readonly client: Client<ApiMethod>;
+  public readonly dispatcher: types.Dispatcher<Actions>;
+  public readonly store: Store<StoreState, Actions>;
+
   /**
    * constructor of context
    * @param dispatcher dispatcher
    * @param store store
    */
-  constructor(
-    public readonly client: Client<ApiMethod>,
-    public readonly dispatcher: types.Dispatcher<Actions>,
-    public readonly store: Store<StoreState, Actions>
-  ) {}
+  public constructor(
+    client: Client<ApiMethod>,
+    dispatcher: types.Dispatcher<Actions>,
+    store: Store<StoreState, Actions>
+  ) {
+    this.client = client;
+    this.dispatcher = dispatcher;
+    this.store = store;
+  }
 
   /**
    * execute use case with context
    * @param usecase an usecase to run
    * @param arg the argument to pass use case
    */
-  public execute<Param>(usecase: UseCaseLike<Actions, Param>, arg: Param) {
+  public execute<Param>(usecase: UseCaseLike<Actions, Param>, arg: Param): void {
     usecase.execute(this.dispatcher, arg);
   }
 }

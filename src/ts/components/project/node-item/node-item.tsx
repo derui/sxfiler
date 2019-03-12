@@ -10,7 +10,7 @@ import Timestamp from "./timestamp-slot";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const styles = require("./node-item.module.scss");
 
-interface Props {
+export interface Props {
   item: Domain.Node;
   selected: boolean;
 }
