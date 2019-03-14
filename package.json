@@ -104,6 +104,7 @@
     "react-test-renderer": "^16.8.3",
     "react-transition-group": "^2.5.0",
     "redux": "^4.0.1",
+    "resize-observer-polyfill": "^1.5.1",
     "typescript": "^3.3.0",
     "uuid": "^3.3.2"
   },
