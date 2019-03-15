@@ -1,9 +1,13 @@
 import * as React from "react";
 
+import { ResizeSensor } from "../resize-sensor";
+
 export interface Props {
-  container: string;
+  refName?: string;
+  container?: string;
   className?: string;
   style?: object;
+  children: (size: { width: number; height: number }) => React.ReactElement;
 }
 
 interface State {
@@ -13,19 +17,21 @@ interface State {
 
 // AutoSizer is HoC to add ability to handle size of component
 export default class AutoSizer extends React.Component<Props, State> {
-  public static defaultProps: Props = {
-    container: "div",
-  };
-
   state: State = {
     width: 0,
     height: 0,
   };
 
-  private _ref = React.createRef();
+  // the callback to handle resize event
+  private handleResize = (entry: ResizeObserverEntry) => {
+    this.setState({
+      width: entry.contentRect.width,
+      height: entry.contentRect.height,
+    });
+  };
 
   public render(): JSX.Element {
-    const { children, container, className, style } = this.props;
+    const { refName = "ref", children, container = "div", className, style } = this.props;
     const { width, height } = this.state;
 
     const outerStyle = { overflow: "visible" };
@@ -40,17 +46,20 @@ export default class AutoSizer extends React.Component<Props, State> {
       boilOnChildren = true;
     }
 
-    return React.createElement(
-      container,
-      {
-        ref: this._ref,
-        className,
-        style: {
-          ...outerStyle,
-          ...style,
-        },
-      },
-      boilOnChildren ? children : null
+    return (
+      <ResizeSensor onResize={this.handleResize} refName={refName}>
+        {React.createElement(
+          container,
+          {
+            className,
+            style: {
+              ...outerStyle,
+              ...style,
+            },
+          },
+          boilOnChildren ? null : children(Object.assign({}, this.state))
+        )}
+      </ResizeSensor>
     );
   }
 }

@@ -89,6 +89,7 @@
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.12.4",
+    "eslint_d": "^7.3.0",
     "intersection-observer": "^0.5.1",
     "karma": "^4.0.1",
     "karma-electron": "^6.0.0",
