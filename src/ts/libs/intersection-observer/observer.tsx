@@ -70,13 +70,8 @@ export class Component extends React.Component<Props> {
     };
   };
 
-  public render(): JSX.Element | null {
-    const child = React.Children.only(this.props.children);
-    if (!React.isValidElement(child)) {
-      return null;
-    }
-
-    return React.cloneElement(child, {
+  public render(): JSX.Element {
+    return React.cloneElement(this.props.children, {
       ref: this.handleNode,
     });
   }

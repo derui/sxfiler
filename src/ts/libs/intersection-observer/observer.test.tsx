@@ -1,6 +1,5 @@
 import * as React from "react";
 import * as enzyme from "enzyme";
-import renderer from "react-test-renderer";
 
 import * as observer from "./observer-manager";
 import * as Observer from "./observer";
@@ -11,16 +10,6 @@ afterEach(() => {
 
 describe("Intersection Observer for React", () => {
   describe("Observer Element", () => {
-    it("throws if component has more than a child", () => {
-      const component = (
-        <Observer.Component rootId="tmp">
-          <span />
-          <span />
-        </Observer.Component>
-      );
-
-      expect(() => renderer.create(component)).toThrowErrorMatchingSnapshot();
-    });
 
     it("observe when component mounted", () => {
       const id = observer.createRoot();

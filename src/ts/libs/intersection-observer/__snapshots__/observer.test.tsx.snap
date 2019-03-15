@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Intersection Observer for React Observer Element throws if component has more than a child 1`] = `"React.Children.only expected to receive a single React element child."`;

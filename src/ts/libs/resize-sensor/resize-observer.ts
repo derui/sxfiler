@@ -27,7 +27,6 @@ function observerCallback(entries: ResizeObserverEntry[], observer: ResizeObserv
  */
 export function observe(element: Element, callback: ResizeCallback) {
   observer.observe(element);
-
   callbackMap.set(element, callback);
 }
 
