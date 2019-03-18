@@ -1,2 +1,1 @@
-
-export {Component as ResizeSensor} from "./resize-sensor";
+export { Component as ResizeSensor } from "./resize-sensor";

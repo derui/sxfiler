@@ -29,14 +29,26 @@ function makeNode(name: string, marked: boolean, isDirectory = false, isSymlink 
   });
 }
 
+const style = {
+  height: "100px",
+};
+
 storiesOf("Project/Node List", module)
   .addDecorator(withInfo)
   .addDecorator(withKnobs)
   .addParameters({ info: { inline: true } })
   .add("empty list", () => {
-    return <NodeList nodes={[]} location="loc" cursor={number("cursor", 0)} focused={boolean("focused", false)} />;
+    return (
+      <div style={style}>
+        <NodeList nodes={[]} location="loc" cursor={number("cursor", 0)} focused={boolean("focused", false)} />
+      </div>
+    );
   })
   .add("with some nodes", () => {
     const nodes = [makeNode("file.txt", true), makeNode("dir", false, true), makeNode("link.txt", false, false, false)];
-    return <NodeList nodes={nodes} location="loc" cursor={number("cursor", 0)} focused={boolean("focused", false)} />;
+    return (
+      <div style={style}>
+        <NodeList nodes={nodes} location="loc" cursor={number("cursor", 0)} focused={boolean("focused", false)} />
+      </div>
+    );
   });

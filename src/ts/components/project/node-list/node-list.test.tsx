@@ -1,8 +1,6 @@
-import { shallow } from "enzyme";
 import * as React from "react";
 import renderer from "react-test-renderer";
 
-import { Component as NodeItem } from "../node-item/node-item";
 import { Component as T } from "./node-list";
 
 import { create } from "../../../domains/node";
@@ -32,11 +30,11 @@ function makeNode(name: string, isDirectory = false, isSymlink = false) {
 
 describe("Project", () => {
   describe("Node List", () => {
-    it("should print correctly", () => {
+    it("should not print before resized", () => {
       const nodes = [makeNode("file.txt")];
-      const wrapper = shallow(<T nodes={nodes} location="loc" cursor={0} focused={false} />);
+      const tree = renderer.create(<T nodes={nodes} location="loc" cursor={0} focused={false} />).toJSON();
 
-      expect(wrapper.find(NodeItem)).toHaveLength(1);
+      expect(tree).toMatchSnapshot();
     });
 
     it("should select a node locating same the index of cursor when focused", () => {

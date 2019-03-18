@@ -4,7 +4,7 @@
 
 .root {
   display: grid;
-  grid-template-rows: calc($baseSpace * 2 + 1rem) 1fr;
+  grid-template-rows: calc( #{$baseSpace} * 2 + 1rem ) 1fr;
 
   width: 100%;
   height: 100%;
@@ -16,6 +16,13 @@
   background-color: $sol_base03;
 
   font-size: 1rem;
+}
+
+.resizeContainer {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .header {

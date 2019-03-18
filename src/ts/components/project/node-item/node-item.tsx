@@ -13,16 +13,17 @@ const styles = require("./node-item.module.scss");
 export interface Props {
   item: Domain.Node;
   selected: boolean;
+  hidden?: boolean;
 }
 
 const Element = ListItem.createComponent();
 
 export class Component extends React.PureComponent<Props> {
   public render() {
-    const { item, selected } = this.props;
+    const { item, selected, hidden = false } = this.props;
 
     return (
-      <Element className={styles.nodeItem} aria-selected={selected} data-marked={item.marked}>
+      <Element className={styles.nodeItem} aria-selected={selected} data-marked={item.marked} aria-hidden={hidden}>
         <Mode key="mode" mode={item.stat.mode} isDirectory={item.stat.isDirectory} isSymlink={item.stat.isSymlink} />
         <Timestamp key="timestamp" timestamp={item.stat.mtime} />
         <Size key="size" size={item.stat.sizeAsBigInt} />

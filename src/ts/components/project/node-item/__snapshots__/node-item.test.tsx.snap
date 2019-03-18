@@ -2,6 +2,7 @@
 
 exports[`Project Node Item should add class correctly when marked 1`] = `
 <div
+  aria-hidden={false}
   aria-selected={false}
   className="nodeItem"
   data-marked={true}
@@ -32,6 +33,7 @@ exports[`Project Node Item should add class correctly when marked 1`] = `
 
 exports[`Project Node Item should add class correctly when selected 1`] = `
 <div
+  aria-hidden={false}
   aria-selected={true}
   className="nodeItem"
   data-marked={false}
@@ -62,6 +64,7 @@ exports[`Project Node Item should add class correctly when selected 1`] = `
 
 exports[`Project Node Item should add class correctly when selected and marked 1`] = `
 <div
+  aria-hidden={false}
   aria-selected={true}
   className="nodeItem"
   data-marked={true}
@@ -92,6 +95,7 @@ exports[`Project Node Item should add class correctly when selected and marked 1
 
 exports[`Project Node Item should print correctly 1`] = `
 <div
+  aria-hidden={false}
   aria-selected={false}
   className="nodeItem"
   data-marked={false}

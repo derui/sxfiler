@@ -20,6 +20,10 @@
     border-left: 4px solid $sol_orange;
   }
 
+  &[aria-hidder="true"] {
+    visibility: hidden;
+  }
+
   &[data-marked="true"] {
     background-color: rgba($sol_blue, 0.25);
   }

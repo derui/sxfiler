@@ -33,7 +33,7 @@ describe("Resize Sensor for React", () => {
       );
       wrapper.unmount();
 
-      expect(spyObserve).toHaveBeenCalledTimes(2);
+      expect(spyObserve).toHaveBeenCalledTimes(1);
       expect(spyUnobserve).toHaveBeenCalledTimes(1);
     });
 
@@ -49,9 +49,9 @@ describe("Resize Sensor for React", () => {
 
         const observe = jest.spyOn(wrapper.instance() as any, "observe");
 
-        wrapper.setProps({ onResize: jest.fn() });
+        wrapper.setProps({ onResize: () => {} });
 
-        expect(observe).toHaveBeenCalledTimes(2);
+        expect(observe).toHaveBeenCalledTimes(1);
       });
     });
   });

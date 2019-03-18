@@ -5,30 +5,20 @@ exports[`Container File List Container should render correctly 1`] = `
   className="root"
 >
   <div
-    className="root"
-  >
-    <header
-      className="header"
-      data-focused={true}
-    >
-      /left
-    </header>
-    <div
-      className="empty"
-    />
-  </div>
+    className="resizeContainer"
+    style={
+      Object {
+        "overflow": "visible",
+      }
+    }
+  />
   <div
-    className="root"
-  >
-    <header
-      className="header"
-      data-focused={false}
-    >
-      /right
-    </header>
-    <div
-      className="empty"
-    />
-  </div>
+    className="resizeContainer"
+    style={
+      Object {
+        "overflow": "visible",
+      }
+    }
+  />
 </div>
 `;

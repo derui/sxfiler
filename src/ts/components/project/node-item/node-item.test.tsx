@@ -4,7 +4,7 @@ import renderer from "react-test-renderer";
 import { create } from "../../../domains/node";
 
 import FileStatFactory from "../../../domains/file-stat-factory";
-import T from "./node-item";
+import { Component as T } from "./node-item";
 
 function makeNode(marked: boolean, isDirectory = false, isSymlink = false) {
   return create({

@@ -5,7 +5,7 @@ import * as React from "react";
 
 import { create } from "../../domains/node";
 
-import NodeItem from "../../components/project/node-item/node-item";
+import { Component as NodeItem } from "../../components/project/node-item/node-item";
 import FileStatFactory from "../../domains/file-stat-factory";
 
 storiesOf("Project/Node Item", module)

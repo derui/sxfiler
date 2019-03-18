@@ -25,6 +25,7 @@ export class Component extends React.Component<Props> {
 
   public componentDidUpdate(prevProps: Props) {
     if (prevProps.onResize !== this.props.onResize) {
+      this.unobserve();
       this.observe();
     }
   }

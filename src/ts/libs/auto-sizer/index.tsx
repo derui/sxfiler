@@ -38,11 +38,7 @@ export default class AutoSizer extends React.Component<Props, State> {
 
     let boilOnChildren = false;
 
-    if (width === 0) {
-      boilOnChildren = true;
-    }
-
-    if (height === 0) {
+    if (width === 0 && height === 0) {
       boilOnChildren = true;
     }
 

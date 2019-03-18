@@ -10,7 +10,6 @@ afterEach(() => {
 
 describe("Intersection Observer for React", () => {
   describe("Observer Element", () => {
-
     it("observe when component mounted", () => {
       const id = observer.createRoot();
       const instance = observer.registerObserverRoot(id, {
