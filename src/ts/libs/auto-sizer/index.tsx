@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import shallowequal from "shallowequal";
 import { ResizeSensor } from "../resize-sensor";
 
 export interface Props {
@@ -29,6 +30,10 @@ export default class AutoSizer extends React.Component<Props, State> {
       height: entry.contentRect.height,
     });
   };
+
+  public shouldComponentUpdate(newProps: Props, newState: State): boolean {
+    return !shallowequal(this.props, newProps) || !shallowequal(newState, this.state);
+  }
 
   public render(): JSX.Element {
     const { refName = "ref", children, container = "div", className, style } = this.props;

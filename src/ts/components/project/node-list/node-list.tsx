@@ -1,4 +1,5 @@
 import * as React from "react";
+import shallowequal from "shallowequal";
 
 import { Node } from "../../../domains/node";
 import * as Element from "../../ui/element/element";
@@ -7,8 +8,8 @@ import { Component as NodeItem } from "../node-item/node-item";
 import { Component as RootRef } from "../../ui/root-ref/root-ref";
 import AutoSizer from "../../../libs/auto-sizer";
 
-import { ItemMeasureCache } from "./item-measure-cache";
-import { ListLayoutCalculator, Layout } from "./list-layout-calculator";
+import { ItemMeasureCache, Measure } from "./item-measure-cache";
+import { ListLayoutCalculator, VirtualizedWindow } from "./list-layout-calculator";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const styles: ClassNames = require("./node-list.module.scss");
@@ -50,36 +51,76 @@ export interface Props {
 export type ElementType = React.ReactElement<Props, React.FunctionComponent<Props>>;
 
 type State = {
-  needRender: boolean;
+  layout: VirtualizedWindow | undefined;
+  cache: ReadonlyMap<number, Measure>;
 };
 
-export class Component extends React.PureComponent<Props, State> {
+export class Component extends React.Component<Props, State> {
   private itemMeasureCache = new ItemMeasureCache();
   private layoutCalculator: ListLayoutCalculator = new ListLayoutCalculator({
     estimatedItemSize: 24,
   });
-  private currentLayout: Layout | undefined = undefined;
+  private unobserve: (() => void) | undefined = undefined;
 
-  state = { needRender: false };
+  constructor(props: Props) {
+    super(props);
 
-  public componentDidMount() {
-    this.setState({ needRender: true });
+    this.state = {
+      layout: undefined,
+      cache: new Map(),
+    };
+
+    this.unobserve = this.itemMeasureCache.observe(this.handleChangeCache);
   }
 
-  private makeListItems(height: number): JSX.Element[] {
-    const { nodes, cursor, focused } = this.props;
+  private handleChangeCache = (cache: ReadonlyMap<number, Measure>) => {
+    this.setState({ cache });
+  };
+
+  public shouldComponentUpdate(newProps: Props, newState: State): boolean {
+    if (!shallowequal(newProps, this.props)) {
+      return true;
+    }
+
+    if (!shallowequal(this.state.cache, newState.cache) || shallowequal(this.state.layout, newState.layout)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  public componentWillUnmount() {
+    if (this.unobserve) {
+      this.unobserve();
+    }
+  }
+
+  private makeList(height: number): JSX.Element {
+    const { cursor } = this.props;
     const layout = this.layoutCalculator.calculateLayout({
       cache: this.itemMeasureCache,
       currentCursorIndex: cursor,
       windowHeight: height,
-      currentLayout: this.currentLayout,
+      listSize: this.props.nodes.length,
     });
 
-    return layout.itemLayouts.map(({ index }) => {
-      const selected = cursor === index && focused;
+    this.setState({ layout });
+
+    return (
+      <List.Component style={{ height: height }} className={styles.list} key="body">
+        {this.makeListItems(layout)}
+      </List.Component>
+    );
+  }
+
+  private makeListItems(layout: VirtualizedWindow): JSX.Element[] {
+    const { nodes, cursor, focused } = this.props;
+
+    return nodes.slice(layout.startIndex, layout.stopIndex).map((node, index) => {
+      const selected = cursor === index + layout.startIndex && focused;
       return (
-        <RootRef rootRef={e => this.itemMeasureCache.set(index, e)}>
-          <NodeItem key={index} item={nodes[index]} selected={selected} />
+        <RootRef key={index} rootRef={e => this.itemMeasureCache.set(index, e)}>
+          <NodeItem item={node} selected={selected} />
         </RootRef>
       );
     });
@@ -89,22 +130,14 @@ export class Component extends React.PureComponent<Props, State> {
     const { nodes, focused } = this.props;
 
     return (
-      <AutoSizer className={styles.resizeContainer}>
-        {({ height }) => {
-          return (
-            <Element.Component className={styles.root}>
-              <Header key="header" className={styles.header} directory={this.props.location} focused={focused} />
-              {nodes.length === 0 ? (
-                <div className={styles.empty} />
-              ) : (
-                <List.Component className={styles.list} key="body">
-                  {this.makeListItems(height)}
-                </List.Component>
-              )}
-            </Element.Component>
-          );
-        }}
-      </AutoSizer>
+      <Element.Component className={styles.root}>
+        <Header key="header" className={styles.header} directory={this.props.location} focused={focused} />
+        <AutoSizer key="sizer" className={styles.resizeContainer}>
+          {({ height }) => {
+            return nodes.length === 0 ? <div className={styles.empty} /> : this.makeList(height);
+          }}
+        </AutoSizer>
+      </Element.Component>
     );
   }
 }

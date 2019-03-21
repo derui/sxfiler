@@ -3,6 +3,7 @@ import { mount } from "enzyme";
 
 import * as Element from "../element/element";
 import { Component } from "./root-ref";
+import { ForwardedRef } from "../util";
 
 describe("UI Kit", () => {
   describe("RootRef", () => {
@@ -32,6 +33,21 @@ describe("UI Kit", () => {
     it("allow to get ref nested component", () => {
       const ref = jest.fn();
       const Comp: Element.ComponentType = props => (
+        <Element.Component forwardedRef={props.forwardedRef}>far</Element.Component>
+      );
+
+      mount(
+        <Component rootRef={ref}>
+          <Comp />
+        </Component>
+      );
+
+      expect(ref).toBeCalledTimes(1);
+    });
+
+    it("allow to get ref with ForwarededRef type", () => {
+      const ref = jest.fn();
+      const Comp: React.FC<ForwardedRef> = props => (
         <Element.Component forwardedRef={props.forwardedRef}>far</Element.Component>
       );
 

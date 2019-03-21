@@ -8,3 +8,10 @@ export function unwrap<T>(v: T | undefined | null): T {
 
   throw new Error("Can not unwrap");
 }
+
+// get generator to get indices across range between start and end.
+export function* range(start: number, end: number) {
+  for (let i = start; i < end; i++) {
+    yield i;
+  }
+}

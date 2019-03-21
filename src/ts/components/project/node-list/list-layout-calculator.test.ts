@@ -11,7 +11,25 @@ function createFixedSizeElement(size: { width: number; height: number }) {
 
 describe("Project", () => {
   describe("Node List", () => {
-    describe("List Layout Calculator", () => {
+    describe("List Window Calculator", () => {
+      it("calculate start/stop index under size of the list", () => {
+        const instance = new L.ListLayoutCalculator({
+          estimatedItemSize: 30,
+        });
+
+        const ret = instance.calculateLayout({
+          cache: new ItemMeasureCache(),
+          currentCursorIndex: 0,
+          windowHeight: 100,
+          listSize: 2,
+        });
+
+        expect(ret).toEqual({
+          startIndex: 0,
+          stopIndex: 2,
+        });
+      });
+
       it("calculate when no any items measured", () => {
         const instance = new L.ListLayoutCalculator({
           estimatedItemSize: 30,
@@ -21,18 +39,12 @@ describe("Project", () => {
           cache: new ItemMeasureCache(),
           currentCursorIndex: 0,
           windowHeight: 100,
+          listSize: 5,
         });
 
         expect(ret).toEqual({
-          totalHeight: 120,
           startIndex: 0,
           stopIndex: 4,
-          itemLayouts: [
-            { index: 0, height: 30, offset: 0 },
-            { index: 1, height: 30, offset: 30 },
-            { index: 2, height: 30, offset: 60 },
-            { index: 3, height: 30, offset: 90 },
-          ],
         });
       });
 
@@ -48,17 +60,12 @@ describe("Project", () => {
           cache,
           currentCursorIndex: 0,
           windowHeight: 100,
+          listSize: 5,
         });
 
         expect(ret).toEqual({
-          totalHeight: 100,
           startIndex: 0,
           stopIndex: 3,
-          itemLayouts: [
-            { index: 0, height: 40, offset: 0 },
-            { index: 1, height: 30, offset: 40 },
-            { index: 2, height: 30, offset: 70 },
-          ],
         });
       });
 
@@ -74,17 +81,12 @@ describe("Project", () => {
           cache,
           currentCursorIndex: 1,
           windowHeight: 100,
+          listSize: 100,
         });
 
         expect(ret).toEqual({
-          totalHeight: 120,
-          startIndex: 0,
-          stopIndex: 3,
-          itemLayouts: [
-            { index: 0, height: 60, offset: 0 },
-            { index: 1, height: 30, offset: 60 },
-            { index: 2, height: 30, offset: 90 },
-          ],
+          startIndex: 1,
+          stopIndex: 5,
         });
       });
 
@@ -102,18 +104,12 @@ describe("Project", () => {
           cache,
           currentCursorIndex: 0,
           windowHeight: 100,
+          listSize: 100,
         });
 
         expect(ret).toEqual({
-          totalHeight: 120,
           startIndex: 0,
           stopIndex: 4,
-          itemLayouts: [
-            { index: 0, height: 30, offset: 0 },
-            { index: 1, height: 30, offset: 30 },
-            { index: 2, height: 30, offset: 60 },
-            { index: 3, height: 30, offset: 90 },
-          ],
         });
       });
 
@@ -131,72 +127,102 @@ describe("Project", () => {
           cache,
           currentCursorIndex: 2,
           windowHeight: 100,
+          listSize: 100,
         });
 
         expect(ret).toEqual({
-          totalHeight: 110,
           startIndex: 2,
           stopIndex: 6,
-          itemLayouts: [
-            { index: 2, height: 30, offset: 60 },
-            { index: 3, height: 30, offset: 90 },
-            { index: 4, height: 30, offset: 120 },
-            { index: 5, height: 20, offset: 150 },
-          ],
         });
       });
-    });
 
-    it("return same layout when index of the cursor contains calculated before", () => {
-      const instance = new L.ListLayoutCalculator({
-        estimatedItemSize: 20,
+      it("should calculate based on previous window when cursor moved to next", () => {
+        const instance = new L.ListLayoutCalculator({
+          estimatedItemSize: 20,
+        });
+
+        const cache = new ItemMeasureCache();
+        new Array(5).fill(true).forEach((_, index) => {
+          cache.set(index, createFixedSizeElement({ width: 10, height: 30 }));
+        });
+
+        instance.calculateLayout({
+          cache,
+          currentCursorIndex: 2,
+          windowHeight: 100,
+          listSize: 100,
+        });
+        const ret = instance.calculateLayout({
+          cache,
+          currentCursorIndex: 6,
+          windowHeight: 100,
+          listSize: 100,
+        });
+
+        expect(ret).toEqual({
+          startIndex: 3,
+          stopIndex: 7,
+        });
       });
 
-      const cache = new ItemMeasureCache();
-      new Array(5).fill(true).forEach((_, index) => {
-        cache.set(index, createFixedSizeElement({ width: 10, height: 30 }));
+      it("should calculate based on previous window when cursor moved to previous", () => {
+        const instance = new L.ListLayoutCalculator({
+          estimatedItemSize: 20,
+        });
+
+        const cache = new ItemMeasureCache();
+        new Array(5).fill(true).forEach((_, index) => {
+          cache.set(index, createFixedSizeElement({ width: 10, height: 30 }));
+        });
+
+        instance.calculateLayout({
+          cache,
+          currentCursorIndex: 2,
+          windowHeight: 100,
+          listSize: 100,
+        });
+        const ret = instance.calculateLayout({
+          cache,
+          currentCursorIndex: 1,
+          windowHeight: 100,
+          listSize: 100,
+        });
+
+        expect(ret).toEqual({
+          startIndex: 1,
+          stopIndex: 5,
+        });
       });
 
-      const before = instance.calculateLayout({
-        cache,
-        currentCursorIndex: 2,
-        windowHeight: 100,
-      });
-      const after = instance.calculateLayout({
-        cache,
-        currentCursorIndex: 3,
-        windowHeight: 100,
-        currentLayout: before,
-      });
+      it("returns difference layout when calculator resetted", () => {
+        const instance = new L.ListLayoutCalculator({
+          estimatedItemSize: 20,
+        });
 
-      expect(after).toEqual(before);
-    });
+        const cache = new ItemMeasureCache();
+        new Array(5).fill(true).forEach((_, index) => {
+          cache.set(index, createFixedSizeElement({ width: 10, height: 30 }));
+        });
 
-    it("should be able to reset current information", () => {
-      const instance = new L.ListLayoutCalculator({
-        estimatedItemSize: 20,
+        instance.calculateLayout({
+          cache,
+          currentCursorIndex: 2,
+          windowHeight: 100,
+          listSize: 100,
+        });
+        instance.reset();
+        const ret = instance.calculateLayout({
+          cache,
+          currentCursorIndex: 3,
+          windowHeight: 100,
+          listSize: 100,
+        });
+
+        expect(ret).toEqual({
+          startIndex: 3,
+          stopIndex: 7,
+        });
       });
-
-      const cache = new ItemMeasureCache();
-      new Array(5).fill(true).forEach((_, index) => {
-        cache.set(index, createFixedSizeElement({ width: 10, height: 30 }));
-      });
-
-      const before = instance.calculateLayout({
-        cache,
-        currentCursorIndex: 2,
-        windowHeight: 100,
-      });
-      instance.reset();
-
-      const after = instance.calculateLayout({
-        cache,
-        currentCursorIndex: 3,
-        windowHeight: 100,
-        currentLayout: before,
-      });
-
-      expect(after).toEqual(before);
     });
   });
 });

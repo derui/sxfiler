@@ -45,6 +45,7 @@
 
 .list {
   composes: list-base from "../../ui/list/list.module.scss";
+  position: relative;
 
   font-size: 1rem;
   border-right: 1px solid $sol_base0;
