@@ -104,6 +104,7 @@ export class Component extends React.Component<Props, State> {
       listSize: this.props.nodes.length,
     });
 
+    console.log(layout);
     this.setState({ layout });
 
     return (

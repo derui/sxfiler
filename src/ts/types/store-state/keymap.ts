@@ -1,8 +1,13 @@
 import { Keymap } from "../../domains/keymap";
 
-export interface State {
+export type State = {
   // current key map
   current: Keymap;
+};
+
+/** find key binding by key */
+export function findBinding(state: State, key: string) {
+  return state.current.find(key);
 }
 
 /** return empty state */

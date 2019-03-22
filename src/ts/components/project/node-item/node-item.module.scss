@@ -6,7 +6,6 @@
   composes: listItem-base from "../../ui/list-item/list-item.module.scss";
 
   padding: $baseSpace 0;
-  position: absolute;
   width: 100%;
 
   background-color: $sol_base02;
