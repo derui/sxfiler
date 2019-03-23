@@ -1,0 +1,17 @@
+@import "../../ui/commom-style/_colors.scss";
+@import "../../ui/commom-style/_variables.scss";
+@import "../../ui/commom-style/reset.module.css";
+
+.root {
+  max-width: 100%;
+  min-width: 0;
+  max-height: 100%;
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+  background-color: $sol_base03;
+
+  display: grid;
+  grid-template-rows: auto 1fr;
+}

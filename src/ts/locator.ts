@@ -1,10 +1,10 @@
 import { Context as ReactContext, createContext } from "react";
 
-import { Context } from "./context";
+import { ContextLike } from "./context";
 
-interface Locator {
-  context?: Context;
-}
+export type Locator = {
+  context?: ContextLike;
+};
 
 let locator: Locator = {};
 

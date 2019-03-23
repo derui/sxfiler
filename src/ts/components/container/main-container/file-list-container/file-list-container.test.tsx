@@ -2,8 +2,8 @@ import { shallow } from "enzyme";
 import * as React from "react";
 import renderer from "react-test-renderer";
 
-import FilerFactory from "../../../domains/filer-factory";
-import { Side, State } from "../../../types/store-state/file-list";
+import FilerFactory from "../../../../domains/filer-factory";
+import { Side, State } from "../../../../types/store-state/file-list";
 import { Component } from "./file-list-container";
 
 describe("Container", () => {
