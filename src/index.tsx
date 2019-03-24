@@ -6,13 +6,16 @@ import { createStore } from "redux";
 
 import { Actions } from "./ts/actions";
 import { ApiMethod } from "./ts/apis";
-import App from "./ts/app";
+import { Component as App } from "./ts/app";
 import { Context } from "./ts/context";
 import { Dispatcher } from "./ts/dispatcher";
 import * as jrpc from "./ts/libs/json-rpc";
 import { Client } from "./ts/libs/json-rpc/client";
 import { setLocator } from "./ts/locator";
 import reducer from "./ts/reducers";
+import { StoreState } from "./ts/types/store-state";
+
+import InitializeUseCase from "./ts/usecases/filer/initialize";
 
 const url = process.env.NODE_ENV === "production" ? process.env.REACT_APP_SERVER : "ws://localhost:50879";
 
@@ -25,10 +28,6 @@ const client: Client<ApiMethod> = jrpc.createClient(jsonrpc, () => {
 
 const store = createStore(reducer);
 
-ws.onopen = () => {
-  /* TODO: call methods to initialize front */
-};
-
 const dispatcher: Dispatcher<Actions> = new Dispatcher();
 dispatcher.subscribe(store.dispatch);
 
@@ -37,8 +36,18 @@ const locator = {
 };
 setLocator(locator);
 
-function render() {
-  ReactDOM.render(<App />, document.getElementById("root") as HTMLElement);
+async function initializeState() {
+  locator.context.execute(new InitializeUseCase(client), { location: "." });
 }
 
-render();
+ws.onopen = () => {
+  initializeState();
+};
+
+function render(state: StoreState) {
+  ReactDOM.render(<App state={state} />, document.getElementById("root") as HTMLElement);
+}
+
+store.subscribe(() => {
+  render(store.getState());
+});

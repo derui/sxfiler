@@ -1,3 +1,5 @@
+import * as FilerApi from "./filer-api";
+
 // define methods that are able to call to server
 
 enum CompletionMethod {
@@ -5,13 +7,8 @@ enum CompletionMethod {
   Read = "completion/read",
 }
 
-enum FilerMethod {
-  Make = "filer/make",
-  Get = "filer/get",
-  MoveParent = "filer/moveParent",
-  EnterDirectory = "filer/enterDirectory",
-  MoveNodes = "filer/moveNodes",
-  DeleteNodes = "filer/deleteNodes",
-}
+export type ApiMethod = CompletionMethod | FilerApi.Methods;
 
-export type ApiMethod = CompletionMethod | FilerMethod;
+export const Apis = {
+  Filer: FilerApi.Apis,
+};

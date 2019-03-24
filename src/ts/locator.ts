@@ -13,7 +13,7 @@ let locator: Locator = {};
  * @param newLocator
  */
 export function setLocator(newLocator: Locator): void {
-  locator = newLocator;
+  Object.assign(locator, newLocator);
 }
 
 const LocatorContext: ReactContext<Locator> = createContext(locator);

@@ -1,21 +1,30 @@
 import * as Common from "./type";
 
 // P and Res only use to define api
-export interface Api<T extends string, P extends {} = {}, Res extends {} = {}> {
+export type Api<T extends string, P extends any = any, Res extends any = any> = {
   method: T;
-}
+
+  /**
+     Transformer for param of the method
+   */
+  parametersTransformer: (param: P) => any;
+
+  /**
+     Transformer for result of the method
+   */
+  resultTransformer: (res: any, error?: Common.RPCError) => Res;
+};
+
+export type Notification<T extends string, P extends {} = any> = {
+  method: T;
+
+  /**
+     Transformer for param of the method
+   */
+  parametersTransformer: (param: P) => any;
+};
 
 export interface Client<M extends string> {
-  call<P, Res>(api: Api<M, P, Res>, params?: P): Promise<Res>;
-  notify<P>(api: Api<M, P, any>, params?: P): void;
-}
-
-/**
- * The client of JSON-RPC
- */
-export class ClientImpl<M extends string> implements Client<M> {
-  constructor(private readonly requester: Common.Requester, private readonly idGenerator: Common.IDGenerator) {}
-
   /**
    * call a method with or without request.
    *
@@ -23,27 +32,49 @@ export class ClientImpl<M extends string> implements Client<M> {
    * @param params object for RPC
    * @return promise to handling result of RPC
    */
-  public async call<P, Res>(api: Api<M, P, Res>, params?: P): Promise<Res> {
+  call<P, Res>(api: Api<M, P, Res>, params: P): Promise<Res>;
+
+  /**
+   * send notification with or without request
+   *
+   * @param api API definition to call
+   * @param params object for RPC
+   * @return promise to handling result of RPC
+   */
+  notify<P>(api: Notification<M, P>, params: P): void;
+}
+
+/**
+ * The client of JSON-RPC
+ */
+export class ClientImpl<M extends string> implements Client<M> {
+  private readonly requester: Common.Requester;
+  private readonly idGenerator: Common.IDGenerator;
+
+  constructor(requester: Common.Requester, idGenerator: Common.IDGenerator) {
+    this.requester = requester;
+    this.idGenerator = idGenerator;
+  }
+
+  public async call<P, Res>(api: Api<M, P, Res>, params: P): Promise<Res> {
     const rpcRequest: Common.Request = {
       jsonrpc: "2.0",
       method: api.method,
-      params,
+      params: api.parametersTransformer(params),
       id: this.idGenerator(),
     };
 
     return this.requester.call(rpcRequest).then(req => {
-      if (req.error) {
-        return Promise.reject(new Common.RPCError(req.error.message, req.error));
-      }
-      return req.result;
+      const error = req.error ? new Common.RPCError(req.error.message, req.error) : undefined;
+      return api.resultTransformer(req.result, error);
     });
   }
 
-  public notify<P>(api: Api<M, P, any>, params?: P): void {
+  public notify<P>(api: Notification<M, P>, params: P): void {
     const rpcRequest: Common.Request = {
       jsonrpc: "2.0",
       method: api.method,
-      params,
+      params: api.parametersTransformer(params),
     };
 
     this.requester.notify(rpcRequest);

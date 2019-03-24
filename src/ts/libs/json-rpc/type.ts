@@ -1,24 +1,24 @@
 // the interface of request of JSON-RPC
-export interface Request {
+export type Request = {
   jsonrpc: "2.0";
   method: string;
   params?: any;
   id?: string;
-}
+};
 
 // Error message
-export interface Error {
+export type Error = {
   code: number;
   message: string;
   data?: any;
-}
+};
 
-export interface Response {
+export type Response = {
   jsonrpc: "2.0";
   result?: any;
   error?: Error;
   id?: string;
-}
+};
 
 // Extended error to handle JSONRPC error.
 export class RPCError extends Error {
@@ -29,6 +29,13 @@ export class RPCError extends Error {
 
     Object.setPrototypeOf(this, RPCError.prototype);
     this.error = error;
+  }
+
+  /**
+     Return an error occured has code or not
+   */
+  hasCode(code: number): boolean {
+    return this.error.code === code;
   }
 }
 

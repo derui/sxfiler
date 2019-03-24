@@ -1,18 +1,13 @@
 import * as React from "react";
+import * as MainContainer from "./components/container/main-container/main-container";
+import { StoreState } from "./types/store-state";
 
-class App extends React.Component {
+export type Props = {
+  state: StoreState;
+};
+
+export class Component extends React.Component<Props> {
   public render(): React.ReactElement {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.tsx</code> and save to reload.
-        </p>
-      </div>
-    );
+    return <MainContainer.Component state={this.props.state} />;
   }
 }
-
-export default App;

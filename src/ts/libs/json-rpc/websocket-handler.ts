@@ -1,12 +1,12 @@
 // handler definition
-export interface Handler {
+export type Handler = {
   handle(ev: MessageEvent): void;
-}
+};
 
 // This module defines handler of WebSocket.
 export class WebSocketHandler {
   private handlers: Handler[];
-  constructor(private readonly ws: WebSocket) {
+  constructor(private ws: WebSocket) {
     this.handlers = [];
   }
 

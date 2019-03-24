@@ -2,6 +2,7 @@ import * as React from "react";
 import { Filer } from "../../../../domains/filer";
 import { Side, State } from "../../../../types/store-state/file-list";
 import * as NodeList from "../../../project/node-list/node-list";
+import * as Element from "../../../ui/element/element";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const styles: ClassNames = require("./file-list-container.module.scss");
@@ -47,5 +48,5 @@ export const Component: React.FC<Props> = (props): ElementType | null => {
     createFiler(Side.Right, props.state.currentSide, props.state.right),
   ];
 
-  return <div className={styles.root}>{filers}</div>;
+  return <Element.Component className={styles.root}>{filers}</Element.Component>;
 };

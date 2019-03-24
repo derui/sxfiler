@@ -1,5 +1,5 @@
 import { Client, ClientImpl } from "./client";
-import Server, { NotificationMethodMap } from "./server";
+import NotificationServer, { NotificationMethodMap } from "./notification-server";
 import { IDGenerator } from "./type";
 import { WebSocketHandler } from "./websocket-handler";
 import WebSocketRequester from "./websocket-requester";
@@ -30,8 +30,8 @@ export function initialize(ws: WebSocket): Jsonrpc {
  * @param jsonrpc base module
  * @param methodMap method map for notification from server
  */
-export function createNotificationServer(jsonrpc: Jsonrpc, methodMap: NotificationMethodMap): Server {
-  const server = new Server(methodMap);
+export function createNotificationServer(jsonrpc: Jsonrpc, methodMap: NotificationMethodMap): NotificationServer {
+  const server = new NotificationServer(methodMap);
 
   jsonrpc.handler.addHandler(server);
 

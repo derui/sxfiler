@@ -1,10 +1,10 @@
 import * as Common from "./type";
 import { Handler } from "./websocket-handler";
 
-type responser = (response: Common.Response) => void;
+type Responser = (response: Common.Response) => void;
 
 export default class WebSocketRequester implements Common.Requester, Handler {
-  private requestIdMap: { [key: string]: responser } = {};
+  private requestIdMap: { [key: string]: Responser } = {};
 
   /**
    * constructor
