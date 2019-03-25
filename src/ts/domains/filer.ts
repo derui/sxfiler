@@ -1,6 +1,5 @@
 // define filer state type and operations.
 import { Node } from "./node";
-import { NodeMarkers } from "./node-markers";
 
 export enum Direction {
   Up = "up",

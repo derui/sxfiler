@@ -60,7 +60,7 @@ const Get: Api<Methods.Get, string, Filer | undefined> = {
     return { name };
   },
   resultTransformer(ret, error) {
-    if (!ret && error && error.hasCode(-4)) {
+    if (!ret && error && error.hasCode(-2)) {
       return undefined;
     }
 

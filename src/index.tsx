@@ -36,7 +36,7 @@ const locator = {
 };
 setLocator(locator);
 
-async function initializeState() {
+function initializeState() {
   locator.context.execute(new InitializeUseCase(client), { location: "." });
 }
 

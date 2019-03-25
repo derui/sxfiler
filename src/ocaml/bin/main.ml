@@ -11,9 +11,8 @@ module Log = (val Logger.make ["main"])
 
 let create_server (module C : Rpc_connection.Instance) =
   let module Dep = Dependencies.Make (C) ((val Global.Completer.get ())) in
-  let procedures = [] in
   let rpc_server = Jsonrpc_server.make () in
-  List.fold_left (fun s procedure -> Jsonrpc_server.expose s ~procedure) rpc_server procedures
+  Procedures.expose_all rpc_server (module Dep : Dependencies.S)
 
 let handler (conn : Conduit_lwt_unix.flow * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
     (body : Cohttp_lwt.Body.t) =

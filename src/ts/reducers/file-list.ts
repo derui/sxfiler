@@ -1,9 +1,16 @@
 // reducers for file list
 import { Actions } from "../actions";
 import { empty, State } from "../types/store-state/file-list";
+import { ActionTypes } from "../actions/filer";
 
 export function reducer(state: State = empty(), action: Actions): State {
   switch (action.type) {
+    case ActionTypes.initialize:
+      return {
+        ...state,
+        left: action.payload.left,
+        right: action.payload.right,
+      };
   }
   return state;
 }

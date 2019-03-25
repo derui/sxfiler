@@ -18,6 +18,7 @@ export function initialize(ws: WebSocket): Jsonrpc {
   const requester = new WebSocketRequester(ws);
 
   handler.addHandler(requester);
+  handler.initialize();
 
   return {
     handler,
