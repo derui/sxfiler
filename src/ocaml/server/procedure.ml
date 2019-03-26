@@ -36,8 +36,9 @@ module Make (S : Spec) : S = struct
     let open Sxfiler_core in
     try%lwt
       Log.debug (fun m ->
-          m "Start procedure: {%s}, id: {%Ld}" req.Req._method
-            (Option.get ~default:(fun () -> 0L) req.Req.id) ) ;%lwt
+          m "Start procedure: {%s}, id: {%Ld}, param: %s" req.Req._method
+            (Option.get ~default:(fun () -> 0L) req.Req.id)
+            (Option.get_exn req.params |> Yojson.Safe.to_string) ) ;%lwt
       let%lwt result =
         let execute_with_param decoder =
           match req.Req.params with
