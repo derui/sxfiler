@@ -11,7 +11,7 @@ import { Context } from "./ts/context";
 import { Dispatcher } from "./ts/dispatcher";
 import * as jrpc from "./ts/libs/json-rpc";
 import { Client } from "./ts/libs/json-rpc/client";
-import { setLocator } from "./ts/locator";
+import LocatorContext from "./ts/locator";
 import reducer from "./ts/reducers";
 import { StoreState } from "./ts/types/store-state";
 
@@ -34,7 +34,6 @@ dispatcher.subscribe(store.dispatch);
 const locator = {
   context: new Context(client, dispatcher, store),
 };
-setLocator(locator);
 
 function initializeState() {
   locator.context.execute(new InitializeUseCase(client), { location: "." });
@@ -45,7 +44,12 @@ ws.onopen = () => {
 };
 
 function render(state: StoreState) {
-  ReactDOM.render(<App state={state} />, document.getElementById("root") as HTMLElement);
+  ReactDOM.render(
+    <LocatorContext.Provider value={locator}>
+      <App state={state} />
+    </LocatorContext.Provider>,
+    document.getElementById("root") as HTMLElement
+  );
 }
 
 store.subscribe(() => {

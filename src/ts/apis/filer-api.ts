@@ -51,7 +51,9 @@ const Make: Api<
 > = {
   method: Methods.Make,
   parametersTransformer: params => params,
-  resultTransformer: transformFiler,
+  resultTransformer(ret) {
+    return transformFiler(ret);
+  },
 };
 
 const Get: Api<Methods.Get, string, Filer | undefined> = {
