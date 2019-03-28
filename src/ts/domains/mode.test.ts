@@ -1,42 +1,68 @@
-import { Capability } from "./capability";
-import { Mode } from "./mode";
+import { createCapability, emptyCapability } from "./capability";
+import { createMode, emptyMode } from "./mode";
 
 describe("Domain", () => {
   describe("Mode", () => {
-    it("should be able to create empty mode", () => {
-      const mode = new Mode();
-      const cap = new Capability({ writable: false, readable: false, executable: false });
+    describe("factory", () => {
+      it("return the mode that setted all capability", () => {
+        const mode = createMode({
+          owner: emptyCapability().allowToWrite(),
+          group: emptyCapability().allowToRead(),
+          others: emptyCapability().allowToExecute(),
+        });
 
-      expect(mode.owner).toEqual(cap);
-      expect(mode.group).toEqual(cap);
-      expect(mode.others).toEqual(cap);
+        expect(mode.owner).toEqual(emptyCapability().allowToWrite());
+        expect(mode.group).toEqual(emptyCapability().allowToRead());
+        expect(mode.others).toEqual(emptyCapability().allowToExecute());
+      });
     });
 
-    it("should be able to change capability of owner", () => {
-      const mode = new Mode();
-      const newMode = mode.changeOwner(new Capability({ writable: true }));
+    describe("empty factory", () => {
+      it("return the mode that is disabled all capabilities", () => {
+        const mode = emptyMode();
 
-      expect(newMode.owner).toStrictEqual(new Capability({ writable: true }));
-      expect(newMode.group).toEqual(mode.group);
-      expect(newMode.others).toEqual(mode.others);
+        expect(mode.owner).toEqual(emptyCapability());
+        expect(mode.group).toEqual(emptyCapability());
+        expect(mode.others).toEqual(emptyCapability());
+      });
     });
 
-    it("should be able to change capability of group", () => {
-      const mode = new Mode();
-      const newMode = mode.changeGroup(new Capability({ readable: true }));
+    describe("methods", () => {
+      it("should be able to create empty mode", () => {
+        const mode = emptyMode();
+        const cap = createCapability({ writable: false, readable: false, executable: false });
 
-      expect(newMode.group).toStrictEqual(new Capability({ readable: true }));
-      expect(newMode.owner).toEqual(mode.group);
-      expect(newMode.others).toEqual(mode.others);
-    });
+        expect(mode.owner).toEqual(cap);
+        expect(mode.group).toEqual(cap);
+        expect(mode.others).toEqual(cap);
+      });
 
-    it("should be able to change capability of others", () => {
-      const mode = new Mode();
-      const newMode = mode.changeOthers(new Capability({ executable: true }));
+      it("should be able to change capability of owner", () => {
+        const mode = emptyMode();
+        const newMode = mode.changeOwner(emptyCapability().allowToWrite());
 
-      expect(newMode.others).toStrictEqual(new Capability({ executable: true }));
-      expect(newMode.owner).toEqual(mode.group);
-      expect(newMode.group).toEqual(mode.others);
+        expect(newMode.owner).toStrictEqual(emptyCapability().allowToWrite());
+        expect(newMode.group).toEqual(mode.group);
+        expect(newMode.others).toEqual(mode.others);
+      });
+
+      it("should be able to change capability of group", () => {
+        const mode = emptyMode();
+        const newMode = mode.changeGroup(emptyCapability().allowToRead());
+
+        expect(newMode.group).toStrictEqual(emptyCapability().allowToRead());
+        expect(newMode.owner).toEqual(mode.owner);
+        expect(newMode.others).toEqual(mode.others);
+      });
+
+      it("should be able to change capability of others", () => {
+        const mode = emptyMode();
+        const newMode = mode.changeOthers(emptyCapability().allowToExecute());
+
+        expect(newMode.others).toStrictEqual(emptyCapability().allowToExecute());
+        expect(newMode.owner).toEqual(mode.owner);
+        expect(newMode.group).toEqual(mode.group);
+      });
     });
   });
 });

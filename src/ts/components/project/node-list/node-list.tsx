@@ -104,9 +104,6 @@ export class Component extends React.Component<Props, State> {
       listSize: this.props.nodes.length,
     });
 
-    console.log(layout);
-    this.setState({ layout });
-
     return (
       <List.Component style={{ height: height }} className={styles.list} key="body">
         {this.makeListItems(layout)}

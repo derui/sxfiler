@@ -3,6 +3,8 @@
 import { Api } from "../libs/json-rpc/client";
 import { Filer } from "../domains/filer";
 import FilerFactory from "../domains/filer-factory";
+import FileStatFactory from "../domains/file-stat-factory";
+import { Node, createNode } from "../domains/node";
 
 export enum Methods {
   Make = "filer/make",
@@ -12,6 +14,12 @@ export enum Methods {
   MoveNodes = "filer/moveNodes",
   DeleteNodes = "filer/deleteNodes",
 }
+
+const transformNode = (node: any): Node => {
+  const stat = FileStatFactory.create(node.stat);
+
+  return createNode({ ...node, stat });
+};
 
 /**
    Support function to transform filer from JSON representation.
@@ -34,7 +42,7 @@ function transformFiler(filer: any): Filer {
   return FilerFactory.create({
     id,
     location,
-    nodes,
+    nodes: nodes.map(transformNode),
   });
 }
 

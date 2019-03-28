@@ -1,8 +1,9 @@
-import FileStatFactory from "./file-stat-factory";
-import { create as createNode } from "./node";
+import { createNode } from "./node";
+import { createFileStat } from "./file-stat";
+import { modeOfBits } from "./mode";
 
-const stat = FileStatFactory.create({
-  mode: String(0o777),
+const stat = createFileStat({
+  mode: modeOfBits(0o777),
   uid: 1000,
   gid: 1000,
   atime: "10",
@@ -25,11 +26,11 @@ describe("Node value object", () => {
       marked: false,
     });
 
-    expect(node.id).toBe("id");
-    expect(node.name).toBe("file");
-    expect(node.stat).toBe(stat);
-    expect(node.parentDirectory).toBe("parent");
-    expect(node.linkPath).toBe("foo");
+    expect(node.id).toEqual("id");
+    expect(node.name).toEqual("file");
+    expect(node.stat).toEqual(stat);
+    expect(node.parentDirectory).toEqual("parent");
+    expect(node.linkPath).toEqual("foo");
     expect(node.marked).toBeFalsy();
   });
 });

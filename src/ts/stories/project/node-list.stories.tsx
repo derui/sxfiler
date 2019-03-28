@@ -3,13 +3,13 @@ import { boolean, number, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
 import * as React from "react";
 
-import { create } from "../../domains/node";
+import { createNode } from "../../domains/node";
 
 import { Component as NodeList } from "../../components/project/node-list/node-list";
 import FileStatFactory from "../../domains/file-stat-factory";
 
 function makeNode(name: string, marked: boolean, isDirectory = false, isSymlink = false) {
-  return create({
+  return createNode({
     id: "node",
     name,
     marked: marked,

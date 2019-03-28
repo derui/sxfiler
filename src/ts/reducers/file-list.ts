@@ -8,6 +8,7 @@ export function reducer(state: State = empty(), action: Actions): State {
     case ActionTypes.initialize:
       return {
         ...state,
+        initialized: true,
         left: action.payload.left,
         right: action.payload.right,
       };

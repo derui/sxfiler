@@ -3,12 +3,12 @@ import renderer from "react-test-renderer";
 
 import { Component as T } from "./node-list";
 
-import { create } from "../../../domains/node";
+import { createNode } from "../../../domains/node";
 
 import FileStatFactory from "../../../domains/file-stat-factory";
 
 function makeNode(name: string, isDirectory = false, isSymlink = false) {
-  return create({
+  return createNode({
     id: "node",
     name,
     marked: false,

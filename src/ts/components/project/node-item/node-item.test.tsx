@@ -1,18 +1,19 @@
 import * as React from "react";
 import renderer from "react-test-renderer";
 
-import { create } from "../../../domains/node";
+import { createNode } from "../../../domains/node";
 
 import FileStatFactory from "../../../domains/file-stat-factory";
 import { Component as T } from "./node-item";
+import { parse } from "../../../domains/mode";
 
 function makeNode(marked: boolean, isDirectory = false, isSymlink = false) {
-  return create({
+  return createNode({
     id: "node",
     name: "file.ext",
     marked,
     stat: FileStatFactory.create({
-      mode: "644",
+      mode: parse("0644"),
       uid: 1000,
       gid: 1000,
       atime: "0",

@@ -1,49 +1,77 @@
-// Argument for Capability constructor
-interface CapabilityArg {
-  writable?: boolean;
-  readable?: boolean;
-  executable?: boolean;
-}
-
 // Capability of a target
-export class Capability {
-  public readonly writable: boolean;
-  public readonly readable: boolean;
-  public readonly executable: boolean;
-
-  constructor(arg: CapabilityArg = {}) {
-    this.writable = arg.writable || false;
-    this.readable = arg.readable || false;
-    this.executable = arg.executable || false;
-  }
+export type Capability = {
+  readonly writable: boolean;
+  readonly readable: boolean;
+  readonly executable: boolean;
 
   /** Return new capability that allows to write */
-  public allowToWrite(): Capability {
-    return new Capability({ ...this, writable: true });
-  }
+  allowToWrite(): Capability;
 
   /** Return new capability that allows to read */
-  public allowToRead(): Capability {
-    return new Capability({ ...this, readable: true });
-  }
+  allowToRead(): Capability;
 
   /** Return new capability that allows to execute */
-  public allowToExecute(): Capability {
-    return new Capability({ ...this, executable: true });
-  }
+  allowToExecute(): Capability;
 
   /** Return new capability that disallows to write */
-  public disallowToWrite() {
-    return new Capability({ ...this, writable: false });
-  }
+  disallowToWrite(): Capability;
 
   /** Return new capability that disallows to read */
-  public disallowToRead() {
-    return new Capability({ ...this, readable: false });
-  }
+  disallowToRead(): Capability;
 
   /** Return new capability that disallows to execute */
-  public disallowToExecute() {
-    return new Capability({ ...this, executable: false });
-  }
-}
+  disallowToExecute(): Capability;
+};
+
+type CreateCapabilityArg = {
+  writable: boolean;
+  readable: boolean;
+  executable: boolean;
+};
+
+/**
+   Create capability from argument
+ */
+export const createCapability = ({ writable, readable, executable }: CreateCapabilityArg): Capability => {
+  return {
+    writable,
+    readable,
+    executable,
+
+    /** Return new capability that allows to write */
+    allowToWrite() {
+      return { ...this, writable: true };
+    },
+
+    /** Return new capability that allows to read */
+    allowToRead() {
+      return { ...this, readable: true };
+    },
+
+    /** Return new capability that allows to execute */
+    allowToExecute() {
+      return { ...this, executable: true };
+    },
+
+    /** Return new capability that disallows to write */
+    disallowToWrite() {
+      return { ...this, writable: false };
+    },
+
+    /** Return new capability that disallows to read */
+    disallowToRead() {
+      return { ...this, readable: false };
+    },
+
+    /** Return new capability that disallows to execute */
+    disallowToExecute() {
+      return { ...this, executable: false };
+    },
+  };
+};
+
+/**
+   Return new capability that have not any work.
+ */
+export const emptyCapability = (): Capability =>
+  createCapability({ writable: false, readable: false, executable: false });

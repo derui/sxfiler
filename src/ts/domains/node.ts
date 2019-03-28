@@ -14,7 +14,7 @@ interface FactoryArg {
  * create node
  * @param args
  */
-export function create(args: FactoryArg) {
+export function createNode(args: FactoryArg) {
   return new NodeImpl(args.id, args.name, args.stat, args.parentDirectory, args.marked, args.linkPath);
 }
 

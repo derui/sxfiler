@@ -3,7 +3,7 @@ import { boolean, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
 import * as React from "react";
 
-import { create } from "../../domains/node";
+import { createNode } from "../../domains/node";
 
 import { Component as NodeItem } from "../../components/project/node-item/node-item";
 import FileStatFactory from "../../domains/file-stat-factory";
@@ -13,7 +13,7 @@ storiesOf("Project/Node Item", module)
   .addDecorator(withKnobs)
   .addParameters({ info: { inline: true } })
   .add("simple file node", () => {
-    const item = create({
+    const item = createNode({
       id: "node",
       name: "file.txt",
       marked: false,
@@ -34,7 +34,7 @@ storiesOf("Project/Node Item", module)
     return <NodeItem item={item} selected={boolean("Selected", false)} />;
   })
   .add("simple directory node", () => {
-    const item = create({
+    const item = createNode({
       id: "node",
       name: "file",
       marked: false,
@@ -55,7 +55,7 @@ storiesOf("Project/Node Item", module)
     return <NodeItem item={item} selected={boolean("Selected", false)} />;
   })
   .add("simple symlink node", () => {
-    const item = create({
+    const item = createNode({
       id: "node",
       name: "file",
       marked: false,
@@ -76,7 +76,7 @@ storiesOf("Project/Node Item", module)
     return <NodeItem item={item} selected={boolean("Selected", false)} />;
   })
   .add("marked node", () => {
-    const item = create({
+    const item = createNode({
       id: "node",
       name: "file",
       marked: true,

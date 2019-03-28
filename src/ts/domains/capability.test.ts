@@ -1,9 +1,9 @@
-import { Capability } from "./capability";
+import { capabilityOfBits } from "./capability";
 
 describe("File Stat", () => {
   describe("Capability", () => {
     it("should be disabled all permission for initial state", () => {
-      const capability = new Capability();
+      const capability = capabilityOfBits(0o0);
 
       expect(capability.readable).toBeFalsy();
       expect(capability.writable).toBeFalsy();
@@ -11,7 +11,7 @@ describe("File Stat", () => {
     });
 
     it("allows to allow some permission", () => {
-      const capability = new Capability();
+      const capability = capabilityOfBits(0);
 
       const newCap = capability
         .allowToExecute()
@@ -24,7 +24,7 @@ describe("File Stat", () => {
     });
 
     it("allows to change readability", () => {
-      const c = new Capability({ writable: true, readable: true, executable: true });
+      const c = capabilityOfBits(0o7);
 
       const newCap = c
         .disallowToRead()
