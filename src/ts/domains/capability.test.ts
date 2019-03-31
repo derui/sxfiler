@@ -1,39 +1,37 @@
-import { capabilityOfBits } from "./capability";
+import { createCapability, emptyCapability, fullCapability } from "./capability";
 
-describe("File Stat", () => {
-  describe("Capability", () => {
-    it("should be disabled all permission for initial state", () => {
-      const capability = capabilityOfBits(0o0);
+describe("Capability", () => {
+  describe("createCapability", () => {
+    it("create with capable actions", () => {
+      const v = createCapability({
+        executable: false,
+        readable: true,
+        writable: false,
+      });
 
-      expect(capability.readable).toBeFalsy();
-      expect(capability.writable).toBeFalsy();
-      expect(capability.executable).toBeFalsy();
+      expect(v.executable).toBeFalsy();
+      expect(v.readable).toBeTruthy();
+      expect(v.writable).toBeFalsy();
     });
+  });
 
-    it("allows to allow some permission", () => {
-      const capability = capabilityOfBits(0);
+  describe("emptyCapability", () => {
+    it("get instance that have no any capability", () => {
+      const v = emptyCapability();
 
-      const newCap = capability
-        .allowToExecute()
-        .allowToRead()
-        .allowToWrite();
-
-      expect(newCap.executable).toBeTruthy();
-      expect(newCap.readable).toBeTruthy();
-      expect(newCap.writable).toBeTruthy();
+      expect(v.executable).toBeFalsy();
+      expect(v.readable).toBeFalsy();
+      expect(v.writable).toBeFalsy();
     });
+  });
 
-    it("allows to change readability", () => {
-      const c = capabilityOfBits(0o7);
+  describe("fullCapability", () => {
+    it("get instance that have all capability", () => {
+      const v = fullCapability();
 
-      const newCap = c
-        .disallowToRead()
-        .disallowToExecute()
-        .disallowToWrite();
-
-      expect(newCap.executable).toBeFalsy();
-      expect(newCap.readable).toBeFalsy();
-      expect(newCap.writable).toBeFalsy();
+      expect(v.executable).toBeTruthy();
+      expect(v.readable).toBeTruthy();
+      expect(v.writable).toBeTruthy();
     });
   });
 });

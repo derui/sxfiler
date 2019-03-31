@@ -1,9 +1,5 @@
-// Capability of a target
-export type Capability = {
-  readonly writable: boolean;
-  readonly readable: boolean;
-  readonly executable: boolean;
-
+// Capability with method
+export type Capability = CapabilityObject & {
   /** Return new capability that allows to write */
   allowToWrite(): Capability;
 
@@ -21,6 +17,16 @@ export type Capability = {
 
   /** Return new capability that disallows to execute */
   disallowToExecute(): Capability;
+
+  /** Return plain CapabilityObject */
+  plain: CapabilityObject;
+};
+
+// Capability of a target
+export type CapabilityObject = {
+  readonly writable: boolean;
+  readonly readable: boolean;
+  readonly executable: boolean;
 };
 
 type CreateCapabilityArg = {
@@ -37,6 +43,10 @@ export const createCapability = ({ writable, readable, executable }: CreateCapab
     writable,
     readable,
     executable,
+
+    get plain() {
+      return { writable: this.writable, readable: this.readable, executable: this.executable };
+    },
 
     /** Return new capability that allows to write */
     allowToWrite() {
@@ -75,3 +85,8 @@ export const createCapability = ({ writable, readable, executable }: CreateCapab
  */
 export const emptyCapability = (): Capability =>
   createCapability({ writable: false, readable: false, executable: false });
+
+/**
+   Return new capability that have all capability on all roles.
+ */
+export const fullCapability = (): Capability => createCapability({ writable: true, readable: true, executable: true });

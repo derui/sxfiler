@@ -33,7 +33,7 @@ export class Component extends React.PureComponent<Props> {
       >
         <Mode key="mode" mode={item.stat.mode} isDirectory={item.stat.isDirectory} isSymlink={item.stat.isSymlink} />
         <Timestamp key="timestamp" timestamp={item.stat.mtime} />
-        <Size key="size" size={item.stat.sizeAsBigInt} />
+        <Size key="size" size={item.stat.sizeAsBigInt()} />
         <Name key="name" name={item.name} isDirectory={item.stat.isDirectory} isSymlink={item.stat.isSymlink} />
       </Element>
     );

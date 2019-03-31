@@ -1,4 +1,11 @@
-import { Capability, capabilityOfBits, createCapability } from "./capability";
+import { Capability, emptyCapability, CapabilityObject } from "./capability";
+
+// A plain mode object
+export type ModeObject = {
+  readonly owner: CapabilityObject;
+  readonly group: CapabilityObject;
+  readonly others: CapabilityObject;
+};
 
 // Mode of a FileStat
 export type Mode = {
@@ -20,6 +27,12 @@ export type Mode = {
      Get a new Mode that is changed other's capability.
    */
   changeOthers(cap: Capability): Mode;
+
+  /**
+     Plain version mode
+   */
+
+  plain: ModeObject;
 };
 
 type CreateModeArg = {
@@ -37,6 +50,14 @@ export const createMode = ({ owner, group, others }: CreateModeArg): Mode => {
     group,
     others,
 
+    get plain() {
+      return {
+        owner: this.owner.plain,
+        group: this.group.plain,
+        others: this.others.plain,
+      };
+    },
+
     changeOwner(cap: Capability): Mode {
       return { ...this, owner: cap };
     },
@@ -51,21 +72,8 @@ export const createMode = ({ owner, group, others }: CreateModeArg): Mode => {
   };
 };
 
-export const emptyMode= (): Mode => createMode({owner: })
-
-
 /**
- * convert number to mode that contains capabilities
- * @param capabilities mode bits. default is 0o777
+   Get a new mode that do not have any capability.
  */
-export const modeOfBits = (capabilities: number = 0o777): Mode => {
-  const ownerBits = (capabilities & 0o700) >> 6;
-  const groupBits = (capabilities & 0o70) >> 3;
-  const othersBits = capabilities & 0o7;
-
-  return createMode({
-    owner: capabilityOfBits(ownerBits),
-    group: capabilityOfBits(groupBits),
-    others: capabilityOfBits(othersBits),
-  });
-};
+export const emptyMode = (): Mode =>
+  createMode({ owner: emptyCapability(), group: emptyCapability(), others: emptyCapability() });

@@ -1,11 +1,11 @@
-import FileStatFactory from "./file-stat-factory";
 import { Direction } from "./filer";
 import Factory from "./filer-factory";
 import { createNode } from "./node";
-import { Mode } from "./mode";
+import { emptyMode } from "./mode";
+import { createFileStat } from "./file-stat";
 
-const stat = FileStatFactory.create({
-  mode: new Mode(),
+const stat = createFileStat({
+  mode: emptyMode(),
   uid: 1000,
   gid: 1000,
   atime: "10",

@@ -14,34 +14,15 @@ interface FactoryArg {
  * create node
  * @param args
  */
-export function createNode(args: FactoryArg) {
-  return new NodeImpl(args.id, args.name, args.stat, args.parentDirectory, args.marked, args.linkPath);
+export function createNode(args: FactoryArg): NodeObject {
+  return { ...args };
 }
 
-export interface Node {
+export type NodeObject = {
   readonly id: string;
   readonly name: string;
   readonly stat: FileStat;
   readonly parentDirectory: string;
   readonly marked: boolean;
   readonly linkPath?: string;
-}
-
-class NodeImpl implements Node {
-  /**
-   * create new Node
-   * @param id id of node
-   * @param name file or directory name of node
-   * @param stat stats of node
-   * @param parentDirectory parent directory of node
-   * @param linkPath link target path if node is link
-   */
-  constructor(
-    public readonly id: string,
-    public readonly name: string,
-    public readonly stat: FileStat,
-    public readonly parentDirectory: string,
-    public readonly marked: boolean,
-    public readonly linkPath?: string
-  ) {}
-}
+};

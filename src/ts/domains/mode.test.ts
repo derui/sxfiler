@@ -10,27 +10,47 @@ describe("Domain", () => {
           group: emptyCapability().allowToRead(),
           others: emptyCapability().allowToExecute(),
         });
+        const plain = mode.plain;
 
-        expect(mode.owner).toEqual(emptyCapability().allowToWrite());
-        expect(mode.group).toEqual(emptyCapability().allowToRead());
-        expect(mode.others).toEqual(emptyCapability().allowToExecute());
+        expect(plain.owner).toEqual(emptyCapability().allowToWrite().plain);
+
+        expect(plain.group).toEqual(emptyCapability().allowToRead().plain);
+        expect(plain.others).toEqual(emptyCapability().allowToExecute().plain);
       });
     });
 
     describe("empty factory", () => {
       it("return the mode that is disabled all capabilities", () => {
-        const mode = emptyMode();
+        const mode = emptyMode().plain;
 
-        expect(mode.owner).toEqual(emptyCapability());
-        expect(mode.group).toEqual(emptyCapability());
-        expect(mode.others).toEqual(emptyCapability());
+        expect(mode.owner).toEqual(emptyCapability().plain);
+        expect(mode.group).toEqual(emptyCapability().plain);
+        expect(mode.others).toEqual(emptyCapability().plain);
       });
     });
 
     describe("methods", () => {
-      it("should be able to create empty mode", () => {
+      it("get plain version mode", () => {
         const mode = emptyMode();
-        const cap = createCapability({ writable: false, readable: false, executable: false });
+
+        const plain = mode.plain;
+
+        expect(plain.owner).toEqual(emptyCapability().plain);
+        expect(plain.group).toEqual(emptyCapability().plain);
+        expect(plain.others).toEqual(emptyCapability().plain);
+      });
+
+      it("get plain object from changed object", () => {
+        const mode = emptyMode().changeGroup(emptyCapability().allowToExecute()).plain;
+
+        expect(mode.owner).toEqual(emptyCapability().plain);
+        expect(mode.group).toEqual(emptyCapability().allowToExecute().plain);
+        expect(mode.others).toEqual(emptyCapability().plain);
+      });
+
+      it("should be able to create empty mode", () => {
+        const mode = emptyMode().plain;
+        const cap = createCapability({ writable: false, readable: false, executable: false }).plain;
 
         expect(mode.owner).toEqual(cap);
         expect(mode.group).toEqual(cap);
@@ -41,7 +61,7 @@ describe("Domain", () => {
         const mode = emptyMode();
         const newMode = mode.changeOwner(emptyCapability().allowToWrite());
 
-        expect(newMode.owner).toStrictEqual(emptyCapability().allowToWrite());
+        expect(newMode.owner.plain).toEqual(emptyCapability().allowToWrite().plain);
         expect(newMode.group).toEqual(mode.group);
         expect(newMode.others).toEqual(mode.others);
       });
@@ -50,7 +70,7 @@ describe("Domain", () => {
         const mode = emptyMode();
         const newMode = mode.changeGroup(emptyCapability().allowToRead());
 
-        expect(newMode.group).toStrictEqual(emptyCapability().allowToRead());
+        expect(newMode.group.plain).toEqual(emptyCapability().allowToRead().plain);
         expect(newMode.owner).toEqual(mode.owner);
         expect(newMode.others).toEqual(mode.others);
       });
@@ -59,7 +79,7 @@ describe("Domain", () => {
         const mode = emptyMode();
         const newMode = mode.changeOthers(emptyCapability().allowToExecute());
 
-        expect(newMode.others).toStrictEqual(emptyCapability().allowToExecute());
+        expect(newMode.others.plain).toEqual(emptyCapability().allowToExecute().plain);
         expect(newMode.owner).toEqual(mode.owner);
         expect(newMode.group).toEqual(mode.group);
       });

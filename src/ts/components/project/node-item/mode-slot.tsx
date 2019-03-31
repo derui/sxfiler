@@ -1,11 +1,11 @@
 import * as React from "react";
-import { Capability } from "../../../domains/capability";
-import { Mode } from "../../../domains/mode";
+import { Capability, CapabilityObject } from "../../../domains/capability";
+import { Mode, ModeObject } from "../../../domains/mode";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const styles = require("./node-item.module.scss");
 
-function capabilityToString(cap: Capability) {
+function capabilityToString(cap: CapabilityObject) {
   const readable = cap.readable ? "r" : "-";
   const writable = cap.writable ? "w" : "-";
   const executable = cap.executable ? "x" : "-";
@@ -16,7 +16,7 @@ function capabilityToString(cap: Capability) {
 /**
  * convert mode to string
  */
-function modeToString(mode: Mode, isDirectory: boolean, isSymlink: boolean): string {
+function modeToString(mode: ModeObject, isDirectory: boolean, isSymlink: boolean): string {
   let state = "=";
 
   if (isDirectory && !isSymlink) {
@@ -33,7 +33,7 @@ function modeToString(mode: Mode, isDirectory: boolean, isSymlink: boolean): str
 }
 
 interface Prop {
-  mode: Mode;
+  mode: ModeObject;
   isDirectory: boolean;
   isSymlink: boolean;
 }

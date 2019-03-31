@@ -1,9 +1,9 @@
 import { createNode } from "./node";
 import { createFileStat } from "./file-stat";
-import { modeOfBits } from "./mode";
+import { emptyMode } from "./mode";
 
 const stat = createFileStat({
-  mode: modeOfBits(0o777),
+  mode: emptyMode(),
   uid: 1000,
   gid: 1000,
   atime: "10",

@@ -4,16 +4,23 @@ import renderer from "react-test-renderer";
 import { Component as T } from "./node-list";
 
 import { createNode } from "../../../domains/node";
-
-import FileStatFactory from "../../../domains/file-stat-factory";
+import { createFileStat } from "../../../domains/file-stat";
+import { createMode } from "../../../domains/mode";
+import { emptyCapability } from "../../../domains/capability";
 
 function makeNode(name: string, isDirectory = false, isSymlink = false) {
   return createNode({
     id: "node",
     name,
     marked: false,
-    stat: FileStatFactory.create({
-      mode: "644",
+    stat: createFileStat({
+      mode: createMode({
+        owner: emptyCapability()
+          .allowToRead()
+          .allowToWrite(),
+        group: emptyCapability().allowToRead(),
+        others: emptyCapability().allowToRead(),
+      }),
       uid: 1000,
       gid: 1000,
       atime: "0",

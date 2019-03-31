@@ -3,17 +3,24 @@ import renderer from "react-test-renderer";
 
 import { createNode } from "../../../domains/node";
 
-import FileStatFactory from "../../../domains/file-stat-factory";
 import { Component as T } from "./node-item";
-import { parse } from "../../../domains/mode";
+import { createMode } from "../../../domains/mode";
+import { emptyCapability } from "../../../domains/capability";
+import { createFileStat } from "../../../domains/file-stat";
 
 function makeNode(marked: boolean, isDirectory = false, isSymlink = false) {
   return createNode({
     id: "node",
     name: "file.ext",
     marked,
-    stat: FileStatFactory.create({
-      mode: parse("0644"),
+    stat: createFileStat({
+      mode: createMode({
+        owner: emptyCapability()
+          .allowToRead()
+          .allowToWrite(),
+        group: emptyCapability().allowToRead(),
+        others: emptyCapability().allowToRead(),
+      }),
       uid: 1000,
       gid: 1000,
       atime: "0",
