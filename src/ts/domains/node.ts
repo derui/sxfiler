@@ -14,9 +14,9 @@ interface FactoryArg {
  * create node
  * @param args
  */
-export function createNode(args: FactoryArg): NodeObject {
+export const createNode = (args: FactoryArg): NodeObject => {
   return { ...args };
-}
+};
 
 export type NodeObject = {
   readonly id: string;

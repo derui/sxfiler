@@ -1,6 +1,27 @@
 import bigInt from "big-integer";
 import { Mode } from "./mode";
 
+// object mode of file
+export type FileStat = FileStatObject & {
+  /**
+   *  get size of file as BigInt
+   */
+  sizeAsBigInt(): bigInt.BigInteger;
+};
+
+export type FileStatObject = {
+  readonly mode: Mode;
+  readonly uid: number;
+  readonly gid: number;
+  readonly atime: Date;
+  readonly ctime: Date;
+  readonly mtime: Date;
+  readonly size: string;
+  readonly isDirectory: boolean;
+  readonly isFile: boolean;
+  readonly isSymlink: boolean;
+};
+
 export type FactoryArg = {
   mode: Mode;
   uid: number;
@@ -14,27 +35,8 @@ export type FactoryArg = {
   isSymlink: boolean;
 };
 
-// object mode of file
-export type FileStat = {
-  readonly mode: Mode;
-  readonly uid: number;
-  readonly gid: number;
-  readonly atime: Date;
-  readonly ctime: Date;
-  readonly mtime: Date;
-  readonly size: string;
-  readonly isDirectory: boolean;
-  readonly isFile: boolean;
-  readonly isSymlink: boolean;
-
-  /**
-   *  get size of file as BigInt
-   */
-  sizeAsBigInt(): bigInt.BigInteger;
-};
-
 /**
- * create Filer
+ * create FileStat
  * @param arg arguments of factory
  */
 export const createFileStat = (arg: FactoryArg): FileStat => {

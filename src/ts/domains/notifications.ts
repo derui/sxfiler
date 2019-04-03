@@ -1,51 +1,84 @@
-import { Notification, NotificationType } from "./notification";
+import { Notification, NotificationKind, MessageNotification, ProgressNotification } from "./notification";
 
-/**
- * list implementation of Notification entity.
- * All method of this class is immutable.
- */
-export default class Notifications {
-  private _items: { [id: string]: Notification } = {};
-  constructor(items: Notification[] = []) {
-    items.forEach(v => {
-      this._items[v.id] = v;
-    });
-  }
-
+export type Notifications = {
   // get notifications as array
-  get messages() {
-    return Object.values(this._items).filter(v => v.bodyKind === NotificationType.Message);
-  }
-  get progresses() {
-    return Object.values(this._items).filter(v => v.bodyKind === NotificationType.Progress);
-  }
+  messages: MessageNotification[];
+  progresses: ProgressNotification[];
 
   /**
    * return matched notification
    * @param id ID of notification
    */
-  public findById(id: string): Notification | undefined {
-    return this._items[id];
-  }
+  findById(id: string): Notification | undefined;
 
   /**
    * Remove the notification having id
    * @param id the id of notification to want to remove
    */
-  public remove(id: string): Notifications {
-    const data = { ...this._items };
-    delete data[id];
-
-    return new Notifications(Object.values(data));
-  }
+  remove(id: string): Notifications;
 
   /**
    * append a notification and return new instance.
    * @param item
    */
-  public append(item: Notification): Notifications {
-    const ret = new Notifications();
-    ret._items = { ...this._items, [item.id]: item };
-    return ret;
-  }
-}
+  append(item: Notification): Notifications;
+};
+
+// Used only module internal type
+type InnerDefinition = Notifications & {
+  _items: { [id: string]: Notification };
+};
+
+/**
+ * list implementation of Notification entity.
+ * All method of this class is immutable.
+ */
+export const createNotifications = (notifications: Notification[]): Notifications => {
+  const _items: { [id: string]: Notification } = {};
+  notifications.forEach(v => {
+    _items[v.id] = v;
+  });
+
+  return {
+    _items,
+
+    // get notifications as array
+    get messages(): MessageNotification[] {
+      return Object.values(this._items)
+        .filter(v => v.kind === NotificationKind.Message)
+        .map(v => v as MessageNotification);
+    },
+    get progresses(): ProgressNotification[] {
+      return Object.values(this._items)
+        .filter(v => v.kind === NotificationKind.Progress)
+        .map(v => v as ProgressNotification);
+    },
+
+    /**
+     * return matched notification
+     * @param id ID of notification
+     */
+    findById(id: string): Notification | undefined {
+      return this._items[id];
+    },
+
+    /**
+     * Remove the notification having id
+     * @param id the id of notification to want to remove
+     */
+    remove(id: string): Notifications {
+      const data = { ...this._items };
+      delete data[id];
+
+      return createNotifications(Object.values(data));
+    },
+
+    /**
+     * append a notification and return new instance.
+     * @param item
+     */
+    append(item: Notification): Notifications {
+      return createNotifications(Object.values({ ...this._items, [item.id]: item }));
+    },
+  } as InnerDefinition;
+};
