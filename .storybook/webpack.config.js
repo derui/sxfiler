@@ -29,8 +29,8 @@ const getRules = extensions => rules => rules.reduce((craRules, rule) => {
 
 const getStyleRules = getRules(cssExtensions.concat(cssModuleExtensions));
 
-module.exports = (baseConfig, env, config) => {
-  craConfig = require("../config/webpack.config.js")(baseConfig.mode);
+module.exports = ({config, mode}) => {
+  craConfig = require("../config/webpack.config.js")(config.mode);
   const styleRules = getStyleRules(craConfig.module.rules)
   config = Object.assign(
     config, {
