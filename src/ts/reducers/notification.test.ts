@@ -2,7 +2,7 @@
 import { actions } from "../actions/notification";
 import { actions as otherActions } from "../actions/ui-context";
 import { createMessage, Level } from "../domains/notification";
-import Notifications from "../domains/notifications";
+import { createNotifications } from "../domains/notifications";
 import { empty, State } from "../types/store-state/notification";
 import reducer from "./notification";
 
@@ -10,16 +10,14 @@ describe("reducers", () => {
   describe("Notification state", () => {
     it("remove the notification specified id in Timeout action", () => {
       const state: State = {
-        notifications: new Notifications([createMessage("id", Level.Info, "message")]),
-        timeouts: new Notifications(),
+        notifications: createNotifications([createMessage("id", Level.Info, "message")]),
+        timeouts: createNotifications([]),
       };
 
       const ret = reducer(state, actions.timeout("id"));
 
-      expect(ret).toEqual({
-        notifications: state.notifications,
-        timeouts: state.notifications,
-      });
+      expect(ret.notifications.messages).toHaveLength(1);
+      expect(ret.timeouts.messages).toHaveLength(1);
     });
 
     it("should append a new notification when ReceiveNotification action", () => {
@@ -33,35 +31,39 @@ describe("reducers", () => {
 
     it("should remove totally when called with Remove action", () => {
       const state: State = {
-        notifications: new Notifications([createMessage("id", Level.Info, "message")]),
-        timeouts: new Notifications([createMessage("id", Level.Info, "message")]),
+        notifications: createNotifications([createMessage("id", Level.Info, "message")]),
+        timeouts: createNotifications([createMessage("id", Level.Info, "message")]),
       };
 
       const ret = reducer(state, actions.remove("id"));
 
-      expect(ret).toEqual(empty());
+      expect(ret.notifications.messages).toHaveLength(0);
+      expect(ret.notifications.progresses).toHaveLength(0);
+      expect(ret.timeouts.messages).toHaveLength(0);
+      expect(ret.timeouts.progresses).toHaveLength(0);
     });
 
     it("should not append to list of timeouts if unknown id given", () => {
       const state: State = {
-        notifications: new Notifications([createMessage("id", Level.Info, "message")]),
-        timeouts: new Notifications(),
+        notifications: createNotifications([createMessage("id", Level.Info, "message")]),
+        timeouts: createNotifications([]),
       };
 
       const ret = reducer(state, actions.timeout("unknown"));
 
-      expect(ret.timeouts).toEqual(new Notifications());
+      expect(ret.timeouts.messages).toHaveLength(0);
+      expect(ret.timeouts.progresses).toHaveLength(0);
     });
 
     it("should through unhandle action", () => {
       const state: State = {
-        notifications: new Notifications([createMessage("id", Level.Info, "message")]),
-        timeouts: new Notifications(),
+        notifications: createNotifications([createMessage("id", Level.Info, "message")]),
+        timeouts: createNotifications([]),
       };
 
       const ret = reducer(state, otherActions.enableFileTree());
 
-      expect(ret).toStrictEqual(state);
+      expect(ret === state).toBeTruthy();
     });
   });
 });

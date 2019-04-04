@@ -58,7 +58,7 @@ export const createProgress = (
   id: string,
   level: Level,
   progress: { process: string; current: number; target: number }
-): Notification => {
+): ProgressNotification => {
   return {
     kind: NotificationKind.Progress,
     id,

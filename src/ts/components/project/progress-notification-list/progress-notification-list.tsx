@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Notification } from "../../../domains/notification";
+import { ProgressNotification } from "../../../domains/notification";
 import * as List from "../../ui/list/list";
 import { Component as Item } from "../progress-notification-item/progress-notification-item";
 
@@ -8,10 +8,10 @@ import { Component as Item } from "../progress-notification-item/progress-notifi
 const styles = require("./progress-notification-list.module.scss");
 
 export interface Props {
-  notifications: Notification[];
+  notifications: ProgressNotification[];
 }
 
 export const Component: React.FC<Props> = ({ notifications }) => {
-  const items = notifications.map(v => <Item key={v.id} body={v.getProgressBody()} />);
+  const items = notifications.map(v => <Item key={v.id} body={v.body} />);
   return <List.Component className={styles.root}>{items}</List.Component>;
 };

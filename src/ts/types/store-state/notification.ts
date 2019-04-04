@@ -1,4 +1,4 @@
-import Notifications from "../../domains/notifications";
+import { Notifications, createNotifications } from "../../domains/notifications";
 
 export interface State {
   // all notification not finished yet
@@ -9,7 +9,7 @@ export interface State {
 // get empty state
 export function empty(): State {
   return {
-    notifications: new Notifications(),
-    timeouts: new Notifications(),
+    notifications: createNotifications([]),
+    timeouts: createNotifications([]),
   };
 }

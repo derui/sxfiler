@@ -13,7 +13,7 @@ describe("Project", () => {
         current: 10,
         target: 100,
       });
-      const tree = renderer.create(<T body={notification.getProgressBody()} />).toJSON();
+      const tree = renderer.create(<T body={notification.body} />).toJSON();
 
       expect(tree).toMatchSnapshot();
     });
@@ -24,7 +24,7 @@ describe("Project", () => {
         current: 101,
         target: 100,
       });
-      const tree = renderer.create(<T body={notification.getProgressBody()} />).toJSON();
+      const tree = renderer.create(<T body={notification.body} />).toJSON();
 
       expect(tree).toMatchSnapshot();
     });
@@ -35,7 +35,7 @@ describe("Project", () => {
         current: 101,
         target: 100,
       });
-      const tree = renderer.create(<T body={notification.getProgressBody()} />).toJSON();
+      const tree = renderer.create(<T body={notification.body} />).toJSON();
 
       expect(tree).toMatchSnapshot();
     });

@@ -5,14 +5,13 @@ describe("Domain", () => {
     it("can create progress item via factory", () => {
       const data = createProgress("id", Level.Info, { process: "foo", current: 0, target: 100 });
 
-      expect(data.body.kind).toEqual(NotificationKind.Progress);
+      expect(data.kind).toEqual(NotificationKind.Progress);
     });
 
     it("can get body as progress from progress notification", () => {
       const data = createProgress("id", Level.Info, { process: "foo", current: 0, target: 100 });
 
       expect(data.body).toEqual({
-        kind: NotificationKind.Progress,
         process: "foo",
         current: 0,
         target: 100,
@@ -23,7 +22,6 @@ describe("Domain", () => {
       const data = createMessage("id", Level.Info, "message");
 
       expect(data.body).toEqual({
-        kind: NotificationKind.Message,
         message: "message",
       });
     });

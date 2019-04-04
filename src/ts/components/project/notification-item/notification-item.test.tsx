@@ -15,9 +15,7 @@ describe("Project", () => {
       };
 
       const tree = renderer
-        .create(
-          <T body={notification.getMessageBody()} level={notification.level} onExited={onExited} timeouted={false} />
-        )
+        .create(<T body={notification.body} level={notification.level} onExited={onExited} timeouted={false} />)
         .toJSON();
 
       expect(tree).toMatchSnapshot();
@@ -30,7 +28,7 @@ describe("Project", () => {
       };
 
       const wrapper = shallow(
-        <T body={notification.getMessageBody()} level={notification.level} onExited={onExited} timeouted={false} />
+        <T body={notification.body} level={notification.level} onExited={onExited} timeouted={false} />
       );
       wrapper.simulate("exited");
     });
@@ -42,9 +40,7 @@ describe("Project", () => {
       };
 
       const tree = renderer
-        .create(
-          <T body={notification.getMessageBody()} level={notification.level} onExited={onExited} timeouted={false} />
-        )
+        .create(<T body={notification.body} level={notification.level} onExited={onExited} timeouted={false} />)
         .toJSON();
 
       expect(tree).toMatchSnapshot();

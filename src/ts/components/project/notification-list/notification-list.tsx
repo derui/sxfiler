@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Notification } from "../../../domains/notification";
+import { MessageNotification } from "../../../domains/notification";
 import * as List from "../../ui/list/list";
 import * as NotificationItem from "../notification-item/notification-item";
 
@@ -12,7 +12,7 @@ interface ClassNames {
 
 export interface Props {
   // notifications given from server
-  notifications: Notification[];
+  notifications: MessageNotification[];
   onNotificationHidden: (id: string) => void;
 
   // notification ids that are timeouted and not yet removed.
@@ -20,14 +20,14 @@ export interface Props {
 }
 
 // make item
-function toComponent(notification: Notification, timeouts: string[], handle: (id: string) => void) {
+function toComponent(notification: MessageNotification, timeouts: string[], handle: (id: string) => void) {
   const C = NotificationItem.Component;
   const timeouted = timeouts.includes(notification.id);
   const handleExited = () => handle(notification.id);
   return (
     <C
       key={notification.id}
-      body={notification.getMessageBody()}
+      body={notification.body}
       level={notification.level}
       onExited={handleExited}
       timeouted={timeouted}
