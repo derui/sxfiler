@@ -1,14 +1,14 @@
 import * as React from "react";
 import shallowequal from "shallowequal";
 
-import { Node } from "../../../domains/node";
+import { NodeObject } from "../../../domains/node";
 import * as Element from "../../ui/element/element";
 import * as List from "../../ui/list/list";
 import { Component as NodeItem } from "../node-item/node-item";
 import { Component as RootRef } from "../../ui/root-ref/root-ref";
 import AutoSizer from "../../../libs/auto-sizer";
 
-import { ItemMeasureCache, Measure } from "./item-measure-cache";
+import { ItemMeasureCache } from "./item-measure-cache";
 import { ListLayoutCalculator, VirtualizedWindow } from "./list-layout-calculator";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -43,56 +43,30 @@ const Header: React.FunctionComponent<HeaderProps> = ({ className, directory, fo
 
 export interface Props {
   location: string;
-  nodes: Node[];
+  nodes: NodeObject[];
   cursor: number;
   focused: boolean;
 }
 
 export type ElementType = React.ReactElement<Props, React.FunctionComponent<Props>>;
 
-type State = {
-  layout: VirtualizedWindow | undefined;
-  cache: ReadonlyMap<number, Measure>;
-};
-
-export class Component extends React.Component<Props, State> {
+export class Component extends React.Component<Props> {
   private itemMeasureCache = new ItemMeasureCache();
   private layoutCalculator: ListLayoutCalculator = new ListLayoutCalculator({
     estimatedItemSize: 24,
   });
-  private unobserve: (() => void) | undefined = undefined;
+  private layout: VirtualizedWindow | undefined;
 
   constructor(props: Props) {
     super(props);
-
-    this.state = {
-      layout: undefined,
-      cache: new Map(),
-    };
-
-    this.unobserve = this.itemMeasureCache.observe(this.handleChangeCache);
   }
 
-  private handleChangeCache = (cache: ReadonlyMap<number, Measure>) => {
-    this.setState({ cache });
-  };
-
-  public shouldComponentUpdate(newProps: Props, newState: State): boolean {
+  public shouldComponentUpdate(newProps: Props): boolean {
     if (!shallowequal(newProps, this.props)) {
       return true;
     }
 
-    if (!shallowequal(this.state.cache, newState.cache) || shallowequal(this.state.layout, newState.layout)) {
-      return true;
-    }
-
     return false;
-  }
-
-  public componentWillUnmount() {
-    if (this.unobserve) {
-      this.unobserve();
-    }
   }
 
   private makeList(height: number): JSX.Element {

@@ -1,10 +1,9 @@
 // defines API signature for Filer group.
 
 import { Api } from "../libs/json-rpc/client";
-import { Filer } from "../domains/filer";
-import FilerFactory from "../domains/filer-factory";
-import FileStatFactory from "../domains/file-stat-factory";
-import { Node, createNode } from "../domains/node";
+import { Filer, createFiler } from "../domains/filer";
+import { NodeObject, createNode } from "../domains/node";
+import { createFileStat } from "../domains/file-stat";
 
 export enum Methods {
   Make = "filer/make",
@@ -15,8 +14,8 @@ export enum Methods {
   DeleteNodes = "filer/deleteNodes",
 }
 
-const transformNode = (node: any): Node => {
-  const stat = FileStatFactory.create(node.stat);
+const transformNode = (node: any): NodeObject => {
+  const stat = createFileStat(node.stat);
 
   return createNode({ ...node, stat });
 };
@@ -39,10 +38,11 @@ function transformFiler(filer: any): Filer {
     sortOrder,
   } = filer;
 
-  return FilerFactory.create({
+  return createFiler({
     id,
     location,
     nodes: nodes.map(transformNode),
+    currentCursorIndex: 0,
   });
 }
 

@@ -2,24 +2,26 @@ import { shallow } from "enzyme";
 import * as React from "react";
 import renderer from "react-test-renderer";
 
-import FilerFactory from "../../../../domains/filer-factory";
 import { Side, State } from "../../../../types/store-state/file-list";
 import { Component } from "./file-list-container";
+import { createFiler } from "../../../../domains/filer";
 
 describe("Container", () => {
   describe("File List Container", () => {
     it("should render correctly", () => {
       const state: State = {
         initialized: true,
-        left: FilerFactory.create({
+        left: createFiler({
           id: "left",
           location: "/left",
           nodes: [],
+          currentCursorIndex: 0,
         }),
-        right: FilerFactory.create({
+        right: createFiler({
           id: "right",
           location: "/right",
           nodes: [],
+          currentCursorIndex: 0,
         }),
         currentSide: Side.Left,
       };
@@ -31,15 +33,17 @@ describe("Container", () => {
     it("should mark current side of filer", () => {
       const state: State = {
         initialized: true,
-        left: FilerFactory.create({
+        left: createFiler({
           id: "left",
           location: "/left",
           nodes: [],
+          currentCursorIndex: 0,
         }),
-        right: FilerFactory.create({
+        right: createFiler({
           id: "right",
           location: "/right",
           nodes: [],
+          currentCursorIndex: 0,
         }),
         currentSide: Side.Right,
       };

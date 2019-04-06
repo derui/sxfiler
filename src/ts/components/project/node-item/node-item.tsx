@@ -12,7 +12,7 @@ import { ForwardedRef } from "../../ui/util";
 const styles = require("./node-item.module.scss");
 
 export type Props = ForwardedRef & {
-  item: Domain.Node;
+  item: Domain.NodeObject;
   selected: boolean;
   hidden?: boolean;
 };
