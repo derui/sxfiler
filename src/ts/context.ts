@@ -4,7 +4,7 @@ import { Actions } from "./actions";
 import { ApiMethod } from "./apis";
 import { Client } from "./libs/json-rpc/client";
 import * as types from "./types/index";
-import { StoreState } from "./types/store-state";
+import { AppState } from "./states";
 import { UseCaseLike } from "./usecases/type";
 
 // interface of context
@@ -16,7 +16,7 @@ export interface ContextLike {
 export class Context implements ContextLike {
   public readonly client: Client<ApiMethod>;
   public readonly dispatcher: types.Dispatcher<Actions>;
-  public readonly store: Store<StoreState, Actions>;
+  public readonly store: Store<AppState, Actions>;
 
   /**
    * constructor of context
@@ -26,7 +26,7 @@ export class Context implements ContextLike {
   public constructor(
     client: Client<ApiMethod>,
     dispatcher: types.Dispatcher<Actions>,
-    store: Store<StoreState, Actions>
+    store: Store<AppState, Actions>
   ) {
     this.client = client;
     this.dispatcher = dispatcher;

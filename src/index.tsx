@@ -13,9 +13,9 @@ import * as jrpc from "./ts/libs/json-rpc";
 import { Client } from "./ts/libs/json-rpc/client";
 import LocatorContext from "./ts/locator";
 import reducer from "./ts/reducers";
-import { StoreState } from "./ts/types/store-state";
+import { AppState } from "./ts/states";
 
-import InitializeUseCase from "./ts/usecases/filer/initialize";
+import { createUseCase } from "./ts/usecases/filer/initialize";
 
 const url = process.env.NODE_ENV === "production" ? process.env.REACT_APP_SERVER : "ws://localhost:50879";
 
@@ -36,14 +36,14 @@ const locator = {
 };
 
 function initializeState() {
-  locator.context.execute(new InitializeUseCase(client), { location: "." });
+  locator.context.execute(createUseCase(client), { location: "." });
 }
 
 ws.onopen = () => {
   initializeState();
 };
 
-function render(state: StoreState) {
+function render(state: AppState) {
   ReactDOM.render(
     <LocatorContext.Provider value={locator}>
       <App state={state} />

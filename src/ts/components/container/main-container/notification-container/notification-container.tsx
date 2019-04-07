@@ -2,8 +2,8 @@ import * as React from "react";
 
 import * as Element from "../../../ui/element/element";
 import { ContextLike } from "../../../../context";
-import { State } from "../../../../types/store-state/notification";
-import TimeoutUseCase from "../../../../usecases/notification/timeout";
+import { State } from "../../../../states/notification";
+import { createUseCase } from "../../../../usecases/notification/timeout";
 import { Component as NotificationList } from "../../../project/notification-list/notification-list";
 import LocatorContext from "../../../../locator";
 
@@ -41,7 +41,7 @@ export class Component extends React.PureComponent<Props> {
   }
 
   private handleNotificationHidden = (context: ContextLike) => (id: string) => {
-    context.execute(new TimeoutUseCase(), {
+    context.execute(createUseCase(), {
       notificationId: id,
     });
   };

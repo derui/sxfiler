@@ -2,7 +2,7 @@ import { shallow } from "enzyme";
 import * as React from "react";
 import renderer from "react-test-renderer";
 
-import { Side, State } from "../../../../types/store-state/file-list";
+import { Side, State } from "../../../../states/file-list";
 import { Component } from "./file-list-container";
 import { createFiler } from "../../../../domains/filer";
 

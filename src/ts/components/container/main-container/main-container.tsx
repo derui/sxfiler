@@ -7,14 +7,14 @@ import { Component as RootRef } from "../../ui/root-ref/root-ref";
 
 import { ContextLike } from "../../../context";
 import LocatorContext from "../../../locator";
-import { StoreState } from "../../../types/store-state";
-import { State as KeymapState, findBinding } from "../../../types/store-state/keymap";
+import { AppState } from "../../../states";
+import { State as KeymapState, findBinding } from "../../../states/keymap";
 import * as kbd from "../../../libs/kbd";
 
 const styles = require("./main-container.module.scss");
 
 export interface Props {
-  state: StoreState;
+  state: AppState;
 }
 
 /**

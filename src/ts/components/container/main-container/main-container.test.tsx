@@ -1,5 +1,5 @@
 import * as React from "react";
-import { empty } from "../../../types/store-state";
+import { empty } from "../../../states";
 import renderer from "react-test-renderer";
 import { Component } from "./main-container";
 import LocatorContext from "../../../locator";

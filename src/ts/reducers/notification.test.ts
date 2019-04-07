@@ -3,7 +3,7 @@ import { actions } from "../actions/notification";
 import { actions as otherActions } from "../actions/ui-context";
 import { createMessage, Level } from "../domains/notification";
 import { createNotifications } from "../domains/notifications";
-import { empty, State } from "../types/store-state/notification";
+import { empty, State } from "../states/notification";
 import reducer from "./notification";
 
 describe("reducers", () => {

@@ -7,10 +7,14 @@ interface Arg {
   notificationId: string;
 }
 
+export type UseCase = UseCaseLike<Actions, Arg>;
+
 // An use case to remove notification from system
-export default class RemoveUseCase implements UseCaseLike<Actions, Arg> {
-  public execute(dispatcher: Dispatcher<Actions>, arg: Arg) {
-    const { notificationId } = arg;
-    dispatcher.dispatch(actions.remove(notificationId));
-  }
-}
+export const createUseCase = (): UseCase => {
+  return {
+    execute(dispatcher: Dispatcher<Actions>, arg: Arg) {
+      const { notificationId } = arg;
+      dispatcher.dispatch(actions.remove(notificationId));
+    },
+  };
+};

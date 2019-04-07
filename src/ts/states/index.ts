@@ -1,10 +1,10 @@
-import * as Config from "./store-state/config";
-import * as FileList from "./store-state/file-list";
-import * as Keymap from "./store-state/keymap";
-import * as Notification from "./store-state/notification";
-import UIContext from "./ui-context";
+import * as Config from "./config";
+import * as FileList from "./file-list";
+import * as Keymap from "./keymap";
+import * as Notification from "./notification";
+import UIContext from "../types/ui-context";
 
-export type StoreState = {
+export type AppState = {
   context: UIContext;
   config: Config.State;
   fileList: FileList.State;
@@ -13,7 +13,7 @@ export type StoreState = {
 };
 
 // get empty state
-export function empty(): StoreState {
+export const empty = (): AppState => {
   return {
     context: UIContext.OnFileTree,
     config: Config.empty(),
@@ -21,4 +21,4 @@ export function empty(): StoreState {
     keymap: Keymap.empty(),
     notification: Notification.empty(),
   };
-}
+};

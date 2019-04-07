@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Filer } from "../../../../domains/filer";
-import { Side, State } from "../../../../types/store-state/file-list";
+import { Side, State } from "../../../../states/file-list";
 import * as NodeList from "../../../project/node-list/node-list";
 import * as Element from "../../../ui/element/element";
 

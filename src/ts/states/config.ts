@@ -1,4 +1,4 @@
-import { Configuration } from "../../domains/configuration";
+import { Configuration } from "../domains/configuration";
 
 export interface State {
   // current configuration

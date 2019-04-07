@@ -8,9 +8,16 @@ interface Arg {
   notification: Notification;
 }
 
-export default class ReceiveNotificationUseCase implements UseCaseLike<Actions, Arg> {
-  public execute(dispatcher: Dispatcher<Actions>, arg: Arg) {
-    const { notification } = arg;
-    dispatcher.dispatch(actions.receiveNotification(notification));
-  }
-}
+export type UseCase = UseCaseLike<Actions, Arg>;
+
+/**
+ * Create the new use case
+ */
+export const createUseCase = (): UseCase => {
+  return {
+    execute(dispatcher: Dispatcher<Actions>, arg: Arg) {
+      const { notification } = arg;
+      dispatcher.dispatch(actions.receiveNotification(notification));
+    },
+  };
+};
