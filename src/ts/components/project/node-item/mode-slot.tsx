@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Capability, CapabilityObject } from "../../../domains/capability";
-import { Mode, ModeObject } from "../../../domains/mode";
+import { CapabilityObject } from "../../../domains/capability";
+import { ModeObject } from "../../../domains/mode";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const styles = require("./node-item.module.scss");
@@ -17,7 +17,7 @@ function capabilityToString(cap: CapabilityObject) {
  * convert mode to string
  */
 function modeToString(mode: ModeObject, isDirectory: boolean, isSymlink: boolean): string {
-  let state = "=";
+  let state = " ";
 
   if (isDirectory && !isSymlink) {
     state = "d";

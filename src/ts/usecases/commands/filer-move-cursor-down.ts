@@ -7,7 +7,7 @@ import { Direction } from "../../domains/filer";
 import { CommandRegistrar } from "../command-registrar";
 
 const belongingModuleId = "builtin";
-const commandId = "filer.moveCursorUp";
+const commandId = "filer.moveCursorDown";
 
 /**
  * Regist command instance to the registrar
@@ -37,7 +37,7 @@ export const createCommand = (): CommandLike => {
       dispatch.dispatch(
         actions.update({
           side,
-          filer: filer.moveIndex(Direction.Up),
+          filer: filer.moveIndex(Direction.Down),
         })
       );
     },

@@ -12,7 +12,7 @@ exports[`Project Node Item Mode slot should print name simply 1`] = `
 <span
   className="mode"
 >
-  =---------
+   ---------
 </span>
 `;
 

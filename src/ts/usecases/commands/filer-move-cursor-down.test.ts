@@ -1,11 +1,11 @@
-import * as C from "./filer-move-cursor-up";
+import * as C from "./filer-move-cursor-down";
 import * as AppState from "../../states";
 import { Side } from "../../states/file-list";
 import { createFiler, Direction } from "../../domains/filer";
 
 describe("Commands", () => {
   describe("Filer", () => {
-    describe("Move the cursor up of the filer", () => {
+    describe("Move the cursor down of the filer", () => {
       it("throw error when pass undefined as argument", () => {
         const command = C.createCommand();
         const dispatcher = jest.fn();
@@ -37,7 +37,7 @@ describe("Commands", () => {
         expect(dispatcher.dispatch).toBeCalled();
       });
 
-      it("moves filer cursor up", () => {
+      it("moves filer cursor down", () => {
         const command = C.createCommand();
         const dispatcher = {
           dispatch: jest.fn(),
@@ -49,7 +49,7 @@ describe("Commands", () => {
         const spy = jest.spyOn(state.fileList.left, "moveIndex");
 
         command.execute(dispatcher as any, { state: state });
-        expect(spy).toBeCalledWith(Direction.Up);
+        expect(spy).toBeCalledWith(Direction.Down);
       });
     });
   });
