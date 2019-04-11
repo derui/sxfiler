@@ -124,7 +124,8 @@
     "format": "node ./scripts/format.js",
     "clean": "node ./scripts/clean.js",
     "dev": "npm-run-all -p start electron",
-    "storybook": "start-storybook -p 9001 -c .storybook"
+    "storybook": "start-storybook -p 9001 -c .storybook",
+    "generate-commands": "node scripts/generate-commands.js"
   },
   "repository": {
     "type": "git",
