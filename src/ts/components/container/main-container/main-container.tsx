@@ -5,10 +5,9 @@ import * as FileListContainer from "./file-list-container/file-list-container";
 import * as NotificationContainer from "./notification-container/notification-container";
 import { Component as RootRef } from "../../ui/root-ref/root-ref";
 
-import { ContextLike } from "../../../context";
-import LocatorContext from "../../../locator";
+import LocatorContext, { Locator } from "../../../locator";
 import { AppState } from "../../../states";
-import { State as KeymapState, findBinding } from "../../../states/keymap";
+import { findBinding } from "../../../states/keymap";
 import * as kbd from "../../../libs/kbd";
 
 const styles = require("./main-container.module.scss");
@@ -21,16 +20,14 @@ export interface Props {
  * handle keyboard event that all keydown event on application
  * @param props properties of component
  */
-function handleKeyDown(context: ContextLike | undefined, keymap: KeymapState): (ev: React.KeyboardEvent<any>) => void {
+function handleKeyDown(locator: Locator, state: AppState): (ev: React.KeyboardEvent<any>) => void {
   return ev => {
-    if (!context) {
-      return;
-    }
+    const { context, commandRegistrar } = locator;
 
     switch (ev.type) {
       case "keydown": {
         const key = kbd.make(ev.key, { meta: ev.metaKey, ctrl: ev.ctrlKey });
-        const binding = findBinding(keymap, kbd.toKeySeq(key));
+        const binding = findBinding(state.keymap, kbd.toKeySeq(key));
 
         if (!binding) {
           break;
@@ -39,7 +36,10 @@ function handleKeyDown(context: ContextLike | undefined, keymap: KeymapState): (
         ev.preventDefault();
         ev.stopPropagation();
         // TODO: implement to invoke action
-        /* onAction(binding.action); */
+        const command = commandRegistrar.findCommand(binding.action);
+        if (command && context) {
+          context.execute(command, { state });
+        }
         break;
       }
       default:
@@ -66,12 +66,16 @@ export class Component extends React.Component<Props> {
   }
 
   public render() {
-    const { fileList, notification, keymap } = this.props.state;
+    const { fileList, notification } = this.props.state;
     return (
       <LocatorContext.Consumer>
-        {({ context }) => (
+        {locator => (
           <RootRef rootRef={this.layoutRef}>
-            <Element.Component className={styles.root} tabIndex={0} onKeyDown={handleKeyDown(context, keymap)}>
+            <Element.Component
+              className={styles.root}
+              tabIndex={0}
+              onKeyDown={handleKeyDown(locator, this.props.state)}
+            >
               <FileListContainer.Component key="filer" state={fileList} />
               <NotificationContainer.Component key="notification" state={notification} />
             </Element.Component>

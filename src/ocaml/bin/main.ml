@@ -21,26 +21,26 @@ let handler (conn : Conduit_lwt_unix.flow * Cohttp.Connection.t) (req : Cohttp_l
   let uri = Cohttp.Request.uri req in
   match Uri.path uri with
   | "/" ->
-    let module C = (val Rpc_connection.make () : Rpc_connection.Instance) in
-    let module R = (val T.Runner.make () : T.Runner.Instance) in
-    let%lwt () = Cohttp_lwt.Body.drain_body body in
-    let%lwt resp, body, frames_out_fn =
-      Websocket_cohttp_lwt.upgrade_connection req (fst conn) (fun f ->
-          C.Connection.push_input C.instance ~frame:(Some f) )
-    in
-    (* serve frame/response handler *)
-    let%lwt () = C.Connection.connect C.instance frames_out_fn in
-    Lwt.ignore_result
-      ((* Disable current task when thread is terminated. *)
-        let rpc_server = create_server (module C) in
-        let thread = Jsonrpc_server.serve_forever rpc_server (module C) in
-        Lwt.on_termination thread (fun () -> Logs.info (fun m -> m "Terminate thread")) ;
-        Lwt.join [thread]) ;
-    Lwt.return (resp, (body :> Cohttp_lwt.Body.t))
+      let module C = (val Rpc_connection.make () : Rpc_connection.Instance) in
+      let module R = (val T.Runner.make () : T.Runner.Instance) in
+      let%lwt () = Cohttp_lwt.Body.drain_body body in
+      let%lwt resp, body, frames_out_fn =
+        Websocket_cohttp_lwt.upgrade_connection req (fst conn) (fun f ->
+            C.Connection.push_input C.instance ~frame:(Some f) )
+      in
+      (* serve frame/response handler *)
+      let%lwt () = C.Connection.connect C.instance frames_out_fn in
+      Lwt.ignore_result
+        ((* Disable current task when thread is terminated. *)
+         let rpc_server = create_server (module C) in
+         let thread = Jsonrpc_server.serve_forever rpc_server (module C) in
+         Lwt.on_termination thread (fun () -> Logs.info (fun m -> m "Terminate thread")) ;
+         Lwt.join [thread]) ;
+      Lwt.return (resp, (body :> Cohttp_lwt.Body.t))
   | _ ->
-    Cohttp_lwt_unix.Server.respond_string ~status:`Not_found
-      ~body:(Sexplib.Sexp.to_string_hum (Cohttp.Request.sexp_of_t req))
-      ()
+      Cohttp_lwt_unix.Server.respond_string ~status:`Not_found
+        ~body:(Sexplib.Sexp.to_string_hum (Cohttp.Request.sexp_of_t req))
+        ()
 
 let initialize_modules ~migemo ~keymap ~config =
   let completer = Sxfiler_bin_lib.Migemo_completer.make ~migemo in
@@ -48,14 +48,14 @@ let initialize_modules ~migemo ~keymap ~config =
   let%lwt () =
     match keymap () with
     | None ->
-      Logs.warn (fun m -> m "Detect errors when load keymap. Use default keymap.") ;
-      Lwt.return_unit
+        Logs.warn (fun m -> m "Detect errors when load keymap. Use default keymap.") ;
+        Lwt.return_unit
     | Some keymap -> Global.Keymap.update keymap
   in
   match config () with
   | None ->
-    Logs.warn (fun m -> m "Detect errors when load configuration. Use default configuration.") ;
-    Lwt.return_unit
+      Logs.warn (fun m -> m "Detect errors when load configuration. Use default configuration.") ;
+      Lwt.return_unit
   | Some config -> Global.Configuration.update config
 
 let start_server _ port =
@@ -84,20 +84,20 @@ let load_migemo dict_dir =
     let module M = Migemocaml in
     match M.Dict_tree.load_dict dict_file with
     | None ->
-      Logs.err (fun m -> m "Dict can not load: %s" dict_file) ;
-      raise Fail_load_migemo
+        Logs.err (fun m -> m "Dict can not load: %s" dict_file) ;
+        raise Fail_load_migemo
     | Some migemo_dict ->
-      let hira_to_kata =
-        Logs.info (fun m -> m "Loading %s" hira_to_kata) ;
-        M.Dict_tree.load_conv @@ Filename.concat dict_dir hira_to_kata
-      and romaji_to_hira =
-        Logs.info (fun m -> m "Loading %s" roma_to_hira) ;
-        M.Dict_tree.load_conv @@ Filename.concat dict_dir roma_to_hira
-      and han_to_zen =
-        Logs.info (fun m -> m "Loading %s" han_to_zen) ;
-        M.Dict_tree.load_conv @@ Filename.concat dict_dir han_to_zen
-      in
-      M.Migemo.make ~dict:migemo_dict ?hira_to_kata ?romaji_to_hira ?han_to_zen ()
+        let hira_to_kata =
+          Logs.info (fun m -> m "Loading %s" hira_to_kata) ;
+          M.Dict_tree.load_conv @@ Filename.concat dict_dir hira_to_kata
+        and romaji_to_hira =
+          Logs.info (fun m -> m "Loading %s" roma_to_hira) ;
+          M.Dict_tree.load_conv @@ Filename.concat dict_dir roma_to_hira
+        and han_to_zen =
+          Logs.info (fun m -> m "Loading %s" han_to_zen) ;
+          M.Dict_tree.load_conv @@ Filename.concat dict_dir han_to_zen
+        in
+        M.Migemo.make ~dict:migemo_dict ?hira_to_kata ?romaji_to_hira ?han_to_zen ()
 
 (** Load configuration from specified file *)
 let load_configuration config =
@@ -111,8 +111,8 @@ let load_keymap file =
   let module Y = Sxfiler_server_translator.Key_map in
   match Y.of_yojson keymap with
   | Error err ->
-    Logs.warn (fun m -> m "Error occurred: %s" err) ;
-    None
+      Logs.warn (fun m -> m "Error occurred: %s" err) ;
+      None
   | Ok v -> Some (Y.to_domain v)
 
 (* Get config from file, but get default when some error happenned  *)

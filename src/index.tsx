@@ -16,6 +16,8 @@ import reducer from "./ts/reducers";
 import { AppState } from "./ts/states";
 
 import { createUseCase } from "./ts/usecases/filer/initialize";
+import { createCommandRegistrar } from "./ts/usecases/command-registrar";
+import { registAllCommand } from "./ts/usecases/commands";
 
 const url = process.env.NODE_ENV === "production" ? process.env.REACT_APP_SERVER : "ws://localhost:50879";
 
@@ -33,6 +35,7 @@ dispatcher.subscribe(store.dispatch);
 
 const locator = {
   context: new Context(client, dispatcher, store),
+  commandRegistrar: registAllCommand(createCommandRegistrar()),
 };
 
 function initializeState() {
