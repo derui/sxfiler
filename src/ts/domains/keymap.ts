@@ -2,33 +2,37 @@
  * keymap defines interfaces for key-action mappings on server.
  */
 
-export interface Binding {
+export type Binding = {
   key: string;
   action: string;
-}
+};
 
-export class Keymap {
-  private _bindings: Binding[] = [];
-  constructor(bindings: Binding[] = []) {
-    this._bindings = bindings.map(v => v);
-  }
-
-  // getter for bindings
-  get bindings() {
-    return this._bindings.map(v => v);
-  }
+export type Keymap = {
+  /**
+   * current bindnings in key map
+   */
+  bindings: Binding[];
 
   /**
-   * find the binding of the key
+   * find a binding of a key
    * @param key the key to find the binding
    */
-  public find(key: string): Binding | null {
-    const filtered = this._bindings.filter(v => v.key === key);
+  find(key: string): Binding | undefined;
+};
 
-    if (filtered.length === 0) {
-      return null;
-    }
+export const createKeymap = (bindings: Binding[] = []): Keymap => {
+  return {
+    _bindings: Array.from(bindings),
 
-    return filtered[0];
-  }
-}
+    // getter for bindings
+    get bindings() {
+      return this._bindings.map(v => v);
+    },
+
+    find(key: string): Binding | undefined {
+      return this._bindings.find(v => v.key === key);
+    },
+  } as Keymap & {
+    _bindings: Binding[];
+  };
+};

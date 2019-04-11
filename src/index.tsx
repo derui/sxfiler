@@ -16,6 +16,7 @@ import reducer from "./ts/reducers";
 import { AppState } from "./ts/states";
 
 import { createUseCase } from "./ts/usecases/filer/initialize";
+import * as KeymapInitialize from "./ts/usecases/keymap/initialize";
 import { createCommandRegistrar } from "./ts/usecases/command-registrar";
 import { registAllCommand } from "./ts/usecases/commands";
 
@@ -38,9 +39,10 @@ const locator = {
   commandRegistrar: registAllCommand(createCommandRegistrar()),
 };
 
-function initializeState() {
+const initializeState = () => {
   locator.context.execute(createUseCase(client), { location: "." });
-}
+  locator.context.execute(KeymapInitialize.createUseCase(client), {});
+};
 
 ws.onopen = () => {
   initializeState();

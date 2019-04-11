@@ -1,14 +1,14 @@
 {
   "bindings": [
-    {"action": "global:exit_omnibar", "key": "Escape", "when": {contexts: ["onComplete"]}},
-    {"action": "global:initialize_omnibar", "key": "C-;", "when": {contexts: ["onFileTree"]}},
-    {"action": "global:initialize_omnibar", "key": "C-;", "when": {contexts: ["onPreview"]}},
-    {"action": "preview:reject", "key": "Escape", "when": {contexts: ["onPreview"]}},
-    {"action": "preview:approve", "key": "Enter", "when": {contexts: ["onPreview"]}},
-    {"action": "builtin:filer-move-cursor-down", "key": "j", "when": {contexts: ["onFileTree"]}},
-    {"action": "builtin:filer-move-cursor-up", "key": "k", "when": {contexts: ["onFileTree"]}},
-    {"action": "completion:prev_item", "key": "ArrowUp", "when": {contexts: ["onComplete"]}},
-    {"action": "completion:next_item", "key": "ArrowDown", "when": {contexts: ["onComplete"]}},
-    {"action": "completion:select_item", "key": "Enter", "when": {contexts: ["onComplete"]}}
+    {"action": "global.exit_omnibar", "key": "Escape", "when": {contexts: ["onComplete"]}},
+    {"action": "global.initialize_omnibar", "key": "C-;", "when": {contexts: ["onFileTree"]}},
+    {"action": "global.initialize_omnibar", "key": "C-;", "when": {contexts: ["onPreview"]}},
+    {"action": "preview.reject", "key": "Escape", "when": {contexts: ["onPreview"]}},
+    {"action": "preview.approve", "key": "Enter", "when": {contexts: ["onPreview"]}},
+    {"action": "builtin.filer.moveCursorDown", "key": "j", "when": {contexts: ["onFileTree"]}},
+    {"action": "builtin.filer.moveCursorUp", "key": "k", "when": {contexts: ["onFileTree"]}},
+    {"action": "completion.prev_item", "key": "ArrowUp", "when": {contexts: ["onComplete"]}},
+    {"action": "completion.next_item", "key": "ArrowDown", "when": {contexts: ["onComplete"]}},
+    {"action": "completion.select_item", "key": "Enter", "when": {contexts: ["onComplete"]}}
   ]
 }

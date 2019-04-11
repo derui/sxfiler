@@ -1,9 +1,24 @@
 // reducers for file list
 import { Actions } from "../actions";
-import { empty, State } from "../states/file-list";
+import { empty, State, Side } from "../states/file-list";
 import { ActionTypes } from "../actions/filer";
+import { Filer } from "../domains/filer";
 
-export function reducer(state: State = empty(), action: Actions): State {
+/**
+ * The sub reducer to handle updateFiler action.
+ */
+const updateFiler = (state: State, payload: { side: Side; filer: Filer }): State => {
+  const { side, filer } = payload;
+
+  switch (side) {
+    case Side.Left:
+      return { ...state, left: filer };
+    case Side.Right:
+      return { ...state, right: filer };
+  }
+};
+
+export const reducer = (state: State = empty(), action: Actions): State => {
   switch (action.type) {
     case ActionTypes.initialize:
       return {
@@ -12,8 +27,10 @@ export function reducer(state: State = empty(), action: Actions): State {
         left: action.payload.left,
         right: action.payload.right,
       };
+    case ActionTypes.updateFiler:
+      return updateFiler(state, action.payload);
   }
   return state;
-}
+};
 
 export default reducer;

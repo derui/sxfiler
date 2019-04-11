@@ -3,10 +3,10 @@ import { empty, findBinding } from "./keymap";
 describe("State", () => {
   describe("Keymap", () => {
     describe("findBinding", () => {
-      it("return null when key not found", () => {
+      it("return undefined when the binding related the key not found", () => {
         const state = empty();
 
-        expect(findBinding(state, "foo")).toBeNull();
+        expect(findBinding(state, "foo")).toBeUndefined();
       });
     });
   });
