@@ -5,6 +5,7 @@ import { createMessage, Level } from "../domains/notification";
 import { createNotifications } from "../domains/notifications";
 import { empty, State } from "../states/notification";
 import reducer from "./notification";
+import { createKeymap } from "../domains/keymap";
 
 describe("reducers", () => {
   describe("Notification state", () => {
@@ -60,10 +61,11 @@ describe("reducers", () => {
         notifications: createNotifications([createMessage("id", Level.Info, "message")]),
         timeouts: createNotifications([]),
       };
+      const keymap = createKeymap();
 
-      const ret = reducer(state, otherActions.enableFileTree());
+      const ret = reducer(state, otherActions.enableFileTree({ keymap }));
 
-      expect(ret === state).toBeTruthy();
+      expect(ret).toStrictEqual(state);
     });
   });
 });

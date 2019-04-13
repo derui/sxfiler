@@ -3,17 +3,19 @@ import { actions as otherActions } from "../actions/notification";
 import { actions } from "../actions/ui-context";
 import UIContext from "../types/ui-context";
 import reducer from "./ui-context";
+import * as Keymap from "../domains/keymap";
 
 describe("reducers", () => {
   describe("UI Context state", () => {
+    const keymap = Keymap.createKeymap();
     it("should change state to OnFileTree", () => {
-      const ret = reducer(UIContext.OnComplete, actions.enableFileTree());
+      const ret = reducer(UIContext.OnComplete, actions.enableFileTree({ keymap }));
 
       expect(ret).toEqual(UIContext.OnFileTree);
     });
 
     it("should append a new notification when Notify action", () => {
-      const ret = reducer(UIContext.OnComplete, actions.enablePreview());
+      const ret = reducer(UIContext.OnComplete, actions.enablePreview({ keymap }));
 
       expect(ret).toEqual(UIContext.OnPreview);
     });

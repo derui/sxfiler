@@ -18,6 +18,15 @@ const updateFiler = (state: State, payload: { side: Side; filer: Filer }): State
   }
 };
 
+const moveToOtherSide = (current: Side): Side => {
+  switch (current) {
+    case Side.Left:
+      return Side.Right;
+    case Side.Right:
+      return Side.Left;
+  }
+};
+
 export const reducer = (state: State = empty(), action: Actions): State => {
   switch (action.type) {
     case ActionTypes.initialize:
@@ -29,6 +38,8 @@ export const reducer = (state: State = empty(), action: Actions): State => {
       };
     case ActionTypes.updateFiler:
       return updateFiler(state, action.payload);
+    case ActionTypes.changeSide:
+      return { ...state, currentSide: moveToOtherSide(state.currentSide) };
   }
   return state;
 };

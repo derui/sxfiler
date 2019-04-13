@@ -1,21 +1,22 @@
 import { AppAction } from "./type";
+import { Keymap } from "../domains/keymap";
 
 export enum ActionTypes {
   enableFileTree = "uicontext_enable_file_tree",
   enablePreview = "uicontext_enable_preview",
 }
 
-type EnableFileTreeAction = AppAction<ActionTypes.enableFileTree>;
-type EnablePreviewAction = AppAction<ActionTypes.enablePreview>;
+type EnableFileTreeAction = AppAction<ActionTypes.enableFileTree, { keymap: Keymap }>;
+type EnablePreviewAction = AppAction<ActionTypes.enablePreview, { keymap: Keymap }>;
 
 export type Actions = EnableFileTreeAction | EnablePreviewAction;
 
-const enableFileTree = (): EnableFileTreeAction => {
-  return { type: ActionTypes.enableFileTree };
+const enableFileTree = ({ keymap }: { keymap: Keymap }): EnableFileTreeAction => {
+  return { type: ActionTypes.enableFileTree, keymap: keymap };
 };
 
-const enablePreview = (): EnablePreviewAction => {
-  return { type: ActionTypes.enablePreview };
+const enablePreview = ({ keymap }: { keymap: Keymap }): EnablePreviewAction => {
+  return { type: ActionTypes.enablePreview, keymap };
 };
 
 export const actions = { enableFileTree, enablePreview };

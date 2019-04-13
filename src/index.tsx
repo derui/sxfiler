@@ -16,9 +16,9 @@ import reducer from "./ts/reducers";
 import { AppState } from "./ts/states";
 
 import { createUseCase } from "./ts/usecases/filer/initialize";
-import * as KeymapInitialize from "./ts/usecases/keymap/initialize";
 import { createCommandRegistrar } from "./ts/usecases/command-registrar";
 import { registAllCommand } from "./ts/usecases/commands";
+import * as enableFileTree from "./ts/usecases/ui-context/enable-file-tree";
 
 const url = process.env.NODE_ENV === "production" ? process.env.REACT_APP_SERVER : "ws://localhost:50879";
 
@@ -41,7 +41,7 @@ const locator = {
 
 const initializeState = () => {
   locator.context.execute(createUseCase(client), { location: "." });
-  locator.context.execute(KeymapInitialize.createUseCase(client), {});
+  locator.context.execute(enableFileTree.createUseCase(client), {});
 };
 
 ws.onopen = () => {

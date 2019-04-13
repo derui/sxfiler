@@ -1,5 +1,5 @@
 // reducers for notification
-import { actions } from "../actions/keymap";
+import { actions } from "../actions/ui-context";
 import { empty, State } from "../states/keymap";
 import reducer from "./keymap";
 import { createKeymap } from "../domains/keymap";
@@ -10,7 +10,7 @@ describe("reducers", () => {
       const state: State = empty();
       const newKeymap = createKeymap([{ key: "a", action: "actions" }]);
 
-      const ret = reducer(state, actions.getKeymap({ keymap: newKeymap }));
+      const ret = reducer(state, actions.enableFileTree({ keymap: newKeymap }));
 
       expect(ret).toEqual({ current: newKeymap });
     });

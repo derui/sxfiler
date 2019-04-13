@@ -42,5 +42,14 @@ describe("reducers", () => {
       expect(ret.left).toEqual(leftFiler);
       expect(ret.right).toEqual(rightFiler);
     });
+
+    it("change current side to other side", () => {
+      let state: State = empty();
+      state = { ...state, currentSide: Side.Left };
+
+      const ret = reducer(state, actions.changeSide());
+      expect(ret.currentSide).toEqual(Side.Right);
+      expect(reducer(ret, actions.changeSide()).currentSide).toEqual(Side.Left);
+    });
   });
 });
