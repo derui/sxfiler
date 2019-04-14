@@ -3,15 +3,12 @@ import { empty } from "../../../states";
 import renderer from "react-test-renderer";
 import { Component } from "./main-container";
 import LocatorContext from "../../../locator";
-import { createCommandRegistrar } from "../../../usecases/command-registrar";
 
 describe("Container", () => {
   describe("Main Container", () => {
     it("render correctly when context not initialized and empty state", () => {
       // ignore warning
-      const locator = {
-        commandRegistrar: createCommandRegistrar(),
-      };
+      const locator = {};
       const state = empty();
 
       const wrapper = renderer

@@ -78,4 +78,18 @@ const Get: Api<Methods.Get, string, Filer | undefined> = {
   },
 };
 
-export const Apis = { Make, Get };
+const MoveParent: Api<Methods.MoveParent, string, Filer | undefined> = {
+  method: Methods.MoveParent,
+  parametersTransformer(name) {
+    return { name };
+  },
+  resultTransformer(ret, error) {
+    if (!ret && error && error.hasCode(-2)) {
+      return undefined;
+    }
+
+    return transformFiler(ret);
+  },
+};
+
+export const Apis = { Make, Get, MoveParent };

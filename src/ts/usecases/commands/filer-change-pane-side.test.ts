@@ -22,7 +22,7 @@ describe("Commands", () => {
         };
         const state = AppState.empty();
 
-        command.execute(dispatcher as any, { state: state });
+        command.execute(dispatcher as any, { state: state, client: jest.fn() as any });
         expect(dispatcher.dispatch).toBeCalledWith(actions.changeSide());
       });
     });

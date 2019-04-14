@@ -36,7 +36,7 @@ dispatcher.subscribe(store.dispatch);
 
 const locator = {
   context: new Context(client, dispatcher, store),
-  commandRegistrar: registAllCommand(createCommandRegistrar()),
+  commandRegistrar: registAllCommand(createCommandRegistrar(client)),
 };
 
 const initializeState = () => {

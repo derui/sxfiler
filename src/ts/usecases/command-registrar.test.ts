@@ -2,27 +2,40 @@ import { createCommandRegistrar } from "./command-registrar";
 
 describe("Use Case", () => {
   describe("Command Registrar", () => {
-    it("create new registrar", () => {
-      const obj = createCommandRegistrar();
+    it("do not execute command if it is not found", () => {
+      const obj = createCommandRegistrar(jest.fn() as any);
+      const context = {
+        execute: jest.fn(),
+      };
 
-      expect(obj.findCommand("command")).toBeUndefined;
+      obj.execute("command", context);
+      expect(context.execute).not.toBeCalled;
     });
 
-    it("regist and find command", () => {
-      const obj = createCommandRegistrar();
+    it("regist and execute command", () => {
+      const obj = createCommandRegistrar(jest.fn() as any);
+      const command = {
+        execute: jest.fn(),
+      };
       const registed = obj.regist({
         moduleId: "module",
         commandId: "command",
-        commandInstance: jest.fn() as any,
+        commandInstance: command,
       });
 
-      expect(registed.findCommand("module.command")).not.toBeUndefined;
+      const context = {
+        execute: jest.fn(),
+      };
+      registed.execute("module.command", context);
+      expect(context.execute).toBeCalled;
     });
 
     it("overwrite command when other command registerd with the same name", () => {
-      const obj = createCommandRegistrar();
+      const obj = createCommandRegistrar(jest.fn() as any);
       const command1 = jest.fn() as any;
-      const command2 = jest.fn() as any;
+      const command2 = {
+        execute: jest.fn() as any,
+      };
       let registed = obj.regist({
         moduleId: "module",
         commandId: "command",
@@ -34,7 +47,11 @@ describe("Use Case", () => {
         commandInstance: command2,
       });
 
-      expect(registed.findCommand("module.command")).toBe(command2);
+      const context = {
+        execute: jest.fn(),
+      };
+      registed.execute("module.command", context);
+      expect(command2.execute).toBeCalled;
     });
   });
 });

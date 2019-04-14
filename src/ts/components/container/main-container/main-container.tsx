@@ -35,10 +35,8 @@ function handleKeyDown(locator: Locator, state: AppState): (ev: React.KeyboardEv
 
         ev.preventDefault();
         ev.stopPropagation();
-        // TODO: implement to invoke action
-        const command = commandRegistrar.findCommand(binding.action);
-        if (command && context) {
-          context.execute(command, { state });
+        if (context && commandRegistrar) {
+          commandRegistrar.execute(binding.action, context, { state });
         }
         break;
       }

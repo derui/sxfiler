@@ -7,7 +7,6 @@ import { createNotifications } from "../../../../domains/notifications";
 import { UseCaseLike } from "../../../../usecases/type";
 import { Component } from "./notification-container";
 import LocatorContext from "../../../../locator";
-import { createCommandRegistrar } from "../../../../usecases/command-registrar";
 
 const context = (done?: (arg: any) => void) => ({
   execute<P>(_: UseCaseLike<Actions, P>, arg: P) {
@@ -20,9 +19,7 @@ const context = (done?: (arg: any) => void) => ({
 describe("Container", () => {
   describe("Notification Container", () => {
     it("should render correctly when context not initialized yet", () => {
-      const locator = {
-        commandRegistrar: createCommandRegistrar(),
-      };
+      const locator = {};
       const state = {
         notifications: createNotifications([
           createMessage("message", Level.Info, "message"),
@@ -46,7 +43,7 @@ describe("Container", () => {
     });
 
     it("should render correctly when context initialized", () => {
-      const locator = { context: context(jest.fn()), commandRegistrar: createCommandRegistrar() };
+      const locator = { context: context(jest.fn()) };
       const state = {
         notifications: createNotifications([
           createMessage("message", Level.Info, "message"),

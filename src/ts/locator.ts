@@ -1,14 +1,14 @@
 import { Context as ReactContext, createContext } from "react";
 
 import { ContextLike } from "./context";
-import { CommandRegistrar, createCommandRegistrar } from "./usecases/command-registrar";
+import { CommandRegistrar } from "./usecases/command-registrar";
 
 export type Locator = {
   context?: ContextLike;
-  commandRegistrar: CommandRegistrar;
+  commandRegistrar?: CommandRegistrar;
 };
 
-let locator: Locator = { commandRegistrar: createCommandRegistrar() };
+let locator: Locator = {};
 
 /**
  * Set new locator to global context

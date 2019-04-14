@@ -1,6 +1,8 @@
 import { Dispatcher } from "../types";
 import { Actions } from "../actions";
 import { AppState } from "../states";
+import { Client } from "../libs/json-rpc/client";
+import { ApiMethod } from "../apis";
 
 export type UseCaseLike<A, Extra extends {} = {}> = {
   /**
@@ -17,5 +19,6 @@ export type CommandLike = UseCaseLike<
   Actions,
   {
     state: AppState;
+    client: Client<ApiMethod>;
   }
 >;

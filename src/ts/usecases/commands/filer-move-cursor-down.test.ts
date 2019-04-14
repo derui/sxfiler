@@ -19,7 +19,7 @@ describe("Commands", () => {
           dispatch: jest.fn(),
         };
         const state = AppState.empty();
-        command.execute(dispatcher as any, { state: state });
+        command.execute(dispatcher as any, { state: state, client: jest.fn() as any });
         expect(dispatcher.dispatch).not.toBeCalled();
       });
 
@@ -33,7 +33,7 @@ describe("Commands", () => {
         state.fileList.currentSide = Side.Left;
         state.fileList.left = createFiler({ id: "id", nodes: [], location: "test", currentCursorIndex: 0 });
 
-        command.execute(dispatcher as any, { state: state });
+        command.execute(dispatcher as any, { state: state, client: jest.fn() as any });
         expect(dispatcher.dispatch).toBeCalled();
       });
 
@@ -48,7 +48,7 @@ describe("Commands", () => {
         state.fileList.left = createFiler({ id: "id", nodes: [], location: "test", currentCursorIndex: 0 });
         const spy = jest.spyOn(state.fileList.left, "moveIndex");
 
-        command.execute(dispatcher as any, { state: state });
+        command.execute(dispatcher as any, { state: state, client: jest.fn() as any });
         expect(spy).toBeCalledWith(Direction.Down);
       });
     });
