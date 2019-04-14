@@ -9,6 +9,7 @@ const styles: ClassNames = require("./file-list-container.module.scss");
 
 interface ClassNames {
   root: string;
+  separator: string;
 }
 
 export interface Props {
@@ -43,10 +44,14 @@ export const Component: React.FC<Props> = (props): ElementType | null => {
     return null;
   }
 
-  const filers = [
-    createFiler(Side.Left, props.state.currentSide, props.state.left),
-    createFiler(Side.Right, props.state.currentSide, props.state.right),
-  ];
+  const leftFiler = createFiler(Side.Left, props.state.currentSide, props.state.left);
+  const rightFiler = createFiler(Side.Right, props.state.currentSide, props.state.right);
 
-  return <Element.Component className={styles.root}>{filers}</Element.Component>;
+  return (
+    <Element.Component className={styles.root}>
+      {leftFiler}
+      <div className={styles.separator} />
+      {rightFiler}
+    </Element.Component>
+  );
 };
