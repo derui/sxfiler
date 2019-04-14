@@ -12,6 +12,9 @@ type InstanceProps = {
 
 type CalculationArguments = {
   cache: ItemMeasureCache;
+  /**
+   * The index of the cursor in the list. This value must be zero-origin
+   */
   currentCursorIndex: number;
   windowHeight: number;
   listSize: number;
@@ -27,19 +30,50 @@ export class ListLayoutCalculator {
     this.instanceProps.estimatedItemSize = args.estimatedItemSize ? args.estimatedItemSize : 50;
   }
 
-  // resolve start index for new size of the list and cursor index.
-  private resolveStartIndexForCursor(currentCursorIndex: number, listSize: number): number {
+  // get index range to show full of the body of the item in current window
+  private resolveWindowForItemDoesNotHaveHiddenArea(cache: ItemMeasureCache, windowHeight: number): VirtualizedWindow {
     if (!this.previousWindow) {
-      return Math.min(currentCursorIndex, listSize);
+      return { startIndex: -1, stopIndex: -1 };
     }
 
-    const { startIndex: previousStartIndex, stopIndex: previousStopIndex } = this.previousWindow;
+    let restSize = windowHeight;
+    const { startIndex, stopIndex } = this.previousWindow;
+    for (let index = startIndex; index < stopIndex; index++) {
+      const measure = cache.get(index);
+      let itemHeight = this.instanceProps.estimatedItemSize;
+
+      if (measure) {
+        itemHeight = measure.height;
+      }
+      if (restSize <= itemHeight) {
+        return {
+          startIndex,
+          stopIndex: index,
+        };
+      }
+      restSize -= itemHeight;
+    }
+    return { ...this.previousWindow };
+  }
+
+  // resolve start index for new size of the list and cursor index.
+  private resolveStartIndexForCursor(
+    currentCursorIndex: number,
+    listSize: number,
+    fullyVisibleWindow: VirtualizedWindow
+  ): number {
+    const maximumStartIndex = listSize - 1;
+    if (!this.previousWindow) {
+      return Math.min(currentCursorIndex, maximumStartIndex);
+    }
+
+    const { startIndex: previousStartIndex, stopIndex: previousStopIndex } = fullyVisibleWindow;
     if (previousStartIndex > currentCursorIndex) {
-      return Math.min(currentCursorIndex, listSize);
+      return Math.min(currentCursorIndex, maximumStartIndex);
     } else if (currentCursorIndex >= previousStopIndex) {
-      return Math.min(previousStartIndex + (currentCursorIndex - previousStopIndex + 1), listSize);
+      return Math.min(previousStartIndex + (currentCursorIndex - previousStopIndex + 1), maximumStartIndex);
     } else {
-      return Math.min(previousStartIndex, listSize);
+      return Math.min(previousStartIndex, maximumStartIndex);
     }
   }
 
@@ -68,7 +102,8 @@ export class ListLayoutCalculator {
 
   // calculate layout of the list
   calculateLayout({ cache, currentCursorIndex, windowHeight, listSize }: CalculationArguments): VirtualizedWindow {
-    const startIndex = this.resolveStartIndexForCursor(currentCursorIndex, listSize);
+    const fullyVisibleWindow = this.resolveWindowForItemDoesNotHaveHiddenArea(cache, windowHeight);
+    const startIndex = this.resolveStartIndexForCursor(currentCursorIndex, listSize, fullyVisibleWindow);
     const stopIndex = this.resolveStopIndexForStartIndex(cache, windowHeight, startIndex, listSize);
 
     this.previousWindow = {

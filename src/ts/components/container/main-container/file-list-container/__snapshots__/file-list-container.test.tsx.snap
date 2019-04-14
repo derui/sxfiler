@@ -23,6 +23,9 @@ exports[`Container File List Container should render correctly 1`] = `
     />
   </div>
   <div
+    className="separator"
+  />
+  <div
     className="root"
   >
     <header
