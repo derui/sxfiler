@@ -87,7 +87,6 @@ export class Component extends React.Component<Props> {
   private makeListItems(layout: VirtualizedWindow): JSX.Element[] {
     const { nodes, cursor, focused } = this.props;
 
-    console.log(layout, cursor);
     return nodes.slice(layout.startIndex, layout.stopIndex).map((node, index) => {
       const selected = cursor === index + layout.startIndex && focused;
       return (
