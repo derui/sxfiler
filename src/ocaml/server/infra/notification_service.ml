@@ -4,7 +4,7 @@ module C = Sxfiler_server_core
 module D = Sxfiler_domain
 module Jy = Jsonrpc_ocaml_yojson
 module Tr = Sxfiler_server_translator
-module W = Websocket_cohttp_lwt
+module W = Websocket
 
 type accepter = Jy.Request.t
 type t = {mutable accepter : accepter}

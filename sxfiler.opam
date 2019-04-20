@@ -23,7 +23,7 @@ depends: [
   "lwt" {>= "3.0.0"}
   "lwt_ppx" {build}
   "cohttp-lwt-unix"
-  "websocket-lwt"
+  "websocket-lwt-unix"
   "conduit-lwt-unix"
   "re" { >= "1.7.3"}
   "uuidm" { >= "0.9.6"}

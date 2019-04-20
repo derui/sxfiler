@@ -20,9 +20,9 @@ type t =
   ; ctime : string
   ; mtime : string
   ; size : string
-  ; is_directory : bool
-  ; is_file : bool
-  ; is_symlink : bool }
+  ; is_directory : bool [@key "isDirectory"]
+  ; is_file : bool [@key "isFile"]
+  ; is_symlink : bool [@key "isSymlink"] }
 [@@deriving eq, show, yojson]
 
 module Domain = struct

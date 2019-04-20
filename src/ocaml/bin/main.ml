@@ -14,7 +14,7 @@ let create_server (module C : Rpc_connection.Instance) =
   let rpc_server = Jsonrpc_server.make () in
   Procedures.expose_all rpc_server (module Dep : Dependencies.S)
 
-let handler (conn : Conduit_lwt_unix.flow * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
+let handler (conn : _ * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
     (body : Cohttp_lwt.Body.t) =
   let conn_name = Cohttp.Connection.to_string @@ snd conn in
   let%lwt () = Log.info @@ fun m -> m "Connection opened: %s" conn_name in
@@ -24,23 +24,26 @@ let handler (conn : Conduit_lwt_unix.flow * Cohttp.Connection.t) (req : Cohttp_l
       let module C = (val Rpc_connection.make () : Rpc_connection.Instance) in
       let module R = (val T.Runner.make () : T.Runner.Instance) in
       let%lwt () = Cohttp_lwt.Body.drain_body body in
-      let%lwt resp, body, frames_out_fn =
-        Websocket_cohttp_lwt.upgrade_connection req (fst conn) (fun f ->
+      let%lwt resp, frames_out_fn =
+        Websocket_cohttp_lwt.upgrade_connection req (fun f ->
             C.Connection.push_input C.instance ~frame:(Some f) )
       in
       (* serve frame/response handler *)
       let%lwt () = C.Connection.connect C.instance frames_out_fn in
-      Lwt.ignore_result
-        ((* Disable current task when thread is terminated. *)
-         let rpc_server = create_server (module C) in
-         let thread = Jsonrpc_server.serve_forever rpc_server (module C) in
-         Lwt.on_termination thread (fun () -> Logs.info (fun m -> m "Terminate thread")) ;
-         Lwt.join [thread]) ;
-      Lwt.return (resp, (body :> Cohttp_lwt.Body.t))
+      Lwt.async (fun () ->
+          (* Disable current task when thread is terminated. *)
+          let rpc_server = create_server (module C) in
+          let thread = Jsonrpc_server.serve_forever rpc_server (module C) in
+          Lwt.on_termination thread (fun () -> Logs.info (fun m -> m "Terminate thread")) ;
+          Lwt.join [thread] ) ;
+      Lwt.return resp
   | _ ->
-      Cohttp_lwt_unix.Server.respond_string ~status:`Not_found
-        ~body:(Sexplib.Sexp.to_string_hum (Cohttp.Request.sexp_of_t req))
-        ()
+      let%lwt resp =
+        Cohttp_lwt_unix.Server.respond_string ~status:`Not_found
+          ~body:(Sexplib.Sexp.to_string_hum (Cohttp.Request.sexp_of_t req))
+          ()
+      in
+      Lwt.return (`Response resp)
 
 let initialize_modules ~migemo ~keymap ~config =
   let completer = Sxfiler_bin_lib.Migemo_completer.make ~migemo in
@@ -68,7 +71,7 @@ let start_server _ port =
   let%lwt () = Log.info @@ fun m -> m "Listening for HTTP on port %d" port in
   Cohttp_lwt_unix.Server.create
     ~mode:(`TCP (`Port port))
-    (Cohttp_lwt_unix.Server.make ~callback:handler ~conn_closed ())
+    (Cohttp_lwt_unix.Server.make_response_action ~callback:handler ~conn_closed ())
 
 (* Load migemo from specified directory that contains dictionary and conversions.  *)
 let load_migemo dict_dir =

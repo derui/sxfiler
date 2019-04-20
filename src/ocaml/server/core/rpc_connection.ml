@@ -44,13 +44,12 @@ module Impl = struct
 
   (** [default_input_handler t f] handles frame [f] with default behavior for Websocket. *)
   let default_input_handler t f =
-    let open Websocket_cohttp_lwt in
-    match f.Frame.opcode with
-    | Frame.Opcode.Ping ->
-      let f = Frame.create ~opcode:Frame.Opcode.Pong ~content:f.Frame.content () in
-      Lwt.return @@ t.output_writer @@ Some f
-    | Frame.Opcode.Close -> disconnect t
-    | _ as op -> Log.err @@ fun m -> m "Not implemented opcode: %s" (Frame.Opcode.to_string op)
+    match f.W.Frame.opcode with
+    | W.Frame.Opcode.Ping ->
+        let f = W.Frame.create ~opcode:W.Frame.Opcode.Pong ~content:f.W.Frame.content () in
+        Lwt.return @@ t.output_writer @@ Some f
+    | W.Frame.Opcode.Close -> disconnect t
+    | _ as op -> Log.err @@ fun m -> m "Not implemented opcode: %s" (W.Frame.Opcode.to_string op)
 end
 
 let make () =
