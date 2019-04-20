@@ -65,7 +65,8 @@ class Size {
   public toString(): string {
     const unit = sizeUnitToString(this.data.sizeUnit);
     const fixed = this.data.alignedSize.toFixed(1);
-    return `${fixed}${unit}`;
+    const padded = fixed.padStart(5, " ");
+    return `${padded}${unit}`;
   }
 
   /**
@@ -108,7 +109,7 @@ interface Prop {
 const NodeSize: React.FC<Prop> = prop => {
   const size = new Size(prop.size);
 
-  return <span className={styles.size}>{size.toString()}</span>;
+  return <pre className={styles.size}>{size.toString()}</pre>;
 };
 
 export default NodeSize;

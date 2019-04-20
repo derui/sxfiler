@@ -17,7 +17,7 @@ function capabilityToString(cap: CapabilityObject) {
  * convert mode to string
  */
 function modeToString(mode: ModeObject, isDirectory: boolean, isSymlink: boolean): string {
-  let state = " ";
+  let state = "-";
 
   if (isDirectory && !isSymlink) {
     state = "d";

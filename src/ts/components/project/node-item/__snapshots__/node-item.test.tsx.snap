@@ -11,18 +11,18 @@ exports[`Project Node Item should add class correctly when marked 1`] = `
   <span
     className="mode"
   >
-     rw-r--r--
+    -rw-r--r--
   </span>
   <span
     className="timestamp"
   >
     1970/01/01
   </span>
-  <span
+  <pre
     className="size"
   >
-    10.0B
-  </span>
+     10.0B
+  </pre>
   <span
     className="name"
   >
@@ -42,18 +42,18 @@ exports[`Project Node Item should add class correctly when selected 1`] = `
   <span
     className="mode"
   >
-     rw-r--r--
+    -rw-r--r--
   </span>
   <span
     className="timestamp"
   >
     1970/01/01
   </span>
-  <span
+  <pre
     className="size"
   >
-    10.0B
-  </span>
+     10.0B
+  </pre>
   <span
     className="name"
   >
@@ -73,18 +73,18 @@ exports[`Project Node Item should add class correctly when selected and marked 1
   <span
     className="mode"
   >
-     rw-r--r--
+    -rw-r--r--
   </span>
   <span
     className="timestamp"
   >
     1970/01/01
   </span>
-  <span
+  <pre
     className="size"
   >
-    10.0B
-  </span>
+     10.0B
+  </pre>
   <span
     className="name"
   >
@@ -104,18 +104,18 @@ exports[`Project Node Item should print correctly 1`] = `
   <span
     className="mode"
   >
-     rw-r--r--
+    -rw-r--r--
   </span>
   <span
     className="timestamp"
   >
     1970/01/01
   </span>
-  <span
+  <pre
     className="size"
   >
-    10.0B
-  </span>
+     10.0B
+  </pre>
   <span
     className="name"
   >
