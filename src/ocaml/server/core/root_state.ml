@@ -1,10 +1,10 @@
 module T = Sxfiler_domain
 
 module String_map = Map.Make (struct
-    type t = string
+  type t = string
 
-    let compare = Pervasives.compare
-  end)
+  let compare = Pervasives.compare
+end)
 
 type t =
   { configuration : T.Configuration.t

@@ -16,7 +16,7 @@ let find_node t = File_tree.find_node t.file_tree
 let move_location t ~file_tree clock =
   let record = Location_record.record_of ~location:file_tree.File_tree.location clock in
   let history = Location_history.add_record t.history ~record in
-  {t with file_tree = File_tree.sort_nodes t.file_tree ~order:t.sort_order; history}
+  {t with file_tree = File_tree.sort_nodes file_tree ~order:t.sort_order; history}
 
 let update_tree t ~file_tree =
   {t with file_tree = File_tree.sort_nodes file_tree ~order:t.sort_order}

@@ -35,7 +35,7 @@ module Make (S : Spec) : S = struct
     let module Res = Rpc.Response in
     let open Sxfiler_core in
     try%lwt
-      Log.debug (fun m ->
+      Log.info (fun m ->
           m "Start procedure: {%s}, id: {%Ld}, param: %s" req.Req._method
             (Option.get ~default:(fun () -> 0L) req.Req.id)
             (Option.get_exn req.params |> Yojson.Safe.to_string) ) ;%lwt
@@ -43,15 +43,15 @@ module Make (S : Spec) : S = struct
         let execute_with_param decoder =
           match req.Req.params with
           | None ->
-            Logs.warn (fun m -> m "Required parameter not found") ;
-            Rpc.(Exception.raise_error Types.Error_code.Invalid_params)
+              Logs.warn (fun m -> m "Required parameter not found") ;
+              Rpc.(Exception.raise_error Types.Error_code.Invalid_params)
           | Some params -> (
-              match decoder params with
-              | Error _ ->
+            match decoder params with
+            | Error _ ->
                 Logs.warn (fun m ->
                     m "Required parameter can not encode: %s" (Yojson.Safe.to_string params) ) ;
                 Rpc.(Exception.raise_error Types.Error_code.Invalid_params)
-              | Ok param -> S.Gateway.handle param )
+            | Ok param -> S.Gateway.handle param )
         in
         match S.param_requirement with
         | `Not_required param -> S.Gateway.handle param
@@ -63,9 +63,11 @@ module Make (S : Spec) : S = struct
       let result = S.Gateway.result_to_yojson result |> Option.some in
       Lwt.return {Res.result; id = req.Req.id; error = None}
     with
-    | G.Gateway_error.Gateway_error e -> handle_error e
+    | G.Gateway_error.Gateway_error e ->
+        let%lwt () = Log.err (fun m -> m "Error from gateway error") in
+        handle_error e
     | _ as e ->
-      let exn = Stdlib.Printexc.to_string e in
-      let%lwt () = Log.err (fun m -> m "Error occurred: %s" exn) in
-      Rpc.(Exception.raise_error (Types.Error_code.Server_error (-32000)))
+        let exn = Stdlib.Printexc.to_string e in
+        let%lwt () = Log.err (fun m -> m "Error occurred: %s" exn) in
+        Rpc.(Exception.raise_error (Types.Error_code.Server_error (-32000)))
 end
