@@ -22,10 +22,10 @@ let update_tree t ~file_tree =
   {t with file_tree = File_tree.sort_nodes file_tree ~order:t.sort_order}
 
 module Node_id_set = Set.Make (struct
-    type t = Node.id
+  type t = Node.id
 
-    let compare = Stdlib.compare
-  end)
+  let compare = Stdlib.compare
+end)
 
 let select_nodes t ~ids =
   let selected_set = Node_id_set.of_list t.selected_nodes in
@@ -42,9 +42,9 @@ let deselect_nodes t ~ids =
 let node_subset t ~ids =
   List.fold_left
     (fun (nodes, ids) id ->
-       match File_tree.find_node t.file_tree ~id with
-       | None -> (nodes, id :: ids)
-       | Some node -> (node :: nodes, ids) )
+      match File_tree.find_node t.file_tree ~id with
+      | None -> (nodes, id :: ids)
+      | Some node -> (node :: nodes, ids) )
     ([], []) ids
 
 (** Signature for repository of scanner. *)
@@ -59,14 +59,17 @@ end
 module Factory = struct
   module type S = sig
     val create :
-      file_tree:File_tree.t -> history:Location_history.t -> sort_order:Types.Sort_type.t -> t
-      (** [create ~file_tree ~history ~sort_order] gets new instance of filer. *)
+         name:string
+      -> file_tree:File_tree.t
+      -> history:Location_history.t
+      -> sort_order:Types.Sort_type.t
+      -> t
+    (** [create ~file_tree ~history ~sort_order] gets new instance of filer. *)
   end
 
-  module Make (G : Id_generator_intf.Gen_random with type id = id) : S = struct
-    let create ~file_tree ~history ~sort_order =
-      let id = G.generate () in
-      { id
+  module Make : S = struct
+    let create ~name ~file_tree ~history ~sort_order =
+      { id = name
       ; file_tree = File_tree.sort_nodes file_tree ~order:sort_order
       ; history
       ; sort_order

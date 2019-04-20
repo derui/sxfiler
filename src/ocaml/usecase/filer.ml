@@ -36,11 +36,14 @@ module Make = struct
       let%lwt v = SR.resolve params.name in
       match v with
       | None ->
-        let sort_order = config.T.Configuration.default_sort_order in
-        let%lwt file_tree = Svc.scan params.initial_location in
-        let t = Factory.create ~file_tree ~history:(T.Location_history.make ()) ~sort_order in
-        let%lwt () = SR.store t in
-        Lwt.return @@ Ok t
+          let sort_order = config.T.Configuration.default_sort_order in
+          let%lwt file_tree = Svc.scan params.initial_location in
+          let t =
+            Factory.create ~name:params.name ~file_tree ~history:(T.Location_history.make ())
+              ~sort_order
+          in
+          let%lwt () = SR.store t in
+          Lwt.return @@ Ok t
       | Some _ -> Lwt.return @@ Error `Already_exists
   end
 end
@@ -94,11 +97,11 @@ module Move_parent = struct
       match%lwt SR.resolve params.name with
       | None -> Lwt.return_error `Not_found
       | Some ({file_tree; _} as filer) ->
-        let parent_dir = Path.dirname_as_path file_tree.location in
-        let%lwt file_tree = Svc.scan parent_dir in
-        let filer' = T.Filer.move_location filer (module Clock) ~file_tree in
-        let%lwt () = SR.store filer' in
-        Lwt.return_ok filer'
+          let parent_dir = Path.dirname_as_path file_tree.location in
+          let%lwt file_tree = Svc.scan parent_dir in
+          let filer' = T.Filer.move_location filer (module Clock) ~file_tree in
+          let%lwt () = SR.store filer' in
+          Lwt.return_ok filer'
   end
 end
 
@@ -137,12 +140,12 @@ module Enter_directory = struct
       | None, _ -> Lwt.return_error `Not_found_filer
       | _, None -> Lwt.return_error `Not_found_node
       | Some filer, Some node ->
-        if not node.stat.is_directory then Lwt.return_error `Not_directory
-        else
-          let%lwt new_file_tree = Svc.scan node.full_path in
-          let filer' = T.Filer.move_location filer (module Clock) ~file_tree:new_file_tree in
-          let%lwt () = FR.store filer' in
-          Lwt.return_ok filer'
+          if not node.stat.is_directory then Lwt.return_error `Not_directory
+          else
+            let%lwt new_file_tree = Svc.scan node.full_path in
+            let filer' = T.Filer.move_location filer (module Clock) ~file_tree:new_file_tree in
+            let%lwt () = FR.store filer' in
+            Lwt.return_ok filer'
   end
 end
 
@@ -172,8 +175,8 @@ module Select_nodes = struct
       match filer with
       | None -> Lwt.return_error `Not_found
       | Some filer ->
-        let%lwt () = SR.store filer in
-        Lwt.return_ok filer
+          let%lwt () = SR.store filer in
+          Lwt.return_ok filer
   end
 end
 
@@ -203,7 +206,7 @@ module Deselect_nodes = struct
       match filer with
       | None -> Lwt.return_error `Not_found
       | Some filer ->
-        let%lwt () = SR.store filer in
-        Lwt.return_ok filer
+          let%lwt () = SR.store filer in
+          Lwt.return_ok filer
   end
 end

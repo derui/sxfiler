@@ -9,13 +9,11 @@ let test_set =
         let writer _ = incr count in
         let%lwt _ = C.Connection.connect conn writer in
         let%lwt _ =
-          Lwt.return
-          @@ C.Connection.write_output conn ~frame:(Some (Websocket_cohttp_lwt.Frame.create ()))
+          Lwt.return @@ C.Connection.write_output conn ~frame:(Some (Websocket.Frame.create ()))
         in
         let%lwt _ = C.Connection.disconnect conn in
         let%lwt _ =
-          Lwt.return
-          @@ C.Connection.write_output conn ~frame:(Some (Websocket_cohttp_lwt.Frame.create ()))
+          Lwt.return @@ C.Connection.write_output conn ~frame:(Some (Websocket.Frame.create ()))
         in
         Alcotest.(check int) "outputs" 1 !count ;
         Lwt.return_unit )
@@ -34,12 +32,12 @@ let test_set =
         let twice_writer _ = count := !count + 2 in
         let%lwt _ = Conn.connect conn writer in
         let%lwt _ =
-          Lwt.return @@ Conn.write_output conn ~frame:(Some (Websocket_cohttp_lwt.Frame.create ()))
+          Lwt.return @@ Conn.write_output conn ~frame:(Some (Websocket.Frame.create ()))
         in
         let%lwt _ = Conn.disconnect conn in
         let%lwt _ = Conn.connect conn twice_writer in
         let%lwt _ =
-          Lwt.return @@ Conn.write_output conn ~frame:(Some (Websocket_cohttp_lwt.Frame.create ()))
+          Lwt.return @@ Conn.write_output conn ~frame:(Some (Websocket.Frame.create ()))
         in
         let%lwt _ = Conn.disconnect conn in
         Alcotest.(check int) "outputs" 1 !count ;
@@ -49,7 +47,7 @@ let test_set =
         let conn = C.instance in
         let module Conn = C.Connection in
         let frame = ref None in
-        let module W = Websocket_cohttp_lwt in
+        let module W = Websocket in
         let%lwt _ = Conn.connect conn (fun v -> frame := v) in
         let%lwt _ =
           Conn.default_input_handler conn W.(Frame.create ~opcode:Frame.Opcode.Ping ())
@@ -65,7 +63,7 @@ let test_set =
         let module Conn = C.Connection in
         let%lwt _ = Conn.connect conn ignore in
         let%lwt _ =
-          let module W = Websocket_cohttp_lwt in
+          let module W = Websocket in
           Conn.default_input_handler conn W.(Frame.create ~opcode:Frame.Opcode.Close ())
         in
         Alcotest.(check bool) "closed" true Conn.(is_closed conn) ;

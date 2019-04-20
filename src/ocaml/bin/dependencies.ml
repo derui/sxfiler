@@ -45,7 +45,7 @@ module Make (Conn : C.Rpc_connection.Instance) (Completer : D.Completer.Instance
   module Key_map_repo : D.Key_map_repository.S = I.Key_map_repo.Make (Global.Keymap)
   module Condition_repo : D.Condition.Repository = I.Condition_repo.Make (Global.Condition)
   module Filer_repo : D.Filer.Repository = I.Filer_repo.Make (Global.Root)
-  module Filer_factory = D.Filer.Factory.Make (I.Id_generator.Gen_random_string)
+  module Filer_factory = D.Filer.Factory.Make
   module Configuration_repo : D.Configuration.Repository = I.Configuration_repo.Make (Global.Root)
   module Completion_repo = I.Completion_repo.Make (Global.Cached_source)
   module Plan_repo : D.Plan.Repository = I.Plan_repo.Make (Global.Root)
