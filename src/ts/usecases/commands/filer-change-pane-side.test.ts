@@ -5,24 +5,24 @@ import { actions } from "../../actions/filer";
 describe("Commands", () => {
   describe("Filer", () => {
     describe("Change the side of pane to use ", () => {
-      it("call dispatch function", () => {
+      it("call dispatch function", async () => {
         const command = C.createCommand();
         const dispatcher = {
           dispatch: jest.fn(),
         };
 
-        command.execute(dispatcher as any);
+        await command.execute(dispatcher as any);
         expect(dispatcher.dispatch).toBeCalled();
       });
 
-      it("change the side of pane", () => {
+      it("change the side of pane", async () => {
         const command = C.createCommand();
         const dispatcher = {
           dispatch: jest.fn(),
         };
         const state = AppState.empty();
 
-        command.execute(dispatcher as any, { state: state, client: jest.fn() as any });
+        await command.execute(dispatcher as any, { state: state, client: jest.fn() as any });
         expect(dispatcher.dispatch).toBeCalledWith(actions.changeSide());
       });
     });

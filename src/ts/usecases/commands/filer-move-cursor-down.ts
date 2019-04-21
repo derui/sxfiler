@@ -21,7 +21,7 @@ export const registCommand = (registrar: CommandRegistrar) =>
 
 export const createCommand = (): CommandLike => {
   return {
-    execute(dispatch: Dispatcher<Actions>, args) {
+    async execute(dispatch: Dispatcher<Actions>, args) {
       if (!args) {
         throw new Error("Do not take store state");
       }

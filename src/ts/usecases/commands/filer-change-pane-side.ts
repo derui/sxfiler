@@ -19,7 +19,7 @@ export const registCommand = (registrar: CommandRegistrar) =>
 
 export const createCommand = (): CommandLike => {
   return {
-    execute(dispatcher: Dispatcher<Actions>) {
+    async execute(dispatcher: Dispatcher<Actions>) {
       dispatcher.dispatch(actions.changeSide());
     },
   };

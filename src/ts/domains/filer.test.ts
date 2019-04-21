@@ -17,6 +17,15 @@ const stat = createFileStat({
 });
 
 describe("Filer domain", () => {
+  describe("comparable", () => {
+    it("compare with filers that has same content", () => {
+      const filer = createFiler({ id: "id", location: "/loc", nodes: [], currentCursorIndex: 0 });
+      const filer2 = createFiler({ id: "id", location: "/loc", nodes: [], currentCursorIndex: 0 });
+
+      expect(filer).toEqual(filer2);
+    });
+  });
+
   describe("getting current node", () => {
     it("should return if do not have any nodes", () => {
       const filer = createFiler({ id: "id", location: "/loc", nodes: [], currentCursorIndex: 0 });

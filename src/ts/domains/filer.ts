@@ -38,6 +38,21 @@ export type Filer = FilerObject & {
   markedNodes: NodeObject[];
 };
 
+function moveIndex(this: FilerObject, direction: Direction): Filer {
+  let index = 0;
+
+  switch (direction) {
+    case Direction.Down:
+      index = Math.min(this.nodes.length - 1, this.currentCursorIndex + 1);
+      break;
+    case Direction.Up:
+      index = Math.max(0, this.currentCursorIndex - 1);
+      break;
+  }
+
+  return createFiler({ ...this, currentCursorIndex: index });
+}
+
 export const createFiler = ({ id, nodes, location, currentCursorIndex }: FactoryArg): Filer => {
   return {
     id,
@@ -55,20 +70,7 @@ export const createFiler = ({ id, nodes, location, currentCursorIndex }: Factory
      * Get new instance of Filer that is moved by direction
      * @param direction direction to move index
      */
-    moveIndex(direction: Direction): Filer {
-      let index = 0;
-
-      switch (direction) {
-        case Direction.Down:
-          index = Math.min(this.nodes.length - 1, this.currentCursorIndex + 1);
-          break;
-        case Direction.Up:
-          index = Math.max(0, this.currentCursorIndex - 1);
-          break;
-      }
-
-      return createFiler({ ...this, currentCursorIndex: index });
-    },
+    moveIndex,
 
     /**
      * @returns marked nodes

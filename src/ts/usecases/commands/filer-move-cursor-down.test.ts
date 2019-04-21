@@ -6,24 +6,24 @@ import { createFiler, Direction } from "../../domains/filer";
 describe("Commands", () => {
   describe("Filer", () => {
     describe("Move the cursor down of the filer", () => {
-      it("throw error when pass undefined as argument", () => {
+      it("throw error when pass undefined as argument", async () => {
         const command = C.createCommand();
         const dispatcher = jest.fn();
 
-        expect(() => command.execute(dispatcher as any, undefined)).toThrowError();
+        await expect(command.execute(dispatcher as any, undefined)).rejects.toThrowError();
       });
 
-      it("do not call anything when filer is not initialized", () => {
+      it("do not call anything when filer is not initialized", async () => {
         const command = C.createCommand();
         const dispatcher = {
           dispatch: jest.fn(),
         };
         const state = AppState.empty();
-        command.execute(dispatcher as any, { state: state, client: jest.fn() as any });
+        await command.execute(dispatcher as any, { state: state, client: jest.fn() as any });
         expect(dispatcher.dispatch).not.toBeCalled();
       });
 
-      it("call dispatch function with argument when filer initialized", () => {
+      it("call dispatch function with argument when filer initialized", async () => {
         const command = C.createCommand();
         const dispatcher = {
           dispatch: jest.fn(),
@@ -33,11 +33,11 @@ describe("Commands", () => {
         state.fileList.currentSide = Side.Left;
         state.fileList.left = createFiler({ id: "id", nodes: [], location: "test", currentCursorIndex: 0 });
 
-        command.execute(dispatcher as any, { state: state, client: jest.fn() as any });
+        await command.execute(dispatcher as any, { state: state, client: jest.fn() as any });
         expect(dispatcher.dispatch).toBeCalled();
       });
 
-      it("moves filer cursor down", () => {
+      it("moves filer cursor down", async () => {
         const command = C.createCommand();
         const dispatcher = {
           dispatch: jest.fn(),
@@ -48,7 +48,7 @@ describe("Commands", () => {
         state.fileList.left = createFiler({ id: "id", nodes: [], location: "test", currentCursorIndex: 0 });
         const spy = jest.spyOn(state.fileList.left, "moveIndex");
 
-        command.execute(dispatcher as any, { state: state, client: jest.fn() as any });
+        await command.execute(dispatcher as any, { state: state, client: jest.fn() as any });
         expect(spy).toBeCalledWith(Direction.Down);
       });
     });
