@@ -92,4 +92,18 @@ const MoveParent: Api<Methods.MoveParent, string, Filer | undefined> = {
   },
 };
 
-export const Apis = { Make, Get, MoveParent };
+const EnterDirectory: Api<Methods.EnterDirectory, { name: string; nodeId: string }, Filer | undefined> = {
+  method: Methods.EnterDirectory,
+  parametersTransformer({ name, nodeId }) {
+    return { name, nodeId };
+  },
+  resultTransformer(ret, error) {
+    if (!ret && error && error.hasCode(-2)) {
+      return undefined;
+    }
+
+    return transformFiler(ret);
+  },
+};
+
+export const Apis = { Make, Get, MoveParent, EnterDirectory };

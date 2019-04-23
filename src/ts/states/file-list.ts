@@ -1,4 +1,5 @@
 import { Filer } from "../domains/filer";
+import { NodeObject } from "../domains/node";
 
 export enum Side {
   Left = "left",
@@ -20,6 +21,18 @@ export const empty = (): State => {
   return {
     currentSide: Side.Left,
     initialized: false,
+  };
+};
+
+/**
+   Initialize a state with filers
+ */
+export const initialize = (state: State, { left, right }: { left: Filer; right: Filer }): State => {
+  return {
+    ...state,
+    initialized: true,
+    left,
+    right,
   };
 };
 
@@ -60,5 +73,25 @@ export const fellowPosition = (state: State): State => {
       return { ...state, currentSide: Side.Right };
     case Side.Right:
       return { ...state, currentSide: Side.Left };
+  }
+};
+
+/**
+ * Get current focusing node
+ *
+ * @param state The state of file list
+ */
+export const currentFocusingNode = (state: State): NodeObject | undefined => {
+  if (!state.initialized || !state.left || !state.right) {
+    return undefined;
+  }
+
+  const side = state.currentSide;
+
+  switch (side) {
+    case Side.Left:
+      return state.left.currentNode;
+    case Side.Right:
+      return state.right.currentNode;
   }
 };
