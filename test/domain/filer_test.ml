@@ -78,14 +78,16 @@ let test_set =
             D.File_tree.make ~location:(Path.of_string "/") ~nodes:[node_1; node_2]
           in
           let filer = TF.Filer.fixture "id" ~file_tree ~sort_order:D.Types.Sort_type.Name in
-          let filer = F.select_nodes filer ~ids:["id1"] in
-          Alcotest.(check @@ list @@ string) "subset" ["id1"] F.(filer.selected_nodes) )
-    ; ( "should be able to deselect nodes"
+          let filer = F.add_mark filer ~ids:["id1"] in
+          let expected = F.Node_id_set.of_list ["id1"] in
+          Alcotest.(check @@ of_pp F.Node_id_set.pp) "subset" expected F.(filer.marked_nodes) )
+    ; ( "should be able to remove nodes from selected these"
       , `Quick
       , fun () ->
           let file_tree =
             D.File_tree.make ~location:(Path.of_string "/") ~nodes:[node_1; node_2]
           in
           let filer = TF.Filer.fixture "id" ~file_tree ~sort_order:D.Types.Sort_type.Name in
-          let filer = F.select_nodes filer ~ids:["id1"; "id2"] |> F.deselect_nodes ~ids:["id2"] in
-          Alcotest.(check @@ list @@ string) "subset" ["id1"] F.(filer.selected_nodes) ) ]
+          let filer = F.add_mark filer ~ids:["id1"; "id2"] |> F.remove_mark ~ids:["id2"] in
+          let expected = F.Node_id_set.of_list ["id1"] in
+          Alcotest.(check @@ of_pp F.Node_id_set.pp) "subset" expected F.(filer.marked_nodes) ) ]

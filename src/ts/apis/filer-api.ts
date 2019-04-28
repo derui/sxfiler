@@ -10,14 +10,16 @@ export enum Methods {
   Get = "filer/get",
   MoveParent = "filer/moveParent",
   EnterDirectory = "filer/enterDirectory",
+  ToggleMark = "filer/toggleMark",
   MoveNodes = "filer/moveNodes",
   DeleteNodes = "filer/deleteNodes",
 }
 
-const transformNode = (node: any): NodeObject => {
+const transformNode = (markedNodes: any[]): ((node: any) => NodeObject) => (node: any) => {
   const stat = createFileStat(node.stat);
+  const marked = markedNodes.includes(node.id);
 
-  return createNode({ ...node, stat });
+  return createNode({ ...node, stat, marked });
 };
 
 /**
@@ -34,14 +36,14 @@ function transformFiler(filer: any): Filer {
   const {
     id,
     fileTree: { location, nodes },
-    selectedNodes,
+    markedNodes,
     sortOrder,
   } = filer;
 
   return createFiler({
     id,
     location,
-    nodes: nodes.map(transformNode),
+    nodes: nodes.map(transformNode(markedNodes)),
     currentCursorIndex: 0,
   });
 }
@@ -106,4 +108,18 @@ const EnterDirectory: Api<Methods.EnterDirectory, { name: string; nodeId: string
   },
 };
 
-export const Apis = { Make, Get, MoveParent, EnterDirectory };
+const ToggleMark: Api<Methods.ToggleMark, { name: string; nodeIds: string[] }, Filer | undefined> = {
+  method: Methods.ToggleMark,
+  parametersTransformer({ name, nodeIds }) {
+    return { name, nodeIds };
+  },
+  resultTransformer(ret, error) {
+    if (!ret && error && error.hasCode(-2)) {
+      return undefined;
+    }
+
+    return transformFiler(ret);
+  },
+};
+
+export const Apis = { Make, Get, MoveParent, EnterDirectory, ToggleMark };

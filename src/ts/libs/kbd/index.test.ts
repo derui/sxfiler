@@ -29,6 +29,12 @@ describe("make key with options", () => {
     expect(key.meta).toEqual(true);
     expect(key.ctrl).toEqual(true);
   });
+
+  it("use readable name instead of raw key", () => {
+    const key = kbd.make(" ", { ctrl: true, meta: true });
+
+    expect(key.key).toEqual("Space");
+  });
 });
 
 describe("convert to key sequence", () => {

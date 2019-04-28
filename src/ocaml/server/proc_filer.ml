@@ -30,3 +30,10 @@ module Enter_directory_spec (Gateway : G.Filer.Enter_directory.S) : P.Spec = str
   let method_ = "filer/enterDirectory"
   let param_requirement = `Required
 end
+
+module Toggle_mark_spec (Gateway : G.Filer.Toggle_mark.S) : P.Spec = struct
+  module Gateway = Gateway
+
+  let method_ = "filer/toggleMark"
+  let param_requirement = `Required
+end

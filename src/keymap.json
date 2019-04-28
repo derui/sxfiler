@@ -10,6 +10,7 @@
     {"action": "builtin.filer.changePaneSide", "key": "Tab", "when": {contexts: ["onFileTree"]}},
     {"action": "builtin.filer.moveParent", "key": "^", "when": {contexts: ["onFileTree"]}},
     {"action": "builtin.filer.enterDirectory", "key": "Enter", "when": {contexts: ["onFileTree"]}},
+    {"action": "builtin.filer.toggleMark", "key": "Space", "when": {contexts: ["onFileTree"]}},
     {"action": "completion.prev_item", "key": "ArrowUp", "when": {contexts: ["onComplete"]}},
     {"action": "completion.next_item", "key": "ArrowDown", "when": {contexts: ["onComplete"]}},
     {"action": "completion.select_item", "key": "Enter", "when": {contexts: ["onComplete"]}}

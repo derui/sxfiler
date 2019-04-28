@@ -36,6 +36,7 @@ module type S = sig
     module Filer_get : U.Filer.Get.S
     module Filer_move_parent : U.Filer.Move_parent.S
     module Filer_enter_directory : U.Filer.Enter_directory.S
+    module Filer_toggle_mark : U.Filer.Toggle_mark.S
   end
 end
 
@@ -88,5 +89,7 @@ module Make (Conn : C.Rpc_connection.Instance) (Completer : D.Completer.Instance
 
     module Filer_enter_directory =
       U.Filer.Enter_directory.Make (Filer_repo) (Location_scanner_service) (Clock)
+
+    module Filer_toggle_mark = U.Filer.Toggle_mark.Make (Filer_repo)
   end
 end

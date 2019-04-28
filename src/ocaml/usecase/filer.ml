@@ -149,7 +149,7 @@ module Enter_directory = struct
   end
 end
 
-module Select_nodes = struct
+module Toggle_mark = struct
   module Type = struct
     type input =
       { name : string
@@ -171,38 +171,19 @@ module Select_nodes = struct
 
     let execute (params : input) =
       let%lwt filer = SR.resolve params.name in
-      let filer = Option.(filer >>= lift @@ T.Filer.select_nodes ~ids:params.node_ids) in
-      match filer with
-      | None -> Lwt.return_error `Not_found
-      | Some filer ->
-          let%lwt () = SR.store filer in
-          Lwt.return_ok filer
-  end
-end
-
-module Deselect_nodes = struct
-  module Type = struct
-    type input =
-      { name : string
-      ; node_ids : T.Node.id list }
-
-    type output = T.Filer.t
-    type error = [`Not_found]
-  end
-
-  module type S = sig
-    include module type of Type
-
-    include
-      Common.Usecase with type input := input and type output := output and type error := error
-  end
-
-  module Make (SR : T.Filer.Repository) : S = struct
-    include Type
-
-    let execute (params : input) =
-      let%lwt filer = SR.resolve params.name in
-      let filer = Option.(filer >>= lift @@ T.Filer.deselect_nodes ~ids:params.node_ids) in
+      let filer =
+        Option.(
+          filer
+          >>= lift
+              @@ fun filer ->
+              let marked, not_marked =
+                List.partition
+                  (fun v -> T.Filer.Node_id_set.mem v filer.T.Filer.marked_nodes)
+                  params.node_ids
+              in
+              let filer = T.Filer.remove_mark filer ~ids:marked in
+              T.Filer.add_mark filer ~ids:not_marked)
+      in
       match filer with
       | None -> Lwt.return_error `Not_found
       | Some filer ->

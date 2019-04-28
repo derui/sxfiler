@@ -115,3 +115,29 @@ module Enter_directory = struct
       | Error `Not_directory -> Lwt.fail Gateway_error.(Gateway_error filer_not_directory)
   end
 end
+
+module Toggle_mark = struct
+  module Type = struct
+    type params =
+      { name : string
+      ; node_ids : string list [@key "nodeIds"] }
+    [@@deriving of_yojson]
+
+    type result = T.Filer.t [@@deriving to_yojson]
+  end
+
+  module type S = sig
+    include module type of Type
+    include Core.Gateway with type params := params and type result := result
+  end
+
+  module Make (U : Usecase.Filer.Toggle_mark.S) : S = struct
+    include Type
+
+    let handle params =
+      let params = {U.name = params.name; node_ids = params.node_ids} in
+      match%lwt U.execute params with
+      | Ok s -> Lwt.return @@ T.Filer.of_domain s
+      | Error `Not_found -> Lwt.fail Gateway_error.(Gateway_error filer_not_found)
+  end
+end

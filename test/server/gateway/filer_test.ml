@@ -52,4 +52,17 @@ let test_set =
           Alcotest.fail "not thrown any exception" |> Lwt.return
         with
         | G.Gateway_error.(Gateway_error Filer_not_found) -> Lwt.return_unit
+        | _ -> Alcotest.fail "catch different exception" )
+  ; Alcotest_lwt.test_case "toggle_mark raise error if filer is not found" `Quick (fun _ () ->
+        let module Usecase = struct
+          include U.Filer.Toggle_mark.Type
+
+          let execute _ = Lwt.return_error `Not_found
+        end in
+        let module Gateway = G.Filer.Toggle_mark.Make (Usecase) in
+        try%lwt
+          let%lwt _ = Gateway.handle {name = "foo"; node_ids = ["id1"]} in
+          Alcotest.fail "not thrown any exception" |> Lwt.return
+        with
+        | G.Gateway_error.(Gateway_error Filer_not_found) -> Lwt.return_unit
         | _ -> Alcotest.fail "catch different exception" ) ]

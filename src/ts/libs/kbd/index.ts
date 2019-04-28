@@ -2,16 +2,20 @@
  * implement for TypeScript version sxfiler_kbd.
  */
 
-interface Key {
+type Key = {
   ctrl: boolean;
   meta: boolean;
   key: string;
-}
+};
 
-interface MakeOption {
+type MakeOption = {
   ctrl?: boolean;
   meta?: boolean;
-}
+};
+
+const specialKeyMapping = {
+  " ": "Space",
+};
 
 /**
  * make key type
@@ -19,8 +23,12 @@ interface MakeOption {
  * @param option option to make key
  */
 export function make(key: string, option: MakeOption = { ctrl: false, meta: false }): Key {
+  const mapping = Object.entries(specialKeyMapping)
+    .map(([k, v]) => ({ key: k, value: v }))
+    .find(v => v.key === key);
+
   return {
-    key,
+    key: mapping ? mapping.value : key,
     ctrl: option.ctrl || false,
     meta: option.meta || false,
   };

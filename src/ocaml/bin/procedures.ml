@@ -26,10 +26,12 @@ let expose_filer_procedures (module Dep : Dependencies.S) : (module Procedure.Sp
   let module Move_parent_gateway = G.Filer.Move_parent.Make (Dep.Usecase.Filer_move_parent) in
   let module Enter_directory_gateway =
     G.Filer.Enter_directory.Make (Dep.Usecase.Filer_enter_directory) in
+  let module Toggle_mark_gateway = G.Filer.Toggle_mark.Make (Dep.Usecase.Filer_toggle_mark) in
   [ (module Proc_filer.Make_spec (Make_gateway))
   ; (module Proc_filer.Get_spec (Get_gateway))
   ; (module Proc_filer.Move_parent_spec (Move_parent_gateway))
-  ; (module Proc_filer.Enter_directory_spec (Enter_directory_gateway)) ]
+  ; (module Proc_filer.Enter_directory_spec (Enter_directory_gateway))
+  ; (module Proc_filer.Toggle_mark_spec (Toggle_mark_gateway)) ]
 
 let expose_configuration_procedures (module Dep : Dependencies.S) : (module Procedure.Spec) list =
   let module S = Jsonrpc_ocaml_yojson.Server in
@@ -54,5 +56,5 @@ let expose_all server (module Dep : Dependencies.S) =
   in
   List.fold_left
     (fun server (module Spec : Procedure.Spec) ->
-       Jsonrpc_server.expose server ~procedure:(module Procedure.Make (Spec)) )
+      Jsonrpc_server.expose server ~procedure:(module Procedure.Make (Spec)) )
     server procedures

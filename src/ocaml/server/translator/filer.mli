@@ -3,7 +3,7 @@ type t =
   { id : string
   ; file_tree : File_tree.t [@key "fileTree"]
   ; history : Location_history.t
-  ; selected_nodes : string list [@key "selectedNodes"]
+  ; marked_nodes : string list [@key "markedNodes"]
   ; sort_order : Types.Sort_type.t [@key "sortOrder"] }
 [@@deriving show, yojson]
 

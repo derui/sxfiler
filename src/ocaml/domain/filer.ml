@@ -2,11 +2,24 @@
 
 type id = string [@@deriving eq, show]
 
+module Node_id_set = struct
+  include Set.Make (struct
+    type t = Node.id
+
+    let compare = Stdlib.compare
+  end)
+
+  let pp fmt t =
+    let ids = to_seq t |> List.of_seq |> List.sort Stdlib.compare in
+    let printer = [%derive.show: Node.id list] in
+    Format.fprintf fmt "%s" @@ printer ids
+end
+
 type t =
   { id : id
   ; file_tree : File_tree.t
   ; history : Location_history.t
-  ; selected_nodes : Node.id list
+  ; marked_nodes : Node_id_set.t
   ; sort_order : Types.Sort_type.t }
 [@@deriving eq, show, make]
 
@@ -21,23 +34,13 @@ let move_location t ~file_tree clock =
 let update_tree t ~file_tree =
   {t with file_tree = File_tree.sort_nodes file_tree ~order:t.sort_order}
 
-module Node_id_set = Set.Make (struct
-  type t = Node.id
+let add_mark t ~ids =
+  let marked_nodes = List.fold_left (fun set id -> Node_id_set.add id set) t.marked_nodes ids in
+  {t with marked_nodes}
 
-  let compare = Stdlib.compare
-end)
-
-let select_nodes t ~ids =
-  let selected_set = Node_id_set.of_list t.selected_nodes in
-  let selected_nodes =
-    List.fold_left (fun set id -> Node_id_set.add id set) selected_set ids
-    |> Node_id_set.to_seq |> List.of_seq
-  in
-  {t with selected_nodes}
-
-let deselect_nodes t ~ids =
-  let selected_nodes = List.filter (fun id -> not @@ List.mem id ids) t.selected_nodes in
-  {t with selected_nodes}
+let remove_mark t ~ids =
+  let marked_nodes = List.fold_left (fun set id -> Node_id_set.remove id set) t.marked_nodes ids in
+  {t with marked_nodes}
 
 let node_subset t ~ids =
   List.fold_left
@@ -73,6 +76,6 @@ module Factory = struct
       ; file_tree = File_tree.sort_nodes file_tree ~order:sort_order
       ; history
       ; sort_order
-      ; selected_nodes = [] }
+      ; marked_nodes = Node_id_set.empty }
   end
 end
