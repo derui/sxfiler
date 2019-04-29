@@ -16,7 +16,7 @@ let test_set =
           D.File_tree.make ~location:(Path.of_string ~env:`Unix "/initial") ~nodes:[]
         in
         let expected =
-          Test_fixtures.Filer.fixture "foo" ~file_tree ~sort_order:D.Types.Sort_type.Date
+          D.Filer.Factory.create ~name:"foo" ~file_tree ~sort_order:D.Types.Sort_type.Date ()
         in
         let module Usecase = struct
           include U.Filer.Make.Type

@@ -1,4 +1,5 @@
 (** Scanner module provides type to scan file tree. *)
+open Sxfiler_core
 
 type id = string [@@deriving eq, show]
 
@@ -26,13 +27,18 @@ type t =
 let has_same_id {id = id1; _} {id = id2; _} = equal_id id1 id2
 let find_node t = File_tree.find_node t.file_tree
 
+let update_tree t ~file_tree =
+  {t with file_tree = File_tree.sort_nodes file_tree ~order:t.sort_order}
+
 let move_location t ~file_tree clock =
   let record = Location_record.record_of ~location:file_tree.File_tree.location clock in
   let history = Location_history.add_record t.history ~record in
-  {t with file_tree = File_tree.sort_nodes file_tree ~order:t.sort_order; history}
-
-let update_tree t ~file_tree =
-  {t with file_tree = File_tree.sort_nodes file_tree ~order:t.sort_order}
+  let marked_nodes =
+    if Path.equal file_tree.location t.file_tree.location then t.marked_nodes
+    else Node_id_set.empty
+  in
+  let t' = update_tree t ~file_tree in
+  {t' with history; marked_nodes}
 
 let add_mark t ~ids =
   let marked_nodes = List.fold_left (fun set id -> Node_id_set.add id set) t.marked_nodes ids in
@@ -60,22 +66,10 @@ module type Repository = sig
 end
 
 module Factory = struct
-  module type S = sig
-    val create :
-         name:string
-      -> file_tree:File_tree.t
-      -> history:Location_history.t
-      -> sort_order:Types.Sort_type.t
-      -> t
-    (** [create ~file_tree ~history ~sort_order] gets new instance of filer. *)
-  end
-
-  module Make : S = struct
-    let create ~name ~file_tree ~history ~sort_order =
-      { id = name
-      ; file_tree = File_tree.sort_nodes file_tree ~order:sort_order
-      ; history
-      ; sort_order
-      ; marked_nodes = Node_id_set.empty }
-  end
+  let create ~name ~file_tree ?(history = Location_history.make ()) ~sort_order () =
+    { id = name
+    ; file_tree = File_tree.sort_nodes file_tree ~order:sort_order
+    ; history
+    ; sort_order
+    ; marked_nodes = Node_id_set.empty }
 end

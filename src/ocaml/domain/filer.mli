@@ -52,15 +52,12 @@ end
 
 (** Factory interface *)
 module Factory : sig
-  module type S = sig
-    val create :
-         name:string
-      -> file_tree:File_tree.t
-      -> history:Location_history.t
-      -> sort_order:Types.Sort_type.t
-      -> t
-    (** [create ~name ~file_tree ~history ~sort_order] gets new instance of filer. *)
-  end
-
-  module Make : S
+  val create :
+       name:string
+    -> file_tree:File_tree.t
+    -> ?history:Location_history.t
+    -> sort_order:Types.Sort_type.t
+    -> unit
+    -> t
+  (** [create ~name ~file_tree ~history ~sort_order] gets new instance of filer. *)
 end

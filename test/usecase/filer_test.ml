@@ -11,13 +11,15 @@ let test_set =
         let file_tree =
           D.File_tree.make ~location:Path.(of_string "/bar") ~nodes:[TF.Node.fixture dir_stat]
         in
-        let filer = TF.Filer.fixture "foo" ~file_tree ~sort_order:D.Types.Sort_type.Name in
+        let filer =
+          D.Filer.Factory.create ~name:"foo" ~file_tree ~sort_order:D.Types.Sort_type.Name ()
+        in
         let module FR =
-          (val Test_fixtures.Memory_repository.filer_repository ~initial:[filer] ())
+        (val Test_fixtures.Memory_repository.filer_repository ~initial:[filer] ())
         in
         let new_nodes = [TF.Node.fixture ~full_path:Path.(of_string "new") dir_stat] in
         let module Svc =
-          (val TF.Service.location_scanner_service Path.(of_string "/bar") new_nodes)
+        (val TF.Service.location_scanner_service Path.(of_string "/bar") new_nodes)
         in
         let module Clock = struct
           let unixtime () = Int64.min_int
@@ -49,7 +51,9 @@ let test_set =
         let file_tree =
           D.File_tree.make ~location:Path.(of_string "/bar") ~nodes:[TF.Node.fixture dir_stat]
         in
-        let filer = TF.Filer.fixture "foo" ~file_tree ~sort_order:D.Types.Sort_type.Name in
+        let filer =
+          D.Filer.Factory.create ~name:"foo" ~file_tree ~sort_order:D.Types.Sort_type.Name ()
+        in
         let module FR = (val TF.Memory_repository.filer_repository ~initial:[filer] ()) in
         let module Svc = struct
           let scan _ = assert false

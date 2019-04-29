@@ -25,7 +25,6 @@ module Make = struct
 
   module Make
       (CR : T.Configuration.Repository)
-      (Factory : T.Filer.Factory.S)
       (SR : T.Filer.Repository)
       (Svc : T.Location_scanner_service.S) : S = struct
     include Type
@@ -39,8 +38,8 @@ module Make = struct
           let sort_order = config.T.Configuration.default_sort_order in
           let%lwt file_tree = Svc.scan params.initial_location in
           let t =
-            Factory.create ~name:params.name ~file_tree ~history:(T.Location_history.make ())
-              ~sort_order
+            T.Filer.Factory.create ~name:params.name ~file_tree
+              ~history:(T.Location_history.make ()) ~sort_order ()
           in
           let%lwt () = SR.store t in
           Lwt.return @@ Ok t

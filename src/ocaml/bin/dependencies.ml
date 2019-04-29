@@ -11,7 +11,6 @@ module type S = sig
   module Key_map_repo : D.Key_map_repository.S
   module Condition_repo : D.Condition.Repository
   module Filer_repo : D.Filer.Repository
-  module Filer_factory : D.Filer.Factory.S
   module Configuration_repo : D.Configuration.Repository
   module Completion_repo : D.Completion.Repository
   module Plan_repo : D.Plan.Repository
@@ -46,7 +45,6 @@ module Make (Conn : C.Rpc_connection.Instance) (Completer : D.Completer.Instance
   module Key_map_repo : D.Key_map_repository.S = I.Key_map_repo.Make (Global.Keymap)
   module Condition_repo : D.Condition.Repository = I.Condition_repo.Make (Global.Condition)
   module Filer_repo : D.Filer.Repository = I.Filer_repo.Make (Global.Root)
-  module Filer_factory = D.Filer.Factory.Make
   module Configuration_repo : D.Configuration.Repository = I.Configuration_repo.Make (Global.Root)
   module Completion_repo = I.Completion_repo.Make (Global.Cached_source)
   module Plan_repo : D.Plan.Repository = I.Plan_repo.Make (Global.Root)
@@ -79,8 +77,7 @@ module Make (Conn : C.Rpc_connection.Instance) (Completer : D.Completer.Instance
     module Completion_read = U.Completion.Read.Make (Completion_repo) (Completer)
 
     module Filer_make =
-      U.Filer.Make.Make (Configuration_repo) (Filer_factory) (Filer_repo)
-        (Location_scanner_service)
+      U.Filer.Make.Make (Configuration_repo) (Filer_repo) (Location_scanner_service)
 
     module Filer_get = U.Filer.Get.Make (Filer_repo)
 
