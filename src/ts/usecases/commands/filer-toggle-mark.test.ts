@@ -72,7 +72,7 @@ describe("Commands", () => {
 
         await command.execute(dispatcher as any, { state, client: client as any });
         await expect(dispatcher.dispatch).toBeCalledWith(
-          actions.update({
+          actions.load({
             side: Side.Left,
             filer: updatedFiler,
           })

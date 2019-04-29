@@ -6,7 +6,7 @@ export enum Side {
   Right = "right",
 }
 
-export interface State {
+export type State = {
   left?: Filer;
   // filer of right side
   right?: Filer;
@@ -14,7 +14,7 @@ export interface State {
   currentSide: Side;
   // filer initialized or not
   initialized: boolean;
-}
+};
 
 /** factory function create empty state */
 export const empty = (): State => {

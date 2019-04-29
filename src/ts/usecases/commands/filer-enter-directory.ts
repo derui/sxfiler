@@ -43,7 +43,7 @@ export const createCommand = (): CommandLike => {
       }
 
       dispatch.dispatch(
-        actions.update({
+        actions.load({
           side,
           filer,
         })
