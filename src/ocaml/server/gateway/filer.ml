@@ -10,9 +10,9 @@ module Make = struct
     type params =
       { initial_location : string [@key "initialLocation"]
       ; name : string }
-    [@@deriving of_yojson]
+    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
 
-    type result = T.Filer.t [@@deriving to_yojson]
+    type result = T.Filer.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = sig
@@ -39,8 +39,8 @@ end
 module Get = struct
   (** request and response for gateway *)
   module Type = struct
-    type params = {name : string} [@@deriving of_yojson]
-    type result = T.Filer.t [@@deriving to_yojson]
+    type params = {name : string} [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+    type result = T.Filer.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = sig
@@ -64,8 +64,8 @@ end
 module Move_parent = struct
   (** gateway for Move_parent use case. *)
   module Type = struct
-    type params = {name : string} [@@deriving of_yojson]
-    type result = T.Filer.t [@@deriving to_yojson]
+    type params = {name : string} [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+    type result = T.Filer.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = sig
@@ -92,9 +92,9 @@ module Enter_directory = struct
     type params =
       { name : string
       ; node_id : string [@key "nodeId"] }
-    [@@deriving of_yojson]
+    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
 
-    type result = T.Filer.t [@@deriving to_yojson]
+    type result = T.Filer.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = sig
@@ -121,9 +121,9 @@ module Toggle_mark = struct
     type params =
       { name : string
       ; node_ids : string list [@key "nodeIds"] }
-    [@@deriving of_yojson]
+    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
 
-    type result = T.Filer.t [@@deriving to_yojson]
+    type result = T.Filer.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = sig

@@ -3,8 +3,8 @@ module T = Sxfiler_server_translator
 
 module Get = struct
   module Type = struct
-    type params = unit [@@deriving of_yojson]
-    type result = T.Key_map.t [@@deriving to_yojson]
+    type params = unit [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+    type result = T.Key_map.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = Core.Gateway with type params = Type.params and type result = Type.result
@@ -24,8 +24,8 @@ end
 
 module Store = struct
   module Type = struct
-    type params = T.Key_map.t [@@deriving of_yojson]
-    type result = unit [@@deriving to_yojson]
+    type params = T.Key_map.t [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+    type result = unit [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = Core.Gateway with type params = Type.params and type result = Type.result
@@ -45,8 +45,10 @@ end
 
 module Add_context = struct
   module Type = struct
-    type params = {context : string} [@@deriving of_yojson]
-    type result = T.Key_map.t [@@deriving to_yojson]
+    type params = {context : string}
+    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+
+    type result = T.Key_map.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = Core.Gateway with type params = Type.params and type result = Type.result
@@ -64,8 +66,10 @@ end
 
 module Delete_context = struct
   module Type = struct
-    type params = {context : string} [@@deriving of_yojson]
-    type result = T.Key_map.t [@@deriving to_yojson]
+    type params = {context : string}
+    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+
+    type result = T.Key_map.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = Core.Gateway with type params = Type.params and type result = Type.result

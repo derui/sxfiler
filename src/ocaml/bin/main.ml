@@ -106,15 +106,15 @@ let load_migemo dict_dir =
 let load_configuration config =
   let module Y = Sxfiler_server_translator.Configuration in
   let config = Yojson.Safe.from_file config in
-  match Y.of_yojson config with Error _ -> None | Ok v -> Some (Y.to_domain v)
+  match Y.of_json config with Error _ -> None | Ok v -> Some (Y.to_domain v)
 
 (* Load keymaps from specified file *)
 let load_keymap file =
   let keymap = Yojson.Safe.from_file file in
   let module Y = Sxfiler_server_translator.Key_map in
-  match Y.of_yojson keymap with
+  match Y.of_json keymap with
   | Error err ->
-      Logs.warn (fun m -> m "Error occurred: %s" err) ;
+      Logs.warn (fun m -> m "Error occurred: %s" @@ Protocol_conv_json.Json.error_to_string_hum err) ;
       None
   | Ok v -> Some (Y.to_domain v)
 

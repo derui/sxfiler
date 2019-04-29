@@ -7,7 +7,7 @@ type t =
   ; name : string
   ; stat : File_stat.t
   ; link_path : string option [@key "linkPath"] }
-[@@deriving show, yojson]
+[@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
 module Domain = struct
   let of_domain t =

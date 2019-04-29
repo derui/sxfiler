@@ -4,7 +4,7 @@ module D = Sxfiler_domain.File_tree
 type t =
   { location : string
   ; nodes : Node.t list }
-[@@deriving show, yojson]
+[@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
 let of_domain (t : D.t) =
   {location = Path.to_string t.location; nodes = List.map Node.of_domain t.nodes}

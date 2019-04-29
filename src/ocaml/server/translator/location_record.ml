@@ -6,15 +6,18 @@ type t =
   ; timestamp : string }
 [@@deriving show]
 
-let to_yojson t = `Assoc [("location", `String t.location); ("timestamp", `String t.timestamp)]
+let to_json t = `Assoc [("location", `String t.location); ("timestamp", `String t.timestamp)]
 
-let of_yojson js =
+let of_json js =
   let open Yojson.Safe.Util in
   try
     let location = js |> member "location" |> to_string
     and timestamp = js |> member "timestamp" |> to_string in
     Ok {location; timestamp}
-  with Type_error (s, _) -> Error s
+  with Type_error (s, value) -> Error (Protocol_conv_json.Json.make_error ~value s)
+
+let of_json_exn js =
+  match of_json js with Ok v -> v | Error e -> raise (Protocol_conv_json.Json.Protocol_error e)
 
 let of_domain t =
   {location = Path.to_string t.D.location; timestamp = Int64.to_string t.D.timestamp}

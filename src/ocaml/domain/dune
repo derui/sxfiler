@@ -2,6 +2,4 @@
  (name sxfiler_domain)
  (public_name sxfiler.domain)
  (libraries sxfiler.kbd sxfiler.core lwt uuidm)
- ; to supress warnings are depended on ppx_deriving_yojson
- (flags (:standard -w -3))
  (preprocess (pps ppx_deriving.std ppx_fields_conv)))

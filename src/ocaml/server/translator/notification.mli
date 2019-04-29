@@ -4,7 +4,7 @@ module Level : sig
     | Info
     | Warning
     | Error
-  [@@deriving show, yojson]
+  [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   include
     Core.Domain_translator with type t := t and type domain := Sxfiler_domain.Notification.Level.t
@@ -14,7 +14,7 @@ module Body : sig
   type t =
     | Message of string
     | Progress of {process : string; current : float; targeted : float}
-  [@@deriving show, yojson]
+  [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   include
     Core.Domain_translator with type t := t and type domain := Sxfiler_domain.Notification.body
@@ -25,6 +25,6 @@ type t =
   { id : string
   ; level : Level.t
   ; body : Body.t }
-[@@deriving show, yojson]
+[@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
 include Core.Domain_translator with type t := t and type domain := Sxfiler_domain.Notification.t

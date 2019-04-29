@@ -3,7 +3,7 @@ module Correction : sig
   type t =
     | Rename of string
     | Overwrite
-  [@@deriving show, yojson]
+  [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   include
     Core.Domain_translator with type t := t and type domain := Sxfiler_domain.Plan.Correction.t
@@ -14,7 +14,7 @@ module Prediction : sig
     | Need_fix
     | Fix of Correction.t
     | No_problem
-  [@@deriving show, yojson]
+  [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   include
     Core.Domain_translator with type t := t and type domain := Sxfiler_domain.Plan.Prediction.t
@@ -25,7 +25,7 @@ module Target_node : sig
   type t =
     { node_id : string [@key "nodeId"]
     ; prediction : Prediction.t }
-  [@@deriving show, yojson]
+  [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   include
     Core.Domain_translator with type t := t and type domain := Sxfiler_domain.Plan.Target_node.t
@@ -35,6 +35,6 @@ end
 type t =
   { id : string
   ; target_nodes : Target_node.t list [@key "targetNodes"] }
-[@@deriving show, yojson]
+[@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
 include Core.Domain_translator with type t := t and type domain := Sxfiler_domain.Plan.t

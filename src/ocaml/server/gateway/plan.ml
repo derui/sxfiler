@@ -5,8 +5,10 @@ module D = Sxfiler_domain
 
 module Reject = struct
   module Type = struct
-    type params = {plan_id : string [@key "planId"]} [@@deriving of_yojson]
-    type result = unit [@@deriving to_yojson]
+    type params = {plan_id : string [@key "planId"]}
+    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+
+    type result = unit [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = Core.Gateway with type params = Type.params and type result = Type.result
@@ -30,9 +32,9 @@ module Filer = struct
         { source : string
         ; node_ids : string list [@key "nodeIds"]
         ; dest : string }
-      [@@deriving of_yojson]
+      [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
 
-      type result = T.Plan.t [@@deriving to_yojson]
+      type result = T.Plan.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
     end
 
     module type S = Core.Gateway with type params = Type.params and type result = Type.result
@@ -56,9 +58,9 @@ module Filer = struct
       type params =
         { source : string
         ; node_ids : string list [@key "nodeIds"] }
-      [@@deriving of_yojson]
+      [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
 
-      type result = T.Plan.t [@@deriving to_yojson]
+      type result = T.Plan.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
     end
 
     module type S = Core.Gateway with type params = Type.params and type result = Type.result

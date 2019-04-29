@@ -8,21 +8,25 @@ module Correction = struct
     | Overwrite
   [@@deriving show]
 
-  let to_yojson = function
+  let to_json = function
     | Rename v -> `Assoc [("type", `String "rename"); ("payload", `String v)]
     | Overwrite -> `Assoc [("type", `String "overwrite")]
 
-  let of_yojson js =
+  let of_json js =
+    let open Protocol_conv_json in
     let open Yojson.Safe.Util in
     try
       let typ = js |> member "type" |> to_string in
       match typ with
       | "rename" ->
-        let payload = js |> member "payload" |> to_string in
-        Ok (Rename payload)
+          let payload = js |> member "payload" |> to_string in
+          Ok (Rename payload)
       | "overwrite" -> Ok Overwrite
-      | _ -> raise (Type_error (Printf.(sprintf "Unknown correction: %s" typ), js))
-    with Type_error (s, _) -> Error s
+      | _ -> Error (Json.make_error ~value:js Printf.(sprintf "Unknown correction: %s" typ))
+    with Type_error (s, value) -> Error (Json.make_error ~value s)
+
+  let of_json_exn js =
+    match of_json js with Ok v -> v | Error e -> raise (Protocol_conv_json.Json.Protocol_error e)
 
   let to_domain = function Rename name -> D.Correction.Rename name | Overwrite -> Overwrite
   let of_domain = function D.Correction.Rename name -> Rename name | Overwrite -> Overwrite
@@ -35,23 +39,27 @@ module Prediction = struct
     | No_problem
   [@@deriving show]
 
-  let to_yojson = function
+  let to_json = function
     | Need_fix -> `Assoc [("type", `String "need-fix")]
-    | Fix v -> `Assoc [("type", `String "fix"); ("payload", Correction.to_yojson v)]
+    | Fix v -> `Assoc [("type", `String "fix"); ("payload", Correction.to_json v)]
     | No_problem -> `Assoc [("type", `String "no-problem")]
 
-  let of_yojson js =
+  let of_json js =
+    let open Protocol_conv_json in
     let open Yojson.Safe.Util in
     try
       let typ = js |> member "type" |> to_string in
       match typ with
       | "fix" ->
-        let payload = js |> member "payload" in
-        Result.(Correction.of_yojson payload >|= fun v -> Fix v)
+          let payload = js |> member "payload" in
+          Result.(Correction.of_json payload >|= fun v -> Fix v)
       | "no-problem" -> Ok No_problem
       | "need-fix" -> Ok Need_fix
-      | _ -> raise (Type_error (Printf.(sprintf "Unknown prediction: %s" typ), js))
-    with Type_error (s, _) -> Error s
+      | _ -> Error (Json.make_error ~value:js Printf.(sprintf "Unknown prediction: %s" typ))
+    with Type_error (s, value) -> Error (Json.make_error ~value s)
+
+  let of_json_exn js =
+    match of_json js with Ok v -> v | Error e -> raise (Protocol_conv_json.Json.Protocol_error e)
 
   let to_domain = function
     | Need_fix -> D.Prediction.Need_fix
@@ -69,7 +77,7 @@ module Target_node = struct
   type t =
     { node_id : string [@key "nodeId"]
     ; prediction : Prediction.t }
-  [@@deriving show, yojson]
+  [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_domain t =
     {D.Target_node.node_id = t.node_id; prediction = Prediction.to_domain t.prediction}
@@ -82,7 +90,7 @@ end
 type t =
   { id : string
   ; target_nodes : Target_node.t list [@key "targetNodes"] }
-[@@deriving show, yojson]
+[@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
 module Empty_executor : D.Executor = struct
   let do_plan _ = assert false

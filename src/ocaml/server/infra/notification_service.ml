@@ -16,7 +16,7 @@ module Make (Conn : C.Rpc_connection.Instance) : D.Notification_service.S = stru
       | D.Notification.Message _ -> "notification/message"
       | D.Notification.Progress _ -> "notification/progress"
     in
-    let params = Tr.Notification.of_domain t |> Tr.Notification.to_yojson in
+    let params = Tr.Notification.of_domain t |> Tr.Notification.to_json in
     let content =
       Jy.Request.to_json {Jy.Request._method; params = Some params; id = None}
       |> Yojson.Safe.to_string

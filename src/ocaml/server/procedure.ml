@@ -55,12 +55,12 @@ module Make (S : Spec) : S = struct
         in
         match S.param_requirement with
         | `Not_required param -> S.Gateway.handle param
-        | `Required -> execute_with_param S.Gateway.params_of_yojson
+        | `Required -> execute_with_param S.Gateway.params_of_json
       in
       Log.info (fun m ->
           m "Finish procedure: {%s}, id: {%Ld}" req._method
             (Option.get ~default:Fun.(const 0L) req.id) ) ;%lwt
-      let result = S.Gateway.result_to_yojson result |> Option.some in
+      let result = S.Gateway.result_to_json result |> Option.some in
       Lwt.return {Res.result; id = req.Req.id; error = None}
     with
     | G.Gateway_error.Gateway_error e ->

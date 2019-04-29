@@ -19,4 +19,4 @@ let test_set =
         let data = Tr.Filer.of_domain data in
         Alcotest.(check @@ result (of_pp Tr.Filer.pp) (of_pp Fmt.nop))
           "yojson" (Ok data)
-          (Tr.Filer.of_yojson @@ Tr.Filer.to_yojson data) ) ]
+          (Tr.Filer.of_json @@ Tr.Filer.to_json data) ) ]

@@ -23,6 +23,6 @@ type t =
   ; is_directory : bool [@key "isDirectory"]
   ; is_file : bool [@key "isFile"]
   ; is_symlink : bool [@key "isSymlink"] }
-[@@deriving eq, show, yojson]
+[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
 include Core.Domain_translator with type t := t and type domain := Sxfiler_domain.File_stat.t

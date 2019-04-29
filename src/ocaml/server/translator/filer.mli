@@ -5,6 +5,6 @@ type t =
   ; history : Location_history.t
   ; marked_nodes : string list [@key "markedNodes"]
   ; sort_order : Types.Sort_type.t [@key "sortOrder"] }
-[@@deriving show, yojson]
+[@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
 include Core.Domain_translator with type t := t and type domain := Sxfiler_domain.Filer.t

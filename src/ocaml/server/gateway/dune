@@ -5,6 +5,5 @@
             sxfiler.usecase
             sxfiler.server.translator
             yojson
-            ppx_deriving_yojson.runtime)
- (flags (:standard -w -3))
- (preprocess (pps lwt_ppx ppx_deriving_yojson ppx_variants_conv)))
+            ppx_protocol_conv_json)
+ (preprocess (pps lwt_ppx ppx_protocol_conv ppx_variants_conv)))

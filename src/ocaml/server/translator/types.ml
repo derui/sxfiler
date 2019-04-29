@@ -3,9 +3,9 @@ module D = Sxfiler_domain.Types
 module Sort_type = struct
   type t =
     | Name [@name "name"]
-        | Size [@name "size"]
-        | Date [@name "date"]
-  [@@deriving show, yojson]
+    | Size [@name "size"]
+    | Date [@name "date"]
+  [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_domain = function
     | Name -> D.Sort_type.Name

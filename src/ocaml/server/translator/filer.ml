@@ -6,7 +6,7 @@ type t =
   ; history : Location_history.t
   ; marked_nodes : string list [@key "markedNodes"]
   ; sort_order : Types.Sort_type.t [@key "sortOrder"] }
-[@@deriving show, yojson]
+[@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
 let of_domain t =
   { id = t.D.id

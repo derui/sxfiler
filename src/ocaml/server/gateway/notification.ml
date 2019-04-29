@@ -7,9 +7,9 @@ module Notify_message = struct
     type params =
       { message : string
       ; level : T.Notification.Level.t }
-    [@@deriving of_yojson]
+    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
 
-    type result = unit [@@deriving to_yojson]
+    type result = unit [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module Make (Usecase : Usecase.Notification.Notify.S) :
