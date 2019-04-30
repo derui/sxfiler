@@ -90,7 +90,7 @@ export class Component extends React.Component<Props> {
     return nodes.slice(layout.startIndex, layout.stopIndex).map((node, index) => {
       const selected = cursor === index + layout.startIndex && focused;
       return (
-        <RootRef key={index} rootRef={e => this.itemMeasureCache.set(index, e)}>
+        <RootRef key={index + layout.startIndex} rootRef={e => this.itemMeasureCache.set(index + layout.startIndex, e)}>
           <NodeItem item={node} selected={selected} />
         </RootRef>
       );

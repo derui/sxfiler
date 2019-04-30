@@ -85,8 +85,8 @@ describe("Project", () => {
         });
 
         expect(ret).toEqual({
-          startIndex: 1,
-          stopIndex: 5,
+          startIndex: 0,
+          stopIndex: 3,
         });
       });
 
@@ -122,24 +122,20 @@ describe("Project", () => {
         new Array(5).fill(true).forEach((_, index) => {
           cache.set(index, createFixedSizeElement({ width: 10, height: 30 }));
         });
-
-        instance.calculateLayout({
+        const args = {
           cache,
           currentCursorIndex: 0,
           windowHeight: 100,
           listSize: 100,
-        });
-        const ret = instance.calculateLayout({
-          cache,
-          currentCursorIndex: 3,
-          windowHeight: 100,
-          listSize: 100,
-        });
+        };
 
-        expect(ret).toEqual({
-          startIndex: 1,
-          stopIndex: 5,
-        });
+        const initial = instance.calculateLayout(args);
+        const ret = instance.calculateLayout({ ...args, currentCursorIndex: 3 });
+        const ret2 = instance.calculateLayout({ ...args, currentCursorIndex: 7 });
+
+        expect(initial).toEqual({ startIndex: 0, stopIndex: 4 });
+        expect(ret).toEqual({ startIndex: 1, stopIndex: 5 });
+        expect(ret2).toEqual({ startIndex: 4, stopIndex: 9 });
       });
 
       it("calculate layout when the cursor locates middle of the window", () => {
@@ -160,8 +156,8 @@ describe("Project", () => {
         });
 
         expect(ret).toEqual({
-          startIndex: 2,
-          stopIndex: 6,
+          startIndex: 0,
+          stopIndex: 4,
         });
       });
 
@@ -189,12 +185,12 @@ describe("Project", () => {
         });
 
         expect(firstMoved).toEqual({
-          startIndex: 2,
-          stopIndex: 6,
+          startIndex: 0,
+          stopIndex: 4,
         });
         expect(ret).toEqual({
-          startIndex: 4,
-          stopIndex: 9,
+          startIndex: 3,
+          stopIndex: 7,
         });
       });
 
@@ -222,8 +218,8 @@ describe("Project", () => {
         });
 
         expect(ret).toEqual({
-          startIndex: 1,
-          stopIndex: 5,
+          startIndex: 0,
+          stopIndex: 4,
         });
       });
 
@@ -252,15 +248,13 @@ describe("Project", () => {
         });
 
         expect(ret).toEqual({
-          startIndex: 3,
-          stopIndex: 7,
+          startIndex: 1,
+          stopIndex: 5,
         });
       });
 
-      it("return return window to show all items when cursor get to the last of the list", () => {
-        const instance = new L.ListLayoutCalculator({
-          estimatedItemSize: 20,
-        });
+      it("return window to show all items when cursor get to the last of the list", () => {
+        const instance = new L.ListLayoutCalculator();
 
         const cache = new ItemMeasureCache();
         new Array(10).fill(true).forEach((_, index) => {
@@ -280,14 +274,8 @@ describe("Project", () => {
           listSize: 10,
         });
 
-        expect(firstMoved).toEqual({
-          startIndex: 6,
-          stopIndex: 10,
-        });
-        expect(ret).toEqual({
-          startIndex: 7,
-          stopIndex: 10,
-        });
+        expect(firstMoved).toEqual({ startIndex: 4, stopIndex: 8 });
+        expect(ret).toEqual({ startIndex: 7, stopIndex: 10 });
       });
     });
   });

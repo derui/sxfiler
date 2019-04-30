@@ -1,6 +1,9 @@
 // Implement simple layouter to use render items of list to fill list based on curser on the list
-import { ItemMeasureCache, Measure } from "./item-measure-cache";
+import { ItemMeasureCache } from "./item-measure-cache";
 
+/**
+   A type saved item indiecs to show in a list. Each indices are zero-origin, and the range shows as `[start, stop)`
+ */
 export type VirtualizedWindow = {
   startIndex: number;
   stopIndex: number;
@@ -27,53 +30,47 @@ export class ListLayoutCalculator {
   };
 
   constructor(args: { estimatedItemSize?: number } = {}) {
-    this.instanceProps.estimatedItemSize = args.estimatedItemSize ? args.estimatedItemSize : 50;
+    if (args.estimatedItemSize) {
+      this.instanceProps.estimatedItemSize = args.estimatedItemSize;
+    }
   }
 
   // get index range to show full of the body of the item in current window
-  private resolveWindowForItemDoesNotHaveHiddenArea(cache: ItemMeasureCache, windowHeight: number): VirtualizedWindow {
-    if (!this.previousWindow) {
-      return { startIndex: -1, stopIndex: -1 };
-    }
-
-    let restSize = windowHeight;
-    const { startIndex, stopIndex } = this.previousWindow;
-    for (let index = startIndex; index < stopIndex; index++) {
-      const measure = cache.get(index);
-      let itemHeight = this.instanceProps.estimatedItemSize;
-
-      if (measure) {
-        itemHeight = measure.height;
-      }
-      if (restSize <= itemHeight) {
-        return {
-          startIndex,
-          stopIndex: index,
-        };
-      }
-      restSize -= itemHeight;
-    }
-    return { ...this.previousWindow };
-  }
-
-  // resolve start index for new size of the list and cursor index.
-  private resolveStartIndexForCursor(
-    currentCursorIndex: number,
+  private resolveStartIndexForVisibleWindow(
+    cache: ItemMeasureCache,
     listSize: number,
-    fullyVisibleWindow: VirtualizedWindow
+    windowHeight: number,
+    currentCursorIndex: number
   ): number {
-    const maximumStartIndex = listSize - 1;
-    if (!this.previousWindow) {
-      return Math.min(currentCursorIndex, maximumStartIndex);
-    }
+    let { startIndex } = this.previousWindow ? this.previousWindow : { startIndex: 0 };
 
-    const { startIndex: previousStartIndex, stopIndex: previousStopIndex } = fullyVisibleWindow;
-    if (previousStartIndex > currentCursorIndex) {
-      return Math.min(currentCursorIndex, maximumStartIndex);
-    } else if (currentCursorIndex >= previousStopIndex) {
-      return Math.min(previousStartIndex + (currentCursorIndex - previousStopIndex + 1), maximumStartIndex);
+    if (startIndex > currentCursorIndex) {
+      return currentCursorIndex;
     } else {
-      return Math.min(previousStartIndex, maximumStartIndex);
+      while (startIndex < currentCursorIndex) {
+        let index;
+        let restSize = windowHeight;
+        for (index = startIndex; index < listSize; index++) {
+          const measure = cache.get(index);
+          let itemHeight = this.instanceProps.estimatedItemSize;
+
+          if (measure) {
+            itemHeight = measure.height;
+          }
+          if (restSize < itemHeight) {
+            break;
+          }
+
+          restSize -= itemHeight;
+        }
+
+        if (startIndex <= currentCursorIndex && currentCursorIndex < index) {
+          break;
+        }
+
+        startIndex = Math.min(startIndex + 1, listSize - 1);
+      }
+      return startIndex;
     }
   }
 
@@ -85,14 +82,15 @@ export class ListLayoutCalculator {
   ): number {
     let restSize = windowHeight;
     for (let index = startIndex; index < listSize; index++) {
+      if (restSize <= 0) {
+        return index;
+      }
+
       const measure = cache.get(index);
       let itemHeight = this.instanceProps.estimatedItemSize;
 
       if (measure) {
         itemHeight = measure.height;
-      }
-      if (restSize <= itemHeight) {
-        return index + 1;
       }
       restSize -= itemHeight;
     }
@@ -102,8 +100,7 @@ export class ListLayoutCalculator {
 
   // calculate layout of the list
   calculateLayout({ cache, currentCursorIndex, windowHeight, listSize }: CalculationArguments): VirtualizedWindow {
-    const fullyVisibleWindow = this.resolveWindowForItemDoesNotHaveHiddenArea(cache, windowHeight);
-    const startIndex = this.resolveStartIndexForCursor(currentCursorIndex, listSize, fullyVisibleWindow);
+    const startIndex = this.resolveStartIndexForVisibleWindow(cache, listSize, windowHeight, currentCursorIndex);
     const stopIndex = this.resolveStopIndexForStartIndex(cache, windowHeight, startIndex, listSize);
 
     this.previousWindow = {
