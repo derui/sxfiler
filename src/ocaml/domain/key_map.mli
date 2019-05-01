@@ -1,4 +1,4 @@
-type t
+type t [@@deriving show, eq]
 
 val make : unit -> t
 (** [make ()] Return an empty keymap with identifier [id]. *)

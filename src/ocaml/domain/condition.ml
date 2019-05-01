@@ -1,13 +1,16 @@
 (* Condition defines condition to handle timing to enable key binding.*)
-module Context_set = Set.Make (struct
+module Context_set = struct
+  include Set.Make (struct
     type t = string
 
     let compare = Pervasives.compare
   end)
 
-type t = Context_set.t
+  let pp fmt v = Format.fprintf fmt "%s" (to_seq v |> List.of_seq |> String.concat ",")
+end
 
-let equal = Context_set.equal
+type t = Context_set.t [@@deriving show, eq]
+
 let empty = Context_set.empty
 
 let of_list contexts =

@@ -4,8 +4,31 @@ module T = Sxfiler_server_task
 module I = Sxfiler_server_infra
 module U = Sxfiler_usecase
 module G = Sxfiler_server_gateway
+module D = Sxfiler_domain
 
 exception Fail_load_migemo
+
+(* application options *)
+module App_option = struct
+  type t =
+    { migemo_dir : string
+    ; keymap : string
+    ; configuration : string
+    ; debug : bool }
+
+  let parse () =
+    let dict_dir = ref "" in
+    let config = ref "./config.json" and key_maps = ref "./keymap.json" in
+    let debug = ref false in
+    let arg_specs =
+      [ ("-d", Arg.String (fun v -> dict_dir := v), "Directory of migemo dictionary")
+      ; ("--config", Arg.String (fun v -> config := v), "File path for server configuration")
+      ; ("--keymap", Arg.String (fun v -> key_maps := v), "File path for key maps")
+      ; ("--debug", Arg.Unit (fun () -> debug := true), "Verbose mode") ]
+    in
+    Arg.parse arg_specs ignore "" ;
+    {migemo_dir = !dict_dir; keymap = !key_maps; configuration = !config; debug = !debug}
+end
 
 module Log = (val Logger.make ["main"])
 
@@ -45,7 +68,7 @@ let handler (conn : _ * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
       in
       Lwt.return (`Response resp)
 
-let initialize_modules ~migemo ~keymap ~config =
+let initialize_modules ~migemo ~keymap ~config ~option =
   let completer = Sxfiler_bin_lib.Migemo_completer.make ~migemo in
   let () = Global.Completer.set @@ fun () -> completer in
   let%lwt () =
@@ -55,11 +78,17 @@ let initialize_modules ~migemo ~keymap ~config =
         Lwt.return_unit
     | Some keymap -> Global.Keymap.update keymap
   in
-  match config () with
-  | None ->
-      Logs.warn (fun m -> m "Detect errors when load configuration. Use default configuration.") ;
-      Lwt.return_unit
-  | Some config -> Global.Configuration.update config
+  let%lwt () =
+    match config () with
+    | None ->
+        Logs.warn (fun m -> m "Detect errors when load configuration. Use default configuration.") ;
+        Lwt.return_unit
+    | Some config -> Global.Configuration.update config
+  in
+  let%lwt config = Global.Configuration.get () in
+  let open Sxfiler_core in
+  Global.Configuration.update
+    D.Configuration.{config with key_map_file = Path.of_string option.App_option.keymap}
 
 let start_server _ port =
   let conn_closed (ch, _) =
@@ -123,27 +152,18 @@ let get_config f config () = if Sys.file_exists config then f config else None
 
 (* main routine. *)
 let () =
+  let option = App_option.parse () in
   Random.init Unix.(gettimeofday () |> int_of_float) ;
-  let dict_dir = ref "" in
-  let config = ref "config.json" and key_maps = ref "keymap.json" in
-  let debug = ref false in
-  let arg_specs =
-    [ ("-d", Arg.String (fun v -> dict_dir := v), "Directory of migemo dictionary")
-    ; ("--config", Arg.String (fun v -> config := v), "File path for server configuration")
-    ; ("--keymap", Arg.String (fun v -> key_maps := v), "File path for key maps")
-    ; ("--debug", Arg.Unit (fun () -> debug := true), "Verbose mode") ]
-  in
-  Arg.parse arg_specs ignore "" ;
-  Logs.set_level (Some (if !debug then Logs.Debug else Logs.Info)) ;
+  Logs.set_level (Some (if option.App_option.debug then Logs.Debug else Logs.Info)) ;
   Logs.set_reporter @@ Logger.lwt_reporter Format.std_formatter ;
   let module D = Sxfiler_domain in
   let port = 50879 in
-  let config = get_config load_configuration !config in
-  let keymap = get_config load_keymap !key_maps in
-  let migemo = load_migemo !dict_dir in
+  let config = get_config load_configuration option.configuration in
+  let keymap = get_config load_keymap option.keymap in
+  let migemo = load_migemo option.migemo_dir in
   (* setup task runner and finalize *)
   let module I = (val Global.Task_runner.get () : T.Runner.Instance) in
   let runner_thread = I.Runner.start I.instance in
   Lwt_main.at_exit (fun () -> I.Runner.stop I.instance ; runner_thread) ;
   Lwt_main.run
-    (initialize_modules ~migemo ~keymap ~config >>= fun () -> start_server "localhost" port)
+    (initialize_modules ~migemo ~keymap ~config ~option >>= fun () -> start_server "localhost" port)

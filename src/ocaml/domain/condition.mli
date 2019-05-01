@@ -1,10 +1,7 @@
 (** Condition defines condition of context such as starting completion, inputting on command. *)
 
 (** abstract type for Condition *)
-type t
-
-val equal : t -> t -> bool
-(** [equal v1 v2] returns equal v1 and v2 or not*)
+type t [@@deriving show, eq]
 
 val empty : t
 (** Get a empty condition {!t}. Condition is immutable. *)

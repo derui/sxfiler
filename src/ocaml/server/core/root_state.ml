@@ -21,3 +21,7 @@ let add_filer ~filer t = {t with filer_map = String_map.add filer.T.Filer.id fil
 let add_plan ~plan t = {t with plan_map = String_map.add plan.T.Plan.id plan t.plan_map}
 let remove_plan ~plan t = {t with plan_map = String_map.remove plan.T.Plan.id t.plan_map}
 let find_plan ~id t = String_map.find_opt id t.plan_map
+
+(** set key map file *)
+let set_key_map_path ~path t =
+  {t with configuration = T.Configuration.{t.configuration with key_map_file = path}}
