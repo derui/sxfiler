@@ -22,7 +22,7 @@ module Get = struct
   end
 end
 
-module Resolve = struct
+module Reload = struct
   module Type = struct
     type params = unit [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
     type result = T.Key_map.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
@@ -30,10 +30,7 @@ module Resolve = struct
 
   module type S = Core.Gateway with type params = Type.params and type result = Type.result
 
-  (** This module defines rpc interface to get current key bindings.
-      Replace [json] on implementation to match rpc.
-  *)
-  module Make (Usecase : Usecase.Keymap.Get.S) : S = struct
+  module Make (Usecase : Usecase.Keymap.Reload.S) : S = struct
     include Type
 
     let handle () =

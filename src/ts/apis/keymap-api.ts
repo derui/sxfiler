@@ -5,6 +5,7 @@ import { createKeymap, Keymap } from "../domains/keymap";
 
 export enum Methods {
   Get = "keymap/get",
+  Reload = "keymap/reload",
   AddContext = "keymap/addContext",
   DeleteContext = "keymap/deleteContext",
 }
@@ -28,6 +29,23 @@ function transformKeymap(keymaps: { bindings: [{ key: string; action: string }] 
  */
 const Get: Api<Methods.Get, any, Keymap> = {
   method: Methods.Get,
+  parametersTransformer() {
+    return undefined;
+  },
+  resultTransformer(ret, error) {
+    if (!ret && error) {
+      throw Error(error.message);
+    }
+
+    return transformKeymap(ret);
+  },
+};
+
+/**
+   API definition for keymap/get
+ */
+const Reload: Api<Methods.Reload, any, Keymap> = {
+  method: Methods.Reload,
   parametersTransformer() {
     return undefined;
   },
@@ -74,4 +92,4 @@ const DeleteContext: Api<Methods.DeleteContext, { context: string }, Keymap> = {
   },
 };
 
-export const Apis = { Get, AddContext, DeleteContext };
+export const Apis = { Get, AddContext, DeleteContext, Reload };

@@ -7,22 +7,22 @@ let data = D.Configuration.{default with default_sort_order = D.Types.Sort_type.
 let test_set =
   [ Alcotest_lwt.test_case "can store configuration to state" `Quick (fun _ () ->
         let module State = S.Statable.Make (struct
-          type t = S.Root_state.t
+          type t = D.Configuration.t
 
-          let empty () = S.Root_state.empty
+          let empty () = D.Configuration.default
         end) in
         let module R = I.Configuration_repo.Make (State) in
         let%lwt () = R.store data in
         let%lwt actual = State.get () in
-        Alcotest.(check @@ of_pp Fmt.nop) "stored" data actual.S.Root_state.configuration ;
+        Alcotest.(check @@ of_pp D.Configuration.pp) "stored" data actual ;
         Lwt.return_unit )
   ; Alcotest_lwt.test_case "can get keymap stored" `Quick (fun _ () ->
         let module State = S.Statable.Make (struct
-          type t = S.Root_state.t
+          type t = D.Configuration.t
 
-          let empty () = {S.Root_state.empty with configuration = data}
+          let empty () = data
         end) in
         let module R = I.Configuration_repo.Make (State) in
         let%lwt actual = R.resolve () in
-        Alcotest.(check @@ of_pp Fmt.nop) "stored" data actual ;
+        Alcotest.(check @@ of_pp D.Configuration.pp) "stored" data actual ;
         Lwt.return_unit ) ]

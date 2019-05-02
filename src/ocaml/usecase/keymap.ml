@@ -1,4 +1,3 @@
-open Sxfiler_core
 open Sxfiler_domain
 
 module Get = struct
@@ -32,7 +31,7 @@ end
 module Reload = struct
   (** Module to share interface and structure. *)
   module Type = struct
-    type input = {path : Path.t}
+    type input = unit
     type output = Key_map.t
     type error = unit
   end
@@ -44,12 +43,19 @@ module Reload = struct
      and type error = Type.error
 
   (** This module defines usecase interface to store key map with repository *)
-  module Make (R : Key_map_repository.S) (S : Key_map_resolve_service.S) : S = struct
+  module Make
+      (CNDR : Condition.Repository)
+      (CR : Configuration.Repository)
+      (R : Key_map_repository.S)
+      (S : Key_map_resolve_service.S) : S = struct
     include Type
 
-    let execute input =
-      let%lwt key_map = S.resolve input.path in
+    let execute () =
+      let%lwt config = CR.resolve () in
+      let%lwt key_map = S.resolve config.key_map_file in
       let%lwt () = R.store key_map in
+      let%lwt condition = CNDR.resolve () in
+      let key_map = Key_map.subset key_map ~condition in
       Lwt.return_ok key_map
   end
 end

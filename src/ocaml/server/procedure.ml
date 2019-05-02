@@ -38,7 +38,7 @@ module Make (S : Spec) : S = struct
       Log.info (fun m ->
           m "Start procedure: {%s}, id: {%Ld}, param: %s" req.Req._method
             (Option.get ~default:(fun () -> 0L) req.Req.id)
-            (Option.get_exn req.params |> Yojson.Safe.to_string) ) ;%lwt
+            (Option.get ~default:(fun () -> `Null) req.params |> Yojson.Safe.to_string) ) ;%lwt
       let%lwt result =
         let execute_with_param decoder =
           match req.Req.params with

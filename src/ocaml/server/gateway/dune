@@ -4,6 +4,7 @@
  (libraries sxfiler.domain
             sxfiler.usecase
             sxfiler.server.translator
+            sxfiler.server.core
             yojson
             ppx_protocol_conv_json)
  (preprocess (pps lwt_ppx ppx_protocol_conv ppx_variants_conv)))

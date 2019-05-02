@@ -1,3 +1,8 @@
+module type Type = sig
+  type params [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+  type result [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+end
+
 (** This signature defines the signature of base gateway module. *)
 module type Gateway = sig
   type params [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]

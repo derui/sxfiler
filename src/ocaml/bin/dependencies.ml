@@ -20,9 +20,11 @@ module type S = sig
   module Node_transporter_service : D.Node_transporter_service.S
   module Location_scanner_service : D.Location_scanner_service.S
   module Node_trash_service : D.Node_trash_service.S
+  module Key_map_resolve_service : D.Key_map_resolve_service.S
 
   module Usecase : sig
     module Keymap_get : U.Keymap.Get.S
+    module Keymap_reload : U.Keymap.Reload.S
     module Keymap_add_context : U.Keymap.Add_context.S
     module Keymap_delete_context : U.Keymap.Delete_context.S
     module Plan_reject : U.Plan.Reject.S
@@ -45,12 +47,16 @@ module Make (Conn : C.Rpc_connection.Instance) (Completer : D.Completer.Instance
   module Key_map_repo : D.Key_map_repository.S = I.Key_map_repo.Make (Global.Keymap)
   module Condition_repo : D.Condition.Repository = I.Condition_repo.Make (Global.Condition)
   module Filer_repo : D.Filer.Repository = I.Filer_repo.Make (Global.Root)
-  module Configuration_repo : D.Configuration.Repository = I.Configuration_repo.Make (Global.Root)
+
+  module Configuration_repo : D.Configuration.Repository =
+    I.Configuration_repo.Make (Global.Configuration)
+
   module Completion_repo = I.Completion_repo.Make (Global.Cached_source)
   module Plan_repo : D.Plan.Repository = I.Plan_repo.Make (Global.Root)
   module Plan_factory = D.Plan.Factory.Make (I.Id_generator.Gen_random_string)
   module Notification_factory : D.Notification.Factory = I.Notification_factory
   module Notification_service = I.Notification_service.Make (Conn)
+  module Key_map_resolve_service = I.Key_map_resolve_service
 
   module Node_transporter_service =
     I.Node_transporter_service.Make (Notification_service) (Notification_factory)
@@ -60,6 +66,11 @@ module Make (Conn : C.Rpc_connection.Instance) (Completer : D.Completer.Instance
 
   module Usecase = struct
     module Keymap_get = U.Keymap.Get.Make (Condition_repo) (Key_map_repo)
+
+    module Keymap_reload =
+      U.Keymap.Reload.Make (Condition_repo) (Configuration_repo) (Key_map_repo)
+        (Key_map_resolve_service)
+
     module Keymap_add_context = U.Keymap.Add_context.Make (Condition_repo) (Key_map_repo)
     module Keymap_delete_context = U.Keymap.Delete_context.Make (Condition_repo) (Key_map_repo)
     module Plan_reject = U.Plan.Reject.Make (Plan_repo)

@@ -16,9 +16,11 @@ let expose_key_map_procedures (module Dep : Dependencies.S) : (module Procedure.
   let module Add_context_gateway = G.Keymap.Add_context.Make (Dep.Usecase.Keymap_add_context) in
   let module Delete_context_gateway =
     G.Keymap.Delete_context.Make (Dep.Usecase.Keymap_delete_context) in
+  let module Reload_gateway = G.Keymap.Reload.Make (Dep.Usecase.Keymap_reload) in
   [ (module Proc_keymap.Get_spec (Get_gateway))
   ; (module Proc_keymap.Add_context_spec (Add_context_gateway))
-  ; (module Proc_keymap.Delete_context_spec (Delete_context_gateway)) ]
+  ; (module Proc_keymap.Delete_context_spec (Delete_context_gateway))
+  ; (module Proc_keymap.Reload_spec (Reload_gateway)) ]
 
 let expose_filer_procedures (module Dep : Dependencies.S) : (module Procedure.Spec) list =
   let module Make_gateway = G.Filer.Make.Make (Dep.System) (Dep.Usecase.Filer_make) in
