@@ -11,23 +11,21 @@ exception Fail_load_migemo
 (* application options *)
 module App_option = struct
   type t =
-    { migemo_dir : string
-    ; keymap : string
+    { migemo_dict_dir : string
     ; configuration : string
     ; debug : bool }
 
   let parse () =
     let dict_dir = ref "" in
-    let config = ref "./config.json" and key_maps = ref "./keymap.json" in
+    let config = ref "./config.json" in
     let debug = ref false in
     let arg_specs =
       [ ("-d", Arg.String (fun v -> dict_dir := v), "Directory of migemo dictionary")
       ; ("--config", Arg.String (fun v -> config := v), "File path for server configuration")
-      ; ("--keymap", Arg.String (fun v -> key_maps := v), "File path for key maps")
       ; ("--debug", Arg.Unit (fun () -> debug := true), "Verbose mode") ]
     in
     Arg.parse arg_specs ignore "" ;
-    {migemo_dir = !dict_dir; keymap = !key_maps; configuration = !config; debug = !debug}
+    {migemo_dict_dir = !dict_dir; configuration = !config; debug = !debug}
 end
 
 module Log = (val Logger.make ["main"])
@@ -68,16 +66,29 @@ let handler (conn : _ * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
       in
       Lwt.return (`Response resp)
 
-let initialize_modules ~migemo ~keymap ~config ~option =
+(** Load configuration from specified file *)
+let load_configuration config =
+  let module Y = Sxfiler_server_translator.Configuration in
+  let config = Yojson.Safe.from_file config in
+  match Y.of_json config with Error _ -> None | Ok v -> Some (Y.to_domain v)
+
+(* Load keymaps from specified file *)
+let load_keymap file =
+  let keymap = Yojson.Safe.from_file file in
+  let module Y = Sxfiler_server_translator.Key_map in
+  match Y.of_json keymap with
+  | Error err ->
+      Logs.warn (fun m -> m "Error occurred: %s" @@ Protocol_conv_json.Json.error_to_string_hum err) ;
+      None
+  | Ok v -> Some (Y.to_domain v)
+
+(* Get config from file, but get default when some error happenned  *)
+let get_config f config () = if Sys.file_exists config then f config else None
+
+let initialize_modules ~migemo ~option =
   let completer = Sxfiler_bin_lib.Migemo_completer.make ~migemo in
+  let config = get_config load_configuration option.App_option.configuration in
   let () = Global.Completer.set @@ fun () -> completer in
-  let%lwt () =
-    match keymap () with
-    | None ->
-        Logs.warn (fun m -> m "Detect errors when load keymap. Use default keymap.") ;
-        Lwt.return_unit
-    | Some keymap -> Global.Keymap.update keymap
-  in
   let%lwt () =
     match config () with
     | None ->
@@ -86,9 +97,13 @@ let initialize_modules ~migemo ~keymap ~config ~option =
     | Some config -> Global.Configuration.update config
   in
   let%lwt config = Global.Configuration.get () in
-  let open Sxfiler_core in
-  Global.Configuration.update
-    D.Configuration.{config with key_map_file = Path.of_string option.App_option.keymap}
+  let module P = Sxfiler_core.Path in
+  let keymap = get_config load_keymap @@ P.to_string config.D.Configuration.key_map_file in
+  match keymap () with
+  | None ->
+      Logs.warn (fun m -> m "Detect errors when load keymap. Use default keymap.") ;
+      Lwt.return_unit
+  | Some keymap -> Global.Keymap.update keymap
 
 let start_server _ port =
   let conn_closed (ch, _) =
@@ -131,25 +146,6 @@ let load_migemo dict_dir =
         in
         M.Migemo.make ~dict:migemo_dict ?hira_to_kata ?romaji_to_hira ?han_to_zen ()
 
-(** Load configuration from specified file *)
-let load_configuration config =
-  let module Y = Sxfiler_server_translator.Configuration in
-  let config = Yojson.Safe.from_file config in
-  match Y.of_json config with Error _ -> None | Ok v -> Some (Y.to_domain v)
-
-(* Load keymaps from specified file *)
-let load_keymap file =
-  let keymap = Yojson.Safe.from_file file in
-  let module Y = Sxfiler_server_translator.Key_map in
-  match Y.of_json keymap with
-  | Error err ->
-      Logs.warn (fun m -> m "Error occurred: %s" @@ Protocol_conv_json.Json.error_to_string_hum err) ;
-      None
-  | Ok v -> Some (Y.to_domain v)
-
-(* Get config from file, but get default when some error happenned  *)
-let get_config f config () = if Sys.file_exists config then f config else None
-
 (* main routine. *)
 let () =
   let option = App_option.parse () in
@@ -158,12 +154,9 @@ let () =
   Logs.set_reporter @@ Logger.lwt_reporter Format.std_formatter ;
   let module D = Sxfiler_domain in
   let port = 50879 in
-  let config = get_config load_configuration option.configuration in
-  let keymap = get_config load_keymap option.keymap in
-  let migemo = load_migemo option.migemo_dir in
+  let migemo = load_migemo option.migemo_dict_dir in
   (* setup task runner and finalize *)
   let module I = (val Global.Task_runner.get () : T.Runner.Instance) in
   let runner_thread = I.Runner.start I.instance in
   Lwt_main.at_exit (fun () -> I.Runner.stop I.instance ; runner_thread) ;
-  Lwt_main.run
-    (initialize_modules ~migemo ~keymap ~config ~option >>= fun () -> start_server "localhost" port)
+  Lwt_main.run (initialize_modules ~migemo ~option >>= fun () -> start_server "localhost" port)

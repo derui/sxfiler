@@ -1,0 +1,4 @@
+{
+  defaultSortOrder: "date",
+  keyMapFile: "src/keymap.json"
+}
