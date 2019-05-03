@@ -40,8 +40,7 @@ module Make_move_plan = struct
       | None, _ -> Lwt.return_error "Not found source filer"
       | _, None -> Lwt.return_error "Not found dest filer"
       | Some source_filer, Some dest_filer ->
-        let transport node prediction =
-          match prediction with
+        let transport node = function
           | T.Plan.Prediction.Fix (T.Plan.Correction.Rename new_name) ->
             Transport.transport ~node ~new_name ~_to:dest_filer.file_tree ()
           | Fix Overwrite | No_problem -> Transport.transport ~node ~_to:dest_filer.file_tree ()

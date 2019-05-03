@@ -2,10 +2,10 @@ open Sxfiler_core
 
 module Binding_map = struct
   include Map.Make (struct
-    type t = string
+      type t = string
 
-    let compare = Pervasives.compare
-  end)
+      let compare = Pervasives.compare
+    end)
 
   let pp pp_v fmt t =
     let list = Fmt.list @@ Fmt.pair Fmt.string pp_v in
@@ -31,9 +31,9 @@ let make () = {keymap = Binding_map.empty}
 let update t ~condition ~key ~value =
   Binding_map.update key
     (fun v ->
-      let values = Option.get ~default:(fun () -> []) v in
-      let value = {Original_key_binding.condition; value} in
-      Some (value :: values) )
+       let values = Option.get ~default:(fun () -> []) v in
+       let value = {Original_key_binding.condition; value} in
+       Some (value :: values) )
     t
 
 let add t ~condition ~key ~value =
@@ -53,10 +53,10 @@ let find t ~condition ~key =
 let bindings t =
   Binding_map.bindings t.keymap
   |> List.map (fun (key, values) ->
-         let open Original_key_binding in
-         let open Option in
-         Sxfiler_kbd.of_keyseq key
-         >|= fun kbd -> List.map (fun value -> (value.condition, kbd, value.value)) values )
+      let open Original_key_binding in
+      let open Option in
+      Sxfiler_kbd.of_keyseq key
+      >|= fun kbd -> List.map (fun value -> (value.condition, kbd, value.value)) values )
   |> List.map (Option.get ~default:(fun () -> []))
   |> List.flatten
 
@@ -64,5 +64,5 @@ let subset t ~condition =
   bindings t
   |> List.filter (fun (cond, _, _) -> Condition.subset ~parts:cond ~current:condition)
   |> List.fold_left
-       (fun keymap (condition, key, value) -> add keymap ~condition ~key ~value)
-       (make ())
+    (fun keymap (condition, key, value) -> add keymap ~condition ~key ~value)
+    (make ())

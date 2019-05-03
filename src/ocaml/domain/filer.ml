@@ -5,10 +5,10 @@ type id = string [@@deriving eq, show]
 
 module Node_id_set = struct
   include Set.Make (struct
-    type t = Node.id
+      type t = Node.id
 
-    let compare = Stdlib.compare
-  end)
+      let compare = Stdlib.compare
+    end)
 
   let pp fmt t =
     let ids = to_seq t |> List.of_seq |> List.sort Stdlib.compare in
@@ -51,9 +51,9 @@ let remove_mark t ~ids =
 let node_subset t ~ids =
   List.fold_left
     (fun (nodes, ids) id ->
-      match File_tree.find_node t.file_tree ~id with
-      | None -> (nodes, id :: ids)
-      | Some node -> (node :: nodes, ids) )
+       match File_tree.find_node t.file_tree ~id with
+       | None -> (nodes, id :: ids)
+       | Some node -> (node :: nodes, ids) )
     ([], []) ids
 
 (** Signature for repository of scanner. *)

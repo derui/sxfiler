@@ -15,11 +15,11 @@ let test_set =
           D.Filer.Factory.create ~name:"foo" ~file_tree ~sort_order:D.Types.Sort_type.Name ()
         in
         let module FR =
-        (val Test_fixtures.Memory_repository.filer_repository ~initial:[filer] ())
+          (val Test_fixtures.Memory_repository.filer_repository ~initial:[filer] ())
         in
         let new_nodes = [TF.Node.fixture ~full_path:Path.(of_string "new") dir_stat] in
         let module Svc =
-        (val TF.Service.location_scanner_service Path.(of_string "/bar") new_nodes)
+          (val TF.Service.location_scanner_service Path.(of_string "/bar") new_nodes)
         in
         let module Clock = struct
           let unixtime () = Int64.min_int

@@ -53,11 +53,11 @@ end
 (** Factory interface *)
 module Factory : sig
   val create :
-       name:string
+    name:string
     -> file_tree:File_tree.t
     -> ?history:Location_history.t
     -> sort_order:Types.Sort_type.t
     -> unit
     -> t
-  (** [create ~name ~file_tree ~history ~sort_order] gets new instance of filer. *)
+    (** [create ~name ~file_tree ~history ~sort_order] gets new instance of filer. *)
 end

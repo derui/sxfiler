@@ -10,10 +10,10 @@ let data =
 let test_set =
   [ Alcotest_lwt.test_case "can store filer to state" `Quick (fun _ () ->
         let module State = S.Statable.Make (struct
-          type t = S.Root_state.t
+            type t = S.Root_state.t
 
-          let empty () = S.Root_state.empty
-        end) in
+            let empty () = S.Root_state.empty
+          end) in
         let module R = I.Filer_repo.Make (State) in
         let%lwt () = R.store data in
         let%lwt actual = State.get () in
@@ -23,10 +23,10 @@ let test_set =
         Lwt.return_unit )
   ; Alcotest_lwt.test_case "can get filer stored" `Quick (fun _ () ->
         let module State = S.Statable.Make (struct
-          type t = S.Root_state.t
+            type t = S.Root_state.t
 
-          let empty () = S.Root_state.(add_filer ~filer:data empty)
-        end) in
+            let empty () = S.Root_state.(add_filer ~filer:data empty)
+          end) in
         let module R = I.Filer_repo.Make (State) in
         let%lwt actual = R.resolve "foo" in
         Alcotest.(check @@ option @@ of_pp Fmt.nop) "stored" (Some data) actual ;

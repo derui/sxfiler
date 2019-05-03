@@ -5,8 +5,8 @@ module D = Sxfiler_domain.Notification
 module Level = struct
   type t =
     | Info [@name "info"]
-    | Warning [@name "warning"]
-    | Error [@name "error"]
+        | Warning [@name "warning"]
+        | Error [@name "error"]
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let of_domain = function D.Level.Info -> Info | Warning -> Warning | Error -> Error
@@ -35,13 +35,13 @@ module Body = struct
   let to_json = function
     | Message body -> `Assoc [("type", `String "message"); ("body", `String body)]
     | Progress body ->
-        `Assoc
-          [ ("type", `String "progress")
-          ; ( "body"
-            , `Assoc
-                [ ("targeted", `Float body.targeted)
-                ; ("current", `Float body.current)
-                ; ("process", `String body.process) ] ) ]
+      `Assoc
+        [ ("type", `String "progress")
+        ; ( "body"
+          , `Assoc
+              [ ("targeted", `Float body.targeted)
+              ; ("current", `Float body.current)
+              ; ("process", `String body.process) ] ) ]
 
   let of_json js =
     let open Yojson.Safe.Util in
@@ -50,10 +50,10 @@ module Body = struct
       match typ with
       | "message" -> Ok (Message (to_string body))
       | "progress" ->
-          let targeted = body |> member "targeted" |> to_float
-          and current = body |> member "current" |> to_float
-          and process = body |> member "process" |> to_string in
-          Ok (Progress {targeted; current; process})
+        let targeted = body |> member "targeted" |> to_float
+        and current = body |> member "current" |> to_float
+        and process = body |> member "process" |> to_string in
+        Ok (Progress {targeted; current; process})
       | _ -> Error (Protocol_conv_json.Json.make_error @@ Printf.sprintf "Unknown type: %s" typ)
     with Type_error (s, value) -> Error (Protocol_conv_json.Json.make_error ~value s)
 

@@ -19,8 +19,8 @@ module Correction = struct
       let typ = js |> member "type" |> to_string in
       match typ with
       | "rename" ->
-          let payload = js |> member "payload" |> to_string in
-          Ok (Rename payload)
+        let payload = js |> member "payload" |> to_string in
+        Ok (Rename payload)
       | "overwrite" -> Ok Overwrite
       | _ -> Error (Json.make_error ~value:js Printf.(sprintf "Unknown correction: %s" typ))
     with Type_error (s, value) -> Error (Json.make_error ~value s)
@@ -51,8 +51,8 @@ module Prediction = struct
       let typ = js |> member "type" |> to_string in
       match typ with
       | "fix" ->
-          let payload = js |> member "payload" in
-          Result.(Correction.of_json payload >|= fun v -> Fix v)
+        let payload = js |> member "payload" in
+        Result.(Correction.of_json payload >|= fun v -> Fix v)
       | "no-problem" -> Ok No_problem
       | "need-fix" -> Ok Need_fix
       | _ -> Error (Json.make_error ~value:js Printf.(sprintf "Unknown prediction: %s" typ))
