@@ -1,16 +1,6 @@
 open Sxfiler_server
 module G = Sxfiler_server_gateway
 
-let expose_plan_procedures (module Dep : Dependencies.S) : (module Procedure.Spec) list =
-  let module Reject_gateway = G.Plan.Reject.Make (Dep.Usecase.Plan_reject) in
-  let module Plan_move_nodes_gateway =
-    G.Plan.Filer.Make_move_plan.Make (Dep.Usecase.Plan_filer_make_move_plan) in
-  let module Plan_delete_nodes_gateway =
-    G.Plan.Filer.Make_delete_plan.Make (Dep.Usecase.Plan_filer_make_delete_plan) in
-  [ (module Proc_plan.Reject_spec (Reject_gateway))
-  ; (module Proc_plan.Make_move_plan_spec (Plan_move_nodes_gateway))
-  ; (module Proc_plan.Make_delete_plan_spec (Plan_delete_nodes_gateway)) ]
-
 let expose_key_map_procedures (module Dep : Dependencies.S) : (module Procedure.Spec) list =
   let module Get_gateway = G.Keymap.Get.Make (Dep.Usecase.Keymap_get) in
   let module Add_context_gateway = G.Keymap.Add_context.Make (Dep.Usecase.Keymap_add_context) in
@@ -50,13 +40,12 @@ let expose_completion_procedures (module Dep : Dependencies.S) : (module Procedu
 let expose_all server (module Dep : Dependencies.S) =
   let procedures =
     List.concat
-      [ expose_plan_procedures (module Dep)
-      ; expose_filer_procedures (module Dep)
+      [ expose_filer_procedures (module Dep)
       ; expose_key_map_procedures (module Dep)
       ; expose_configuration_procedures (module Dep)
       ; expose_completion_procedures (module Dep) ]
   in
   List.fold_left
     (fun server (module Spec : Procedure.Spec) ->
-       Jsonrpc_server.expose server ~procedure:(module Procedure.Make (Spec)) )
+      Jsonrpc_server.expose server ~procedure:(module Procedure.Make (Spec)) )
     server procedures
