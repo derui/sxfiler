@@ -6,9 +6,11 @@ module Clock = struct
 end
 
 module Id_gen = struct
-  type id = string
+  type id = Uuidm.t
 
-  let generate () = "id"
+  let seed = Random.State.make [|0|]
+  let id = Uuidm.v4_gen seed ()
+  let generate () = id
 end
 
 let test_set =
@@ -35,7 +37,7 @@ let test_set =
             let apply_interaction = `No_interaction
 
             let execute {D.Task.task_id} =
-              Alcotest.(check @@ string) "subset" "id" task_id ;
+              Alcotest.(check @@ of_pp Uuidm.pp) "subset" Id_gen.id task_id ;
               Lwt.return_unit
           end )
     in

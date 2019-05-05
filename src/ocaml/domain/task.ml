@@ -1,4 +1,4 @@
-type id = string [@@deriving show, eq]
+type id = Uuidm.t [@@deriving show, eq]
 
 type interaction =
   | Yes_no of bool
