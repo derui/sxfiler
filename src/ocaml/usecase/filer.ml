@@ -15,8 +15,7 @@ module Make = struct
 
   (** {!Make_sync} module defines interface to make filer. *)
   module type S = sig
-    (* trick to remove dependency for Make_type *)
-
+    (* trick to avoid error to unbound record field *)
     include module type of Type
 
     include
@@ -200,18 +199,30 @@ module Move = struct
       ; dest : T.Filer.id
       ; node_ids : T.Node.id list }
 
-    type output = T.Task.id
+    type output =
+      { task_id : T.Task.id
+      ; task_name : string }
 
     type error =
       [ `Not_found of T.Filer.id
       | `Same_filer ]
   end
 
-  module type S =
-    Common.Usecase
-    with type input := Type.input
-     and type output := Type.output
-     and type error := Type.error
+  module type S = sig
+    include module type of Type
+
+    include
+      Common.Usecase with type input := input and type output := output and type error := error
+  end
+
+  module type Dependencies = sig
+    module FR : T.Filer.Repository
+    module TF : T.Task.Factory.S
+    module TR : T.Task.Repository
+    module Notifier : T.Task_interaction.Notifier.S
+    module Transport : T.Node_transporter_service.S
+    module Scan : T.Location_scanner_service.S
+  end
 
   (** The executor of this plan. *)
   module Executor (P : sig
@@ -219,9 +230,7 @@ module Move = struct
     val dest_filer : T.Filer.t
     val source_nodes : T.Node.id list
   end)
-  (FR : T.Filer.Repository)
-  (Transport : T.Node_transporter_service.S)
-  (Scan : T.Location_scanner_service.S) : T.Task.Executor = struct
+  (Dep : Dependencies) : T.Task.Executor = struct
     type allow_interaction =
       | Overwrite of bool
       | Rename of string
@@ -241,7 +250,8 @@ module Move = struct
       let compare = Stdlib.compare
     end)
 
-    let execute () =
+    let execute {T.Task.task_id} =
+      let open Dep in
       let source_filer = P.source_filer and dest_filer = P.dest_filer in
       let nodes_in_dest =
         List.fold_left
@@ -251,11 +261,12 @@ module Move = struct
           Node_name_set.empty dest_filer.file_tree.nodes
       in
       let transport node =
-        if Node_name_set.mem (Path.to_string node.T.Node.full_path) nodes_in_dest then
+        if Node_name_set.mem (Path.to_string node.T.Node.full_path) nodes_in_dest then (
+          Notifier.notify ~filter:(function Yes_no _ | String _ -> true | _ -> false) task_id ;%lwt
           match%lwt Lwt_mvar.take interaction with
           | Overwrite true -> Transport.transport ~node ~_to:dest_filer.file_tree ()
           | Rename new_name -> Transport.transport ~node ~new_name ~_to:dest_filer.file_tree ()
-          | _ -> Lwt.return_unit
+          | _ -> Lwt.return_unit )
         else Transport.transport ~node ~_to:dest_filer.file_tree ()
       in
       let%lwt () =
@@ -273,15 +284,11 @@ module Move = struct
       Lwt.(join [FR.store from_filer; FR.store to_filer])
   end
 
-  module Make
-      (FR : T.Filer.Repository)
-      (TF : T.Task.Factory.S)
-      (TR : T.Task.Repository)
-      (Transport : T.Node_transporter_service.S)
-      (Scan : T.Location_scanner_service.S) : S = struct
+  module Make (Dep : Dependencies) : S = struct
     include Type
 
     let execute (params : input) =
+      let open Dep in
       let is_same_filer = params.source = params.dest in
       if is_same_filer then Lwt.return_error `Same_filer
       else
@@ -296,13 +303,11 @@ module Move = struct
                   let dest_filer = dest'
                   let source_nodes = params.node_ids
                 end)
-                (FR)
-                (Transport)
-                (Scan)
+                (Dep)
             in
             let task = TF.create ~executor:(module Executor) in
             let%lwt () = TR.store task in
-            Lwt.return_ok task.id
+            Lwt.return_ok {task_id = task.id; task_name = "Move"}
   end
 end
 
@@ -324,17 +329,24 @@ module Delete = struct
       Common.Usecase with type input := input and type output := output and type error := error
   end
 
+  module type Dependencies = sig
+    module FR : T.Filer.Repository
+    module TF : T.Task.Factory.S
+    module TR : T.Task.Repository
+    module Scan : T.Location_scanner_service.S
+    module Trash : T.Node_trash_service.S
+  end
+
   (** Use case to delete nodes *)
   module Executor (P : sig
     val filer : T.Filer.t
     val target_nodes : T.Node.id list
   end)
-  (FR : T.Filer.Repository)
-  (Scan : T.Location_scanner_service.S)
-  (Trash : T.Node_trash_service.S) : T.Task.Executor = struct
+  (Dep : Dependencies) : T.Task.Executor = struct
     let apply_interaction = `No_interaction
 
-    let execute () =
+    let execute _ =
+      let open Dep in
       let file_tree = P.filer.file_tree in
       let nodes =
         P.target_nodes
@@ -346,29 +358,23 @@ module Delete = struct
       T.Filer.update_tree P.filer ~file_tree |> FR.store
   end
 
-  module Make
-      (FR : T.Filer.Repository)
-      (TF : T.Task.Factory.S)
-      (TR : T.Task.Repository)
-      (Scan : T.Location_scanner_service.S)
-      (Trash : T.Node_trash_service.S) : S = struct
+  module Make (Dep : Dependencies) : S = struct
     include Type
 
     let execute (params : input) =
+      let open Dep in
       let%lwt source = FR.resolve params.source in
       match source with
       | None -> Lwt.return_error (`Not_found params.source)
       | Some source ->
-          let module Executor =
+          let module E =
             Executor (struct
                 let filer = source
                 let target_nodes = params.node_ids
               end)
-              (FR)
-              (Scan)
-              (Trash)
+              (Dep)
           in
-          let task = TF.create ~executor:(module Executor) in
+          let task = TF.create ~executor:(module E) in
           let%lwt () = TR.store task in
           Lwt.return_ok task.id
   end
@@ -393,15 +399,22 @@ module Copy = struct
      and type output := Type.output
      and type error := Type.error
 
+  module type Dependencies = sig
+    module FR : T.Filer.Repository
+    module TF : T.Task.Factory.S
+    module TR : T.Task.Repository
+    module Notifier : T.Task_interaction.Notifier.S
+    module Replicate : T.Node_replication_service.S
+    module Scan : T.Location_scanner_service.S
+  end
+
   (** The executor of this plan. *)
   module Executor (P : sig
     val source_filer : T.Filer.t
     val dest_filer : T.Filer.t
     val source_nodes : T.Node.id list
   end)
-  (FR : T.Filer.Repository)
-  (Replicate : T.Node_replication_service.S)
-  (Scan : T.Location_scanner_service.S) : T.Task.Executor = struct
+  (Dep : Dependencies) : T.Task.Executor = struct
     type allow_interaction =
       | Overwrite of bool
       | Rename of string
@@ -421,7 +434,8 @@ module Copy = struct
       let compare = Stdlib.compare
     end)
 
-    let execute () =
+    let execute {T.Task.task_id} =
+      let open Dep in
       let source_filer = P.source_filer and dest_filer = P.dest_filer in
       let nodes_in_dest =
         List.fold_left
@@ -431,11 +445,12 @@ module Copy = struct
           Node_name_set.empty dest_filer.file_tree.nodes
       in
       let transport node =
-        if Node_name_set.mem (Path.to_string node.T.Node.full_path) nodes_in_dest then
+        if Node_name_set.mem (Path.to_string node.T.Node.full_path) nodes_in_dest then (
+          Notifier.notify ~filter:(function Yes_no _ | String _ -> true | _ -> false) task_id ;%lwt
           match%lwt Lwt_mvar.take interaction with
           | Overwrite true -> Replicate.replicate ~node ~_to:dest_filer.file_tree ()
           | Rename new_name -> Replicate.replicate ~node ~new_name ~_to:dest_filer.file_tree ()
-          | _ -> Lwt.return_unit
+          | _ -> Lwt.return_unit )
         else Replicate.replicate ~node ~_to:dest_filer.file_tree ()
       in
       let%lwt () =
@@ -453,15 +468,11 @@ module Copy = struct
       Lwt.(join [FR.store from_filer; FR.store to_filer])
   end
 
-  module Make
-      (FR : T.Filer.Repository)
-      (TF : T.Task.Factory.S)
-      (TR : T.Task.Repository)
-      (Replicate : T.Node_replication_service.S)
-      (Scan : T.Location_scanner_service.S) : S = struct
+  module Make (Dep : Dependencies) : S = struct
     include Type
 
     let execute (params : input) =
+      let open Dep in
       let%lwt source = FR.resolve params.source and dest = FR.resolve params.dest in
       match (source, dest) with
       | None, _ -> Lwt.return_error (`Not_found params.source)
@@ -473,9 +484,7 @@ module Copy = struct
                 let dest_filer = dest'
                 let source_nodes = params.node_ids
               end)
-              (FR)
-              (Replicate)
-              (Scan)
+              (Dep)
           in
           let task = TF.create ~executor:(module Executor) in
           let%lwt () = TR.store task in

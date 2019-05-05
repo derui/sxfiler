@@ -11,6 +11,8 @@ type status =
   | Wait_interaction
 [@@deriving show, eq]
 
+type context = {task_id : id}
+
 (** {!S} is signature to do the task. *)
 module type Executor = sig
   val apply_interaction : [`No_interaction | `Apply of interaction -> unit Lwt.t]
@@ -18,7 +20,7 @@ module type Executor = sig
       The Executor is able to do not define anything for interaction.
   *)
 
-  val execute : unit -> unit Lwt.t
+  val execute : context -> unit Lwt.t
   (** [execute ()] runs the task body. *)
 end
 
@@ -35,11 +37,7 @@ let make ~id ~executor ~status = {id; executor; status}
 (** [execute t] execute the plan [t] with {!Executor}. *)
 let execute t =
   let module E = (val t.executor) in
-  E.execute ()
-
-(** change status to wait user interaction for the task *)
-let wait_interaction t =
-  match t.status with Running -> {t with status = Wait_interaction} | _ -> t
+  E.execute {task_id = t.id}
 
 (** [apply_interaction ~interaction t] apply an interaction to the task *)
 let apply_interaction ~interaction t =
