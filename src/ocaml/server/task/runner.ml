@@ -9,10 +9,10 @@ module Impl = struct
     | `Rejected ]
 
   module Task_state = Set.Make (struct
-      type t = Uuidm.t
+    type t = Uuidm.t
 
-      let compare = Uuidm.compare
-    end)
+    let compare = Uuidm.compare
+  end)
 
   type t =
     { task_queue : (module Task.Instance) Lwt_stream.t
@@ -27,9 +27,14 @@ module Impl = struct
   (** Forever loop to accept task. Running this function must be in other thread of worker thread. *)
   let rec accept_task_loop t () =
     let%lwt task = Lwt_mvar.take t.task_mailbox in
-    match%lwt Lwt.return task with
+    match task with
     | `Accepted task -> t.task_queue_writer (Some task) ; accept_task_loop t ()
     | `Rejected -> Lwt.return_unit
+
+  let add_state t id =
+    Lwt_mutex.with_lock t.task_state_lock (fun () ->
+        t.task_state <- Task_state.add id t.task_state ;
+        Lwt.return_unit )
 
   let remove_state t id =
     Lwt_mutex.with_lock t.task_state_lock (fun () ->
@@ -39,22 +44,17 @@ module Impl = struct
   (** Forever loop to run task. *)
   let run_task_loop t () =
     let module C = Sxfiler_server_core in
-    Lwt_stream.iter_p
-      (fun task ->
-         let id = Uuidm.v4_gen (Random.get_state ()) () in
-         let%lwt _ =
-           Lwt_mutex.with_lock t.task_state_lock (fun () ->
-               t.task_state <- Task_state.add id t.task_state ;
-               Lwt.return_unit )
-         in
-         let module Current_task = (val task : Task.Instance) in
-         Lwt.return
-         @@ Lwt.async (fun () ->
-             try%lwt
-               let%lwt () = Current_task.(Task.run this) in
-               remove_state t id
-             with _ -> remove_state t id ) )
-      t.task_queue
+    t.task_queue
+    |> Lwt_stream.iter_p (fun task ->
+           let id = Uuidm.v4_gen (Random.get_state ()) () in
+           let%lwt () = add_state t id in
+           let module Current_task = (val task : Task.Instance) in
+           Lwt.return
+           @@ Lwt.async (fun () ->
+                  try%lwt
+                    let%lwt () = Current_task.(Task.run this) in
+                    remove_state t id
+                  with _ -> remove_state t id ) )
 
   (** [add_task task] add [task] to mailbox of task accepter. *)
   let add_task t task = Lwt_mvar.put t.task_mailbox (`Accepted task)

@@ -11,11 +11,13 @@ module Send_interaction = struct
     type error = [`Not_found]
   end
 
-  module type S =
-    Common.Usecase
-    with type input = Type.input
-     and type output = Type.output
-     and type error = Type.error
+  module type S = sig
+    (* trick to avoid error to unbound record field *)
+    include module type of Type
+
+    include
+      Common.Usecase with type input := input and type output := output and type error := error
+  end
 
   module Make (R : Task.Repository) : S = struct
     include Type

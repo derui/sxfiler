@@ -3,20 +3,20 @@ module D = Sxfiler_domain.Task_interaction
 
 (** level of notification. *)
 module Interaction = struct
-  type typ =
-    | Yes_no [@name "yes-no"]
-    | String [@name "string"]
-    | Int [@name "int"]
+  type t =
+    | Yes_no of bool [@name "yes-no"]
+    | String of string [@name "string"]
+    | Int of int [@name "int"]
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
-  let of_domain = function T.Yes_no _ -> Yes_no | String _ -> String | Int _ -> Int
-  let to_domain _ = failwith "Can not convert to domain"
+  let of_domain = function T.Yes_no b -> Yes_no b | String s -> String s | Int v -> Int v
+  let to_domain = function Yes_no b -> T.Yes_no b | String s -> String s | Int v -> Int v
 end
 
 type t =
   { id : string
   ; task_id : string [@key "taskId"]
-  ; filter_interaction : Interaction.typ list [@key "filterInteraction"] }
+  ; filter_interaction : Interaction.t list [@key "filterInteraction"] }
 [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
 let of_domain t =

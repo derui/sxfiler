@@ -4,6 +4,7 @@
  (libraries lwt
             sxfiler.core
             sxfiler.server.core
+            sxfiler.server.task
             sxfiler.server.translator
             jsonrpc-ocaml.yojson
             unix)

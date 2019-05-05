@@ -7,8 +7,7 @@ type t =
   | Filer_already_exists
   | Filer_not_directory
   | Node_not_found
-  | Plan_not_found
-  | Plan_same_filer
+  | Task_not_found
 [@@deriving variants]
 
 exception Gateway_error of t
