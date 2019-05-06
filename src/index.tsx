@@ -18,12 +18,21 @@ import { AppState } from "./ts/states";
 import { createUseCase } from "./ts/usecases/filer/initialize";
 import { createCommandRegistrar } from "./ts/usecases/command-registrar";
 import { registAllCommand } from "./ts/usecases/commands";
+import * as NotificationHandlers from "./ts/notification-handlers";
 import * as enableFileTree from "./ts/usecases/ui-context/enable-file-tree";
 
 const url = process.env.NODE_ENV === "production" ? process.env.REACT_APP_SERVER : "ws://localhost:50879";
 
 const ws = new WebSocket(url || "");
 const jsonrpc = jrpc.initialize(ws);
+
+// register notification handlers
+jrpc.createNotificationServer(jsonrpc, {
+  "notification/message": NotificationHandlers.handleNotification,
+  "notification/progress": NotificationHandlers.handleNotification,
+  "notification/taskFinished": NotificationHandlers.handleTaskFinished,
+  "notification/taskInteraction": NotificationHandlers.handleInteraction,
+});
 
 const client: Client<ApiMethod> = jrpc.createClient(jsonrpc, () => {
   return bigInt.randBetween(bigInt(Int64.MIN_INT), bigInt(Int64.MAX_INT)).toString();

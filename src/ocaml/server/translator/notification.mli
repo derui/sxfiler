@@ -1,9 +1,9 @@
 (** level of notification. *)
 module Level : sig
   type t =
-    | Info
-    | Warning
-    | Error
+    | Info [@key "info"]
+    | Warning [@key "warning"]
+    | Error [@key "error"]
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   include

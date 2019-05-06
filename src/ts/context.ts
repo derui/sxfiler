@@ -8,9 +8,9 @@ import { AppState } from "./states";
 import { UseCaseLike } from "./usecases/type";
 
 // interface of context
-export interface ContextLike {
+export type ContextLike = {
   execute<Param>(usecase: UseCaseLike<Actions, Param>, arg: Param): void;
-}
+};
 
 // Context for application
 export class Context implements ContextLike {

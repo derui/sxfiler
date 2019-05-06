@@ -1,7 +1,8 @@
-import { createYesNoInteraction, InteractionKind, createStringInteraction, createIntInteraction } from "./task";
+import { createYesNoInteraction, createStringInteraction, createIntInteraction } from "./task-payload";
+import { InteractionKind } from "./task-interaction";
 
 describe("Domain", () => {
-  describe("Task", () => {
+  describe("Task payload", () => {
     it("can create payload for Yes/No interaction", () => {
       const data = createYesNoInteraction(true);
 

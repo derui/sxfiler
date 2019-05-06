@@ -1,9 +1,4 @@
-// type of interaction
-export enum InteractionKind {
-  YesNo = "yes-no",
-  String = "string",
-  Int = "int",
-}
+import { InteractionKind } from "./task-interaction";
 
 export type YesNoPayload = {
   readonly kind: "yes-no";
