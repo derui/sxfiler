@@ -19,9 +19,13 @@ module Factory = struct
   end
 end
 
-(** Notifier provides an ability to send notification what the task need interaction *)
+(** Notifier provides an ability to send notification what the task state changed *)
 module Notifier = struct
   module type S = sig
-    val notify : accept:Task.Interaction_typ.t list -> Task.id -> unit Lwt.t
+    val need_interaction : accept:Task.Interaction_typ.t list -> Task.id -> unit Lwt.t
+    (** [need_interaction ~accept task_id] send a notification that the task needs user interaction *)
+
+    val finished : Task.id -> unit Lwt.t
+    (** [finished task_id] send a notification that the task finished *)
   end
 end

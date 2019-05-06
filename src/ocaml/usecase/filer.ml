@@ -262,7 +262,7 @@ module Move = struct
       in
       let transport node =
         if Node_name_set.mem (Path.to_string node.T.Node.full_path) nodes_in_dest then (
-          Notifier.notify ~accept:[Yes_no; String] task_id ;%lwt
+          Notifier.need_interaction ~accept:[Yes_no; String] task_id ;%lwt
           match%lwt Lwt_mvar.take interaction with
           | Overwrite true -> Transport.transport ~node ~_to:dest_filer.file_tree ()
           | Rename new_name -> Transport.transport ~node ~new_name ~_to:dest_filer.file_tree ()
@@ -281,7 +281,7 @@ module Move = struct
       and to_tree = Scan.scan dest_filer.file_tree.location in
       let from_filer = T.Filer.update_tree source_filer ~file_tree:from_tree
       and to_filer = T.Filer.update_tree dest_filer ~file_tree:to_tree in
-      Lwt.(join [FR.store from_filer; FR.store to_filer])
+      Lwt.(join [FR.store from_filer; FR.store to_filer] >>= fun () -> Notifier.finished task_id)
   end
 
   module Make (Dep : Dependencies) : S = struct
@@ -446,7 +446,7 @@ module Copy = struct
       in
       let transport node =
         if Node_name_set.mem (Path.to_string node.T.Node.full_path) nodes_in_dest then (
-          Notifier.notify ~accept:[Yes_no; String] task_id ;%lwt
+          Notifier.need_interaction ~accept:[Yes_no; String] task_id ;%lwt
           match%lwt Lwt_mvar.take interaction with
           | Overwrite true -> Replicate.replicate ~node ~_to:dest_filer.file_tree ()
           | Rename new_name -> Replicate.replicate ~node ~new_name ~_to:dest_filer.file_tree ()
@@ -465,7 +465,7 @@ module Copy = struct
       and to_tree = Scan.scan dest_filer.file_tree.location in
       let from_filer = T.Filer.update_tree source_filer ~file_tree:from_tree
       and to_filer = T.Filer.update_tree dest_filer ~file_tree:to_tree in
-      Lwt.(join [FR.store from_filer; FR.store to_filer])
+      Lwt.(join [FR.store from_filer; FR.store to_filer] >>= fun () -> Notifier.finished task_id)
   end
 
   module Make (Dep : Dependencies) : S = struct
