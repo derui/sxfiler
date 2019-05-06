@@ -31,7 +31,7 @@ jrpc.createNotificationServer(jsonrpc, {
   "notification/message": NotificationHandlers.handleNotification,
   "notification/progress": NotificationHandlers.handleNotification,
   "notification/taskFinished": NotificationHandlers.handleTaskFinished,
-  "notification/taskInteraction": NotificationHandlers.handleInteraction,
+  "notification/taskInteraction": NotificationHandlers.handleTaskInteraction,
 });
 
 const client: Client<ApiMethod> = jrpc.createClient(jsonrpc, () => {

@@ -1,4 +1,4 @@
-import { InteractionPayload } from "../domains/task";
+import { InteractionPayload } from "../domains/task-payload";
 
 // defines API signature for Task group.
 
