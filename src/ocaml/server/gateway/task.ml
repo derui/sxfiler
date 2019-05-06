@@ -12,6 +12,8 @@ module Send_interaction = struct
     type result = unit [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
+  module type S = Core.Gateway with type params = Type.params and type result = Type.result
+
   module Make (Usecase : Usecase.Task.Send_interaction.S) :
     Core.Gateway with type params = Type.params and type result = Type.result = struct
     include Type

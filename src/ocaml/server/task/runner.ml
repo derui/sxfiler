@@ -9,10 +9,10 @@ module Impl = struct
     | `Rejected ]
 
   module Task_state = Set.Make (struct
-    type t = Uuidm.t
+      type t = Uuidm.t
 
-    let compare = Uuidm.compare
-  end)
+      let compare = Uuidm.compare
+    end)
 
   type t =
     { task_queue : (module Task.Instance) Lwt_stream.t
@@ -46,15 +46,15 @@ module Impl = struct
     let module C = Sxfiler_server_core in
     t.task_queue
     |> Lwt_stream.iter_p (fun task ->
-           let id = Uuidm.v4_gen (Random.get_state ()) () in
-           let%lwt () = add_state t id in
-           let module Current_task = (val task : Task.Instance) in
-           Lwt.return
-           @@ Lwt.async (fun () ->
-                  try%lwt
-                    let%lwt () = Current_task.(Task.run this) in
-                    remove_state t id
-                  with _ -> remove_state t id ) )
+        let id = Uuidm.v4_gen (Random.get_state ()) () in
+        let%lwt () = add_state t id in
+        let module Current_task = (val task : Task.Instance) in
+        Lwt.return
+        @@ Lwt.async (fun () ->
+            try%lwt
+              let%lwt () = Current_task.(Task.run this) in
+              remove_state t id
+            with _ -> remove_state t id ) )
 
   (** [add_task task] add [task] to mailbox of task accepter. *)
   let add_task t task = Lwt_mvar.put t.task_mailbox (`Accepted task)

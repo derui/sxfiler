@@ -37,15 +37,21 @@ let expose_completion_procedures (module Dep : Dependencies.S) : (module Procedu
   [ (module Proc_completion.Setup_spec (Setup_gateway))
   ; (module Proc_completion.Read_spec (Read_gateway)) ]
 
+let expose_task_procedures (module Dep : Dependencies.S) : (module Procedure.Spec) list =
+  let module S = Jsonrpc_ocaml_yojson.Server in
+  let module Gateway = G.Task.Send_interaction.Make (Dep.Usecase.Task_send_interaction) in
+  [(module Proc_task.Send_interaction_spec (Gateway))]
+
 let expose_all server (module Dep : Dependencies.S) =
   let procedures =
     List.concat
       [ expose_filer_procedures (module Dep)
       ; expose_key_map_procedures (module Dep)
       ; expose_configuration_procedures (module Dep)
-      ; expose_completion_procedures (module Dep) ]
+      ; expose_completion_procedures (module Dep)
+      ; expose_task_procedures (module Dep) ]
   in
   List.fold_left
     (fun server (module Spec : Procedure.Spec) ->
-      Jsonrpc_server.expose server ~procedure:(module Procedure.Make (Spec)) )
+       Jsonrpc_server.expose server ~procedure:(module Procedure.Make (Spec)) )
     server procedures

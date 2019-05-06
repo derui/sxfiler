@@ -4,6 +4,7 @@ module C = Sxfiler_server_core
 module U = Sxfiler_usecase
 module D = Sxfiler_domain
 module I = Sxfiler_server_infra
+module TR = Sxfiler_server_task.Runner_intf
 
 module type S = sig
   module System : Sxfiler_core.System.S
@@ -19,6 +20,7 @@ module type S = sig
   module Location_scanner_service : D.Location_scanner_service.S
   module Node_trash_service : D.Node_trash_service.S
   module Key_map_resolve_service : D.Key_map_resolve_service.S
+  module Task_repo : D.Task.Repository
 
   module Usecase : sig
     module Keymap_get : U.Keymap.Get.S
@@ -33,10 +35,14 @@ module type S = sig
     module Filer_move_parent : U.Filer.Move_parent.S
     module Filer_enter_directory : U.Filer.Enter_directory.S
     module Filer_toggle_mark : U.Filer.Toggle_mark.S
+    module Task_send_interaction : U.Task.Send_interaction.S
   end
 end
 
-module Make (Conn : C.Rpc_connection.Instance) (Completer : D.Completer.Instance) : S = struct
+module Make
+    (Conn : C.Rpc_connection.Instance)
+    (Completer : D.Completer.Instance)
+    (Runner : TR.Instance) : S = struct
   module System = Sxfiler_core.System.Real
   module Clock = Global.Clock
   module Key_map_repo : D.Key_map_repository.S = I.Key_map_repo.Make (Global.Keymap)
@@ -56,6 +62,7 @@ module Make (Conn : C.Rpc_connection.Instance) (Completer : D.Completer.Instance
 
   module Location_scanner_service : D.Location_scanner_service.S = I.Location_scanner_service
   module Node_trash_service = I.Node_trash_service
+  module Task_repo = I.Task_repo.Make (Global.Root) (Runner)
 
   module Usecase = struct
     module Keymap_get = U.Keymap.Get.Make (Condition_repo) (Key_map_repo)
@@ -82,5 +89,6 @@ module Make (Conn : C.Rpc_connection.Instance) (Completer : D.Completer.Instance
       U.Filer.Enter_directory.Make (Filer_repo) (Location_scanner_service) (Clock)
 
     module Filer_toggle_mark = U.Filer.Toggle_mark.Make (Filer_repo)
+    module Task_send_interaction = U.Task.Send_interaction.Make (Task_repo)
   end
 end

@@ -8,8 +8,8 @@ module W = Websocket
 
 module Make (Conn : C.Rpc_connection.Instance) (F : D.Task_interaction.Factory.S) :
   D.Task_interaction.Notifier.S = struct
-  let notify ~filter task_id =
-    let t' = F.create ~task_id ~filter_interaction:filter in
+  let notify ~accept task_id =
+    let t' = F.create ~task_id ~accept_interactions:accept in
     let _method = "notification/taskInteraction" in
     let params = Tr.Task_interaction.of_domain t' |> Tr.Task_interaction.to_json in
     let content =

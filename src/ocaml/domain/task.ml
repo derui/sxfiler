@@ -1,21 +1,27 @@
 type id = Uuidm.t [@@deriving show, eq]
 
-type interaction =
-  | Yes_no of bool
-  | String of string
-  | Int of int
+(** This module defines only types in the  *)
+module Interaction_typ = struct
+  type t =
+    | Yes_no
+    | String
+    | Int
+  [@@deriving show, eq]
+end
 
-type status =
-  | Pending
-  | Running
-  | Wait_interaction
-[@@deriving show, eq]
+module Interaction = struct
+  type t =
+    | Yes_no of bool
+    | String of string
+    | Int of int
+  [@@deriving show, eq]
+end
 
 type context = {task_id : id}
 
 (** {!S} is signature to do the task. *)
 module type Executor = sig
-  val apply_interaction : [`No_interaction | `Apply of interaction -> unit Lwt.t]
+  val apply_interaction : [`No_interaction | `Apply of Interaction.t -> unit Lwt.t]
   (** [apply_interaction interaction] applies an interaction to the executor.
       The Executor is able to do not define anything for interaction.
   *)
@@ -27,12 +33,11 @@ end
 (** [!t] is . *)
 type t =
   { id : id
-  ; executor : (module Executor) [@printer fun _ _ -> ()]
-  ; status : status }
+  ; executor : (module Executor) [@printer fun _ _ -> ()] }
 [@@deriving show, fields]
 
 (** [make ~id ~operation ~nodes] makes new plan [t] instance from. *)
-let make ~id ~executor ~status = {id; executor; status}
+let make ~id ~executor = {id; executor}
 
 (** [execute t] execute the plan [t] with {!Executor}. *)
 let execute t =
@@ -62,6 +67,6 @@ module Factory = struct
   end
 
   module Make (G : Id_generator_intf.Gen_random with type id = id) : S = struct
-    let create = make ~id:(G.generate ()) ~status:Pending
+    let create = make ~id:(G.generate ())
   end
 end

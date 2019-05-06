@@ -5,7 +5,7 @@ module Send_interaction = struct
   module Type = struct
     type input =
       { task_id : Task.id
-      ; interaction : Task.interaction }
+      ; interaction : Task.Interaction.t }
 
     type output = unit
     type error = [`Not_found]
@@ -26,7 +26,7 @@ module Send_interaction = struct
       match%lwt R.resolve task_id with
       | None -> Lwt.return_error `Not_found
       | Some t ->
-          let open Lwt in
-          Task.apply_interaction ~interaction t >>= return_ok
+        let open Lwt in
+        Task.apply_interaction ~interaction t >>= return_ok
   end
 end

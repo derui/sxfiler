@@ -31,7 +31,9 @@ end
 module Log = (val Logger.make ["main"])
 
 let create_server (module C : Rpc_connection.Instance) =
-  let module Dep = Dependencies.Make (C) ((val Global.Completer.get ())) in
+  let module R = (val T.Runner.make () : T.Runner.Instance) in
+  let module Completer = (val Global.Completer.get ()) in
+  let module Dep = Dependencies.Make (C) (Completer) (R) in
   let rpc_server = Jsonrpc_server.make () in
   Procedures.expose_all rpc_server (module Dep : Dependencies.S)
 
@@ -43,7 +45,6 @@ let handler (conn : _ * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
   match Uri.path uri with
   | "/" ->
     let module C = (val Rpc_connection.make () : Rpc_connection.Instance) in
-    let module R = (val T.Runner.make () : T.Runner.Instance) in
     let%lwt () = Cohttp_lwt.Body.drain_body body in
     let%lwt resp, frames_out_fn =
       Websocket_cohttp_lwt.upgrade_connection req (fun f ->
