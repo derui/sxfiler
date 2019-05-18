@@ -1,5 +1,5 @@
 (** this module defines application error raises from JSON-RPC. *)
-module E = Jsonrpc_ocaml.Types.Error_code
+module E = Jsonrpc.Types.Error_code
 
 let unknown_error v = E.make ~message:Printf.(sprintf "Unknown error: %s" v) (-1)
 let filer_not_found = E.make ~message:"Filer not found" (-2)

@@ -1,5 +1,5 @@
 module S = Sxfiler_server
-module Jy = Jsonrpc_ocaml_yojson
+module Jy = Jsonrpc_yojson
 
 let test_set =
   [ Alcotest_lwt.test_case "parse request when request required by spec" `Quick (fun _ () ->
@@ -18,18 +18,11 @@ let test_set =
           let param_requirement = `Required
         end in
         let module Proc = S.Procedure.Make (Spec) in
-        let id = Random.int64 Int64.max_int in
-        let%lwt res =
-          Proc.handle
-            Jy.Request.
-              { _method = ""
-              ; params = Some Spec.Gateway.(params_to_json {foo = "bar"})
-              ; id = Some id }
-        in
+        let%lwt res = Proc.handle (Some Spec.Gateway.(params_to_json {foo = "bar"})) in
         let module G = Sxfiler_server_gateway in
-        Alcotest.(check @@ of_pp Fmt.nop)
+        Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
           "current" res
-          Jy.Response.{id = Some id; error = None; result = Some (Spec.Gateway.result_to_json 100)} ;
+          (Ok (Some (Spec.Gateway.result_to_json 100))) ;
         Lwt.return_unit )
   ; Alcotest_lwt.test_case "use default value when parameter not required" `Quick (fun _ () ->
         let module Spec = struct
@@ -47,8 +40,7 @@ let test_set =
           let param_requirement = `Not_required {Gateway.foo = "boo"}
         end in
         let module Proc = S.Procedure.Make (Spec) in
-        let id = Random.int64 Int64.max_int in
-        let%lwt _ = Proc.handle Jy.Request.{_method = ""; params = None; id = Some id} in
+        let%lwt _ = Proc.handle None in
         let module G = Sxfiler_server_gateway in
         Alcotest.(check @@ of_pp Fmt.nop)
           "current"

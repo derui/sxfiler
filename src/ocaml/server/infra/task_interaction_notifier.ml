@@ -2,7 +2,7 @@
 
 module C = Sxfiler_server_core
 module D = Sxfiler_domain
-module Jy = Jsonrpc_ocaml_yojson
+module Jy = Jsonrpc_yojson
 module Tr = Sxfiler_server_translator
 module W = Websocket
 
