@@ -1,50 +1,61 @@
+module Ty = Sxfiler_domain.Task_types
 module T = Sxfiler_domain.Task
 module D = Sxfiler_domain.Task_interaction
 
-module Interaction_typ = struct
-  type t =
-    | Yes_no [@name "yes-no"]
-        | String [@name "string"]
-        | Int [@name "int"]
+module Reply = struct
+  type typ =
+    | Overwrite of bool [@name "overwrite"]
+    | Rename of {new_name : string [@key "newName"]} [@name "rename"]
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
-  let of_domain = function T.Interaction_typ.Yes_no -> Yes_no | String -> String | Int -> Int
-  let to_domain = function Yes_no -> T.Interaction_typ.Yes_no | String -> String | Int -> Int
-end
-
-module Interaction = struct
   type t =
-    | Yes_no of bool [@name "yes-no"]
-          | String of string [@name "string"]
-          | Int of int [@name "int"]
+    { reply : typ [@key "reply"]
+    ; task_id : string [@key "taskId"] }
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
-  let of_domain = function
-    | T.Interaction.Yes_no b -> Yes_no b
-    | String s -> String s
-    | Int v -> Int v
+  let of_domain {D.Reply.task_id; reply} =
+    { task_id = Ty.show_id task_id
+    ; reply =
+        ( match reply with
+        | D.Reply.Overwrite b -> Overwrite b
+        | Rename new_name -> Rename {new_name} ) }
 
-  let to_domain = function
-    | Yes_no b -> T.Interaction.Yes_no b
-    | String s -> String s
-    | Int v -> Int v
+  let to_domain {task_id; reply} =
+    let open Sxfiler_core in
+    { D.Reply.task_id = Uuidm.of_string task_id |> Option.get_exn
+    ; reply =
+        ( match reply with
+        | Overwrite b -> D.Reply.Overwrite b
+        | Rename {new_name} -> Rename new_name ) }
 end
 
-type t =
-  { id : string
-  ; task_id : string [@key "taskId"]
-  ; accept_interactions : Interaction_typ.t list [@key "acceptInteractions"] }
-[@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
+module Suggestion = struct
+  type typ =
+    | Overwrite of {node_name : string [@key "nodeName"]} [@name "overwrite"]
+    | Rename of {node_name : string [@key "nodeName"]} [@name "rename"]
+  [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
-let of_domain t =
-  { id = Uuidm.to_string t.D.id
-  ; task_id = Uuidm.to_string t.task_id
-  ; accept_interactions = List.map Interaction_typ.of_domain t.accept_interactions }
+  type t =
+    { suggestions : typ list [@key "suggestions"]
+    ; task_id : string [@key "taskId"] }
+  [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
-let to_domain v =
-  match (Uuidm.of_string v.id, Uuidm.of_string v.task_id) with
-  | None, _ | _, None -> failwith "Can not convert to domain"
-  | Some id, Some task_id ->
-    { D.id
-    ; task_id
-    ; accept_interactions = List.map Interaction_typ.to_domain v.accept_interactions }
+  let of_domain {D.Suggestion.task_id; suggestions} =
+    { task_id = Ty.show_id task_id
+    ; suggestions =
+        List.map
+          (function
+            | D.Suggestion.Overwrite {node_name} -> Overwrite {node_name}
+            | Rename {node_name} -> Rename {node_name} )
+          suggestions }
+
+  let to_domain {task_id; suggestions} =
+    let open Sxfiler_core in
+    { D.Suggestion.task_id = Uuidm.of_string task_id |> Option.get_exn
+    ; suggestions =
+        List.map
+          (function
+            | Overwrite {node_name} -> D.Suggestion.Overwrite {node_name}
+            | Rename {node_name} -> Rename {node_name} )
+          suggestions }
+end

@@ -2,38 +2,39 @@
     type defined in module to domain.
 *)
 
-(** Type of interaction *)
-module Interaction_typ : sig
+module Reply : sig
+  (** Type of interaction *)
+  type typ =
+    | Overwrite of bool [@name "overwrite"]
+    | Rename of {new_name : string [@key "newName"]} [@name "rename"]
+  [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
+
   type t =
-    | Yes_no [@name "yes-no"]
-        | String [@name "string"]
-        | Int [@name "int"]
+    { reply : typ [@key "reply"]
+    ; task_id : string [@key "taskId"] }
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   include
     Core.Domain_translator
     with type t := t
-     and type domain := Sxfiler_domain.Task.Interaction_typ.t
+     and type domain := Sxfiler_domain.Task_interaction.Reply.t
 end
 
-(** interaction *)
-module Interaction : sig
+module Suggestion : sig
+  (** Type of interaction *)
+
+  type typ =
+    | Overwrite of {node_name : string [@key "nodeName"]} [@name "overwrite"]
+    | Rename of {node_name : string [@key "nodeName"]} [@name "rename"]
+  [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
+
   type t =
-    | Yes_no of bool [@name "yes-no"]
-          | String of string [@name "string"]
-          | Int of int [@name "int"]
+    { suggestions : typ list [@key "suggestions"]
+    ; task_id : string [@key "taskId"] }
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   include
-    Core.Domain_translator with type t := t and type domain := Sxfiler_domain.Task.Interaction.t
+    Core.Domain_translator
+    with type t := t
+     and type domain := Sxfiler_domain.Task_interaction.Suggestion.t
 end
-
-(** the type that is JSON friendly for {!Sxfiler_domain.Task_interaction.t} *)
-type t =
-  { id : string
-  ; task_id : string [@key "taskId"]
-  ; accept_interactions : Interaction_typ.t list [@key "acceptInteractions"] }
-[@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
-
-include
-  Core.Domain_translator with type t := t and type domain := Sxfiler_domain.Task_interaction.t

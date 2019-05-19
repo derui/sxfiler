@@ -1,31 +1,25 @@
-type id = Uuidm.t [@@deriving show, eq]
+open Task_types
 
-type t =
-  { id : id
-  ; task_id : Task.id
-  ; accept_interactions : Task.Interaction_typ.t list }
-[@@deriving show, eq]
+module Reply = struct
+  type typ =
+    | Overwrite of bool
+    | Rename of string
+  [@@deriving show, eq]
 
-(** A factory for [t] *)
-module Factory = struct
-  module type S = sig
-    val create : task_id:Task.id -> accept_interactions:Task.Interaction_typ.t list -> t
-  end
-
-  module Make (Gen : Id_generator_intf.Gen_random with type id = id) : S = struct
-    let create ~task_id ~accept_interactions =
-      let id = Gen.generate () in
-      {id; task_id; accept_interactions}
-  end
+  type t =
+    { task_id : id
+    ; reply : typ }
+  [@@deriving show, eq]
 end
 
-(** Notifier provides an ability to send notification what the task state changed *)
-module Notifier = struct
-  module type S = sig
-    val need_interaction : accept:Task.Interaction_typ.t list -> Task.id -> unit Lwt.t
-    (** [need_interaction ~accept task_id] send a notification that the task needs user interaction *)
+module Suggestion = struct
+  type typ =
+    | Overwrite of {node_name : string}
+    | Rename of {node_name : string}
+  [@@deriving show, eq]
 
-    val finished : Task.id -> unit Lwt.t
-    (** [finished task_id] send a notification that the task finished *)
-  end
+  type t =
+    { task_id : id
+    ; suggestions : typ list }
+  [@@deriving show, eq]
 end

@@ -1,32 +1,13 @@
-type id = Uuidm.t [@@deriving show, eq]
-
-(** This module defines only types in the  *)
-module Interaction_typ = struct
-  type t =
-    | Yes_no
-    | String
-    | Int
-  [@@deriving show, eq]
-end
-
-module Interaction = struct
-  type t =
-    | Yes_no of bool
-    | String of string
-    | Int of int
-  [@@deriving show, eq]
-end
-
-type context = {task_id : id}
+open Task_types
 
 (** {!S} is signature to do the task. *)
 module type Executor = sig
-  val apply_interaction : [`No_interaction | `Apply of Interaction.t -> unit Lwt.t]
+  val apply_interaction : [`No_interaction | `Apply of Task_interaction.Reply.typ -> unit Lwt.t]
   (** [apply_interaction interaction] applies an interaction to the executor.
       The Executor is able to do not define anything for interaction.
   *)
 
-  val execute : context -> unit Lwt.t
+  val execute : Context.t -> unit Lwt.t
   (** [execute ()] runs the task body. *)
 end
 
@@ -45,9 +26,9 @@ let execute t =
   E.execute {task_id = t.id}
 
 (** [apply_interaction ~interaction t] apply an interaction to the task *)
-let apply_interaction ~interaction t =
+let apply_interaction ~reply t =
   let module E = (val t.executor) in
-  match E.apply_interaction with `No_interaction -> Lwt.return_unit | `Apply f -> f interaction
+  match E.apply_interaction with `No_interaction -> Lwt.return_unit | `Apply f -> f reply
 
 module type Repository = sig
   val store : t -> unit Lwt.t
