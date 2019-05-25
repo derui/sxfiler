@@ -1,7 +1,7 @@
 import { actions } from "../../actions/task";
 import { Dispatcher } from "../../dispatcher";
 import { createUseCase } from "./require-interaction";
-import { createInteraction } from "../../domains/task-interaction";
+import { createSuggestions } from "../../domains/task-suggestion";
 
 describe("UseCases", () => {
   describe("Task", () => {
@@ -11,11 +11,11 @@ describe("UseCases", () => {
         const fn = jest.fn();
 
         dispatcher.subscribe(fn);
-        const interaction = createInteraction({ id: "id", taskId: "task", acceptInteractions: [] });
+        const suggestions = createSuggestions({ taskId: "task", suggestions: [] });
 
-        createUseCase().execute(dispatcher, { interaction });
+        createUseCase().execute(dispatcher, { suggestions });
 
-        expect(fn.mock.calls[0]).toEqual([actions.requireInteraction(interaction)]);
+        expect(fn.mock.calls[0]).toEqual([actions.requireInteraction(suggestions)]);
       });
     });
   });
