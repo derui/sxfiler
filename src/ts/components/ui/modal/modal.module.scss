@@ -1,0 +1,21 @@
+@import "../commom-style/reset.module.css";
+
+// base layout for root element. This layout should use without change.
+.root-base {
+  display: flex;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+}
+
+// Base layout for overlay element.
+.overlay-base {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+// Base layout for madal elemenrt.
+.modal-base {
+}
