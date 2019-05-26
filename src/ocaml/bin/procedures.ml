@@ -39,8 +39,8 @@ let expose_completion_procedures (module Dep : Dependencies.S) : (module Procedu
 
 let expose_task_procedures (module Dep : Dependencies.S) : (module Procedure.Spec) list =
   let module S = Jsonrpc_yojson.Server in
-  let module Gateway = G.Task.Send_interaction.Make (Dep.Usecase.Task_send_interaction) in
-  [(module Proc_task.Send_interaction_spec (Gateway))]
+  let module Gateway = G.Task.Send_reply.Make (Dep.Usecase.Task_send_reply) in
+  [(module Proc_task.Send_reply_spec (Gateway))]
 
 let expose_all server (module Dep : Dependencies.S) =
   let procedures =

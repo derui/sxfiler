@@ -16,18 +16,17 @@ let test_set =
   [ Alcotest_lwt.test_case "execute use case with the parameters" `Quick (fun _ () ->
         let spy, f = Spy.wrap (fun _ -> Lwt.return_ok ()) in
         let module Usecase = struct
-          include U.Task.Send_interaction.Type
+          include U.Task.Send_reply.Type
 
           let execute = f
         end in
-        let module Gateway = G.Task.Send_interaction.Make (Usecase) in
+        let module Gateway = G.Task.Send_reply.Make (Usecase) in
         let%lwt () =
           Gateway.handle
-            { task_id = Uuidm.to_string task_id
-            ; payload = T.Task_interaction.Interaction.Yes_no false }
+            {task_id = Uuidm.to_string task_id; reply = T.Task_interaction.Reply.Overwrite true}
         in
         Alcotest.(check @@ list @@ of_pp Fmt.nop)
           "called"
-          [{Usecase.task_id; interaction = D.Task.Interaction.Yes_no false}]
+          [{D.Task_interaction.Reply.task_id; reply = D.Task_interaction.Reply.Overwrite true}]
           (Spy.Wrap.called_args spy) ;
         Lwt.return_unit ) ]

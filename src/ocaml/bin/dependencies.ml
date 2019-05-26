@@ -35,7 +35,7 @@ module type S = sig
     module Filer_move_parent : U.Filer.Move_parent.S
     module Filer_enter_directory : U.Filer.Enter_directory.S
     module Filer_toggle_mark : U.Filer.Toggle_mark.S
-    module Task_send_interaction : U.Task.Send_interaction.S
+    module Task_send_reply : U.Task.Send_reply.S
   end
 end
 
@@ -89,6 +89,6 @@ module Make
       U.Filer.Enter_directory.Make (Filer_repo) (Location_scanner_service) (Clock)
 
     module Filer_toggle_mark = U.Filer.Toggle_mark.Make (Filer_repo)
-    module Task_send_interaction = U.Task.Send_interaction.Make (Task_repo)
+    module Task_send_reply = U.Task.Send_reply.Make (Task_repo)
   end
 end

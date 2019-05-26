@@ -2,11 +2,9 @@ module D = Sxfiler_domain
 module Usecase = Sxfiler_usecase
 module T = Sxfiler_server_translator
 
-module Send_interaction = struct
+module Send_reply = struct
   module Type = struct
-    type params =
-      { task_id : string [@key "taskId"]
-      ; payload : T.Task_interaction.Interaction.t }
+    type params = T.Task_interaction.Reply.t
     [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
 
     type result = unit [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
@@ -14,14 +12,13 @@ module Send_interaction = struct
 
   module type S = Core.Gateway with type params = Type.params and type result = Type.result
 
-  module Make (Usecase : Usecase.Task.Send_interaction.S) :
+  module Make (Usecase : Usecase.Task.Send_reply.S) :
     Core.Gateway with type params = Type.params and type result = Type.result = struct
     include Type
 
     let handle param =
-      let task_id = Uuidm.of_string param.task_id |> Sxfiler_core.Option.get_exn in
-      let interaction = T.Task_interaction.Interaction.to_domain param.payload in
-      match%lwt Usecase.execute {Usecase.task_id; interaction} with
+      let reply = T.Task_interaction.Reply.to_domain param in
+      match%lwt Usecase.execute reply with
       | Ok () -> Lwt.return_unit
       | Error `Not_found -> Lwt.fail Gateway_error.(Gateway_error Task_not_found)
   end
