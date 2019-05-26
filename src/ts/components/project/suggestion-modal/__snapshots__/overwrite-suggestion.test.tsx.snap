@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Project Overwrite suggestion change style when selected 1`] = `
+<div
+  className="root"
+  onKeyDown={[Function]}
+>
+  <p
+    aria-selected={true}
+    className="text"
+  >
+    Overwrite foo.
+  </p>
+</div>
+`;
+
+exports[`Project Overwrite suggestion do not render with other suggestion 1`] = `null`;
+
+exports[`Project Overwrite suggestion render with overwrite suggestion 1`] = `
+<div
+  className="root"
+  onKeyDown={[Function]}
+>
+  <p
+    aria-selected={false}
+    className="text"
+  >
+    Overwrite foo.
+  </p>
+</div>
+`;

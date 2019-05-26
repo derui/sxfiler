@@ -7,24 +7,24 @@ type RenamePayload = {
   readonly newName: string;
 };
 
-type PayloadObject = OverwritePayload | RenamePayload;
-export type Payload = PayloadObject;
+type ReplyPayloadObject = OverwritePayload | RenamePayload;
+export type ReplyPayload = ReplyPayloadObject;
 
 type ReplyObject = {
-  readonly reply: Payload;
+  readonly reply: ReplyPayload;
   readonly taskId: string;
 };
 export type Reply = ReplyObject;
 
 // create payload to overwrite a node
-export const createOverwritePayload = (): Payload => {
+export const createOverwritePayload = (): ReplyPayload => {
   return {
     kind: "overwrite",
   };
 };
 
 // create payload to rename a node
-export const createRenamePayload = (newName: string): Payload => {
+export const createRenamePayload = (newName: string): ReplyPayload => {
   return {
     kind: "rename",
     newName,
@@ -32,6 +32,6 @@ export const createRenamePayload = (newName: string): Payload => {
 };
 
 // create object for reply
-export const createReply = (taskId: string, payload: Payload): Reply => {
+export const createReply = (taskId: string, payload: ReplyPayload): Reply => {
   return { taskId, reply: payload };
 };

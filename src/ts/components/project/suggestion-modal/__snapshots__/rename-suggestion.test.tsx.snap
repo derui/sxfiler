@@ -1,0 +1,91 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Project Rename suggestion change style when selected 1`] = `
+<div
+  className="root"
+  onKeyDown={[Function]}
+>
+  <p
+    aria-selected={true}
+    className="text"
+  >
+    Rename foo.
+  </p>
+  <label
+    aria-selected={true}
+    className="labelContainer"
+  >
+    <span
+      className="label"
+    >
+      New Name
+    </span>
+    <input
+      className="input"
+      onChange={[Function]}
+      type="text"
+      value="foo"
+    />
+  </label>
+</div>
+`;
+
+exports[`Project Rename suggestion do not render with other suggestion 1`] = `
+<div
+  className="root"
+  onKeyDown={[Function]}
+>
+  <p
+    aria-selected={false}
+    className="text"
+  >
+    Rename foo.
+  </p>
+  <label
+    aria-selected={false}
+    className="labelContainer"
+  >
+    <span
+      className="label"
+    >
+      New Name
+    </span>
+    <input
+      className="input"
+      onChange={[Function]}
+      type="text"
+      value="foo"
+    />
+  </label>
+</div>
+`;
+
+exports[`Project Rename suggestion render with rename suggestion 1`] = `
+<div
+  className="root"
+  onKeyDown={[Function]}
+>
+  <p
+    aria-selected={false}
+    className="text"
+  >
+    Rename foo.
+  </p>
+  <label
+    aria-selected={false}
+    className="labelContainer"
+  >
+    <span
+      className="label"
+    >
+      New Name
+    </span>
+    <input
+      className="input"
+      onChange={[Function]}
+      type="text"
+      value="foo"
+    />
+  </label>
+</div>
+`;

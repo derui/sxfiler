@@ -1,0 +1,23 @@
+@import "../../ui/commom-style/_colors.scss";
+@import "../../ui/commom-style/_variables.scss";
+@import "../../ui/commom-style/reset.module.css";
+
+// base layout for root element. This layout should use without change.
+.root {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: $smallSpace $nanoSpace;
+  background-color: $sol_base03;
+}
+
+// Base layout for overlay element.
+.text {
+  flex: 1 1 auto;
+  color: $sol_base3;
+  font-size: 1.5rem;
+
+  [aria-selected="true"] {
+    color: $sol_red;
+  }
+}
