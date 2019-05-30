@@ -6,13 +6,15 @@ export enum ActionTypes {
   requireInteraction = "task_require_interaction",
   sendReply = "task_send_reply",
   finished = "task_finished",
+  selectSuggestion = "task_select_suggestion",
 }
 
 type RequireInteractionAction = AppAction<ActionTypes.requireInteraction, { suggestions: Suggestions }>;
 type SendReplyAction = AppAction<ActionTypes.sendReply, { reply: Reply }>;
 type FinishedAction = AppAction<ActionTypes.finished, { taskId: string }>;
+type SelectSuggestionAction = AppAction<ActionTypes.selectSuggestion, { index: number }>;
 
-export type Actions = RequireInteractionAction | FinishedAction;
+export type Actions = RequireInteractionAction | FinishedAction | SelectSuggestionAction;
 
 const requireInteraction = (suggestions: Suggestions): RequireInteractionAction => {
   return { type: ActionTypes.requireInteraction, suggestions };
@@ -26,4 +28,8 @@ const sendReply = (reply: Reply): SendReplyAction => {
   return { type: ActionTypes.sendReply, reply };
 };
 
-export const actions = { requireInteraction, finished, sendReply };
+const selectSuggestion = (index: number): SelectSuggestionAction => {
+  return { type: ActionTypes.selectSuggestion, index };
+};
+
+export const actions = { requireInteraction, finished, sendReply, selectSuggestion };

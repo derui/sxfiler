@@ -1,3 +1,8 @@
+export enum ReplyKind {
+  Overwrite = "overwrite",
+  Rename = "rename",
+}
+
 type OverwritePayload = {
   readonly kind: "overwrite";
 };
@@ -19,14 +24,14 @@ export type Reply = ReplyObject;
 // create payload to overwrite a node
 export const createOverwritePayload = (): ReplyPayload => {
   return {
-    kind: "overwrite",
+    kind: ReplyKind.Overwrite,
   };
 };
 
 // create payload to rename a node
 export const createRenamePayload = (newName: string): ReplyPayload => {
   return {
-    kind: "rename",
+    kind: ReplyKind.Rename,
     newName,
   };
 };

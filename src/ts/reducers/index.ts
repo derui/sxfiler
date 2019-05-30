@@ -9,6 +9,7 @@ import fileListReducer from "./file-list";
 import keymapReducer from "./keymap";
 import notificationReducer from "./notification";
 import uiContextReducer from "./ui-context";
+import taskInteractionReducer from "./task-interaction";
 
 const reducerMap: ReducersMapObject<AppState, actions.Actions> = {
   context: uiContextReducer,
@@ -16,6 +17,7 @@ const reducerMap: ReducersMapObject<AppState, actions.Actions> = {
   fileList: fileListReducer,
   keymap: keymapReducer,
   notification: notificationReducer,
+  taskInteraction: taskInteractionReducer,
 };
 const reducer: Reducer<AppState, actions.Actions> = combineReducers(reducerMap);
 

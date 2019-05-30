@@ -1,21 +1,32 @@
-import { InteractionPayload } from "../domains/task-payload";
+import { Reply, ReplyPayload, ReplyKind } from "../domains/task-reply";
 
 // defines API signature for Task group.
 
 export enum Methods {
-  SendInteraction = "task/sendInteraction",
+  SendReply = "task/sendReply",
 }
+
+const replyToServerRepresentation = (reply: ReplyPayload): any[] => {
+  switch (reply.kind) {
+    case ReplyKind.Overwrite:
+      return [ReplyKind.Overwrite];
+    case ReplyKind.Rename:
+      return [ReplyKind.Rename, { newName: reply.newName }];
+    default:
+      throw Error("Unknown reply kind");
+  }
+};
 
 /**
    API definition for keymap/get
  */
 const SendInteraction = {
-  method: Methods.SendInteraction,
-  parametersTransformer(param: { taskId: string; payload: InteractionPayload }) {
-    const { taskId, payload } = param;
+  method: Methods.SendReply,
+  parametersTransformer(param: Reply) {
+    const { taskId, reply } = param;
     return {
       taskId,
-      payload: payload.toServerRepresentation(),
+      reply: replyToServerRepresentation(reply),
     };
   },
   resultTransformer() {

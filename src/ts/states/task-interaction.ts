@@ -14,6 +14,16 @@ export const empty = (): State => {
 };
 
 // apply given suggestions to state
-export const gaveSuggestions = (state: State, taskId: string, suggestions: Suggestions): State => {
-  return { ...state, operating: true, currentTaskId: taskId, suggestions, currentSuggestionIndex: 0 };
+export const gaveSuggestions = (state: State, suggestions: Suggestions): State => {
+  return { ...state, operating: true, currentTaskId: suggestions.taskId, suggestions, currentSuggestionIndex: 0 };
+};
+
+// select suggestion to make reply
+export const selectSuggestion = (state: State, index: number): State => {
+  let suggestionLength = 0;
+  if (state.suggestions) {
+    suggestionLength = state.suggestions.suggestions.length;
+  }
+
+  return { ...state, currentSuggestionIndex: Math.min(Math.max(0, index), suggestionLength) };
 };

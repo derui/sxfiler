@@ -1,8 +1,8 @@
 import { NotificationKind, createMessage, createProgress } from "./domains/notification";
 import { ContextLike } from "./context";
-import { createInteraction } from "./domains/task-interaction";
 import * as TaskRequireInteractionUseCase from "./usecases/task/require-interaction";
 import * as TaskFinishedUseCase from "./usecases/task/finished";
+import { createSuggestions } from "./domains/task-suggestion";
 
 /**
    Handle common notification that contains message or progress of a server.
@@ -32,8 +32,8 @@ export const handleTaskInteraction = (context: ContextLike) => (params: any) => 
     throw Error("Params should be not null in definition");
   }
 
-  const interaction = createInteraction(params);
-  context.execute(TaskRequireInteractionUseCase.createUseCase(), { interaction });
+  const suggestions = createSuggestions(params);
+  context.execute(TaskRequireInteractionUseCase.createUseCase(), { suggestions });
 };
 
 /**
