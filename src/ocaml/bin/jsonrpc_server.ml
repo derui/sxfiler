@@ -30,17 +30,17 @@ let request_handler t conn =
           let json = Yojson.Safe.from_string f.W.Frame.content in
           match Jy.Request.of_json json with
           | Error _ ->
-              let%lwt res =
-                Lwt.return @@ res_to_frame
-                @@ { Jy.Response.result = None
-                   ; id = None
-                   ; error = Some (Jy.Error.make J.Types.Error_code.Parse_error) }
-              in
-              Lwt.return @@ C.Connection.write_output conn ~frame:res
+            let%lwt res =
+              Lwt.return @@ res_to_frame
+              @@ { Jy.Response.result = None
+                 ; id = None
+                 ; error = Some (Jy.Error.make J.Types.Error_code.Parse_error) }
+            in
+            Lwt.return @@ C.Connection.write_output conn ~frame:res
           | Ok req ->
-              let%lwt res = Jy.Server.handle_request ~request:req t.method_handler in
-              let%lwt frame = Lwt.return @@ res_to_frame @@ res in
-              Lwt.return @@ C.Connection.write_output conn ~frame )
+            let%lwt res = Jy.Server.handle_request ~request:req t.method_handler in
+            let%lwt frame = Lwt.return @@ res_to_frame @@ res in
+            Lwt.return @@ C.Connection.write_output conn ~frame )
       | _ -> C.Connection.default_input_handler conn f )
 
 (** Serve response sending loop *)
