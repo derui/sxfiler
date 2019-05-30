@@ -3,7 +3,7 @@ import { Suggestion, SuggestionKind } from "../../../domains/task-suggestion";
 import * as Element from "../../ui/element/element";
 import { ReplyPayload, createRenamePayload } from "../../../domains/task-reply";
 
-const style: ClassNames = require("./overwrite-suggestion.module.scss");
+const style: ClassNames = require("./overwrite-suggestion-panel.module.scss");
 
 type ClassNames = {
   root: string;

@@ -1,15 +1,15 @@
 import * as React from "react";
 import { mount } from "enzyme";
 import renderer from "react-test-renderer";
-import { Component } from "./rename-suggestion";
+import { Component } from "./overwrite-suggestion-panel";
 import { createSuggestion, SuggestionKind } from "../../../domains/task-suggestion";
-import { createRenamePayload, ReplyPayload } from "../../../domains/task-reply";
+import { createOverwritePayload, ReplyPayload } from "../../../domains/task-reply";
 
 describe("Project", () => {
-  describe("Rename suggestion", () => {
-    it("render with rename suggestion", () => {
+  describe("Overwrite suggestion", () => {
+    it("render with overwrite suggestion", () => {
       const suggestion = createSuggestion({
-        kind: SuggestionKind.Rename,
+        kind: SuggestionKind.Overwrite,
         nodeName: "foo",
       });
       const handler = () => {};
@@ -20,7 +20,7 @@ describe("Project", () => {
 
     it("change style when selected", () => {
       const suggestion = createSuggestion({
-        kind: SuggestionKind.Rename,
+        kind: SuggestionKind.Overwrite,
         nodeName: "foo",
       });
       const handler = () => {};
@@ -42,28 +42,14 @@ describe("Project", () => {
 
     it("call handler when the component is selected and enter key pressed ", done => {
       const suggestion = createSuggestion({
-        kind: SuggestionKind.Rename,
+        kind: SuggestionKind.Overwrite,
         nodeName: "foo",
       });
       const handler = (reply: ReplyPayload) => {
-        expect(reply).toEqual(createRenamePayload("foo"));
+        expect(reply).toEqual(createOverwritePayload());
         done();
       };
       const wrapper = mount(<Component selected={true} suggestion={suggestion} onReply={handler} />);
-      wrapper.simulate("keydown", { key: "Enter" });
-    });
-
-    it("change name when changed value", done => {
-      const suggestion = createSuggestion({
-        kind: SuggestionKind.Rename,
-        nodeName: "foo",
-      });
-      const handler = (reply: ReplyPayload) => {
-        expect(reply).toEqual(createRenamePayload("next"));
-        done();
-      };
-      const wrapper = mount(<Component selected={true} suggestion={suggestion} onReply={handler} />);
-      wrapper.find("input").simulate("change", { target: { nodeValue: "next" } });
       wrapper.simulate("keydown", { key: "Enter" });
     });
   });
