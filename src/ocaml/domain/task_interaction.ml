@@ -14,12 +14,13 @@ end
 
 module Suggestion = struct
   type typ =
-    | Overwrite of {node_name : string}
-    | Rename of {node_name : string}
+    | Overwrite
+    | Rename
   [@@deriving show, eq]
 
   type t =
     { task_id : id
+    ; node_name : string
     ; suggestions : typ list }
   [@@deriving show, eq]
 end

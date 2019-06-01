@@ -7,8 +7,8 @@ module Tr = Sxfiler_server_translator
 module W = Websocket
 
 module Make (Conn : C.Rpc_connection.Instance) : D.Task_notifier.S = struct
-  let need_interaction ~suggestions task_id =
-    let t' = {D.Task_interaction.Suggestion.task_id; suggestions} in
+  let need_interaction ~suggestions ~node_name task_id =
+    let t' = {D.Task_interaction.Suggestion.task_id; node_name; suggestions} in
     let _method = "notification/task/needInteraction" in
     let params = Tr.Task_interaction.Suggestion.(of_domain t' |> to_json) in
     let content =

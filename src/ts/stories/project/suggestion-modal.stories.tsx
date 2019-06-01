@@ -24,10 +24,10 @@ storiesOf("Project/Suggestion Modal", module)
           container={{
             onReply: () => {},
             focusedSuggestion: 0,
+            nodeName: "node",
             suggestions: [
               createSuggestion({
                 kind: SuggestionKind.Overwrite,
-                nodeName: "node",
               }),
             ],
           }}
@@ -51,11 +51,11 @@ storiesOf("Project/Suggestion Modal", module)
           overlay={{}}
           container={{
             onReply: () => {},
+            nodeName: "node",
             focusedSuggestion: 0,
             suggestions: [
               createSuggestion({
                 kind: SuggestionKind.Rename,
-                nodeName: "node",
               }),
             ],
           }}
@@ -74,11 +74,9 @@ storiesOf("Project/Suggestion Modal", module)
       const suggestions = [
         createSuggestion({
           kind: SuggestionKind.Overwrite,
-          nodeName: "node",
         }),
         createSuggestion({
           kind: SuggestionKind.Rename,
-          nodeName: "node",
         }),
       ];
 
@@ -88,6 +86,7 @@ storiesOf("Project/Suggestion Modal", module)
           opened={boolean("opened", false)}
           overlay={{}}
           container={{
+            nodeName: "node",
             onReply: () => {},
             focusedSuggestion: 0,
             suggestions,

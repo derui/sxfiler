@@ -11,6 +11,7 @@ type OverlayProps = { className?: string };
 
 type ContainerProps = {
   className?: string;
+  nodeName: string;
   focusedSuggestion: number;
   suggestions: Suggestion[];
   onReply: (reply: ReplyPayload) => void;

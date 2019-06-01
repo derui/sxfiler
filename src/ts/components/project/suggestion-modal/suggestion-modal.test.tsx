@@ -14,6 +14,7 @@ describe("Project", () => {
           dialogRoot={root}
           opened={true}
           container={{
+            nodeName: "node",
             focusedSuggestion: 0,
             suggestions: [],
             onReply: () => {},
@@ -32,8 +33,9 @@ describe("Project", () => {
           dialogRoot={root}
           opened={true}
           container={{
+            nodeName: "node",
             focusedSuggestion: 0,
-            suggestions: [createSuggestion({ kind: SuggestionKind.Overwrite, nodeName: "foo" })],
+            suggestions: [createSuggestion({ kind: SuggestionKind.Overwrite })],
             onReply: () => {},
           }}
         />
@@ -49,8 +51,9 @@ describe("Project", () => {
           dialogRoot={root}
           opened={true}
           container={{
+            nodeName: "node",
             focusedSuggestion: 0,
-            suggestions: [createSuggestion({ kind: SuggestionKind.Rename, nodeName: "foo" })],
+            suggestions: [createSuggestion({ kind: SuggestionKind.Rename })],
             onReply: () => {},
           }}
         />

@@ -6,12 +6,12 @@ export enum SuggestionKind {
 
 type SuggestionObject = {
   readonly kind: SuggestionKind;
-  readonly nodeName: string;
 };
 export type Suggestion = SuggestionObject;
 
 type SuggestionsObject = {
   readonly taskId: string;
+  readonly nodeName: string;
   readonly suggestions: Suggestion[];
 };
 
@@ -20,7 +20,7 @@ export type Suggestions = SuggestionsObject;
 /**
    The factory function to create interaction from argument
  */
-export const createSuggestion = (args: { kind: SuggestionKind; nodeName: string }): Suggestion => {
+export const createSuggestion = (args: { kind: SuggestionKind }): Suggestion => {
   return {
     ...args,
   };
@@ -29,7 +29,11 @@ export const createSuggestion = (args: { kind: SuggestionKind; nodeName: string 
 /**
    The factory function to create suggestions from argument
  */
-export const createSuggestions = (args: { taskId: string; suggestions: Suggestion[] }): Suggestions => {
+export const createSuggestions = (args: {
+  taskId: string;
+  nodeName: string;
+  suggestions: Suggestion[];
+}): Suggestions => {
   return {
     ...args,
   };
