@@ -9,7 +9,7 @@ exports[`Project Rename suggestion change style when selected 1`] = `
     aria-selected={true}
     className="text"
   >
-    Rename foo.
+    Rename
   </p>
   <label
     aria-selected={true}
@@ -24,7 +24,7 @@ exports[`Project Rename suggestion change style when selected 1`] = `
       className="input"
       onChange={[Function]}
       type="text"
-      value="foo"
+      value="node"
     />
   </label>
 </div>
@@ -39,7 +39,7 @@ exports[`Project Rename suggestion do not render with other suggestion 1`] = `
     aria-selected={false}
     className="text"
   >
-    Rename foo.
+    Rename
   </p>
   <label
     aria-selected={false}
@@ -54,7 +54,7 @@ exports[`Project Rename suggestion do not render with other suggestion 1`] = `
       className="input"
       onChange={[Function]}
       type="text"
-      value="foo"
+      value="node"
     />
   </label>
 </div>
@@ -69,7 +69,7 @@ exports[`Project Rename suggestion render with rename suggestion 1`] = `
     aria-selected={false}
     className="text"
   >
-    Rename foo.
+    Rename
   </p>
   <label
     aria-selected={false}
@@ -84,7 +84,7 @@ exports[`Project Rename suggestion render with rename suggestion 1`] = `
       className="input"
       onChange={[Function]}
       type="text"
-      value="foo"
+      value="node"
     />
   </label>
 </div>

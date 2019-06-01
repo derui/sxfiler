@@ -37,7 +37,9 @@ export const Component: React.FC<Props> = ({ selected, suggestion, onReply }) =>
 
   return (
     <Element.Component className={style.root} onKeyDown={handleKeyDown(selected, onReply)}>
-      <p className={style.text} aria-selected={selected}>{`Overwrite ${suggestion.nodeName}.`}</p>
+      <p className={style.text} aria-selected={selected}>
+        Overwrite
+      </p>
     </Element.Component>
   );
 };

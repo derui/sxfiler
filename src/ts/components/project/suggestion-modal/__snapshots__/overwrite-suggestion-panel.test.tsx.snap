@@ -9,7 +9,7 @@ exports[`Project Overwrite suggestion change style when selected 1`] = `
     aria-selected={true}
     className="text"
   >
-    Overwrite foo.
+    Overwrite
   </p>
 </div>
 `;
@@ -25,7 +25,7 @@ exports[`Project Overwrite suggestion render with overwrite suggestion 1`] = `
     aria-selected={false}
     className="text"
   >
-    Overwrite foo.
+    Overwrite
   </p>
 </div>
 `;

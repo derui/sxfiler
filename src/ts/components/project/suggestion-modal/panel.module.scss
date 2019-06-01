@@ -1,0 +1,37 @@
+@import "../../ui/commom-style/_colors.scss";
+@import "../../ui/commom-style/_variables.scss";
+@import "../../ui/commom-style/reset.module.css";
+
+// Common style for the panels
+.root-base {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: $smallSpace 0;
+  background-color: $sol_base03;
+}
+
+// Base layout for overlay element.
+.text-base {
+  flex: 1 1 auto;
+  color: $sol_base3;
+  font-size: 1.2rem;
+
+  &::before {
+    content: " ";
+    padding-left: $smallSpace;
+    margin-right: $baseSpace;
+
+    background-color: transparent;
+  }
+
+  &[aria-selected="true"] {
+    &::before {
+      content: " ";
+      padding-left: $smallSpace;
+      margin-right: $baseSpace;
+
+      background-color: $sol_red;
+    }
+  }
+}

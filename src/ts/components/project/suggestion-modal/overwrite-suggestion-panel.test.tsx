@@ -10,7 +10,6 @@ describe("Project", () => {
     it("render with overwrite suggestion", () => {
       const suggestion = createSuggestion({
         kind: SuggestionKind.Overwrite,
-        nodeName: "foo",
       });
       const handler = () => {};
       const tree = renderer.create(<Component selected={false} suggestion={suggestion} onReply={handler} />).toJSON();
@@ -21,7 +20,6 @@ describe("Project", () => {
     it("change style when selected", () => {
       const suggestion = createSuggestion({
         kind: SuggestionKind.Overwrite,
-        nodeName: "foo",
       });
       const handler = () => {};
       const tree = renderer.create(<Component selected={true} suggestion={suggestion} onReply={handler} />).toJSON();
@@ -32,7 +30,6 @@ describe("Project", () => {
     it("do not render with other suggestion", () => {
       const suggestion = createSuggestion({
         kind: SuggestionKind.Rename,
-        nodeName: "foo",
       });
       const handler = () => {};
       const tree = renderer.create(<Component selected={false} suggestion={suggestion} onReply={handler} />).toJSON();
@@ -43,7 +40,6 @@ describe("Project", () => {
     it("call handler when the component is selected and enter key pressed ", done => {
       const suggestion = createSuggestion({
         kind: SuggestionKind.Overwrite,
-        nodeName: "foo",
       });
       const handler = (reply: ReplyPayload) => {
         expect(reply).toEqual(createOverwritePayload());

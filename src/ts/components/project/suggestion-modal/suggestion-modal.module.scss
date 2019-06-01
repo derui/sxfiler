@@ -1,8 +1,11 @@
 @import "../../ui/commom-style/reset.module.css";
+@import "../../ui/commom-style/_colors.scss";
+@import "../../ui/commom-style/_variables.scss";
 
 // base layout for root element. This layout should use without change.
 .root {
   composes: root-base from "../../ui/modal/modal.module.scss";
+  overflow: hidden;
 }
 
 // Base layout for overlay element.
@@ -15,4 +18,33 @@
 // Base layout for madal elemenrt.
 .container {
   composes: container-base from "../../ui/modal/modal.module.scss";
+}
+
+.header {
+  color: $sol_base2;
+  background-color: $sol_base03;
+  border-bottom: 1px solid $sol_base2;
+  padding: $baseSpace $smallSpace;
+}
+
+.panelContainer {
+  padding: $smallSpace;
+}
+
+.rootAnimationEnter {
+  transform: translateY(-100%);
+}
+
+.rootAnimationEnterActive {
+  transform: translateY(0);
+  transition: transform ease-out 200ms;
+}
+
+.rootAnimationExit {
+  transform: translateY(0);
+}
+
+.rootAnimationExitActive {
+  transition: transform ease-in 200ms;
+  transform: translateY(-100%);
 }

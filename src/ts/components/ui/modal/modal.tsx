@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import * as Element from "../element/element";
+import { applyDisplayName } from "../util";
 
 export interface ModalClassNames {
   root?: string;
@@ -28,7 +29,7 @@ export function createComponent<
   H extends HTMLElement = HTMLElement
 >(
   context: {
-    container?: React.ComponentType<ContainerProps>;
+    container?: React.ComponentType<ContainerProps & { opened: boolean; onClose: () => void; onOpen: () => void }>;
     overlay?: React.ComponentType<OverlayProps>;
     classNames?: ModalClassNames;
   } = {}
@@ -37,32 +38,25 @@ export function createComponent<
   const Container = context.container || Element.Component;
   const Overlay = context.overlay || Element.Component;
 
-  return class Dialog extends React.Component<Props<ContainerProps, OverlayProps, T, H>> {
-    constructor(props: Props<ContainerProps, OverlayProps, T, H>) {
-      super(props);
-    }
+  return applyDisplayName("Dialog", ({ opened, dialogRoot, overlay, container, ...props }) => {
+    const [closed, setClosed] = React.useState(false);
 
-    render() {
-      const {
-        opened,
-        dialogRoot,
-        overlay,
-        container,
-        ...props
-      }: Props<ContainerProps, OverlayProps, T, H> = this.props;
-      if (!opened) {
-        return null;
-      }
-
-      return ReactDOM.createPortal(
-        <Element.Component className={modalClassNames.root} {...props}>
-          {overlay && <Overlay className={modalClassNames.overlay} {...overlay} />}
-          {container && <Container className={modalClassNames.container} {...container} />}
-        </Element.Component>,
-        this.props.dialogRoot
-      );
-    }
-  };
+    return ReactDOM.createPortal(
+      <Element.Component className={modalClassNames.root} aria-hidden={!opened && closed} {...props}>
+        {overlay && <Overlay className={modalClassNames.overlay} {...overlay} />}
+        {container && (
+          <Container
+            className={modalClassNames.container}
+            onOpen={() => setClosed(false)}
+            onClose={() => setClosed(true)}
+            opened={opened}
+            {...container}
+          />
+        )}
+      </Element.Component>,
+      dialogRoot
+    );
+  });
 }
 
 export const Component = createComponent();
