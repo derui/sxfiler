@@ -6,7 +6,7 @@
   position: relative;
   width: 100%;
   height: 100%;
-  align-items: center;
+  justify-content: center;
 }
 
 // Base layout for overlay element.
@@ -17,5 +17,5 @@
 }
 
 // Base layout for madal elemenrt.
-.modal-base {
+.container-base {
 }

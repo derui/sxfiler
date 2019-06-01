@@ -38,19 +38,8 @@ export function createComponent<
   const Overlay = context.overlay || Element.Component;
 
   return class Dialog extends React.Component<Props<ContainerProps, OverlayProps, T, H>> {
-    private _el: HTMLElement;
-
     constructor(props: Props<ContainerProps, OverlayProps, T, H>) {
       super(props);
-      this._el = document.createElement("div");
-    }
-
-    componentDidMount() {
-      this.props.dialogRoot.appendChild(this._el);
-    }
-
-    componentWillUnmount() {
-      this.props.dialogRoot.removeChild(this._el);
     }
 
     render() {
@@ -70,7 +59,7 @@ export function createComponent<
           {overlay && <Overlay className={modalClassNames.overlay} {...overlay} />}
           {container && <Container className={modalClassNames.container} {...container} />}
         </Element.Component>,
-        this._el
+        this.props.dialogRoot
       );
     }
   };

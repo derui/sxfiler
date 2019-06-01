@@ -7,6 +7,8 @@ import { ReplyPayload } from "../../../domains/task-reply";
 
 const style: Modal.ModalClassNames = require("./suggestion-modal.module.scss");
 
+type OverlayProps = { className?: string };
+
 type ContainerProps = {
   className?: string;
   focusedSuggestion: number;
@@ -31,7 +33,7 @@ const Container: React.FC<ContainerProps> = ({ className, suggestions, focusedSu
   return <div className={className}>{makeSuggestionPanel(focusedSuggestion, suggestions, onReply)}</div>;
 };
 
-export type Props = Modal.Props<ContainerProps>;
+export type Props = Modal.Props<ContainerProps, OverlayProps>;
 
 export const Component = Modal.createComponent({
   classNames: style,
