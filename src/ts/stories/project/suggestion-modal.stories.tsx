@@ -11,7 +11,7 @@ storiesOf("Project/Suggestion Modal", module)
   .add(
     "overwrite suggestion",
     () => {
-      const root = document.getElementById("story-root");
+      const root = document.getElementById("modal-root");
       if (!root) {
         return <span />;
       }
@@ -39,7 +39,7 @@ storiesOf("Project/Suggestion Modal", module)
   .add(
     "rename suggention",
     () => {
-      const root = document.getElementById("story-root");
+      const root = document.getElementById("modal-root");
       if (!root) {
         return <span />;
       }
@@ -67,7 +67,7 @@ storiesOf("Project/Suggestion Modal", module)
   .add(
     "Multiple suggestions",
     () => {
-      const root = document.getElementById("story-root");
+      const root = document.getElementById("modal-root");
       if (!root) {
         return <span />;
       }

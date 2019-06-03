@@ -7,3 +7,14 @@ function loadStories() {
 }
 
 configure(loadStories, module);
+
+// add root element for modal
+const modalRoot = document.createElement("div");
+modalRoot.setAttribute("id", "modal-root");
+modalRoot.style.position = "absolute";
+modalRoot.style.width = "100%";
+modalRoot.style.height = "100%";
+modalRoot.style.top = "0";
+modalRoot.style.left = "0";
+
+document.body.append(modalRoot);

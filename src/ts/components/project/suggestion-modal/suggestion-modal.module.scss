@@ -48,3 +48,13 @@
   transition: transform ease-in 200ms;
   transform: translateY(-100%);
 }
+
+
+.overlayAnimationEnter {
+  opacity: 0.1;
+}
+
+.overlayAnimationEnterActive {
+  opacity: 1.0;
+  transition: opacity ease-out 200ms;
+}

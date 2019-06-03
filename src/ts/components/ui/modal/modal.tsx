@@ -30,7 +30,7 @@ export function createComponent<
 >(
   context: {
     container?: React.ComponentType<ContainerProps & { opened: boolean; onClose: () => void; onOpen: () => void }>;
-    overlay?: React.ComponentType<OverlayProps>;
+    overlay?: React.ComponentType<OverlayProps & { opened: boolean }>;
     classNames?: ModalClassNames;
   } = {}
 ): React.ComponentType<Props<ContainerProps, OverlayProps, T, H>> {
@@ -39,11 +39,11 @@ export function createComponent<
   const Overlay = context.overlay || Element.Component;
 
   return applyDisplayName("Dialog", ({ opened, dialogRoot, overlay, container, ...props }) => {
-    const [closed, setClosed] = React.useState(false);
+    const [closed, setClosed] = React.useState(true);
 
     return ReactDOM.createPortal(
       <Element.Component className={modalClassNames.root} aria-hidden={!opened && closed} {...props}>
-        {overlay && <Overlay className={modalClassNames.overlay} {...overlay} />}
+        {overlay && <Overlay className={modalClassNames.overlay} opened={opened} {...overlay} />}
         {container && (
           <Container
             className={modalClassNames.container}

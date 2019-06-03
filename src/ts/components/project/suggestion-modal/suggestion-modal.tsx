@@ -15,9 +15,11 @@ type ClassNames = Modal.ModalClassNames & {
   rootAnimationExitActive: string;
   rootAnimationEnter: string;
   rootAnimationEnterActive: string;
+  overlayAnimationEnter: string;
+  overlayAnimationEnterActive: string;
 };
 
-type OverlayProps = { className?: string };
+export type OverlayProps = { className?: string };
 
 export type ContainerProps = {
   className?: string;
@@ -33,12 +35,27 @@ type ContainerContextProps = ContainerProps & {
   onOpen: () => void;
 };
 
-const makeSuggestionPanel = (
-  nodeName: string,
-  index: number,
-  suggestions: Suggestion[],
-  handleReply: (reply: ReplyPayload) => void
-) => {
+type OverlayContextProps = OverlayProps & {
+  opened: boolean;
+};
+
+const Overlay: React.FC<OverlayContextProps> = ({ className, opened }) => {
+  return (
+    <CSSTransition
+      in={opened}
+      timeout={100}
+      unmountOnExit={true}
+      classNames={{
+        enter: style.overlayAnimationEnter,
+        enterActive: style.overlayAnimationEnterActive,
+      }}
+    >
+      {() => <div className={className} />}
+    </CSSTransition>
+  );
+};
+
+const makeSuggestionPanel = (index: number, suggestions: Suggestion[], handleReply: (reply: ReplyPayload) => void) => {
   return suggestions.map((v, i) => {
     switch (v.kind) {
       case SuggestionKind.Overwrite:
@@ -46,15 +63,7 @@ const makeSuggestionPanel = (
           <OverwriteSuggestionPanel.Component key={i} selected={index === i} suggestion={v} onReply={handleReply} />
         );
       case SuggestionKind.Rename:
-        return (
-          <RenameSuggestionPanel.Component
-            key={i}
-            nodeName={nodeName}
-            selected={index === i}
-            suggestion={v}
-            onReply={handleReply}
-          />
-        );
+        return <RenameSuggestionPanel.Component key={i} selected={index === i} suggestion={v} onReply={handleReply} />;
     }
   });
 };
@@ -87,7 +96,7 @@ const Container: React.FC<ContainerContextProps> = ({
           <div className={className}>
             <h4 className={style.header}>Suggestions for {nodeName}</h4>
             <section className={style.panelContainer}>
-              {makeSuggestionPanel(nodeName, focusedSuggestion, suggestions, onReply)}
+              {makeSuggestionPanel(focusedSuggestion, suggestions, onReply)}
             </section>
           </div>
         );
@@ -101,4 +110,5 @@ export type Props = Modal.Props<ContainerProps, OverlayProps>;
 export const Component = Modal.createComponent({
   classNames: style,
   container: Container,
+  overlay: Overlay,
 });
