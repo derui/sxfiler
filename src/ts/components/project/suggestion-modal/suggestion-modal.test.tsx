@@ -1,9 +1,9 @@
 import * as React from "react";
 import { mount } from "enzyme";
 import * as Modal from "./suggestion-modal";
-import { createSuggestion, SuggestionKind } from "../../../domains/task-suggestion";
 import { Component as OverwriteSuggestionPanel } from "./overwrite-suggestion-panel";
 import { Component as RenameSuggestionPanel } from "./rename-suggestion-panel";
+import { createRenamePayload, createOverwritePayload } from "../../../domains/task-reply";
 
 describe("Project", () => {
   describe("Suggestion Modal", () => {
@@ -14,9 +14,8 @@ describe("Project", () => {
           dialogRoot={root}
           opened={true}
           container={{
-            nodeName: "node",
-            focusedSuggestion: 0,
-            suggestions: [],
+            focusedReply: 0,
+            replies: [],
             onReply: () => {},
           }}
         />
@@ -26,16 +25,15 @@ describe("Project", () => {
       expect(tree.find(RenameSuggestionPanel)).toHaveLength(0);
     });
 
-    it("render with overwrite suggestion", () => {
+    it("render with reply to overwrite", () => {
       const root = document.createElement("div");
       const tree = mount(
         <Modal.Component
           dialogRoot={root}
           opened={true}
           container={{
-            nodeName: "node",
-            focusedSuggestion: 0,
-            suggestions: [createSuggestion({ kind: SuggestionKind.Overwrite })],
+            focusedReply: 0,
+            replies: [createOverwritePayload()],
             onReply: () => {},
           }}
         />
@@ -44,16 +42,15 @@ describe("Project", () => {
       expect(tree.find(OverwriteSuggestionPanel)).toHaveLength(1);
       expect(tree.find(RenameSuggestionPanel)).toHaveLength(0);
     });
-    it("render with rename suggestion", () => {
+    it("render with reply to rename", () => {
       const root = document.createElement("div");
       const tree = mount(
         <Modal.Component
           dialogRoot={root}
           opened={true}
           container={{
-            nodeName: "node",
-            focusedSuggestion: 0,
-            suggestions: [createSuggestion({ kind: SuggestionKind.Rename })],
+            focusedReply: 0,
+            replies: [createRenamePayload("foo")],
             onReply: () => {},
           }}
         />

@@ -21,14 +21,14 @@
 }
 
 .header {
-  color: $sol_base2;
-  background-color: $sol_base03;
-  border-bottom: 1px solid $sol_base2;
-  padding: $baseSpace $smallSpace;
+  color: $sol_base03;
+  background-color: $sol_base3;
+  padding: $largeSpace;
 }
 
 .panelContainer {
-  padding: $smallSpace;
+  padding: $baseSpace 0;
+  background-color: $sol_base03;
 }
 
 .rootAnimationEnter {

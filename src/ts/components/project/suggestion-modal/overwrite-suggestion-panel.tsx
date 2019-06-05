@@ -14,10 +14,8 @@ export type Props = {
 
 export const Component: React.FC<Props> = ({ selected }) => {
   return (
-    <Element.Component className={style.root}>
-      <p className={style.text} aria-selected={selected}>
-        Overwrite
-      </p>
+    <Element.Component className={style.root} aria-selected={selected}>
+      <p className={style.text}>Overwrite</p>
     </Element.Component>
   );
 };

@@ -1,10 +1,10 @@
 import { withInfo } from "@storybook/addon-info";
-import { boolean, withKnobs } from "@storybook/addon-knobs";
+import { boolean, number, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
 import * as React from "react";
 
 import { Component as SuggestionModal } from "../../components/project/suggestion-modal/suggestion-modal";
-import { createSuggestion, SuggestionKind } from "../../domains/task-suggestion";
+import { createOverwritePayload, createRenamePayload } from "../../domains/task-reply";
 
 storiesOf("Project/Suggestion Modal", module)
   .addParameters({ info: { inline: true } })
@@ -23,13 +23,8 @@ storiesOf("Project/Suggestion Modal", module)
           overlay={{}}
           container={{
             onReply: () => {},
-            focusedSuggestion: 0,
-            nodeName: "node",
-            suggestions: [
-              createSuggestion({
-                kind: SuggestionKind.Overwrite,
-              }),
-            ],
+            focusedReply: 0,
+            replies: [createOverwritePayload()],
           }}
         />
       );
@@ -51,13 +46,8 @@ storiesOf("Project/Suggestion Modal", module)
           overlay={{}}
           container={{
             onReply: () => {},
-            nodeName: "node",
-            focusedSuggestion: 0,
-            suggestions: [
-              createSuggestion({
-                kind: SuggestionKind.Rename,
-              }),
-            ],
+            focusedReply: 0,
+            replies: [createRenamePayload("node")],
           }}
         />
       );
@@ -71,14 +61,7 @@ storiesOf("Project/Suggestion Modal", module)
       if (!root) {
         return <span />;
       }
-      const suggestions = [
-        createSuggestion({
-          kind: SuggestionKind.Overwrite,
-        }),
-        createSuggestion({
-          kind: SuggestionKind.Rename,
-        }),
-      ];
+      const replies = [createOverwritePayload(), createRenamePayload("node")];
 
       return (
         <SuggestionModal
@@ -86,10 +69,9 @@ storiesOf("Project/Suggestion Modal", module)
           opened={boolean("opened", false)}
           overlay={{}}
           container={{
-            nodeName: "node",
             onReply: () => {},
-            focusedSuggestion: 0,
-            suggestions,
+            focusedReply: number("selected", 0),
+            replies,
           }}
         />
       );

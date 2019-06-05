@@ -4,34 +4,27 @@
 
 // Common style for the panels
 .root-base {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  padding: $smallSpace 0;
+  display: grid;
+  grid-template-columns: 10em 1fr;
+
+  align-items: center;
+  padding: $baseSpace;
+  margin: 0 $baseSpace;
+
+  border-left: $smallSpace solid transparent;
+
+  color: $sol_base3;
   background-color: $sol_base03;
+
+  transition: background-color ease-out 150ms, color ease-out 150ms;
+
+  &[aria-selected="true"] {
+    color: $sol_base03;
+    background-color: $sol_base3;
+    border-left: $smallSpace solid $sol_red;
+  }
 }
 
 // Base layout for overlay element.
 .text-base {
-  flex: 1 1 auto;
-  color: $sol_base3;
-  font-size: 1.2rem;
-
-  &::before {
-    content: " ";
-    padding-left: $smallSpace;
-    margin-right: $baseSpace;
-
-    background-color: transparent;
-  }
-
-  &[aria-selected="true"] {
-    &::before {
-      content: " ";
-      padding-left: $smallSpace;
-      margin-right: $baseSpace;
-
-      background-color: $sol_red;
-    }
-  }
 }

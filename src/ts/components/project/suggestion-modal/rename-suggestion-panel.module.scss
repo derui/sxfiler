@@ -13,17 +13,8 @@
 }
 
 .labelContainer {
-  flex: 1 1 auto;
-
-  display: flex;
-  flex-direction: row;
-}
-
-.label {
-  color: $sol_base3;
-  flex: 1 1 auto;
 }
 
 .input {
-  flex: 1 1 auto;
+  padding: $smallSpace;
 }

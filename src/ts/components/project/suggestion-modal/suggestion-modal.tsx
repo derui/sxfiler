@@ -1,9 +1,8 @@
 import * as React from "react";
 import * as Modal from "../../ui/modal/modal";
-import { Suggestion, SuggestionKind } from "../../../domains/task-suggestion";
 import * as OverwriteSuggestionPanel from "./overwrite-suggestion-panel";
 import * as RenameSuggestionPanel from "./rename-suggestion-panel";
-import { ReplyPayload } from "../../../domains/task-reply";
+import { ReplyPayload, ReplyKind } from "../../../domains/task-reply";
 import { CSSTransition } from "react-transition-group";
 
 const style: ClassNames = require("./suggestion-modal.module.scss");
@@ -11,6 +10,7 @@ const style: ClassNames = require("./suggestion-modal.module.scss");
 type ClassNames = Modal.ModalClassNames & {
   header: string;
   panelContainer: string;
+  originalNode: string;
   rootAnimationExit: string;
   rootAnimationExitActive: string;
   rootAnimationEnter: string;
@@ -23,9 +23,8 @@ export type OverlayProps = { className?: string };
 
 export type ContainerProps = {
   className?: string;
-  nodeName: string;
-  focusedSuggestion: number;
-  suggestions: Suggestion[];
+  focusedReply: number;
+  replies: ReplyPayload[];
   onReply: (reply: ReplyPayload) => void;
 };
 
@@ -55,19 +54,19 @@ const Overlay: React.FC<OverlayContextProps> = ({ className, opened }) => {
   );
 };
 
-const makeSuggestionPanel = (
-  index: number,
-  nodeName: string,
-  suggestions: Suggestion[],
-  handleReply: (reply: ReplyPayload) => void
-) => {
-  return suggestions.map((v, i) => {
+const makeSuggestionPanel = (index: number, replies: ReplyPayload[], handleReply: (reply: ReplyPayload) => void) => {
+  return replies.map((v, i) => {
     switch (v.kind) {
-      case SuggestionKind.Overwrite:
+      case ReplyKind.Overwrite:
         return <OverwriteSuggestionPanel.Component key={i} selected={index === i} />;
-      case SuggestionKind.Rename:
+      case ReplyKind.Rename:
         return (
-          <RenameSuggestionPanel.Component key={i} selected={index === i} onUpdated={handleReply} nodeName={nodeName} />
+          <RenameSuggestionPanel.Component
+            key={i}
+            selected={index === i}
+            onUpdated={handleReply}
+            nodeName={v.newName}
+          />
         );
     }
   });
@@ -75,9 +74,8 @@ const makeSuggestionPanel = (
 
 const Container: React.FC<ContainerContextProps> = ({
   className,
-  nodeName,
-  suggestions,
-  focusedSuggestion,
+  replies,
+  focusedReply,
   onReply,
   opened,
   onClose,
@@ -99,10 +97,8 @@ const Container: React.FC<ContainerContextProps> = ({
       {() => {
         return (
           <div className={className}>
-            <h4 className={style.header}>Suggestions for {nodeName}</h4>
-            <section className={style.panelContainer}>
-              {makeSuggestionPanel(focusedSuggestion, nodeName, suggestions, onReply)}
-            </section>
+            <h4 className={style.header}>Suggestions </h4>
+            <section className={style.panelContainer}>{makeSuggestionPanel(focusedReply, replies, onReply)}</section>
           </div>
         );
       }}
