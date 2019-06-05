@@ -2,7 +2,7 @@ import { NotificationKind, createMessage, createProgress } from "./domains/notif
 import { ContextLike } from "./context";
 import * as TaskRequireInteractionUseCase from "./usecases/task/require-interaction";
 import * as TaskFinishedUseCase from "./usecases/task/finished";
-import { createSuggestions } from "./domains/task-suggestion";
+import { createSuggestions, Suggestion } from "./domains/task-suggestion";
 
 /**
    Handle common notification that contains message or progress of a server.
@@ -27,11 +27,11 @@ export const handleNotification = (params: any) => {
 /**
    Handle a notification to require interaction of a task
  */
-export const handleTaskInteraction = (context: ContextLike) => (params: any) => {
-  if (!params) {
-    throw Error("Params should be not null in definition");
-  }
-
+export const handleTaskInteraction = (context: ContextLike) => (params: {
+  taskId: string;
+  nodeName: string;
+  suggestions: Suggestion[];
+}) => {
   const suggestions = createSuggestions(params);
   context.execute(TaskRequireInteractionUseCase.createUseCase(), { suggestions });
 };
@@ -39,10 +39,6 @@ export const handleTaskInteraction = (context: ContextLike) => (params: any) => 
 /**
    Handle a notification that contains the task id finished
  */
-export const handleTaskFinished = (context: ContextLike) => (params: any) => {
-  if (!params) {
-    throw Error("Params should be not null in definition");
-  }
-
+export const handleTaskFinished = (context: ContextLike) => (params: string) => {
   context.execute(TaskFinishedUseCase.createUseCase(), params);
 };
