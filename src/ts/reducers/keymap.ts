@@ -8,7 +8,7 @@ export function reducer(state: State = empty(), action: Actions): State {
   switch (action.type) {
     case ActionTypes.enableFileTree:
       return { current: action.keymap };
-    case ActionTypes.enablePreview:
+    case ActionTypes.enableSuggestion:
       return { current: action.keymap };
     case KeymapActionTypes.updateKeymap:
       return { current: action.keymap };

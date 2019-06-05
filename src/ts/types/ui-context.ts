@@ -2,7 +2,7 @@
 enum UIContext {
   OnFileTree = "onFileTree",
   OnComplete = "onComplete",
-  OnPreview = "onPreview",
+  OnSuggestion = "onSuggestion",
 }
 
 export default UIContext;

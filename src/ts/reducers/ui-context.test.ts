@@ -17,7 +17,7 @@ describe("reducers", () => {
     it("should append a new notification when Notify action", () => {
       const ret = reducer(UIContext.OnComplete, actions.enablePreview({ keymap }));
 
-      expect(ret).toEqual(UIContext.OnPreview);
+      expect(ret).toEqual(UIContext.OnSuggestion);
     });
 
     it("should through action if unknown target", () => {

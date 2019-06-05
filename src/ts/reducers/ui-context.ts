@@ -7,8 +7,8 @@ export default function reducer(state = UIContext.OnFileTree, action: Actions) {
   switch (action.type) {
     case ActionTypes.enableFileTree:
       return UIContext.OnFileTree;
-    case ActionTypes.enablePreview:
-      return UIContext.OnPreview;
+    case ActionTypes.enableSuggestion:
+      return UIContext.OnSuggestion;
     default:
       break;
   }

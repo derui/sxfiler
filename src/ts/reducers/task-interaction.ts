@@ -6,12 +6,14 @@ import * as TaskInteractionState from "../states/task-interaction";
 export default function reducer(state = TaskInteractionState.empty(), action: Actions) {
   switch (action.type) {
     case ActionTypes.requireInteraction:
-      return TaskInteractionState.gaveSuggestions(state, action.suggestions);
+      return TaskInteractionState.giveSuggestions(state, action.suggestions);
     case ActionTypes.finished:
       // TODO
       break;
     case ActionTypes.selectSuggestion:
       return TaskInteractionState.selectSuggestion(state, action.index);
+    case ActionTypes.updateReplyPayload:
+      return TaskInteractionState.updateReplyPayload(state, action.payload);
   }
   return state;
 }

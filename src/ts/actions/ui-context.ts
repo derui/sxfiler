@@ -3,11 +3,11 @@ import { Keymap } from "../domains/keymap";
 
 export enum ActionTypes {
   enableFileTree = "uicontext_enable_file_tree",
-  enablePreview = "uicontext_enable_preview",
+  enableSuggestion = "uicontext_enable_preview",
 }
 
 type EnableFileTreeAction = AppAction<ActionTypes.enableFileTree, { keymap: Keymap }>;
-type EnablePreviewAction = AppAction<ActionTypes.enablePreview, { keymap: Keymap }>;
+type EnablePreviewAction = AppAction<ActionTypes.enableSuggestion, { keymap: Keymap }>;
 
 export type Actions = EnableFileTreeAction | EnablePreviewAction;
 
@@ -16,7 +16,7 @@ const enableFileTree = ({ keymap }: { keymap: Keymap }): EnableFileTreeAction =>
 };
 
 const enablePreview = ({ keymap }: { keymap: Keymap }): EnablePreviewAction => {
-  return { type: ActionTypes.enablePreview, keymap };
+  return { type: ActionTypes.enableSuggestion, keymap };
 };
 
 export const actions = { enableFileTree, enablePreview };
