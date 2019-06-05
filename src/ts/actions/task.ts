@@ -6,17 +6,17 @@ export enum ActionTypes {
   requireInteraction = "task_require_interaction",
   sendReply = "task_send_reply",
   finished = "task_finished",
-  selectSuggestion = "task_select_suggestion",
+  selectReply = "task_select_reply",
   updateReplyPayload = "task_update_reply_payload",
 }
 
 type RequireInteractionAction = AppAction<ActionTypes.requireInteraction, { suggestions: Suggestions }>;
 type SendReplyAction = AppAction<ActionTypes.sendReply, { reply: Reply }>;
 type FinishedAction = AppAction<ActionTypes.finished, { taskId: string }>;
-type SelectSuggestionAction = AppAction<ActionTypes.selectSuggestion, { index: number }>;
+type SelectReplyAction = AppAction<ActionTypes.selectReply, { index: number }>;
 type UpdateReplyPayloadAction = AppAction<ActionTypes.updateReplyPayload, { payload: ReplyPayload }>;
 
-export type Actions = RequireInteractionAction | FinishedAction | SelectSuggestionAction | UpdateReplyPayloadAction;
+export type Actions = RequireInteractionAction | FinishedAction | SelectReplyAction | UpdateReplyPayloadAction;
 
 const requireInteraction = (suggestions: Suggestions): RequireInteractionAction => {
   return { type: ActionTypes.requireInteraction, suggestions };
@@ -30,12 +30,12 @@ const sendReply = (reply: Reply): SendReplyAction => {
   return { type: ActionTypes.sendReply, reply };
 };
 
-const selectSuggestion = (index: number): SelectSuggestionAction => {
-  return { type: ActionTypes.selectSuggestion, index };
+const selectReply = (index: number): SelectReplyAction => {
+  return { type: ActionTypes.selectReply, index };
 };
 
 const updateReplyPayload = (payload: ReplyPayload): UpdateReplyPayloadAction => {
   return { type: ActionTypes.updateReplyPayload, payload };
 };
 
-export const actions = { requireInteraction, finished, sendReply, selectSuggestion, updateReplyPayload };
+export const actions = { requireInteraction, finished, sendReply, selectReply, updateReplyPayload };

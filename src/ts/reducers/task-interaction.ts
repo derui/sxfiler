@@ -10,10 +10,10 @@ export default function reducer(state = TaskInteractionState.empty(), action: Ac
     case ActionTypes.finished:
       // TODO
       break;
-    case ActionTypes.selectSuggestion:
-      return TaskInteractionState.selectSuggestion(state, action.index);
+    case ActionTypes.selectReply:
+      return TaskInteractionState.selectReply(state, action.index);
     case ActionTypes.updateReplyPayload:
-      return TaskInteractionState.updateReplyPayload(state, action.payload);
+      return TaskInteractionState.updateCurrentReply(state, action.payload);
   }
   return state;
 }
