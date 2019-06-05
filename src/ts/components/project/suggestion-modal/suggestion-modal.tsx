@@ -55,15 +55,20 @@ const Overlay: React.FC<OverlayContextProps> = ({ className, opened }) => {
   );
 };
 
-const makeSuggestionPanel = (index: number, suggestions: Suggestion[], handleReply: (reply: ReplyPayload) => void) => {
+const makeSuggestionPanel = (
+  index: number,
+  nodeName: string,
+  suggestions: Suggestion[],
+  handleReply: (reply: ReplyPayload) => void
+) => {
   return suggestions.map((v, i) => {
     switch (v.kind) {
       case SuggestionKind.Overwrite:
-        return (
-          <OverwriteSuggestionPanel.Component key={i} selected={index === i} suggestion={v} onReply={handleReply} />
-        );
+        return <OverwriteSuggestionPanel.Component key={i} selected={index === i} />;
       case SuggestionKind.Rename:
-        return <RenameSuggestionPanel.Component key={i} selected={index === i} suggestion={v} onReply={handleReply} />;
+        return (
+          <RenameSuggestionPanel.Component key={i} selected={index === i} onUpdated={handleReply} nodeName={nodeName} />
+        );
     }
   });
 };
@@ -96,7 +101,7 @@ const Container: React.FC<ContainerContextProps> = ({
           <div className={className}>
             <h4 className={style.header}>Suggestions for {nodeName}</h4>
             <section className={style.panelContainer}>
-              {makeSuggestionPanel(focusedSuggestion, suggestions, onReply)}
+              {makeSuggestionPanel(focusedSuggestion, nodeName, suggestions, onReply)}
             </section>
           </div>
         );

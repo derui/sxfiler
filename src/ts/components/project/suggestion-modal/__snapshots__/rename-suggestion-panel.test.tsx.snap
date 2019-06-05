@@ -3,7 +3,6 @@
 exports[`Project Rename suggestion change style when selected 1`] = `
 <div
   className="root"
-  onKeyDown={[Function]}
 >
   <p
     aria-selected={true}
@@ -33,7 +32,6 @@ exports[`Project Rename suggestion change style when selected 1`] = `
 exports[`Project Rename suggestion do not render with other suggestion 1`] = `
 <div
   className="root"
-  onKeyDown={[Function]}
 >
   <p
     aria-selected={false}
@@ -63,7 +61,6 @@ exports[`Project Rename suggestion do not render with other suggestion 1`] = `
 exports[`Project Rename suggestion render with rename suggestion 1`] = `
 <div
   className="root"
-  onKeyDown={[Function]}
 >
   <p
     aria-selected={false}
