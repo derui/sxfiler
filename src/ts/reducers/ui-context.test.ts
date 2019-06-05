@@ -14,8 +14,8 @@ describe("reducers", () => {
       expect(ret).toEqual(UIContext.OnFileTree);
     });
 
-    it("should append a new notification when Notify action", () => {
-      const ret = reducer(UIContext.OnComplete, actions.enablePreview({ keymap }));
+    it("should change state to do action for suggestion", () => {
+      const ret = reducer(UIContext.OnComplete, actions.enableSuggestion({ keymap }));
 
       expect(ret).toEqual(UIContext.OnSuggestion);
     });
