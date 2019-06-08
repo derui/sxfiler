@@ -1,6 +1,5 @@
 // reducers for notification
 import { actions } from "../actions/notification";
-import { actions as otherActions } from "../actions/ui-context";
 import { createMessage, Level } from "../domains/notification";
 import { createNotifications } from "../domains/notifications";
 import { empty, State } from "../states/notification";
@@ -54,18 +53,6 @@ describe("reducers", () => {
 
       expect(ret.timeouts.messages).toHaveLength(0);
       expect(ret.timeouts.progresses).toHaveLength(0);
-    });
-
-    it("should through unhandle action", () => {
-      const state: State = {
-        notifications: createNotifications([createMessage("id", Level.Info, "message")]),
-        timeouts: createNotifications([]),
-      };
-      const keymap = createKeymap();
-
-      const ret = reducer(state, otherActions.enableFileTree({ keymap }));
-
-      expect(ret).toStrictEqual(state);
     });
   });
 });

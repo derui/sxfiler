@@ -1,14 +1,14 @@
 // define reducer for UI context
 import { Actions } from "../actions";
-import { ActionTypes } from "../actions/ui-context";
 import UIContext from "../types/ui-context";
+import { ActionTypes } from "../actions/task";
 
 export default function reducer(state = UIContext.OnFileTree, action: Actions) {
   switch (action.type) {
-    case ActionTypes.enableFileTree:
-      return UIContext.OnFileTree;
-    case ActionTypes.enableSuggestion:
+    case ActionTypes.requireInteraction:
       return UIContext.OnSuggestion;
+    case ActionTypes.finished:
+      return UIContext.OnFileTree;
     default:
       break;
   }
