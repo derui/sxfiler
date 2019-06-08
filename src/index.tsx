@@ -19,7 +19,6 @@ import { createUseCase } from "./ts/usecases/filer/initialize";
 import { createCommandRegistrar } from "./ts/usecases/command-registrar";
 import { registAllCommand } from "./ts/usecases/commands";
 import * as NotificationHandlers from "./ts/notification-handlers";
-import * as enableFileTree from "./ts/usecases/ui-context/enable-file-tree";
 
 const url = process.env.NODE_ENV === "production" ? process.env.REACT_APP_SERVER : "ws://localhost:50879";
 
@@ -50,7 +49,6 @@ const locator = {
 
 const initializeState = () => {
   locator.context.execute(createUseCase(client), { location: "." });
-  locator.context.execute(enableFileTree.createUseCase(client), {});
 };
 
 ws.onopen = () => {

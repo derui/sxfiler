@@ -2,12 +2,11 @@
 
 import { Api } from "../libs/json-rpc/client";
 import { createKeymap, Keymap } from "../domains/keymap";
+import UIContext from "../types/ui-context";
 
 export enum Methods {
   Get = "keymap/get",
   Reload = "keymap/reload",
-  AddContext = "keymap/addContext",
-  DeleteContext = "keymap/deleteContext",
 }
 
 /**
@@ -16,12 +15,28 @@ export enum Methods {
    @param keymaps JSON representation for fller
    @return Filer object
  */
-function transformKeymap(keymaps: { bindings: [{ key: string; action: string }] }): Keymap {
+function transformKeymap(keymaps: {
+  bindings: [{ key: string; action: string; when: { contexts: string[] } }];
+}): Keymap {
   if (!keymaps) {
     throw new Error("Keymap should not be undefined or null");
   }
 
-  return createKeymap(keymaps.bindings);
+  return createKeymap(
+    keymaps.bindings.map(v => {
+      const contexts = v.when.contexts.map(v => {
+        switch (v) {
+          case UIContext.OnFileTree:
+            return UIContext.OnFileTree;
+          case UIContext.OnSuggestion:
+            return UIContext.OnSuggestion;
+          default:
+            throw new Error(`Unknown context: ${v}`);
+        }
+      });
+      return { ...v, when: { contexts } };
+    })
+  );
 }
 
 /**
@@ -58,38 +73,4 @@ const Reload: Api<Methods.Reload, any, Keymap> = {
   },
 };
 
-/**
-   API definition for keymap/addContext
- */
-const AddContext: Api<Methods.AddContext, { context: string }, Keymap> = {
-  method: Methods.AddContext,
-  parametersTransformer({ context }) {
-    return { context };
-  },
-  resultTransformer(ret, error) {
-    if (!ret && error) {
-      throw Error(error.message);
-    }
-
-    return transformKeymap(ret);
-  },
-};
-
-/**
-   API definition for keymap/deleteContext
- */
-const DeleteContext: Api<Methods.DeleteContext, { context: string }, Keymap> = {
-  method: Methods.DeleteContext,
-  parametersTransformer({ context }) {
-    return { context };
-  },
-  resultTransformer(ret, error) {
-    if (!ret && error) {
-      throw Error(error.message);
-    }
-
-    return transformKeymap(ret);
-  },
-};
-
-export const Apis = { Get, AddContext, DeleteContext, Reload };
+export const Apis = { Get, Reload };

@@ -1,10 +1,21 @@
+import UIContext from "../types/ui-context";
+
 /**
  * keymap defines interfaces for key-action mappings on server.
  */
 
+export type AppContext = {
+  currentContext: UIContext;
+};
+
+type When = {
+  contexts: UIContext[];
+};
+
 export type Binding = {
   key: string;
   action: string;
+  when: When;
 };
 
 export type Keymap = {
@@ -18,7 +29,18 @@ export type Keymap = {
    * @param key the key to find the binding
    */
   find(key: string): Binding | undefined;
+
+  /**
+   * Get subset of keymap allowed to use
+   */
+  allowedWhen(context: AppContext): Keymap;
 };
+
+const evaluateWithContext = (w: When, context: AppContext) => w.contexts.includes(context.currentContext);
+
+function allowedWhen(this: Keymap, context: AppContext): Keymap {
+  return createKeymap(this.bindings.filter(v => evaluateWithContext(v.when, context)));
+}
 
 export const createKeymap = (bindings: Binding[] = []): Keymap => {
   return {
@@ -32,6 +54,7 @@ export const createKeymap = (bindings: Binding[] = []): Keymap => {
     find(key: string): Binding | undefined {
       return this._bindings.find(v => v.key === key);
     },
+    allowedWhen,
   } as Keymap & {
     _bindings: Binding[];
   };
