@@ -18,6 +18,7 @@ import { AppState } from "./ts/states";
 import { createUseCase } from "./ts/usecases/filer/initialize";
 import { createCommandRegistrar } from "./ts/usecases/command-registrar";
 import { registAllCommand } from "./ts/usecases/commands";
+import * as Get from "./ts/usecases/keymap/get";
 import * as NotificationHandlers from "./ts/notification-handlers";
 
 const url = process.env.NODE_ENV === "production" ? process.env.REACT_APP_SERVER : "ws://localhost:50879";
@@ -48,6 +49,7 @@ const locator = {
 };
 
 const initializeState = () => {
+  locator.context.execute(Get.createUseCase(client), undefined);
   locator.context.execute(createUseCase(client), { location: "." });
 };
 
