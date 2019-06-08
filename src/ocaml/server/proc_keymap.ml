@@ -12,21 +12,6 @@ module Get_spec (G : G.Keymap.Get.S) : P.Spec = struct
 end
 
 (* defines procedure to get current key bindings *)
-module Add_context_spec (G : G.Keymap.Add_context.S) : P.Spec = struct
-  module Gateway = G
-
-  let method_ = "keymap/addContext"
-  let param_requirement = `Required
-end
-
-module Delete_context_spec (G : G.Keymap.Delete_context.S) : P.Spec = struct
-  module Gateway = G
-
-  let method_ = "keymap/deleteContext"
-  let param_requirement = `Required
-end
-
-(* defines procedure to get current key bindings *)
 module Reload_spec (G : G.Keymap.Reload.S) : P.Spec = struct
   module Gateway = G
 

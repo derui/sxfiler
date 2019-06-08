@@ -25,8 +25,6 @@ module type S = sig
   module Usecase : sig
     module Keymap_get : U.Keymap.Get.S
     module Keymap_reload : U.Keymap.Reload.S
-    module Keymap_add_context : U.Keymap.Add_context.S
-    module Keymap_delete_context : U.Keymap.Delete_context.S
     module Configuration_get : U.Configuration.Get.S
     module Completion_setup : U.Completion.Setup.S
     module Completion_read : U.Completion.Read.S
@@ -71,8 +69,6 @@ module Make
       U.Keymap.Reload.Make (Condition_repo) (Configuration_repo) (Key_map_repo)
         (Key_map_resolve_service)
 
-    module Keymap_add_context = U.Keymap.Add_context.Make (Condition_repo) (Key_map_repo)
-    module Keymap_delete_context = U.Keymap.Delete_context.Make (Condition_repo) (Key_map_repo)
     module Configuration_get = U.Configuration.Get.Make (Configuration_repo)
     module Completion_setup = U.Completion.Setup.Make (Completion_repo)
     module Completion_read = U.Completion.Read.Make (Completion_repo) (Completer)

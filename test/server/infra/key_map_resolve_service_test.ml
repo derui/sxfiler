@@ -6,17 +6,13 @@ module F = Test_fixtures
 let key_map =
   let module K = Sxfiler_kbd in
   let bindings =
-    [ (D.Condition.empty, K.of_keyseq "k" |> Option.get_exn, "action1")
-    ; ( D.Condition.empty |> D.Condition.enable ~context:"foo"
-      , K.of_keyseq "j" |> Option.get_exn
-      , "action2" )
-    ; ( D.Condition.empty |> D.Condition.enable ~context:"bar"
-      , K.of_keyseq "h" |> Option.get_exn
-      , "action3" ) ]
+    [ ([], K.of_keyseq "k" |> Option.get_exn, "action1")
+    ; (["foo"], K.of_keyseq "j" |> Option.get_exn, "action2")
+    ; (["bar"], K.of_keyseq "h" |> Option.get_exn, "action3") ]
   in
   let key_map = D.Key_map.make () in
   List.fold_left
-    (fun key_map (condition, key, value) -> D.Key_map.add ~condition ~key ~value key_map)
+    (fun key_map (contexts, key, value) -> D.Key_map.add ~contexts ~key ~value key_map)
     key_map bindings
 
 let test_set =

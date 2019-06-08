@@ -8,5 +8,5 @@ type bind = key * action
 let fixture bindings =
   let bindings = List.map (fun (key, action) -> (Sxfiler_kbd.make key, action)) bindings in
   List.fold_left
-    (fun keymap (key, value) -> D.Key_map.add ~condition:D.Condition.empty ~key ~value keymap)
+    (fun keymap (key, value) -> D.Key_map.add ~contexts:[] ~key ~value keymap)
     (D.Key_map.make ()) bindings
