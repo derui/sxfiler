@@ -9,6 +9,7 @@ import LocatorContext, { Locator } from "../../../locator";
 import { AppState } from "../../../states";
 import { findBinding } from "../../../states/keymap";
 import * as kbd from "../../../libs/kbd";
+import * as SuggestionModalContainer from "./suggestion-modal-container/suggestion-modal-container";
 
 const styles = require("./main-container.module.scss");
 
@@ -76,6 +77,7 @@ export class Component extends React.Component<Props> {
             >
               <FileListContainer.Component key="filer" state={fileList} />
               <NotificationContainer.Component key="notification" state={notification} />
+              <SuggestionModalContainer.Component state={this.props.state.taskInteraction} />
             </Element.Component>
           </RootRef>
         )}

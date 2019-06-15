@@ -6,7 +6,7 @@ describe("Contexts", () => {
   describe("ModalRoot", () => {
     it("get undefined when default provider", () => {
       const wrapper = mount(
-        <ModalRootContext.Provider value={{}}>
+        <ModalRootContext.Provider value={{ element: null }}>
           <ModalRootContext.Consumer>
             {context => {
               if (context.element) {

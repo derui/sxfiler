@@ -20,6 +20,7 @@ import { createCommandRegistrar } from "./ts/usecases/command-registrar";
 import { registAllCommand } from "./ts/usecases/commands";
 import * as Get from "./ts/usecases/keymap/get";
 import * as NotificationHandlers from "./ts/notification-handlers";
+import ModalRootContext from "./ts/modal-root";
 
 const url = process.env.NODE_ENV === "production" ? process.env.REACT_APP_SERVER : "ws://localhost:50879";
 
@@ -59,9 +60,11 @@ ws.onopen = () => {
 
 function render(state: AppState) {
   ReactDOM.render(
-    <LocatorContext.Provider value={locator}>
-      <App state={state} />
-    </LocatorContext.Provider>,
+    <ModalRootContext.Provider value={{ element: document.getElementById("modal-root") }}>
+      <LocatorContext.Provider value={locator}>
+        <App state={state} />
+      </LocatorContext.Provider>
+    </ModalRootContext.Provider>,
     document.getElementById("root") as HTMLElement
   );
 }

@@ -6,8 +6,4 @@ export type Props = {
   state: AppState;
 };
 
-export class Component extends React.Component<Props> {
-  public render(): React.ReactElement {
-    return <MainContainer.Component state={this.props.state} />;
-  }
-}
+export const Component: React.FC<Props> = ({ state }) => <MainContainer.Component state={state} />;
