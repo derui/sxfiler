@@ -1,4 +1,4 @@
 {
-  defaultSortOrder: "date",
+  defaultSortOrder: "name",
   keyMapFile: "src/keymap.json"
 }
