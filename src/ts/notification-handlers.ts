@@ -33,12 +33,12 @@ export const handleTaskInteraction = (context: ContextLike) => (params: {
   suggestions: Suggestion[];
 }) => {
   const suggestions = createSuggestions(params);
-  context.execute(TaskRequireInteractionUseCase.createUseCase(), { suggestions });
+  context.use(TaskRequireInteractionUseCase.createUseCase()).execute({ suggestions });
 };
 
 /**
    Handle a notification that contains the task id finished
  */
 export const handleTaskFinished = (context: ContextLike) => (params: string) => {
-  context.execute(TaskFinishedUseCase.createUseCase(), params);
+  context.use(TaskFinishedUseCase.createUseCase()).execute(params);
 };

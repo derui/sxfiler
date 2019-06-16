@@ -14,7 +14,7 @@ export interface Props {
 export type ElementType = React.ReactElement<Props, React.FC<Props>>;
 
 const handleReply = (context: ContextLike) => (reply: ReplyPayload) => {
-  context.execute(UseCase.createUseCase(), reply);
+  context.use(UseCase.createUseCase()).execute(reply);
 };
 
 // Stateless container to render filer

@@ -19,7 +19,7 @@ export type CommandRegistrar = {
   /**
    * execute the command that is named to fqdn with parameter
    */
-  execute(fqdn: string, context: ContextLike, arg?: { state: AppState }): void;
+  execute(fqdn: string, context: ContextLike, arg: { state: AppState }): void;
 };
 
 type CommandRegistrarInner = CommandRegistrar & {
@@ -48,14 +48,14 @@ export const createCommandRegistrar = (
     findCommand(fqdn: string) {
       return this._commands[fqdn];
     },
-    execute(fqdn: string, context: ContextLike, arg?: { state: AppState }) {
+    execute(fqdn: string, context: ContextLike, arg: { state: AppState }) {
       const command = this.findCommand(fqdn);
 
       if (!command) {
         return;
       }
 
-      context.execute(command, arg ? { ...arg, client: this._client } : undefined);
+      context.use(command).execute({ ...arg, client: this._client });
     },
   } as CommandRegistrarInner;
 };

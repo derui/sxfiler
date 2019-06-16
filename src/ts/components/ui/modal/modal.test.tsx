@@ -3,7 +3,7 @@ import { mount } from "enzyme";
 
 import * as Modal from "./modal";
 
-const Container = ({ opened, onOpen, onClose, role, className }) => {
+const Container = ({ role, className }: any) => {
   return <div className={className} role={role} />;
 };
 

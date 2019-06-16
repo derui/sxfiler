@@ -41,7 +41,7 @@ export class Component extends React.PureComponent<Props> {
   }
 
   private handleNotificationHidden = (context: ContextLike) => (id: string) => {
-    context.execute(createUseCase(), {
+    context.use(createUseCase()).execute({
       notificationId: id,
     });
   };

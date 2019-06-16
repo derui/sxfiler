@@ -1,17 +1,9 @@
 import { createCommandRegistrar } from "./command-registrar";
+import * as AppState from "../states";
+import { CommandLike } from "./type";
 
 describe("Use Case", () => {
   describe("Command Registrar", () => {
-    it("do not execute command if it is not found", () => {
-      const obj = createCommandRegistrar(jest.fn() as any);
-      const context = {
-        execute: jest.fn(),
-      };
-
-      obj.execute("command", context);
-      expect(context.execute).not.toBeCalled;
-    });
-
     it("regist and execute command", () => {
       const obj = createCommandRegistrar(jest.fn() as any);
       const command = {
@@ -23,11 +15,14 @@ describe("Use Case", () => {
         commandInstance: command,
       });
 
-      const context = {
+      const executor = {
         execute: jest.fn(),
       };
-      registed.execute("module.command", context);
-      expect(context.execute).toBeCalled;
+      const context = {
+        use: () => executor,
+      };
+      registed.execute("module.command", context, { state: AppState.empty() });
+      expect(executor.execute).toBeCalled;
     });
 
     it("overwrite command when other command registerd with the same name", () => {
@@ -47,10 +42,15 @@ describe("Use Case", () => {
         commandInstance: command2,
       });
 
+      const executor = (u: CommandLike) => ({
+        execute(arg: any) {
+          u.execute(arg);
+        },
+      });
       const context = {
-        execute: jest.fn(),
+        use: (u: any) => executor(u),
       };
-      registed.execute("module.command", context);
+      registed.execute("module.command", context, { state: AppState.empty() });
       expect(command2.execute).toBeCalled;
     });
   });

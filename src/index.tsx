@@ -7,7 +7,7 @@ import { createStore } from "redux";
 import { Actions } from "./ts/actions";
 import { ApiMethod } from "./ts/apis";
 import { Component as App } from "./ts/app";
-import { Context } from "./ts/context";
+import { createContext } from "./ts/context";
 import { Dispatcher } from "./ts/dispatcher";
 import * as jrpc from "./ts/libs/json-rpc";
 import { Client } from "./ts/libs/json-rpc/client";
@@ -45,13 +45,13 @@ const dispatcher: Dispatcher<Actions> = new Dispatcher();
 dispatcher.subscribe(store.dispatch);
 
 const locator = {
-  context: new Context(client, dispatcher, store),
+  context: createContext({ client, dispatcher }),
   commandRegistrar: registAllCommand(createCommandRegistrar(client)),
 };
 
 const initializeState = () => {
-  locator.context.execute(Get.createUseCase(client), undefined);
-  locator.context.execute(createUseCase(client), { location: "." });
+  locator.context.use(Get.createUseCase(client)).execute({});
+  locator.context.use(createUseCase(client)).execute({ location: "." });
 };
 
 ws.onopen = () => {

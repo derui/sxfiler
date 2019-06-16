@@ -21,13 +21,16 @@ describe("Container", () => {
       })
     );
 
+    const executor = { execute: jest.fn() };
+
     function makeMockedLocator(): Locator {
       return {
         context: {
-          execute: jest.fn(),
+          use: () => executor,
         },
       };
     }
+    afterEach(() => jest.clearAllMocks());
 
     it("do not render when element is not provided", () => {
       const wrapper = mount(
@@ -81,7 +84,7 @@ describe("Container", () => {
         .find(SuggestionModal.Component)
         .props()
         .container!!.onReply(payload);
-      expect(locator.context!!.execute).toHaveBeenCalled();
+      expect(executor.execute).toHaveBeenCalled();
     });
   });
 });
