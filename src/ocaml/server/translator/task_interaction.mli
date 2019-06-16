@@ -6,7 +6,7 @@ module Reply : sig
   (** Type of interaction *)
   type typ =
     | Overwrite of bool [@name "overwrite"]
-    | Rename of {new_name : string [@key "newName"]} [@name "rename"]
+          | Rename of {new_name : string [@key "newName"]} [@name "rename"]
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   type t =
@@ -25,7 +25,7 @@ module Suggestion : sig
 
   type typ =
     | Overwrite [@name "overwrite"]
-    | Rename [@name "rename"]
+        | Rename [@name "rename"]
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   type t =

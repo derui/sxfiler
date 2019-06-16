@@ -24,12 +24,12 @@ let test_set =
         let finalizer () = File.remove temp_dir ; File.remove dest ; Lwt.return_unit in
         finalizer
         |> Lwt.finalize (fun () ->
-               let _to = D.File_tree.make ~location:Path.(of_string dest) ~nodes:[] in
-               let%lwt () = M.replicate ~node ~_to () in
-               let dest_file = Filename.basename temp_file |> Filename.concat dest in
-               Alcotest.(check bool) "destination" true (Sys.file_exists dest_file) ;
-               Alcotest.(check bool) "source" true (Sys.file_exists temp_file) ;
-               Lwt.return_unit ) )
+            let _to = D.File_tree.make ~location:Path.(of_string dest) ~nodes:[] in
+            let%lwt () = M.replicate ~node ~_to () in
+            let dest_file = Filename.basename temp_file |> Filename.concat dest in
+            Alcotest.(check bool) "destination" true (Sys.file_exists dest_file) ;
+            Alcotest.(check bool) "source" true (Sys.file_exists temp_file) ;
+            Lwt.return_unit ) )
   ; Alcotest_lwt.test_case "replicate nodes to destination with correction" `Quick (fun _ () ->
         let module M = I.Node_replication_service.Make (Dummy_ns) (Dummy_factory) in
         let temp_dir = File.mk_temp_dir "nts" in
@@ -40,9 +40,9 @@ let test_set =
         let finalizer () = File.remove temp_dir ; File.remove dest ; Lwt.return_unit in
         finalizer
         |> Lwt.finalize (fun () ->
-               let _to = D.File_tree.make ~location:Path.(of_string dest) ~nodes:[] in
-               let%lwt () = M.replicate ~node ~new_name:"renamed" ~_to () in
-               let dest_file = Filename.concat dest "renamed" in
-               Alcotest.(check bool) "destination" true (Sys.file_exists dest_file) ;
-               Alcotest.(check bool) "source" true (Sys.file_exists temp_file) ;
-               Lwt.return_unit ) ) ]
+            let _to = D.File_tree.make ~location:Path.(of_string dest) ~nodes:[] in
+            let%lwt () = M.replicate ~node ~new_name:"renamed" ~_to () in
+            let dest_file = Filename.concat dest "renamed" in
+            Alcotest.(check bool) "destination" true (Sys.file_exists dest_file) ;
+            Alcotest.(check bool) "source" true (Sys.file_exists temp_file) ;
+            Lwt.return_unit ) ) ]

@@ -98,30 +98,30 @@ module Make
     module Filer_toggle_mark = U.Filer.Toggle_mark.Make (Filer_repo)
 
     module Filer_move = U.Filer.Move.Make (struct
-      module FR = Filer_repo
-      module TF = Task_factory
-      module TR = Task_repo
-      module Scan = Location_scanner_service
-      module Transport = Node_transporter_service
-      module Notifier = Task_notifier
-    end)
+        module FR = Filer_repo
+        module TF = Task_factory
+        module TR = Task_repo
+        module Scan = Location_scanner_service
+        module Transport = Node_transporter_service
+        module Notifier = Task_notifier
+      end)
 
     module Filer_copy = U.Filer.Copy.Make (struct
-      module FR = Filer_repo
-      module TF = Task_factory
-      module TR = Task_repo
-      module Scan = Location_scanner_service
-      module Replicate = Node_replication_service
-      module Notifier = Task_notifier
-    end)
+        module FR = Filer_repo
+        module TF = Task_factory
+        module TR = Task_repo
+        module Scan = Location_scanner_service
+        module Replicate = Node_replication_service
+        module Notifier = Task_notifier
+      end)
 
     module Filer_delete = U.Filer.Delete.Make (struct
-      module FR = Filer_repo
-      module TF = Task_factory
-      module TR = Task_repo
-      module Scan = Location_scanner_service
-      module Trash = Node_trash_service
-    end)
+        module FR = Filer_repo
+        module TF = Task_factory
+        module TR = Task_repo
+        module Scan = Location_scanner_service
+        module Trash = Node_trash_service
+      end)
 
     module Task_send_reply = U.Task.Send_reply.Make (Task_repo)
   end
