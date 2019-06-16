@@ -37,3 +37,24 @@ module Toggle_mark_spec (Gateway : G.Filer.Toggle_mark.S) : P.Spec = struct
   let method_ = "filer/toggleMark"
   let param_requirement = `Required
 end
+
+module Move_spec (Gateway : G.Filer.Move.S) : P.Spec = struct
+  module Gateway = Gateway
+
+  let method_ = "filer/move"
+  let param_requirement = `Required
+end
+
+module Copy_spec (Gateway : G.Filer.Copy.S) : P.Spec = struct
+  module Gateway = Gateway
+
+  let method_ = "filer/copy"
+  let param_requirement = `Required
+end
+
+module Delete_spec (Gateway : G.Filer.Delete.S) : P.Spec = struct
+  module Gateway = Gateway
+
+  let method_ = "filer/delete"
+  let param_requirement = `Required
+end

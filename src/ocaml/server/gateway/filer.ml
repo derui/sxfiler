@@ -141,3 +141,93 @@ module Toggle_mark = struct
       | Error `Not_found -> Lwt.fail Gateway_error.(Gateway_error filer_not_found)
   end
 end
+
+module Move = struct
+  module Type = struct
+    type params =
+      { source : string
+      ; dest : string
+      ; node_ids : string list [@key "nodeIds"] }
+    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+
+    type result =
+      { task_id : string [@key "taskId"]
+      ; task_name : string [@key "taskName"] }
+    [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+  end
+
+  module type S = sig
+    include module type of Type
+    include Core.Gateway with type params := params and type result := result
+  end
+
+  module Make (U : Usecase.Filer.Move.S) : S = struct
+    include Type
+
+    let handle params =
+      let params = {U.source = params.source; dest = params.dest; node_ids = params.node_ids} in
+      match%lwt U.execute params with
+      | Ok s -> Lwt.return {task_id = s.task_id |> Uuidm.to_string; task_name = s.task_name}
+      | Error (`Not_found _) -> Lwt.fail Gateway_error.(Gateway_error filer_not_found)
+      | Error `Same_filer -> Lwt.fail Gateway_error.(Gateway_error filer_same_filer)
+  end
+end
+
+module Delete = struct
+  module Type = struct
+    type params =
+      { source : string
+      ; node_ids : string list [@key "nodeIds"] }
+    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+
+    type result =
+      { task_id : string [@key "taskId"]
+      ; task_name : string [@key "taskName"] }
+    [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+  end
+
+  module type S = sig
+    include module type of Type
+    include Core.Gateway with type params := params and type result := result
+  end
+
+  module Make (U : Usecase.Filer.Delete.S) : S = struct
+    include Type
+
+    let handle params =
+      let params = {U.source = params.source; node_ids = params.node_ids} in
+      match%lwt U.execute params with
+      | Ok s -> Lwt.return {task_id = s |> Uuidm.to_string; task_name = "Delete"}
+      | Error (`Not_found _) -> Lwt.fail Gateway_error.(Gateway_error filer_not_found)
+  end
+end
+
+module Copy = struct
+  module Type = struct
+    type params =
+      { source : string
+      ; dest : string
+      ; node_ids : string list [@key "nodeIds"] }
+    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+
+    type result =
+      { task_id : string [@key "taskId"]
+      ; task_name : string [@key "taskName"] }
+    [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+  end
+
+  module type S = sig
+    include module type of Type
+    include Core.Gateway with type params := params and type result := result
+  end
+
+  module Make (U : Usecase.Filer.Copy.S) : S = struct
+    include Type
+
+    let handle params =
+      let params = {U.source = params.source; dest = params.dest; node_ids = params.node_ids} in
+      match%lwt U.execute params with
+      | Ok s -> Lwt.return {task_id = s |> Uuidm.to_string; task_name = "Copy"}
+      | Error (`Not_found _) -> Lwt.fail Gateway_error.(Gateway_error filer_not_found)
+  end
+end

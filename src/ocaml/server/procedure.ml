@@ -18,14 +18,6 @@ module type S = sig
   val handle : Rpc.Server.handler
 end
 
-let handle_error = function
-  | G.Gateway_error.Unknown_error v -> Rpc.Exception.raise_error (Errors.unknown_error v)
-  | Filer_already_exists -> Rpc.Exception.raise_error Errors.filer_already_exists
-  | Filer_not_found -> Rpc.Exception.raise_error Errors.filer_not_found
-  | Filer_not_directory -> Rpc.Exception.raise_error Errors.filer_not_directory
-  | Node_not_found -> Rpc.Exception.raise_error Errors.node_not_found
-  | Task_not_found -> Rpc.Exception.raise_error Errors.task_not_found
-
 module Make (S : Spec) : S = struct
   let method_ = S.method_
 
@@ -41,15 +33,15 @@ module Make (S : Spec) : S = struct
         let execute_with_param decoder =
           match req with
           | None ->
-            Logs.warn (fun m -> m "Required parameter not found") ;
-            Rpc.(Exception.raise_error Jsonrpc.Types.Error_code.Invalid_params)
+              Logs.warn (fun m -> m "Required parameter not found") ;
+              Rpc.(Exception.raise_error Jsonrpc.Types.Error_code.Invalid_params)
           | Some params -> (
-              match decoder params with
-              | Error _ ->
+            match decoder params with
+            | Error _ ->
                 Logs.warn (fun m ->
                     m "Required parameter can not encode: %s" (Yojson.Safe.to_string params) ) ;
                 Rpc.(Exception.raise_error Jsonrpc.Types.Error_code.Invalid_params)
-              | Ok param -> S.Gateway.handle param )
+            | Ok param -> S.Gateway.handle param )
         in
         match S.param_requirement with
         | `Not_required param -> S.Gateway.handle param
@@ -58,11 +50,9 @@ module Make (S : Spec) : S = struct
       Log.info (fun m -> m "Finish procedure: {%s}" method_) ;%lwt
       S.Gateway.result_to_json result |> Option.some |> Lwt.return_ok
     with
-    | G.Gateway_error.Gateway_error e ->
-      let%lwt () = Log.err (fun m -> m "Error from gateway error") in
-      handle_error e
+    | G.Gateway_error.Gateway_error e -> Errors.of_gateway_error e
     | _ as e ->
-      let exn = Stdlib.Printexc.to_string e in
-      let%lwt () = Log.err (fun m -> m "Error occurred: %s" exn) in
-      Rpc.(Exception.raise_error (Jsonrpc.Types.Error_code.Server_error (-32000)))
+        let exn = Stdlib.Printexc.to_string e in
+        let%lwt () = Log.err (fun m -> m "Error occurred: %s" exn) in
+        Rpc.(Exception.raise_error (Jsonrpc.Types.Error_code.Server_error (-32000)))
 end

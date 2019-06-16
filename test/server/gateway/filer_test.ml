@@ -65,4 +65,56 @@ let test_set =
           Alcotest.fail "not thrown any exception" |> Lwt.return
         with
         | G.Gateway_error.(Gateway_error Filer_not_found) -> Lwt.return_unit
+        | _ -> Alcotest.fail "catch different exception" )
+  ; Alcotest_lwt.test_case "move raise error if filer is not found" `Quick (fun _ () ->
+        let module Usecase = struct
+          include U.Filer.Move.Type
+
+          let execute _ = Lwt.return_error (`Not_found "foo")
+        end in
+        let module Gateway = G.Filer.Move.Make (Usecase) in
+        try%lwt
+          let%lwt _ = Gateway.handle {source = "foo"; dest = "dest"; node_ids = ["id1"]} in
+          Alcotest.fail "not thrown any exception" |> Lwt.return
+        with
+        | G.Gateway_error.(Gateway_error Filer_not_found) -> Lwt.return_unit
+        | _ -> Alcotest.fail "catch different exception" )
+  ; Alcotest_lwt.test_case "move gateway raise error if same filer" `Quick (fun _ () ->
+        let module Usecase = struct
+          include U.Filer.Move.Type
+
+          let execute _ = Lwt.return_error `Same_filer
+        end in
+        let module Gateway = G.Filer.Move.Make (Usecase) in
+        try%lwt
+          let%lwt _ = Gateway.handle {source = "foo"; dest = "dest"; node_ids = ["id1"]} in
+          Alcotest.fail "not thrown any exception" |> Lwt.return
+        with
+        | G.Gateway_error.(Gateway_error Filer_same_filer) -> Lwt.return_unit
+        | _ -> Alcotest.fail "catch different exception" )
+  ; Alcotest_lwt.test_case "delete gateway raise error if filer is not found" `Quick (fun _ () ->
+        let module Usecase = struct
+          include U.Filer.Delete.Type
+
+          let execute _ = Lwt.return_error (`Not_found "foo")
+        end in
+        let module Gateway = G.Filer.Delete.Make (Usecase) in
+        try%lwt
+          let%lwt _ = Gateway.handle {source = "foo"; node_ids = ["id1"]} in
+          Alcotest.fail "not thrown any exception" |> Lwt.return
+        with
+        | G.Gateway_error.(Gateway_error Filer_not_found) -> Lwt.return_unit
+        | _ -> Alcotest.fail "catch different exception" )
+  ; Alcotest_lwt.test_case "copy gateway raise error if filer is not found" `Quick (fun _ () ->
+        let module Usecase = struct
+          include U.Filer.Copy.Type
+
+          let execute _ = Lwt.return_error (`Not_found "foo")
+        end in
+        let module Gateway = G.Filer.Copy.Make (Usecase) in
+        try%lwt
+          let%lwt _ = Gateway.handle {source = "foo"; dest = "dest"; node_ids = ["id1"]} in
+          Alcotest.fail "not thrown any exception" |> Lwt.return
+        with
+        | G.Gateway_error.(Gateway_error Filer_not_found) -> Lwt.return_unit
         | _ -> Alcotest.fail "catch different exception" ) ]

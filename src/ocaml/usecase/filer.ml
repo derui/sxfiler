@@ -393,11 +393,12 @@ module Copy = struct
     type error = [`Not_found of T.Filer.id]
   end
 
-  module type S =
-    Common.Usecase
-    with type input := Type.input
-     and type output := Type.output
-     and type error := Type.error
+  module type S = sig
+    include module type of Type
+
+    include
+      Common.Usecase with type input := input and type output := output and type error := error
+  end
 
   module type Dependencies = sig
     module FR : T.Filer.Repository

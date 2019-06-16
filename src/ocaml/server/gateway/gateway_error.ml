@@ -6,6 +6,7 @@ type t =
   | Filer_not_found
   | Filer_already_exists
   | Filer_not_directory
+  | Filer_same_filer
   | Node_not_found
   | Task_not_found
 [@@deriving variants]

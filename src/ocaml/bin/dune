@@ -5,7 +5,8 @@
             migemocaml
             logs
             re)
- (modules migemo_completer))
+ (modules migemo_completer)
+ (preprocess (pps lwt_ppx)))
 
 (executable
  (name main)
@@ -13,7 +14,8 @@
  (package sxfiler)
  (modules main dependencies jsonrpc_server global procedures)
  (libraries lwt
-            websocket websocket-lwt-unix.cohttp
+            websocket
+            websocket-lwt-unix.cohttp
             logs.fmt
             jsonrpc-ocaml.yojson
             sxfiler.server
