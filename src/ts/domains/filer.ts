@@ -76,7 +76,12 @@ export const createFiler = ({ id, nodes, location, currentCursorIndex }: Factory
      * @returns marked nodes
      */
     get markedNodes(): NodeObject[] {
-      return this.nodes.filter(v => v.marked);
+      const nodes = this.nodes.filter(v => v.marked);
+
+      if (nodes.length === 0 && this.currentNode) {
+        return [this.currentNode];
+      }
+      return nodes;
     },
   };
 };

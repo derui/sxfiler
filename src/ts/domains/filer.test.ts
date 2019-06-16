@@ -84,5 +84,13 @@ describe("Filer domain", () => {
 
       expect(filer.markedNodes).toEqual([node1]);
     });
+
+    it("return only current focused node", () => {
+      const node1 = createNode({ id: "node1", name: "name", stat, parentDirectory: "/", marked: false });
+      const node2 = createNode({ id: "node2", name: "name2", stat, parentDirectory: "/", marked: false });
+      const filer = createFiler({ id: "id", location: "/loc", nodes: [node1, node2], currentCursorIndex: 1 });
+
+      expect(filer.markedNodes).toEqual([node2]);
+    });
   });
 });
