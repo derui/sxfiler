@@ -6,6 +6,15 @@ export enum Side {
   Right = "right",
 }
 
+export const swapSide = (side: Side): Side => {
+  switch (side) {
+    case Side.Left:
+      return Side.Right;
+    case Side.Right:
+      return Side.Left;
+  }
+};
+
 export type State = {
   left?: Filer;
   // filer of right side

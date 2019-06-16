@@ -11,8 +11,9 @@ export enum Methods {
   MoveParent = "filer/moveParent",
   EnterDirectory = "filer/enterDirectory",
   ToggleMark = "filer/toggleMark",
-  MoveNodes = "filer/moveNodes",
-  DeleteNodes = "filer/deleteNodes",
+  Move = "filer/move",
+  Copy = "filer/copy",
+  Delete = "filer/delete",
 }
 
 const transformNode = (markedNodes: any[]): ((node: any) => NodeObject) => (node: any) => {
@@ -122,4 +123,46 @@ const ToggleMark: Api<Methods.ToggleMark, { name: string; nodeIds: string[] }, F
   },
 };
 
-export const Apis = { Make, Get, MoveParent, EnterDirectory, ToggleMark };
+const Move: Api<Methods.ToggleMark, { source: string; dest: string; nodeIds: string[] }, undefined> = {
+  method: Methods.ToggleMark,
+  parametersTransformer({ source, dest, nodeIds }) {
+    return { source, dest, nodeIds };
+  },
+  resultTransformer(ret, error) {
+    if (!ret && error && error.hasCode(-2)) {
+      return undefined;
+    }
+
+    return undefined;
+  },
+};
+
+const Copy: Api<Methods.ToggleMark, { source: string; dest: string; nodeIds: string[] }, undefined> = {
+  method: Methods.ToggleMark,
+  parametersTransformer({ source, dest, nodeIds }) {
+    return { source, dest, nodeIds };
+  },
+  resultTransformer(ret, error) {
+    if (!ret && error && error.hasCode(-2)) {
+      return undefined;
+    }
+
+    return undefined;
+  },
+};
+
+const Delete: Api<Methods.ToggleMark, { source: string; nodeIds: string[] }, undefined> = {
+  method: Methods.ToggleMark,
+  parametersTransformer({ source, nodeIds }) {
+    return { source, nodeIds };
+  },
+  resultTransformer(ret, error) {
+    if (!ret && error && error.hasCode(-2)) {
+      return undefined;
+    }
+
+    return undefined;
+  },
+};
+
+export const Apis = { Make, Get, MoveParent, EnterDirectory, ToggleMark, Move, Copy, Delete };
