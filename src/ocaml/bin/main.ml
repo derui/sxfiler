@@ -30,8 +30,7 @@ end
 
 module Log = (val Logger.make ["main"])
 
-let create_server (module C : Rpc_connection.Instance) =
-  let module R = (val T.Runner.make () : T.Runner.Instance) in
+let create_server (module C : Rpc_connection.Instance) (module R : T.Runner.Instance) =
   let module Completer = (val Global.Completer.get ()) in
   let module Dep = Dependencies.Make (C) (Completer) (R) in
   let rpc_server = Jsonrpc_server.make () in
@@ -44,6 +43,7 @@ let handler (conn : _ * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
   let uri = Cohttp.Request.uri req in
   match Uri.path uri with
   | "/" ->
+    let module R = (val Global.Task_runner.get () : T.Runner.Instance) in
     let module C = (val Rpc_connection.make () : Rpc_connection.Instance) in
     let%lwt () = Cohttp_lwt.Body.drain_body body in
     let%lwt resp, frames_out_fn =
@@ -54,7 +54,7 @@ let handler (conn : _ * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
     let%lwt () = C.Connection.connect C.instance frames_out_fn in
     Lwt.async (fun () ->
         (* Disable current task when thread is terminated. *)
-        let rpc_server = create_server (module C) in
+        let rpc_server = create_server (module C) (module R) in
         let thread = Jsonrpc_server.serve_forever rpc_server (module C) in
         Lwt.on_termination thread (fun () -> Logs.info (fun m -> m "Terminate thread")) ;
         Lwt.join [thread] ) ;
@@ -158,6 +158,7 @@ let () =
   let migemo = load_migemo option.migemo_dict_dir in
   (* setup task runner and finalize *)
   let module I = (val Global.Task_runner.get () : T.Runner.Instance) in
-  let runner_thread = I.Runner.start I.instance in
-  Lwt_main.at_exit (fun () -> I.Runner.stop I.instance ; runner_thread) ;
-  Lwt_main.run (initialize_modules ~migemo ~option >>= fun () -> start_server "localhost" port)
+  Lwt_main.at_exit (fun () -> I.Runner.stop I.instance |> Lwt.return) ;
+  Lwt_main.run
+    ( initialize_modules ~migemo ~option
+      >>= fun () -> start_server "localhost" port <&> I.Runner.start I.instance )

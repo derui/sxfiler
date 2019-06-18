@@ -1,11 +1,13 @@
 (** This module will run tasks with task queue.  *)
 
+module D = Sxfiler_domain
+module Log = (val Sxfiler_server_core.Logger.make ["task"])
 include Runner_intf
 
 module Impl = struct
   (** only entry point to add task to task queue in this module. *)
   type thread_state =
-    [ `Accepted of (module Task.Instance)
+    [ `Accepted of D.Task.t
     | `Rejected ]
 
   module Task_state = Set.Make (struct
@@ -14,22 +16,41 @@ module Impl = struct
       let compare = Uuidm.compare
     end)
 
+  module Subscriber = struct
+    type t =
+      { id : Uuidm.t
+      ; f : subscriber }
+
+    let compare v1 v2 = Uuidm.compare v1.id v2.id
+  end
+
+  module Subscriber_set = Set.Make (Subscriber)
+
   type t =
-    { task_queue : (module Task.Instance) Lwt_stream.t
-    ; task_queue_writer : (module Task.Instance) option -> unit
+    { task_queue : D.Task.t Lwt_stream.t
+    ; task_queue_writer : D.Task.t option -> unit
     ; mutable task_state : Task_state.t
     ; task_state_lock : Lwt_mutex.t
     ; task_mailbox : thread_state Lwt_mvar.t
     ; wakener : unit Lwt.u
     ; waiter : unit Lwt.t
-    ; handler_lock : Lwt_mutex.t }
+    ; handler_lock : Lwt_mutex.t
+    ; mutable subscribers : Subscriber_set.t
+    ; subscribers_lock : Lwt_mutex.t }
 
   (** Forever loop to accept task. Running this function must be in other thread of worker thread. *)
-  let rec accept_task_loop t () =
-    let%lwt task = Lwt_mvar.take t.task_mailbox in
-    match task with
-    | `Accepted task -> t.task_queue_writer (Some task) ; accept_task_loop t ()
-    | `Rejected -> Lwt.return_unit
+  let accept_task_loop t =
+    let rec loop () =
+      let open Lwt in
+      Log.info (fun m -> m "Waiting task entry...") ;%lwt
+      let%lwt task = Lwt_mvar.take t.task_mailbox in
+      match task with
+      | `Accepted task ->
+        Log.info (fun m -> m "Task accepted") ;%lwt
+        Lwt.return @@ t.task_queue_writer (Some task) >>= loop
+      | `Rejected -> Log.info (fun m -> m "Rejected") ;%lwt Lwt.return_unit
+    in
+    loop ()
 
   let add_state t id =
     Lwt_mutex.with_lock t.task_state_lock (fun () ->
@@ -46,33 +67,40 @@ module Impl = struct
     let module C = Sxfiler_server_core in
     t.task_queue
     |> Lwt_stream.iter_p (fun task ->
-        let id = Uuidm.v4_gen (Random.get_state ()) () in
-        let%lwt () = add_state t id in
-        let module Current_task = (val task : Task.Instance) in
-        Lwt.return
-        @@ Lwt.async (fun () ->
-            try%lwt
-              let%lwt () = Current_task.(Task.run this) in
-              remove_state t id
-            with _ -> remove_state t id ) )
+        let%lwt () = add_state t task.D.Task.id in
+        Lwt.finalize
+          (fun () ->
+             Log.info (fun m -> m "Start executing task...") ;%lwt
+             let%lwt () = D.Task.(execute task) in
+             Log.info (fun m -> m "Finish executing task") )
+          (fun () -> remove_state t task.D.Task.id) )
 
   (** [add_task task] add [task] to mailbox of task accepter. *)
-  let add_task t task = Lwt_mvar.put t.task_mailbox (`Accepted task)
+  let add_task t ~task = Lwt_mvar.put t.task_mailbox (`Accepted task)
+
+  let subscribe t ~f =
+    let id = Uuidm.v4_gen (Random.get_state ()) () in
+    let f' = {Subscriber.id; f} in
+    let unsubscribe () =
+      Lwt_mutex.with_lock t.subscribers_lock (fun () ->
+          t.subscribers <- Subscriber_set.remove f' t.subscribers ;
+          Lwt.return_unit )
+    in
+    Lwt_mutex.with_lock t.task_state_lock (fun () ->
+        t.subscribers <- Subscriber_set.add f' t.subscribers ;
+        Lwt.return_unit ) ;%lwt
+    Lwt.return unsubscribe
 
   let start t =
     let module C = Sxfiler_server_core in
-    let accepter = accept_task_loop t () in
+    let accepter = accept_task_loop t in
     let worker = run_task_loop t () in
     let stopper =
       let%lwt () = t.waiter in
       (* Cancel all async threads. *)
-      let%lwt () = Lwt_mvar.put t.task_mailbox `Rejected in
-      t.task_queue_writer None ;
-      Lwt.join [accepter; worker]
+      Lwt_mvar.put t.task_mailbox `Rejected
     in
-    Lwt.async (fun () -> accepter) ;
-    Lwt.async (fun () -> worker) ;
-    stopper
+    Log.info (fun m -> m "Task runner started") ;%lwt Lwt.(accepter <?> worker <?> stopper)
 
   let stop t = Lwt.wakeup t.wakener ()
 end
@@ -80,6 +108,8 @@ end
 let make () =
   let task_queue, task_queue_writer = Lwt_stream.create () in
   let task_state_lock = Lwt_mutex.create () in
+  let subscribers_lock = Lwt_mutex.create () in
+  let subscribers = Impl.Subscriber_set.empty in
   let task_state = Impl.Task_state.empty in
   let task_mailbox = Lwt_mvar.create_empty () in
   let waiter, wakener = Lwt.task () in
@@ -95,6 +125,8 @@ let make () =
       ; task_mailbox
       ; waiter
       ; wakener
-      ; handler_lock }
+      ; handler_lock
+      ; subscribers
+      ; subscribers_lock }
   end
   : Instance )

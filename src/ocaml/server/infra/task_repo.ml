@@ -10,18 +10,7 @@ module Make
   let store task =
     let%lwt _ = S.with_lock (fun state -> C.Root_state.add_task ~task state |> Lwt.return) in
     (* Add task queue *)
-    Runner.(
-      Runner.add_task instance
-        ( module struct
-          module Task = struct
-            type t = D.Task.t
-
-            let run = D.Task.execute
-          end
-
-          let this = task
-        end )) ;%lwt
-    Lwt.return_unit
+    Runner.(Runner.add_task instance ~task)
 
   let remove t =
     let%lwt _ = S.with_lock (fun state -> C.Root_state.remove_task ~task:t state |> Lwt.return) in
