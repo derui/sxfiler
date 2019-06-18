@@ -40,12 +40,13 @@ describe("Commands", () => {
           call: jest.fn(),
         };
         client.call.mockResolvedValue(
-          createFiler({ id: "id1", nodes: [], location: "entered", currentCursorIndex: 0 })
+          createFiler({ id: "id1", name: "name", nodes: [], location: "entered", currentCursorIndex: 0 })
         );
         const state = AppState.empty();
         state.fileList = initialize(state.fileList, {
           left: createFiler({
             id: "id1",
+            name: "name",
             nodes: [
               createNode({
                 id: "node",
@@ -58,7 +59,7 @@ describe("Commands", () => {
             location: "test",
             currentCursorIndex: 0,
           }),
-          right: createFiler({ id: "id2", nodes: [], location: "test", currentCursorIndex: 0 }),
+          right: createFiler({ id: "id2", name: "name", nodes: [], location: "test", currentCursorIndex: 0 }),
         });
 
         await command.execute(dispatcher as any, { state, client: client as any });
@@ -78,6 +79,7 @@ describe("Commands", () => {
         state.fileList = initialize(state.fileList, {
           left: createFiler({
             id: "id1",
+            name: "name",
             nodes: [
               createNode({
                 id: "node",
@@ -90,20 +92,15 @@ describe("Commands", () => {
             location: "test",
             currentCursorIndex: 0,
           }),
-          right: createFiler({ id: "id2", nodes: [], location: "test", currentCursorIndex: 0 }),
+          right: createFiler({ id: "id2", name: "name", nodes: [], location: "test", currentCursorIndex: 0 }),
         });
 
-        const filer = createFiler({ id: "id1", nodes: [], location: "test/node", currentCursorIndex: 0 });
+        const filer = createFiler({ id: "id1", name: "name", nodes: [], location: "test/node", currentCursorIndex: 0 });
         client.call.mockResolvedValue(filer);
 
         await command.execute(dispatcher as any, { state, client: client as any });
 
-        await expect(dispatcher.dispatch).toBeCalledWith(
-          actions.load({
-            side: Side.Left,
-            filer,
-          })
-        );
+        await expect(dispatcher.dispatch).toBeCalledWith(actions.load({ filer }));
       });
     });
   });

@@ -30,7 +30,7 @@ export const createUseCase = (client: Client<ApiMethod>): UseCase => {
         rightFiler = await this.client.call(Apis.Filer.Make, { initialLocation, name: Side.Right });
       }
 
-      return dispatcher.dispatch(actions.initialize({ left: leftFiler, right: rightFiler }));
+      return dispatcher.dispatch(actions.reload({ filers: [leftFiler, rightFiler] }));
     },
   } as UseCaseInner;
 };

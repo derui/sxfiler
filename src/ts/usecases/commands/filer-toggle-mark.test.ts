@@ -12,6 +12,9 @@ import * as FileListState from "../../states/file-list";
 const nodes = [
   createNode({
     id: "node1",
+    name: "node",
+    parentDirectory: "/parent",
+    marked: false,
     stat: createFileStat({
       mode: emptyMode(),
       uid: 1000,
@@ -45,7 +48,7 @@ describe("Commands", () => {
         const client = {
           call: jest.fn(),
         };
-        const filer = createFiler({ id: "id", nodes, location: "test", currentCursorIndex: 0 });
+        const filer = createFiler({ id: "id", name: "name", nodes, location: "test", currentCursorIndex: 0 });
         client.call.mockResolvedValue(filer);
 
         const state = AppState.empty();
@@ -63,20 +66,21 @@ describe("Commands", () => {
         const client = {
           call: jest.fn(),
         };
-        const filer = createFiler({ id: "id", nodes, location: "test", currentCursorIndex: 0 });
-        const updatedFiler = createFiler({ id: "id", nodes: [], location: "test", currentCursorIndex: 0 });
+        const filer = createFiler({ id: "id", name: "name", nodes, location: "test", currentCursorIndex: 0 });
+        const updatedFiler = createFiler({
+          id: "id",
+          name: "name",
+          nodes: [],
+          location: "test",
+          currentCursorIndex: 0,
+        });
         const state = AppState.empty();
         state.fileList = FileListState.initialize(state.fileList, { left: filer, right: filer });
 
         client.call.mockResolvedValue(updatedFiler);
 
         await command.execute(dispatcher as any, { state, client: client as any });
-        await expect(dispatcher.dispatch).toBeCalledWith(
-          actions.load({
-            side: Side.Left,
-            filer: updatedFiler,
-          })
-        );
+        await expect(dispatcher.dispatch).toBeCalledWith(actions.load({ filer: updatedFiler }));
       });
     });
   });

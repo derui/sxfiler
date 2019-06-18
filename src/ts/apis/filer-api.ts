@@ -36,6 +36,7 @@ const transformFiler = (filer: any): Filer => {
 
   const {
     id,
+    name,
     fileTree: { location, nodes },
     markedNodes,
     sortOrder,
@@ -43,6 +44,7 @@ const transformFiler = (filer: any): Filer => {
 
   return createFiler({
     id,
+    name,
     location,
     nodes: nodes.map(transformNode(markedNodes)),
     currentCursorIndex: 0,

@@ -1,4 +1,4 @@
-import * as C from "./filer-toggle-mark";
+import * as C from "./filer-move-nodes";
 import * as AppState from "../../states";
 import { Side } from "../../states/file-list";
 import { createFiler } from "../../domains/filer";
@@ -12,6 +12,9 @@ import * as FileListState from "../../states/file-list";
 const nodes = [
   createNode({
     id: "node1",
+    name: "node",
+    parentDirectory: "/parent",
+    marked: false,
     stat: createFileStat({
       mode: emptyMode(),
       uid: 1000,
@@ -29,7 +32,7 @@ const nodes = [
 
 describe("Commands", () => {
   describe("Filer", () => {
-    describe("Toggle mark of current focusing node in the filer", () => {
+    describe("Move nodes", () => {
       it("throw error when pass undefined as argument", async () => {
         const command = C.createCommand();
         const dispatcher = jest.fn();
@@ -45,17 +48,33 @@ describe("Commands", () => {
         const client = {
           call: jest.fn(),
         };
-        const filer = createFiler({ id: "id", nodes, location: "test", currentCursorIndex: 0 });
-        client.call.mockResolvedValue(filer);
+        const left = createFiler({ id: "id", name: "name", nodes, location: "test", currentCursorIndex: 0 });
+        const right = createFiler({ id: "id", name: "name", nodes, location: "test", currentCursorIndex: 0 });
+        client.call.mockImplementation((typ, arg) => {
+          if (typ === Apis.Filer.Move) {
+            return Promise.resolve();
+          }
+
+          switch (arg) {
+            case Side.Left:
+              return left;
+            case Side.Right:
+              return right;
+          }
+        });
 
         const state = AppState.empty();
-        state.fileList = FileListState.initialize(state.fileList, { left: filer, right: filer });
+        state.fileList = FileListState.initialize(state.fileList, { left, right });
 
         await command.execute(dispatcher as any, { state, client: client as any });
-        expect(client.call).toBeCalledWith(Apis.Filer.ToggleMark, { name: Side.Left, nodeIds: [nodes[0].id] });
+        expect(client.call).toBeCalledWith(Apis.Filer.Move, {
+          source: Side.Left,
+          dest: Side.Right,
+          nodeIds: [nodes[0].id],
+        });
       });
 
-      it("update a filer after to toggle mark of the node", async () => {
+      it("dispatch reload action to update each side", async () => {
         const command = C.createCommand();
         const dispatcher = {
           dispatch: jest.fn(),
@@ -63,20 +82,26 @@ describe("Commands", () => {
         const client = {
           call: jest.fn(),
         };
-        const filer = createFiler({ id: "id", nodes, location: "test", currentCursorIndex: 0 });
-        const updatedFiler = createFiler({ id: "id", nodes: [], location: "test", currentCursorIndex: 0 });
-        const state = AppState.empty();
-        state.fileList = FileListState.initialize(state.fileList, { left: filer, right: filer });
+        const left = createFiler({ id: "id", name: "name", nodes, location: "test", currentCursorIndex: 0 });
+        const right = createFiler({ id: "id", name: "name", nodes, location: "test", currentCursorIndex: 0 });
+        client.call.mockImplementation((typ, arg) => {
+          if (typ === Apis.Filer.Move) {
+            return Promise.resolve();
+          }
 
-        client.call.mockResolvedValue(updatedFiler);
+          switch (arg) {
+            case Side.Left:
+              return left;
+            case Side.Right:
+              return right;
+          }
+        });
+
+        const state = AppState.empty();
+        state.fileList = FileListState.initialize(state.fileList, { left, right });
 
         await command.execute(dispatcher as any, { state, client: client as any });
-        await expect(dispatcher.dispatch).toBeCalledWith(
-          actions.load({
-            side: Side.Left,
-            filer: updatedFiler,
-          })
-        );
+        expect(dispatcher.dispatch).toBeCalledWith(actions.reload({ filers: [left, right] }));
       });
     });
   });

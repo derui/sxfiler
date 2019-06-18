@@ -34,12 +34,7 @@ export const createCommand = (): CommandLike => {
         return;
       }
 
-      dispatch.dispatch(
-        actions.update({
-          side,
-          filer: filer.moveIndex(Direction.Up),
-        })
-      );
+      dispatch.dispatch(actions.update({ filer: filer.moveIndex(Direction.Up) }));
     },
   };
 };

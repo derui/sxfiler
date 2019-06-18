@@ -8,17 +8,13 @@ export enum Direction {
 
 export type FactoryArg = {
   id: string;
+  name: string;
   location: string;
   nodes: NodeObject[];
   currentCursorIndex: number;
 };
 
-export type FilerObject = {
-  readonly id: string;
-  readonly location: string;
-  readonly nodes: NodeObject[];
-  readonly currentCursorIndex: number;
-};
+export type FilerObject = Readonly<FactoryArg>;
 
 export type Filer = FilerObject & {
   /**
@@ -53,9 +49,10 @@ function moveIndex(this: FilerObject, direction: Direction): Filer {
   return createFiler({ ...this, currentCursorIndex: index });
 }
 
-export const createFiler = ({ id, nodes, location, currentCursorIndex }: FactoryArg): Filer => {
+export const createFiler = ({ id, name, nodes, location, currentCursorIndex }: FactoryArg): Filer => {
   return {
     id,
+    name,
     nodes,
     location,
     currentCursorIndex,

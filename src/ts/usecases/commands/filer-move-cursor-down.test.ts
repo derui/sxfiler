@@ -29,9 +29,14 @@ describe("Commands", () => {
           dispatch: jest.fn(),
         };
         const state = AppState.empty();
-        state.fileList.initialized = true;
         state.fileList.currentSide = Side.Left;
-        state.fileList.left = createFiler({ id: "id", nodes: [], location: "test", currentCursorIndex: 0 });
+        state.fileList.left = createFiler({
+          id: "id",
+          name: "name",
+          nodes: [],
+          location: "test",
+          currentCursorIndex: 0,
+        });
 
         await command.execute(dispatcher as any, { state: state, client: jest.fn() as any });
         expect(dispatcher.dispatch).toBeCalled();
@@ -43,9 +48,14 @@ describe("Commands", () => {
           dispatch: jest.fn(),
         };
         const state = AppState.empty();
-        state.fileList.initialized = true;
         state.fileList.currentSide = Side.Left;
-        state.fileList.left = createFiler({ id: "id", nodes: [], location: "test", currentCursorIndex: 0 });
+        state.fileList.left = createFiler({
+          id: "id",
+          name: "name",
+          nodes: [],
+          location: "test",
+          currentCursorIndex: 0,
+        });
         const spy = jest.spyOn(state.fileList.left, "moveIndex");
 
         await command.execute(dispatcher as any, { state: state, client: jest.fn() as any });

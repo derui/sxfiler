@@ -33,12 +33,7 @@ export const createCommand = (): CommandLike => {
         return;
       }
 
-      dispatch.dispatch(
-        actions.load({
-          side,
-          filer,
-        })
-      );
+      dispatch.dispatch(actions.load({ filer }));
     },
   };
 };

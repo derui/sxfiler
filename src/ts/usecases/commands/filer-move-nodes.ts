@@ -7,7 +7,7 @@ import { Apis } from "../../apis";
 import * as FileListState from "../../states/file-list";
 
 const belongingModuleId = "builtin";
-const commandId = "filer.toggleMark";
+const commandId = "filer.move";
 
 /**
  * Regist command instance to the registrar
@@ -48,12 +48,7 @@ export const createCommand = (): CommandLike => {
         return Promise.resolve();
       }
 
-      dispatch.dispatch(
-        actions.initialize({
-          left,
-          right,
-        })
-      );
+      dispatch.dispatch(actions.reload({ filers: [left, right] }));
     },
   };
 };

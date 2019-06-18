@@ -7,25 +7,28 @@ import { Filer, createFiler } from "../domains/filer";
 /**
  * The sub reducer to handle updateFiler action.
  */
-const updateFiler = (state: State, payload: { side: Side; filer: Filer }): State => {
-  const { side, filer } = payload;
+const updateFiler = (state: State, payload: { filer: Filer }): State => {
+  const { filer } = payload;
 
-  switch (side) {
+  switch (filer.name) {
     case Side.Left:
       return { ...state, left: filer };
     case Side.Right:
       return { ...state, right: filer };
+    default:
+      console.warn(`Unknown filer: ${filer.name}`);
+      return state;
   }
 };
 
 /**
  * The sub reducer to handle loadFiler action.
  */
-const updateFilerByServerState = (state: State, payload: { side: Side; filer: Filer }): State => {
-  const { side, filer } = payload;
+const updateFilerByServerState = (state: State, payload: { filer: Filer }): State => {
+  const { filer } = payload;
 
   let updatedFiler = filer;
-  switch (side) {
+  switch (filer.name) {
     case Side.Left:
       if (state.left && state.left.location === filer.location) {
         updatedFiler = createFiler({
@@ -42,6 +45,9 @@ const updateFilerByServerState = (state: State, payload: { side: Side; filer: Fi
         });
       }
       return { ...state, right: updatedFiler };
+    default:
+      console.warn(`Unknown filer: ${filer.name}`);
+      return state;
   }
 };
 
@@ -54,15 +60,17 @@ const moveToOtherSide = (current: Side): Side => {
   }
 };
 
+const reloadFiler = (state: State, filers: [Filer, Filer]): State => {
+  const left = filers.find(v => v.name === Side.Left);
+  const right = filers.find(v => v.name === Side.Right);
+
+  return { ...state, left, right };
+};
+
 export const reducer = (state: State = empty(), action: Actions): State => {
   switch (action.type) {
-    case ActionTypes.initialize:
-      return {
-        ...state,
-        initialized: true,
-        left: action.payload.left,
-        right: action.payload.right,
-      };
+    case ActionTypes.reload:
+      return reloadFiler(state, action.payload.filers);
     case ActionTypes.updateFiler:
       return updateFiler(state, action.payload);
     case ActionTypes.loadFiler:

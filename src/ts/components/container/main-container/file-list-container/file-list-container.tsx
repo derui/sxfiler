@@ -40,7 +40,7 @@ export type ElementType = React.ReactElement<Props, React.FC<Props>>;
 // Stateless container to render filer
 export const Component: React.FC<Props> = (props): ElementType | null => {
   // can not render anything if filer is not initialized
-  if (!props.state.initialized) {
+  if (!props.state.left || !props.state.right) {
     return null;
   }
 

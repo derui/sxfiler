@@ -21,15 +21,12 @@ export type State = {
   right?: Filer;
   // current selected side
   currentSide: Side;
-  // filer initialized or not
-  initialized: boolean;
 };
 
 /** factory function create empty state */
 export const empty = (): State => {
   return {
     currentSide: Side.Left,
-    initialized: false,
   };
 };
 
@@ -39,7 +36,6 @@ export const empty = (): State => {
 export const initialize = (state: State, { left, right }: { left: Filer; right: Filer }): State => {
   return {
     ...state,
-    initialized: true,
     left,
     right,
   };
@@ -91,7 +87,7 @@ export const fellowPosition = (state: State): State => {
  * @param state The state of file list
  */
 export const currentFocusingNode = (state: State): NodeObject | undefined => {
-  if (!state.initialized || !state.left || !state.right) {
+  if (!state.left || !state.right) {
     return undefined;
   }
 
