@@ -14,4 +14,5 @@ export type ApiMethod = CompletionMethod | FilerApi.Methods | KeymapApi.Methods 
 export const Apis = {
   Filer: FilerApi.Apis,
   Keymap: KeymapApi.Apis,
+  Task: TaskApi.Apis,
 };

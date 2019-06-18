@@ -6,11 +6,22 @@ export enum ActionTypes {
   initialize = "filer_initialize",
   updateFiler = "filer_update_filer",
   loadFiler = "filer_load_filer",
+  reload = "filer_reload",
   changeSide = "filer_change_side",
 }
 
 type InitializeAction = AppAction<
   ActionTypes.initialize,
+  {
+    payload: {
+      left: Filer;
+      right: Filer;
+    };
+  }
+>;
+
+type ReloadAction = AppAction<
+  ActionTypes.reload,
   {
     payload: {
       left: Filer;
@@ -48,6 +59,10 @@ const initialize = (args: { left: Filer; right: Filer }): InitializeAction => {
   return { type: ActionTypes.initialize, payload: { ...args } };
 };
 
+const reload = (args: { left: Filer; right: Filer }): ReloadAction => {
+  return { type: ActionTypes.reload, payload: { ...args } };
+};
+
 /**
  * Update filer on the side.
  */
@@ -69,4 +84,4 @@ const changeSide = (): ChangeSideAction => {
   return { type: ActionTypes.changeSide };
 };
 
-export const actions = { initialize, update, changeSide, load };
+export const actions = { initialize, update, changeSide, load, reload };

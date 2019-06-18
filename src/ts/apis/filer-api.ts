@@ -29,7 +29,7 @@ const transformNode = (markedNodes: any[]): ((node: any) => NodeObject) => (node
    @param filer JSON representation for fller
    @return Filer object
  */
-function transformFiler(filer: any): Filer {
+const transformFiler = (filer: any): Filer => {
   if (!filer) {
     throw new Error("Filer should not be undefined or null");
   }
@@ -47,7 +47,7 @@ function transformFiler(filer: any): Filer {
     nodes: nodes.map(transformNode(markedNodes)),
     currentCursorIndex: 0,
   });
-}
+};
 
 /**
    API definition for filer/make
@@ -129,8 +129,8 @@ const Move: Api<Methods.ToggleMark, { source: string; dest: string; nodeIds: str
     return { source, dest, nodeIds };
   },
   resultTransformer(ret, error) {
-    if (!ret && error && error.hasCode(-2)) {
-      return undefined;
+    if (!ret && error) {
+      throw new Error(`Error occuerred: ${error}`);
     }
 
     return undefined;
@@ -143,8 +143,8 @@ const Copy: Api<Methods.ToggleMark, { source: string; dest: string; nodeIds: str
     return { source, dest, nodeIds };
   },
   resultTransformer(ret, error) {
-    if (!ret && error && error.hasCode(-2)) {
-      return undefined;
+    if (!ret && error) {
+      throw new Error(`Error occuerred: ${error}`);
     }
 
     return undefined;
@@ -157,8 +157,8 @@ const Delete: Api<Methods.ToggleMark, { source: string; nodeIds: string[] }, und
     return { source, nodeIds };
   },
   resultTransformer(ret, error) {
-    if (!ret && error && error.hasCode(-2)) {
-      return undefined;
+    if (!ret && error) {
+      throw new Error(`Error occuerred: ${error}`);
     }
 
     return undefined;
