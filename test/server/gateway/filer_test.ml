@@ -6,6 +6,13 @@ module C = Sxfiler_server_core
 module G = Sxfiler_server_gateway
 module T = Sxfiler_server_translator
 
+module Factory = D.Filer.Factory.Make (struct
+    type id = D.Filer.id
+
+    let state = Random.get_state ()
+    let generate () = Uuidm.v4_gen state ()
+  end)
+
 module Dummy_system = struct
   let getcwd () = "/foo"
 end
@@ -15,9 +22,7 @@ let test_set =
         let file_tree =
           D.File_tree.make ~location:(Path.of_string ~env:`Unix "/initial") ~nodes:[]
         in
-        let expected =
-          D.Filer.Factory.create ~name:"foo" ~file_tree ~sort_order:D.Types.Sort_type.Date ()
-        in
+        let expected = Factory.create ~name:"foo" ~file_tree ~sort_order:D.Types.Sort_type.Date in
         let module Usecase = struct
           include U.Filer.Make.Type
 

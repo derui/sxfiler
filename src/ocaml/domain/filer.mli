@@ -1,6 +1,6 @@
 (** Filer module provides type to scan file tree. *)
 
-type id = string [@@deriving show]
+type id = Uuidm.t [@@deriving show]
 
 module Node_id_set : sig
   include Set.S with type elt = Node.id
@@ -10,6 +10,7 @@ end
 
 type t = private
   { id : id
+  ; name : string
   ; file_tree : File_tree.t
   ; history : Location_history.t
   ; marked_nodes : Node_id_set.t
@@ -29,7 +30,7 @@ val move_location : t -> file_tree:File_tree.t -> (module Location_record.Clock)
 val update_tree : t -> file_tree:File_tree.t -> t
 (** [update_tree t ~file_tree] get new filer is based on [t] and updated file tree from parameter. *)
 
-val find_node : t -> id:id -> Node.t option
+val find_node : t -> id:Node.id -> Node.t option
 (** [find_node t ~id] search node having [id] in filer [t] *)
 
 val add_mark : t -> ids:Node.id list -> t
@@ -42,22 +43,11 @@ val node_subset : t -> ids:Node.id list -> Node.t list * Node.id list
 (** [node_subset t ~ids] returns subset of nodes of [t] that are found in [t] and ids that are not found in [t] *)
 
 (** Signature for repository of scanner. *)
-module type Repository = sig
-  val resolve : id -> t option Lwt.t
-  (** [resolve id] returns scanner instance if already exists. *)
-
-  val store : t -> unit Lwt.t
-  (** [store filer] stores [t] to any place. *)
-end
+module type Repository = Filer_intf.Repository with type t := t and type id := id
 
 (** Factory interface *)
 module Factory : sig
-  val create :
-    name:string
-    -> file_tree:File_tree.t
-    -> ?history:Location_history.t
-    -> sort_order:Types.Sort_type.t
-    -> unit
-    -> t
-    (** [create ~name ~file_tree ~history ~sort_order] gets new instance of filer. *)
+  module type S = Filer_intf.Factory with type t := t
+
+  module Make (G : Id_generator_intf.Gen_random with type id = id) : S
 end

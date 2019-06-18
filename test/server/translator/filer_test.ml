@@ -2,10 +2,17 @@ open Sxfiler_core
 module D = Sxfiler_domain
 module Tr = Sxfiler_server_translator
 
+module Factory = D.Filer.Factory.Make (struct
+    type id = D.Filer.id
+
+    let state = Random.get_state ()
+    let generate () = Uuidm.v4_gen state ()
+  end)
+
 let data =
-  D.Filer.Factory.create ~name:"id"
+  Factory.create ~name:"id"
     ~file_tree:Test_fixtures.(File_tree.empty_tree (Path.of_string "/bar"))
-    ~sort_order:D.Types.Sort_type.Date ()
+    ~sort_order:D.Types.Sort_type.Date
 
 let test_set =
   [ ( "can translate to/from domain"

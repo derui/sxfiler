@@ -1,6 +1,7 @@
 (** the type that is JSON friendly for {!Sxfiler_domain.Filer.t} *)
 type t =
   { id : string
+  ; name : string
   ; file_tree : File_tree.t [@key "fileTree"]
   ; history : Location_history.t
   ; marked_nodes : string list [@key "markedNodes"]

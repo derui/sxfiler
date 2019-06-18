@@ -25,21 +25,19 @@ module Make = struct
   module Make
       (CR : T.Configuration.Repository)
       (SR : T.Filer.Repository)
+      (FC : T.Filer.Factory.S)
       (Svc : T.Location_scanner_service.S) : S = struct
     include Type
 
     let execute (params : input) =
       (* Create filer if it is not exists *)
       let%lwt config = CR.resolve () in
-      let%lwt v = SR.resolve params.name in
+      let%lwt v = SR.resolve_by_name params.name in
       match v with
       | None ->
         let sort_order = config.T.Configuration.default_sort_order in
         let%lwt file_tree = Svc.scan params.initial_location in
-        let t =
-          T.Filer.Factory.create ~name:params.name ~file_tree
-            ~history:(T.Location_history.make ()) ~sort_order ()
-        in
+        let t = FC.create ~name:params.name ~file_tree ~sort_order in
         let%lwt () = SR.store t in
         Lwt.return @@ Ok t
       | Some _ -> Lwt.return @@ Error `Already_exists
@@ -64,7 +62,7 @@ module Get = struct
     include Type
 
     let execute (params : input) =
-      match%lwt SR.resolve params.name with
+      match%lwt SR.resolve_by_name params.name with
       | None -> Lwt.return_error `Not_found
       | Some filer -> Lwt.return_ok filer
   end
@@ -92,7 +90,7 @@ module Move_parent = struct
     include Type
 
     let execute (params : input) =
-      match%lwt SR.resolve params.name with
+      match%lwt SR.resolve_by_name params.name with
       | None -> Lwt.return_error `Not_found
       | Some ({file_tree; _} as filer) ->
         let parent_dir = Path.dirname_as_path file_tree.location in
@@ -132,7 +130,7 @@ module Enter_directory = struct
     include Type
 
     let execute (params : input) =
-      let%lwt filer = FR.resolve params.name in
+      let%lwt filer = FR.resolve_by_name params.name in
       let node = Option.(filer >>= T.Filer.find_node ~id:params.node_id) in
       match (filer, node) with
       | None, _ -> Lwt.return_error `Not_found_filer
@@ -168,7 +166,7 @@ module Toggle_mark = struct
     include Type
 
     let execute (params : input) =
-      let%lwt filer = SR.resolve params.name in
+      let%lwt filer = SR.resolve_by_name params.name in
       let filer =
         Option.(
           filer
@@ -195,8 +193,8 @@ module Move = struct
   (* Make plan to move nodes in filer to the location of another filer. *)
   module Type = struct
     type input =
-      { source : T.Filer.id
-      ; dest : T.Filer.id
+      { source : string
+      ; dest : string
       ; node_ids : T.Node.id list }
 
     type output =
@@ -204,7 +202,7 @@ module Move = struct
       ; task_name : string }
 
     type error =
-      [ `Not_found of T.Filer.id
+      [ `Not_found of string
       | `Same_filer ]
   end
 
@@ -292,7 +290,8 @@ module Move = struct
       let is_same_filer = params.source = params.dest in
       if is_same_filer then Lwt.return_error `Same_filer
       else
-        let%lwt source = FR.resolve params.source and dest = FR.resolve params.dest in
+        let%lwt source = FR.resolve_by_name params.source
+        and dest = FR.resolve_by_name params.dest in
         match (source, dest) with
         | None, _ -> Lwt.return_error (`Not_found params.source)
         | _, None -> Lwt.return_error (`Not_found params.dest)
@@ -315,11 +314,11 @@ end
 module Delete = struct
   module Type = struct
     type input =
-      { source : T.Filer.id
+      { source : string
       ; node_ids : T.Node.id list }
 
     type output = T.Task_types.id
-    type error = [`Not_found of T.Filer.id]
+    type error = [`Not_found of string]
   end
 
   module type S = sig
@@ -363,7 +362,7 @@ module Delete = struct
 
     let execute (params : input) =
       let open Dep in
-      let%lwt source = FR.resolve params.source in
+      let%lwt source = FR.resolve_by_name params.source in
       match source with
       | None -> Lwt.return_error (`Not_found params.source)
       | Some source ->
@@ -385,12 +384,12 @@ module Copy = struct
   (* Make plan to move nodes in filer to the location of another filer. *)
   module Type = struct
     type input =
-      { source : T.Filer.id
-      ; dest : T.Filer.id
+      { source : string
+      ; dest : string
       ; node_ids : T.Node.id list }
 
     type output = T.Task_types.id
-    type error = [`Not_found of T.Filer.id]
+    type error = [`Not_found of string]
   end
 
   module type S = sig
@@ -474,7 +473,8 @@ module Copy = struct
 
     let execute (params : input) =
       let open Dep in
-      let%lwt source = FR.resolve params.source and dest = FR.resolve params.dest in
+      let%lwt source = FR.resolve_by_name params.source
+      and dest = FR.resolve_by_name params.dest in
       match (source, dest) with
       | None, _ -> Lwt.return_error (`Not_found params.source)
       | _, None -> Lwt.return_error (`Not_found params.dest)

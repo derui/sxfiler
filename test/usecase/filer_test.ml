@@ -3,6 +3,13 @@ module F = Test_fixtures
 module D = Sxfiler_domain
 module U = Sxfiler_usecase
 
+module Factory = D.Filer.Factory.Make (struct
+    type id = D.Filer.id
+
+    let state = Random.get_state ()
+    let generate () = Uuidm.v4_gen state ()
+  end)
+
 let dir_stat = Test_fixtures.File_stat.fixture ~directory:true ()
 
 let test_set =
@@ -11,9 +18,7 @@ let test_set =
         let file_tree =
           D.File_tree.make ~location:Path.(of_string "/bar") ~nodes:[TF.Node.fixture dir_stat]
         in
-        let filer =
-          D.Filer.Factory.create ~name:"foo" ~file_tree ~sort_order:D.Types.Sort_type.Name ()
-        in
+        let filer = Factory.create ~name:"foo" ~file_tree ~sort_order:D.Types.Sort_type.Name in
         let module FR =
           (val Test_fixtures.Memory_repository.filer_repository ~initial:[filer] ())
         in
@@ -28,7 +33,7 @@ let test_set =
         let%lwt result =
           Usecase.execute {name = "foo"; node_id = List.hd file_tree.nodes |> D.Node.id}
         in
-        let%lwt data = Lwt.(FR.resolve "foo" >|= Option.get_exn) in
+        let%lwt data = Lwt.(FR.resolve_by_name "foo" >|= Option.get_exn) in
         Alcotest.(check @@ result (of_pp D.Filer.pp) (of_pp Fmt.nop))
           "renew filer" (Ok data) result ;
         Lwt.return_unit )
@@ -51,9 +56,7 @@ let test_set =
         let file_tree =
           D.File_tree.make ~location:Path.(of_string "/bar") ~nodes:[TF.Node.fixture dir_stat]
         in
-        let filer =
-          D.Filer.Factory.create ~name:"foo" ~file_tree ~sort_order:D.Types.Sort_type.Name ()
-        in
+        let filer = Factory.create ~name:"foo" ~file_tree ~sort_order:D.Types.Sort_type.Name in
         let module FR = (val TF.Memory_repository.filer_repository ~initial:[filer] ()) in
         let module Svc = struct
           let scan _ = assert false

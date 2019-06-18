@@ -6,7 +6,13 @@ let filer_repository ?(initial = []) () =
   let hash : (D.Filer.id, D.Filer.t) Hashtbl.t = Hashtbl.create 10 in
   List.iter (fun t -> Hashtbl.add hash t.D.Filer.id t) initial ;
   ( module struct
-    let resolve id = Hashtbl.find_opt hash id |> Lwt.return
+    let resolve id = Hashtbl.find hash id |> Lwt.return
+
+    let resolve_by_name name =
+      Hashtbl.to_seq hash |> Seq.map snd |> List.of_seq
+      |> List.find_opt (fun v -> v.D.Filer.name = name)
+      |> Lwt.return
+
     let store t = Hashtbl.add hash t.D.Filer.id t |> Lwt.return
   end
   : D.Filer.Repository )

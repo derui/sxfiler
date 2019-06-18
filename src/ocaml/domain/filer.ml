@@ -1,7 +1,7 @@
 (** Scanner module provides type to scan file tree. *)
 open Sxfiler_core
 
-type id = string [@@deriving eq, show]
+type id = Uuidm.t [@@deriving eq, show]
 
 module Node_id_set = struct
   include Set.Make (struct
@@ -18,6 +18,7 @@ end
 
 type t =
   { id : id
+  ; name : string
   ; file_tree : File_tree.t
   ; history : Location_history.t
   ; marked_nodes : Node_id_set.t
@@ -56,20 +57,16 @@ let node_subset t ~ids =
        | Some node -> (node :: nodes, ids) )
     ([], []) ids
 
-(** Signature for repository of scanner. *)
-module type Repository = sig
-  val resolve : string -> t option Lwt.t
-  (** [resolve id] returns scanner instance if already exists. *)
+module type Repository = Filer_intf.Repository with type t := t and type id := id
 
-  val store : t -> unit Lwt.t
-  (** [store filer] stores [t] to any place. *)
-end
-
+(** Factory interface *)
 module Factory = struct
-  let create ~name ~file_tree ?(history = Location_history.make ()) ~sort_order () =
-    { id = name
-    ; file_tree = File_tree.sort_nodes file_tree ~order:sort_order
-    ; history
-    ; sort_order
-    ; marked_nodes = Node_id_set.empty }
+  module type S = Filer_intf.Factory with type t := t
+
+  module Make (G : Id_generator_intf.Gen_random with type id = id) : S = struct
+    let create ~name ~file_tree ~sort_order =
+      let file_tree = File_tree.sort_nodes ~order:sort_order file_tree in
+      make ~id:(G.generate ()) ~name ~file_tree ~sort_order ~history:(Location_history.make ())
+        ~marked_nodes:Node_id_set.empty
+  end
 end
