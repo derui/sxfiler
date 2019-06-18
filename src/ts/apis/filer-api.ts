@@ -125,8 +125,8 @@ const ToggleMark: Api<Methods.ToggleMark, { name: string; nodeIds: string[] }, F
   },
 };
 
-const Move: Api<Methods.ToggleMark, { source: string; dest: string; nodeIds: string[] }, undefined> = {
-  method: Methods.ToggleMark,
+const Move: Api<Methods.Move, { source: string; dest: string; nodeIds: string[] }, undefined> = {
+  method: Methods.Move,
   parametersTransformer({ source, dest, nodeIds }) {
     return { source, dest, nodeIds };
   },
@@ -139,8 +139,8 @@ const Move: Api<Methods.ToggleMark, { source: string; dest: string; nodeIds: str
   },
 };
 
-const Copy: Api<Methods.ToggleMark, { source: string; dest: string; nodeIds: string[] }, undefined> = {
-  method: Methods.ToggleMark,
+const Copy: Api<Methods.Copy, { source: string; dest: string; nodeIds: string[] }, undefined> = {
+  method: Methods.Copy,
   parametersTransformer({ source, dest, nodeIds }) {
     return { source, dest, nodeIds };
   },
@@ -153,8 +153,8 @@ const Copy: Api<Methods.ToggleMark, { source: string; dest: string; nodeIds: str
   },
 };
 
-const Delete: Api<Methods.ToggleMark, { source: string; nodeIds: string[] }, undefined> = {
-  method: Methods.ToggleMark,
+const Delete: Api<Methods.Delete, { source: string; nodeIds: string[] }, undefined> = {
+  method: Methods.Delete,
   parametersTransformer({ source, nodeIds }) {
     return { source, nodeIds };
   },
