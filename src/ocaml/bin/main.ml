@@ -8,6 +8,8 @@ module D = Sxfiler_domain
 
 exception Fail_load_migemo
 
+module Task_runner = Global.Task_runner (I.Id_generator.Gen_uuid)
+
 (* application options *)
 module App_option = struct
   type t =
@@ -43,7 +45,7 @@ let handler (conn : _ * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
   let uri = Cohttp.Request.uri req in
   match Uri.path uri with
   | "/" ->
-    let module R = (val Global.Task_runner.get () : T.Runner.Instance) in
+    let module R = (val Task_runner.get () : T.Runner.Instance) in
     let module C = (val Rpc_connection.make () : Rpc_connection.Instance) in
     let%lwt () = Cohttp_lwt.Body.drain_body body in
     let%lwt resp, frames_out_fn =
@@ -157,7 +159,7 @@ let () =
   let port = 50879 in
   let migemo = load_migemo option.migemo_dict_dir in
   (* setup task runner and finalize *)
-  let module I = (val Global.Task_runner.get () : T.Runner.Instance) in
+  let module I = (val Task_runner.get () : T.Runner.Instance) in
   Lwt_main.at_exit (fun () -> I.Runner.stop I.instance |> Lwt.return) ;
   Lwt_main.run
     ( initialize_modules ~migemo ~option

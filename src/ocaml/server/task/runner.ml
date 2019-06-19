@@ -4,27 +4,27 @@ module D = Sxfiler_domain
 module Log = (val Sxfiler_server_core.Logger.make ["task"])
 include Runner_intf
 
-module Impl = struct
+module Task_state = Set.Make (struct
+    type t = Uuidm.t
+
+    let compare = Uuidm.compare
+  end)
+
+module Subscriber = struct
+  type t =
+    { id : Uuidm.t
+    ; f : subscriber }
+
+  let compare v1 v2 = Uuidm.compare v1.id v2.id
+end
+
+module Subscriber_set = Set.Make (Subscriber)
+
+module Impl (R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) = struct
   (** only entry point to add task to task queue in this module. *)
   type thread_state =
     [ `Accepted of D.Task.t
     | `Rejected ]
-
-  module Task_state = Set.Make (struct
-      type t = Uuidm.t
-
-      let compare = Uuidm.compare
-    end)
-
-  module Subscriber = struct
-    type t =
-      { id : Uuidm.t
-      ; f : subscriber }
-
-    let compare v1 v2 = Uuidm.compare v1.id v2.id
-  end
-
-  module Subscriber_set = Set.Make (Subscriber)
 
   type t =
     { task_queue : D.Task.t Lwt_stream.t
@@ -79,7 +79,7 @@ module Impl = struct
   let add_task t ~task = Lwt_mvar.put t.task_mailbox (`Accepted task)
 
   let subscribe t ~f =
-    let id = Uuidm.v4_gen (Random.get_state ()) () in
+    let id = R.generate () in
     let f' = {Subscriber.id; f} in
     let unsubscribe () =
       Lwt_mutex.with_lock t.subscribers_lock (fun () ->
@@ -105,20 +105,21 @@ module Impl = struct
   let stop t = Lwt.wakeup t.wakener ()
 end
 
-let make () =
+let make (module R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) =
+  let module Runner = Impl (R) in
   let task_queue, task_queue_writer = Lwt_stream.create () in
   let task_state_lock = Lwt_mutex.create () in
   let subscribers_lock = Lwt_mutex.create () in
-  let subscribers = Impl.Subscriber_set.empty in
-  let task_state = Impl.Task_state.empty in
+  let subscribers = Subscriber_set.empty in
+  let task_state = Task_state.empty in
   let task_mailbox = Lwt_mvar.create_empty () in
   let waiter, wakener = Lwt.task () in
   let handler_lock = Lwt_mutex.create () in
   ( module struct
-    module Runner = Impl
+    module Runner = Runner
 
     let instance =
-      { Impl.task_queue
+      { Runner.task_queue
       ; task_queue_writer
       ; task_state
       ; task_state_lock

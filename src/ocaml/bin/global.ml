@@ -26,7 +26,7 @@ module Cached_source = C.Statable.Make (struct
     let empty () = []
   end)
 
-module Task_runner : sig
+module Task_runner (G : D.Id_generator_intf.Gen_random with type id = Uuidm.t) : sig
   val get : unit -> (module T.Runner.Instance)
 end = struct
   let t = ref None
@@ -34,7 +34,7 @@ end = struct
   let get () =
     match !t with
     | None ->
-      let v = T.Runner.make () in
+      let v = T.Runner.make (module G) in
       t := Some v ;
       v
     | Some t -> t
