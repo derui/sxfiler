@@ -5,6 +5,8 @@ let () =
     ; ("filer repository", Filer_repo_test.test_set)
     ; ("key map respository", Key_map_repo_test.test_set)
     ; ("location scanner service", Location_scanner_service_test.test_set)
+    ; ("progress notification", Message_notification_test.test_set)
+    ; ("message notification", Progress_notification_test.test_set)
     ; ("node transporter service", Node_transporter_service_test.test_set)
     ; ("node replication service", Node_replication_service_test.test_set)
     ; ("node trash service", Node_trash_service_test.test_set)

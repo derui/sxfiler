@@ -5,17 +5,35 @@ module I = Sxfiler_server_infra
 module Dummy_ns = struct
   type location = Path.t
 
-  let send _ = Lwt.return_unit
+  let send ~typ:_ _ = Lwt.return_unit
 end
 
-module Dummy_factory : D.Notification.Factory = struct
+module Message_factory = I.Message_notification_factory.Make (struct
+  type id = Uuidm.t
+
   let id = Uuidm.v4_gen (Random.State.make [||]) ()
-  let create ~level ~body = D.Notification.make ~id ~level ~body
-end
+  let generate () = id
+end)
+
+module Progress_factory = I.Progress_notification_factory.Make (struct
+  type id = Uuidm.t
+
+  let id = Uuidm.v4_gen (Random.State.make [||]) ()
+  let generate () = id
+end)
 
 let test_set =
+  let suggest node =
+    let suggestion =
+      D.Task_interaction.Suggestion.
+        { task_id = Uuidm.v4_gen (Random.State.make [||]) ()
+        ; node_name = Path.basename node.D.Node.full_path
+        ; suggestions = [] }
+    in
+    (suggestion, Lwt.return (D.Task_interaction.Reply.Rename "renamed"))
+  in
+  let module M = I.Node_transporter_service.Make (Dummy_ns) (Message_factory) (Progress_factory) in
   [ Alcotest_lwt.test_case "transport a node to destination" `Quick (fun _ () ->
-        let module M = I.Node_transporter_service.Make (Dummy_ns) (Dummy_factory) in
         let temp_dir = File.mk_temp_dir "nts" in
         let dest = File.mk_temp_dir "destination" in
         let temp_file = Filename.temp_file ~temp_dir "node" "sample" in
@@ -24,25 +42,29 @@ let test_set =
         let finalizer () = File.remove temp_dir ; File.remove dest ; Lwt.return_unit in
         finalizer
         |> Lwt.finalize (fun () ->
-            let _to = D.File_tree.make ~location:Path.(of_string dest) ~nodes:[] in
-            let%lwt () = M.transport ~node ~_to () in
-            let dest_file = Filename.basename temp_file |> Filename.concat dest in
-            Alcotest.(check bool) "destination" true (Sys.file_exists dest_file) ;
-            Alcotest.(check bool) "source" false (Sys.file_exists temp_file) ;
-            Lwt.return_unit ) )
-  ; Alcotest_lwt.test_case "transport nodes to destination with correction" `Quick (fun _ () ->
-        let module M = I.Node_transporter_service.Make (Dummy_ns) (Dummy_factory) in
+               let _to = D.File_tree.make ~location:Path.(of_string dest) ~nodes:[] in
+               let%lwt () = M.transport ~suggest ~nodes:[node] ~_to in
+               let dest_file = Filename.basename temp_file |> Filename.concat dest in
+               Alcotest.(check bool) "destination" true (Sys.file_exists dest_file) ;
+               Alcotest.(check bool) "source" false (Sys.file_exists temp_file) ;
+               Lwt.return_unit ) )
+  ; Alcotest_lwt.test_case "transport nodes to destination with suggestion" `Quick (fun _ () ->
         let temp_dir = File.mk_temp_dir "nts" in
         let dest = File.mk_temp_dir "destination" in
         let temp_file = Filename.temp_file ~temp_dir "node" "sample" in
         let stat = Test_fixtures.File_stat.fixture () in
         let node = Test_fixtures.Node.fixture ~full_path:Path.(of_string temp_file) stat in
+        let node_to =
+          Test_fixtures.Node.fixture
+            ~full_path:Path.(of_list [dest; Filename.basename temp_file])
+            stat
+        in
         let finalizer () = File.remove temp_dir ; File.remove dest ; Lwt.return_unit in
         finalizer
         |> Lwt.finalize (fun () ->
-            let _to = D.File_tree.make ~location:Path.(of_string dest) ~nodes:[] in
-            let%lwt () = M.transport ~node ~new_name:"renamed" ~_to () in
-            let dest_file = Filename.concat dest "renamed" in
-            Alcotest.(check bool) "destination" true (Sys.file_exists dest_file) ;
-            Alcotest.(check bool) "source" false (Sys.file_exists temp_file) ;
-            Lwt.return_unit ) ) ]
+               let _to = D.File_tree.make ~location:Path.(of_string dest) ~nodes:[node_to] in
+               let%lwt () = M.transport ~suggest ~nodes:[node] ~_to in
+               let dest_file = Filename.concat dest "renamed" in
+               Alcotest.(check bool) "destination" true (Sys.file_exists dest_file) ;
+               Alcotest.(check bool) "source" false (Sys.file_exists temp_file) ;
+               Lwt.return_unit ) ) ]

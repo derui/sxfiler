@@ -7,5 +7,6 @@
             sxfiler.server.task
             sxfiler.server.translator
             jsonrpc-ocaml.yojson
+            ppx_protocol_conv_json
             unix)
- (preprocess (pps lwt_ppx)))
+ (preprocess (pps lwt_ppx ppx_deriving.std ppx_protocol_conv)))

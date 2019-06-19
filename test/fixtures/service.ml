@@ -4,7 +4,7 @@
 module D = Sxfiler_domain
 
 module Node_transport_service : D.Node_transporter_service.S = struct
-  let transport ?new_name:_ ~node:_ ~_to:_ () = Lwt.return_unit
+  let transport ~suggest:_ ~nodes:_ ~_to:_ = Lwt.return_unit
 end
 
 module Node_trash_service : D.Node_trash_service.S = struct

@@ -16,8 +16,9 @@ module type S = sig
   module Filer_factory : D.Filer.Factory.S
   module Configuration_repo : D.Configuration.Repository
   module Completion_repo : D.Completion.Repository
-  module Notification_factory : D.Notification.Factory
-  module Notification_service : D.Notification_service.S
+  module Message_notification_factory : I.Message_notification_factory.S
+  module Progress_notification_factory : I.Progress_notification_factory.S
+  module Notification_service : I.Notification_service.S
   module Node_transporter_service : D.Node_transporter_service.S
   module Node_replication_service : D.Node_replication_service.S
   module Location_scanner_service : D.Location_scanner_service.S
@@ -25,7 +26,6 @@ module type S = sig
   module Key_map_resolve_service : D.Key_map_resolve_service.S
   module Task_repo : D.Task.Repository
   module Task_factory : D.Task.Factory.S
-  module Task_notifier : D.Task_notifier.S
 
   module Usecase : sig
     module Keymap_get : U.Keymap.Get.S
@@ -60,21 +60,28 @@ module Make
     I.Configuration_repo.Make (Global.Configuration)
 
   module Completion_repo = I.Completion_repo.Make (Global.Cached_source)
-  module Notification_factory : D.Notification.Factory = I.Notification_factory
+
+  module Message_notification_factory =
+    I.Message_notification_factory.Make (I.Id_generator.Gen_uuid)
+
+  module Progress_notification_factory =
+    I.Progress_notification_factory.Make (I.Id_generator.Gen_uuid)
+
   module Notification_service = I.Notification_service.Make (Conn)
   module Key_map_resolve_service = I.Key_map_resolve_service
 
   module Node_transporter_service =
-    I.Node_transporter_service.Make (Notification_service) (Notification_factory)
+    I.Node_transporter_service.Make (Notification_service) (Message_notification_factory)
+      (Progress_notification_factory)
 
   module Node_replication_service =
-    I.Node_replication_service.Make (Notification_service) (Notification_factory)
+    I.Node_replication_service.Make (Notification_service) (Message_notification_factory)
+      (Progress_notification_factory)
 
   module Location_scanner_service : D.Location_scanner_service.S = I.Location_scanner_service
   module Node_trash_service = I.Node_trash_service
   module Task_repo = I.Task_repo.Make (Global.Root) (Runner)
   module Task_factory = D.Task.Factory.Make (I.Id_generator.Gen_uuid)
-  module Task_notifier = I.Task_interaction_notifier.Make (Conn)
 
   module Usecase = struct
     module Keymap_get = U.Keymap.Get.Make (Condition_repo) (Key_map_repo)
@@ -102,30 +109,28 @@ module Make
     module Filer_toggle_mark = U.Filer.Toggle_mark.Make (Filer_repo)
 
     module Filer_move = U.Filer.Move.Make (struct
-        module FR = Filer_repo
-        module TF = Task_factory
-        module TR = Task_repo
-        module Scan = Location_scanner_service
-        module Transport = Node_transporter_service
-        module Notifier = Task_notifier
-      end)
+      module FR = Filer_repo
+      module TF = Task_factory
+      module TR = Task_repo
+      module Scan = Location_scanner_service
+      module Transport = Node_transporter_service
+    end)
 
     module Filer_copy = U.Filer.Copy.Make (struct
-        module FR = Filer_repo
-        module TF = Task_factory
-        module TR = Task_repo
-        module Scan = Location_scanner_service
-        module Replicate = Node_replication_service
-        module Notifier = Task_notifier
-      end)
+      module FR = Filer_repo
+      module TF = Task_factory
+      module TR = Task_repo
+      module Scan = Location_scanner_service
+      module Replicate = Node_replication_service
+    end)
 
     module Filer_delete = U.Filer.Delete.Make (struct
-        module FR = Filer_repo
-        module TF = Task_factory
-        module TR = Task_repo
-        module Scan = Location_scanner_service
-        module Trash = Node_trash_service
-      end)
+      module FR = Filer_repo
+      module TF = Task_factory
+      module TR = Task_repo
+      module Scan = Location_scanner_service
+      module Trash = Node_trash_service
+    end)
 
     module Task_send_reply = U.Task.Send_reply.Make (Task_repo)
   end

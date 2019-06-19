@@ -4,5 +4,4 @@ let () =
     ; ("configuration gateway", Configuration_test.test_set)
     ; ("Key map gateway", Keymap_test.test_set)
     ; ("filer gateway", Filer_test.test_set)
-    ; ("notification gateway", Notification_test.test_set)
     ; ("task gateway", Task_test.test_set) ]
