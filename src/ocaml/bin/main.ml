@@ -35,8 +35,10 @@ module Log = (val Logger.make ["main"])
 let create_server (module C : Rpc_connection.Instance) (module R : T.Runner.Instance) =
   let module Completer = (val Global.Completer.get ()) in
   let module Dep = Dependencies.Make (C) (Completer) (R) in
+  let subscribe_task_finished task = Dep.Task_notifier.finished task.D.Task.id in
+  let unsubscribe = R.(Runner.subscribe instance ~f:subscribe_task_finished) in
   let rpc_server = Jsonrpc_server.make () in
-  Procedures.expose_all rpc_server (module Dep : Dependencies.S)
+  (Procedures.expose_all rpc_server (module Dep : Dependencies.S), unsubscribe)
 
 let handler (conn : _ * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
     (body : Cohttp_lwt.Body.t) =
@@ -56,9 +58,13 @@ let handler (conn : _ * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
     let%lwt () = C.Connection.connect C.instance frames_out_fn in
     Lwt.async (fun () ->
         (* Disable current task when thread is terminated. *)
-        let rpc_server = create_server (module C) (module R) in
+        let rpc_server, unsubscribe = create_server (module C) (module R) in
         let thread = Jsonrpc_server.serve_forever rpc_server (module C) in
-        Lwt.on_termination thread (fun () -> Logs.info (fun m -> m "Terminate thread")) ;
+        Lwt.on_termination thread (fun () ->
+            (let%lwt f = unsubscribe in
+             let%lwt () = f () in
+             Logs.info (fun m -> m "Terminate thread") |> Lwt.return)
+            |> Lwt.ignore_result ) ;
         Lwt.join [thread] ) ;
     Lwt.return resp
   | _ ->
