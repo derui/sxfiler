@@ -9,9 +9,8 @@ module Get = struct
 
   module type S = Core.Gateway with type params = Type.params and type result = Type.result
 
-  (** This module defines rpc interface to get current key bindings.
-      Replace [json] on implementation to match rpc.
-  *)
+  (** This module defines rpc interface to get current key bindings. Replace [json] on
+      implementation to match rpc. *)
   module Make (Usecase : Usecase.Keymap.Get.S) : S = struct
     include Type
 
@@ -48,9 +47,8 @@ module Store = struct
 
   module type S = Core.Gateway with type params = Type.params and type result = Type.result
 
-  (** This module defines rpc interface to get current key bindings.
-      Replace [json] on implementation to match rpc.
-  *)
+  (** This module defines rpc interface to get current key bindings. Replace [json] on
+      implementation to match rpc. *)
   module Make (Usecase : Usecase.Keymap.Store.S) : S = struct
     include Type
 

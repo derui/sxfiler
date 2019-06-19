@@ -1,6 +1,5 @@
 (** Translators for {!Sxfiler_domain.Task_interaction}. This module can not support conversion from
-    type defined in module to domain.
-*)
+    type defined in module to domain. *)
 
 module Reply : sig
   (** Type of interaction *)

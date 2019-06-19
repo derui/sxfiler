@@ -91,7 +91,7 @@ let load_keymap file =
     None
   | Ok v -> Some (Y.to_domain v)
 
-(* Get config from file, but get default when some error happenned  *)
+(* Get config from file, but get default when some error happenned *)
 let get_config f config () = if Sys.file_exists config then f config else None
 
 let initialize_modules ~migemo ~option =
@@ -126,7 +126,7 @@ let start_server _ port =
     ~mode:(`TCP (`Port port))
     (Cohttp_lwt_unix.Server.make_response_action ~callback:handler ~conn_closed ())
 
-(* Load migemo from specified directory that contains dictionary and conversions.  *)
+(* Load migemo from specified directory that contains dictionary and conversions. *)
 let load_migemo dict_dir =
   let migemo_dict = "migemo-dict"
   and hira_to_kata = "hira2kata.dat"

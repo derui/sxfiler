@@ -1,4 +1,4 @@
-(** This module will run tasks with task queue.  *)
+(** This module will run tasks with task queue. *)
 
 module D = Sxfiler_domain
 module Log = (val Sxfiler_server_core.Logger.make ["task"])

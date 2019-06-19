@@ -14,9 +14,8 @@ module Get = struct
      and type output = Type.output
      and type error = Type.error
 
-  (** This module defines usecase interface to get current key bindings.
-      Replace [json] on implementation to match rpc.
-  *)
+  (** This module defines usecase interface to get current key bindings. Replace [json] on
+      implementation to match rpc. *)
   module Make (C : Condition.Repository) (R : Key_map_repository.S) : S = struct
     include Type
 

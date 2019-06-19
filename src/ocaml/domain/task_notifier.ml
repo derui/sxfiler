@@ -5,8 +5,8 @@ module type S = sig
     -> node_name:string
     -> Task_types.id
     -> unit Lwt.t
-  (** [need_interaction ~suggestions ~node_name task_id] send a notification that the task needs user interaction
-      for the node *)
+  (** [need_interaction ~suggestions ~node_name task_id] send a notification that the task needs
+      user interaction for the node *)
 
   val finished : Task_types.id -> unit Lwt.t
   (** [finished task_id] send a notification that the task finished *)

@@ -11,7 +11,7 @@ let default =
 
 module type Repository = sig
   val resolve : unit -> t Lwt.t
-  (** [resolve ()] returns configuration. Configuration should be singleton.  *)
+  (** [resolve ()] returns configuration. Configuration should be singleton. *)
 
   val store : t -> unit Lwt.t
   (** [store t] saves the [t] as singleton *)

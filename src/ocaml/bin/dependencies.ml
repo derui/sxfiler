@@ -1,4 +1,5 @@
-(** This module declares dependencies for signature-only modules in {!Sxfiler_domain} and {!Sxfiler_usecase}  *)
+(** This module declares dependencies for signature-only modules in {!Sxfiler_domain} and
+    {!Sxfiler_usecase} *)
 
 module C = Sxfiler_server_core
 module U = Sxfiler_usecase

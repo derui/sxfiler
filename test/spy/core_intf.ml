@@ -8,7 +8,7 @@ module type S = sig
   (** [called_args t] returns arguments before called spied function. *)
 
   val called_count : 'a t -> int
-  (** [called_count t] returns number of called count spied function.   *)
+  (** [called_count t] returns number of called count spied function. *)
 end
 
 module type S2 = sig
@@ -21,5 +21,5 @@ module type S2 = sig
   (** [called_args t] returns arguments before called spied function. *)
 
   val called_count : ('a, 'b) t -> int
-  (** [called_count t] returns number of called count spied function.   *)
+  (** [called_count t] returns number of called count spied function. *)
 end

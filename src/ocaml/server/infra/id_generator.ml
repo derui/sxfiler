@@ -1,4 +1,4 @@
-(** A implementation for {!module: Sxfiler_domain.Plan.Factory} signature. *)
+(** A implementation for {!module:Sxfiler_domain.Plan.Factory} signature. *)
 
 module T = Sxfiler_domain
 

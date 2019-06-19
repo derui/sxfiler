@@ -1,6 +1,5 @@
-(** {!Statable} can create new State with Lwt. This module is useful to define
-    thread-global and thread-safe state in application.
-*)
+(** {!Statable} can create new State with Lwt. This module is useful to define thread-global and
+    thread-safe state in application. *)
 module type Type = sig
   type t
 

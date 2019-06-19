@@ -1,6 +1,5 @@
-(** The module defines all error type in gateway. Modules implemented {!Core.Gateway} will raise exception
-    defined in this module.
-*)
+(** The module defines all error type in gateway. Modules implemented {!Core.Gateway} will raise
+    exception defined in this module. *)
 type t =
   | Unknown_error of string
   | Filer_not_found

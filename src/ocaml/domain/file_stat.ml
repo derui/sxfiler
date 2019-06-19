@@ -16,8 +16,7 @@ let empty_mode =
   ; others = {writable = true; readable = true; executable = true} }
 
 (** Type of stat of file. Note: The value of *time (atime, ctime, mtime) fields has time resolution
-    in term of milliseconds, not seconds.
-*)
+    in term of milliseconds, not seconds. *)
 type t =
   { mode : mode
   ; uid : int

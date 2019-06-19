@@ -13,7 +13,7 @@ module Completer = struct
 
   let instance : t ref = ref @@ fun () -> failwith "Not initialized"
 
-  (** [set closure] set closure to wrap completer instance  *)
+  (** [set closure] set closure to wrap completer instance *)
   let set t = instance := t
 
   let get () = !instance ()

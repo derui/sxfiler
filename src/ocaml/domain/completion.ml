@@ -1,4 +1,4 @@
-(** Completion defines value object to complete something.  *)
+(** Completion defines value object to complete something. *)
 
 (** Item is only type to complete by RPC with any value. *)
 module Item = struct
@@ -37,5 +37,5 @@ module type Repository = sig
   (** [store collection] saves collection to some space. *)
 
   val resolve : unit -> collection Lwt.t
-  (** [resolve ()] returns collection that is stored now.  *)
+  (** [resolve ()] returns collection that is stored now. *)
 end

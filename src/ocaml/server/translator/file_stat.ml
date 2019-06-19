@@ -1,4 +1,4 @@
-(** Define objects for JSON friendly  *)
+(** Define objects for JSON friendly *)
 
 type capability =
   { writable : bool

@@ -1,7 +1,7 @@
 module C = Sxfiler_server_core
 module D = Sxfiler_domain
 
-(** Make task repository to  *)
+(** Make task repository to *)
 module Make
     (S : C.Statable.S with type state = C.Root_state.t)
     (Runner : Sxfiler_server_task.Runner.Instance) : D.Task.Repository = struct

@@ -3,9 +3,8 @@ open Task_types
 (** {!S} is signature to do the task. *)
 module type Executor = sig
   val apply_interaction : [`No_interaction | `Apply of Task_interaction.Reply.typ -> unit Lwt.t]
-  (** [apply_interaction interaction] applies an interaction to the executor.
-      The Executor is able to do not define anything for interaction.
-  *)
+  (** [apply_interaction interaction] applies an interaction to the executor. The Executor is able
+      to do not define anything for interaction. *)
 
   val execute : Context.t -> unit Lwt.t
   (** [execute ()] runs the task body. *)

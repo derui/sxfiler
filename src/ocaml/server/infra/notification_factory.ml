@@ -1,4 +1,4 @@
-(** A implementation for {!module: Sxfiler_domain.Notification.Factory} signature. *)
+(** A implementation for {!module:Sxfiler_domain.Notification.Factory} signature. *)
 
 module T = Sxfiler_domain
 

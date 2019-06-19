@@ -19,7 +19,7 @@ let res_to_frame res =
   let content = Yojson.Safe.to_string json in
   Some (W.Frame.create ~opcode:W.Frame.Opcode.Text ~content ())
 
-(** handle response as JSON-RPC payload. This handler limits handling unfragment frames.  *)
+(** handle response as JSON-RPC payload. This handler limits handling unfragment frames. *)
 let request_handler t conn =
   let open Sxfiler_server_core in
   let module C = (val conn : Rpc_connection.Instance) in

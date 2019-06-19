@@ -1,8 +1,6 @@
-(**
-   Base signature of translator for domain and a type.
-*)
+(** Base signature of translator for domain and a type. *)
 module type Domain_translator = sig
-  (** base type of translator  *)
+  (** base type of translator *)
   type t
 
   (** Target type of conversion each way *)

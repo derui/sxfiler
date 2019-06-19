@@ -16,7 +16,7 @@ type body =
   | Message of string
   | Progress of {process : string; current : float; targeted : float}
 
-(** Identifier of the notification. Each notifications has global unique identifier.  *)
+(** Identifier of the notification. Each notifications has global unique identifier. *)
 type id = Uuidm.t
 
 type t =

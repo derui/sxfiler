@@ -1,7 +1,7 @@
 (** Node is a domain in a file tree. *)
 open Sxfiler_core
 
-(** identifier in file tree.  *)
+(** identifier in file tree. *)
 type id = string [@@deriving eq, show]
 
 (** [link_path] will have target of the link if item pointed to full_path is *link. *)

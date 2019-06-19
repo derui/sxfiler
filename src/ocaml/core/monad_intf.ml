@@ -7,9 +7,8 @@ module type Base = sig
   val return : 'a -> 'a t
 end
 
-(** module interface of monad. This interface apply to single placeholder only,
-    but you can use this interface with type having placeholder more than two if you specify other placeholders.
-*)
+(** module interface of monad. This interface apply to single placeholder only, but you can use
+    this interface with type having placeholder more than two if you specify other placeholders. *)
 module type S = sig
   type 'a t
 
@@ -30,11 +29,9 @@ module type S = sig
   end
 end
 
-(**
-   module type for type to want to make monadic interface.
+(** module type for type to want to make monadic interface.
 
-   This interface will manage first placeholder only, second placeholder do not manage in this.
-*)
+    This interface will manage first placeholder only, second placeholder do not manage in this. *)
 module type Base2 = sig
   type ('a, 'b) t
 

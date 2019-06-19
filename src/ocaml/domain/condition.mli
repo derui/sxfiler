@@ -19,9 +19,8 @@ val disable : t -> context:string -> t
 (** [disable t ~context] returns new condition context disabled. *)
 
 val subset : current:t -> parts:t -> bool
-(** [subset ~current ~parts] returns what [parts] is subset of [current] or not. This function is useful to check
-    if current context was fulfilled condition specified by [parts].
-*)
+(** [subset ~current ~parts] returns what [parts] is subset of [current] or not. This function is
+    useful to check if current context was fulfilled condition specified by [parts]. *)
 
 module type Repository = sig
   val store : t -> unit Lwt.t

@@ -1,5 +1,5 @@
-(** This module provides simple functions for more functional style and to fill the gap
-    of OCaml's stdlib.  *)
+(** This module provides simple functions for more functional style and to fill the gap of OCaml's
+    stdlib. *)
 
 let ident : 'a -> 'a = fun v -> v
 

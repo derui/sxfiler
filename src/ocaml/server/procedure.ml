@@ -2,9 +2,8 @@ module G = Sxfiler_server_gateway
 module Rpc = Jsonrpc_yojson
 module Log = (val Sxfiler_server_core.Logger.make ["rpc"])
 
-(** Types of spec of RPC to create procedure handler.
-    This interface requires to define result and param always if procedure not required.
-*)
+(** Types of spec of RPC to create procedure handler. This interface requires to define result and
+    param always if procedure not required. *)
 
 module type Spec = sig
   module Gateway : G.Core.Gateway

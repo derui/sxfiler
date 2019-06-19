@@ -1,6 +1,5 @@
 (** Path is utility module more flexibility handling path and filename based on {!Filename} module.
-    This module allows to handle pathname on windows and *nix platform do not change codebase.
-*)
+    This module allows to handle pathname on windows and *nix platform do not change codebase. *)
 
 exception Empty_path
 
@@ -36,11 +35,11 @@ let resolve_sep env =
   let f v = Option.fmap v ~f:sep_of_env in
   Option.get ~default:(fun () -> sep_of_env (if Sys.unix then `Unix else `Win)) @@ f env
 
-(** [split_path_sep ?env path] splits from first separater '/' on *nix, or "\\" on Windows.
-    If [path] does not have separator, return [(path, "")].
+(** [split_path_sep ?env path] splits from first separater '/' on *nix, or "\\" on Windows. If
+    [path] does not have separator, return [(path, "")].
 
-    Default separator is platform dependent separator such as [/] on *nix or [\\] on Windows when do not pass [sep].
-*)
+    Default separator is platform dependent separator such as [/] on *nix or [\\] on Windows when
+    do not pass [sep]. *)
 let split_path_sep ?env path =
   let length = String.length path in
   let sep = resolve_sep env in
@@ -59,13 +58,20 @@ let split_path_sep ?env path =
   in
   find_sep path 0
 
-(** [normalize_path ?env path] splits [path] with [env] as {!component}
+(** [normalize_path ?env path] splits [path] with [env] as {!component}.
 
-    - "/" -> [Comp_empty]
-    - "C:\\" -> [Comp_filename "C:"]
-    - "c/f" -> [Comp_current;Comp_filename "c";Comp_filename "f"]
-    - "/a/b" -> [Comp_empty;Comp_filename "a";Comp_filename "b"]
-*)
+    - {[
+      "/" => [Comp_empty]
+    ]}
+    - {[
+      "C:\\" => [Comp_filename "C:"]
+    ]}
+    - {[
+      "c/f" => [Comp_current;Comp_filename "c";Comp_filename "f"]
+    ]}
+    - {[
+      "/a/b" => [Comp_empty;Comp_filename "a";Comp_filename "b"]
+    ]} *)
 let normalize_path ?env path =
   let path_to_component = function
     | "" -> Comp_empty

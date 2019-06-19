@@ -1,4 +1,4 @@
-(** [Snapshot_record] provides types for record of history  *)
+(** [Snapshot_record] provides types for record of history *)
 
 open Sxfiler_core
 
@@ -11,8 +11,7 @@ type t =
 module type Clock = sig
   val unixtime : unit -> int64
   (** Get unix time that should have millisecond resolution. So if 1 second of unix time given,
-      this function should return [1000L] as unix time.
-  *)
+      this function should return [1000L] as unix time. *)
 end
 
 let record_of ~location clock =

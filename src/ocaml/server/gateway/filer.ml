@@ -3,7 +3,7 @@ module Usecase = Sxfiler_usecase
 module T = Sxfiler_server_translator
 module D = Sxfiler_domain
 
-(** the gateway for {!module: Usecase.Filer.Make}*)
+(** the gateway for {!module:Usecase.Filer.Make}*)
 module Make = struct
   (** request and response definition *)
   module Type = struct
@@ -35,7 +35,7 @@ module Make = struct
   end
 end
 
-(** the gateway for {!module: Usecase.Filer.Get}*)
+(** the gateway for {!module:Usecase.Filer.Get}*)
 module Get = struct
   (** request and response for gateway *)
   module Type = struct
@@ -60,7 +60,7 @@ module Get = struct
   end
 end
 
-(** the gateway for {!module: Usecase.Filer.Move_parent} *)
+(** the gateway for {!module:Usecase.Filer.Move_parent} *)
 module Move_parent = struct
   (** gateway for Move_parent use case. *)
   module Type = struct
@@ -85,7 +85,7 @@ module Move_parent = struct
   end
 end
 
-(** The gateway for {!module: Usecase.Filer.Enter_directory} use case. *)
+(** The gateway for {!module:Usecase.Filer.Enter_directory} use case. *)
 module Enter_directory = struct
   (** Request and response of gateway *)
   module Type = struct

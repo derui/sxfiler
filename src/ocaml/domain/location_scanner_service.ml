@@ -1,6 +1,5 @@
-(** this module defines interface to transport node between filers.
-    No implementation that is default provides from this, should implement yourself.
-*)
+(** this module defines interface to transport node between filers. No implementation that is
+    default provides from this, should implement yourself. *)
 open Sxfiler_core
 
 type location = Path.t
