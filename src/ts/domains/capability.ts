@@ -19,7 +19,7 @@ export type Capability = CapabilityObject & {
   disallowToExecute(): Capability;
 
   /** Return plain CapabilityObject */
-  plain: CapabilityObject;
+  plain(): CapabilityObject;
 };
 
 // Capability of a target
@@ -35,6 +35,10 @@ type CreateCapabilityArg = {
   executable: boolean;
 };
 
+function plain(this: Capability): CapabilityObject {
+  return { writable: this.writable, readable: this.readable, executable: this.executable };
+}
+
 /**
    Create capability from argument
  */
@@ -44,9 +48,7 @@ export const createCapability = ({ writable, readable, executable }: CreateCapab
     readable,
     executable,
 
-    get plain() {
-      return { writable: this.writable, readable: this.readable, executable: this.executable };
-    },
+    plain,
 
     /** Return new capability that allows to write */
     allowToWrite() {

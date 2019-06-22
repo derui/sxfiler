@@ -1,16 +1,23 @@
 import bigInt from "big-integer";
-import { Mode } from "./mode";
+import { Mode, ModeObject, createMode } from "./mode";
+import { createCapability } from "./capability";
 
 // object mode of file
 export type FileStat = FileStatObject & {
+  mode: Mode;
   /**
    *  get size of file as BigInt
    */
   sizeAsBigInt(): bigInt.BigInteger;
+
+  /**
+   * Get POJO of this object
+   */
+  plain(): FileStatObject;
 };
 
 export type FileStatObject = {
-  readonly mode: Mode;
+  readonly mode: ModeObject;
   readonly uid: number;
   readonly gid: number;
   readonly atime: Date;
@@ -23,7 +30,7 @@ export type FileStatObject = {
 };
 
 export type FactoryArg = {
-  mode: Mode;
+  mode: ModeObject;
   uid: number;
   gid: number;
   atime: string;
@@ -40,14 +47,23 @@ export type FactoryArg = {
  * @param arg arguments of factory
  */
 export const createFileStat = (arg: FactoryArg): FileStat => {
-  const { atime, ctime, mtime, ...rest } = arg;
+  const { atime, ctime, mtime, mode, ...rest } = arg;
   return {
     ...rest,
+    mode: createMode({
+      group: createCapability(mode.group),
+      owner: createCapability(mode.owner),
+      others: createCapability(mode.others),
+    }),
     atime: new Date(Number(arg.atime)),
     ctime: new Date(Number(arg.ctime)),
     mtime: new Date(Number(arg.mtime)),
     sizeAsBigInt(): bigInt.BigInteger {
       return bigInt(this.size);
+    },
+    plain(): FileStatObject {
+      const { sizeAsBigInt, mode, plain, ...rest } = this;
+      return { ...rest, mode: mode.plain() };
     },
   };
 };

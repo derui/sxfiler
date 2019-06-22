@@ -32,7 +32,7 @@ export type Mode = {
      Plain version mode
    */
 
-  plain: ModeObject;
+  plain(): ModeObject;
 };
 
 type CreateModeArg = {
@@ -50,11 +50,11 @@ export const createMode = ({ owner, group, others }: CreateModeArg): Mode => {
     group,
     others,
 
-    get plain() {
+    plain() {
       return {
-        owner: this.owner.plain,
-        group: this.group.plain,
-        others: this.others.plain,
+        owner: this.owner.plain(),
+        group: this.group.plain(),
+        others: this.others.plain(),
       };
     },
 
