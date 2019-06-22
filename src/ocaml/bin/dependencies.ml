@@ -67,7 +67,7 @@ module Make
   module Progress_notification_factory =
     I.Progress_notification_factory.Make (I.Id_generator.Gen_uuid)
 
-  module Notification_service = I.Notification_service.Make (Conn)
+  module Notification_service = I.Notification_service.Make (C.Rpc_client.Make (Conn))
   module Key_map_resolve_service = I.Key_map_resolve_service
 
   module Node_transporter_service =
