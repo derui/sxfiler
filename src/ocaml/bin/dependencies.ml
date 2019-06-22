@@ -53,7 +53,8 @@ module Make
   module Clock = Global.Clock
   module Key_map_repo : D.Key_map_repository.S = I.Key_map_repo.Make (Global.Keymap)
   module Condition_repo : D.Condition.Repository = I.Condition_repo.Make (Global.Condition)
-  module Filer_repo : D.Filer.Repository = I.Filer_repo.Make (Global.Root)
+  module Notification_service = I.Notification_service.Make (C.Rpc_client.Make (Conn))
+  module Filer_repo : D.Filer.Repository = I.Filer_repo.Make (Global.Root) (Notification_service)
   module Filer_factory : D.Filer.Factory.S = D.Filer.Factory.Make (I.Id_generator.Gen_uuid)
 
   module Configuration_repo : D.Configuration.Repository =
@@ -67,7 +68,6 @@ module Make
   module Progress_notification_factory =
     I.Progress_notification_factory.Make (I.Id_generator.Gen_uuid)
 
-  module Notification_service = I.Notification_service.Make (C.Rpc_client.Make (Conn))
   module Key_map_resolve_service = I.Key_map_resolve_service
 
   module Node_transporter_service =
