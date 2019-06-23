@@ -1,7 +1,8 @@
 import * as Common from "./type";
 import { Handler } from "./websocket-handler";
+import { ContextLike } from "../../context";
 
-export type NotificationMethod = (params: any) => void;
+export type NotificationMethod = (context: ContextLike) => (params: any) => void;
 export type NotificationMethodMap = {
   [key: string]: NotificationMethod;
 };
@@ -11,7 +12,7 @@ export default class NotificationServer implements Handler {
    * constructor
    * @param methodMap available websocket
    */
-  constructor(private methodMap: NotificationMethodMap) {}
+  constructor(private context: ContextLike, private methodMap: NotificationMethodMap) {}
 
   /**
    * handle websocket event to handle notification.
@@ -21,7 +22,7 @@ export default class NotificationServer implements Handler {
     const json: Common.Request = JSON.parse(ev.data);
 
     if (!json.id && this.methodMap[json.method]) {
-      this.methodMap[json.method](json.params);
+      this.methodMap[json.method](this.context)(json.params);
     }
   }
 }

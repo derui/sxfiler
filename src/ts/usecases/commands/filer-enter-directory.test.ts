@@ -64,7 +64,7 @@ describe("Commands", () => {
 
         await command.execute(dispatcher as any, { state, client: client as any });
 
-        expect(client.call).toBeCalledWith(Apis.Filer.EnterDirectory, { name: Side.Left, nodeId: "node" });
+        expect(client.call).toBeCalledWith(Apis.Filer.EnterDirectory, { name: Side.Left, itemId: "node" });
       });
 
       it("update a filer after entered into directory", async () => {

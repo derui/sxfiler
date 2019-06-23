@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ProgressNotification } from "../../../domains/notification";
+import { ProgressNotification } from "../../../domains/progress-notification";
 import * as List from "../../ui/list/list";
 import { Component as Item } from "../progress-notification-item/progress-notification-item";
 

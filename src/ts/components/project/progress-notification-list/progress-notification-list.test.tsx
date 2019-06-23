@@ -1,14 +1,14 @@
 import * as React from "react";
 import renderer from "react-test-renderer";
 
-import * as N from "../../../domains/notification";
+import * as N from "../../../domains/progress-notification";
 import { Component as T } from "./progress-notification-list";
 
 describe("Project", () => {
   describe("Progress Notification List", () => {
     it("can render correctly", () => {
       const notifications = [
-        N.createProgress("id", N.Level.Info, {
+        N.createProgress("id", {
           process: "process",
           current: 10,
           target: 100,
@@ -27,12 +27,12 @@ describe("Project", () => {
 
     it("should render progresses", () => {
       const notifications = [
-        N.createProgress("id", N.Level.Info, {
+        N.createProgress("id", {
           process: "foo",
           current: 9,
           target: 10,
         }),
-        N.createProgress("id2", N.Level.Warning, {
+        N.createProgress("id2", {
           process: "bar",
           current: 10,
           target: 11,

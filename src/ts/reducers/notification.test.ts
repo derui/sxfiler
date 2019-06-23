@@ -1,58 +1,48 @@
 // reducers for notification
 import { actions } from "../actions/notification";
-import { createMessage, Level } from "../domains/notification";
-import { createNotifications } from "../domains/notifications";
 import { empty, State } from "../states/notification";
 import reducer from "./notification";
-import { createKeymap } from "../domains/keymap";
+import { createProgress } from "../domains/progress-notification";
+import { createNotifications } from "../domains/progress-notifications";
 
 describe("reducers", () => {
   describe("Notification state", () => {
+    const data = createProgress("id", {
+      current: 1,
+      process: "process",
+      target: 100,
+    });
+
     it("remove the notification specified id in Timeout action", () => {
       const state: State = {
-        notifications: createNotifications([createMessage("id", Level.Info, "message")]),
+        progresses: createNotifications([data]),
         timeouts: createNotifications([]),
       };
 
       const ret = reducer(state, actions.timeout("id"));
 
-      expect(ret.notifications.messages).toHaveLength(1);
-      expect(ret.timeouts.messages).toHaveLength(1);
+      expect(ret.progresses.notifications).toHaveLength(1);
+      expect(ret.timeouts.notifications).toHaveLength(1);
     });
 
     it("should append a new notification when ReceiveNotification action", () => {
       const state = empty();
 
-      const data = createMessage("id", Level.Info, "message");
-      const ret = reducer(state, actions.receiveNotification(createMessage("id", Level.Info, "message")));
+      const ret = reducer(state, actions.receiveProgress(data));
 
-      expect(ret.notifications.findById("id")).toEqual(data);
+      expect(ret.progresses.findById("id")).toEqual(data);
     });
 
     it("should remove totally when called with Remove action", () => {
       const state: State = {
-        notifications: createNotifications([createMessage("id", Level.Info, "message")]),
-        timeouts: createNotifications([createMessage("id", Level.Info, "message")]),
+        progresses: createNotifications([data]),
+        timeouts: createNotifications([data]),
       };
 
-      const ret = reducer(state, actions.remove("id"));
+      const ret = reducer(state, actions.remove(data.id));
 
-      expect(ret.notifications.messages).toHaveLength(0);
-      expect(ret.notifications.progresses).toHaveLength(0);
-      expect(ret.timeouts.messages).toHaveLength(0);
-      expect(ret.timeouts.progresses).toHaveLength(0);
-    });
-
-    it("should not append to list of timeouts if unknown id given", () => {
-      const state: State = {
-        notifications: createNotifications([createMessage("id", Level.Info, "message")]),
-        timeouts: createNotifications([]),
-      };
-
-      const ret = reducer(state, actions.timeout("unknown"));
-
-      expect(ret.timeouts.messages).toHaveLength(0);
-      expect(ret.timeouts.progresses).toHaveLength(0);
+      expect(ret.progresses.notifications).toHaveLength(0);
+      expect(ret.timeouts.notifications).toHaveLength(0);
     });
   });
 });

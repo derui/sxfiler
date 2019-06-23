@@ -117,7 +117,7 @@ const Copy: Api<Methods.Copy, { source: string; dest: string; itemIds: string[] 
   },
 };
 
-const Delete: Api<Methods.Delete, { source: string; itemIds: string[] }, undefined> = {
+const Delete: Api<Methods.Delete, { source: string; itemIds: string[] }> = {
   method: Methods.Delete,
   parametersTransformer({ source, itemIds }) {
     return { source, itemIds };
@@ -127,7 +127,7 @@ const Delete: Api<Methods.Delete, { source: string; itemIds: string[] }, undefin
       throw new Error(`Error occuerred: ${error}`);
     }
 
-    return undefined;
+    return ret;
   },
 };
 

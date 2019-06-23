@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ProgressBody } from "../../../domains/notification";
+import { Body } from "../../../domains/progress-notification";
 import * as Element from "../../ui/element/element";
 import * as ListItem from "../../ui/list-item/list-item";
 
@@ -22,7 +22,7 @@ function makeProgressBar(ratio: number) {
 const Span = Element.createComponent({ tagName: "span" });
 
 export interface Props {
-  body: ProgressBody;
+  body: Body;
 }
 
 export class Component extends React.PureComponent<Props> {

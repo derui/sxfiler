@@ -1,48 +1,46 @@
 import * as H from "./notification-handlers";
-import { NotificationKind, Level, createMessage, createProgress } from "./domains/notification";
+import { ContextLike } from "./context";
+import { Level } from "./domains/message-notification";
 
 describe("Notification handlers", () => {
   describe("Notify handler", () => {
-    it("throw error when invalid object schema", () => {
-      expect(() => H.handleNotification({})).toThrowError();
-      expect(() => H.handleNotification({ id: "foo" })).toThrowError();
-      expect(() => H.handleNotification({ type: NotificationKind.Message })).toThrowError();
-      expect(() => H.handleNotification({ body: "foo" })).toThrowError();
-    });
+    let executor = {
+      execute: jest.fn(),
+    };
+    let context: ContextLike = {
+      use: useCase => {
+        return executor;
+      },
+    };
 
-    it("throw error when passed unknown notification kind", () => {
-      const obj = {
-        id: "id",
-        type: "unknown",
-        level: Level.Info,
-      };
-      expect(() => H.handleNotification(obj)).toThrowError();
+    afterEach(() => jest.clearAllMocks());
+
+    it("throw error when invalid object schema", () => {
+      expect(() => H.handleMessageNotification(context)({})).toThrowError();
+      expect(() => H.handleMessageNotification(context)({ id: "foo" })).toThrowError();
+      expect(() => H.handleMessageNotification(context)({ level: Level.Info })).toThrowError();
+      expect(() => H.handleMessageNotification(context)({ body: "foo" })).toThrowError();
     });
 
     it("return notification domain for message of front", () => {
       const obj = {
         id: "id",
         level: Level.Info,
-        body: {
-          type: NotificationKind.Message,
-          message: "message",
-        },
+        body: "message",
       };
-      expect(H.handleNotification(obj)).toEqual(createMessage("id", Level.Info, "message"));
+      H.handleMessageNotification(context)(obj);
+
+      expect(executor.execute).toBeCalled();
     });
 
     it("return notification domain for progress of front", () => {
       const obj = {
         id: "id",
-        level: Level.Info,
-        body: {
-          type: NotificationKind.Progress,
-          progress: { process: "process", current: 0, target: 100 },
-        },
+        body: { process: "process", current: 0, target: 100 },
       };
-      expect(H.handleNotification(obj)).toEqual(
-        createProgress("id", Level.Info, { process: "process", current: 0, target: 100 })
-      );
+      H.handleProgressNotification(context)(obj);
+
+      expect(executor.execute).toBeCalled();
     });
   });
 });

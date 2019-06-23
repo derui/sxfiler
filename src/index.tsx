@@ -27,14 +27,6 @@ const url = process.env.NODE_ENV === "production" ? process.env.REACT_APP_SERVER
 const ws = new WebSocket(url || "");
 const jsonrpc = jrpc.initialize(ws);
 
-// register notification handlers
-jrpc.createNotificationServer(jsonrpc, {
-  "notification/message": NotificationHandlers.handleNotification,
-  "notification/progress": NotificationHandlers.handleNotification,
-  "notification/taskFinished": NotificationHandlers.handleTaskFinished,
-  "notification/taskInteraction": NotificationHandlers.handleTaskInteraction,
-});
-
 const client: Client<ApiMethod> = jrpc.createClient(jsonrpc, () => {
   return bigInt.randBetween(bigInt(Int64.MIN_INT), bigInt(Int64.MAX_INT)).toString();
 });
@@ -48,6 +40,15 @@ const locator = {
   context: createContext({ client, dispatcher }),
   commandRegistrar: registAllCommand(createCommandRegistrar(client)),
 };
+
+// register notification handlers
+jrpc.createNotificationServer(jsonrpc, locator.context, {
+  "notification/message": NotificationHandlers.handleMessageNotification,
+  "notification/progress": NotificationHandlers.handleProgressNotification,
+  "notification/taskFinished": NotificationHandlers.handleTaskFinished,
+  "notification/taskInteraction": NotificationHandlers.handleTaskInteraction,
+  "notification/filerUpdated": NotificationHandlers.handleFilerUpdated,
+});
 
 const initializeState = () => {
   locator.context.use(Get.createUseCase(client)).execute({});

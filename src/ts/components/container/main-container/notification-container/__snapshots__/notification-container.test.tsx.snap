@@ -11,10 +11,25 @@ exports[`Container Notification Container should render correctly when context i
     <div
       aria-selected={false}
       className="root"
-      data-level="info"
       role="listitem"
     >
-      message
+      <span
+        className="processLabel"
+      >
+        process
+      </span>
+      <div
+        className="progressBar"
+      >
+        <div
+          className="progressIndicator"
+          style={
+            Object {
+              "width": "10%",
+            }
+          }
+        />
+      </div>
     </div>
   </div>
 </div>

@@ -1,15 +1,15 @@
-import { Notifications, createNotifications } from "../domains/notifications";
+import { createNotifications, ProgressNotifications } from "../domains/progress-notifications";
 
 export interface State {
   // all notification not finished yet
-  notifications: Notifications;
-  timeouts: Notifications;
+  progresses: ProgressNotifications;
+  timeouts: ProgressNotifications;
 }
 
 // get empty state
 export function empty(): State {
   return {
-    notifications: createNotifications([]),
+    progresses: createNotifications([]),
     timeouts: createNotifications([]),
   };
 }

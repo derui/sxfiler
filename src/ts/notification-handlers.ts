@@ -1,29 +1,37 @@
-import { NotificationKind, createMessage, createProgress } from "./domains/notification";
 import { ContextLike } from "./context";
 import * as TaskRequireInteractionUseCase from "./usecases/task/require-interaction";
+import * as ReceiveMessageNotificationUseCase from "./usecases/notification/receive-message-notification";
+import * as ReceiveProgressNotificationUseCase from "./usecases/notification/receive-progress-notification";
 import * as TaskFinishedUseCase from "./usecases/task/finished";
 import * as FilerUpdatedUseCase from "./usecases/filer/filer-updated";
 import { createSuggestions, Suggestion } from "./domains/task-suggestion";
 import { FilerOnRPC, encode } from "./codecs/filer";
+import { createMessage } from "./domains/message-notification";
+import { createProgress } from "./domains/progress-notification";
 
 /**
    Handle common notification that contains message or progress of a server.
  */
-export const handleNotification = (params: any) => {
+export const handleMessageNotification = (context: ContextLike) => (params: any) => {
   const { id, level, body } = params;
 
   if (!id || !level || !body) {
     throw Error("Invalid parameter format");
   }
 
-  switch (body.type) {
-    case NotificationKind.Message:
-      return createMessage(id, level, body.message);
-    case NotificationKind.Progress:
-      return createProgress(id, level, body.progress);
-    default:
-      throw Error(`Unknown notification format: ${params}`);
+  const notification = createMessage({ id, level, message: body });
+  context.use(ReceiveMessageNotificationUseCase.createUseCase()).execute({ notification });
+};
+
+export const handleProgressNotification = (context: ContextLike) => (params: any) => {
+  const { id, body } = params;
+
+  if (!id || !body) {
+    throw Error("Invalid parameter format");
   }
+
+  const notification = createProgress(id, body);
+  context.use(ReceiveProgressNotificationUseCase.createUseCase()).execute({ notification });
 };
 
 /**
@@ -34,6 +42,7 @@ export const handleTaskInteraction = (context: ContextLike) => (params: {
   nodeName: string;
   suggestions: Suggestion[];
 }) => {
+  console.log(params);
   const suggestions = createSuggestions(params);
   context.use(TaskRequireInteractionUseCase.createUseCase()).execute({ suggestions });
 };

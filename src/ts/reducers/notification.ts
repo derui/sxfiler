@@ -8,17 +8,17 @@ export function reducer(state: State = empty(), action: Actions): State {
     case ActionTypes.remove:
       return {
         ...state,
-        notifications: state.notifications.remove(action.notificationId),
+        progresses: state.progresses.remove(action.notificationId),
         timeouts: state.timeouts.remove(action.notificationId),
       };
     case ActionTypes.timeout:
-      const notification = state.notifications.findById(action.notificationId);
+      const notification = state.progresses.findById(action.notificationId);
       if (notification) {
         return { ...state, timeouts: state.timeouts.append(notification) };
       }
       return state;
-    case ActionTypes.receiveNotification:
-      return { ...state, notifications: state.notifications.append(action.notification) };
+    case ActionTypes.receiveProgress:
+      return { ...state, progresses: state.progresses.append(action.notification) };
   }
   return state;
 }

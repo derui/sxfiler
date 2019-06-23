@@ -55,7 +55,7 @@ describe("Commands", () => {
         state.fileList = FileListState.initialize(state.fileList, { left: filer, right: filer });
 
         await command.execute(dispatcher as any, { state, client: client as any });
-        expect(client.call).toBeCalledWith(Apis.Filer.ToggleMark, { name: Side.Left, nodeIds: [items[0].id] });
+        expect(client.call).toBeCalledWith(Apis.Filer.ToggleMark, { name: Side.Left, itemIds: [items[0].id] });
       });
 
       it("update a filer after to toggle mark of the node", async () => {

@@ -40,15 +40,6 @@ export const createCommand = (): CommandLike => {
         dest: FileListState.swapSide(side),
         itemIds: fileTree.markedItems.map(v => v.id),
       });
-      const left = await client.call(Apis.Filer.Get, FileListState.Side.Left);
-      const right = await client.call(Apis.Filer.Get, FileListState.Side.Right);
-
-      if (!left || !right) {
-        console.log("can not get filer");
-        return Promise.resolve();
-      }
-
-      dispatch.dispatch(actions.reload({ filers: [left, right] }));
     },
   };
 };
