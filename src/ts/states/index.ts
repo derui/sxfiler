@@ -3,6 +3,7 @@ import * as FileList from "./file-list";
 import * as Keymap from "./keymap";
 import * as Notification from "./notification";
 import * as TaskInteraction from "./task-interaction";
+import * as LogEntry from "./log-entry";
 import UIContext from "../types/ui-context";
 
 export type AppState = {
@@ -12,6 +13,7 @@ export type AppState = {
   keymap: Keymap.State;
   notification: Notification.State;
   taskInteraction: TaskInteraction.State;
+  logEntry: LogEntry.State;
 };
 
 // get empty state
@@ -23,5 +25,6 @@ export const empty = (): AppState => {
     keymap: Keymap.empty(),
     notification: Notification.empty(),
     taskInteraction: TaskInteraction.empty(),
+    logEntry: LogEntry.empty(),
   };
 };

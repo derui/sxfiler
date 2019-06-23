@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Project Log Viewer should render empty 1`] = `
+<div
+  aria-hidden={false}
+  className="root"
+  role="list"
+/>
+`;
+
+exports[`Project Log Viewer should render empty when hidden it 1`] = `
+<div
+  aria-hidden={true}
+  className="root"
+  role="list"
+/>
+`;
+
+exports[`Project Log Viewer should render items each level 1`] = `
+<div
+  aria-hidden={false}
+  className="root"
+  role="list"
+>
+  <div
+    aria-selected={false}
+    className="item"
+    role="listitem"
+  >
+    <span
+      className="itemLevel"
+      data-level="info"
+    >
+      INFO
+    </span>
+    <span
+      className="itemMessage"
+    >
+      info
+    </span>
+  </div>
+  <div
+    aria-selected={false}
+    className="item"
+    role="listitem"
+  >
+    <span
+      className="itemLevel"
+      data-level="error"
+    >
+      ERROR
+    </span>
+    <span
+      className="itemMessage"
+    >
+      error
+    </span>
+  </div>
+  <div
+    aria-selected={false}
+    className="item"
+    role="listitem"
+  >
+    <span
+      className="itemLevel"
+      data-level="warning"
+    >
+      WARNING
+    </span>
+    <span
+      className="itemMessage"
+    >
+      warning
+    </span>
+  </div>
+</div>
+`;

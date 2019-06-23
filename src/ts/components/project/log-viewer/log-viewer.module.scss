@@ -1,0 +1,44 @@
+@import "../../ui/commom-style/_colors.scss";
+@import "../../ui/commom-style/_variables.scss";
+@import "../../ui/commom-style/reset.module.css";
+
+.root {
+  composes: list-base from "../../ui/list/list.module.scss";
+
+  background-color: $sol_base03;
+  color: $sol_base2;
+
+  font-size: 0.75rem;
+  overflow-x: auto;
+  overflow-y: scroll;
+
+  font-family: monospace;
+}
+
+.item {
+  display: flex;
+  flex-direction: row;
+  padding: $nanoSpace 0;
+}
+
+.itemLevel {
+  flex: 0 0 4rem;
+  white-space: pre;
+  margin-right: 1rem;
+
+  &[data-level="info"]{
+    color: $sol_blue;
+  }
+
+  &[data-level="warning"]{
+    color: $sol_orange;
+  }
+
+  &[data-level="error"]{
+    color: $sol_red;
+  }
+}
+
+.itemMessage {
+  flex: 1 1 auto;
+}
