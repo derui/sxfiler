@@ -35,11 +35,11 @@ module Make = struct
       let%lwt v = SR.resolve_by_name params.name in
       match v with
       | None ->
-          let sort_order = config.T.Configuration.default_sort_order in
-          let%lwt file_tree = Svc.scan params.initial_location in
-          let t = FC.create ~name:params.name ~file_tree ~sort_order in
-          let%lwt () = SR.store t in
-          Lwt.return @@ Ok t
+        let sort_order = config.T.Configuration.default_sort_order in
+        let%lwt file_list = Svc.scan params.initial_location in
+        let t = FC.create ~name:params.name ~file_list ~sort_order in
+        let%lwt () = SR.store t in
+        Lwt.return @@ Ok t
       | Some _ -> Lwt.return @@ Error `Already_exists
   end
 end
@@ -92,27 +92,27 @@ module Move_parent = struct
     let execute (params : input) =
       match%lwt SR.resolve_by_name params.name with
       | None -> Lwt.return_error `Not_found
-      | Some ({file_tree; _} as filer) ->
-          let parent_dir = Path.dirname_as_path file_tree.location in
-          let%lwt file_tree = Svc.scan parent_dir in
-          let filer' = T.Filer.move_location filer (module Clock) ~file_tree in
-          let%lwt () = SR.store filer' in
-          Lwt.return_ok filer'
+      | Some ({file_list; _} as filer) ->
+        let parent_dir = Path.dirname_as_path file_list.location in
+        let%lwt file_list = Svc.scan parent_dir in
+        let filer' = T.Filer.move_location filer (module Clock) ~file_list in
+        let%lwt () = SR.store filer' in
+        Lwt.return_ok filer'
   end
 end
 
 module Enter_directory = struct
-  (* move to location of the node in filer *)
+  (* move to location of the item in filer *)
   module Type = struct
     type input =
       { name : string
-      ; node_id : string }
+      ; item_id : string }
 
     type output = T.Filer.t
 
     type error =
       [ `Not_found_filer
-      | `Not_found_node
+      | `Not_found_item
       | `Not_directory ]
   end
 
@@ -131,17 +131,17 @@ module Enter_directory = struct
 
     let execute (params : input) =
       let%lwt filer = FR.resolve_by_name params.name in
-      let node = Option.(filer >>= T.Filer.find_node ~id:params.node_id) in
-      match (filer, node) with
+      let item = Option.(filer >>= T.Filer.find_item ~id:params.item_id) in
+      match (filer, item) with
       | None, _ -> Lwt.return_error `Not_found_filer
-      | _, None -> Lwt.return_error `Not_found_node
-      | Some filer, Some node ->
-          if not node.stat.is_directory then Lwt.return_error `Not_directory
-          else
-            let%lwt new_file_tree = Svc.scan node.full_path in
-            let filer' = T.Filer.move_location filer (module Clock) ~file_tree:new_file_tree in
-            let%lwt () = FR.store filer' in
-            Lwt.return_ok filer'
+      | _, None -> Lwt.return_error `Not_found_item
+      | Some filer, Some item ->
+        if not item.stat.is_directory then Lwt.return_error `Not_directory
+        else
+          let%lwt new_file_list = Svc.scan item.full_path in
+          let filer' = T.Filer.move_location filer (module Clock) ~file_list:new_file_list in
+          let%lwt () = FR.store filer' in
+          Lwt.return_ok filer'
   end
 end
 
@@ -149,7 +149,7 @@ module Toggle_mark = struct
   module Type = struct
     type input =
       { name : string
-      ; node_ids : T.Node.id list }
+      ; item_ids : T.File_item.id list }
 
     type output = T.Filer.t
     type error = [`Not_found]
@@ -171,31 +171,31 @@ module Toggle_mark = struct
         Option.(
           filer
           >>= lift
-              @@ fun filer ->
-              let marked, not_marked =
-                List.partition
-                  (fun v -> T.Filer.Node_id_set.mem v filer.T.Filer.marked_nodes)
-                  params.node_ids
-              in
-              let filer = T.Filer.remove_mark filer ~ids:marked in
-              T.Filer.add_mark filer ~ids:not_marked)
+          @@ fun filer ->
+          let marked, not_marked =
+            List.partition
+              (fun v -> T.Filer.Marked_item_set.mem v filer.T.Filer.marked_items)
+              params.item_ids
+          in
+          let filer = T.Filer.remove_mark filer ~ids:marked in
+          T.Filer.add_mark filer ~ids:not_marked)
       in
       match filer with
       | None -> Lwt.return_error `Not_found
       | Some filer ->
-          let%lwt () = SR.store filer in
-          Lwt.return_ok filer
+        let%lwt () = SR.store filer in
+        Lwt.return_ok filer
   end
 end
 
-(** Make plan to move nodes between filers. *)
+(** Make plan to move items between filers. *)
 module Move = struct
-  (* Make plan to move nodes in filer to the location of another filer. *)
+  (* Make plan to move items in filer to the location of another filer. *)
   module Type = struct
     type input =
       { source : string
       ; dest : string
-      ; node_ids : T.Node.id list }
+      ; item_ids : T.File_item.id list }
 
     type output =
       { task_id : T.Task_types.id
@@ -217,42 +217,42 @@ module Move = struct
     module FR : T.Filer.Repository
     module TF : T.Task.Factory.S
     module TR : T.Task.Repository
-    module Transport : T.Node_transporter_service.S
+    module Transport : T.Item_transporter_service.S
     module Scan : T.Location_scanner_service.S
   end
 
   (** The executor of this plan. *)
   module Executor (P : sig
-    val source_filer : T.Filer.t
-    val dest_filer : T.Filer.t
-    val source_nodes : T.Node.id list
-  end)
-  (Dep : Dependencies) : T.Task.Executor = struct
+      val source_filer : T.Filer.t
+      val dest_filer : T.Filer.t
+      val source_items : T.File_item.id list
+    end)
+      (Dep : Dependencies) : T.Task.Executor = struct
     let interaction = Lwt_mvar.create_empty ()
     let apply_interaction = `Apply (Lwt_mvar.put interaction)
 
     let execute {T.Task_types.Context.task_id} =
       let open Dep in
       let source_filer = P.source_filer and dest_filer = P.dest_filer in
-      let suggest node =
+      let suggest item =
         let suggestion =
           T.Task_interaction.Suggestion.
             { task_id
-            ; node_name = Path.basename node.T.Node.full_path
+            ; item_name = Path.basename item.T.File_item.full_path
             ; suggestions = [Rename; Overwrite] }
         in
         (suggestion, Lwt_mvar.take interaction)
       in
-      let nodes =
-        P.source_nodes
-        |> List.map (fun id -> T.Filer.find_node source_filer ~id)
+      let items =
+        P.source_items
+        |> List.map (fun id -> T.Filer.find_item source_filer ~id)
         |> List.filter Option.is_some |> List.map Option.get_exn
       in
-      let%lwt () = Dep.Transport.transport ~nodes ~suggest ~_to:dest_filer.file_tree in
-      let%lwt from_tree = Scan.scan source_filer.file_tree.location
-      and to_tree = Scan.scan dest_filer.file_tree.location in
-      let from_filer = T.Filer.update_tree source_filer ~file_tree:from_tree
-      and to_filer = T.Filer.update_tree dest_filer ~file_tree:to_tree in
+      let%lwt () = Dep.Transport.transport ~items ~suggest ~_to:dest_filer.file_list in
+      let%lwt from_tree = Scan.scan source_filer.file_list.location
+      and to_tree = Scan.scan dest_filer.file_list.location in
+      let from_filer = T.Filer.update_list source_filer ~file_list:from_tree
+      and to_filer = T.Filer.update_list dest_filer ~file_list:to_tree in
       Lwt.(join [FR.store from_filer; FR.store to_filer])
   end
 
@@ -270,26 +270,26 @@ module Move = struct
         | None, _ -> Lwt.return_error (`Not_found params.source)
         | _, None -> Lwt.return_error (`Not_found params.dest)
         | Some source', Some dest' ->
-            let module Executor =
-              Executor (struct
-                  let source_filer = source'
-                  let dest_filer = dest'
-                  let source_nodes = params.node_ids
-                end)
-                (Dep)
-            in
-            let task = TF.create ~executor:(module Executor) in
-            let%lwt () = TR.store task in
-            Lwt.return_ok {task_id = task.id; task_name = "Move"}
+          let module Executor =
+            Executor (struct
+              let source_filer = source'
+              let dest_filer = dest'
+              let source_items = params.item_ids
+            end)
+              (Dep)
+          in
+          let task = TF.create ~executor:(module Executor) in
+          let%lwt () = TR.store task in
+          Lwt.return_ok {task_id = task.id; task_name = "Move"}
   end
 end
 
-(** Make plan to delete nodes *)
+(** Make plan to delete items *)
 module Delete = struct
   module Type = struct
     type input =
       { source : string
-      ; node_ids : T.Node.id list }
+      ; item_ids : T.File_item.id list }
 
     type output = T.Task_types.id
     type error = [`Not_found of string]
@@ -307,28 +307,28 @@ module Delete = struct
     module TF : T.Task.Factory.S
     module TR : T.Task.Repository
     module Scan : T.Location_scanner_service.S
-    module Trash : T.Node_trash_service.S
+    module Trash : T.Item_trash_service.S
   end
 
-  (** Use case to delete nodes *)
+  (** Use case to delete items *)
   module Executor (P : sig
-    val filer : T.Filer.t
-    val target_nodes : T.Node.id list
-  end)
-  (Dep : Dependencies) : T.Task.Executor = struct
+      val filer : T.Filer.t
+      val target_items : T.File_item.id list
+    end)
+      (Dep : Dependencies) : T.Task.Executor = struct
     let apply_interaction = `No_interaction
 
     let execute _ =
       let open Dep in
-      let file_tree = P.filer.file_tree in
-      let nodes =
-        P.target_nodes
-        |> List.map (fun v -> T.Filer.(find_node P.filer ~id:v))
+      let file_list = P.filer.file_list in
+      let items =
+        P.target_items
+        |> List.map (fun v -> T.Filer.(find_item P.filer ~id:v))
         |> List.filter Option.is_some |> List.map Option.get_exn
       in
-      let%lwt () = Trash.trash nodes in
-      let%lwt file_tree = Scan.scan file_tree.T.File_tree.location in
-      T.Filer.update_tree P.filer ~file_tree |> FR.store
+      let%lwt () = Trash.trash items in
+      let%lwt file_list = Scan.scan file_list.T.File_list.location in
+      T.Filer.update_list P.filer ~file_list |> FR.store
   end
 
   module Make (Dep : Dependencies) : S = struct
@@ -340,27 +340,27 @@ module Delete = struct
       match source with
       | None -> Lwt.return_error (`Not_found params.source)
       | Some source ->
-          let module E =
-            Executor (struct
-                let filer = source
-                let target_nodes = params.node_ids
-              end)
-              (Dep)
-          in
-          let task = TF.create ~executor:(module E) in
-          let%lwt () = TR.store task in
-          Lwt.return_ok task.id
+        let module E =
+          Executor (struct
+            let filer = source
+            let target_items = params.item_ids
+          end)
+            (Dep)
+        in
+        let task = TF.create ~executor:(module E) in
+        let%lwt () = TR.store task in
+        Lwt.return_ok task.id
   end
 end
 
-(** Make plan to copy nodes to other filer. *)
+(** Make plan to copy items to other filer. *)
 module Copy = struct
-  (* Make plan to move nodes in filer to the location of another filer. *)
+  (* Make plan to move items in filer to the location of another filer. *)
   module Type = struct
     type input =
       { source : string
       ; dest : string
-      ; node_ids : T.Node.id list }
+      ; item_ids : T.File_item.id list }
 
     type output = T.Task_types.id
     type error = [`Not_found of string]
@@ -377,42 +377,42 @@ module Copy = struct
     module FR : T.Filer.Repository
     module TF : T.Task.Factory.S
     module TR : T.Task.Repository
-    module Replicate : T.Node_replication_service.S
+    module Replicate : T.Item_replication_service.S
     module Scan : T.Location_scanner_service.S
   end
 
   (** The executor of this plan. *)
   module Executor (P : sig
-    val source_filer : T.Filer.t
-    val dest_filer : T.Filer.t
-    val source_nodes : T.Node.id list
-  end)
-  (Dep : Dependencies) : T.Task.Executor = struct
+      val source_filer : T.Filer.t
+      val dest_filer : T.Filer.t
+      val source_items : T.File_item.id list
+    end)
+      (Dep : Dependencies) : T.Task.Executor = struct
     let interaction = Lwt_mvar.create_empty ()
     let apply_interaction = `Apply (Lwt_mvar.put interaction)
 
     let execute {T.Task_types.Context.task_id} =
       let open Dep in
       let source_filer = P.source_filer and dest_filer = P.dest_filer in
-      let suggest node =
+      let suggest item =
         let suggestion =
           T.Task_interaction.Suggestion.
             { task_id
-            ; node_name = Path.basename node.T.Node.full_path
+            ; item_name = Path.basename item.T.File_item.full_path
             ; suggestions = [Rename; Overwrite] }
         in
         (suggestion, Lwt_mvar.take interaction)
       in
-      let nodes =
-        P.source_nodes
-        |> List.map (fun id -> T.Filer.find_node source_filer ~id)
+      let items =
+        P.source_items
+        |> List.map (fun id -> T.Filer.find_item source_filer ~id)
         |> List.filter Option.is_some |> List.map Option.get_exn
       in
-      let%lwt () = Dep.Replicate.replicate ~nodes ~suggest ~_to:dest_filer.file_tree in
-      let%lwt from_tree = Scan.scan source_filer.file_tree.location
-      and to_tree = Scan.scan dest_filer.file_tree.location in
-      let from_filer = T.Filer.update_tree source_filer ~file_tree:from_tree
-      and to_filer = T.Filer.update_tree dest_filer ~file_tree:to_tree in
+      let%lwt () = Dep.Replicate.replicate ~items ~suggest ~_to:dest_filer.file_list in
+      let%lwt from_list = Scan.scan source_filer.file_list.location
+      and to_list = Scan.scan dest_filer.file_list.location in
+      let from_filer = T.Filer.update_list source_filer ~file_list:from_list
+      and to_filer = T.Filer.update_list dest_filer ~file_list:to_list in
       Lwt.(join [FR.store from_filer; FR.store to_filer])
   end
 
@@ -427,16 +427,16 @@ module Copy = struct
       | None, _ -> Lwt.return_error (`Not_found params.source)
       | _, None -> Lwt.return_error (`Not_found params.dest)
       | Some source', Some dest' ->
-          let module Executor =
-            Executor (struct
-                let source_filer = source'
-                let dest_filer = dest'
-                let source_nodes = params.node_ids
-              end)
-              (Dep)
-          in
-          let task = TF.create ~executor:(module Executor) in
-          let%lwt () = TR.store task in
-          Lwt.return_ok task.id
+        let module Executor =
+          Executor (struct
+            let source_filer = source'
+            let dest_filer = dest'
+            let source_items = params.item_ids
+          end)
+            (Dep)
+        in
+        let task = TF.create ~executor:(module Executor) in
+        let%lwt () = TR.store task in
+        Lwt.return_ok task.id
   end
 end

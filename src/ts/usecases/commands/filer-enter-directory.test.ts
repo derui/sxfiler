@@ -4,7 +4,7 @@ import { Side, initialize } from "../../states/file-list";
 import { createFiler } from "../../domains/filer";
 import { Apis } from "../../apis";
 import { actions } from "../../actions/filer";
-import { createNode } from "../../domains/node";
+import { createFileItem } from "../../domains/file-item";
 import { emptyMode } from "../../domains/mode";
 import { createFileStat } from "../../domains/file-stat";
 
@@ -40,15 +40,15 @@ describe("Commands", () => {
           call: jest.fn(),
         };
         client.call.mockResolvedValue(
-          createFiler({ id: "id1", name: "name", nodes: [], location: "entered", currentCursorIndex: 0 })
+          createFiler({ id: "id1", name: "name", items: [], location: "entered", currentCursorIndex: 0 })
         );
         const state = AppState.empty();
         state.fileList = initialize(state.fileList, {
           left: createFiler({
             id: "id1",
             name: "name",
-            nodes: [
-              createNode({
+            items: [
+              createFileItem({
                 id: "node",
                 parentDirectory: "parent",
                 name: "dir",
@@ -59,7 +59,7 @@ describe("Commands", () => {
             location: "test",
             currentCursorIndex: 0,
           }),
-          right: createFiler({ id: "id2", name: "name", nodes: [], location: "test", currentCursorIndex: 0 }),
+          right: createFiler({ id: "id2", name: "name", items: [], location: "test", currentCursorIndex: 0 }),
         });
 
         await command.execute(dispatcher as any, { state, client: client as any });
@@ -80,8 +80,8 @@ describe("Commands", () => {
           left: createFiler({
             id: "id1",
             name: "name",
-            nodes: [
-              createNode({
+            items: [
+              createFileItem({
                 id: "node",
                 name: "node",
                 parentDirectory: "test",
@@ -92,10 +92,10 @@ describe("Commands", () => {
             location: "test",
             currentCursorIndex: 0,
           }),
-          right: createFiler({ id: "id2", name: "name", nodes: [], location: "test", currentCursorIndex: 0 }),
+          right: createFiler({ id: "id2", name: "name", items: [], location: "test", currentCursorIndex: 0 }),
         });
 
-        const filer = createFiler({ id: "id1", name: "name", nodes: [], location: "test/node", currentCursorIndex: 0 });
+        const filer = createFiler({ id: "id1", name: "name", items: [], location: "test/node", currentCursorIndex: 0 });
         client.call.mockResolvedValue(filer);
 
         await command.execute(dispatcher as any, { state, client: client as any });

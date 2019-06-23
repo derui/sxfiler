@@ -1,5 +1,5 @@
 import { Filer } from "../domains/filer";
-import { NodeObject } from "../domains/node";
+import { FileItem } from "../domains/file-item";
 
 export enum Side {
   Left = "left",
@@ -86,7 +86,7 @@ export const fellowPosition = (state: State): State => {
  *
  * @param state The state of file list
  */
-export const currentFocusingNode = (state: State): NodeObject | undefined => {
+export const currentFocusingNode = (state: State): FileItem | undefined => {
   if (!state.left || !state.right) {
     return undefined;
   }
@@ -95,8 +95,8 @@ export const currentFocusingNode = (state: State): NodeObject | undefined => {
 
   switch (side) {
     case Side.Left:
-      return state.left.currentNode;
+      return state.left.currentFileItem;
     case Side.Right:
-      return state.right.currentNode;
+      return state.right.currentFileItem;
   }
 };

@@ -33,7 +33,7 @@ describe("Commands", () => {
         state.fileList.left = createFiler({
           id: "id",
           name: "name",
-          nodes: [],
+          items: [],
           location: "test",
           currentCursorIndex: 0,
         });
@@ -52,7 +52,7 @@ describe("Commands", () => {
         state.fileList.left = createFiler({
           id: "id",
           name: "name",
-          nodes: [],
+          items: [],
           location: "test",
           currentCursorIndex: 0,
         });

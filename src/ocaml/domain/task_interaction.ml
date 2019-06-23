@@ -20,7 +20,7 @@ module Suggestion = struct
 
   type t =
     { task_id : id
-    ; node_name : string
+    ; item_name : string
     ; suggestions : typ list }
   [@@deriving show, eq]
 end

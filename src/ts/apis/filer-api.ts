@@ -1,9 +1,8 @@
 // defines API signature for Filer group.
 
 import { Api } from "../libs/json-rpc/client";
-import { Filer, createFiler } from "../domains/filer";
-import { NodeObject, createNode } from "../domains/node";
-import { createFileStat } from "../domains/file-stat";
+import { Filer } from "../domains/filer";
+import * as E from "../codecs/filer";
 
 export enum Methods {
   Make = "filer/make",
@@ -15,41 +14,6 @@ export enum Methods {
   Copy = "filer/copy",
   Delete = "filer/delete",
 }
-
-const transformNode = (markedNodes: any[]): ((node: any) => NodeObject) => (node: any) => {
-  const stat = createFileStat(node.stat);
-  const marked = markedNodes.includes(node.id);
-
-  return createNode({ ...node, stat, marked });
-};
-
-/**
-   Support function to transform filer from JSON representation.
-
-   @param filer JSON representation for fller
-   @return Filer object
- */
-const transformFiler = (filer: any): Filer => {
-  if (!filer) {
-    throw new Error("Filer should not be undefined or null");
-  }
-
-  const {
-    id,
-    name,
-    fileTree: { location, nodes },
-    markedNodes,
-    sortOrder,
-  } = filer;
-
-  return createFiler({
-    id,
-    name,
-    location,
-    nodes: nodes.map(transformNode(markedNodes)),
-    currentCursorIndex: 0,
-  });
-};
 
 /**
    API definition for filer/make
@@ -65,7 +29,7 @@ const Make: Api<
   method: Methods.Make,
   parametersTransformer: params => params,
   resultTransformer(ret) {
-    return transformFiler(ret);
+    return E.encode(ret);
   },
 };
 
@@ -79,7 +43,7 @@ const Get: Api<Methods.Get, string, Filer | undefined> = {
       return undefined;
     }
 
-    return transformFiler(ret);
+    return E.encode(ret);
   },
 };
 
@@ -93,42 +57,42 @@ const MoveParent: Api<Methods.MoveParent, string, Filer | undefined> = {
       return undefined;
     }
 
-    return transformFiler(ret);
+    return E.encode(ret);
   },
 };
 
-const EnterDirectory: Api<Methods.EnterDirectory, { name: string; nodeId: string }, Filer | undefined> = {
+const EnterDirectory: Api<Methods.EnterDirectory, { name: string; itemId: string }, Filer | undefined> = {
   method: Methods.EnterDirectory,
-  parametersTransformer({ name, nodeId }) {
-    return { name, nodeId };
+  parametersTransformer({ name, itemId }) {
+    return { name, itemId };
   },
   resultTransformer(ret, error) {
     if (!ret && error && error.hasCode(-2)) {
       return undefined;
     }
 
-    return transformFiler(ret);
+    return E.encode(ret);
   },
 };
 
-const ToggleMark: Api<Methods.ToggleMark, { name: string; nodeIds: string[] }, Filer | undefined> = {
+const ToggleMark: Api<Methods.ToggleMark, { name: string; itemIds: string[] }, Filer | undefined> = {
   method: Methods.ToggleMark,
-  parametersTransformer({ name, nodeIds }) {
-    return { name, nodeIds };
+  parametersTransformer({ name, itemIds }) {
+    return { name, itemIds };
   },
   resultTransformer(ret, error) {
     if (!ret && error && error.hasCode(-2)) {
       return undefined;
     }
 
-    return transformFiler(ret);
+    return E.encode(ret);
   },
 };
 
-const Move: Api<Methods.Move, { source: string; dest: string; nodeIds: string[] }, undefined> = {
+const Move: Api<Methods.Move, { source: string; dest: string; itemIds: string[] }, undefined> = {
   method: Methods.Move,
-  parametersTransformer({ source, dest, nodeIds }) {
-    return { source, dest, nodeIds };
+  parametersTransformer({ source, dest, itemIds }) {
+    return { source, dest, itemIds };
   },
   resultTransformer(ret, error) {
     if (!ret && error) {
@@ -139,10 +103,10 @@ const Move: Api<Methods.Move, { source: string; dest: string; nodeIds: string[] 
   },
 };
 
-const Copy: Api<Methods.Copy, { source: string; dest: string; nodeIds: string[] }, undefined> = {
+const Copy: Api<Methods.Copy, { source: string; dest: string; itemIds: string[] }, undefined> = {
   method: Methods.Copy,
-  parametersTransformer({ source, dest, nodeIds }) {
-    return { source, dest, nodeIds };
+  parametersTransformer({ source, dest, itemIds }) {
+    return { source, dest, itemIds };
   },
   resultTransformer(ret, error) {
     if (!ret && error) {
@@ -153,10 +117,10 @@ const Copy: Api<Methods.Copy, { source: string; dest: string; nodeIds: string[] 
   },
 };
 
-const Delete: Api<Methods.Delete, { source: string; nodeIds: string[] }, undefined> = {
+const Delete: Api<Methods.Delete, { source: string; itemIds: string[] }, undefined> = {
   method: Methods.Delete,
-  parametersTransformer({ source, nodeIds }) {
-    return { source, nodeIds };
+  parametersTransformer({ source, itemIds }) {
+    return { source, itemIds };
   },
   resultTransformer(ret, error) {
     if (!ret && error) {

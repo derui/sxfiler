@@ -7,7 +7,7 @@ let () =
     ; ("location scanner service", Location_scanner_service_test.test_set)
     ; ("progress notification", Message_notification_test.test_set)
     ; ("message notification", Progress_notification_test.test_set)
-    ; ("node transporter service", Node_transporter_service_test.test_set)
-    ; ("node replication service", Node_replication_service_test.test_set)
-    ; ("node trash service", Node_trash_service_test.test_set)
+    ; ("item transporter service", Item_transporter_service_test.test_set)
+    ; ("item replication service", Item_replication_service_test.test_set)
+    ; ("item trash service", Item_trash_service_test.test_set)
     ; ("key map resolve service", Key_map_resolve_service_test.test_set) ]

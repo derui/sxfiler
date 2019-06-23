@@ -1,5 +1,5 @@
 // define filer state type and operations.
-import { NodeObject } from "./node";
+import { FileItem } from "./file-item";
 
 export enum Direction {
   Up = "up",
@@ -10,7 +10,7 @@ export type FactoryArg = {
   id: string;
   name: string;
   location: string;
-  nodes: NodeObject[];
+  items: FileItem[];
   currentCursorIndex: number;
 };
 
@@ -20,7 +20,7 @@ export type Filer = FilerObject & {
   /**
    * the node object current marked
    */
-  currentNode: NodeObject | undefined;
+  currentFileItem: FileItem | undefined;
 
   /**
    * Get new instance of Filer that is moved by direction
@@ -31,7 +31,7 @@ export type Filer = FilerObject & {
   /**
    * @returns marked nodes
    */
-  markedNodes: NodeObject[];
+  markedItems: FileItem[];
 };
 
 function moveIndex(this: FilerObject, direction: Direction): Filer {
@@ -39,7 +39,7 @@ function moveIndex(this: FilerObject, direction: Direction): Filer {
 
   switch (direction) {
     case Direction.Down:
-      index = Math.min(this.nodes.length - 1, this.currentCursorIndex + 1);
+      index = Math.min(this.items.length - 1, this.currentCursorIndex + 1);
       break;
     case Direction.Up:
       index = Math.max(0, this.currentCursorIndex - 1);
@@ -49,18 +49,18 @@ function moveIndex(this: FilerObject, direction: Direction): Filer {
   return createFiler({ ...this, currentCursorIndex: index });
 }
 
-export const createFiler = ({ id, name, nodes, location, currentCursorIndex }: FactoryArg): Filer => {
+export const createFiler = ({ id, name, items, location, currentCursorIndex }: FactoryArg): Filer => {
   return {
     id,
     name,
-    nodes,
+    items,
     location,
     currentCursorIndex,
-    get currentNode(): NodeObject | undefined {
-      if (this.nodes.length === 0) {
+    get currentFileItem(): FileItem | undefined {
+      if (this.items.length === 0) {
         return undefined;
       }
-      return this.nodes[this.currentCursorIndex];
+      return this.items[this.currentCursorIndex];
     },
 
     /**
@@ -72,11 +72,11 @@ export const createFiler = ({ id, name, nodes, location, currentCursorIndex }: F
     /**
      * @returns marked nodes
      */
-    get markedNodes(): NodeObject[] {
-      const nodes = this.nodes.filter(v => v.marked);
+    get markedItems(): FileItem[] {
+      const nodes = this.items.filter(v => v.marked);
 
-      if (nodes.length === 0 && this.currentNode) {
-        return [this.currentNode];
+      if (nodes.length === 0 && this.currentFileItem) {
+        return [this.currentFileItem];
       }
       return nodes;
     },

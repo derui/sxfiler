@@ -16,7 +16,7 @@ type t =
   ; executor : (module Executor) [@printer fun _ _ -> ()] }
 [@@deriving show, fields]
 
-(** [make ~id ~operation ~nodes] makes new plan [t] instance from. *)
+(** [make ~id ~operation] makes new plan [t] instance from. *)
 let make ~id ~executor = {id; executor}
 
 (** [execute t] execute the plan [t] with {!Executor}. *)

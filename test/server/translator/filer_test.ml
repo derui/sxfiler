@@ -11,7 +11,7 @@ module Factory = D.Filer.Factory.Make (struct
 
 let data =
   Factory.create ~name:"id"
-    ~file_tree:Test_fixtures.(File_tree.empty_tree (Path.of_string "/bar"))
+    ~file_list:Test_fixtures.(File_list.empty_list (Path.of_string "/bar"))
     ~sort_order:D.Types.Sort_type.Date
 
 let test_set =

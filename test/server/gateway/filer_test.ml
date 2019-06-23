@@ -19,10 +19,10 @@ end
 
 let test_set =
   [ Alcotest_lwt.test_case "create new filer if it does not exists" `Quick (fun _ () ->
-        let file_tree =
-          D.File_tree.make ~location:(Path.of_string ~env:`Unix "/initial") ~nodes:[]
+        let file_list =
+          D.File_list.make ~location:(Path.of_string ~env:`Unix "/initial") ~items:[] ()
         in
-        let expected = Factory.create ~name:"foo" ~file_tree ~sort_order:D.Types.Sort_type.Date in
+        let expected = Factory.create ~name:"foo" ~file_list ~sort_order:D.Types.Sort_type.Date in
         let module Usecase = struct
           include U.Filer.Make.Type
 
@@ -66,7 +66,7 @@ let test_set =
         end in
         let module Gateway = G.Filer.Toggle_mark.Make (Usecase) in
         try%lwt
-          let%lwt _ = Gateway.handle {name = "foo"; node_ids = ["id1"]} in
+          let%lwt _ = Gateway.handle {name = "foo"; item_ids = ["id1"]} in
           Alcotest.fail "not thrown any exception" |> Lwt.return
         with
         | G.Gateway_error.(Gateway_error Filer_not_found) -> Lwt.return_unit
@@ -79,7 +79,7 @@ let test_set =
         end in
         let module Gateway = G.Filer.Move.Make (Usecase) in
         try%lwt
-          let%lwt _ = Gateway.handle {source = "foo"; dest = "dest"; node_ids = ["id1"]} in
+          let%lwt _ = Gateway.handle {source = "foo"; dest = "dest"; item_ids = ["id1"]} in
           Alcotest.fail "not thrown any exception" |> Lwt.return
         with
         | G.Gateway_error.(Gateway_error Filer_not_found) -> Lwt.return_unit
@@ -92,7 +92,7 @@ let test_set =
         end in
         let module Gateway = G.Filer.Move.Make (Usecase) in
         try%lwt
-          let%lwt _ = Gateway.handle {source = "foo"; dest = "dest"; node_ids = ["id1"]} in
+          let%lwt _ = Gateway.handle {source = "foo"; dest = "dest"; item_ids = ["id1"]} in
           Alcotest.fail "not thrown any exception" |> Lwt.return
         with
         | G.Gateway_error.(Gateway_error Filer_same_filer) -> Lwt.return_unit
@@ -105,7 +105,7 @@ let test_set =
         end in
         let module Gateway = G.Filer.Delete.Make (Usecase) in
         try%lwt
-          let%lwt _ = Gateway.handle {source = "foo"; node_ids = ["id1"]} in
+          let%lwt _ = Gateway.handle {source = "foo"; item_ids = ["id1"]} in
           Alcotest.fail "not thrown any exception" |> Lwt.return
         with
         | G.Gateway_error.(Gateway_error Filer_not_found) -> Lwt.return_unit
@@ -118,7 +118,7 @@ let test_set =
         end in
         let module Gateway = G.Filer.Copy.Make (Usecase) in
         try%lwt
-          let%lwt _ = Gateway.handle {source = "foo"; dest = "dest"; node_ids = ["id1"]} in
+          let%lwt _ = Gateway.handle {source = "foo"; dest = "dest"; item_ids = ["id1"]} in
           Alcotest.fail "not thrown any exception" |> Lwt.return
         with
         | G.Gateway_error.(Gateway_error Filer_not_found) -> Lwt.return_unit

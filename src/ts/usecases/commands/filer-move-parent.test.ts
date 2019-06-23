@@ -24,7 +24,7 @@ describe("Commands", () => {
           call: jest.fn(),
         };
         client.call.mockResolvedValue(
-          createFiler({ id: "id", name: "name", nodes: [], location: "test", currentCursorIndex: 0 })
+          createFiler({ id: "id", name: "name", items: [], location: "test", currentCursorIndex: 0 })
         );
         const state = AppState.empty();
         state.fileList.currentSide = Side.Left;
@@ -41,7 +41,7 @@ describe("Commands", () => {
         const client = {
           call: jest.fn(),
         };
-        const filer = createFiler({ id: "id", name: "name", nodes: [], location: "test", currentCursorIndex: 0 });
+        const filer = createFiler({ id: "id", name: "name", items: [], location: "test", currentCursorIndex: 0 });
         const state = AppState.empty();
         state.fileList.currentSide = Side.Left;
 

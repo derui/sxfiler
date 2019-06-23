@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Filer } from "../../../../domains/filer";
 import { Side, State } from "../../../../states/file-list";
-import * as NodeList from "../../../project/node-list/node-list";
+import * as FileList from "../../../project/file-list/file-list";
 import * as Element from "../../../ui/element/element";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -17,7 +17,7 @@ export interface Props {
 }
 
 /* create filer from state and key */
-function createFiler(key: string, currentSide: Side, filer?: Filer): NodeList.ElementType | null {
+function createFiler(key: string, currentSide: Side, filer?: Filer): FileList.ElementType | null {
   const focused = key === currentSide;
 
   if (!filer) {
@@ -25,9 +25,9 @@ function createFiler(key: string, currentSide: Side, filer?: Filer): NodeList.El
   }
 
   return (
-    <NodeList.Component
+    <FileList.Component
       key={key}
-      nodes={filer.nodes}
+      items={filer.items}
       cursor={filer.currentCursorIndex}
       location={filer.location}
       focused={focused}

@@ -8,7 +8,7 @@ const leftFiler = createFiler({
   id: "left",
   name: Side.Left,
   location: "loc",
-  nodes: [],
+  items: [],
   currentCursorIndex: 0,
 });
 
@@ -16,7 +16,7 @@ const rightFiler = createFiler({
   id: "right",
   name: Side.Right,
   location: "loc",
-  nodes: [],
+  items: [],
   currentCursorIndex: 0,
 });
 

@@ -10,17 +10,18 @@ describe("Container", () => {
   describe("File List Container", () => {
     it("should render correctly", () => {
       const state: State = {
-        initialized: true,
         left: createFiler({
           id: "left",
+          name: "right",
           location: "/left",
-          nodes: [],
+          items: [],
           currentCursorIndex: 0,
         }),
         right: createFiler({
           id: "right",
+          name: "right",
           location: "/right",
-          nodes: [],
+          items: [],
           currentCursorIndex: 0,
         }),
         currentSide: Side.Left,
@@ -32,17 +33,18 @@ describe("Container", () => {
 
     it("should mark current side of filer", () => {
       const state: State = {
-        initialized: true,
         left: createFiler({
           id: "left",
+          name: "left",
           location: "/left",
-          nodes: [],
+          items: [],
           currentCursorIndex: 0,
         }),
         right: createFiler({
           id: "right",
+          name: "right",
           location: "/right",
-          nodes: [],
+          items: [],
           currentCursorIndex: 0,
         }),
         currentSide: Side.Right,

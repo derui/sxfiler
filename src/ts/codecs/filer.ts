@@ -1,16 +1,16 @@
 import { Filer, createFiler } from "../domains/filer";
-import { NodeOnRPC, encode as encodeNode } from "./node";
+import { FileItemOnRPC, encode as encodeFileItem } from "./file-item";
 
 // define codec that is between filer domain and RPC
 
 export type FilerOnRPC = {
   id: string;
   name: string;
-  fileTree: {
+  fileList: {
     location: string;
-    nodes: NodeOnRPC[];
+    items: FileItemOnRPC[];
   };
-  markedNodes: string[];
+  markedItems: string[];
   sortOrder: string;
 };
 
@@ -24,20 +24,20 @@ export const encode = (obj: FilerOnRPC): Filer => {
   const {
     id,
     name,
-    fileTree: { location, nodes },
-    markedNodes,
+    fileList: { location, items },
+    markedItems,
   } = obj;
 
   return createFiler({
     id,
     name,
     location,
-    nodes: nodes
+    items: items
       .map(v => ({
         ...v,
-        marked: markedNodes.includes(v.id),
+        marked: markedItems.includes(v.id),
       }))
-      .map(encodeNode),
+      .map(encodeFileItem),
     currentCursorIndex: 0,
   });
 };

@@ -4,13 +4,13 @@ import { Side } from "../../states/file-list";
 import { createFiler } from "../../domains/filer";
 import { Apis } from "../../apis";
 import { actions } from "../../actions/filer";
-import { createNode } from "../../domains/node";
+import { createFileItem } from "../../domains/file-item";
 import { createFileStat } from "../../domains/file-stat";
 import { emptyMode } from "../../domains/mode";
 import * as FileListState from "../../states/file-list";
 
-const nodes = [
-  createNode({
+const items = [
+  createFileItem({
     id: "node1",
     name: "node",
     parentDirectory: "/parent",
@@ -48,14 +48,14 @@ describe("Commands", () => {
         const client = {
           call: jest.fn(),
         };
-        const filer = createFiler({ id: "id", name: "name", nodes, location: "test", currentCursorIndex: 0 });
+        const filer = createFiler({ id: "id", name: "name", items, location: "test", currentCursorIndex: 0 });
         client.call.mockResolvedValue(filer);
 
         const state = AppState.empty();
         state.fileList = FileListState.initialize(state.fileList, { left: filer, right: filer });
 
         await command.execute(dispatcher as any, { state, client: client as any });
-        expect(client.call).toBeCalledWith(Apis.Filer.ToggleMark, { name: Side.Left, nodeIds: [nodes[0].id] });
+        expect(client.call).toBeCalledWith(Apis.Filer.ToggleMark, { name: Side.Left, nodeIds: [items[0].id] });
       });
 
       it("update a filer after to toggle mark of the node", async () => {
@@ -66,11 +66,11 @@ describe("Commands", () => {
         const client = {
           call: jest.fn(),
         };
-        const filer = createFiler({ id: "id", name: "name", nodes, location: "test", currentCursorIndex: 0 });
+        const filer = createFiler({ id: "id", name: "name", items, location: "test", currentCursorIndex: 0 });
         const updatedFiler = createFiler({
           id: "id",
           name: "name",
-          nodes: [],
+          items: [],
           location: "test",
           currentCursorIndex: 0,
         });

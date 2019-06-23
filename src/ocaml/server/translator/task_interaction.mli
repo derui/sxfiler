@@ -29,7 +29,7 @@ module Suggestion : sig
 
   type t =
     { suggestions : typ list [@key "suggestions"]
-    ; node_name : string [@key "nodeName"]
+    ; item_name : string [@key "itemName"]
     ; task_id : string [@key "taskId"] }
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 

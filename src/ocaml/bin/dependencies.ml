@@ -19,10 +19,10 @@ module type S = sig
   module Message_notification_factory : I.Message_notification_factory.S
   module Progress_notification_factory : I.Progress_notification_factory.S
   module Notification_service : I.Notification_service.S
-  module Node_transporter_service : D.Node_transporter_service.S
-  module Node_replication_service : D.Node_replication_service.S
+  module Item_transporter_service : D.Item_transporter_service.S
+  module Item_replication_service : D.Item_replication_service.S
   module Location_scanner_service : D.Location_scanner_service.S
-  module Node_trash_service : D.Node_trash_service.S
+  module Item_trash_service : D.Item_trash_service.S
   module Key_map_resolve_service : D.Key_map_resolve_service.S
   module Task_repo : D.Task.Repository
   module Task_factory : D.Task.Factory.S
@@ -70,16 +70,16 @@ module Make
 
   module Key_map_resolve_service = I.Key_map_resolve_service
 
-  module Node_transporter_service =
-    I.Node_transporter_service.Make (Notification_service) (Message_notification_factory)
+  module Item_transporter_service =
+    I.Item_transporter_service.Make (Notification_service) (Message_notification_factory)
       (Progress_notification_factory)
 
-  module Node_replication_service =
-    I.Node_replication_service.Make (Notification_service) (Message_notification_factory)
+  module Item_replication_service =
+    I.Item_replication_service.Make (Notification_service) (Message_notification_factory)
       (Progress_notification_factory)
 
   module Location_scanner_service : D.Location_scanner_service.S = I.Location_scanner_service
-  module Node_trash_service = I.Node_trash_service
+  module Item_trash_service = I.Item_trash_service
   module Task_repo = I.Task_repo.Make (Global.Root) (Runner)
   module Task_factory = D.Task.Factory.Make (I.Id_generator.Gen_uuid)
 
@@ -109,28 +109,28 @@ module Make
     module Filer_toggle_mark = U.Filer.Toggle_mark.Make (Filer_repo)
 
     module Filer_move = U.Filer.Move.Make (struct
-      module FR = Filer_repo
-      module TF = Task_factory
-      module TR = Task_repo
-      module Scan = Location_scanner_service
-      module Transport = Node_transporter_service
-    end)
+        module FR = Filer_repo
+        module TF = Task_factory
+        module TR = Task_repo
+        module Scan = Location_scanner_service
+        module Transport = Item_transporter_service
+      end)
 
     module Filer_copy = U.Filer.Copy.Make (struct
-      module FR = Filer_repo
-      module TF = Task_factory
-      module TR = Task_repo
-      module Scan = Location_scanner_service
-      module Replicate = Node_replication_service
-    end)
+        module FR = Filer_repo
+        module TF = Task_factory
+        module TR = Task_repo
+        module Scan = Location_scanner_service
+        module Replicate = Item_replication_service
+      end)
 
     module Filer_delete = U.Filer.Delete.Make (struct
-      module FR = Filer_repo
-      module TF = Task_factory
-      module TR = Task_repo
-      module Scan = Location_scanner_service
-      module Trash = Node_trash_service
-    end)
+        module FR = Filer_repo
+        module TF = Task_factory
+        module TR = Task_repo
+        module Scan = Location_scanner_service
+        module Trash = Item_trash_service
+      end)
 
     module Task_send_reply = U.Task.Send_reply.Make (Task_repo)
   end

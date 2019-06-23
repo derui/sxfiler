@@ -91,7 +91,7 @@ module Enter_directory = struct
   module Type = struct
     type params =
       { name : string
-      ; node_id : string [@key "nodeId"] }
+      ; item_id : string [@key "itemId"] }
     [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
 
     type result = T.Filer.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
@@ -107,11 +107,11 @@ module Enter_directory = struct
     include Type
 
     let handle param =
-      let params = {U.name = param.name; node_id = param.node_id} in
+      let params = {U.name = param.name; item_id = param.item_id} in
       match%lwt U.execute params with
       | Ok s -> Lwt.return @@ T.Filer.of_domain s
       | Error `Not_found_filer -> Lwt.fail Gateway_error.(Gateway_error filer_not_found)
-      | Error `Not_found_node -> Lwt.fail Gateway_error.(Gateway_error node_not_found)
+      | Error `Not_found_item -> Lwt.fail Gateway_error.(Gateway_error Item_not_found)
       | Error `Not_directory -> Lwt.fail Gateway_error.(Gateway_error filer_not_directory)
   end
 end
@@ -120,7 +120,7 @@ module Toggle_mark = struct
   module Type = struct
     type params =
       { name : string
-      ; node_ids : string list [@key "nodeIds"] }
+      ; item_ids : string list [@key "itemIds"] }
     [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
 
     type result = T.Filer.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
@@ -135,7 +135,7 @@ module Toggle_mark = struct
     include Type
 
     let handle params =
-      let params = {U.name = params.name; node_ids = params.node_ids} in
+      let params = {U.name = params.name; item_ids = params.item_ids} in
       match%lwt U.execute params with
       | Ok s -> Lwt.return @@ T.Filer.of_domain s
       | Error `Not_found -> Lwt.fail Gateway_error.(Gateway_error filer_not_found)
@@ -147,7 +147,7 @@ module Move = struct
     type params =
       { source : string
       ; dest : string
-      ; node_ids : string list [@key "nodeIds"] }
+      ; item_ids : string list [@key "itemIds"] }
     [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
 
     type result =
@@ -165,7 +165,7 @@ module Move = struct
     include Type
 
     let handle params =
-      let params = {U.source = params.source; dest = params.dest; node_ids = params.node_ids} in
+      let params = {U.source = params.source; dest = params.dest; item_ids = params.item_ids} in
       match%lwt U.execute params with
       | Ok s -> Lwt.return {task_id = s.task_id |> Uuidm.to_string; task_name = s.task_name}
       | Error (`Not_found _) -> Lwt.fail Gateway_error.(Gateway_error filer_not_found)
@@ -177,7 +177,7 @@ module Delete = struct
   module Type = struct
     type params =
       { source : string
-      ; node_ids : string list [@key "nodeIds"] }
+      ; item_ids : string list [@key "itemIds"] }
     [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
 
     type result =
@@ -195,7 +195,7 @@ module Delete = struct
     include Type
 
     let handle params =
-      let params = {U.source = params.source; node_ids = params.node_ids} in
+      let params = {U.source = params.source; item_ids = params.item_ids} in
       match%lwt U.execute params with
       | Ok s -> Lwt.return {task_id = s |> Uuidm.to_string; task_name = "Delete"}
       | Error (`Not_found _) -> Lwt.fail Gateway_error.(Gateway_error filer_not_found)
@@ -207,7 +207,7 @@ module Copy = struct
     type params =
       { source : string
       ; dest : string
-      ; node_ids : string list [@key "nodeIds"] }
+      ; item_ids : string list [@key "itemIds"] }
     [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
 
     type result =
@@ -225,7 +225,7 @@ module Copy = struct
     include Type
 
     let handle params =
-      let params = {U.source = params.source; dest = params.dest; node_ids = params.node_ids} in
+      let params = {U.source = params.source; dest = params.dest; item_ids = params.item_ids} in
       match%lwt U.execute params with
       | Ok s -> Lwt.return {task_id = s |> Uuidm.to_string; task_name = "Copy"}
       | Error (`Not_found _) -> Lwt.fail Gateway_error.(Gateway_error filer_not_found)

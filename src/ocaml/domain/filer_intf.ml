@@ -17,6 +17,6 @@ end
 module type Factory = sig
   type t
 
-  val create : name:string -> file_tree:File_tree.t -> sort_order:Types.Sort_type.t -> t
+  val create : name:string -> file_list:File_list.t -> sort_order:Types.Sort_type.t -> t
   (** [create ~name ~file_tree ~sort_order] gets new instance of filer. *)
 end

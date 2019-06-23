@@ -17,6 +17,6 @@ module Finished = struct
     { to_method = (fun _ -> "notification/task/finished")
     ; to_json =
         (fun v ->
-          let v' = Uuidm.to_string v in
-          `String v' ) }
+           let v' = Uuidm.to_string v in
+           `String v' ) }
 end

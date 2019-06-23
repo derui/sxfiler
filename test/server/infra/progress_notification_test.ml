@@ -7,11 +7,11 @@ let test_set =
   [ ( "can translate to/from domain"
     , `Quick
     , fun () ->
-        Alcotest.(check @@ of_pp Fmt.nop) "domain" data Tr.Conv.(to_domain @@ of_domain data) )
+      Alcotest.(check @@ of_pp Fmt.nop) "domain" data Tr.Conv.(to_domain @@ of_domain data) )
   ; ( "can translate to/from yojson"
     , `Quick
     , fun () ->
-        let data = Tr.Conv.of_domain data in
-        Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
-          "yojson" (Ok data)
-          Tr.Json.(of_json @@ to_json data) ) ]
+      let data = Tr.Conv.of_domain data in
+      Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
+        "yojson" (Ok data)
+        Tr.Json.(of_json @@ to_json data) ) ]

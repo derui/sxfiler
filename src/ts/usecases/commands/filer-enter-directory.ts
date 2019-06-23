@@ -35,7 +35,7 @@ export const createCommand = (): CommandLike => {
       const side = state.fileList.currentSide;
       const filer = await client.call(Apis.Filer.EnterDirectory, {
         name: side,
-        nodeId: currentNode.id,
+        itemId: currentNode.id,
       });
 
       if (!filer) {

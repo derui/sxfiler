@@ -35,7 +35,7 @@ export const createCommand = (): CommandLike => {
         return Promise.resolve();
       }
 
-      const filer = await client.call(Apis.Filer.ToggleMark, { name: side, nodeIds: [focused.id] });
+      const filer = await client.call(Apis.Filer.ToggleMark, { name: side, itemIds: [focused.id] });
 
       if (!filer) {
         return;

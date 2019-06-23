@@ -2,9 +2,9 @@
 type t =
   { id : string
   ; name : string
-  ; file_tree : File_tree.t [@key "fileTree"]
+  ; file_list : File_list.t [@key "fileList"]
   ; history : Location_history.t
-  ; marked_nodes : string list [@key "markedNodes"]
+  ; marked_items : string list [@key "markedItems"]
   ; sort_order : Types.Sort_type.t [@key "sortOrder"] }
 [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 

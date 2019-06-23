@@ -2,7 +2,9 @@ import { NotificationKind, createMessage, createProgress } from "./domains/notif
 import { ContextLike } from "./context";
 import * as TaskRequireInteractionUseCase from "./usecases/task/require-interaction";
 import * as TaskFinishedUseCase from "./usecases/task/finished";
+import * as FilerUpdatedUseCase from "./usecases/filer/filer-updated";
 import { createSuggestions, Suggestion } from "./domains/task-suggestion";
+import { FilerOnRPC, encode } from "./codecs/filer";
 
 /**
    Handle common notification that contains message or progress of a server.
@@ -41,4 +43,11 @@ export const handleTaskInteraction = (context: ContextLike) => (params: {
  */
 export const handleTaskFinished = (context: ContextLike) => (params: string) => {
   context.use(TaskFinishedUseCase.createUseCase()).execute(params);
+};
+
+/**
+   Handle a notification that contains the task id finished
+ */
+export const handleFilerUpdated = (context: ContextLike) => (params: FilerOnRPC) => {
+  context.use(FilerUpdatedUseCase.createUseCase()).execute({ filer: encode(params) });
 };

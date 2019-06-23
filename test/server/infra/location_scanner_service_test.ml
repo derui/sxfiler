@@ -9,8 +9,8 @@ let test_set =
         Lwt.finalize
           (fun () ->
              let path = Path.of_string tempfile in
-             let%lwt file_tree = I.Location_scanner_service.scan path in
-             Alcotest.(check @@ list @@ Test_fixtures.Testable.node) "nodes" [] file_tree.nodes ;
+             let%lwt file_list = I.Location_scanner_service.scan path in
+             Alcotest.(check @@ list @@ Test_fixtures.Testable.file_item) "nodes" [] file_list.items ;
              Lwt.return_unit )
           (fun () -> Lwt.return @@ Unix.rmdir tempfile) )
   ; Alcotest_lwt.test_case "scan from directory that contains regular files" `Quick (fun _ () ->
@@ -19,10 +19,10 @@ let test_set =
         end in
         let to_path s = Path.resolve (module Dummy) @@ Path.of_string s in
         let path = to_path "./data_real/file_only" in
-        let%lwt file_tree = I.Location_scanner_service.scan path in
-        let module N = Sxfiler_domain.Node in
+        let%lwt file_list = I.Location_scanner_service.scan path in
+        let module N = Sxfiler_domain.File_item in
         let nodes =
-          List.map N.full_path file_tree.nodes |> List.map Path.to_string |> List.sort compare
+          List.map N.full_path file_list.items |> List.map Path.to_string |> List.sort compare
         in
         Alcotest.(check @@ list string)
           "nodes"
