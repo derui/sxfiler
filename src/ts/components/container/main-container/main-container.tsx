@@ -3,6 +3,7 @@ import * as React from "react";
 import * as Element from "../../ui/element/element";
 import * as FileListContainer from "./file-list-container/file-list-container";
 import * as NotificationContainer from "./notification-container/notification-container";
+import * as LogViewerContainer from "./log-viewer-container/log-viewer-container";
 import { Component as RootRef } from "../../ui/root-ref/root-ref";
 
 import LocatorContext, { Locator } from "../../../locator";
@@ -65,7 +66,7 @@ export class Component extends React.Component<Props> {
   }
 
   public render() {
-    const { fileList, notification } = this.props.state;
+    const { fileList, notification, logEntry } = this.props.state;
     return (
       <LocatorContext.Consumer>
         {locator => (
@@ -77,6 +78,7 @@ export class Component extends React.Component<Props> {
             >
               <FileListContainer.Component key="filer" state={fileList} />
               <NotificationContainer.Component key="notification" state={notification} />
+              <LogViewerContainer.Component key="log" state={logEntry} />
               <SuggestionModalContainer.Component state={this.props.state.taskInteraction} />
             </Element.Component>
           </RootRef>

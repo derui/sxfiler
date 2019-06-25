@@ -5,5 +5,15 @@ exports[`Container Main Container render correctly when context not initialized 
   className="root"
   onKeyDown={[Function]}
   tabIndex={0}
-/>
+>
+  <div
+    className="root"
+  >
+    <div
+      aria-hidden={false}
+      className="root"
+      role="list"
+    />
+  </div>
+</div>
 `;
