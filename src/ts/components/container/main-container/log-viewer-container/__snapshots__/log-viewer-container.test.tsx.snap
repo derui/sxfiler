@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Container Log Viewer Container should render correctly 1`] = `
+<div
+  className="root"
+>
+  <div
+    aria-hidden={false}
+    className="root"
+    role="list"
+  >
+    <div
+      aria-selected={false}
+      className="item"
+      role="listitem"
+    >
+      <span
+        className="itemLevel"
+        data-level="info"
+      >
+        [
+        INFO
+        ]
+      </span>
+      <span
+        className="itemMessage"
+      >
+        message
+      </span>
+    </div>
+  </div>
+</div>
+`;
