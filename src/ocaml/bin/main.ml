@@ -54,7 +54,7 @@ let handler (conn : _ * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
     let%lwt () = Cohttp_lwt.Body.drain_body body in
     let%lwt resp, frames_out_fn =
       Websocket_cohttp_lwt.upgrade_connection req (fun f ->
-          C.Connection.push_input C.instance ~frame:(Some f) )
+          C.Connection.push_input C.instance ~frame:(Some f))
     in
     (* serve frame/response handler *)
     let%lwt () = C.Connection.connect C.instance frames_out_fn in
@@ -66,8 +66,8 @@ let handler (conn : _ * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
             (let%lwt f = unsubscribe in
              let%lwt () = f () in
              Logs.info (fun m -> m "Terminate thread") |> Lwt.return)
-            |> Lwt.ignore_result ) ;
-        Lwt.join [thread] ) ;
+            |> Lwt.ignore_result) ;
+        Lwt.join [thread]) ;
     Lwt.return resp
   | _ ->
     let%lwt resp =
@@ -89,7 +89,8 @@ let load_keymap file =
   let module Y = Sxfiler_server_translator.Key_map in
   match Y.of_json keymap with
   | Error err ->
-    Logs.warn (fun m -> m "Error occurred: %s" @@ Protocol_conv_json.Json.error_to_string_hum err) ;
+    Logs.warn (fun m ->
+        m "Error occurred: %s" @@ Protocol_conv_json.Json.error_to_string_hum err) ;
     None
   | Ok v -> Some (Y.to_domain v)
 

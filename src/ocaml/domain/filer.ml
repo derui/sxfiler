@@ -1,5 +1,5 @@
-(** Scanner module provides type to scan file tree. *)
 open Sxfiler_core
+(** Scanner module provides type to scan file tree. *)
 
 type id = Uuidm.t [@@deriving eq, show]
 

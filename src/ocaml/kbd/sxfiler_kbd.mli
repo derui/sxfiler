@@ -2,8 +2,8 @@
 
     You can use this library in OCaml. Use {!Sxfiler_kbd_jsoo} if you use js_of_ocaml. *)
 
-(** A type represent key combination from string that like Emacs's [kbd] macro. *)
 type t
+(** A type represent key combination from string that like Emacs's [kbd] macro. *)
 
 val make : ?ctrl:bool -> ?meta:bool -> string -> t
 (** [make ?ctrl ?meta key] returns new type [t] *)

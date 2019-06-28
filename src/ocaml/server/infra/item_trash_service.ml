@@ -1,5 +1,5 @@
-(** This module provides implementation of trash service.*)
 open Sxfiler_core
+(** This module provides implementation of trash service.*)
 
 module D = Sxfiler_domain
 
@@ -18,5 +18,5 @@ let trash items =
        let path = item.D.File_item.full_path |> Path.to_string in
        match item.D.File_item.stat.is_directory with
        | true -> delete_dir path
-       | false -> File.remove path |> Lwt.return )
+       | false -> File.remove path |> Lwt.return)
     items

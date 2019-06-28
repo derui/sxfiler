@@ -10,11 +10,11 @@ module type Executor = sig
   (** [execute ()] runs the task body. *)
 end
 
-(** [!t] is . *)
 type t =
   { id : id
   ; executor : (module Executor) [@printer fun _ _ -> ()] }
 [@@deriving show, fields]
+(** [!t] is . *)
 
 (** [make ~id ~operation] makes new plan [t] instance from. *)
 let make ~id ~executor = {id; executor}

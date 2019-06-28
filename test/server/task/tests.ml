@@ -15,7 +15,7 @@ let task_runner =
         Tasker.(Runner.stop instance) ;
         let%lwt () = stopper in
         Alcotest.(check @@ of_pp @@ Fmt.nop) "thread stopped" (Lwt.Return ()) (Lwt.state stopper) ;
-        Lwt.return_unit )
+        Lwt.return_unit)
   ; Alcotest_lwt.test_case "allow to run task immediately" `Quick (fun _ () ->
         let module T = Sxfiler_server_task in
         let module Tasker = (val T.Runner.make (module G) : T.Runner.Instance) in
@@ -37,7 +37,7 @@ let task_runner =
         let%lwt () = stopper in
         Alcotest.(check @@ of_pp @@ Fmt.nop) "thread stopped" (Lwt.Return ()) (Lwt.state stopper) ;
         Alcotest.(check int) "task run" 1 !data ;
-        Lwt.return_unit )
+        Lwt.return_unit)
   ; Alcotest_lwt.test_case "call subscriber when task finished" `Quick (fun _ () ->
         let module T = Sxfiler_server_task in
         let module Tasker = (val T.Runner.make (module G) : T.Runner.Instance) in
@@ -54,11 +54,11 @@ let task_runner =
           Tasker.(
             Runner.subscribe instance ~f:(fun t ->
                 if t.id = task.id then Lwt.return Tasker.(Runner.stop instance)
-                else Lwt.return_unit ))
+                else Lwt.return_unit))
         in
         let%lwt () = Tasker.(Runner.add_task instance ~task) in
         let%lwt () = stopper in
         Alcotest.(check @@ of_pp @@ Fmt.nop) "thread stopped" (Lwt.Return ()) (Lwt.state stopper) ;
-        Lwt.return_unit ) ]
+        Lwt.return_unit) ]
 
 let () = Alcotest.run "Task library" [("task_runner", task_runner)]

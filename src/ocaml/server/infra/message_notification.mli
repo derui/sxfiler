@@ -6,11 +6,11 @@ type level =
   | Warning
   | Error
 
-(** [body] describes body of the notification. *)
 type body = string
+(** [body] describes body of the notification. *)
 
-(** Identifier of the notification. Each notifications has global unique identifier. *)
 type id = Uuidm.t
+(** Identifier of the notification. Each notifications has global unique identifier. *)
 
 type t = private
   { id : id
@@ -35,12 +35,12 @@ module Json : sig
     type t = string [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
-  (** the type that is JSON friendly for {!Sxfiler_domain.Notification.t} *)
   type t =
     { id : string
     ; level : Level.t
     ; body : Body.t }
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
+  (** the type that is JSON friendly for {!Sxfiler_domain.Notification.t} *)
 end
 
 (** Conversion between domain and JSON representation *)

@@ -13,5 +13,5 @@ end
 
 type file_id = string
 
-(** Base signature of thread. *)
 module type Thread = Sxfiler_core.Monad.S
+(** Base signature of thread. *)

@@ -23,7 +23,7 @@ let test_set =
         Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
           "current" res
           (Ok (Some (Spec.Gateway.result_to_json 100))) ;
-        Lwt.return_unit )
+        Lwt.return_unit)
   ; Alcotest_lwt.test_case "use default value when parameter not required" `Quick (fun _ () ->
         let module Spec = struct
           module Gateway = struct
@@ -46,4 +46,4 @@ let test_set =
           "current"
           Spy.Wrap.(called_args Spec.Gateway.spy)
           [{Spec.Gateway.foo = "boo"}] ;
-        Lwt.return_unit ) ]
+        Lwt.return_unit) ]

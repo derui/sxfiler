@@ -1,5 +1,5 @@
-(** Client to call RPC on the client *)
 module W = Websocket
+(** Client to call RPC on the client *)
 
 module Jy = Jsonrpc_yojson
 module Jyc = Jy.Client.Make (Lwt)

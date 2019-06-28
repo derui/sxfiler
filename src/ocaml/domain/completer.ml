@@ -1,8 +1,8 @@
 (** Completer provides simple completion interface via string. *)
 
 module type S = sig
-  (** The type of completer. *)
   type t
+  (** The type of completer. *)
 
   val read : t -> input:string -> collection:Completion.collection -> Completion.Candidate.t list
   (** Match [input] from [candidates] with method specified by [match_type].

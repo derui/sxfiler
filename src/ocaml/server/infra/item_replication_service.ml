@@ -60,9 +60,9 @@ module Make
                copy_file source dest
            else copy_file source dest
          in
-         Log.debug (fun m -> m "Copy file: [%s] from [%s]" dest source) ;%lwt
+         Log.debug (fun m -> m "Copy file: [%s] -> [%s]" source dest) ;%lwt
          MF.create ~level:Message_notification.Info
-           ~body:Printf.(sprintf "Copy file: [%s] from [%s]" dest source)
-         |> NS.send ~typ:Message_notification.notification_typ )
+           ~body:Printf.(sprintf "Copy file: [%s] -> [%s]" source dest)
+         |> NS.send ~typ:Message_notification.notification_typ)
       items
 end

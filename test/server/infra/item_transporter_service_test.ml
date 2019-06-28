@@ -47,7 +47,7 @@ let test_set =
             let dest_file = Filename.basename temp_file |> Filename.concat dest in
             Alcotest.(check bool) "destination" true (Sys.file_exists dest_file) ;
             Alcotest.(check bool) "source" false (Sys.file_exists temp_file) ;
-            Lwt.return_unit ) )
+            Lwt.return_unit))
   ; Alcotest_lwt.test_case "transport items to destination with suggestion" `Quick (fun _ () ->
         let temp_dir = File.mk_temp_dir "nts" in
         let dest = File.mk_temp_dir "destination" in
@@ -67,4 +67,4 @@ let test_set =
             let dest_file = Filename.concat dest "renamed" in
             Alcotest.(check bool) "destination" true (Sys.file_exists dest_file) ;
             Alcotest.(check bool) "source" false (Sys.file_exists temp_file) ;
-            Lwt.return_unit ) ) ]
+            Lwt.return_unit)) ]

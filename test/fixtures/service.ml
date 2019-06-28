@@ -14,5 +14,4 @@ end
 let location_scanner_service location items =
   ( module struct
     let scan _ = D.File_list.make ~location ~items () |> Lwt.return
-  end
-  : D.Location_scanner_service.S )
+  end : D.Location_scanner_service.S )

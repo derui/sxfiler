@@ -3,8 +3,8 @@
 open Rpc_connection_abbrev
 
 module type Connection = sig
-  (** Type of Rpc_connection. *)
   type t
+  (** Type of Rpc_connection. *)
 
   val write_output : t -> frame:W.Frame.t option -> unit
   (** [write_output t ~frame] writes a [frame] to peer on websocket connection. This function calls

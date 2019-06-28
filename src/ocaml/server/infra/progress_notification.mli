@@ -1,13 +1,13 @@
 (** [Notification] provides types for notification that send to client. *)
 
-(** [body] describes body of the notification. *)
 type body =
   { process : string
   ; current : float
   ; targeted : float }
+(** [body] describes body of the notification. *)
 
-(** Identifier of the notification. Each notifications has global unique identifier. *)
 type id = Uuidm.t
+(** Identifier of the notification. Each notifications has global unique identifier. *)
 
 type t = private
   { id : id
@@ -26,11 +26,11 @@ module Json : sig
     [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
-  (** the type that is JSON friendly for {!Sxfiler_domain.Notification.t} *)
   type t =
     { id : string
     ; body : Body.t }
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
+  (** the type that is JSON friendly for {!Sxfiler_domain.Notification.t} *)
 end
 
 (** Conversion between domain and JSON representation *)

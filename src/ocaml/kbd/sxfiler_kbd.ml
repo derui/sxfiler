@@ -36,7 +36,7 @@ let lex_combination seq =
          | None -> token := temp_token
          | Some typ ->
            token := "" ;
-           types := typ :: !types )
+           types := typ :: !types)
       seq ;
     List.rev (Key !token :: !types)
 
@@ -48,7 +48,7 @@ let parse_sequence seq =
     let k =
       List.fold_left
         (fun item -> function Meta -> {item with meta = true} | Ctrl -> {item with ctrl = true}
-                            | Key key -> {item with key} )
+                            | Key key -> {item with key})
         empty tokens
     in
     if k.key = "" then None else Some k

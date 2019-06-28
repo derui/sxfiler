@@ -1,10 +1,10 @@
 open Sxfiler_core
 
-(** [t] defines flat file tree of the location. File tree is entity in system *)
 type t =
   { location : Path.t
   ; items : File_item.t list }
 [@@deriving eq, show, make]
+(** [t] defines flat file tree of the location. File tree is entity in system *)
 
 (** [has_same_location t1 t2] returns having same location between [t1] and [t2]. *)
 let has_same_location t1 t2 = t1.location = t2.location

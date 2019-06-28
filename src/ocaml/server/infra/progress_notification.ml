@@ -1,13 +1,13 @@
 (** [Notification] provides types for notification that send to client. *)
 
-(** [body] describes body of the notification. *)
 type body =
   { process : string
   ; current : float
   ; targeted : float }
+(** [body] describes body of the notification. *)
 
-(** Identifier of the notification. Each notifications has global unique identifier. *)
 type id = Uuidm.t
+(** Identifier of the notification. Each notifications has global unique identifier. *)
 
 type t =
   { id : id

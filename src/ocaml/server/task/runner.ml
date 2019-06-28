@@ -21,10 +21,10 @@ end
 module Subscriber_set = Set.Make (Subscriber)
 
 module Impl (R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) = struct
-  (** only entry point to add task to task queue in this module. *)
   type thread_state =
     [ `Accepted of D.Task.t
     | `Rejected ]
+  (** only entry point to add task to task queue in this module. *)
 
   type t =
     { task_queue : D.Task.t Lwt_stream.t
@@ -55,12 +55,12 @@ module Impl (R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) = struct
   let add_state t id =
     Lwt_mutex.with_lock t.task_state_lock (fun () ->
         t.task_state <- Task_state.add id t.task_state ;
-        Lwt.return_unit )
+        Lwt.return_unit)
 
   let remove_state t id =
     Lwt_mutex.with_lock t.task_state_lock (fun () ->
         t.task_state <- Task_state.remove id t.task_state ;
-        Lwt.return_unit )
+        Lwt.return_unit)
 
   (** Forever loop to run task. *)
   let run_task_loop t () =
@@ -72,15 +72,15 @@ module Impl (R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) = struct
           (fun () ->
              Log.info (fun m -> m "Start executing task...") ;%lwt
              let%lwt () = D.Task.(execute task) in
-             Log.info (fun m -> m "Finish executing task") )
+             Log.info (fun m -> m "Finish executing task"))
           (fun () ->
              let%lwt () =
                Lwt_mutex.with_lock t.task_state_lock (fun () ->
                    Subscriber_set.to_seq t.subscribers
                    |> Seq.map (fun v -> v.Subscriber.f task)
-                   |> List.of_seq |> Lwt.join )
+                   |> List.of_seq |> Lwt.join)
              in
-             remove_state t task.D.Task.id ) )
+             remove_state t task.D.Task.id))
 
   (** [add_task task] add [task] to mailbox of task accepter. *)
   let add_task t ~task = Lwt_mvar.put t.task_mailbox (`Accepted task)
@@ -91,11 +91,11 @@ module Impl (R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) = struct
     let unsubscribe () =
       Lwt_mutex.with_lock t.subscribers_lock (fun () ->
           t.subscribers <- Subscriber_set.remove f' t.subscribers ;
-          Lwt.return_unit )
+          Lwt.return_unit)
     in
     Lwt_mutex.with_lock t.task_state_lock (fun () ->
         t.subscribers <- Subscriber_set.add f' t.subscribers ;
-        Lwt.return_unit ) ;%lwt
+        Lwt.return_unit) ;%lwt
     Lwt.return unsubscribe
 
   let start t =
@@ -136,5 +136,4 @@ let make (module R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) =
       ; handler_lock
       ; subscribers
       ; subscribers_lock }
-  end
-  : Instance )
+  end : Instance )

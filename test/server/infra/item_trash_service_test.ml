@@ -20,4 +20,4 @@ let test_set =
             let _to = Path.of_string dest in
             let%lwt () = M.trash [item] in
             Alcotest.(check bool) "source" false (Sys.file_exists temp_file) ;
-            Lwt.return_unit ) ) ]
+            Lwt.return_unit)) ]

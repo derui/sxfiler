@@ -18,5 +18,5 @@ module Finished = struct
     ; to_json =
         (fun v ->
            let v' = Uuidm.to_string v in
-           `String v' ) }
+           `String v') }
 end

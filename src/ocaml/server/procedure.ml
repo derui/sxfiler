@@ -27,7 +27,7 @@ module Make (S : Spec) : S = struct
     try%lwt
       Log.info (fun m ->
           m "Start procedure: {%s}, param: %s" method_
-            (Option.get ~default:(fun () -> `Null) req |> Yojson.Safe.to_string) ) ;%lwt
+            (Option.get ~default:(fun () -> `Null) req |> Yojson.Safe.to_string)) ;%lwt
       let%lwt result =
         let execute_with_param decoder =
           match req with
@@ -38,7 +38,7 @@ module Make (S : Spec) : S = struct
               match decoder params with
               | Error _ ->
                 Logs.warn (fun m ->
-                    m "Required parameter can not encode: %s" (Yojson.Safe.to_string params) ) ;
+                    m "Required parameter can not encode: %s" (Yojson.Safe.to_string params)) ;
                 Rpc.(Exception.raise_error Jsonrpc.Types.Error_code.Invalid_params)
               | Ok param -> S.Gateway.handle param )
         in

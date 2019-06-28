@@ -38,7 +38,7 @@ let test_set =
         let%lwt data = Lwt.(FR.resolve_by_name "foo" >|= Option.get_exn) in
         Alcotest.(check @@ result (of_pp D.Filer.pp) (of_pp Fmt.nop))
           "renew filer" (Ok data) result ;
-        Lwt.return_unit )
+        Lwt.return_unit)
   ; Alcotest_lwt.test_case "error when filer not found" `Quick (fun _ () ->
         let module FR = (val TF.Memory_repository.filer_repository ()) in
         let module Svc = struct
@@ -53,7 +53,7 @@ let test_set =
           "not found filer"
           (Error `Not_found_filer)
           result ;
-        Lwt.return_unit )
+        Lwt.return_unit)
   ; Alcotest_lwt.test_case "issue error when item not found" `Quick (fun _ () ->
         let file_list =
           D.File_list.make
@@ -74,4 +74,4 @@ let test_set =
           "not found item"
           (Error `Not_found_item)
           result ;
-        Lwt.return_unit ) ]
+        Lwt.return_unit) ]

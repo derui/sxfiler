@@ -1,10 +1,10 @@
 (** Base signature of translator for domain and a type. *)
 module type Domain_translator = sig
-  (** base type of translator *)
   type t
+  (** base type of translator *)
 
-  (** Target type of conversion each way *)
   type domain
+  (** Target type of conversion each way *)
 
   val of_domain : domain -> t
   (** [of_domain domain] get the instance {!t} from [domain] *)

@@ -13,7 +13,7 @@ let test_set =
         let module Usecase = U.Keymap.Get.Make (CR) (KR) in
         let%lwt result = Usecase.execute () in
         Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop)) "key map" (Ok keymap) result ;
-        Lwt.return_unit )
+        Lwt.return_unit)
   ; Alcotest_lwt.test_case "store key map" `Quick (fun _ () ->
         let keymap = D.Key_map.make () in
         let key = Fun.(Sxfiler_kbd.of_keyseq %> Option.get_exn) "k" in
@@ -22,4 +22,4 @@ let test_set =
         let module Usecase = U.Keymap.Store.Make (KR) in
         let%lwt result = Usecase.execute keymap' in
         Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop)) "key map" (Ok ()) result ;
-        Lwt.return_unit ) ]
+        Lwt.return_unit) ]

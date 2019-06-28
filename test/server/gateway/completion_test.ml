@@ -22,7 +22,7 @@ let test_set =
         in
         let%lwt _ = Setup.handle {source = T.Completion.Collection.of_domain expected} in
         Alcotest.(check @@ list @@ of_pp Fmt.nop) "called" expected !called ;
-        Lwt.return_unit )
+        Lwt.return_unit)
   ; Alcotest_lwt.test_case "can complete from common source stored before" `Quick (fun _ () ->
         let expected =
           [ {Co.Candidate.start = 0; length = 3; value = {Co.Item.id = "1"; value = "foo"}}
@@ -39,4 +39,4 @@ let test_set =
           "read"
           (T.Completion.Candidates.of_domain expected)
           res ;
-        Lwt.return_unit ) ]
+        Lwt.return_unit) ]

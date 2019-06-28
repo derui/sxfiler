@@ -1,8 +1,8 @@
 (** this module defines interface to transport item between filers. No implementation that is
     default provides from this, should implement yourself. *)
 
-(** suggest and waiter to get interaction from others. *)
 type suggest = File_item.t -> Task_interaction.Suggestion.t * Task_interaction.Reply.typ Lwt.t
+(** suggest and waiter to get interaction from others. *)
 
 module type S = sig
   val transport : suggest:suggest -> items:File_item.t list -> _to:File_list.t -> unit Lwt.t

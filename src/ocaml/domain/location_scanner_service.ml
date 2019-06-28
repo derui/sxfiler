@@ -1,6 +1,6 @@
+open Sxfiler_core
 (** this module defines interface to transport item between filers. No implementation that is
     default provides from this, should implement yourself. *)
-open Sxfiler_core
 
 type location = Path.t
 

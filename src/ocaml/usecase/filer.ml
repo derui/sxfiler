@@ -1,5 +1,5 @@
-(** Use cases for filer *)
 open Sxfiler_core
+(** Use cases for filer *)
 
 module T = Sxfiler_domain
 
@@ -271,11 +271,12 @@ module Move = struct
         | _, None -> Lwt.return_error (`Not_found params.dest)
         | Some source', Some dest' ->
           let module Executor =
-            Executor (struct
-              let source_filer = source'
-              let dest_filer = dest'
-              let source_items = params.item_ids
-            end)
+            Executor
+              (struct
+                let source_filer = source'
+                let dest_filer = dest'
+                let source_items = params.item_ids
+              end)
               (Dep)
           in
           let task = TF.create ~executor:(module Executor) in
@@ -341,10 +342,11 @@ module Delete = struct
       | None -> Lwt.return_error (`Not_found params.source)
       | Some source ->
         let module E =
-          Executor (struct
-            let filer = source
-            let target_items = params.item_ids
-          end)
+          Executor
+            (struct
+              let filer = source
+              let target_items = params.item_ids
+            end)
             (Dep)
         in
         let task = TF.create ~executor:(module E) in
@@ -428,11 +430,12 @@ module Copy = struct
       | _, None -> Lwt.return_error (`Not_found params.dest)
       | Some source', Some dest' ->
         let module Executor =
-          Executor (struct
-            let source_filer = source'
-            let dest_filer = dest'
-            let source_items = params.item_ids
-          end)
+          Executor
+            (struct
+              let source_filer = source'
+              let dest_filer = dest'
+              let source_items = params.item_ids
+            end)
             (Dep)
         in
         let task = TF.create ~executor:(module Executor) in

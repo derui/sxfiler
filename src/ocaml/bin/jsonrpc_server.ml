@@ -41,7 +41,7 @@ let request_handler t conn =
             let%lwt res = Jy.Server.handle_request ~request:req t.method_handler in
             let%lwt frame = Lwt.return @@ res_to_frame @@ res in
             Lwt.return @@ C.Connection.write_output conn ~frame )
-      | _ -> C.Connection.default_input_handler conn f )
+      | _ -> C.Connection.default_input_handler conn f)
 
 (** Serve response sending loop *)
 let serve_forever t conn = request_handler t conn

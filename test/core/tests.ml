@@ -139,7 +139,7 @@ let path_tests =
     , `Quick
     , fun () ->
       Alcotest.check_raises "empth path" Path.Empty_path (fun () ->
-          Path.of_string ~env:`Unix "" |> ignore ) )
+          Path.of_string ~env:`Unix "" |> ignore) )
   ; ( "gets base name of a path"
     , `Quick
     , fun () ->
@@ -266,7 +266,7 @@ let error_tests =
     , fun () ->
       let error = Error.create "sample" in
       Alcotest.check_raises "exception" (Error.Error error) (fun () ->
-          raise @@ Error.to_exn error ) ) ]
+          raise @@ Error.to_exn error) ) ]
 
 let testcases =
   [ ("Option", option_tests)

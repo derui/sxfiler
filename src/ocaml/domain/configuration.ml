@@ -1,5 +1,5 @@
-(** Configuration domain has all configurations of application. *)
 open Sxfiler_core
+(** Configuration domain has all configurations of application. *)
 
 type t =
   { default_sort_order : Types.Sort_type.t

@@ -6,11 +6,11 @@ type level =
   | Warning
   | Error
 
-(** [body] describes body of the notification. *)
 type body = string
+(** [body] describes body of the notification. *)
 
-(** Identifier of the notification. Each notifications has global unique identifier. *)
 type id = Uuidm.t
+(** Identifier of the notification. Each notifications has global unique identifier. *)
 
 type t =
   { id : id

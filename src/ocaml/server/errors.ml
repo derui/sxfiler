@@ -1,5 +1,5 @@
-(** this module defines application error raises from JSON-RPC. *)
 module G = Sxfiler_server_gateway
+(** this module defines application error raises from JSON-RPC. *)
 
 module Jye = Jsonrpc_yojson.Exception
 module E = Jsonrpc.Types.Error_code

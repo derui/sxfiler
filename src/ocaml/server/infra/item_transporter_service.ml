@@ -45,9 +45,9 @@ module Make
                move dest
            else move dest
          in
-         Log.debug (fun m -> m "Move file: [%s] from [%s]" dest source) ;%lwt
+         Log.debug (fun m -> m "Move file: [%s] -> [%s]" source dest) ;%lwt
          MF.create ~level:Message_notification.Info
-           ~body:Printf.(sprintf "Move file: [%s] from [%s]" dest source)
-         |> NS.send ~typ:Message_notification.notification_typ )
+           ~body:Printf.(sprintf "Move file: [%s] -> [%s]" dest source)
+         |> NS.send ~typ:Message_notification.notification_typ)
       items
 end

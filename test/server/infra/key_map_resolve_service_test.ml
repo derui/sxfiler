@@ -24,4 +24,4 @@ let test_set =
         let path = to_path "./data_real/key_map/test.json" in
         let%lwt resolved = I.Key_map_resolve_service.resolve path in
         Alcotest.(check @@ F.Testable.key_map) "key_map" resolved key_map ;
-        Lwt.return_unit ) ]
+        Lwt.return_unit) ]

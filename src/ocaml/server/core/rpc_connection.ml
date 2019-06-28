@@ -1,16 +1,16 @@
+open Rpc_connection_abbrev
 (** Rpc_connection handle request and response on Websocket as Lwt stream. This module defines
     global connection to be able to use other module to send frame. *)
-open Rpc_connection_abbrev
 
 include Rpc_connection_intf
 
 module Impl = struct
-  (** Type of Rpc_connection. output_writer is created by Websocket_cohttp_lwt.upgrade_connection,
-      and do not get stream of it. *)
   type t =
     { mutable output_writer : W.Frame.t option -> unit
     ; input_stream : W.Frame.t Lwt_stream.t
     ; input_writer : W.Frame.t option -> unit }
+  (** Type of Rpc_connection. output_writer is created by Websocket_cohttp_lwt.upgrade_connection,
+      and do not get stream of it. *)
 
   let write_output t ~frame = t.output_writer frame
   let process_input t ~f = Lwt_stream.iter_s f t.input_stream
@@ -56,5 +56,4 @@ let make () =
     module Connection = Impl
 
     let instance = t
-  end
-  : Instance )
+  end : Instance )

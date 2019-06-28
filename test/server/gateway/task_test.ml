@@ -29,4 +29,4 @@ let test_set =
           "called"
           [{D.Task_interaction.Reply.task_id; reply = D.Task_interaction.Reply.Overwrite true}]
           (Spy.Wrap.called_args spy) ;
-        Lwt.return_unit ) ]
+        Lwt.return_unit) ]

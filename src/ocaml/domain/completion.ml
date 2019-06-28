@@ -25,11 +25,11 @@ module Candidate = struct
   let value t = t.value.Item.value
 end
 
-(** Type of collection that is used to source of completion. *)
 type collection = Item.t list
+(** Type of collection that is used to source of completion. *)
 
-(** Result of completion. *)
 type candidates = Candidate.t list
+(** Result of completion. *)
 
 (** Repository interface *)
 module type Repository = sig

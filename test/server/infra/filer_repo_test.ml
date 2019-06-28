@@ -31,7 +31,7 @@ let test_set =
         Alcotest.(check @@ option @@ of_pp D.Filer.pp)
           "stored" (Some data)
           (S.Root_state.find_filer_by_name ~name:"foo" actual) ;
-        Lwt.return_unit )
+        Lwt.return_unit)
   ; Alcotest_lwt.test_case "can get filer stored" `Quick (fun _ () ->
         let module State = S.Statable.Make (struct
             type t = S.Root_state.t
@@ -41,4 +41,4 @@ let test_set =
         let module R = I.Filer_repo.Make (State) (NS) in
         let%lwt actual = R.resolve data.id in
         Alcotest.(check @@ of_pp D.Filer.pp) "stored" data actual ;
-        Lwt.return_unit ) ]
+        Lwt.return_unit) ]

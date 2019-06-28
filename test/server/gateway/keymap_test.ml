@@ -21,4 +21,4 @@ let test_set =
         let module Gateway = G.Keymap.Get.Make (Usecase) in
         let%lwt res = Gateway.handle () in
         Alcotest.(check @@ of_pp Fmt.nop) "current" (Tr.Key_map.of_domain expected) res ;
-        Lwt.return_unit ) ]
+        Lwt.return_unit) ]

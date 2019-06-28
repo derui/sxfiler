@@ -1,4 +1,3 @@
-(** the type that is JSON friendly for {!Sxfiler_domain.Filer.t} *)
 type t =
   { id : string
   ; name : string
@@ -7,5 +6,6 @@ type t =
   ; marked_items : string list [@key "markedItems"]
   ; sort_order : Types.Sort_type.t [@key "sortOrder"] }
 [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
+(** the type that is JSON friendly for {!Sxfiler_domain.Filer.t} *)
 
 include Core.Domain_translator with type t := t and type domain := Sxfiler_domain.Filer.t

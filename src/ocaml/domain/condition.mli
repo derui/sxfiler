@@ -1,7 +1,7 @@
 (** Condition defines condition of context such as starting completion, inputting on command. *)
 
-(** abstract type for Condition *)
 type t [@@deriving show, eq]
+(** abstract type for Condition *)
 
 val empty : t
 (** Get a empty condition {!t}. Condition is immutable. *)

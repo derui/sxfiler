@@ -12,7 +12,7 @@ let test_set =
         let module R = I.Condition_repo.Make (State) in
         let%lwt cond = R.resolve () in
         Alcotest.(check bool) "stored" true D.Condition.(equal empty cond) ;
-        Lwt.return_unit )
+        Lwt.return_unit)
   ; Alcotest_lwt.test_case "can enable/disable context" `Quick (fun _ () ->
         let module State = S.Statable.Make (struct
             type t = D.Condition.t
@@ -24,4 +24,4 @@ let test_set =
         let%lwt () = R.store expected in
         let%lwt actual = R.resolve () in
         Alcotest.(check bool) "stored" true (D.Condition.equal actual expected) ;
-        Lwt.return_unit ) ]
+        Lwt.return_unit) ]

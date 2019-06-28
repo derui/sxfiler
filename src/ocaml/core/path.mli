@@ -4,8 +4,8 @@
 
 exception Empty_path
 
-(** The type of Path. *)
 type t
+(** The type of Path. *)
 
 type env =
   [ `Unix

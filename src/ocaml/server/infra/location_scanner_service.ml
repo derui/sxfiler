@@ -1,5 +1,5 @@
-(** This module provides implementation of item repository.*)
 open Sxfiler_core
+(** This module provides implementation of item repository.*)
 
 module D = Sxfiler_domain
 

@@ -1,5 +1,5 @@
-(** Define in-memory repositories *)
 module D = Sxfiler_domain
+(** Define in-memory repositories *)
 
 (** make new in-memory repository for Filer *)
 let filer_repository ?(initial = []) () =
@@ -14,8 +14,7 @@ let filer_repository ?(initial = []) () =
       |> Lwt.return
 
     let store t = Hashtbl.add hash t.D.Filer.id t |> Lwt.return
-  end
-  : D.Filer.Repository )
+  end : D.Filer.Repository )
 
 (** make new in-memory repository for Filer *)
 let key_map_repository init =
@@ -26,5 +25,4 @@ let key_map_repository init =
     let store t =
       data := t ;
       Lwt.return_unit
-  end
-  : D.Key_map_repository.S )
+  end : D.Key_map_repository.S )

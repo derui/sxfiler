@@ -18,5 +18,5 @@ module Make (S : C.Statable.S with type state = C.Root_state.t) (NS : Notificati
     S.with_lock (fun state ->
         let state = C.Root_state.add_filer ~filer state in
         let%lwt () = S.update state in
-        NS.send ~typ:filer_updated_api filer )
+        NS.send ~typ:filer_updated_api filer)
 end

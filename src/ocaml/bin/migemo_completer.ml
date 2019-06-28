@@ -1,11 +1,11 @@
-(** Completer provides simple completion interface via string. *)
 module T = Sxfiler_domain
+(** Completer provides simple completion interface via string. *)
 
 include T.Completer
 
 module Core = struct
-  (** The type of completer. *)
   type t = {migemo : Migemocaml.Migemo.t}
+  (** The type of completer. *)
 
   let make ~migemo = {migemo}
   let is_some = function Some _ -> true | None -> false
@@ -18,7 +18,7 @@ module Core = struct
         | None, _ -> failwith "Invalid branch"
         | Some group, v ->
           let start, length = Re.Group.offset group 0 in
-          {T.Completion.Candidate.start; length; value = v} )
+          {T.Completion.Candidate.start; length; value = v})
 end
 
 let make ~migemo =
@@ -26,5 +26,4 @@ let make ~migemo =
     module Completer = Core
 
     let this = Core.make ~migemo
-  end
-  : Instance )
+  end : Instance )

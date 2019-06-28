@@ -1,8 +1,8 @@
-(** Type of error. *)
 type t
+(** Type of error. *)
 
-(** Exception of error. This exception is created by [to_exn] *)
 exception Error of t
+(** Exception of error. This exception is created by [to_exn] *)
 
 val create : string -> t
 (** [create message] create new object [t] *)

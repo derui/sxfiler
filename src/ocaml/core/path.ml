@@ -152,7 +152,7 @@ let to_string ?env path =
         | Comp_current -> Filename.current_dir_name
         | Comp_parent -> Filename.parent_dir_name
         | Comp_empty -> ""
-        | Comp_filename f -> f )
+        | Comp_filename f -> f)
   in
   let concatted = String.concat (String.make 1 sep) comps in
   match path.root with None -> concatted | Some v -> v ^ concatted

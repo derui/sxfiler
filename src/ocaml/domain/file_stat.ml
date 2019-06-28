@@ -15,8 +15,6 @@ let empty_mode =
   ; group = {writable = true; readable = true; executable = true}
   ; others = {writable = true; readable = true; executable = true} }
 
-(** Type of stat of file. Note: The value of *time (atime, ctime, mtime) fields has time resolution
-    in term of milliseconds, not seconds. *)
 type t =
   { mode : mode
   ; uid : int
@@ -29,3 +27,5 @@ type t =
   ; is_file : bool
   ; is_symlink : bool }
 [@@deriving eq, make, show]
+(** Type of stat of file. Note: The value of *time (atime, ctime, mtime) fields has time resolution
+    in term of milliseconds, not seconds. *)

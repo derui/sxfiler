@@ -1,5 +1,5 @@
-(** Completer provides simple completion interface via string. *)
 open Sxfiler_domain
+(** Completer provides simple completion interface via string. *)
 
 include module type of struct
   include Completer

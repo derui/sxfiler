@@ -16,7 +16,7 @@ let test_set =
         let%lwt result = Usecase.execute () in
         Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
           "renew filer" (Ok !CR.data) result ;
-        Lwt.return_unit )
+        Lwt.return_unit)
   ; Alcotest_lwt.test_case "return current configuration" `Quick (fun _ () ->
         let configuration = D.Configuration.default in
         let module CR = struct
@@ -31,4 +31,4 @@ let test_set =
         let%lwt _ = Usecase.execute configuration in
         Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
           "stored" (Ok !CR.data) (Ok (Some configuration)) ;
-        Lwt.return_unit ) ]
+        Lwt.return_unit) ]
