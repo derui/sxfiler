@@ -63,6 +63,21 @@ describe("Filer domain", () => {
       expect(nextFiler.currentFileItem).toEqual(node2);
     });
 
+    it("can move index to next node that are sorted on create", () => {
+      const node1 = createFileItem({ id: "node1", name: "name", stat, parentDirectory: "/", marked: false });
+      const node2 = createFileItem({ id: "node2", name: "name2", stat, parentDirectory: "/", marked: false });
+      const filer = createFiler({
+        id: "id",
+        name: "name",
+        location: "/loc",
+        items: [node1, node2],
+        currentCursorIndex: 0,
+      });
+
+      const nextFiler = filer.moveIndex(Direction.Down);
+      expect(nextFiler.currentCursorIndex).toEqual(1);
+    });
+
     it("should not move to up direction if current is the first of nodes", () => {
       const node1 = createFileItem({ id: "node1", name: "name", stat, parentDirectory: "/", marked: false });
       const node2 = createFileItem({ id: "node2", name: "name2", stat, parentDirectory: "/", marked: false });
