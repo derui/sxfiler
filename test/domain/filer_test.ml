@@ -19,7 +19,7 @@ let update_test_set =
   let stat = TF.File_stat.fixture () in
   let item_1 = TF.File_item.fixture ~full_path:(Path.of_string ~env:`Unix "/foo") stat
   and item_2 = TF.File_item.fixture ~full_path:(Path.of_string ~env:`Unix "/bar") stat in
-  [ ( "hold marked_nodes if the new file_list has same location"
+  [ ( "hold marked_items if the new file_list has same location"
     , `Quick
     , fun () ->
       let data = [item_1] in
@@ -31,6 +31,22 @@ let update_test_set =
         |> D.Filer.add_mark ~ids:[item_1.id]
       in
       let data = D.Filer.move_location data ~file_list:file_list' (module Clock) in
+      let expected = D.Filer.Marked_item_set.(empty |> add item_1.id) in
+      Alcotest.(check @@ of_pp D.Filer.Marked_item_set.pp)
+        "same item id" expected
+        F.(data.marked_items) )
+  ; ( "hold marked_items if the new file_list has only some items marked before"
+    , `Quick
+    , fun () ->
+      let data = [item_2; item_1] in
+      let expected = [item_1] in
+      let file_list = D.File_list.make ~location:(Path.of_string "/") ~items:data () in
+      let file_list' = D.File_list.make ~location:(Path.of_string "/") ~items:expected () in
+      let data =
+        Factory.create ~name:"id" ~file_list ~sort_order:D.Types.Sort_type.Name
+        |> D.Filer.add_mark ~ids:[item_1.id; item_2.id]
+      in
+      let data = D.Filer.update_list data ~file_list:file_list' in
       let expected = D.Filer.Marked_item_set.(empty |> add item_1.id) in
       Alcotest.(check @@ of_pp D.Filer.Marked_item_set.pp)
         "same item id" expected

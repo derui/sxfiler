@@ -29,17 +29,21 @@ let has_same_id {id = id1; _} {id = id2; _} = equal_id id1 id2
 let find_item t = File_list.find_item t.file_list
 
 let update_list t ~file_list =
-  {t with file_list = File_list.sort_items file_list ~order:t.sort_order}
+  let marked_items =
+    if Path.equal file_list.File_list.location t.file_list.location then
+      let current_items =
+        List.map File_item.id file_list.File_list.items |> Marked_item_set.of_list
+      in
+      Marked_item_set.inter t.marked_items current_items
+    else Marked_item_set.empty
+  in
+  {t with file_list = File_list.sort_items file_list ~order:t.sort_order; marked_items}
 
 let move_location t ~file_list clock =
   let record = Location_record.record_of ~location:file_list.File_list.location clock in
   let history = Location_history.add_record t.history ~record in
-  let marked_items =
-    if Path.equal file_list.location t.file_list.location then t.marked_items
-    else Marked_item_set.empty
-  in
   let t' = update_list t ~file_list in
-  {t' with history; marked_items}
+  {t' with history}
 
 let add_mark t ~ids =
   let marked_items =
