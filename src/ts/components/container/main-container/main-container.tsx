@@ -77,8 +77,8 @@ export class Component extends React.Component<Props> {
               onKeyDown={handleKeyDown(locator, this.props.state)}
             >
               <FileListContainer.Component key="filer" state={fileList} />
-              <NotificationContainer.Component key="notification" state={notification} />
               <LogViewerContainer.Component key="log" state={logEntry} />
+              <NotificationContainer.Component key="notification" state={notification} />
               <SuggestionModalContainer.Component state={this.props.state.taskInteraction} />
             </Element.Component>
           </RootRef>

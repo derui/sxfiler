@@ -10,7 +10,7 @@
 
 .processLabel {
   flex: 0 0 20%;
-  padding: 0 $smallSpace;
+  padding: $smallSpace;
   color: $sol_base2;
 
   border-right: $smallSpace solid $sol_base3;
@@ -19,6 +19,8 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  font-size: 1rem;
+  font-family: monospace;
 }
 
 .progressBar {
