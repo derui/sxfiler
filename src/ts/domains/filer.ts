@@ -55,7 +55,7 @@ export const createFiler = ({ id, name, items, location, currentCursorIndex }: F
     name,
     items,
     location,
-    currentCursorIndex,
+    currentCursorIndex: Math.min(items.length - 1, Math.max(0, currentCursorIndex)),
     get currentFileItem(): FileItem | undefined {
       if (this.items.length === 0) {
         return undefined;

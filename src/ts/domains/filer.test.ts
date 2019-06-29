@@ -17,6 +17,35 @@ const stat = createFileStat({
 });
 
 describe("Filer domain", () => {
+  describe("factory", () => {
+    it("avoid to overlap current cursor index", () => {
+      const node1 = createFileItem({
+        id: "node1",
+        name: "name",
+        stat,
+        parentDirectory: "/",
+        marked: false,
+      });
+      const node2 = createFileItem({
+        id: "node2",
+        name: "name",
+        stat,
+        parentDirectory: "/",
+        marked: false,
+      });
+
+      const filer = createFiler({
+        id: "id",
+        name: "name",
+        location: "/loc",
+        items: [node1, node2],
+        currentCursorIndex: 1,
+      });
+      const filer2 = createFiler({ ...filer, items: [node1], currentCursorIndex: 2 });
+
+      expect(filer2.currentFileItem).toEqual(node1);
+    });
+  });
   describe("comparable", () => {
     it("compare with filers that has same content", () => {
       const filer = createFiler({ id: "id", name: "name", location: "/loc", items: [], currentCursorIndex: 0 });
