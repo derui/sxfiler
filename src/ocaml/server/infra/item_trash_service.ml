@@ -34,15 +34,15 @@ module Make
     in
     Lwt_list.iter_p
       (fun item ->
-        let path = item.D.File_item.full_path |> Path.to_string in
-        let%lwt () =
-          match item.D.File_item.stat.is_directory with
-          | true -> delete_dir path
-          | false -> File.remove path |> Lwt.return
-        in
-        up_count () ;%lwt
-        Log.debug (fun m -> m "Delete item: [%s]" path) ;%lwt
-        MF.create ~level:Message_notification.Info ~body:Printf.(sprintf "Delete item: [%s]" path)
-        |> NS.send ~typ:Message_notification.notification_typ)
+         let path = item.D.File_item.full_path |> Path.to_string in
+         let%lwt () =
+           match item.D.File_item.stat.is_directory with
+           | true -> delete_dir path
+           | false -> File.remove path |> Lwt.return
+         in
+         up_count () ;%lwt
+         Log.debug (fun m -> m "Delete item: [%s]" path) ;%lwt
+         MF.create ~level:Message_notification.Info ~body:Printf.(sprintf "Delete item: [%s]" path)
+         |> NS.send ~typ:Message_notification.notification_typ)
       items
 end
