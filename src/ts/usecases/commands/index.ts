@@ -1,4 +1,5 @@
 import * as filerChangePaneSide from "./filer-change-pane-side";
+import * as filerCopyItems from "./filer-copy-items";
 import * as filerDeleteItems from "./filer-delete-items";
 import * as filerEnterDirectory from "./filer-enter-directory";
 import * as filerMoveCursorDown from "./filer-move-cursor-down";
@@ -15,6 +16,7 @@ import { CommandRegistrar } from "../command-registrar";
 export const registAllCommand = (registrar: CommandRegistrar): CommandRegistrar => {
   const modules = [
     filerChangePaneSide,
+    filerCopyItems,
     filerDeleteItems,
     filerEnterDirectory,
     filerMoveCursorDown,
