@@ -11,8 +11,8 @@ end
 (** {!Candidate} defines type of result of completion. *)
 module Candidate = struct
   type t =
-    { start : int
-    ; length : int
+    { start : int (* 0-origin index of match *)
+    ; length : int (* length of match started from [start] *)
     ; value : Item.t }
   [@@deriving show]
 
