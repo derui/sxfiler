@@ -1,4 +1,4 @@
-import { createCandidate } from "./completion";
+import { createCandidate } from "./candidate";
 
 describe("Domain", () => {
   describe("Completion Candidate", () => {
