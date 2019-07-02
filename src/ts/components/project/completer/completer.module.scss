@@ -1,0 +1,60 @@
+@import "../../ui/commom-style/reset.module.css";
+@import "../../ui/commom-style/_colors.scss";
+@import "../../ui/commom-style/_variables.scss";
+
+// base layout for root element. This layout should use without change.
+.root {
+  composes: root-base from "../../ui/modal/modal.module.scss";
+  overflow: hidden;
+}
+
+// Base layout for overlay element.
+.overlay {
+  composes: overlay-base from "../../ui/modal/modal.module.scss";
+
+  background-color: rgba(black, 0.2);
+}
+
+// Base layout for madal elemenrt.
+.container {
+  composes: container-base from "../../ui/modal/modal.module.scss";
+}
+
+.header {
+  color: $sol_base03;
+  background-color: $sol_base3;
+  padding: $largeSpace;
+}
+
+.panelContainer {
+  padding: $baseSpace 0;
+  background-color: $sol_base03;
+}
+
+.rootAnimationEnter {
+  transform: translateY(-100%);
+}
+
+.rootAnimationEnterActive {
+  transform: translateY(0);
+  transition: transform ease-out 200ms;
+}
+
+.rootAnimationExit {
+  transform: translateY(0);
+}
+
+.rootAnimationExitActive {
+  transition: transform ease-in 200ms;
+  transform: translateY(-100%);
+}
+
+
+.overlayAnimationEnter {
+  opacity: 0.1;
+}
+
+.overlayAnimationEnterActive {
+  opacity: 1.0;
+  transition: opacity ease-out 200ms;
+}
