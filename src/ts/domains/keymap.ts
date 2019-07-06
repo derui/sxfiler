@@ -6,6 +6,7 @@ import UIContext from "../types/ui-context";
 
 export type AppContext = {
   currentContext: UIContext;
+  subContext: UIContext[];
 };
 
 type When = {
@@ -36,10 +37,29 @@ export type Keymap = {
   allowedWhen(context: AppContext): Keymap;
 };
 
-const evaluateWithContext = (w: When, context: AppContext) => w.contexts.includes(context.currentContext);
+const evaluateWithContext = (w: When, context: AppContext) => {
+  const contextSet = new Set(context.subContext);
+  contextSet.add(context.currentContext);
+
+  return w.contexts.every(v => contextSet.has(v));
+};
 
 function allowedWhen(this: Keymap, context: AppContext): Keymap {
-  return createKeymap(this.bindings.filter(v => evaluateWithContext(v.when, context)));
+  const evaluatedKeymap = this.bindings
+    .filter(v => evaluateWithContext(v.when, context))
+    .reduce((map, v) => {
+      const binding = map.get(v.key);
+      if (binding && binding.when.contexts.length < v.when.contexts.length) {
+        map.set(v.key, v);
+      } else {
+        map.set(v.key, v);
+      }
+
+      return map;
+    }, new Map<string, Binding>())
+    .values();
+
+  return createKeymap(Array.from(evaluatedKeymap));
 }
 
 export const createKeymap = (bindings: Binding[] = []): Keymap => {
@@ -48,7 +68,7 @@ export const createKeymap = (bindings: Binding[] = []): Keymap => {
 
     // getter for bindings
     get bindings() {
-      return this._bindings.map(v => v);
+      return Array.from(this._bindings);
     },
 
     find(key: string): Binding | undefined {

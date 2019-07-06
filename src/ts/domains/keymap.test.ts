@@ -26,14 +26,46 @@ describe("keymap value object", () => {
 
   it("get allowed binding in the current context", () => {
     const value = [
-      { key: "a", action: "foo", when: { contexts: [] } },
       { key: "a", action: "foobar", when: { contexts: [UIContext.OnFileTree] } },
       { key: "b", action: "bar", when: { contexts: [UIContext.OnFileTree] } },
       { key: "a", action: "foobar", when: { contexts: [UIContext.OnSuggestion] } },
     ];
-    const obj = keymap.createKeymap(value).allowedWhen({ currentContext: UIContext.OnFileTree });
+    const obj = keymap.createKeymap(value).allowedWhen({ currentContext: UIContext.OnFileTree, subContext: [] });
+
+    expect(obj.find("a")).toEqual(value[0]);
+    expect(obj.find("b")).toEqual(value[1]);
+  });
+
+  it("get allowed binding in the current context and sub contexts", () => {
+    const value = [
+      { key: "a", action: "foobar", when: { contexts: [UIContext.OnFileTree] } },
+      { key: "b", action: "bar", when: { contexts: [UIContext.OnFileTree] } },
+      { key: "a", action: "foobar", when: { contexts: [UIContext.OnSuggestion] } },
+      { key: "d", action: "foobar", when: { contexts: [UIContext.ForHistory] } },
+    ];
+    const obj = keymap
+      .createKeymap(value)
+      .allowedWhen({ currentContext: UIContext.OnFileTree, subContext: [UIContext.ForHistory] });
+
+    expect(obj.find("a")).toEqual(value[0]);
+    expect(obj.find("b")).toEqual(value[1]);
+    expect(obj.find("d")).toEqual(value[3]);
+  });
+
+  it("overwrite loose context if keymap having same key in allowed by contexts", () => {
+    const value = [
+      { key: "a", action: "foo", when: { contexts: [] } },
+      { key: "a", action: "foobar", when: { contexts: [UIContext.OnFileTree] } },
+      { key: "b", action: "bar", when: { contexts: [UIContext.OnFileTree] } },
+      { key: "a", action: "foobar", when: { contexts: [UIContext.OnSuggestion] } },
+      { key: "d", action: "foobar", when: { contexts: [UIContext.ForHistory] } },
+    ];
+    const obj = keymap
+      .createKeymap(value)
+      .allowedWhen({ currentContext: UIContext.OnFileTree, subContext: [UIContext.ForHistory] });
 
     expect(obj.find("a")).toEqual(value[1]);
     expect(obj.find("b")).toEqual(value[2]);
+    expect(obj.find("d")).toEqual(value[4]);
   });
 });
