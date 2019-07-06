@@ -5,13 +5,14 @@ import * as ListItem from "../../ui/list-item/list-item";
 import { CSSTransition } from "react-transition-group";
 import { Candidate } from "../../../domains/candidate";
 
-const style: ClassNames = require("./suggestion-modal.module.scss");
+const style: ClassNames = require("./completer.module.scss");
 
 type ClassNames = Modal.ModalClassNames & {
+  overlay: string;
   title: string;
   itemContainer: string;
   inputContainer: string;
-  label: string;
+  matching: string;
   input: string;
   list: string;
   listItem: string;
@@ -72,11 +73,16 @@ const handleChange = (cb: (input: string) => void, cb2: (input: string) => void)
  * Make list that contains completion items
  */
 const makeList = (items: Item[], index: number) => {
-  const listItems = items.map((v, i) => (
-    <ListItem.Component className={style.listItem} selected={i === index} key={v.id}>
-      {v.value}
-    </ListItem.Component>
-  ));
+  const listItems = items.map((v, i) => {
+    const [before, matched, after] = v.splitByInput();
+    return (
+      <ListItem.Component className={style.listItem} selected={i === index} key={v.id}>
+        {before}
+        <span className={style.matching}>{matched}</span>
+        {after}
+      </ListItem.Component>
+    );
+  });
   return <List.Component className={style.list}>{listItems}</List.Component>;
 };
 
@@ -111,12 +117,9 @@ const Container: React.FC<ContainerContextProps> = ({
             <h4 className={style.title}>{title}</h4>
             <section className={style.itemContainer}>
               <div className={style.inputContainer}>
-                <label className={style.label}>
-                  Input:{" "}
-                  <input className={style.input} type="text" onChange={handleChange(onInput, setState)} value={state} />
-                </label>
+                <input className={style.input} type="text" onChange={handleChange(onInput, setState)} value={state} />
               </div>
-              <List.Component className={style.list}>{makeList(items, selectedItemIndex)}</List.Component>
+              {makeList(items, selectedItemIndex)}
             </section>
           </div>
         );

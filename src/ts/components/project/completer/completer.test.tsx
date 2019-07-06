@@ -16,7 +16,7 @@ describe("Project", () => {
             title: "test",
             selectedItemIndex: -1,
             items: [],
-            onInput: () => {},
+            onChange: () => {},
           }}
         />
       );
@@ -34,7 +34,7 @@ describe("Project", () => {
             title: "test",
             selectedItemIndex: -1,
             items: [createCandidate({ id: "id", value: "value", start: 0, length: 0 })],
-            onInput: () => {},
+            onChange: () => {},
           }}
         />
       );
@@ -55,7 +55,7 @@ describe("Project", () => {
               createCandidate({ id: "id", value: "value", start: 0, length: 0 }),
               createCandidate({ id: "id2", value: "value2", start: 0, length: 0 }),
             ],
-            onInput: () => {},
+            onChange: () => {},
           }}
         />
       );
@@ -77,7 +77,7 @@ describe("Project", () => {
                 createCandidate({ id: "id", value: "value", start: 0, length: 0 }),
                 createCandidate({ id: "id2", value: "value2", start: 0, length: 0 }),
               ],
-              onInput: v => {
+              onChange: v => {
                 expect(v).toEqual("foo");
                 resolve();
               },
