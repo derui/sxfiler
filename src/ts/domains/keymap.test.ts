@@ -1,5 +1,6 @@
 import * as keymap from "./keymap";
 import UIContext from "../types/ui-context";
+import { createAppContext } from "./app-context";
 
 describe("keymap value object", () => {
   it("can create value object without reference", () => {
@@ -30,7 +31,8 @@ describe("keymap value object", () => {
       { key: "b", action: "bar", when: { contexts: [UIContext.OnFileTree] } },
       { key: "a", action: "foobar", when: { contexts: [UIContext.OnSuggestion] } },
     ];
-    const obj = keymap.createKeymap(value).allowedWhen({ currentContext: UIContext.OnFileTree, subContext: [] });
+    const context = createAppContext({ current: UIContext.OnFileTree });
+    const obj = keymap.createKeymap(value).allowedWhen(context);
 
     expect(obj.find("a")).toEqual(value[0]);
     expect(obj.find("b")).toEqual(value[1]);
@@ -43,9 +45,8 @@ describe("keymap value object", () => {
       { key: "a", action: "foobar", when: { contexts: [UIContext.OnSuggestion] } },
       { key: "d", action: "foobar", when: { contexts: [UIContext.ForHistory] } },
     ];
-    const obj = keymap
-      .createKeymap(value)
-      .allowedWhen({ currentContext: UIContext.OnFileTree, subContext: [UIContext.ForHistory] });
+    const context = createAppContext({ current: UIContext.OnFileTree, subContexts: [UIContext.ForHistory] });
+    const obj = keymap.createKeymap(value).allowedWhen(context);
 
     expect(obj.find("a")).toEqual(value[0]);
     expect(obj.find("b")).toEqual(value[1]);
@@ -60,9 +61,8 @@ describe("keymap value object", () => {
       { key: "a", action: "foobar", when: { contexts: [UIContext.OnSuggestion] } },
       { key: "d", action: "foobar", when: { contexts: [UIContext.ForHistory] } },
     ];
-    const obj = keymap
-      .createKeymap(value)
-      .allowedWhen({ currentContext: UIContext.OnFileTree, subContext: [UIContext.ForHistory] });
+    const context = createAppContext({ current: UIContext.OnFileTree, subContexts: [UIContext.ForHistory] });
+    const obj = keymap.createKeymap(value).allowedWhen(context);
 
     expect(obj.find("a")).toEqual(value[1]);
     expect(obj.find("b")).toEqual(value[2]);

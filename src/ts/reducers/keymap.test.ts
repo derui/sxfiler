@@ -12,7 +12,8 @@ describe("reducers", () => {
 
       const ret = reducer(state, actions.updateKeymap(newKeymap));
 
-      expect(ret).toEqual({ current: newKeymap });
+      expect(ret.allKeymap).toEqual(newKeymap);
+      expect(ret.current).toEqual(newKeymap);
     });
   });
 });

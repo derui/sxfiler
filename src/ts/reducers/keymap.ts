@@ -6,7 +6,7 @@ import { empty, State } from "../states/keymap";
 export function reducer(state: State = empty(), action: Actions): State {
   switch (action.type) {
     case KeymapActionTypes.updateKeymap:
-      return { current: action.keymap };
+      return { current: action.keymap, allKeymap: action.keymap };
   }
   return state;
 }

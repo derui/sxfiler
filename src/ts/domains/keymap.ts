@@ -1,13 +1,9 @@
 import UIContext from "../types/ui-context";
+import { AppContext } from "./app-context";
 
 /**
  * keymap defines interfaces for key-action mappings on server.
  */
-
-export type AppContext = {
-  currentContext: UIContext;
-  subContext: UIContext[];
-};
 
 type When = {
   contexts: UIContext[];
@@ -38,8 +34,8 @@ export type Keymap = {
 };
 
 const evaluateWithContext = (w: When, context: AppContext) => {
-  const contextSet = new Set(context.subContext);
-  contextSet.add(context.currentContext);
+  const contextSet = new Set(context.subContexts);
+  contextSet.add(context.current);
 
   return w.contexts.every(v => contextSet.has(v));
 };
