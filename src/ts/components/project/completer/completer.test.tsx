@@ -77,7 +77,7 @@ describe("Project", () => {
                 createCandidate({ id: "id", value: "value", start: 0, length: 0 }),
                 createCandidate({ id: "id2", value: "value2", start: 0, length: 0 }),
               ],
-              onChange: v => {
+              onInput: v => {
                 expect(v).toEqual("foo");
                 resolve();
               },

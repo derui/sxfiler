@@ -31,7 +31,9 @@ exports[`Project Log Viewer should render items each level 1`] = `
       className="itemLevel"
       data-level="info"
     >
+      [
       INFO
+      ]
     </span>
     <span
       className="itemMessage"
@@ -48,7 +50,9 @@ exports[`Project Log Viewer should render items each level 1`] = `
       className="itemLevel"
       data-level="error"
     >
+      [
       ERROR
+      ]
     </span>
     <span
       className="itemMessage"
@@ -65,7 +69,9 @@ exports[`Project Log Viewer should render items each level 1`] = `
       className="itemLevel"
       data-level="warning"
     >
+      [
       WARNING
+      ]
     </span>
     <span
       className="itemMessage"
