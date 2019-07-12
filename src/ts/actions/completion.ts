@@ -1,33 +1,41 @@
-import { AppAction } from "./type";
-import { Candidate } from "../domains/candidate";
+import { AppAction, ActionTypes } from "./type";
 
-export enum ActionTypes {
-  cursorUp = "completion_cursor_up",
-  cursorDown = "completion_cursor_down",
-  initializeCandidate = "completion_initialize_candidate",
-}
+type Item = {
+  id: string;
+  value: string;
+};
 
-type CursorUpAction = AppAction<ActionTypes.cursorUp>;
-type CursorDownAction = AppAction<ActionTypes.cursorDown>;
+type CursorUpAction = AppAction<ActionTypes.COMPLETION_CURSOR_UP>;
+type CursorDownAction = AppAction<ActionTypes.COMPLETION_CURSOR_DOWN>;
 type InitializeCandidateAction = AppAction<
-  ActionTypes.initializeCandidate,
+  ActionTypes.COMPLETION_INITIALIZE,
   {
-    candidates: Candidate[];
+    initialCandidates: Item[];
+  }
+>;
+type ReadCandidatesAction = AppAction<
+  ActionTypes.COMPLETION_READ,
+  {
+    input: string;
   }
 >;
 
 const cursorUp = (): CursorUpAction => {
-  return { type: ActionTypes.cursorUp };
+  return { type: ActionTypes.COMPLETION_CURSOR_UP };
 };
 
 const cursorDown = (): CursorDownAction => {
-  return { type: ActionTypes.cursorDown };
+  return { type: ActionTypes.COMPLETION_CURSOR_DOWN };
 };
 
-const initializeCandidate = (candidates: Candidate[]): InitializeCandidateAction => {
-  return { type: ActionTypes.initializeCandidate, candidates };
+const initializeCandidate = (initialCandidates: Item[]): InitializeCandidateAction => {
+  return { type: ActionTypes.COMPLETION_INITIALIZE, initialCandidates };
 };
 
-export const actions = { cursorUp, cursorDown, initializeCandidate };
+const readCandidates = (input: string): ReadCandidatesAction => {
+  return { type: ActionTypes.COMPLETION_READ, input };
+};
 
-export type Actions = CursorUpAction | CursorDownAction | InitializeCandidateAction;
+export const actions = { cursorUp, cursorDown, initializeCandidate, readCandidates };
+
+export type Actions = CursorUpAction | CursorDownAction | InitializeCandidateAction | ReadCandidatesAction;

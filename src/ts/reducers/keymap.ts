@@ -1,11 +1,10 @@
 // reducers for keymap
-import { Actions } from "../actions";
-import { ActionTypes as KeymapActionTypes } from "../actions/key-map";
+import { Actions, ActionTypes } from "../actions";
 import { empty, State } from "../states/keymap";
 
 export function reducer(state: State = empty(), action: Actions): State {
   switch (action.type) {
-    case KeymapActionTypes.updateKeymap:
+    case ActionTypes.KEYMAP_UPDATE:
       return { current: action.keymap, allKeymap: action.keymap };
   }
   return state;

@@ -1,6 +1,5 @@
 // reducers for notification
-import { Actions } from "../actions";
-import { ActionTypes } from "../actions/completion";
+import { Actions, ActionTypes } from "../actions";
 import { State, empty } from "../states/completion";
 
 export function reducer(state: State = empty(), action: Actions): State {

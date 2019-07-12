@@ -1,11 +1,10 @@
 // reducers for notification
-import { Actions } from "../actions";
-import { ActionTypes } from "../actions/notification";
+import { Actions, ActionTypes } from "../actions";
 import { empty, State, pushEntry } from "../states/log-entry";
 
 export function reducer(state: State = empty(), action: Actions): State {
   switch (action.type) {
-    case ActionTypes.receiveMessage:
+    case ActionTypes.NOTIFICATION_RECEIVE_MESSAGE:
       return pushEntry(state, action.notification);
   }
   return state;

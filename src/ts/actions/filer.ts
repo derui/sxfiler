@@ -1,15 +1,8 @@
-import { AppAction } from "./type";
+import { AppAction, ActionTypes } from "./type";
 import { Filer } from "../domains/filer";
 
-export enum ActionTypes {
-  updateFiler = "filer_update_filer",
-  loadFiler = "filer_load_filer",
-  reload = "filer_reload",
-  changeSide = "filer_change_side",
-}
-
 type ReloadAction = AppAction<
-  ActionTypes.reload,
+  ActionTypes.FILER_RELOAD,
   {
     payload: {
       filers: [Filer, Filer];
@@ -18,7 +11,7 @@ type ReloadAction = AppAction<
 >;
 
 type UpdateFilerAction = AppAction<
-  ActionTypes.updateFiler,
+  ActionTypes.FILER_UPDATE,
   {
     payload: {
       filer: Filer;
@@ -28,7 +21,7 @@ type UpdateFilerAction = AppAction<
 
 // The action to load or get a filer from server
 type LoadFilerAction = AppAction<
-  ActionTypes.loadFiler,
+  ActionTypes.FILER_LOAD,
   {
     payload: {
       filer: Filer;
@@ -36,33 +29,33 @@ type LoadFilerAction = AppAction<
   }
 >;
 
-type ChangeSideAction = AppAction<ActionTypes.changeSide>;
+type ChangeSideAction = AppAction<ActionTypes.FILER_CHANGE_SIDE>;
 
 export type Actions = ReloadAction | UpdateFilerAction | ChangeSideAction | LoadFilerAction;
 
 const reload = (args: { filers: [Filer, Filer] }): ReloadAction => {
-  return { type: ActionTypes.reload, payload: { ...args } };
+  return { type: ActionTypes.FILER_RELOAD, payload: { ...args } };
 };
 
 /**
  * Update filer
  */
 const update = (args: { filer: Filer }): UpdateFilerAction => {
-  return { type: ActionTypes.updateFiler, payload: { ...args } };
+  return { type: ActionTypes.FILER_UPDATE, payload: { ...args } };
 };
 
 /**
  * Load or get filer on the side.
  */
 const load = (args: { filer: Filer }): LoadFilerAction => {
-  return { type: ActionTypes.loadFiler, payload: { ...args } };
+  return { type: ActionTypes.FILER_LOAD, payload: { ...args } };
 };
 
 /**
    change current side
 */
 const changeSide = (): ChangeSideAction => {
-  return { type: ActionTypes.changeSide };
+  return { type: ActionTypes.FILER_CHANGE_SIDE };
 };
 
 export const actions = { update, changeSide, load, reload };

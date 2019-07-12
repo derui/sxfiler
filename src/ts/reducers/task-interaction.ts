@@ -1,18 +1,17 @@
 // Task interaction manages the state for task suggestions and replys
-import { Actions } from "../actions";
-import { ActionTypes } from "../actions/task";
+import { Actions, ActionTypes } from "../actions";
 import * as TaskInteractionState from "../states/task-interaction";
 
 export default function reducer(state = TaskInteractionState.empty(), action: Actions) {
   switch (action.type) {
-    case ActionTypes.requireInteraction:
+    case ActionTypes.TASK_REQUIRE_INTERACTION:
       return TaskInteractionState.giveSuggestions(state, action.suggestions);
-    case ActionTypes.finished:
+    case ActionTypes.TASK_FINISHED:
       // TODO
       break;
-    case ActionTypes.selectReply:
+    case ActionTypes.TASK_SELECT_REPLY:
       return TaskInteractionState.selectReply(state, action.index);
-    case ActionTypes.updateReplyPayload:
+    case ActionTypes.TASK_UPDATE_REPLY_PAYLOAD:
       return TaskInteractionState.updateCurrentReply(state, action.payload);
   }
   return state;

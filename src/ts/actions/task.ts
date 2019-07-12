@@ -1,41 +1,33 @@
-import { AppAction } from "./type";
+import { AppAction, ActionTypes } from "./type";
 import { Suggestions } from "../domains/task-suggestion";
 import { Reply, ReplyPayload } from "../domains/task-reply";
 
-export enum ActionTypes {
-  requireInteraction = "task_require_interaction",
-  sendReply = "task_send_reply",
-  finished = "task_finished",
-  selectReply = "task_select_reply",
-  updateReplyPayload = "task_update_reply_payload",
-}
-
-type RequireInteractionAction = AppAction<ActionTypes.requireInteraction, { suggestions: Suggestions }>;
-type SendReplyAction = AppAction<ActionTypes.sendReply, { reply: Reply }>;
-type FinishedAction = AppAction<ActionTypes.finished, { taskId: string }>;
-type SelectReplyAction = AppAction<ActionTypes.selectReply, { index: number }>;
-type UpdateReplyPayloadAction = AppAction<ActionTypes.updateReplyPayload, { payload: ReplyPayload }>;
+type RequireInteractionAction = AppAction<ActionTypes.TASK_REQUIRE_INTERACTION, { suggestions: Suggestions }>;
+type SendReplyAction = AppAction<ActionTypes.TASK_SEND_REPLY, { reply: Reply }>;
+type FinishedAction = AppAction<ActionTypes.TASK_FINISHED, { taskId: string }>;
+type SelectReplyAction = AppAction<ActionTypes.TASK_SELECT_REPLY, { index: number }>;
+type UpdateReplyPayloadAction = AppAction<ActionTypes.TASK_UPDATE_REPLY_PAYLOAD, { payload: ReplyPayload }>;
 
 export type Actions = RequireInteractionAction | FinishedAction | SelectReplyAction | UpdateReplyPayloadAction;
 
 const requireInteraction = (suggestions: Suggestions): RequireInteractionAction => {
-  return { type: ActionTypes.requireInteraction, suggestions };
+  return { type: ActionTypes.TASK_REQUIRE_INTERACTION, suggestions };
 };
 
 const finished = (taskId: string): FinishedAction => {
-  return { type: ActionTypes.finished, taskId };
+  return { type: ActionTypes.TASK_FINISHED, taskId };
 };
 
 const sendReply = (reply: Reply): SendReplyAction => {
-  return { type: ActionTypes.sendReply, reply };
+  return { type: ActionTypes.TASK_SEND_REPLY, reply };
 };
 
 const selectReply = (index: number): SelectReplyAction => {
-  return { type: ActionTypes.selectReply, index };
+  return { type: ActionTypes.TASK_SELECT_REPLY, index };
 };
 
 const updateReplyPayload = (payload: ReplyPayload): UpdateReplyPayloadAction => {
-  return { type: ActionTypes.updateReplyPayload, payload };
+  return { type: ActionTypes.TASK_UPDATE_REPLY_PAYLOAD, payload };
 };
 
 export const actions = { requireInteraction, finished, sendReply, selectReply, updateReplyPayload };

@@ -1,11 +1,7 @@
 import { Keymap } from "../domains/keymap";
-import { AppAction } from "./type";
+import { AppAction, ActionTypes } from "./type";
 
-export enum ActionTypes {
-  updateKeymap = "update_keymap",
-}
-
-type UpdateAction = AppAction<ActionTypes.updateKeymap, { keymap: Keymap }>;
+type UpdateAction = AppAction<ActionTypes.KEYMAP_UPDATE, { keymap: Keymap }>;
 
 export type Actions = UpdateAction;
 
@@ -13,7 +9,7 @@ export type Actions = UpdateAction;
    update the key map
  */
 const updateKeymap = (keymap: Keymap): UpdateAction => {
-  return { type: ActionTypes.updateKeymap, keymap };
+  return { type: ActionTypes.KEYMAP_UPDATE, keymap };
 };
 
 export const actions = { updateKeymap };

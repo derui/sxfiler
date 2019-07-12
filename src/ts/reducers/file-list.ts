@@ -1,7 +1,6 @@
 // reducers for file list
-import { Actions } from "../actions";
+import { Actions, ActionTypes } from "../actions";
 import { empty, State, Side } from "../states/file-list";
-import { ActionTypes } from "../actions/filer";
 import { Filer, createFiler } from "../domains/filer";
 
 /**
@@ -69,13 +68,13 @@ const reloadFiler = (state: State, filers: [Filer, Filer]): State => {
 
 export const reducer = (state: State = empty(), action: Actions): State => {
   switch (action.type) {
-    case ActionTypes.reload:
+    case ActionTypes.FILER_RELOAD:
       return reloadFiler(state, action.payload.filers);
-    case ActionTypes.updateFiler:
+    case ActionTypes.FILER_UPDATE:
       return updateFiler(state, action.payload);
-    case ActionTypes.loadFiler:
+    case ActionTypes.FILER_LOAD:
       return updateFilerByServerState(state, action.payload);
-    case ActionTypes.changeSide:
+    case ActionTypes.FILER_CHANGE_SIDE:
       return { ...state, currentSide: moveToOtherSide(state.currentSide) };
   }
   return state;

@@ -1,35 +1,31 @@
-import { AppAction } from "./type";
+import { AppAction, ActionTypes } from "./type";
 import { ProgressNotification } from "../domains/progress-notification";
 import { MessageNotification } from "../domains/message-notification";
 
-export enum ActionTypes {
-  timeout = "notification_timeout",
-  receiveMessage = "notification_receive_message",
-  receiveProgress = "notification_receive_progress",
-  remove = "notification_remove",
-}
-
-type TimeoutAction = AppAction<ActionTypes.timeout, { notificationId: string }>;
-type ReceiveMessageAction = AppAction<ActionTypes.receiveMessage, { notification: MessageNotification }>;
-type ReceiveProgressAction = AppAction<ActionTypes.receiveProgress, { notification: ProgressNotification }>;
-type RemoveAction = AppAction<ActionTypes.remove, { notificationId: string }>;
+type TimeoutAction = AppAction<ActionTypes.NOTIFICATION_TIMEOUT, { notificationId: string }>;
+type ReceiveMessageAction = AppAction<ActionTypes.NOTIFICATION_RECEIVE_MESSAGE, { notification: MessageNotification }>;
+type ReceiveProgressAction = AppAction<
+  ActionTypes.NOTIFICATION_RECEIVE_PROGRESS,
+  { notification: ProgressNotification }
+>;
+type RemoveAction = AppAction<ActionTypes.NOTIFICATION_REMOVE, { notificationId: string }>;
 
 export type Actions = TimeoutAction | ReceiveMessageAction | ReceiveProgressAction | RemoveAction;
 
 const timeout = (notificationId: string): TimeoutAction => {
-  return { type: ActionTypes.timeout, notificationId };
+  return { type: ActionTypes.NOTIFICATION_TIMEOUT, notificationId };
 };
 
 const receiveProgress = (notification: ProgressNotification): ReceiveProgressAction => {
-  return { type: ActionTypes.receiveProgress, notification };
+  return { type: ActionTypes.NOTIFICATION_RECEIVE_PROGRESS, notification };
 };
 
 const receiveMessage = (notification: MessageNotification): ReceiveMessageAction => {
-  return { type: ActionTypes.receiveMessage, notification };
+  return { type: ActionTypes.NOTIFICATION_RECEIVE_MESSAGE, notification };
 };
 
 const remove = (notificationId: string): RemoveAction => {
-  return { type: ActionTypes.remove, notificationId };
+  return { type: ActionTypes.NOTIFICATION_REMOVE, notificationId };
 };
 
 export const actions = { timeout, receiveProgress, receiveMessage, remove };

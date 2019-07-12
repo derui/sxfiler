@@ -1,13 +1,12 @@
 // define reducer for UI context
-import { Actions } from "../actions";
+import { Actions, ActionTypes } from "../actions";
 import UIContext from "../types/ui-context";
-import { ActionTypes } from "../actions/task";
 
 export default function reducer(state = UIContext.OnFileTree, action: Actions) {
   switch (action.type) {
-    case ActionTypes.requireInteraction:
+    case ActionTypes.TASK_REQUIRE_INTERACTION:
       return UIContext.OnSuggestion;
-    case ActionTypes.finished:
+    case ActionTypes.TASK_FINISHED:
       return UIContext.OnFileTree;
     default:
       break;
