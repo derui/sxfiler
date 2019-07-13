@@ -55,14 +55,19 @@ export const createFileStat = (arg: FactoryArg): FileStat => {
       owner: createCapability(mode.owner),
       others: createCapability(mode.others),
     }),
-    atime: new Date(Number(arg.atime)),
-    ctime: new Date(Number(arg.ctime)),
-    mtime: new Date(Number(arg.mtime)),
+    atime: new Date(Number(atime)),
+    ctime: new Date(Number(ctime)),
+    mtime: new Date(Number(mtime)),
     sizeAsBigInt(): bigInt.BigInteger {
       return bigInt(this.size);
     },
     plain(): FileStatObject {
-      const { sizeAsBigInt, mode, plain, ...rest } = this;
+      const {
+        sizeAsBigInt, // eslint-disable-line @typescript-eslint/no-unused-vars
+        mode,
+        plain, // eslint-disable-line @typescript-eslint/no-unused-vars
+        ...rest
+      } = this;
       return { ...rest, mode: mode.plain() };
     },
   };

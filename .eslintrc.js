@@ -4,6 +4,8 @@ module.exports = {
   extends:  [
     'plugin:prettier/recommended',
     "plugin:react/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
   ],
   env: {
     es6: true,
@@ -18,7 +20,8 @@ module.exports = {
     project: "./tsconfig.json",
   },
   rules: {
-
+    "react/prop-types": false,
+    "import/no-unresolved": false,
     "react/jsx-uses-vars": ["warn", {
       "extensions": [".tsx"]
     }],
@@ -27,6 +30,14 @@ module.exports = {
     "prettier/prettier": ['error'],
   },
   settings:  {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      node: {
+        extensions:  [".ts", ".tsx", ".js"]
+      }
+    },
     react:  {
       version:  'detect',  // Tells eslint-plugin-react to automatically detect the version of React to use
     },

@@ -11,7 +11,11 @@ interface FactoryArg {
 }
 
 function plain(this: FileItem): FileItemObject {
-  const { plain, stat, ...rest } = this;
+  const {
+    plain, // eslint-disable-line @typescript-eslint/no-unused-vars
+    stat,
+    ...rest
+  } = this;
 
   return { ...rest, stat: stat.plain() };
 }
