@@ -2,6 +2,7 @@ import { withInfo } from "@storybook/addon-info";
 import { boolean, number, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
 import * as React from "react";
+import { Theme, ThemeProvider } from "@/components/theme";
 
 import { createFileItem } from "@/domains/file-item";
 
@@ -46,14 +47,16 @@ storiesOf("Project/File List", module)
     "empty list",
     () => {
       return (
-        <div style={style}>
-          <FileListComponent
-            items={[]}
-            location="loc"
-            cursor={number("cursor", 0)}
-            focused={boolean("focused", false)}
-          />
-        </div>
+        <ThemeProvider theme={Theme}>
+          <div style={style}>
+            <FileListComponent
+              items={[]}
+              location="loc"
+              cursor={number("cursor", 0)}
+              focused={boolean("focused", false)}
+            />
+          </div>
+        </ThemeProvider>
       );
     },
     { decorators: [withInfo, withKnobs] }
@@ -67,14 +70,16 @@ storiesOf("Project/File List", module)
         makeFileItem("link.txt", false, false, false),
       ];
       return (
-        <div style={style}>
-          <FileListComponent
-            items={fileItems}
-            location="loc"
-            cursor={number("cursor", 0)}
-            focused={boolean("focused", false)}
-          />
-        </div>
+        <ThemeProvider theme={Theme}>
+          <div style={style}>
+            <FileListComponent
+              items={fileItems}
+              location="loc"
+              cursor={number("cursor", 0)}
+              focused={boolean("focused", false)}
+            />
+          </div>
+        </ThemeProvider>
       );
     },
     { decorators: [withInfo, withKnobs] }

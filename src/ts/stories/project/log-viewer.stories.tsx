@@ -2,6 +2,7 @@ import { withInfo } from "@storybook/addon-info";
 import { boolean, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
 import * as React from "react";
+import { Theme, ThemeProvider } from "@/components/theme";
 
 import { Component as LogViewer } from "@/components/project/log-viewer/log-viewer";
 import { createMessage } from "@/domains/message-notification";
@@ -17,9 +18,11 @@ storiesOf("Project/Log Viewer ", module)
     "empty list",
     () => {
       return (
-        <div style={style}>
-          <LogViewer entries={[]} hidden={boolean("hidden", false)} />
-        </div>
+        <ThemeProvider theme={Theme}>
+          <div style={style}>
+            <LogViewer entries={[]} hidden={boolean("hidden", false)} />
+          </div>
+        </ThemeProvider>
       );
     },
     { decorators: [withInfo, withKnobs] }
@@ -33,9 +36,11 @@ storiesOf("Project/Log Viewer ", module)
         createMessage({ id: "id3", message: "warning", level: Level.Warning }),
       ];
       return (
-        <div style={style}>
-          <LogViewer entries={entries} hidden={boolean("hidden", false)} />
-        </div>
+        <ThemeProvider theme={Theme}>
+          <div style={style}>
+            <LogViewer entries={entries} hidden={boolean("hidden", false)} />
+          </div>
+        </ThemeProvider>
       );
     },
     { decorators: [withInfo, withKnobs] }

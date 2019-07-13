@@ -237,13 +237,11 @@ module.exports = function(webpackEnv) {
         },
 
         // First, run the linter.
-        // It's important to do this before Babel processes the JS.
         {
           // "oneOf" will traverse all following loaders until one will
           // match the requirements. When no loader matches it will fall
           // back to the "file" loader at the end of the loader list.
           oneOf: [
-            // Process application JS with Babel.
             // The preset includes JSX, Flow, TypeScript, and some ESnext features.
             {
               test: /\.(ts|tsx)$/,

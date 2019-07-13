@@ -2,6 +2,7 @@ import { withInfo } from "@storybook/addon-info";
 import { number, withKnobs, boolean } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
 import * as React from "react";
+import { Theme, ThemeProvider } from "@/components/theme";
 
 import { Component as Completer } from "@/components/project/completer/completer";
 import { createCandidate } from "@/domains/candidate";
@@ -20,19 +21,21 @@ storiesOf("Project/Completer", module)
         return <span />;
       }
       return (
-        <div style={style}>
-          <Completer
-            dialogRoot={root}
-            opened={boolean("opened", false)}
-            container={{
-              title: "completion",
-              items: [],
-              selectedItemIndex: number("item", 0),
-              onInput: () => {},
-            }}
-            overlay={{}}
-          />
-        </div>
+        <ThemeProvider theme={Theme}>
+          <div style={style}>
+            <Completer
+              dialogRoot={root}
+              opened={boolean("opened", false)}
+              container={{
+                title: "completion",
+                items: [],
+                selectedItemIndex: number("item", 0),
+                onInput: () => {},
+              }}
+              overlay={{}}
+            />
+          </div>
+        </ThemeProvider>
       );
     },
     { decorators: [withInfo, withKnobs] }
@@ -51,19 +54,21 @@ storiesOf("Project/Completer", module)
       ];
 
       return (
-        <div style={style}>
-          <Completer
-            dialogRoot={root}
-            opened={true}
-            container={{
-              title: "completion",
-              items,
-              selectedItemIndex: number("item", 0),
-              onInput: () => {},
-            }}
-            overlay={{}}
-          />
-        </div>
+        <ThemeProvider theme={Theme}>
+          <div style={style}>
+            <Completer
+              dialogRoot={root}
+              opened={true}
+              container={{
+                title: "completion",
+                items,
+                selectedItemIndex: number("item", 0),
+                onInput: () => {},
+              }}
+              overlay={{}}
+            />
+          </div>
+        </ThemeProvider>
       );
     },
     { decorators: [withInfo, withKnobs] }

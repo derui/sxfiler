@@ -2,6 +2,7 @@ import { withInfo } from "@storybook/addon-info";
 import { number, text, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
 import * as React from "react";
+import { Theme, ThemeProvider } from "@/components/theme";
 
 import { Component as L } from "@/components/project/progress-notification-list/progress-notification-list";
 import * as N from "@/domains/progress-notification";
@@ -9,7 +10,11 @@ import * as N from "@/domains/progress-notification";
 storiesOf("Project/Progress Notification List", module)
   .addParameters({ info: { inline: true } })
   .add("empty", () => {
-    return <L notifications={[]} />;
+    return (
+      <ThemeProvider theme={Theme}>
+        <L notifications={[]} />
+      </ThemeProvider>
+    );
   })
   .add(
     "with notifications",
@@ -28,7 +33,11 @@ storiesOf("Project/Progress Notification List", module)
         target: 87,
       });
 
-      return <L notifications={[item, item2]} />;
+      return (
+        <ThemeProvider theme={Theme}>
+          <L notifications={[item, item2]} />
+        </ThemeProvider>
+      );
     },
     { decorators: [withInfo, withKnobs] }
   );

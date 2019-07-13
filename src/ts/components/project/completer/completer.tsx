@@ -54,7 +54,7 @@ const CandidateItem = styled(ListItem.Component)`
   color: ${({ theme }) => theme.colors.base3};
 
   &[aria-selected="true"] {
-    background-color: lighten(${({ theme }) => theme.colors.base2}, 10%);
+    background-color: ${({ theme }) => theme.colors.base2}30;
   }
 `;
 
@@ -99,6 +99,7 @@ const Title = styled.h4`
   color: ${props => props.theme.colors.base03};
   background-color: ${props => props.theme.colors.base3};
   padding: ${props => props.theme.spaces.base};
+  margin: 0px;
   box-shadow: ${props => props.theme.headerShadow};
 `;
 

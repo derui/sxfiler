@@ -23,7 +23,7 @@ ${ListItem.style}
   background-color: ${props => props.theme.colors.base03};
 
   font-family: monospace;
-  color: ${props => props.theme.colors.base02};
+  color: ${props => props.theme.colors.base2};
   white-space: nowrap;
 
   font-size: 1rem;
@@ -38,7 +38,7 @@ ${ListItem.style}
   }
 
   &[data-marked="true"] {
-    background-color: rgba(${props => props.theme.colors.blue}, 0.25);
+    background-color: ${props => props.theme.colors.blue}3d;
   }
 `;
 

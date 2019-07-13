@@ -2,6 +2,7 @@ import { withInfo } from "@storybook/addon-info";
 import { boolean, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
 import * as React from "react";
+import { Theme, ThemeProvider } from "@/components/theme";
 
 import { createFileItem } from "@/domains/file-item";
 
@@ -33,7 +34,11 @@ storiesOf("Project/File Item Item", module)
         }),
         parentDirectory: "/",
       });
-      return <FileItemComponent item={item} selected={boolean("Selected", false)} />;
+      return (
+        <ThemeProvider theme={Theme}>
+          <FileItemComponent item={item} selected={boolean("Selected", false)} />
+        </ThemeProvider>
+      );
     },
     { decorators: [withInfo, withKnobs] }
   )
@@ -62,7 +67,11 @@ storiesOf("Project/File Item Item", module)
         }),
         parentDirectory: "/",
       });
-      return <FileItemComponent item={item} selected={boolean("Selected", false)} />;
+      return (
+        <ThemeProvider theme={Theme}>
+          <FileItemComponent item={item} selected={boolean("Selected", false)} />
+        </ThemeProvider>
+      );
     },
     { decorators: [withInfo, withKnobs] }
   )
@@ -91,7 +100,11 @@ storiesOf("Project/File Item Item", module)
         }),
         parentDirectory: "/",
       });
-      return <FileItemComponent item={item} selected={boolean("Selected", false)} />;
+      return (
+        <ThemeProvider theme={Theme}>
+          <FileItemComponent item={item} selected={boolean("Selected", false)} />
+        </ThemeProvider>
+      );
     },
     { decorators: [withInfo, withKnobs] }
   )
@@ -120,7 +133,11 @@ storiesOf("Project/File Item Item", module)
         }),
         parentDirectory: "/",
       });
-      return <FileItemComponent item={item} selected={boolean("Selected", false)} />;
+      return (
+        <ThemeProvider theme={Theme}>
+          <FileItemComponent item={item} selected={boolean("Selected", false)} />
+        </ThemeProvider>
+      );
     },
     { decorators: [withInfo, withKnobs] }
   );

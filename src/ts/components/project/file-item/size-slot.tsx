@@ -108,6 +108,7 @@ export type Props = {
 const SizeNode = styled.pre`
   flex: 0 1 auto;
   padding: 0 ${props => props.theme.spaces.base};
+  margin: 0;
   text-align: right;
 
   white-space: pre;

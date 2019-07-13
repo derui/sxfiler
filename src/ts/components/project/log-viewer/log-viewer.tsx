@@ -15,7 +15,7 @@ const Root = styled(List.Component)`
 
   background-color: ${props => props.theme.colors.base03};
 
-  color: ${props => props.theme.colors.base02};
+  color: ${props => props.theme.colors.base2};
 
   height: 100%;
   font-size: 1rem;

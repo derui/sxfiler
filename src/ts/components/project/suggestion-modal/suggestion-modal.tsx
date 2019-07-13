@@ -56,13 +56,14 @@ const InnerContainer = styled.div`
 `;
 
 const Header = styled.h4`
+  margin: 0;
   color: ${props => props.theme.colors.base03};
   background-color: ${props => props.theme.colors.base3};
   padding: ${props => props.theme.spaces.large};
 `;
 
 const PanelContainer = styled.section`
-  padding: ${props => props.theme.spaces.base} 0;
+  padding: ${props => props.theme.spaces.base};
   background-color: ${props => props.theme.colors.base03};
 `;
 
