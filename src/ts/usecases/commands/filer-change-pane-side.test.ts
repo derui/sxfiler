@@ -1,6 +1,6 @@
 import * as C from "./filer-change-pane-side";
-import * as AppState from "../../states";
-import { actions } from "../../actions/filer";
+import * as AppState from "@/states";
+import { actions } from "@/actions/filer";
 
 describe("Commands", () => {
   describe("Filer", () => {

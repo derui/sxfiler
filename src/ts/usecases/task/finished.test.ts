@@ -1,5 +1,5 @@
-import { actions } from "../../actions/task";
-import { Dispatcher } from "../../dispatcher";
+import { actions } from "@/actions/task";
+import { Dispatcher } from "@/dispatcher";
 import { createUseCase } from "./finished";
 
 describe("UseCases", () => {

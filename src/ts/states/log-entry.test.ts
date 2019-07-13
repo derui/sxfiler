@@ -1,5 +1,5 @@
 import { empty, pushEntry } from "./log-entry";
-import { createMessage, Level } from "../domains/message-notification";
+import { createMessage, Level } from "@/domains/message-notification";
 
 describe("States", () => {
   describe("Log entries", () => {

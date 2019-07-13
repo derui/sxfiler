@@ -1,5 +1,5 @@
 import * as React from "react";
-import { applyDisplayName } from "../util";
+import { applyDisplayName } from "@/components/ui/util";
 
 export type ElementProps<H> = {
   forwardedRef?: React.Ref<H>;

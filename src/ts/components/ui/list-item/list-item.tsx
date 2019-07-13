@@ -1,11 +1,22 @@
 import * as React from "react";
-import * as Element from "../element/element";
-import { applyDisplayName } from "../util";
+import { css } from "@/components/theme";
+import * as Element from "@/components/ui/element/element";
+import { applyDisplayName } from "@/components/ui/util";
 
 export type Props<T extends Element.Props<H> = Element.Props, H extends HTMLElement = HTMLElement> = T &
   React.HTMLAttributes<H> & {
     selected?: boolean;
   };
+
+export const style = css`
+  display: flex;
+  flex-direction: row;
+
+  // show original item forcely
+  flex: 0 0 auto;
+
+  list-style: none;
+`;
 
 export function createComponent<T extends Element.Props<H> = Element.Props, H extends HTMLElement = HTMLElement>(
   context: {

@@ -1,6 +1,6 @@
-import { actions } from "../../actions/notification";
-import { Dispatcher } from "../../dispatcher";
-import { createProgress } from "../../domains/progress-notification";
+import { actions } from "@/actions/notification";
+import { Dispatcher } from "@/dispatcher";
+import { createProgress } from "@/domains/progress-notification";
 import { createUseCase } from "./receive-progress-notification";
 
 describe("UseCases", () => {

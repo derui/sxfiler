@@ -1,9 +1,9 @@
-import { Actions } from "../../actions";
-import { actions } from "../../actions/key-map";
-import { CommandLike } from "../type";
-import { Dispatcher } from "../../types";
-import { CommandRegistrar } from "../command-registrar";
-import { Apis } from "../../apis";
+import { Actions } from "@/actions";
+import { actions } from "@/actions/key-map";
+import { CommandLike } from "@/usecases/type";
+import { Dispatcher } from "@/types";
+import { CommandRegistrar } from "@/usecases/command-registrar";
+import { Apis } from "@/apis";
 
 const belongingModuleId = "builtin";
 const commandId = "keymap.reload";

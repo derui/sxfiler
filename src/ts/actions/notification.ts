@@ -1,6 +1,6 @@
 import { AppAction, ActionTypes } from "./type";
-import { ProgressNotification } from "../domains/progress-notification";
-import { MessageNotification } from "../domains/message-notification";
+import { ProgressNotification } from "@/domains/progress-notification";
+import { MessageNotification } from "@/domains/message-notification";
 
 type TimeoutAction = AppAction<ActionTypes.NOTIFICATION_TIMEOUT, { notificationId: string }>;
 type ReceiveMessageAction = AppAction<ActionTypes.NOTIFICATION_RECEIVE_MESSAGE, { notification: MessageNotification }>;

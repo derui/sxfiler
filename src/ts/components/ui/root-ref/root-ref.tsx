@@ -1,6 +1,6 @@
 // RootRef defines component to pass reference of root node.
 import * as React from "react";
-import { ForwardedRef } from "../util";
+import { ForwardedRef } from "@/components/ui/util";
 
 export type Props = {
   rootRef: React.Ref<HTMLElement>;

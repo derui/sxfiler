@@ -1,8 +1,7 @@
-import bigInt from "big-integer";
 import * as React from "react";
+import bigInt from "big-integer";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const styles = require("./file-item.module.scss");
+import { styled } from "@/components/theme";
 
 enum SizeUnit {
   Byte = "byte",
@@ -102,14 +101,20 @@ class Size {
   }
 }
 
-interface Prop {
+export type Props = {
   size: bigInt.BigInteger;
-}
-
-const NodeSize: React.FC<Prop> = prop => {
-  const size = new Size(prop.size);
-
-  return <pre className={styles.size}>{size.toString()}</pre>;
 };
 
-export default NodeSize;
+const SizeNode = styled.pre`
+  flex: 0 1 auto;
+  padding: 0 ${props => props.theme.spaces.base};
+  text-align: right;
+
+  white-space: pre;
+`;
+
+export const Component: React.FC<Props> = prop => {
+  const size = new Size(prop.size);
+
+  return <SizeNode>{size.toString()}</SizeNode>;
+};

@@ -2,7 +2,7 @@ import * as React from "react";
 import renderer from "react-test-renderer";
 
 import { Component as T } from "./log-viewer";
-import { createMessage, Level } from "../../../domains/message-notification";
+import { createMessage, Level } from "@/domains/message-notification";
 
 describe("Project", () => {
   describe("Log Viewer", () => {

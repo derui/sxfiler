@@ -1,15 +1,13 @@
 import * as React from "react";
-import * as Domain from "../../../domains/file-item";
-import * as ListItem from "../../ui/list-item/list-item";
+import { styled } from "@/components/theme";
 
-import Mode from "./mode-slot";
-import Name from "./name-slot";
-import Size from "./size-slot";
-import Timestamp from "./timestamp-slot";
-import { ForwardedRef } from "../../ui/util";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const styles = require("./file-item.module.scss");
+import * as Domain from "@/domains/file-item";
+import * as ListItem from "@/components/ui/list-item";
+import { Component as Mode } from "./mode-slot";
+import { Component as Name } from "./name-slot";
+import { Component as Size } from "./size-slot";
+import { Component as Timestamp } from "./timestamp-slot";
+import { ForwardedRef } from "@/components/ui/util";
 
 export type Props = ForwardedRef & {
   item: Domain.FileItem;
@@ -17,25 +15,40 @@ export type Props = ForwardedRef & {
   hidden?: boolean;
 };
 
-const Element = ListItem.createComponent();
+const Element = styled(ListItem.Component)`
+${ListItem.style}
+  padding: ${props => props.theme.spaces.base} 0;
+  width: 100%;
 
-export class Component extends React.PureComponent<Props> {
-  public render() {
-    const { item, selected, hidden = false, ...rest } = this.props;
+  background-color: ${props => props.theme.colors.base03};
 
-    return (
-      <Element
-        className={styles.fileItem}
-        aria-selected={selected}
-        data-marked={item.marked}
-        aria-hidden={hidden}
-        {...rest}
-      >
-        <Mode key="mode" mode={item.stat.mode} isDirectory={item.stat.isDirectory} isSymlink={item.stat.isSymlink} />
-        <Timestamp key="timestamp" timestamp={item.stat.mtime} />
-        <Size key="size" size={item.stat.sizeAsBigInt()} />
-        <Name key="name" name={item.name} isDirectory={item.stat.isDirectory} isSymlink={item.stat.isSymlink} />
-      </Element>
-    );
+  font-family: monospace;
+  color: ${props => props.theme.colors.base02};
+  white-space: nowrap;
+
+  font-size: 1rem;
+  border-left: 4px solid transparent;
+
+  &[aria-selected="true"] {
+    border-left: 4px solid ${props => props.theme.colors.orange};
   }
-}
+
+  &[aria-hidder="true"] {
+    visibility: hidden;
+  }
+
+  &[data-marked="true"] {
+    background-color: rgba(${props => props.theme.colors.blue}, 0.25);
+  }
+`;
+
+export const Component: React.FC<Props> = ({ item, selected, hidden = false, ...rest }) => {
+  return (
+    <Element aria-selected={selected} data-marked={item.marked} aria-hidden={hidden} {...rest}>
+      <Mode key="mode" mode={item.stat.mode} isDirectory={item.stat.isDirectory} isSymlink={item.stat.isSymlink} />
+      <Timestamp key="timestamp" timestamp={item.stat.mtime} />
+      <Size key="size" size={item.stat.sizeAsBigInt()} />
+      <Name key="name" name={item.name} isDirectory={item.stat.isDirectory} isSymlink={item.stat.isSymlink} />
+    </Element>
+  );
+};

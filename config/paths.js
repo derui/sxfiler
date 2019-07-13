@@ -39,17 +39,9 @@ function getServedPath(appPackageJson) {
 }
 
 const moduleFileExtensions = [
-  'web.mjs',
-  'mjs',
-  'web.js',
   'js',
-  'web.ts',
   'ts',
-  'web.tsx',
   'tsx',
-  'json',
-  'web.jsx',
-  'jsx',
 ];
 
 // Resolve file paths in the same order as webpack

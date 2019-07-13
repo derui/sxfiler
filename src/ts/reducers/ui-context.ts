@@ -1,6 +1,6 @@
 // define reducer for UI context
-import { Actions, ActionTypes } from "../actions";
-import UIContext from "../types/ui-context";
+import { Actions, ActionTypes } from "@/actions";
+import { UIContext } from "@/types/ui-context";
 
 export default function reducer(state = UIContext.OnFileTree, action: Actions) {
   switch (action.type) {

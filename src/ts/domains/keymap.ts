@@ -1,4 +1,4 @@
-import UIContext from "../types/ui-context";
+import { UIContext } from "@/types/ui-context";
 import { AppContext } from "./app-context";
 
 /**

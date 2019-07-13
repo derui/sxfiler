@@ -1,22 +1,36 @@
 import * as React from "react";
 
-import * as Element from "../../ui/element/element";
+import { styled } from "@/components/theme";
+import * as Element from "@/components/ui/element/element";
 import * as FileListContainer from "./file-list-container/file-list-container";
 import * as NotificationContainer from "./notification-container/notification-container";
 import * as LogViewerContainer from "./log-viewer-container/log-viewer-container";
-import { Component as RootRef } from "../../ui/root-ref/root-ref";
+import { Component as RootRef } from "@/components/ui/root-ref/root-ref";
 
-import LocatorContext, { Locator } from "../../../locator";
-import { AppState } from "../../../states";
-import { findBinding } from "../../../states/keymap";
-import * as kbd from "../../../libs/kbd";
+import LocatorContext, { Locator } from "@/locator";
+import { AppState } from "@/states";
+import { findBinding } from "@/states/keymap";
+import * as kbd from "@/libs/kbd";
 import * as SuggestionModalContainer from "./suggestion-modal-container/suggestion-modal-container";
 
-const styles = require("./main-container.module.scss");
-
-export interface Props {
+export type Props = {
   state: AppState;
-}
+};
+
+const Root = styled(Element.Component)`
+  max-width: 100%;
+  min-width: 0;
+  max-height: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+  background-color: ${props => props.theme.colors.base03};
+
+  display: grid;
+  grid-template-rows: 1fr 10% auto;
+`;
 
 /**
  * handle keyboard event that all keydown event on application
@@ -71,16 +85,12 @@ export class Component extends React.Component<Props> {
       <LocatorContext.Consumer>
         {locator => (
           <RootRef rootRef={this.layoutRef}>
-            <Element.Component
-              className={styles.root}
-              tabIndex={0}
-              onKeyDown={handleKeyDown(locator, this.props.state)}
-            >
+            <Root tabIndex={0} onKeyDown={handleKeyDown(locator, this.props.state)}>
               <FileListContainer.Component key="filer" state={fileList} />
               <LogViewerContainer.Component key="log" state={logEntry} />
               <NotificationContainer.Component key="notification" state={notification} />
               <SuggestionModalContainer.Component state={this.props.state.taskInteraction} />
-            </Element.Component>
+            </Root>
           </RootRef>
         )}
       </LocatorContext.Consumer>

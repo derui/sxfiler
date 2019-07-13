@@ -1,17 +1,19 @@
 import * as React from "react";
+import { styled } from "@/components/theme";
 
-import { ProgressNotification } from "../../../domains/progress-notification";
-import * as List from "../../ui/list/list";
-import { Component as Item } from "../progress-notification-item/progress-notification-item";
+import { ProgressNotification } from "@/domains/progress-notification";
+import * as List from "@/components/ui/list";
+import { Component as Item } from "@/components/project/progress-notification-item";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const styles = require("./progress-notification-list.module.scss");
-
-export interface Props {
+export type Props = {
   notifications: ProgressNotification[];
-}
+};
+
+const StyledList = styled(List.Component)`
+  ${List.style}
+`;
 
 export const Component: React.FC<Props> = ({ notifications }) => {
   const items = notifications.map(v => <Item key={v.id} body={v.body} />);
-  return <List.Component className={styles.root}>{items}</List.Component>;
+  return <StyledList>{items}</StyledList>;
 };

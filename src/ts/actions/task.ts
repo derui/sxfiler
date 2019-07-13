@@ -1,6 +1,6 @@
 import { AppAction, ActionTypes } from "./type";
-import { Suggestions } from "../domains/task-suggestion";
-import { Reply, ReplyPayload } from "../domains/task-reply";
+import { Suggestions } from "@/domains/task-suggestion";
+import { Reply, ReplyPayload } from "@/domains/task-reply";
 
 type RequireInteractionAction = AppAction<ActionTypes.TASK_REQUIRE_INTERACTION, { suggestions: Suggestions }>;
 type SendReplyAction = AppAction<ActionTypes.TASK_SEND_REPLY, { reply: Reply }>;

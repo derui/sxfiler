@@ -1,7 +1,7 @@
 import * as React from "react";
 import renderer from "react-test-renderer";
 
-import * as Element from "../element/element";
+import * as Element from "@/components/ui/element/element";
 import * as List from "./list";
 
 describe("UI kit", () => {

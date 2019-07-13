@@ -1,5 +1,5 @@
 import { createCommandRegistrar } from "./command-registrar";
-import * as AppState from "../states";
+import * as AppState from "@/states";
 import { CommandLike } from "./type";
 
 describe("Use Case", () => {

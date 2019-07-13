@@ -1,8 +1,8 @@
 // defines API signature for Filer group.
 
-import { Api } from "../libs/json-rpc/client";
-import * as E from "../codecs/candidate";
-import { Candidate } from "../domains/candidate";
+import { Api } from "@/libs/json-rpc/client";
+import * as E from "@/codecs/candidate";
+import { Candidate } from "@/domains/candidate";
 
 export enum Methods {
   Setup = "completion/setup",

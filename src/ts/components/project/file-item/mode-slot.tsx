@@ -1,9 +1,7 @@
 import * as React from "react";
-import { CapabilityObject } from "../../../domains/capability";
-import { ModeObject } from "../../../domains/mode";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const styles = require("./file-item.module.scss");
+import { styled } from "@/components/theme";
+import { CapabilityObject } from "@/domains/capability";
+import { ModeObject } from "@/domains/mode";
 
 function capabilityToString(cap: CapabilityObject) {
   const readable = cap.readable ? "r" : "-";
@@ -38,10 +36,15 @@ interface Prop {
   isSymlink: boolean;
 }
 
-const NodeMode: React.FC<Prop> = prop => {
+const Mode = styled.span`
+  flex: 0 1 auto;
+  padding: 0 ${props => props.theme.spaces.small};
+
+  white-space: nowrap;
+`;
+
+export const Component: React.FC<Prop> = prop => {
   const data = modeToString(prop.mode, prop.isDirectory, prop.isSymlink);
 
-  return <span className={styles.mode}>{data}</span>;
+  return <Mode>{data}</Mode>;
 };
-
-export default NodeMode;

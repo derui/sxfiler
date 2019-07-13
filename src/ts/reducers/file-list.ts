@@ -1,7 +1,7 @@
 // reducers for file list
-import { Actions, ActionTypes } from "../actions";
-import { empty, State, Side } from "../states/file-list";
-import { Filer, createFiler } from "../domains/filer";
+import { Actions, ActionTypes } from "@/actions";
+import { empty, State, Side } from "@/states/file-list";
+import { Filer, createFiler } from "@/domains/filer";
 
 /**
  * The sub reducer to handle updateFiler action.

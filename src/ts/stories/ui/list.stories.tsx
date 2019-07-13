@@ -2,8 +2,8 @@ import { withInfo } from "@storybook/addon-info";
 import { storiesOf } from "@storybook/react";
 import * as React from "react";
 
-import * as ListItem from "../../components/ui/list-item/list-item";
-import * as List from "../../components/ui/list/list";
+import * as ListItem from "@/components/ui/list-item/list-item";
+import * as List from "@/components/ui/list/list";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const styles = require("./list.stories.module.scss");

@@ -1,9 +1,9 @@
 import * as C from "./filer-move-parent";
-import * as AppState from "../../states";
-import { Side } from "../../states/file-list";
-import { createFiler } from "../../domains/filer";
-import { Apis } from "../../apis";
-import { actions } from "../../actions/filer";
+import * as AppState from "@/states";
+import { Side } from "@/states/file-list";
+import { createFiler } from "@/domains/filer";
+import { Apis } from "@/apis";
+import { actions } from "@/actions/filer";
 
 describe("Commands", () => {
   describe("Filer", () => {

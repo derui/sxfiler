@@ -1,15 +1,15 @@
 import * as React from "react";
-import { State } from "../../../../states/task-interaction";
-import ModalRootContext from "../../../../modal-root";
-import * as SuggestionModal from "../../../project/suggestion-modal/suggestion-modal";
-import { ReplyPayload } from "../../../../domains/task-reply";
-import { ContextLike } from "../../../../context";
-import * as UseCase from "../../../../usecases/task/update-reply-payload";
-import LocatorContext from "../../../../locator";
+import { State } from "@/states/task-interaction";
+import ModalRootContext from "@/modal-root";
+import * as SuggestionModal from "@/components/project/suggestion-modal/suggestion-modal";
+import { ReplyPayload } from "@/domains/task-reply";
+import { ContextLike } from "@/context";
+import * as UseCase from "@/usecases/task/update-reply-payload";
+import LocatorContext from "@/locator";
 
-export interface Props {
+export type Props = {
   state: State;
-}
+};
 
 export type ElementType = React.ReactElement<Props, React.FC<Props>>;
 

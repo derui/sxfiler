@@ -1,8 +1,8 @@
 // defines API signature for Filer group.
 
-import { Api } from "../libs/json-rpc/client";
-import { createKeymap, Keymap } from "../domains/keymap";
-import UIContext from "../types/ui-context";
+import { Api } from "@/libs/json-rpc/client";
+import { createKeymap, Keymap } from "@/domains/keymap";
+import { UIContext } from "@/types/ui-context";
 
 export enum Methods {
   Get = "keymap/get",

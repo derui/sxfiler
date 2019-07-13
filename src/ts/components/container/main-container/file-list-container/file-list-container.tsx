@@ -1,20 +1,31 @@
 import * as React from "react";
-import { Filer } from "../../../../domains/filer";
-import { Side, State } from "../../../../states/file-list";
-import * as FileList from "../../../project/file-list/file-list";
-import * as Element from "../../../ui/element/element";
+import { styled } from "@/components/theme";
+import { Filer } from "@/domains/filer";
+import { Side, State } from "@/states/file-list";
+import * as FileList from "@/components/project/file-list";
+import * as Element from "@/components/ui/element";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const styles: ClassNames = require("./file-list-container.module.scss");
-
-interface ClassNames {
-  root: string;
-  separator: string;
-}
-
-export interface Props {
+export type Props = {
   state: State;
-}
+};
+
+const Root = styled(Element.Component)`
+  display: grid;
+  grid-template-rows: 100%;
+  grid-template-columns: 50% auto 50%;
+
+  color: ${props => props.theme.colors.base1};
+  overflow: hidden;
+  background-color: ${props => props.theme.colors.base03};
+
+  font-size: 1rem;
+`;
+
+const Separator = styled.div`
+  width: 2px;
+  background-color: ${props => props.theme.colors.base00};
+  margin: 0 ${props => props.theme.spaces.nano};
+`;
 
 /* create filer from state and key */
 function createFiler(key: string, currentSide: Side, filer?: Filer): FileList.ElementType | null {
@@ -48,10 +59,10 @@ export const Component: React.FC<Props> = (props): ElementType | null => {
   const rightFiler = createFiler(Side.Right, props.state.currentSide, props.state.right);
 
   return (
-    <Element.Component className={styles.root}>
+    <Root>
       {leftFiler}
-      <div className={styles.separator} />
+      <Separator />
       {rightFiler}
-    </Element.Component>
+    </Root>
   );
 };

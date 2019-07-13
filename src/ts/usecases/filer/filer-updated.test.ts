@@ -1,6 +1,6 @@
-import * as actions from "../../actions/filer";
+import * as actions from "@/actions/filer";
 import * as U from "./filer-updated";
-import { createFiler } from "../../domains/filer";
+import { createFiler } from "@/domains/filer";
 
 describe("UseCase", () => {
   describe("Filer", () => {

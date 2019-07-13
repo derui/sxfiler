@@ -1,5 +1,5 @@
-import { Filer } from "../domains/filer";
-import { FileItem } from "../domains/file-item";
+import { Filer } from "@/domains/filer";
+import { FileItem } from "@/domains/file-item";
 
 export enum Side {
   Left = "left",

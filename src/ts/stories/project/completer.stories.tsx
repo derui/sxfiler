@@ -3,8 +3,8 @@ import { number, withKnobs, boolean } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
 import * as React from "react";
 
-import { Component as Completer } from "../../components/project/completer/completer";
-import { createCandidate } from "../../domains/candidate";
+import { Component as Completer } from "@/components/project/completer/completer";
+import { createCandidate } from "@/domains/candidate";
 
 const style = {
   height: "100px",

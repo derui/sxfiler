@@ -1,8 +1,8 @@
 import * as React from "react";
-import { empty } from "../../../states";
+import { empty } from "@/states";
 import renderer from "react-test-renderer";
 import { Component } from "./main-container";
-import LocatorContext from "../../../locator";
+import LocatorContext from "@/locator";
 
 describe("Container", () => {
   describe("Main Container", () => {

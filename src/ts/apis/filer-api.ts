@@ -1,8 +1,8 @@
 // defines API signature for Filer group.
 
-import { Api } from "../libs/json-rpc/client";
-import { Filer } from "../domains/filer";
-import * as E from "../codecs/filer";
+import { Api } from "@/libs/json-rpc/client";
+import { Filer } from "@/domains/filer";
+import * as E from "@/codecs/filer";
 
 export enum Methods {
   Make = "filer/make",

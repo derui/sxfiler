@@ -1,4 +1,4 @@
-import { createNotifications, ProgressNotifications } from "../domains/progress-notifications";
+import { createNotifications, ProgressNotifications } from "@/domains/progress-notifications";
 
 export interface State {
   // all notification not finished yet

@@ -1,8 +1,8 @@
-import { CommandLike } from "../usecases/type";
-import { Client } from "../libs/json-rpc/client";
-import { ApiMethod } from "../apis";
-import { AppState } from "../states";
-import { ContextLike } from "../context";
+import { CommandLike } from "@/usecases/type";
+import { Client } from "@/libs/json-rpc/client";
+import { ApiMethod } from "@/apis";
+import { AppState } from "@/states";
+import { ContextLike } from "@/context";
 
 export type RegisterArg = {
   moduleId: string;

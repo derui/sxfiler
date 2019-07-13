@@ -1,4 +1,4 @@
-import { FileItem, createFileItem } from "../domains/file-item";
+import { FileItem, createFileItem } from "@/domains/file-item";
 import { encode as encodeFileStat, TypeOnRPC as FileStatOnRPC } from "./file-stat";
 
 // define codec that is between filer domain and RPC

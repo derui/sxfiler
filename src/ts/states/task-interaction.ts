@@ -1,5 +1,5 @@
-import { Suggestions, Suggestion, SuggestionKind } from "../domains/task-suggestion";
-import { ReplyPayload, createOverwritePayload, createRenamePayload } from "../domains/task-reply";
+import { Suggestions, Suggestion, SuggestionKind } from "@/domains/task-suggestion";
+import { ReplyPayload, createOverwritePayload, createRenamePayload } from "@/domains/task-reply";
 
 // Task interaction manages the state for task suggestions and replys
 

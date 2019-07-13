@@ -1,7 +1,7 @@
 import * as E from "./file-stat";
-import { createFileStat } from "../domains/file-stat";
-import { createMode } from "../domains/mode";
-import { createCapability } from "../domains/capability";
+import { createFileStat } from "@/domains/file-stat";
+import { createMode } from "@/domains/mode";
+import { createCapability } from "@/domains/capability";
 
 describe("Object Codecs", () => {
   describe("File Stat", () => {

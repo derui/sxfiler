@@ -3,9 +3,9 @@ import { boolean, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
 import * as React from "react";
 
-import { Component as LogViewer } from "../../components/project/log-viewer/log-viewer";
-import { createMessage } from "../../domains/message-notification";
-import { Level } from "../../domains/message-notification";
+import { Component as LogViewer } from "@/components/project/log-viewer/log-viewer";
+import { createMessage } from "@/domains/message-notification";
+import { Level } from "@/domains/message-notification";
 
 const style = {
   height: "100px",

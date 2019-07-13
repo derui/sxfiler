@@ -1,32 +1,14 @@
 import * as React from "react";
-import * as Modal from "../../ui/modal/modal";
-import * as List from "../../ui/list/list";
-import * as ListItem from "../../ui/list-item/list-item";
-import { CSSTransition } from "react-transition-group";
-import { Candidate } from "../../../domains/candidate";
-
-const style: ClassNames = require("./completer.module.scss");
-
-type ClassNames = Modal.ModalClassNames & {
-  overlay: string;
-  title: string;
-  itemContainer: string;
-  inputContainer: string;
-  matching: string;
-  input: string;
-  list: string;
-  listItem: string;
-  rootAnimationExit: string;
-  rootAnimationExitActive: string;
-  rootAnimationEnter: string;
-  rootAnimationEnterActive: string;
-  overlayAnimationEnter: string;
-  overlayAnimationEnterActive: string;
-};
-
-export type OverlayProps = { className?: string };
+import * as Modal from "@/components/ui/modal";
+import * as List from "@/components/ui/list";
+import * as ListItem from "@/components/ui/list-item";
+import { Transition } from "react-transition-group";
+import { Candidate } from "@/domains/candidate";
+import { styled } from "@/components/theme";
 
 type Item = Candidate;
+
+export type OverlayProps = { className?: string };
 
 export type ContainerProps = {
   className?: string;
@@ -46,21 +28,103 @@ type OverlayContextProps = OverlayProps & {
   opened: boolean;
 };
 
-const Overlay: React.FC<OverlayContextProps> = ({ className, opened }) => {
-  return (
-    <CSSTransition
-      in={opened}
-      timeout={100}
-      unmountOnExit={true}
-      classNames={{
-        enter: style.overlayAnimationEnter,
-        enterActive: style.overlayAnimationEnterActive,
-      }}
-    >
-      {() => <div className={className} />}
-    </CSSTransition>
-  );
-};
+/// styled components.
+const InnerOverlay = styled.div`
+  ${Modal.overlayStyle};
+
+  background-color: rgba(black, 0.2);
+
+  &[data-state="entering"] {
+    opacity: 0.1;
+  }
+
+  &[data-state="entered"] {
+    opacity: 1;
+    transition: opacity ease-out 200ms;
+  }
+`;
+
+const CandidateList = styled(List.Component)`
+  ${List.style};
+`;
+
+const CandidateItem = styled(ListItem.Component)`
+  ${ListItem.style};
+  padding: ${({ theme }) => `${theme.spaces.small} ${theme.spaces.base}`};
+  color: ${({ theme }) => theme.colors.base3};
+
+  &[aria-selected="true"] {
+    background-color: lighten(${({ theme }) => theme.colors.base2}, 10%);
+  }
+`;
+
+const MatchingArea = styled.span`
+  border-radius: ${props => props.theme.baseBorderRadius};
+
+  color: ${({ theme }) => theme.colors.base03};
+  background-color: ${({ theme }) => theme.colors.yellow};
+`;
+
+const InnerContainer = styled.div`
+  ${Modal.containerStyle};
+  flex: 0 1 auto;
+
+  margin: 0px auto auto auto;
+  width: 50%;
+  max-height: 80%;
+
+  border-radius: ${props => props.theme.spaces.small};
+  background-color: ${props => props.theme.colors.base02};
+
+  &[data-state="entering"] {
+    transform: translateY(-100%);
+  }
+
+  &[data-state="entered"] {
+    transform: translateY(0);
+    transition: transform ease-out 200ms;
+  }
+
+  &[data-state="exiting"] {
+    transform: translateY(0);
+  }
+
+  &[data-state="exited"] {
+    transition: transform ease-in 200ms;
+    transform: translateY(-100%);
+  }
+`;
+
+const Title = styled.h4`
+  color: ${props => props.theme.colors.base03};
+  background-color: ${props => props.theme.colors.base3};
+  padding: ${props => props.theme.spaces.base};
+  box-shadow: ${props => props.theme.headerShadow};
+`;
+
+const Section = styled.section`
+  display: grid;
+  grid-template-rows: auto 1fr;
+  margin-top: ${props => props.theme.spaces.small};
+`;
+
+const InputContainer = styled.div`
+  display: flex;
+  padding: ${props => props.theme.spaces.small};
+  padding-bottom: ${props => props.theme.spaces.small}+ 2px;
+  height: 1.5rem;
+`;
+
+const Input = styled.input`
+  flex: 1 1 auto;
+
+  outline: none;
+  border: 1px solid ${props => props.theme.colors.blue};
+
+  font-size: 1rem;
+  color: ${props => props.theme.colors.base3};
+  background-color: ${props => props.theme.colors.base03};
+`;
 
 const handleChange = (cb: (input: string) => void, cb2: (input: string) => void) => (
   e: React.ChangeEvent<HTMLInputElement>
@@ -76,18 +140,25 @@ const makeList = (items: Item[], index: number) => {
   const listItems = items.map((v, i) => {
     const [before, matched, after] = v.splitByInput();
     return (
-      <ListItem.Component className={style.listItem} selected={i === index} key={v.id}>
+      <CandidateItem selected={i === index} key={v.id}>
         {before}
-        <span className={style.matching}>{matched}</span>
+        <MatchingArea>{matched}</MatchingArea>
         {after}
-      </ListItem.Component>
+      </CandidateItem>
     );
   });
-  return <List.Component className={style.list}>{listItems}</List.Component>;
+  return <CandidateList>{listItems}</CandidateList>;
+};
+
+const Overlay: React.FC<OverlayContextProps> = ({ opened }) => {
+  return (
+    <Transition in={opened} timeout={100} unmountOnExit={true}>
+      {state => <InnerOverlay data-state={state} />}
+    </Transition>
+  );
 };
 
 const Container: React.FC<ContainerContextProps> = ({
-  className,
   selectedItemIndex,
   items,
   onInput,
@@ -99,39 +170,27 @@ const Container: React.FC<ContainerContextProps> = ({
   const [state, setState] = React.useState("");
 
   return (
-    <CSSTransition
-      in={opened}
-      timeout={200}
-      onEnter={onOpen}
-      onExited={onClose}
-      classNames={{
-        enter: style.rootAnimationEnter,
-        enterActive: style.rootAnimationEnterActive,
-        exit: style.rootAnimationExit,
-        exitActive: style.rootAnimationExitActive,
-      }}
-    >
-      {() => {
+    <Transition in={opened} timeout={200} onEnter={onOpen} onExited={onClose}>
+      {transitionState => {
         return (
-          <div className={className}>
-            <h4 className={style.title}>{title}</h4>
-            <section className={style.itemContainer}>
-              <div className={style.inputContainer}>
-                <input className={style.input} type="text" onChange={handleChange(onInput, setState)} value={state} />
-              </div>
+          <InnerContainer data-state={transitionState}>
+            <Title>{title}</Title>
+            <Section>
+              <InputContainer>
+                <Input type="text" onChange={handleChange(onInput, setState)} value={state} />
+              </InputContainer>
               {makeList(items, selectedItemIndex)}
-            </section>
-          </div>
+            </Section>
+          </InnerContainer>
         );
       }}
-    </CSSTransition>
+    </Transition>
   );
 };
 
 export type Props = Modal.Props<ContainerProps, OverlayProps>;
 
 export const Component = Modal.createComponent({
-  classNames: style,
   container: Container,
   overlay: Overlay,
 });

@@ -1,20 +1,27 @@
 import * as React from "react";
+import { styled } from "@/components/theme";
 
-import * as Element from "../../../ui/element/element";
-import { State } from "../../../../states/log-entry";
-import { Component as LogViewer } from "../../../project/log-viewer/log-viewer";
+import * as Element from "@/components/ui/element";
+import { State } from "@/states/log-entry";
+import { Component as LogViewer } from "@/components/project/log-viewer";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const styles = require("./log-viewer-container.module.scss");
-
-export interface Props {
+export type Props = {
   state: State;
-}
+};
+
+const Root = styled(Element.Component)`
+  position: relative;
+
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  border-top: 1px solid ${props => props.theme.colors.base2};
+`;
 
 export const Component: React.FC<Props> = ({ state }) => {
   return (
-    <Element.Component className={styles.root}>
+    <Root>
       <LogViewer entries={Array.from(state.entries.values())} hidden={false} />
-    </Element.Component>
+    </Root>
   );
 };

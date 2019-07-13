@@ -1,12 +1,12 @@
 import * as C from "./filer-delete-items";
-import * as AppState from "../../states";
-import { Side } from "../../states/file-list";
-import { createFiler } from "../../domains/filer";
-import { Apis } from "../../apis";
-import { createFileItem } from "../../domains/file-item";
-import { createFileStat } from "../../domains/file-stat";
-import * as FileListState from "../../states/file-list";
-import { emptyMode } from "../../domains/mode";
+import * as AppState from "@/states";
+import { Side } from "@/states/file-list";
+import { createFiler } from "@/domains/filer";
+import { Apis } from "@/apis";
+import { createFileItem } from "@/domains/file-item";
+import { createFileStat } from "@/domains/file-stat";
+import * as FileListState from "@/states/file-list";
+import { emptyMode } from "@/domains/mode";
 
 const items = [
   createFileItem({

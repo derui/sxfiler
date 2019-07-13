@@ -1,12 +1,12 @@
 import * as React from "react";
 import renderer from "react-test-renderer";
 
-import { Actions } from "../../../../actions/notification";
-import { createNotifications } from "../../../../domains/progress-notifications";
-import { UseCaseLike } from "../../../../usecases/type";
+import { Actions } from "@/actions/notification";
+import { createNotifications } from "@/domains/progress-notifications";
+import { UseCaseLike } from "@/usecases/type";
 import { Component } from "./notification-container";
-import LocatorContext from "../../../../locator";
-import { createProgress } from "../../../../domains/progress-notification";
+import LocatorContext from "@/locator";
+import { createProgress } from "@/domains/progress-notification";
 
 const context = (done?: (arg: any) => void) => ({
   use<P>(_: UseCaseLike<Actions, P>) {

@@ -4,7 +4,7 @@ import * as Keymap from "./keymap";
 import * as Notification from "./notification";
 import * as TaskInteraction from "./task-interaction";
 import * as LogEntry from "./log-entry";
-import UIContext from "../types/ui-context";
+import { UIContext } from "@/types/ui-context";
 
 export type AppState = {
   context: UIContext;

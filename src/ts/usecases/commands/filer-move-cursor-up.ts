@@ -1,10 +1,10 @@
-import { Actions } from "../../actions";
-import { actions } from "../../actions/filer";
-import { CommandLike } from "../type";
-import { Dispatcher } from "../../types";
-import { filerOnSide } from "../../states/file-list";
-import { Direction } from "../../domains/filer";
-import { CommandRegistrar } from "../command-registrar";
+import { Actions } from "@/actions";
+import { actions } from "@/actions/filer";
+import { CommandLike } from "@/usecases/type";
+import { Dispatcher } from "@/types";
+import { filerOnSide } from "@/states/file-list";
+import { Direction } from "@/domains/filer";
+import { CommandRegistrar } from "@/usecases/command-registrar";
 
 const belongingModuleId = "builtin";
 const commandId = "filer.moveCursorUp";

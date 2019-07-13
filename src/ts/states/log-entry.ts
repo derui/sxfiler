@@ -1,4 +1,4 @@
-import { MessageNotification } from "../domains/message-notification";
+import { MessageNotification } from "@/domains/message-notification";
 
 // define state to store log entries
 

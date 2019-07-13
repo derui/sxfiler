@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import shallowequal from "shallowequal";
-import { ResizeSensor } from "../resize-sensor";
+import { ResizeSensor } from "@/libs/resize-sensor";
 
 export interface Props {
   refName?: string;
@@ -17,7 +17,7 @@ interface State {
 }
 
 // AutoSizer is HoC to add ability to handle size of component
-export default class AutoSizer extends React.Component<Props, State> {
+export class AutoSizer extends React.Component<Props, State> {
   state: State = {
     width: 0,
     height: 0,

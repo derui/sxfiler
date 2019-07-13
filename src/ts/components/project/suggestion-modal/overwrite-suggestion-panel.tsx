@@ -1,21 +1,21 @@
 import * as React from "react";
-import * as Element from "../../ui/element/element";
 
-const style: ClassNames = require("./overwrite-suggestion-panel.module.scss");
-
-type ClassNames = {
-  root: string;
-  text: string;
-};
+import { styled } from "@/components/theme";
+import * as Element from "@/components/ui/element";
+import * as Panel from "./panel";
 
 export type Props = {
   selected: boolean;
 };
 
+const Root = styled(Element.Component)`
+  ${Panel.rootStyle}
+`;
+
 export const Component: React.FC<Props> = ({ selected }) => {
   return (
-    <Element.Component className={style.root} aria-selected={selected}>
-      <p className={style.text}>Overwrite</p>
-    </Element.Component>
+    <Root aria-selected={selected}>
+      <p>Overwrite</p>
+    </Root>
   );
 };

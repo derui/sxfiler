@@ -1,7 +1,7 @@
-import { Actions } from "../../actions";
-import { actions } from "../../actions/notification";
-import { Dispatcher } from "../../types";
-import { UseCaseLike } from "../type";
+import { Actions } from "@/actions";
+import { actions } from "@/actions/notification";
+import { Dispatcher } from "@/types";
+import { UseCaseLike } from "@/usecases/type";
 
 interface Arg {
   notificationId: string;

@@ -2,8 +2,8 @@ import * as React from "react";
 import renderer from "react-test-renderer";
 
 import { Component } from "./log-viewer-container";
-import { empty, pushEntry } from "../../../../states/log-entry";
-import { Level, createMessage } from "../../../../domains/message-notification";
+import { empty, pushEntry } from "@/states/log-entry";
+import { Level, createMessage } from "@/domains/message-notification";
 
 describe("Container", () => {
   describe("Log Viewer Container", () => {

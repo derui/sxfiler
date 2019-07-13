@@ -1,12 +1,12 @@
 import * as React from "react";
 import renderer from "react-test-renderer";
 
-import { createFileItem } from "../../../domains/file-item";
+import { createFileItem } from "@/domains/file-item";
 
 import { Component as T } from "./file-item";
-import { createMode } from "../../../domains/mode";
-import { emptyCapability } from "../../../domains/capability";
-import { createFileStat } from "../../../domains/file-stat";
+import { createMode } from "@/domains/mode";
+import { emptyCapability } from "@/domains/capability";
+import { createFileStat } from "@/domains/file-stat";
 
 function makeNode(marked: boolean, isDirectory = false, isSymlink = false) {
   return createFileItem({

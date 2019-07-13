@@ -2,7 +2,7 @@ import * as React from "react";
 import { mount } from "enzyme";
 import renderer from "react-test-renderer";
 import { Component } from "./rename-suggestion-panel";
-import { createRenamePayload, ReplyPayload } from "../../../domains/task-reply";
+import { createRenamePayload, ReplyPayload } from "@/domains/task-reply";
 
 describe("Project", () => {
   describe("Rename suggestion", () => {

@@ -3,7 +3,7 @@ import NotificationServer, { NotificationMethodMap } from "./notification-server
 import { IDGenerator } from "./type";
 import { WebSocketHandler } from "./websocket-handler";
 import WebSocketRequester from "./websocket-requester";
-import { ContextLike } from "../../context";
+import { ContextLike } from "@/context";
 
 export interface Jsonrpc {
   handler: WebSocketHandler;

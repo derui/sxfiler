@@ -3,8 +3,8 @@ import { boolean, number, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
 import * as React from "react";
 
-import { Component as SuggestionModal } from "../../components/project/suggestion-modal/suggestion-modal";
-import { createOverwritePayload, createRenamePayload } from "../../domains/task-reply";
+import { Component as SuggestionModal } from "@/components/project/suggestion-modal/suggestion-modal";
+import { createOverwritePayload, createRenamePayload } from "@/domains/task-reply";
 
 storiesOf("Project/Suggestion Modal", module)
   .addParameters({ info: { inline: true } })

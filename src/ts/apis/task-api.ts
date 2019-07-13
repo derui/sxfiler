@@ -1,4 +1,4 @@
-import { Reply, ReplyPayload, ReplyKind } from "../domains/task-reply";
+import { Reply, ReplyPayload, ReplyKind } from "@/domains/task-reply";
 
 // defines API signature for Task group.
 

@@ -3,8 +3,8 @@ import { number, text, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
 import * as React from "react";
 
-import { Component as L } from "../../components/project/progress-notification-list/progress-notification-list";
-import * as N from "../../domains/progress-notification";
+import { Component as L } from "@/components/project/progress-notification-list/progress-notification-list";
+import * as N from "@/domains/progress-notification";
 
 storiesOf("Project/Progress Notification List", module)
   .addParameters({ info: { inline: true } })

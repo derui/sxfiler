@@ -1,6 +1,6 @@
 // reducers for notification
-import { Actions, ActionTypes } from "../actions";
-import { empty, State, pushEntry } from "../states/log-entry";
+import { Actions, ActionTypes } from "@/actions";
+import { empty, State, pushEntry } from "@/states/log-entry";
 
 export function reducer(state: State = empty(), action: Actions): State {
   switch (action.type) {

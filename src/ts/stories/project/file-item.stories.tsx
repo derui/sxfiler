@@ -3,12 +3,12 @@ import { boolean, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
 import * as React from "react";
 
-import { createFileItem } from "../../domains/file-item";
+import { createFileItem } from "@/domains/file-item";
 
-import { Component as FileItemComponent } from "../../components/project/file-item/file-item";
-import { createFileStat } from "../../domains/file-stat";
-import { emptyMode, createMode } from "../../domains/mode";
-import { fullCapability } from "../../domains/capability";
+import { Component as FileItemComponent } from "@/components/project/file-item/file-item";
+import { createFileStat } from "@/domains/file-stat";
+import { emptyMode, createMode } from "@/domains/mode";
+import { fullCapability } from "@/domains/capability";
 
 storiesOf("Project/File Item Item", module)
   .addParameters({ info: { inline: true } })

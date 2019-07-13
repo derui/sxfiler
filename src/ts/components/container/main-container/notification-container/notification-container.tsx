@@ -1,16 +1,25 @@
 import * as React from "react";
 
-import * as Element from "../../../ui/element/element";
-import { State } from "../../../../states/notification";
-import { Component as NotificationList } from "../../../project/progress-notification-list/progress-notification-list";
-import LocatorContext from "../../../../locator";
+import { styled } from "@/components/theme";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const styles = require("./notification-container.module.scss");
+import * as Element from "@/components/ui/element/element";
+import { State } from "@/states/notification";
+import { Component as NotificationList } from "@/components/project/progress-notification-list";
+import LocatorContext from "@/locator";
 
-export interface Props {
+export type Props = {
   state: State;
-}
+};
+
+const Root = styled(Element.Component)`
+  position: relative;
+
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+
+  border-top: 1px solid ${props => props.theme.colors.base2};
+`;
 
 export const Component: React.FC<Props> = ({ state }) => {
   return (
@@ -21,9 +30,9 @@ export const Component: React.FC<Props> = ({ state }) => {
         }
 
         return (
-          <Element.Component className={styles.root}>
+          <Root>
             <NotificationList notifications={state.progresses.notifications} />
-          </Element.Component>
+          </Root>
         );
       }}
     </LocatorContext.Consumer>

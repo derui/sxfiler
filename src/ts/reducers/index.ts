@@ -1,8 +1,8 @@
 // define reducers and export root reducer
 import { combineReducers, Reducer, ReducersMapObject } from "redux";
 
-import * as actions from "../actions";
-import { AppState } from "../states";
+import * as actions from "@/actions";
+import { AppState } from "@/states";
 
 import configReducer from "./config";
 import fileListReducer from "./file-list";

@@ -1,5 +1,5 @@
 import * as keymap from "./keymap";
-import UIContext from "../types/ui-context";
+import UIContext from "@/types/ui-context";
 import { createAppContext } from "./app-context";
 
 describe("keymap value object", () => {

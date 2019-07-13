@@ -1,7 +1,7 @@
 import * as React from "react";
 import renderer from "react-test-renderer";
 
-import * as Notification from "../../../domains/progress-notification";
+import * as Notification from "@/domains/progress-notification";
 
 import { Component as T } from "./progress-notification-item";
 

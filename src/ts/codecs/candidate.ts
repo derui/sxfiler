@@ -1,4 +1,4 @@
-import { Candidate, createCandidate } from "../domains/candidate";
+import { Candidate, createCandidate } from "@/domains/candidate";
 
 // define codec that is between filer domain and RPC
 export type TypeOnRPC = {

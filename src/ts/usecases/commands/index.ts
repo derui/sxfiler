@@ -11,7 +11,7 @@ import * as keymapReload from "./keymap-reload";
 import * as taskSelectNextReply from "./task-select-next-reply";
 import * as taskSelectPreviousReply from "./task-select-previous-reply";
 
-import { CommandRegistrar } from "../command-registrar";
+import { CommandRegistrar } from "@/usecases/command-registrar";
 
 export const registAllCommand = (registrar: CommandRegistrar): CommandRegistrar => {
   const modules = [

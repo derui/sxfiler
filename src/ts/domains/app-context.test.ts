@@ -1,5 +1,5 @@
 import { createAppContext } from "./app-context";
-import UIContext from "../types/ui-context";
+import UIContext from "@/types/ui-context";
 
 describe("Domains", () => {
   describe("App Context", () => {

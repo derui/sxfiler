@@ -3,12 +3,12 @@ import { boolean, number, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
 import * as React from "react";
 
-import { createFileItem } from "../../domains/file-item";
+import { createFileItem } from "@/domains/file-item";
 
-import { Component as FileListComponent } from "../../components/project/file-list/file-list";
-import { createFileStat } from "../../domains/file-stat";
-import { createMode } from "../../domains/mode";
-import { fullCapability, emptyCapability } from "../../domains/capability";
+import { Component as FileListComponent } from "@/components/project/file-list/file-list";
+import { createFileStat } from "@/domains/file-stat";
+import { createMode } from "@/domains/mode";
+import { fullCapability, emptyCapability } from "@/domains/capability";
 
 function makeFileItem(name: string, marked: boolean, isDirectory = false, isSymlink = false) {
   return createFileItem({

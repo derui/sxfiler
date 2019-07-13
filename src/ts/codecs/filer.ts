@@ -1,4 +1,4 @@
-import { Filer, createFiler } from "../domains/filer";
+import { Filer, createFiler } from "@/domains/filer";
 import { FileItemOnRPC, encode as encodeFileItem } from "./file-item";
 
 // define codec that is between filer domain and RPC

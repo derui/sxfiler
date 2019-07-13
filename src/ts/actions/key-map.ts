@@ -1,4 +1,4 @@
-import { Keymap } from "../domains/keymap";
+import { Keymap } from "@/domains/keymap";
 import { AppAction, ActionTypes } from "./type";
 
 type UpdateAction = AppAction<ActionTypes.KEYMAP_UPDATE, { keymap: Keymap }>;

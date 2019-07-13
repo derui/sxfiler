@@ -1,13 +1,13 @@
 import { mount } from "enzyme";
 import * as React from "react";
 
-import * as State from "../../../../states/task-interaction";
+import * as State from "@/states/task-interaction";
 import { Component } from "./suggestion-modal-container";
-import { createSuggestions, createSuggestion, SuggestionKind } from "../../../../domains/task-suggestion";
-import LocatorContext, { Locator } from "../../../../locator";
-import ModalRootContext from "../../../../modal-root";
-import * as SuggestionModal from "../../../project/suggestion-modal/suggestion-modal";
-import { createOverwritePayload } from "../../../../domains/task-reply";
+import { createSuggestions, createSuggestion, SuggestionKind } from "@/domains/task-suggestion";
+import LocatorContext, { Locator } from "@/locator";
+import ModalRootContext from "@/modal-root";
+import * as SuggestionModal from "@/components/project/suggestion-modal/suggestion-modal";
+import { createOverwritePayload } from "@/domains/task-reply";
 
 describe("Container", () => {
   describe("Suggestion modal container", () => {

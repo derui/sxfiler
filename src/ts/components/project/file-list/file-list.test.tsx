@@ -3,10 +3,10 @@ import renderer from "react-test-renderer";
 
 import { Component as T } from "./file-list";
 
-import { createFileItem } from "../../../domains/file-item";
-import { createFileStat } from "../../../domains/file-stat";
-import { createMode } from "../../../domains/mode";
-import { emptyCapability } from "../../../domains/capability";
+import { createFileItem } from "@/domains/file-item";
+import { createFileStat } from "@/domains/file-stat";
+import { createMode } from "@/domains/mode";
+import { emptyCapability } from "@/domains/capability";
 
 function makeNode(name: string, isDirectory = false, isSymlink = false) {
   return createFileItem({

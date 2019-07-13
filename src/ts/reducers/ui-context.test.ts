@@ -1,10 +1,10 @@
 // reducers for notification
-import { actions as otherActions } from "../actions/notification";
-import { actions } from "../actions/task";
-import UIContext from "../types/ui-context";
+import { actions as otherActions } from "@/actions/notification";
+import { actions } from "@/actions/task";
+import UIContext from "@/types/ui-context";
 import reducer from "./ui-context";
-import * as Keymap from "../domains/keymap";
-import { createSuggestions } from "../domains/task-suggestion";
+import * as Keymap from "@/domains/keymap";
+import { createSuggestions } from "@/domains/task-suggestion";
 
 describe("reducers", () => {
   describe("UI Context state", () => {

@@ -1,6 +1,6 @@
 import * as S from "./task-interaction";
-import { createSuggestions, createSuggestion, SuggestionKind } from "../domains/task-suggestion";
-import { createRenamePayload, createOverwritePayload } from "../domains/task-reply";
+import { createSuggestions, createSuggestion, SuggestionKind } from "@/domains/task-suggestion";
+import { createRenamePayload, createOverwritePayload } from "@/domains/task-reply";
 
 describe("States", () => {
   describe("Task Interaction", () => {

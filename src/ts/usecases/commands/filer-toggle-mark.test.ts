@@ -1,13 +1,13 @@
 import * as C from "./filer-toggle-mark";
-import * as AppState from "../../states";
-import { Side } from "../../states/file-list";
-import { createFiler } from "../../domains/filer";
-import { Apis } from "../../apis";
-import { actions } from "../../actions/filer";
-import { createFileItem } from "../../domains/file-item";
-import { createFileStat } from "../../domains/file-stat";
-import { emptyMode } from "../../domains/mode";
-import * as FileListState from "../../states/file-list";
+import * as AppState from "@/states";
+import { Side } from "@/states/file-list";
+import { createFiler } from "@/domains/filer";
+import { Apis } from "@/apis";
+import { actions } from "@/actions/filer";
+import { createFileItem } from "@/domains/file-item";
+import { createFileStat } from "@/domains/file-stat";
+import { emptyMode } from "@/domains/mode";
+import * as FileListState from "@/states/file-list";
 
 const items = [
   createFileItem({

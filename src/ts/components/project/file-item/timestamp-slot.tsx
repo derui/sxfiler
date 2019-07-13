@@ -1,11 +1,9 @@
 import * as React from "react";
+import { styled } from "@/components/theme";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const styles = require("./file-item.module.scss");
-
-interface Prop {
+export type Props = {
   timestamp: Date;
-}
+};
 
 /**
  * format Date to display in item
@@ -18,9 +16,15 @@ function format(timestamp: Date): string {
   return `${year}/${month}/${date}`;
 }
 
-const NodeTimestamp: React.FC<Prop> = prop => {
-  const date = format(prop.timestamp);
-  return <span className={styles.timestamp}>{date}</span>;
-};
+const Timestamp = styled.span`
+  flex: 0 1 auto;
+  padding: 0 ${props => props.theme.spaces.small};
+  text-align: right;
 
-export default NodeTimestamp;
+  white-space: nowrap;
+`;
+
+export const Component: React.FC<Props> = prop => {
+  const date = format(prop.timestamp);
+  return <Timestamp>{date}</Timestamp>;
+};

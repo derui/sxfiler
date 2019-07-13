@@ -1,5 +1,5 @@
 import { AppAction, ActionTypes } from "./type";
-import { Filer } from "../domains/filer";
+import { Filer } from "@/domains/filer";
 
 type ReloadAction = AppAction<
   ActionTypes.FILER_RELOAD,

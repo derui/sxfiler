@@ -1,8 +1,8 @@
-import { Actions } from "../../actions";
-import { actions } from "../../actions/notification";
-import { Dispatcher } from "../../types";
-import { UseCaseLike } from "../type";
-import { ProgressNotification } from "../../domains/progress-notification";
+import { Actions } from "@/actions";
+import { actions } from "@/actions/notification";
+import { Dispatcher } from "@/types";
+import { UseCaseLike } from "@/usecases/type";
+import { ProgressNotification } from "@/domains/progress-notification";
 
 interface Arg {
   notification: ProgressNotification;

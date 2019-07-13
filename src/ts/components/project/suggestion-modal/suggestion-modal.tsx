@@ -1,23 +1,13 @@
 import * as React from "react";
-import * as Modal from "../../ui/modal/modal";
+import { styled } from "@/components/theme";
+import * as Modal from "@/components/ui/modal";
 import * as OverwriteSuggestionPanel from "./overwrite-suggestion-panel";
 import * as RenameSuggestionPanel from "./rename-suggestion-panel";
-import { ReplyPayload, ReplyKind } from "../../../domains/task-reply";
-import { CSSTransition } from "react-transition-group";
 
-const style: ClassNames = require("./suggestion-modal.module.scss");
+import * as Element from "@/components/ui/element";
 
-type ClassNames = Modal.ModalClassNames & {
-  header: string;
-  panelContainer: string;
-  originalNode: string;
-  rootAnimationExit: string;
-  rootAnimationExitActive: string;
-  rootAnimationEnter: string;
-  rootAnimationEnterActive: string;
-  overlayAnimationEnter: string;
-  overlayAnimationEnterActive: string;
-};
+import { ReplyPayload, ReplyKind } from "@/domains/task-reply";
+import { Transition } from "react-transition-group";
 
 export type OverlayProps = { className?: string };
 
@@ -38,19 +28,64 @@ type OverlayContextProps = OverlayProps & {
   opened: boolean;
 };
 
-const Overlay: React.FC<OverlayContextProps> = ({ className, opened }) => {
+const Root = styled(Element.Component)`
+  ${Modal.rootStyle}
+  overflow: hidden;
+`;
+
+const InnerContainer = styled.div`
+  ${Modal.containerStyle};
+
+  &[data-state="entering"] {
+    transform: translateY(-100%);
+  }
+
+  &[data-state="entered"] {
+    transform: translateY(0);
+    transition: transform ease-out 200ms;
+  }
+
+  &[data-state="exiting"] {
+    transform: translateY(0);
+  }
+
+  &[data-state="exited"] {
+    transition: transform ease-in 200ms;
+    transform: translateY(-100%);
+  }
+`;
+
+const Header = styled.h4`
+  color: ${props => props.theme.colors.base03};
+  background-color: ${props => props.theme.colors.base3};
+  padding: ${props => props.theme.spaces.large};
+`;
+
+const PanelContainer = styled.section`
+  padding: ${props => props.theme.spaces.base} 0;
+  background-color: ${props => props.theme.colors.base03};
+`;
+
+const InnerOverlay = styled.div`
+  ${Modal.overlayStyle};
+
+  background-color: rgba(black, 0.2);
+
+  &[data-state="entering"] {
+    opacity: 0.1;
+  }
+
+  &[data-state="entered"] {
+    opacity: 1;
+    transition: opacity ease-out 200ms;
+  }
+`;
+
+const Overlay: React.FC<OverlayContextProps> = ({ opened }) => {
   return (
-    <CSSTransition
-      in={opened}
-      timeout={100}
-      unmountOnExit={true}
-      classNames={{
-        enter: style.overlayAnimationEnter,
-        enterActive: style.overlayAnimationEnterActive,
-      }}
-    >
-      {() => <div className={className} />}
-    </CSSTransition>
+    <Transition in={opened} timeout={100} unmountOnExit={true}>
+      {state => <InnerOverlay data-state={state} />}
+    </Transition>
   );
 };
 
@@ -72,44 +107,25 @@ const makeSuggestionPanel = (index: number, replies: ReplyPayload[], handleReply
   });
 };
 
-const Container: React.FC<ContainerContextProps> = ({
-  className,
-  replies,
-  focusedReply,
-  onReply,
-  opened,
-  onClose,
-  onOpen,
-}) => {
+const Container: React.FC<ContainerContextProps> = ({ replies, focusedReply, onReply, opened, onClose, onOpen }) => {
   return (
-    <CSSTransition
-      in={opened}
-      timeout={200}
-      onEnter={onOpen}
-      onExited={onClose}
-      classNames={{
-        enter: style.rootAnimationEnter,
-        enterActive: style.rootAnimationEnterActive,
-        exit: style.rootAnimationExit,
-        exitActive: style.rootAnimationExitActive,
-      }}
-    >
+    <Transition in={opened} timeout={200} onEnter={onOpen} onExited={onClose}>
       {() => {
         return (
-          <div className={className}>
-            <h4 className={style.header}>Suggestions </h4>
-            <section className={style.panelContainer}>{makeSuggestionPanel(focusedReply, replies, onReply)}</section>
-          </div>
+          <InnerContainer>
+            <Header>Suggestions</Header>
+            <PanelContainer>{makeSuggestionPanel(focusedReply, replies, onReply)}</PanelContainer>
+          </InnerContainer>
         );
       }}
-    </CSSTransition>
+    </Transition>
   );
 };
 
 export type Props = Modal.Props<ContainerProps, OverlayProps>;
 
 export const Component = Modal.createComponent({
-  classNames: style,
+  root: Root,
   container: Container,
   overlay: Overlay,
 });

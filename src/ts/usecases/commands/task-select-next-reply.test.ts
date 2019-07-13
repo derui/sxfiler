@@ -1,8 +1,8 @@
 import * as C from "./task-select-next-reply";
-import * as AppState from "../../states";
-import { actions } from "../../actions/task";
-import * as State from "../../states/task-interaction";
-import { createSuggestions, createSuggestion, SuggestionKind } from "../../domains/task-suggestion";
+import * as AppState from "@/states";
+import { actions } from "@/actions/task";
+import * as State from "@/states/task-interaction";
+import { createSuggestions, createSuggestion, SuggestionKind } from "@/domains/task-suggestion";
 
 describe("Commands", () => {
   describe("Task", () => {

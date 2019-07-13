@@ -3,7 +3,7 @@ import { mount } from "enzyme";
 import * as Modal from "./suggestion-modal";
 import { Component as OverwriteSuggestionPanel } from "./overwrite-suggestion-panel";
 import { Component as RenameSuggestionPanel } from "./rename-suggestion-panel";
-import { createRenamePayload, createOverwritePayload } from "../../../domains/task-reply";
+import { createRenamePayload, createOverwritePayload } from "@/domains/task-reply";
 
 describe("Project", () => {
   describe("Suggestion Modal", () => {

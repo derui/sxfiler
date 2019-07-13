@@ -1,6 +1,6 @@
-import { actions } from "../../actions/notification";
-import { Dispatcher } from "../../dispatcher";
-import { createMessage, Level } from "../../domains/message-notification";
+import { actions } from "@/actions/notification";
+import { Dispatcher } from "@/dispatcher";
+import { createMessage, Level } from "@/domains/message-notification";
 import { createUseCase } from "./receive-message-notification";
 
 describe("UseCases", () => {

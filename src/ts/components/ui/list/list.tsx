@@ -1,9 +1,17 @@
 import * as React from "react";
-import * as Element from "../element/element";
-import { applyDisplayName } from "../util";
+import { css } from "@/components/theme";
+import * as Element from "@/components/ui/element/element";
+import { applyDisplayName } from "@/components/ui/util";
 
 export type Props<T extends Element.Props<H> = Element.Props, H extends HTMLElement = HTMLElement> = T &
   React.HTMLAttributes<H>;
+
+export const style = css`
+  display: flex;
+  flex-direction: column;
+
+  flex: 1 1 auto;
+`;
 
 export function createComponent<T extends Element.Props<H> = Element.Props, H extends HTMLElement = HTMLElement>(
   context: {

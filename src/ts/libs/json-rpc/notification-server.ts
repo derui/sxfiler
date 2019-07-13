@@ -1,6 +1,6 @@
 import * as Common from "./type";
 import { Handler } from "./websocket-handler";
-import { ContextLike } from "../../context";
+import { ContextLike } from "@/context";
 
 export type NotificationMethod = (context: ContextLike) => (params: any) => void;
 export type NotificationMethodMap = {

@@ -1,10 +1,9 @@
-import { Actions } from "../../actions";
-import { actions } from "../../actions/filer";
-import { CommandLike } from "../type";
-import { Dispatcher } from "../../types";
-import { CommandRegistrar } from "../command-registrar";
-import { Apis } from "../../apis";
-import * as FileListState from "../../states/file-list";
+import { Actions } from "@/actions";
+import { CommandLike } from "@/usecases/type";
+import { Dispatcher } from "@/types";
+import { CommandRegistrar } from "@/usecases/command-registrar";
+import { Apis } from "@/apis";
+import * as FileListState from "@/states/file-list";
 
 const belongingModuleId = "builtin";
 const commandId = "filer.move";

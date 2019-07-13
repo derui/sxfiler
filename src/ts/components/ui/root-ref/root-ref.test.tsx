@@ -1,9 +1,9 @@
 import * as React from "react";
 import { mount } from "enzyme";
 
-import * as Element from "../element/element";
+import * as Element from "@/components/ui/element/element";
 import { Component } from "./root-ref";
-import { ForwardedRef } from "../util";
+import { ForwardedRef } from "@/components/ui/util";
 
 describe("UI Kit", () => {
   describe("RootRef", () => {

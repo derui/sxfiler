@@ -1,7 +1,7 @@
 import * as C from "./filer-move-cursor-up";
-import * as AppState from "../../states";
-import { Side } from "../../states/file-list";
-import { createFiler, Direction } from "../../domains/filer";
+import * as AppState from "@/states";
+import { Side } from "@/states/file-list";
+import { createFiler, Direction } from "@/domains/filer";
 
 describe("Commands", () => {
   describe("Filer", () => {

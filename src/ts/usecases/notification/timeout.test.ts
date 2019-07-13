@@ -1,5 +1,5 @@
-import { actions } from "../../actions/notification";
-import { Dispatcher } from "../../dispatcher";
+import { actions } from "@/actions/notification";
+import { Dispatcher } from "@/dispatcher";
 import { createUseCase } from "./timeout";
 
 describe("UseCases", () => {

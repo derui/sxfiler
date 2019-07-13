@@ -1,4 +1,4 @@
-import { Candidate } from "../domains/candidate";
+import { Candidate } from "@/domains/candidate";
 
 export type State = {
   // current key map

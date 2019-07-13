@@ -1,8 +1,8 @@
 import * as React from "react";
 import { mount } from "enzyme";
 import * as Modal from "./completer";
-import * as ListItem from "../../ui/list-item/list-item";
-import { createCandidate } from "../../../domains/candidate";
+import * as ListItem from "@/components/ui/list-item/list-item";
+import { createCandidate } from "@/domains/candidate";
 
 describe("Project", () => {
   describe("Completer", () => {
@@ -16,7 +16,7 @@ describe("Project", () => {
             title: "test",
             selectedItemIndex: -1,
             items: [],
-            onChange: () => {},
+            onInput: () => {},
           }}
         />
       );
@@ -34,7 +34,7 @@ describe("Project", () => {
             title: "test",
             selectedItemIndex: -1,
             items: [createCandidate({ id: "id", value: "value", start: 0, length: 0 })],
-            onChange: () => {},
+            onInput: () => {},
           }}
         />
       );
@@ -55,7 +55,7 @@ describe("Project", () => {
               createCandidate({ id: "id", value: "value", start: 0, length: 0 }),
               createCandidate({ id: "id2", value: "value2", start: 0, length: 0 }),
             ],
-            onChange: () => {},
+            onInput: () => {},
           }}
         />
       );

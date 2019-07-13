@@ -1,6 +1,6 @@
 // Task interaction manages the state for task suggestions and replys
-import { Actions, ActionTypes } from "../actions";
-import * as TaskInteractionState from "../states/task-interaction";
+import { Actions, ActionTypes } from "@/actions";
+import * as TaskInteractionState from "@/states/task-interaction";
 
 export default function reducer(state = TaskInteractionState.empty(), action: Actions) {
   switch (action.type) {

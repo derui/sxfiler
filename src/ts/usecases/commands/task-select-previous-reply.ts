@@ -1,8 +1,8 @@
-import { Actions } from "../../actions";
-import { actions } from "../../actions/task";
-import { CommandLike } from "../type";
-import { Dispatcher } from "../../types";
-import { CommandRegistrar } from "../command-registrar";
+import { Actions } from "@/actions";
+import { actions } from "@/actions/task";
+import { CommandLike } from "@/usecases/type";
+import { Dispatcher } from "@/types";
+import { CommandRegistrar } from "@/usecases/command-registrar";
 
 const belongingModuleId = "builtin";
 const commandId = "task.selectPreviousReply";

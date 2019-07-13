@@ -1,4 +1,4 @@
-import { Keymap, createKeymap } from "../domains/keymap";
+import { Keymap, createKeymap } from "@/domains/keymap";
 
 export type State = {
   // current key map

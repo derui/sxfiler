@@ -1,10 +1,10 @@
 import * as U from "./get";
-import { Dispatcher } from "../../types";
-import { Actions } from "../../actions";
-import { Client } from "../../libs/json-rpc/client";
-import { ApiMethod } from "../../apis";
-import * as actions from "../../actions/key-map";
-import { createKeymap } from "../../domains/keymap";
+import { Dispatcher } from "@/types";
+import { Actions } from "@/actions";
+import { Client } from "@/libs/json-rpc/client";
+import { ApiMethod } from "@/apis";
+import * as actions from "@/actions/key-map";
+import { createKeymap } from "@/domains/keymap";
 
 describe("UseCases", () => {
   describe("Key map", () => {

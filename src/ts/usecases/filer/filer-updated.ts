@@ -1,9 +1,9 @@
 // defines use case to update a filer from notification
-import { Actions } from "../../actions";
-import { actions } from "../../actions/filer";
-import { Dispatcher } from "../../types";
-import { UseCaseLike } from "../type";
-import { Filer } from "../../domains/filer";
+import { Actions } from "@/actions";
+import { actions } from "@/actions/filer";
+import { Dispatcher } from "@/types";
+import { UseCaseLike } from "@/usecases/type";
+import { Filer } from "@/domains/filer";
 
 type Args = {
   filer: Filer;

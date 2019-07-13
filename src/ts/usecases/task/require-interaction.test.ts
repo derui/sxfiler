@@ -1,7 +1,7 @@
-import { actions } from "../../actions/task";
-import { Dispatcher } from "../../dispatcher";
+import { actions } from "@/actions/task";
+import { Dispatcher } from "@/dispatcher";
 import { createUseCase } from "./require-interaction";
-import { createSuggestions } from "../../domains/task-suggestion";
+import { createSuggestions } from "@/domains/task-suggestion";
 
 describe("UseCases", () => {
   describe("Task", () => {

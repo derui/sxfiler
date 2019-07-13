@@ -1,8 +1,5 @@
-import classNames from "classnames";
 import * as React from "react";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const styles = require("./file-item.module.scss");
+import { styled } from "@/components/theme";
 
 interface Prop {
   isDirectory: boolean;
@@ -10,13 +7,22 @@ interface Prop {
   name: string;
 }
 
-const NodeName: React.FC<Prop> = ({ isDirectory, name, isSymlink }) => {
-  const className = classNames(styles.name, {
-    [styles.nameDirectory]: isDirectory && !isSymlink,
-    [styles.nameSymlink]: isSymlink,
-  });
+const Name = styled.span`
+    flex: 1 0 auto;
+    padding: 0;
+    font-weight: bold;
 
-  return <span className={className}>{name}</span>;
-};
+    &[data-directory="true"] {
+    color: ${props => props.theme.colors.yellow};
+    }
 
-export default NodeName;
+    &[data-symlink="true] {
+    color: ${props => props.theme.colors.orange};
+    }
+`;
+
+export const Component: React.FC<Prop> = ({ isDirectory, name, isSymlink }) => (
+  <Name data-directory={isDirectory && !isSymlink} data-symlink={isSymlink}>
+    {name}
+  </Name>
+);

@@ -1,6 +1,6 @@
-import { FileStat, createFileStat } from "../domains/file-stat";
-import { createCapability } from "../domains/capability";
-import { ModeObject, createMode } from "../domains/mode";
+import { FileStat, createFileStat } from "@/domains/file-stat";
+import { createCapability } from "@/domains/capability";
+import { ModeObject, createMode } from "@/domains/mode";
 
 // define codec that is between filer domain and RPC
 export type TypeOnRPC = {

@@ -2,8 +2,8 @@ import * as React from "react";
 import renderer from "react-test-renderer";
 import T from "./mode-slot";
 
-import { emptyCapability } from "../../../domains/capability";
-import { emptyMode } from "../../../domains/mode";
+import { emptyCapability } from "@/domains/capability";
+import { emptyMode } from "@/domains/mode";
 
 describe("Project", () => {
   describe("Node Item", () => {

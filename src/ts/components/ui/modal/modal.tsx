@@ -1,13 +1,44 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import * as Element from "../element/element";
-import { applyDisplayName } from "../util";
+import { styled, css } from "@/components/theme";
+import * as Element from "@/components/ui/element/element";
+import { applyDisplayName } from "@/components/ui/util";
 
-export interface ModalClassNames {
-  root?: string;
-  overlay?: string;
-  container?: string;
-}
+export const rootStyle = css`
+  display: flex;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+
+  &[aria-hidden="true"] {
+    display: none;
+  }
+`;
+
+const DefaultRoot = styled(Element.Component)`
+  ${rootStyle}
+`;
+
+export const overlayStyle = css`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  z-index: 1;
+`;
+
+const DefaultOverlay = styled(Element.Component)`
+  ${overlayStyle}
+`;
+
+export const containerStyle = css`
+  z-index: 2;
+`;
+
+const DefaultContainer = styled(Element.Component)`
+  ${containerStyle}
+`;
 
 export type Props<
   ContainerProps extends { className?: string } = Element.Props,
@@ -29,31 +60,25 @@ export function createComponent<
   H extends HTMLElement = HTMLElement
 >(
   context: {
+    root?: Element.ComponentType;
     container?: React.ComponentType<ContainerProps & { opened: boolean; onClose: () => void; onOpen: () => void }>;
     overlay?: React.ComponentType<OverlayProps & { opened: boolean }>;
-    classNames?: ModalClassNames;
   } = {}
 ): React.ComponentType<Props<ContainerProps, OverlayProps, T, H>> {
-  const modalClassNames = context.classNames || {};
-  const Container = context.container || Element.Component;
-  const Overlay = context.overlay || Element.Component;
+  const Root = context.root || DefaultRoot;
+  const Container = context.container || DefaultContainer;
+  const Overlay = context.overlay || DefaultOverlay;
 
   return applyDisplayName("Dialog", ({ opened, dialogRoot, overlay, container, ...props }) => {
     const [closed, setClosed] = React.useState(true);
 
     return ReactDOM.createPortal(
-      <Element.Component className={modalClassNames.root} aria-hidden={!opened && closed} {...props}>
-        {overlay && <Overlay className={modalClassNames.overlay} opened={opened} {...overlay} />}
+      <Root aria-hidden={!opened && closed} {...props}>
+        {overlay && <Overlay opened={opened} {...overlay} />}
         {container && (
-          <Container
-            className={modalClassNames.container}
-            onOpen={() => setClosed(false)}
-            onClose={() => setClosed(true)}
-            opened={opened}
-            {...container}
-          />
+          <Container onOpen={() => setClosed(false)} onClose={() => setClosed(true)} opened={opened} {...container} />
         )}
-      </Element.Component>,
+      </Root>,
       dialogRoot
     );
   });
