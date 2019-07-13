@@ -2,19 +2,19 @@
 
 exports[`Container File List Container should render correctly 1`] = `
 <div
-  className="root"
+  className="sc-iwsKbI bAdfJM"
 >
   <div
-    className="root"
+    className="sc-bZQynM gAHUms"
   >
     <header
-      className="header"
+      className="sc-EHOje eksHn"
       data-focused={true}
     >
       /left
     </header>
     <div
-      className="resizeContainer"
+      className="sc-gzVnrw VQBHp"
       style={
         Object {
           "overflow": "visible",
@@ -23,19 +23,19 @@ exports[`Container File List Container should render correctly 1`] = `
     />
   </div>
   <div
-    className="separator"
+    className="sc-gZMcBi fZsDTv"
   />
   <div
-    className="root"
+    className="sc-bZQynM gAHUms"
   >
     <header
-      className="header"
+      className="sc-EHOje eksHn"
       data-focused={false}
     >
       /right
     </header>
     <div
-      className="resizeContainer"
+      className="sc-gzVnrw VQBHp"
       style={
         Object {
           "overflow": "visible",

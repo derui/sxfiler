@@ -1,7 +1,7 @@
 // reducers for notification
 import { actions } from "@/actions/notification";
 import { empty } from "@/states/log-entry";
-import reducer from "./log-entry";
+import { reducer } from "./log-entry";
 import { createMessage, Level } from "@/domains/message-notification";
 
 describe("reducers", () => {

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { mount } from "enzyme";
+import { wrap } from "@/components/theme/test-util";
 import * as Modal from "./suggestion-modal";
 import { Component as OverwriteSuggestionPanel } from "./overwrite-suggestion-panel";
 import { Component as RenameSuggestionPanel } from "./rename-suggestion-panel";
@@ -10,15 +11,17 @@ describe("Project", () => {
     it("do not render when no any suggestion", () => {
       const root = document.createElement("div");
       const tree = mount(
-        <Modal.Component
-          dialogRoot={root}
-          opened={true}
-          container={{
-            focusedReply: 0,
-            replies: [],
-            onReply: () => {},
-          }}
-        />
+        wrap(
+          <Modal.Component
+            dialogRoot={root}
+            opened={true}
+            container={{
+              focusedReply: 0,
+              replies: [],
+              onReply: () => {},
+            }}
+          />
+        )
       );
 
       expect(tree.find(OverwriteSuggestionPanel)).toHaveLength(0);
@@ -28,15 +31,17 @@ describe("Project", () => {
     it("render with reply to overwrite", () => {
       const root = document.createElement("div");
       const tree = mount(
-        <Modal.Component
-          dialogRoot={root}
-          opened={true}
-          container={{
-            focusedReply: 0,
-            replies: [createOverwritePayload()],
-            onReply: () => {},
-          }}
-        />
+        wrap(
+          <Modal.Component
+            dialogRoot={root}
+            opened={true}
+            container={{
+              focusedReply: 0,
+              replies: [createOverwritePayload()],
+              onReply: () => {},
+            }}
+          />
+        )
       );
 
       expect(tree.find(OverwriteSuggestionPanel)).toHaveLength(1);
@@ -45,15 +50,17 @@ describe("Project", () => {
     it("render with reply to rename", () => {
       const root = document.createElement("div");
       const tree = mount(
-        <Modal.Component
-          dialogRoot={root}
-          opened={true}
-          container={{
-            focusedReply: 0,
-            replies: [createRenamePayload("foo")],
-            onReply: () => {},
-          }}
-        />
+        wrap(
+          <Modal.Component
+            dialogRoot={root}
+            opened={true}
+            container={{
+              focusedReply: 0,
+              replies: [createRenamePayload("foo")],
+              onReply: () => {},
+            }}
+          />
+        )
       );
 
       expect(tree.find(OverwriteSuggestionPanel)).toHaveLength(0);

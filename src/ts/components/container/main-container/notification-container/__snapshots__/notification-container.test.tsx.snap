@@ -2,32 +2,27 @@
 
 exports[`Container Notification Container should render correctly when context initialized 1`] = `
 <div
-  className="root"
+  className="sc-EHOje lmepRT"
 >
   <div
-    className="root"
+    className="sc-ifAKCX ipbtqc"
     role="list"
   >
     <div
       aria-selected={false}
-      className="root"
+      className="sc-bdVaJa gneklD"
       role="listitem"
     >
       <span
-        className="processLabel"
+        className="sc-bwzfXH fCwXYg"
       >
         process
       </span>
       <div
-        className="progressBar"
+        className="sc-htpNat hkuyqD"
       >
         <div
-          className="progressIndicator"
-          style={
-            Object {
-              "width": "10%",
-            }
-          }
+          className="sc-bxivhb MqTMw"
         />
       </div>
     </div>

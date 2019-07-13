@@ -4,13 +4,13 @@ import { combineReducers, Reducer, ReducersMapObject } from "redux";
 import * as actions from "@/actions";
 import { AppState } from "@/states";
 
-import configReducer from "./config";
-import fileListReducer from "./file-list";
-import keymapReducer from "./keymap";
-import notificationReducer from "./notification";
-import uiContextReducer from "./ui-context";
-import taskInteractionReducer from "./task-interaction";
-import logEntryReducer from "./log-entry";
+import { reducer as configReducer } from "./config";
+import { reducer as fileListReducer } from "./file-list";
+import { reducer as keymapReducer } from "./keymap";
+import { reducer as notificationReducer } from "./notification";
+import { reducer as uiContextReducer } from "./ui-context";
+import { reducer as taskInteractionReducer } from "./task-interaction";
+import { reducer as logEntryReducer } from "./log-entry";
 
 const reducerMap: ReducersMapObject<AppState, actions.Actions> = {
   context: uiContextReducer,

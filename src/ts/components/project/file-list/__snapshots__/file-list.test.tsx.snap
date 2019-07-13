@@ -2,16 +2,16 @@
 
 exports[`Project Node List should not print before resized 1`] = `
 <div
-  className="root"
+  className="sc-bZQynM gAHUms"
 >
   <header
-    className="header"
+    className="sc-EHOje eksHn"
     data-focused={false}
   >
     loc
   </header>
   <div
-    className="resizeContainer"
+    className="sc-gzVnrw VQBHp"
     style={
       Object {
         "overflow": "visible",
@@ -23,16 +23,16 @@ exports[`Project Node List should not print before resized 1`] = `
 
 exports[`Project Node List should select a node locating same the index of cursor when focused 1`] = `
 <div
-  className="root"
+  className="sc-bZQynM gAHUms"
 >
   <header
-    className="header"
+    className="sc-EHOje eksHn"
     data-focused={true}
   >
     loc
   </header>
   <div
-    className="resizeContainer"
+    className="sc-gzVnrw VQBHp"
     style={
       Object {
         "overflow": "visible",
@@ -44,16 +44,16 @@ exports[`Project Node List should select a node locating same the index of curso
 
 exports[`Project Node List should show dummy content when nodes is empty 1`] = `
 <div
-  className="root"
+  className="sc-bZQynM gAHUms"
 >
   <header
-    className="header"
+    className="sc-EHOje eksHn"
     data-focused={true}
   >
     loc
   </header>
   <div
-    className="resizeContainer"
+    className="sc-gzVnrw VQBHp"
     style={
       Object {
         "overflow": "visible",

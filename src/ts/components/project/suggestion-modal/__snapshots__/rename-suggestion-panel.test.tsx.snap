@@ -3,20 +3,14 @@
 exports[`Project Rename suggestion change style when selected 1`] = `
 <div
   aria-selected={true}
-  className="root"
+  className="sc-bdVaJa hTXxV"
 >
-  <p
-    aria-selected={true}
-    className="text"
-  >
+  <p>
     Rename
   </p>
-  <label
-    aria-selected={true}
-    className="labelContainer"
-  >
+  <label>
     <input
-      className="input"
+      className="sc-bwzfXH fhlOTR"
       onChange={[Function]}
       type="text"
       value="node"
@@ -28,20 +22,14 @@ exports[`Project Rename suggestion change style when selected 1`] = `
 exports[`Project Rename suggestion do not render with other suggestion 1`] = `
 <div
   aria-selected={false}
-  className="root"
+  className="sc-bdVaJa hTXxV"
 >
-  <p
-    aria-selected={false}
-    className="text"
-  >
+  <p>
     Rename
   </p>
-  <label
-    aria-selected={false}
-    className="labelContainer"
-  >
+  <label>
     <input
-      className="input"
+      className="sc-bwzfXH fhlOTR"
       onChange={[Function]}
       type="text"
       value="node"
@@ -53,20 +41,14 @@ exports[`Project Rename suggestion do not render with other suggestion 1`] = `
 exports[`Project Rename suggestion render with rename suggestion 1`] = `
 <div
   aria-selected={false}
-  className="root"
+  className="sc-bdVaJa hTXxV"
 >
-  <p
-    aria-selected={false}
-    className="text"
-  >
+  <p>
     Rename
   </p>
-  <label
-    aria-selected={false}
-    className="labelContainer"
-  >
+  <label>
     <input
-      className="input"
+      className="sc-bwzfXH fhlOTR"
       onChange={[Function]}
       type="text"
       value="node"

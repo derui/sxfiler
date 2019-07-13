@@ -1,6 +1,7 @@
-import { shallow } from "enzyme";
+import { mount } from "enzyme";
 import * as React from "react";
 import renderer from "react-test-renderer";
+import { wrap } from "@/components/theme/test-util";
 
 import { Side, State } from "@/states/file-list";
 import { Component } from "./file-list-container";
@@ -26,7 +27,7 @@ describe("Container", () => {
         }),
         currentSide: Side.Left,
       };
-      const tree = renderer.create(<Component state={state} />).toJSON();
+      const tree = renderer.create(wrap(<Component state={state} />)).toJSON();
 
       expect(tree).toMatchSnapshot();
     });
@@ -49,7 +50,7 @@ describe("Container", () => {
         }),
         currentSide: Side.Right,
       };
-      const wrapper = shallow(<Component state={state} />);
+      const wrapper = mount(wrap(<Component state={state} />));
 
       const focused = wrapper.findWhere(child => child.key() === Side.Right).prop("focused");
       expect(focused).toStrictEqual(true);

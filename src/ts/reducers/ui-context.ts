@@ -2,7 +2,7 @@
 import { Actions, ActionTypes } from "@/actions";
 import { UIContext } from "@/types/ui-context";
 
-export default function reducer(state = UIContext.OnFileTree, action: Actions) {
+export function reducer(state = UIContext.OnFileTree, action: Actions) {
   switch (action.type) {
     case ActionTypes.TASK_REQUIRE_INTERACTION:
       return UIContext.OnSuggestion;

@@ -2,7 +2,7 @@
 
 exports[`Project Node Item Mode slot should print directory mode 1`] = `
 <span
-  className="mode"
+  className="sc-bdVaJa fIwzXV"
 >
   dr--------
 </span>
@@ -10,7 +10,7 @@ exports[`Project Node Item Mode slot should print directory mode 1`] = `
 
 exports[`Project Node Item Mode slot should print name simply 1`] = `
 <span
-  className="mode"
+  className="sc-bdVaJa fIwzXV"
 >
   ----------
 </span>
@@ -18,7 +18,7 @@ exports[`Project Node Item Mode slot should print name simply 1`] = `
 
 exports[`Project Node Item Mode slot should print symlink mode 1`] = `
 <span
-  className="mode"
+  className="sc-bdVaJa fIwzXV"
 >
   lr--------
 </span>
@@ -26,7 +26,7 @@ exports[`Project Node Item Mode slot should print symlink mode 1`] = `
 
 exports[`Project Node Item Mode slot should print symlink when directory and symlink are true 1`] = `
 <span
-  className="mode"
+  className="sc-bdVaJa fIwzXV"
 >
   lr--------
 </span>

@@ -2,7 +2,7 @@
 import { Actions, ActionTypes } from "@/actions";
 import * as TaskInteractionState from "@/states/task-interaction";
 
-export default function reducer(state = TaskInteractionState.empty(), action: Actions) {
+export function reducer(state = TaskInteractionState.empty(), action: Actions) {
   switch (action.type) {
     case ActionTypes.TASK_REQUIRE_INTERACTION:
       return TaskInteractionState.giveSuggestions(state, action.suggestions);

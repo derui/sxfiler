@@ -8,17 +8,17 @@ interface Prop {
 }
 
 const Name = styled.span`
-    flex: 1 0 auto;
-    padding: 0;
-    font-weight: bold;
+  flex: 1 0 auto;
+  padding: 0;
+  font-weight: bold;
 
-    &[data-directory="true"] {
+  &[data-directory="true"] {
     color: ${props => props.theme.colors.yellow};
-    }
+  }
 
-    &[data-symlink="true] {
+  &[data-symlink="true"] {
     color: ${props => props.theme.colors.orange};
-    }
+  }
 `;
 
 export const Component: React.FC<Prop> = ({ isDirectory, name, isSymlink }) => (

@@ -1,5 +1,6 @@
 import * as React from "react";
 import renderer from "react-test-renderer";
+import { wrap } from "@/components/theme/test-util";
 
 import { Component as T } from "./file-list";
 
@@ -39,20 +40,20 @@ describe("Project", () => {
   describe("Node List", () => {
     it("should not print before resized", () => {
       const nodes = [makeNode("file.txt")];
-      const tree = renderer.create(<T items={nodes} location="loc" cursor={0} focused={false} />).toJSON();
+      const tree = renderer.create(wrap(<T items={nodes} location="loc" cursor={0} focused={false} />)).toJSON();
 
       expect(tree).toMatchSnapshot();
     });
 
     it("should select a node locating same the index of cursor when focused", () => {
       const nodes = [makeNode("file.txt")];
-      const tree = renderer.create(<T items={nodes} location="loc" cursor={0} focused={true} />).toJSON();
+      const tree = renderer.create(wrap(<T items={nodes} location="loc" cursor={0} focused={true} />)).toJSON();
 
       expect(tree).toMatchSnapshot();
     });
 
     it("should show dummy content when nodes is empty", () => {
-      const tree = renderer.create(<T items={[]} location="loc" cursor={0} focused={true} />).toJSON();
+      const tree = renderer.create(wrap(<T items={[]} location="loc" cursor={0} focused={true} />)).toJSON();
 
       expect(tree).toMatchSnapshot();
     });

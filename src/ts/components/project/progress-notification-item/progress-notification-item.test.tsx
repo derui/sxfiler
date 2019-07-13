@@ -1,5 +1,6 @@
 import * as React from "react";
 import renderer from "react-test-renderer";
+import { wrap } from "@/components/theme/test-util";
 
 import * as Notification from "@/domains/progress-notification";
 
@@ -13,7 +14,7 @@ describe("Project", () => {
         current: 10,
         target: 100,
       });
-      const tree = renderer.create(<T body={notification.body} />).toJSON();
+      const tree = renderer.create(wrap(<T body={notification.body} />)).toJSON();
 
       expect(tree).toMatchSnapshot();
     });
@@ -24,7 +25,7 @@ describe("Project", () => {
         current: 101,
         target: 100,
       });
-      const tree = renderer.create(<T body={notification.body} />).toJSON();
+      const tree = renderer.create(wrap(<T body={notification.body} />)).toJSON();
 
       expect(tree).toMatchSnapshot();
     });
@@ -35,7 +36,7 @@ describe("Project", () => {
         current: 101,
         target: 100,
       });
-      const tree = renderer.create(<T body={notification.body} />).toJSON();
+      const tree = renderer.create(wrap(<T body={notification.body} />)).toJSON();
 
       expect(tree).toMatchSnapshot();
     });

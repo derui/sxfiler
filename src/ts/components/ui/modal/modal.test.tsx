@@ -3,8 +3,8 @@ import { mount } from "enzyme";
 
 import * as Modal from "./modal";
 
-const Container = ({ role, className }: any) => {
-  return <div className={className} role={role} />;
+const Container = ({ role }: any) => {
+  return <div role={role} />;
 };
 
 describe("UI kit", () => {
@@ -33,7 +33,6 @@ describe("UI kit", () => {
 
     it("render a dialog opened on a dialog root", () => {
       const C = Modal.createComponent({
-        classNames: { root: "foo" },
         container: Container,
       });
       const root = mount(<div />);

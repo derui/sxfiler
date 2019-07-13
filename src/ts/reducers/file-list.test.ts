@@ -1,7 +1,7 @@
 // reducers for notification
 import { actions } from "@/actions/filer";
 import { empty, State, Side, initialize } from "@/states/file-list";
-import reducer from "./file-list";
+import { reducer } from "./file-list";
 import { createFiler, Direction } from "@/domains/filer";
 
 const leftFiler = createFiler({

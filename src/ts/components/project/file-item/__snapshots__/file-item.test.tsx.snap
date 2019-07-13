@@ -4,27 +4,29 @@ exports[`Project Node Item should add class correctly when marked 1`] = `
 <div
   aria-hidden={false}
   aria-selected={false}
-  className="fileItem"
+  className="sc-ifAKCX jkIeLh"
   data-marked={true}
   role="listitem"
 >
   <span
-    className="mode"
+    className="sc-bdVaJa fIwzXV"
   >
     -rw-r--r--
   </span>
   <span
-    className="timestamp"
+    className="sc-bxivhb jIOOMm"
   >
     1970/01/01
   </span>
   <pre
-    className="size"
+    className="sc-htpNat hxcXAK"
   >
      10.0B
   </pre>
   <span
-    className="name"
+    className="sc-bwzfXH eXHuVE"
+    data-directory={false}
+    data-symlink={false}
   >
     file.ext
   </span>
@@ -35,27 +37,29 @@ exports[`Project Node Item should add class correctly when selected 1`] = `
 <div
   aria-hidden={false}
   aria-selected={true}
-  className="fileItem"
+  className="sc-ifAKCX jkIeLh"
   data-marked={false}
   role="listitem"
 >
   <span
-    className="mode"
+    className="sc-bdVaJa fIwzXV"
   >
     -rw-r--r--
   </span>
   <span
-    className="timestamp"
+    className="sc-bxivhb jIOOMm"
   >
     1970/01/01
   </span>
   <pre
-    className="size"
+    className="sc-htpNat hxcXAK"
   >
      10.0B
   </pre>
   <span
-    className="name"
+    className="sc-bwzfXH eXHuVE"
+    data-directory={false}
+    data-symlink={false}
   >
     file.ext
   </span>
@@ -66,27 +70,29 @@ exports[`Project Node Item should add class correctly when selected and marked 1
 <div
   aria-hidden={false}
   aria-selected={true}
-  className="fileItem"
+  className="sc-ifAKCX jkIeLh"
   data-marked={true}
   role="listitem"
 >
   <span
-    className="mode"
+    className="sc-bdVaJa fIwzXV"
   >
     -rw-r--r--
   </span>
   <span
-    className="timestamp"
+    className="sc-bxivhb jIOOMm"
   >
     1970/01/01
   </span>
   <pre
-    className="size"
+    className="sc-htpNat hxcXAK"
   >
      10.0B
   </pre>
   <span
-    className="name"
+    className="sc-bwzfXH eXHuVE"
+    data-directory={false}
+    data-symlink={false}
   >
     file.ext
   </span>
@@ -97,27 +103,29 @@ exports[`Project Node Item should print correctly 1`] = `
 <div
   aria-hidden={false}
   aria-selected={false}
-  className="fileItem"
+  className="sc-ifAKCX jkIeLh"
   data-marked={false}
   role="listitem"
 >
   <span
-    className="mode"
+    className="sc-bdVaJa fIwzXV"
   >
     -rw-r--r--
   </span>
   <span
-    className="timestamp"
+    className="sc-bxivhb jIOOMm"
   >
     1970/01/01
   </span>
   <pre
-    className="size"
+    className="sc-htpNat hxcXAK"
   >
      10.0B
   </pre>
   <span
-    className="name"
+    className="sc-bwzfXH eXHuVE"
+    data-directory={false}
+    data-symlink={false}
   >
     file.ext
   </span>

@@ -1,14 +1,20 @@
 import * as React from "react";
 import { mount } from "enzyme";
+
+import { Theme, ThemeProvider } from "@/components/theme";
 import * as Modal from "./completer";
 import * as ListItem from "@/components/ui/list-item/list-item";
 import { createCandidate } from "@/domains/candidate";
+
+function wrap(comp: React.ReactElement) {
+  return mount(<ThemeProvider theme={Theme}>{comp}</ThemeProvider>);
+}
 
 describe("Project", () => {
   describe("Completer", () => {
     it("render correctly", () => {
       const root = document.createElement("div");
-      const tree = mount(
+      const tree = wrap(
         <Modal.Component
           dialogRoot={root}
           opened={true}
@@ -26,7 +32,7 @@ describe("Project", () => {
 
     it("render with a candidate", () => {
       const root = document.createElement("div");
-      const tree = mount(
+      const tree = wrap(
         <Modal.Component
           dialogRoot={root}
           opened={true}
@@ -44,7 +50,7 @@ describe("Project", () => {
 
     it("render with candidates", () => {
       const root = document.createElement("div");
-      const tree = mount(
+      const tree = wrap(
         <Modal.Component
           dialogRoot={root}
           opened={true}
@@ -66,7 +72,7 @@ describe("Project", () => {
     it("call callback when change input", () => {
       const root = document.createElement("div");
       const promise = new Promise(resolve => {
-        const tree = mount(
+        const tree = wrap(
           <Modal.Component
             dialogRoot={root}
             opened={true}

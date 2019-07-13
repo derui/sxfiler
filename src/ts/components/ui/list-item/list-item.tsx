@@ -27,7 +27,7 @@ export function createComponent<T extends Element.Props<H> = Element.Props, H ex
 
   return applyDisplayName("ListItem", ({ selected = false, ...rest }: Props<T, H>) => {
     // TODO: need cast?
-    return <Container role="listitem" aria-selected={selected} {...rest as T} />;
+    return <Container role="listitem" aria-selected={selected} {...(rest as T)} />;
   });
 }
 

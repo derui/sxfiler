@@ -1,5 +1,6 @@
 import * as React from "react";
 import renderer from "react-test-renderer";
+import { wrap } from "@/components/theme/test-util";
 
 import * as N from "@/domains/progress-notification";
 import { Component as T } from "./progress-notification-list";
@@ -14,13 +15,13 @@ describe("Project", () => {
           target: 100,
         }),
       ];
-      const tree = renderer.create(<T notifications={notifications} />).toJSON();
+      const tree = renderer.create(wrap(<T notifications={notifications} />)).toJSON();
 
       expect(tree).toMatchSnapshot();
     });
 
     it("can render with empty list of notification", () => {
-      const tree = renderer.create(<T notifications={[]} />).toJSON();
+      const tree = renderer.create(wrap(<T notifications={[]} />)).toJSON();
 
       expect(tree).toMatchSnapshot();
     });
@@ -38,7 +39,7 @@ describe("Project", () => {
           target: 11,
         }),
       ];
-      const tree = renderer.create(<T notifications={notifications} />).toJSON();
+      const tree = renderer.create(wrap(<T notifications={notifications} />)).toJSON();
 
       expect(tree).toMatchSnapshot();
     });

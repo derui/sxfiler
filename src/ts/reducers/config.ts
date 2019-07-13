@@ -7,5 +7,3 @@ export function reducer(state: State = empty(), action: Actions): State {
   }
   return state;
 }
-
-export default reducer;

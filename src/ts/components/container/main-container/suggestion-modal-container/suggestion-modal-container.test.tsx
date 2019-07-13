@@ -1,5 +1,6 @@
 import { mount } from "enzyme";
 import * as React from "react";
+import { wrap } from "@/components/theme/test-util";
 
 import * as State from "@/states/task-interaction";
 import { Component } from "./suggestion-modal-container";
@@ -34,9 +35,11 @@ describe("Container", () => {
 
     it("do not render when element is not provided", () => {
       const wrapper = mount(
-        <LocatorContext.Provider value={makeMockedLocator()}>
-          <Component state={state} />
-        </LocatorContext.Provider>
+        wrap(
+          <LocatorContext.Provider value={makeMockedLocator()}>
+            <Component state={state} />
+          </LocatorContext.Provider>
+        )
       );
 
       expect(wrapper.isEmptyRender()).toBeTruthy();
@@ -45,11 +48,13 @@ describe("Container", () => {
     it("render when element is provided", () => {
       const element = document.createElement("div");
       const wrapper = mount(
-        <LocatorContext.Provider value={makeMockedLocator()}>
-          <ModalRootContext.Provider value={{ element }}>
-            <Component state={state} />
-          </ModalRootContext.Provider>
-        </LocatorContext.Provider>
+        wrap(
+          <LocatorContext.Provider value={makeMockedLocator()}>
+            <ModalRootContext.Provider value={{ element }}>
+              <Component state={state} />
+            </ModalRootContext.Provider>
+          </LocatorContext.Provider>
+        )
       );
 
       expect(wrapper.find(SuggestionModal.Component)).toHaveLength(1);
@@ -58,11 +63,13 @@ describe("Container", () => {
     it("open the modal when operating some suggestion", () => {
       const element = document.createElement("div");
       const wrapper = mount(
-        <LocatorContext.Provider value={makeMockedLocator()}>
-          <ModalRootContext.Provider value={{ element }}>
-            <Component state={state} />
-          </ModalRootContext.Provider>
-        </LocatorContext.Provider>
+        wrap(
+          <LocatorContext.Provider value={makeMockedLocator()}>
+            <ModalRootContext.Provider value={{ element }}>
+              <Component state={state} />
+            </ModalRootContext.Provider>
+          </LocatorContext.Provider>
+        )
       );
 
       expect(wrapper.find(SuggestionModal.Component).prop("opened")).toBeTruthy();
@@ -72,11 +79,13 @@ describe("Container", () => {
       const element = document.createElement("div");
       const locator = makeMockedLocator();
       const wrapper = mount(
-        <LocatorContext.Provider value={locator}>
-          <ModalRootContext.Provider value={{ element }}>
-            <Component state={state} />
-          </ModalRootContext.Provider>
-        </LocatorContext.Provider>
+        wrap(
+          <LocatorContext.Provider value={locator}>
+            <ModalRootContext.Provider value={{ element }}>
+              <Component state={state} />
+            </ModalRootContext.Provider>
+          </LocatorContext.Provider>
+        )
       );
       const payload = createOverwritePayload();
 

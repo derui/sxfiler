@@ -3,7 +3,7 @@
 exports[`Project Log Viewer should render empty 1`] = `
 <div
   aria-hidden={false}
-  className="root"
+  className="sc-bdVaJa kMdzPL"
   role="list"
 />
 `;
@@ -11,7 +11,7 @@ exports[`Project Log Viewer should render empty 1`] = `
 exports[`Project Log Viewer should render empty when hidden it 1`] = `
 <div
   aria-hidden={true}
-  className="root"
+  className="sc-bdVaJa kMdzPL"
   role="list"
 />
 `;
@@ -19,16 +19,16 @@ exports[`Project Log Viewer should render empty when hidden it 1`] = `
 exports[`Project Log Viewer should render items each level 1`] = `
 <div
   aria-hidden={false}
-  className="root"
+  className="sc-bdVaJa kMdzPL"
   role="list"
 >
   <div
     aria-selected={false}
-    className="item"
+    className="sc-bwzfXH daSFCf"
     role="listitem"
   >
     <span
-      className="itemLevel"
+      className="sc-htpNat kQdIEM"
       data-level="info"
     >
       [
@@ -36,18 +36,18 @@ exports[`Project Log Viewer should render items each level 1`] = `
       ]
     </span>
     <span
-      className="itemMessage"
+      className="sc-bxivhb ghzfYa"
     >
       info
     </span>
   </div>
   <div
     aria-selected={false}
-    className="item"
+    className="sc-bwzfXH daSFCf"
     role="listitem"
   >
     <span
-      className="itemLevel"
+      className="sc-htpNat kQdIEM"
       data-level="error"
     >
       [
@@ -55,18 +55,18 @@ exports[`Project Log Viewer should render items each level 1`] = `
       ]
     </span>
     <span
-      className="itemMessage"
+      className="sc-bxivhb ghzfYa"
     >
       error
     </span>
   </div>
   <div
     aria-selected={false}
-    className="item"
+    className="sc-bwzfXH daSFCf"
     role="listitem"
   >
     <span
-      className="itemLevel"
+      className="sc-htpNat kQdIEM"
       data-level="warning"
     >
       [
@@ -74,7 +74,7 @@ exports[`Project Log Viewer should render items each level 1`] = `
       ]
     </span>
     <span
-      className="itemMessage"
+      className="sc-bxivhb ghzfYa"
     >
       warning
     </span>

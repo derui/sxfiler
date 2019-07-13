@@ -2,6 +2,7 @@ import * as React from "react";
 import renderer from "react-test-renderer";
 
 import { createFileItem } from "@/domains/file-item";
+import { Theme, ThemeProvider } from "@/components/theme";
 
 import { Component as T } from "./file-item";
 import { createMode } from "@/domains/mode";
@@ -35,32 +36,36 @@ function makeNode(marked: boolean, isDirectory = false, isSymlink = false) {
   });
 }
 
+function wrap(comp: React.ReactElement) {
+  return <ThemeProvider theme={Theme}>{comp}</ThemeProvider>;
+}
+
 describe("Project", () => {
   describe("Node Item", () => {
     it("should print correctly", () => {
       const node = makeNode(false);
-      const tree = renderer.create(<T item={node} selected={false} />).toJSON();
+      const tree = renderer.create(wrap(<T item={node} selected={false} />)).toJSON();
 
       expect(tree).toMatchSnapshot();
     });
 
     it("should add class correctly when marked", () => {
       const node = makeNode(true);
-      const tree = renderer.create(<T item={node} selected={false} />).toJSON();
+      const tree = renderer.create(wrap(<T item={node} selected={false} />)).toJSON();
 
       expect(tree).toMatchSnapshot();
     });
 
     it("should add class correctly when selected", () => {
       const node = makeNode(false);
-      const tree = renderer.create(<T item={node} selected={true} />).toJSON();
+      const tree = renderer.create(wrap(<T item={node} selected={true} />)).toJSON();
 
       expect(tree).toMatchSnapshot();
     });
 
     it("should add class correctly when selected and marked", () => {
       const node = makeNode(true);
-      const tree = renderer.create(<T item={node} selected={true} />).toJSON();
+      const tree = renderer.create(wrap(<T item={node} selected={true} />)).toJSON();
 
       expect(tree).toMatchSnapshot();
     });

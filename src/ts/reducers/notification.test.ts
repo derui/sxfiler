@@ -1,7 +1,7 @@
 // reducers for notification
 import { actions } from "@/actions/notification";
 import { empty, State } from "@/states/notification";
-import reducer from "./notification";
+import { reducer } from "./notification";
 import { createProgress } from "@/domains/progress-notification";
 import { createNotifications } from "@/domains/progress-notifications";
 

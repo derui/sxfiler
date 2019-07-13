@@ -2,20 +2,20 @@
 
 exports[`Container Log Viewer Container should render correctly 1`] = `
 <div
-  className="root"
+  className="sc-ifAKCX fskjUa"
 >
   <div
     aria-hidden={false}
-    className="root"
+    className="sc-bdVaJa kMdzPL"
     role="list"
   >
     <div
       aria-selected={false}
-      className="item"
+      className="sc-bwzfXH daSFCf"
       role="listitem"
     >
       <span
-        className="itemLevel"
+        className="sc-htpNat kQdIEM"
         data-level="info"
       >
         [
@@ -23,7 +23,7 @@ exports[`Container Log Viewer Container should render correctly 1`] = `
         ]
       </span>
       <span
-        className="itemMessage"
+        className="sc-bxivhb ghzfYa"
       >
         message
       </span>

@@ -1,5 +1,6 @@
 import * as React from "react";
 import renderer from "react-test-renderer";
+import { wrap } from "@/components/theme/test-util";
 
 import { Actions } from "@/actions/notification";
 import { createNotifications } from "@/domains/progress-notifications";
@@ -36,9 +37,11 @@ describe("Container", () => {
       };
       const tree = renderer
         .create(
-          <LocatorContext.Provider value={locator}>
-            <Component state={state} />
-          </LocatorContext.Provider>
+          wrap(
+            <LocatorContext.Provider value={locator}>
+              <Component state={state} />
+            </LocatorContext.Provider>
+          )
         )
         .toJSON();
 
@@ -59,9 +62,11 @@ describe("Container", () => {
       };
       const tree = renderer
         .create(
-          <LocatorContext.Provider value={locator}>
-            <Component state={state} />
-          </LocatorContext.Provider>
+          wrap(
+            <LocatorContext.Provider value={locator}>
+              <Component state={state} />
+            </LocatorContext.Provider>
+          )
         )
         .toJSON();
 

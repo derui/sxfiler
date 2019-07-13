@@ -2,7 +2,7 @@ import * as React from "react";
 import { mount } from "enzyme";
 import renderer from "react-test-renderer";
 
-import AutoSizer from "./index";
+import { AutoSizer } from "./index";
 
 describe("Auto Sizer", () => {
   it("do not render children when first mounted", () => {

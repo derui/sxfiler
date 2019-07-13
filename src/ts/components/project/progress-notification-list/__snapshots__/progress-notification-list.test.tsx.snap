@@ -2,29 +2,24 @@
 
 exports[`Project Progress Notification List can render correctly 1`] = `
 <div
-  className="root"
+  className="sc-ifAKCX ipbtqc"
   role="list"
 >
   <div
     aria-selected={false}
-    className="root"
+    className="sc-bdVaJa gneklD"
     role="listitem"
   >
     <span
-      className="processLabel"
+      className="sc-bwzfXH fCwXYg"
     >
       process
     </span>
     <div
-      className="progressBar"
+      className="sc-htpNat hkuyqD"
     >
       <div
-        className="progressIndicator"
-        style={
-          Object {
-            "width": "10%",
-          }
-        }
+        className="sc-bxivhb MqTMw"
       />
     </div>
   </div>
@@ -33,59 +28,49 @@ exports[`Project Progress Notification List can render correctly 1`] = `
 
 exports[`Project Progress Notification List can render with empty list of notification 1`] = `
 <div
-  className="root"
+  className="sc-ifAKCX ipbtqc"
   role="list"
 />
 `;
 
 exports[`Project Progress Notification List should render progresses 1`] = `
 <div
-  className="root"
+  className="sc-ifAKCX ipbtqc"
   role="list"
 >
   <div
     aria-selected={false}
-    className="root"
+    className="sc-bdVaJa gneklD"
     role="listitem"
   >
     <span
-      className="processLabel"
+      className="sc-bwzfXH fCwXYg"
     >
       foo
     </span>
     <div
-      className="progressBar"
+      className="sc-htpNat hkuyqD"
     >
       <div
-        className="progressIndicator"
-        style={
-          Object {
-            "width": "90%",
-          }
-        }
+        className="sc-bxivhb jQexdE"
       />
     </div>
   </div>
   <div
     aria-selected={false}
-    className="root"
+    className="sc-bdVaJa gneklD"
     role="listitem"
   >
     <span
-      className="processLabel"
+      className="sc-bwzfXH fCwXYg"
     >
       bar
     </span>
     <div
-      className="progressBar"
+      className="sc-htpNat hkuyqD"
     >
       <div
-        className="progressIndicator"
-        style={
-          Object {
-            "width": "90.9090909090909%",
-          }
-        }
+        className="sc-bxivhb iKWdPW"
       />
     </div>
   </div>

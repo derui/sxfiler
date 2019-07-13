@@ -2,16 +2,16 @@
 
 exports[`Container Main Container render correctly when context not initialized and empty state 1`] = `
 <div
-  className="root"
+  className="sc-jWBwVP icamBV"
   onKeyDown={[Function]}
   tabIndex={0}
 >
   <div
-    className="root"
+    className="sc-kpOJdX bBCFNP"
   >
     <div
       aria-hidden={false}
-      className="root"
+      className="sc-kAzzGY jCYnVZ"
       role="list"
     />
   </div>

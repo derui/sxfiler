@@ -1,5 +1,6 @@
 import * as React from "react";
 import renderer from "react-test-renderer";
+import { wrap } from "@/components/theme/test-util";
 
 import { Component } from "./log-viewer-container";
 import { empty, pushEntry } from "@/states/log-entry";
@@ -9,7 +10,7 @@ describe("Container", () => {
   describe("Log Viewer Container", () => {
     it("should render correctly", () => {
       const state = pushEntry(empty(), createMessage({ id: "id", level: Level.Info, message: "message" }));
-      const tree = renderer.create(<Component state={state} />).toJSON();
+      const tree = renderer.create(wrap(<Component state={state} />)).toJSON();
 
       expect(tree).toMatchSnapshot();
     });

@@ -4,7 +4,7 @@ import { Apis } from "@/apis";
 import { actions } from "@/actions/key-map";
 import { createKeymap } from "@/domains/keymap";
 
-const keyMap = createKeymap([{ key: "k", action: "action" }]);
+const keyMap = createKeymap([{ when: { contexts: [] }, key: "k", action: "action" }]);
 
 describe("Commands", () => {
   describe("Key map", () => {
