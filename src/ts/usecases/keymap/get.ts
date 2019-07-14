@@ -4,8 +4,7 @@ import { actions } from "@/actions/key-map";
 import { Dispatcher } from "@/types";
 import { UseCaseLike } from "@/usecases/type";
 import { Client } from "@/libs/json-rpc/client";
-import { ApiMethod } from "@/apis";
-import { Apis } from "@/apis";
+import { ApiMethod, Apis } from "@/apis";
 
 export type UseCase = UseCaseLike<Actions>;
 

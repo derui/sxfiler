@@ -4,9 +4,8 @@ import { actions } from "@/actions/filer";
 import { Dispatcher } from "@/types";
 import { UseCaseLike } from "@/usecases/type";
 import { Client } from "@/libs/json-rpc/client";
-import { ApiMethod } from "@/apis";
+import { ApiMethod, Apis } from "@/apis";
 import { Side } from "@/states/file-list";
-import { Apis } from "@/apis";
 
 export type UseCase = UseCaseLike<Actions, { location: string }>;
 
