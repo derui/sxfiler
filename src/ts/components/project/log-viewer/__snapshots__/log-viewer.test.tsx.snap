@@ -3,7 +3,7 @@
 exports[`Project Log Viewer should render empty 1`] = `
 <div
   aria-hidden={false}
-  className="sc-bdVaJa kMdzPL"
+  className="sc-bdVaJa htgHiE"
   role="list"
 />
 `;
@@ -11,7 +11,7 @@ exports[`Project Log Viewer should render empty 1`] = `
 exports[`Project Log Viewer should render empty when hidden it 1`] = `
 <div
   aria-hidden={true}
-  className="sc-bdVaJa kMdzPL"
+  className="sc-bdVaJa htgHiE"
   role="list"
 />
 `;
@@ -19,7 +19,7 @@ exports[`Project Log Viewer should render empty when hidden it 1`] = `
 exports[`Project Log Viewer should render items each level 1`] = `
 <div
   aria-hidden={false}
-  className="sc-bdVaJa kMdzPL"
+  className="sc-bdVaJa htgHiE"
   role="list"
 >
   <div

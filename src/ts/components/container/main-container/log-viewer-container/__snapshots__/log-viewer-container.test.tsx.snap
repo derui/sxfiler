@@ -6,7 +6,7 @@ exports[`Container Log Viewer Container should render correctly 1`] = `
 >
   <div
     aria-hidden={false}
-    className="sc-bdVaJa kMdzPL"
+    className="sc-bdVaJa htgHiE"
     role="list"
   >
     <div

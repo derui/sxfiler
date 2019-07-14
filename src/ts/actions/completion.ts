@@ -1,41 +1,25 @@
 import { AppAction, ActionTypes } from "./type";
-
-type Item = {
-  id: string;
-  value: string;
-};
+import { Candidate } from "@/domains/candidate";
 
 type CursorUpAction = AppAction<ActionTypes.COMPLETION_CURSOR_UP>;
 type CursorDownAction = AppAction<ActionTypes.COMPLETION_CURSOR_DOWN>;
-type InitializeCandidateAction = AppAction<
-  ActionTypes.COMPLETION_INITIALIZE,
+type ReplaceCandidateAction = AppAction<
+  ActionTypes.COMPLETION_REPLACE_CANDIDATES,
   {
-    initialCandidates: Item[];
-  }
->;
-type ReadCandidatesAction = AppAction<
-  ActionTypes.COMPLETION_READ,
-  {
-    input: string;
+    candidates: Candidate[];
   }
 >;
 
-const cursorUp = (): CursorUpAction => {
+export const cursorUp = (): CursorUpAction => {
   return { type: ActionTypes.COMPLETION_CURSOR_UP };
 };
 
-const cursorDown = (): CursorDownAction => {
+export const cursorDown = (): CursorDownAction => {
   return { type: ActionTypes.COMPLETION_CURSOR_DOWN };
 };
 
-const initializeCandidate = (initialCandidates: Item[]): InitializeCandidateAction => {
-  return { type: ActionTypes.COMPLETION_INITIALIZE, initialCandidates };
+export const replaceCandidates = (candidates: Candidate[]): ReplaceCandidateAction => {
+  return { type: ActionTypes.COMPLETION_REPLACE_CANDIDATES, candidates };
 };
 
-const readCandidates = (input: string): ReadCandidatesAction => {
-  return { type: ActionTypes.COMPLETION_READ, input };
-};
-
-export const actions = { cursorUp, cursorDown, initializeCandidate, readCandidates };
-
-export type Actions = CursorUpAction | CursorDownAction | InitializeCandidateAction | ReadCandidatesAction;
+export type Actions = CursorUpAction | CursorDownAction | ReplaceCandidateAction;

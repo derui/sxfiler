@@ -2,7 +2,7 @@
 
 exports[`Project Node Item Size slot should print GiB size when size between 1GiB and 1023GiB 1`] = `
 <pre
-  className="sc-bdVaJa gsquFR"
+  className="sc-bdVaJa eztgmS"
 >
     5.0G
 </pre>
@@ -10,7 +10,7 @@ exports[`Project Node Item Size slot should print GiB size when size between 1Gi
 
 exports[`Project Node Item Size slot should print MiB size when size between 1MiB and 1023MiB 1`] = `
 <pre
-  className="sc-bdVaJa gsquFR"
+  className="sc-bdVaJa eztgmS"
 >
     3.0M
 </pre>
@@ -18,7 +18,7 @@ exports[`Project Node Item Size slot should print MiB size when size between 1Mi
 
 exports[`Project Node Item Size slot should print TiB size when size between 1TiB and 1023TiB 1`] = `
 <pre
-  className="sc-bdVaJa gsquFR"
+  className="sc-bdVaJa eztgmS"
 >
     5.0T
 </pre>
@@ -26,7 +26,7 @@ exports[`Project Node Item Size slot should print TiB size when size between 1Ti
 
 exports[`Project Node Item Size slot should print byte size when size less than 1024 1`] = `
 <pre
-  className="sc-bdVaJa gsquFR"
+  className="sc-bdVaJa eztgmS"
 >
   1023.0B
 </pre>
@@ -34,7 +34,7 @@ exports[`Project Node Item Size slot should print byte size when size less than 
 
 exports[`Project Node Item Size slot should print hyphen only when unit can not calculate 1`] = `
 <pre
-  className="sc-bdVaJa gsquFR"
+  className="sc-bdVaJa eztgmS"
 >
     1.0-
 </pre>
@@ -42,7 +42,7 @@ exports[`Project Node Item Size slot should print hyphen only when unit can not 
 
 exports[`Project Node Item Size slot should print kibibyte size when size between 1KiB and 1023KiB 1`] = `
 <pre
-  className="sc-bdVaJa gsquFR"
+  className="sc-bdVaJa eztgmS"
 >
     2.0K
 </pre>
@@ -50,7 +50,7 @@ exports[`Project Node Item Size slot should print kibibyte size when size betwee
 
 exports[`Project Node Item Size slot should print zero size 1`] = `
 <pre
-  className="sc-bdVaJa gsquFR"
+  className="sc-bdVaJa eztgmS"
 >
     0.0B
 </pre>

@@ -11,7 +11,7 @@ exports[`Container Main Container render correctly when context not initialized 
   >
     <div
       aria-hidden={false}
-      className="sc-kAzzGY jCYnVZ"
+      className="sc-kAzzGY dlQRqb"
       role="list"
     />
   </div>

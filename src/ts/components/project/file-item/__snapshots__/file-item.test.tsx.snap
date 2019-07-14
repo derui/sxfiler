@@ -4,7 +4,7 @@ exports[`Project Node Item should add class correctly when marked 1`] = `
 <div
   aria-hidden={false}
   aria-selected={false}
-  className="sc-ifAKCX jkIeLh"
+  className="sc-ifAKCX kmfGrQ"
   data-marked={true}
   role="listitem"
 >
@@ -19,7 +19,7 @@ exports[`Project Node Item should add class correctly when marked 1`] = `
     1970/01/01
   </span>
   <pre
-    className="sc-htpNat hxcXAK"
+    className="sc-htpNat fVieJu"
   >
      10.0B
   </pre>
@@ -37,7 +37,7 @@ exports[`Project Node Item should add class correctly when selected 1`] = `
 <div
   aria-hidden={false}
   aria-selected={true}
-  className="sc-ifAKCX jkIeLh"
+  className="sc-ifAKCX kmfGrQ"
   data-marked={false}
   role="listitem"
 >
@@ -52,7 +52,7 @@ exports[`Project Node Item should add class correctly when selected 1`] = `
     1970/01/01
   </span>
   <pre
-    className="sc-htpNat hxcXAK"
+    className="sc-htpNat fVieJu"
   >
      10.0B
   </pre>
@@ -70,7 +70,7 @@ exports[`Project Node Item should add class correctly when selected and marked 1
 <div
   aria-hidden={false}
   aria-selected={true}
-  className="sc-ifAKCX jkIeLh"
+  className="sc-ifAKCX kmfGrQ"
   data-marked={true}
   role="listitem"
 >
@@ -85,7 +85,7 @@ exports[`Project Node Item should add class correctly when selected and marked 1
     1970/01/01
   </span>
   <pre
-    className="sc-htpNat hxcXAK"
+    className="sc-htpNat fVieJu"
   >
      10.0B
   </pre>
@@ -103,7 +103,7 @@ exports[`Project Node Item should print correctly 1`] = `
 <div
   aria-hidden={false}
   aria-selected={false}
-  className="sc-ifAKCX jkIeLh"
+  className="sc-ifAKCX kmfGrQ"
   data-marked={false}
   role="listitem"
 >
@@ -118,7 +118,7 @@ exports[`Project Node Item should print correctly 1`] = `
     1970/01/01
   </span>
   <pre
-    className="sc-htpNat hxcXAK"
+    className="sc-htpNat fVieJu"
   >
      10.0B
   </pre>

@@ -33,5 +33,5 @@ export const updateCandidates = (state: State, candidates: Candidate[]): State =
  * move cursor with amount
  */
 export const moveCursor = (state: State, amount: number): State => {
-  return { ...state, cursor: state.cursor + amount };
+  return { ...state, cursor: Math.max(0, Math.min(state.candidates.length - 1, state.cursor + amount)) };
 };
