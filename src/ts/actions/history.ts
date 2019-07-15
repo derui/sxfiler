@@ -1,10 +1,11 @@
 import { AppAction, ActionTypes } from "./type";
 import { Candidate } from "@/domains/candidate";
+import { Side } from "@/states/file-list";
 
-type OpenAction = AppAction<ActionTypes.HISTORY_OPEN>;
 type CloseAction = AppAction<ActionTypes.HISTORY_CLOSE>;
 type CursorUpAction = AppAction<ActionTypes.HISTORY_CURSOR_UP>;
 type CursorDownAction = AppAction<ActionTypes.HISTORY_CURSOR_DOWN>;
+type OpenAction = AppAction<ActionTypes.HISTORY_OPEN, { side: Side }>;
 type ReplaceCandidateAction = AppAction<
   ActionTypes.HISTORY_REPLACE_CANDIDATES,
   {
@@ -24,8 +25,8 @@ export const replaceCandidates = (candidates: Candidate[]): ReplaceCandidateActi
   return { type: ActionTypes.HISTORY_REPLACE_CANDIDATES, candidates };
 };
 
-export const open = (): OpenAction => {
-  return { type: ActionTypes.HISTORY_OPEN };
+export const open = (side: Side): OpenAction => {
+  return { type: ActionTypes.HISTORY_OPEN, side };
 };
 
 export const close = (): CloseAction => {

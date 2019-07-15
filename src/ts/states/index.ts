@@ -4,6 +4,7 @@ import * as Keymap from "./keymap";
 import * as Notification from "./notification";
 import * as TaskInteraction from "./task-interaction";
 import * as LogEntry from "./log-entry";
+import * as H from "./history";
 import { UIContext } from "@/types/ui-context";
 
 export type AppState = {
@@ -14,6 +15,7 @@ export type AppState = {
   notification: Notification.State;
   taskInteraction: TaskInteraction.State;
   logEntry: LogEntry.State;
+  history: H.State;
 };
 
 // get empty state
@@ -26,5 +28,6 @@ export const empty = (): AppState => {
     notification: Notification.empty(),
     taskInteraction: TaskInteraction.empty(),
     logEntry: LogEntry.empty(),
+    history: H.empty(),
   };
 };

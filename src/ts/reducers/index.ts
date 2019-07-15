@@ -11,6 +11,7 @@ import { reducer as notificationReducer } from "./notification";
 import { reducer as uiContextReducer } from "./ui-context";
 import { reducer as taskInteractionReducer } from "./task-interaction";
 import { reducer as logEntryReducer } from "./log-entry";
+import { reducer as historyReducer } from "./history";
 
 const reducerMap: ReducersMapObject<AppState, actions.Actions> = {
   context: uiContextReducer,
@@ -20,6 +21,7 @@ const reducerMap: ReducersMapObject<AppState, actions.Actions> = {
   notification: notificationReducer,
   taskInteraction: taskInteractionReducer,
   logEntry: logEntryReducer,
+  history: historyReducer,
 };
 const reducer: Reducer<AppState, actions.Actions> = combineReducers(reducerMap);
 
