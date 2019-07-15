@@ -1,5 +1,6 @@
 import { Filer, createFiler } from "@/domains/filer";
 import { FileItemOnRPC, encode as encodeFileItem } from "./file-item";
+import { LocationHistoryOnRPC, encode as encodeLocationHistory } from "./location-history";
 
 // define codec that is between filer domain and RPC
 
@@ -12,6 +13,7 @@ export type FilerOnRPC = {
   };
   markedItems: string[];
   sortOrder: string;
+  history: LocationHistoryOnRPC;
 };
 
 /**
@@ -26,6 +28,7 @@ export const encode = (obj: FilerOnRPC): Filer => {
     name,
     fileList: { location, items },
     markedItems,
+    history,
   } = obj;
 
   return createFiler({
@@ -39,5 +42,6 @@ export const encode = (obj: FilerOnRPC): Filer => {
       }))
       .map(encodeFileItem),
     currentCursorIndex: 0,
+    history: encodeLocationHistory(history),
   });
 };

@@ -2,6 +2,7 @@ import { Direction, createFiler } from "./filer";
 import { createFileItem } from "./file-item";
 import { emptyMode } from "./mode";
 import { createFileStat } from "./file-stat";
+import { createLocationHistory } from "./location-history";
 
 const stat = createFileStat({
   mode: emptyMode(),
@@ -17,6 +18,8 @@ const stat = createFileStat({
 });
 
 describe("Filer domain", () => {
+  const history = createLocationHistory({ records: [], maxRecordNumber: 100 });
+
   describe("factory", () => {
     it("avoid to overlap current cursor index", () => {
       const node1 = createFileItem({
@@ -40,6 +43,7 @@ describe("Filer domain", () => {
         location: "/loc",
         items: [node1, node2],
         currentCursorIndex: 1,
+        history,
       });
       const filer2 = createFiler({ ...filer, items: [node1], currentCursorIndex: 2 });
 
@@ -48,8 +52,22 @@ describe("Filer domain", () => {
   });
   describe("comparable", () => {
     it("compare with filers that has same content", () => {
-      const filer = createFiler({ id: "id", name: "name", location: "/loc", items: [], currentCursorIndex: 0 });
-      const filer2 = createFiler({ id: "id", name: "name", location: "/loc", items: [], currentCursorIndex: 0 });
+      const filer = createFiler({
+        id: "id",
+        name: "name",
+        location: "/loc",
+        items: [],
+        currentCursorIndex: 0,
+        history,
+      });
+      const filer2 = createFiler({
+        id: "id",
+        name: "name",
+        location: "/loc",
+        items: [],
+        currentCursorIndex: 0,
+        history,
+      });
 
       expect(filer).toEqual(filer2);
     });
@@ -57,7 +75,14 @@ describe("Filer domain", () => {
 
   describe("getting current node", () => {
     it("should return if do not have any nodes", () => {
-      const filer = createFiler({ id: "id", name: "name", location: "/loc", items: [], currentCursorIndex: 0 });
+      const filer = createFiler({
+        id: "id",
+        name: "name",
+        location: "/loc",
+        items: [],
+        currentCursorIndex: 0,
+        history,
+      });
 
       expect(filer.currentFileItem).toBeUndefined();
     });
@@ -70,7 +95,14 @@ describe("Filer domain", () => {
         parentDirectory: "/",
         marked: false,
       });
-      const filer = createFiler({ id: "id", name: "name", location: "/loc", items: [node], currentCursorIndex: 0 });
+      const filer = createFiler({
+        id: "id",
+        name: "name",
+        location: "/loc",
+        items: [node],
+        currentCursorIndex: 0,
+        history,
+      });
 
       expect(filer.currentFileItem).toEqual(node);
     });
@@ -86,6 +118,7 @@ describe("Filer domain", () => {
         location: "/loc",
         items: [node1, node2],
         currentCursorIndex: 0,
+        history,
       });
 
       const nextFiler = filer.moveIndex(Direction.Down);
@@ -101,6 +134,7 @@ describe("Filer domain", () => {
         location: "/loc",
         items: [node1, node2],
         currentCursorIndex: 0,
+        history,
       });
 
       const nextFiler = filer.moveIndex(Direction.Down);
@@ -116,6 +150,7 @@ describe("Filer domain", () => {
         location: "/loc",
         items: [node1, node2],
         currentCursorIndex: 0,
+        history,
       });
 
       const nextFiler = filer.moveIndex(Direction.Up);
@@ -131,6 +166,7 @@ describe("Filer domain", () => {
         location: "/loc",
         items: [node1, node2],
         currentCursorIndex: 0,
+        history,
       });
 
       const nextFiler = filer.moveIndex(Direction.Down).moveIndex(Direction.Down);
@@ -148,6 +184,7 @@ describe("Filer domain", () => {
         location: "/loc",
         items: [node1, node2],
         currentCursorIndex: 0,
+        history,
       });
 
       expect(filer.markedItems).toEqual([node1]);
@@ -162,6 +199,7 @@ describe("Filer domain", () => {
         location: "/loc",
         items: [node1, node2],
         currentCursorIndex: 1,
+        history,
       });
 
       expect(filer.markedItems).toEqual([node2]);

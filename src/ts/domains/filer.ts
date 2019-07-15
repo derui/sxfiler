@@ -1,5 +1,6 @@
 // define filer state type and operations.
 import { FileItem } from "./file-item";
+import { LocationHistory } from "./location-history";
 
 export enum Direction {
   Up = "up",
@@ -12,6 +13,7 @@ export type FactoryArg = {
   location: string;
   items: FileItem[];
   currentCursorIndex: number;
+  history: LocationHistory;
 };
 
 export type FilerObject = Readonly<FactoryArg>;
@@ -49,13 +51,14 @@ function moveIndex(this: FilerObject, direction: Direction): Filer {
   return createFiler({ ...this, currentCursorIndex: index });
 }
 
-export const createFiler = ({ id, name, items, location, currentCursorIndex }: FactoryArg): Filer => {
+export const createFiler = ({ id, name, items, location, currentCursorIndex, history }: FactoryArg): Filer => {
   return {
     id,
     name,
     items,
     location,
     currentCursorIndex: Math.min(items.length - 1, Math.max(0, currentCursorIndex)),
+    history,
     get currentFileItem(): FileItem | undefined {
       if (this.items.length === 0) {
         return undefined;
