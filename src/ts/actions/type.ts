@@ -3,10 +3,11 @@ import { Action } from "redux";
 export type AppAction<T extends string, Extra extends {} = {}> = Action<T> & { [K in keyof Extra]: Extra[K] };
 
 export enum ActionTypes {
+  HISTORY_OPEN = "HISTORY_OPEN",
   HISTORY_CURSOR_UP = "HISTORY_CURSOR_UP",
   HISTORY_CURSOR_DOWN = "HISTORY_CURSOR_DOWN",
   HISTORY_REPLACE_CANDIDATES = "HISTORY_REPLACE_CANDIDATES",
-  HISTORY_SELECT = "HISTORY_SELECT",
+  HISTORY_CLOSE = "HISTORY_CLOSE",
   FILER_UPDATE = "FILER_UPDATE_FILER",
   FILER_LOAD = "FILER_LOAD_FILER",
   FILER_RELOAD = "FILER_RELOAD",

@@ -1,7 +1,8 @@
 import { AppAction, ActionTypes } from "./type";
 import { Candidate } from "@/domains/candidate";
 
-type SelectAction = AppAction<ActionTypes.HISTORY_SELECT>;
+type OpenAction = AppAction<ActionTypes.HISTORY_OPEN>;
+type CloseAction = AppAction<ActionTypes.HISTORY_CLOSE>;
 type CursorUpAction = AppAction<ActionTypes.HISTORY_CURSOR_UP>;
 type CursorDownAction = AppAction<ActionTypes.HISTORY_CURSOR_DOWN>;
 type ReplaceCandidateAction = AppAction<
@@ -23,4 +24,12 @@ export const replaceCandidates = (candidates: Candidate[]): ReplaceCandidateActi
   return { type: ActionTypes.HISTORY_REPLACE_CANDIDATES, candidates };
 };
 
-export type Actions = CursorUpAction | CursorDownAction | ReplaceCandidateAction;
+export const open = (): OpenAction => {
+  return { type: ActionTypes.HISTORY_OPEN };
+};
+
+export const close = (): CloseAction => {
+  return { type: ActionTypes.HISTORY_CLOSE };
+};
+
+export type Actions = CursorUpAction | CursorDownAction | ReplaceCandidateAction | OpenAction | CloseAction;
