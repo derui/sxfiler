@@ -18,10 +18,12 @@ export type Candidate = CandidateObject & {
   plain(): CandidateObject;
 };
 
+type FactoryArg = Pick<CandidateObject, "id" | "value"> & Partial<Pick<CandidateObject, "start" | "length">>;
+
 /**
  * Create candidate from candidate object.
  */
-export const createCandidate = ({ id, value, start, length }: CandidateObject): Candidate => {
+export const createCandidate = ({ id, value, start = 0, length = 0 }: FactoryArg): Candidate => {
   return {
     id,
     value,
