@@ -15,3 +15,8 @@ export function* range(start: number, end: number) {
     yield i;
   }
 }
+
+// get integer between minvalue and maxvalue. The default value of minvalue is 0.
+export function between(value: number, max: number, min = 0): number {
+  return Math.max(min, Math.min(value, max));
+}
