@@ -1,25 +1,26 @@
 import { AppAction, ActionTypes } from "./type";
 import { Candidate } from "@/domains/candidate";
 
-type CursorUpAction = AppAction<ActionTypes.COMPLETION_CURSOR_UP>;
-type CursorDownAction = AppAction<ActionTypes.COMPLETION_CURSOR_DOWN>;
+type SelectAction = AppAction<ActionTypes.HISTORY_SELECT>;
+type CursorUpAction = AppAction<ActionTypes.HISTORY_CURSOR_UP>;
+type CursorDownAction = AppAction<ActionTypes.HISTORY_CURSOR_DOWN>;
 type ReplaceCandidateAction = AppAction<
-  ActionTypes.COMPLETION_REPLACE_CANDIDATES,
+  ActionTypes.HISTORY_REPLACE_CANDIDATES,
   {
     candidates: Candidate[];
   }
 >;
 
 export const cursorUp = (): CursorUpAction => {
-  return { type: ActionTypes.COMPLETION_CURSOR_UP };
+  return { type: ActionTypes.HISTORY_CURSOR_UP };
 };
 
 export const cursorDown = (): CursorDownAction => {
-  return { type: ActionTypes.COMPLETION_CURSOR_DOWN };
+  return { type: ActionTypes.HISTORY_CURSOR_DOWN };
 };
 
 export const replaceCandidates = (candidates: Candidate[]): ReplaceCandidateAction => {
-  return { type: ActionTypes.COMPLETION_REPLACE_CANDIDATES, candidates };
+  return { type: ActionTypes.HISTORY_REPLACE_CANDIDATES, candidates };
 };
 
 export type Actions = CursorUpAction | CursorDownAction | ReplaceCandidateAction;
