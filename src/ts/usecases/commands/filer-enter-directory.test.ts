@@ -7,6 +7,7 @@ import { actions } from "@/actions/filer";
 import { createFileItem } from "@/domains/file-item";
 import { emptyMode } from "@/domains/mode";
 import { createFileStat } from "@/domains/file-stat";
+import { createLocationHistory } from "@/domains/location-history";
 
 const stat = createFileStat({
   mode: emptyMode(),
@@ -24,6 +25,8 @@ const stat = createFileStat({
 describe("Commands", () => {
   describe("Filer", () => {
     describe("Enter into the directory", () => {
+      const history = createLocationHistory({ records: [], maxRecordNumber: 100 });
+
       it("throw error when pass undefined as argument", async () => {
         const command = C.createCommand();
         const dispatcher = jest.fn();
@@ -40,7 +43,7 @@ describe("Commands", () => {
           call: jest.fn(),
         };
         client.call.mockResolvedValue(
-          createFiler({ id: "id1", name: "name", items: [], location: "entered", currentCursorIndex: 0 })
+          createFiler({ id: "id1", name: "name", items: [], location: "entered", currentCursorIndex: 0, history })
         );
         const state = AppState.empty();
         state.fileList = initialize(state.fileList, {
@@ -58,8 +61,9 @@ describe("Commands", () => {
             ],
             location: "test",
             currentCursorIndex: 0,
+            history,
           }),
-          right: createFiler({ id: "id2", name: "name", items: [], location: "test", currentCursorIndex: 0 }),
+          right: createFiler({ id: "id2", name: "name", items: [], location: "test", currentCursorIndex: 0, history }),
         });
 
         await command.execute(dispatcher as any, { state, client: client as any });
@@ -91,11 +95,19 @@ describe("Commands", () => {
             ],
             location: "test",
             currentCursorIndex: 0,
+            history,
           }),
-          right: createFiler({ id: "id2", name: "name", items: [], location: "test", currentCursorIndex: 0 }),
+          right: createFiler({ id: "id2", name: "name", items: [], location: "test", currentCursorIndex: 0, history }),
         });
 
-        const filer = createFiler({ id: "id1", name: "name", items: [], location: "test/node", currentCursorIndex: 0 });
+        const filer = createFiler({
+          id: "id1",
+          name: "name",
+          items: [],
+          location: "test/node",
+          currentCursorIndex: 0,
+          history,
+        });
         client.call.mockResolvedValue(filer);
 
         await command.execute(dispatcher as any, { state, client: client as any });

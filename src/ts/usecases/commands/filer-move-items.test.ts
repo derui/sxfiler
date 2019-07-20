@@ -3,11 +3,11 @@ import * as AppState from "@/states";
 import { Side } from "@/states/file-list";
 import { createFiler } from "@/domains/filer";
 import { Apis } from "@/apis";
-import { actions } from "@/actions/filer";
 import { createFileItem } from "@/domains/file-item";
 import { createFileStat } from "@/domains/file-stat";
 import * as FileListState from "@/states/file-list";
 import { emptyMode } from "@/domains/mode";
+import { createLocationHistory } from "@/domains/location-history";
 
 const items = [
   createFileItem({
@@ -33,6 +33,8 @@ const items = [
 describe("Commands", () => {
   describe("Filer", () => {
     describe("Move nodes", () => {
+      const history = createLocationHistory({ records: [], maxRecordNumber: 100 });
+
       it("throw error when pass undefined as argument", async () => {
         const command = C.createCommand();
         const dispatcher = jest.fn();
@@ -48,8 +50,8 @@ describe("Commands", () => {
         const client = {
           call: jest.fn(),
         };
-        const left = createFiler({ id: "id", name: "name", items, location: "test", currentCursorIndex: 0 });
-        const right = createFiler({ id: "id", name: "name", items, location: "test", currentCursorIndex: 0 });
+        const left = createFiler({ id: "id", name: "name", items, location: "test", currentCursorIndex: 0, history });
+        const right = createFiler({ id: "id", name: "name", items, location: "test", currentCursorIndex: 0, history });
         client.call.mockImplementation((typ, arg) => {
           if (typ === Apis.Filer.Move) {
             return Promise.resolve();

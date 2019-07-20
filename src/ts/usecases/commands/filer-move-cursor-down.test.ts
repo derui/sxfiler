@@ -2,10 +2,13 @@ import * as C from "./filer-move-cursor-down";
 import * as AppState from "@/states";
 import { Side } from "@/states/file-list";
 import { createFiler, Direction } from "@/domains/filer";
+import { createLocationHistory } from "@/domains/location-history";
 
 describe("Commands", () => {
   describe("Filer", () => {
     describe("Move the cursor down of the filer", () => {
+      const history = createLocationHistory({ records: [], maxRecordNumber: 100 });
+
       it("throw error when pass undefined as argument", async () => {
         const command = C.createCommand();
         const dispatcher = jest.fn();
@@ -36,6 +39,7 @@ describe("Commands", () => {
           items: [],
           location: "test",
           currentCursorIndex: 0,
+          history,
         });
 
         await command.execute(dispatcher as any, { state: state, client: jest.fn() as any });
@@ -55,6 +59,7 @@ describe("Commands", () => {
           items: [],
           location: "test",
           currentCursorIndex: 0,
+          history,
         });
         const spy = jest.spyOn(state.fileList.left, "moveIndex");
 

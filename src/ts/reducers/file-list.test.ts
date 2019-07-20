@@ -3,13 +3,16 @@ import { actions } from "@/actions/filer";
 import { empty, State, Side, initialize } from "@/states/file-list";
 import { reducer } from "./file-list";
 import { createFiler, Direction } from "@/domains/filer";
+import { createLocationHistory } from "@/domains/location-history";
 
+const history = createLocationHistory({ records: [], maxRecordNumber: 100 });
 const leftFiler = createFiler({
   id: "left",
   name: Side.Left,
   location: "loc",
   items: [],
   currentCursorIndex: 0,
+  history,
 });
 
 const rightFiler = createFiler({
@@ -18,6 +21,7 @@ const rightFiler = createFiler({
   location: "loc",
   items: [],
   currentCursorIndex: 0,
+  history,
 });
 
 describe("reducers", () => {

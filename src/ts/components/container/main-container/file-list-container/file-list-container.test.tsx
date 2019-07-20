@@ -6,9 +6,12 @@ import { wrap } from "@/components/theme/test-util";
 import { Side, State } from "@/states/file-list";
 import { Component } from "./file-list-container";
 import { createFiler } from "@/domains/filer";
+import { createLocationHistory } from "@/domains/location-history";
 
 describe("Container", () => {
   describe("File List Container", () => {
+    const history = createLocationHistory({ records: [], maxRecordNumber: 100 });
+
     it("should render correctly", () => {
       const state: State = {
         left: createFiler({
@@ -17,6 +20,7 @@ describe("Container", () => {
           location: "/left",
           items: [],
           currentCursorIndex: 0,
+          history,
         }),
         right: createFiler({
           id: "right",
@@ -24,6 +28,7 @@ describe("Container", () => {
           location: "/right",
           items: [],
           currentCursorIndex: 0,
+          history,
         }),
         currentSide: Side.Left,
       };
@@ -40,6 +45,7 @@ describe("Container", () => {
           location: "/left",
           items: [],
           currentCursorIndex: 0,
+          history,
         }),
         right: createFiler({
           id: "right",
@@ -47,6 +53,7 @@ describe("Container", () => {
           location: "/right",
           items: [],
           currentCursorIndex: 0,
+          history,
         }),
         currentSide: Side.Right,
       };

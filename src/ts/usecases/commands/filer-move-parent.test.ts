@@ -4,10 +4,13 @@ import { Side } from "@/states/file-list";
 import { createFiler } from "@/domains/filer";
 import { Apis } from "@/apis";
 import { actions } from "@/actions/filer";
+import { createLocationHistory } from "@/domains/location-history";
 
 describe("Commands", () => {
   describe("Filer", () => {
     describe("Move to the parent of the filer", () => {
+      const history = createLocationHistory({ records: [], maxRecordNumber: 100 });
+
       it("throw error when pass undefined as argument", async () => {
         const command = C.createCommand();
         const dispatcher = jest.fn();
@@ -24,7 +27,7 @@ describe("Commands", () => {
           call: jest.fn(),
         };
         client.call.mockResolvedValue(
-          createFiler({ id: "id", name: "name", items: [], location: "test", currentCursorIndex: 0 })
+          createFiler({ id: "id", name: "name", items: [], location: "test", currentCursorIndex: 0, history })
         );
         const state = AppState.empty();
         state.fileList.currentSide = Side.Left;
@@ -41,7 +44,14 @@ describe("Commands", () => {
         const client = {
           call: jest.fn(),
         };
-        const filer = createFiler({ id: "id", name: "name", items: [], location: "test", currentCursorIndex: 0 });
+        const filer = createFiler({
+          id: "id",
+          name: "name",
+          items: [],
+          location: "test",
+          currentCursorIndex: 0,
+          history,
+        });
         const state = AppState.empty();
         state.fileList.currentSide = Side.Left;
 
