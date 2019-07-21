@@ -31,6 +31,7 @@ type OverlayContextProps = OverlayProps & {
 const Root = styled(Element.Component)`
   ${Modal.rootStyle}
   overflow: hidden;
+  top: 0;
 `;
 
 const InnerContainer = styled.div`
