@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as Modal from "@/components/ui/modal";
 import * as List from "@/components/ui/list";
+import * as Element from "@/components/ui/element";
 import * as ListItem from "@/components/ui/list-item";
 import { Transition } from "react-transition-group";
 import { Candidate } from "@/domains/candidate";
@@ -28,6 +29,11 @@ type OverlayContextProps = OverlayProps & {
   opened: boolean;
 };
 
+const root = styled(Element.Component)`
+  ${Modal.rootStyle}
+  top: 0;
+`;
+
 /// styled components.
 const InnerOverlay = styled.div`
   ${Modal.overlayStyle};
@@ -52,6 +58,7 @@ const CandidateItem = styled(ListItem.Component)`
   ${ListItem.style};
   padding: ${({ theme }) => `${theme.spaces.small} ${theme.spaces.base}`};
   color: ${({ theme }) => theme.colors.base3};
+  font-size: 0.8rem;
 
   &[aria-selected="true"] {
     background-color: ${({ theme }) => theme.colors.base2}30;
@@ -75,6 +82,8 @@ const InnerContainer = styled.div`
 
   border-radius: ${props => props.theme.spaces.small};
   background-color: ${props => props.theme.colors.base02};
+
+  box-shadow: ${props => props.theme.boxShadow};
 
   &[data-state="entering"] {
     transform: translateY(-100%);
@@ -192,6 +201,7 @@ const Container: React.FC<ContainerContextProps> = ({
 export type Props = Modal.Props<ContainerProps, OverlayProps>;
 
 export const Component = Modal.createComponent({
+  root,
   container: Container,
   overlay: Overlay,
 });

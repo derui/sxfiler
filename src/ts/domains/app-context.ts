@@ -12,6 +12,11 @@ export type AppContext = AppContextObject & {
   plain(): AppContextObject;
 
   /**
+     change current context
+   */
+  changeCurrent(context: UIContext): AppContext;
+
+  /**
      add to a context to sub contexts
    */
   addSubContext(context: UIContext): AppContext;
@@ -44,12 +49,23 @@ export const createAppContext = ({
     plain() {
       return { current: this.current, subContexts: Array.from(this._subContexts.values()) };
     },
+    changeCurrent,
     addSubContext,
     removeSubContext,
 
     _subContexts: new Set(subContexts),
   } as InnerAppContext;
 };
+
+/**
+   change context
+ */
+function changeCurrent(this: InnerAppContext, context: UIContext) {
+  return createAppContext({
+    current: context,
+    subContexts: this.subContexts,
+  });
+}
 
 /**
    Add a context to AppContext

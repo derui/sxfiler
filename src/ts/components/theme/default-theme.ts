@@ -5,6 +5,7 @@ export interface Theme {
   baseFontSize: string;
   baseBorderRadius: string;
   headerShadow: string;
+  boxShadow: string;
   colors: {
     base03: string;
     base02: string;
@@ -35,6 +36,7 @@ export const Theme = {
   baseFontSize: "13.5px",
   baseBorderRadius: "4px",
   headerShadow: "0px 7px 3px rgba(0, 0, 0, 0.2)",
+  boxShadow: "4px 4px 7px rgba(0, 0, 0, 0.2), -4px 0px 7px rgba(0, 0, 0, 0.2)",
 
   colors: {
     /* color schema of solalized-dark (from http://ethanschoonover.com/solarized) */

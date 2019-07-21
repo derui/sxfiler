@@ -1,17 +1,18 @@
 import * as React from "react";
 
 import { styled, Theme, ThemeProvider } from "@/components/theme";
-import * as Element from "@/components/ui/element/element";
-import * as FileListContainer from "./file-list-container/file-list-container";
-import * as NotificationContainer from "./notification-container/notification-container";
-import * as LogViewerContainer from "./log-viewer-container/log-viewer-container";
-import { Component as RootRef } from "@/components/ui/root-ref/root-ref";
+import * as Element from "@/components/ui/element";
+import * as FileListContainer from "./file-list-container";
+import * as NotificationContainer from "./notification-container";
+import * as LogViewerContainer from "./log-viewer-container";
+import * as HistorySelectorContainer from "./history-selector-container";
+import { Component as RootRef } from "@/components/ui/root-ref";
 
 import LocatorContext, { Locator } from "@/locator";
 import { AppState } from "@/states";
 import { findBinding } from "@/states/keymap";
 import * as kbd from "@/libs/kbd";
-import * as SuggestionModalContainer from "./suggestion-modal-container/suggestion-modal-container";
+import * as SuggestionModalContainer from "./suggestion-modal-container";
 
 export type Props = {
   state: AppState;
@@ -91,6 +92,7 @@ export class Component extends React.Component<Props> {
                 <LogViewerContainer.Component key="log" state={logEntry} />
                 <NotificationContainer.Component key="notification" state={notification} />
                 <SuggestionModalContainer.Component state={this.props.state.taskInteraction} />
+                <HistorySelectorContainer.Component state={this.props.state.history} />
               </Root>
             </RootRef>
           )}
