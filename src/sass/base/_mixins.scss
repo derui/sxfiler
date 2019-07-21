@@ -1,7 +1,0 @@
-@mixin box-shadow-medium($color: rgba(0, 0, 0, 0.2)) {
-  box-shadow: 4px 4px 7px $color, -4px -4px 7px $color;
-}
-
-@mixin base-border-radius() {
-  border-radius: $baseBorderRadius;
-}
