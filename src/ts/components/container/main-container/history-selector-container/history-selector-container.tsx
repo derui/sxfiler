@@ -30,6 +30,7 @@ export const Component: React.FC<Props> = ({ state }) => {
               selectedItemIndex: state.completion.cursor,
               onInput: handleInput,
             }}
+            overlay={{}}
           />
         );
       }}
