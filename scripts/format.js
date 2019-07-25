@@ -26,7 +26,3 @@ execFileSync('prettier', ['--single-quote', '--trailing-comma', 'es5', '--write'
 });
 
 execFileSync('prettier', ['--parser', 'typescript', '--write', 'src/ts/**/*.{ts,tsx}'], { stdio: 'inherit' });
-
-execFileSync('prettier', ['--write', 'src/sass/**/*.scss'], {
-  stdio: 'inherit',
-});
