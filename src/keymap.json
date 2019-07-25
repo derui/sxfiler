@@ -10,6 +10,7 @@
     {"action": "builtin.filer.delete", "key": "d", "when": {contexts: ["onFileTree"]}},
     {"action": "builtin.filer.copy", "key": "c", "when": {contexts: ["onFileTree"]}},
     {"action": "builtin.history.open", "key": "h", "when": {contexts: ["onFileTree"]}},
+    {"action": "builtin.history.close", "key": "Escape", "when": {contexts: ["onCompletion", "ForHistory"]}},
     {"action": "builtin.keymap.reload", "key": "R", "when": {contexts: ["onFileTree"]}},
     {"action": "builtin.task.selectNextReply", "key": "Up", "when": {contexts: ["onSuggestion"]}},
     {"action": "builtin.task.selectPrevReply", "key": "Down", "when": {contexts: ["onSuggestion"]}}
