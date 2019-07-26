@@ -54,5 +54,6 @@ export const createKeymap = (bindings: Binding[] = []): Keymap => {
 };
 
 export const find = (key: string) => (state: Keymap): Binding | undefined => {
+  console.log(key, state.bindings.find(v => v.key === key));
   return state.bindings.find(v => v.key === key);
 };

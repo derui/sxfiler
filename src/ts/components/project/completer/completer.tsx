@@ -48,6 +48,11 @@ const InnerOverlay = styled.div`
     opacity: 1;
     transition: opacity ease-out 200ms;
   }
+
+  &[data-state="exiting"] {
+    opacity: 0.1;
+    transition: opacity ease-out 200ms;
+  }
 `;
 
 const CandidateList = styled(List.Component)`
@@ -95,10 +100,6 @@ const InnerContainer = styled.div`
   }
 
   &[data-state="exiting"] {
-    transform: translateY(0);
-  }
-
-  &[data-state="exited"] {
     transition: transform ease-in 200ms;
     transform: translateY(-100%);
   }
@@ -162,7 +163,7 @@ const makeList = (items: Item[], index: number) => {
 
 const Overlay: React.FC<OverlayContextProps> = ({ opened }) => {
   return (
-    <Transition in={opened} timeout={100} unmountOnExit={true}>
+    <Transition in={opened} timeout={200}>
       {state => <InnerOverlay data-state={state} />}
     </Transition>
   );
@@ -182,6 +183,7 @@ const Container: React.FC<ContainerContextProps> = ({
   return (
     <Transition in={opened} timeout={200} onEnter={onOpen} onExited={onClose}>
       {transitionState => {
+        console.log(transitionState);
         return (
           <InnerContainer data-state={transitionState}>
             <Title>{title}</Title>

@@ -30,6 +30,10 @@ function transformKeymap(keymaps: {
             return UIContext.OnFileTree;
           case UIContext.OnSuggestion:
             return UIContext.OnSuggestion;
+          case UIContext.OnCompletion:
+            return UIContext.OnCompletion;
+          case UIContext.ForHistory:
+            return UIContext.ForHistory;
           default:
             throw new Error(`Unknown context: ${v}`);
         }

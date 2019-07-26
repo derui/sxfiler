@@ -60,13 +60,14 @@ describe("keymap value object", () => {
     expect(keymap.find("d")(obj)).toEqual(value[3]);
   });
 
-  it("overwrite loose context if keymap having same key in allowed by contexts", () => {
+  it("should overwrite loose context if keymap having same key in allowed by contexts", () => {
     const value = [
       { key: "a", action: "foo", when: { contexts: [] } },
       { key: "a", action: "foobar", when: { contexts: [UIContext.OnFileTree] } },
       { key: "b", action: "bar", when: { contexts: [UIContext.OnFileTree] } },
       { key: "a", action: "foobar", when: { contexts: [UIContext.OnSuggestion] } },
       { key: "d", action: "foobar", when: { contexts: [UIContext.ForHistory] } },
+      { key: "e", action: "zoo", when: { contexts: [UIContext.ForHistory, UIContext.OnFileTree] } },
     ];
     const context = createAppContext({ current: UIContext.OnFileTree, subContexts: [UIContext.ForHistory] });
     const obj = compose(
@@ -77,5 +78,6 @@ describe("keymap value object", () => {
     expect(keymap.find("a")(obj)).toEqual(value[1]);
     expect(keymap.find("b")(obj)).toEqual(value[2]);
     expect(keymap.find("d")(obj)).toEqual(value[4]);
+    expect(keymap.find("e")(obj)).toEqual(value[5]);
   });
 });
