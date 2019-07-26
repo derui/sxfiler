@@ -5,7 +5,7 @@ import { styled } from "@/components/theme";
 import * as Element from "@/components/ui/element/element";
 import { State } from "@/states/notification";
 import { Component as NotificationList } from "@/components/project/progress-notification-list";
-import LocatorContext from "@/locator";
+import { LocatorContext } from "@/locator";
 
 export type Props = {
   state: State;

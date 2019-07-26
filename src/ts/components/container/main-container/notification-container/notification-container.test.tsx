@@ -6,7 +6,7 @@ import { Actions } from "@/actions/notification";
 import { createNotifications } from "@/domains/progress-notifications";
 import { UseCaseLike } from "@/usecases/type";
 import { Component } from "./notification-container";
-import LocatorContext from "@/locator";
+import { LocatorContext } from "@/locator";
 import { createProgress } from "@/domains/progress-notification";
 
 const context = (done?: (arg: any) => void) => ({

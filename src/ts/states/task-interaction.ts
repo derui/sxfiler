@@ -71,14 +71,12 @@ export const selectReply = (state: State, index: number): State => {
 
 export const updateCurrentReply = (state: State, payload: ReplyPayload): State => {
   if (!state.replies) {
-    console.log("foo");
     return state;
   }
 
   const v = Array.from(state.replies);
 
   if (state.currentReplyIndex === undefined || v[state.currentReplyIndex].kind !== payload.kind) {
-    console.log("bar");
     return state;
   }
 

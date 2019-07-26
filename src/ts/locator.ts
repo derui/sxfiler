@@ -1,10 +1,13 @@
 import { Context as ReactContext, createContext } from "react";
 
+import { ApiMethod } from "./apis";
+import { Client } from "./libs/json-rpc/client";
 import { ContextLike } from "./context";
 import { CommandRegistrar } from "./usecases/command-registrar";
 
 export type Locator = {
   context?: ContextLike;
+  readonly client?: Client<ApiMethod>;
   commandRegistrar?: CommandRegistrar;
 };
 
@@ -18,6 +21,4 @@ export function setLocator(newLocator: Locator): void {
   Object.assign(locator, newLocator);
 }
 
-const LocatorContext: ReactContext<Locator> = createContext(locator);
-
-export default LocatorContext;
+export const LocatorContext: ReactContext<Locator> = createContext(locator);

@@ -5,7 +5,7 @@ import * as SuggestionModal from "@/components/project/suggestion-modal/suggesti
 import { ReplyPayload } from "@/domains/task-reply";
 import { ContextLike } from "@/context";
 import * as UseCase from "@/usecases/task/update-reply-payload";
-import LocatorContext from "@/locator";
+import { LocatorContext } from "@/locator";
 
 export type Props = {
   state: State;

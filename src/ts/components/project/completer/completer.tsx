@@ -183,7 +183,6 @@ const Container: React.FC<ContainerContextProps> = ({
   return (
     <Transition in={opened} timeout={200} onEnter={onOpen} onExited={onClose}>
       {transitionState => {
-        console.log(transitionState);
         return (
           <InnerContainer data-state={transitionState}>
             <Title>{title}</Title>

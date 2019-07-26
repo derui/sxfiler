@@ -11,7 +11,7 @@ import { createContext } from "./ts/context";
 import { Dispatcher } from "./ts/dispatcher";
 import * as jrpc from "./ts/libs/json-rpc";
 import { Client } from "./ts/libs/json-rpc/client";
-import LocatorContext from "./ts/locator";
+import { LocatorContext } from "./ts/locator";
 import reducer from "./ts/reducers";
 import { AppState } from "./ts/states";
 
@@ -38,6 +38,7 @@ dispatcher.subscribe(store.dispatch);
 
 const locator = {
   context: createContext({ client, dispatcher }),
+  client,
   commandRegistrar: registAllCommand(createCommandRegistrar(client)),
 };
 

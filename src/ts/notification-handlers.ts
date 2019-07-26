@@ -42,7 +42,6 @@ export const handleTaskInteraction = (context: ContextLike) => (params: {
   nodeName: string;
   suggestions: Suggestion[];
 }) => {
-  console.log(params);
   const suggestions = createSuggestions(params);
   context.use(TaskRequireInteractionUseCase.createUseCase()).execute({ suggestions });
 };

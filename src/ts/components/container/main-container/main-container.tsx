@@ -8,7 +8,7 @@ import * as LogViewerContainer from "./log-viewer-container";
 import * as HistorySelectorContainer from "./history-selector-container";
 import { Component as RootRef } from "@/components/ui/root-ref";
 
-import LocatorContext, { Locator } from "@/locator";
+import { LocatorContext, Locator } from "@/locator";
 import { AppState } from "@/states";
 import { findBinding } from "@/states/keymap";
 import * as kbd from "@/libs/kbd";
