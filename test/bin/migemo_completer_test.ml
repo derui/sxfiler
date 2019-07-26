@@ -22,6 +22,6 @@ let test_set =
       let expect =
         [ {C.Candidate.start = 0; length = 3; value = List.nth collection 0}
         ; {C.Candidate.start = 0; length = 3; value = List.nth collection 1}
-        ; {C.Candidate.start = 3; length = 6; value = List.nth collection 3} ]
+        ; {C.Candidate.start = 3; length = 3; value = List.nth collection 3} ]
       in
-      Alcotest.(check @@ list (of_pp Fmt.nop)) "completed" expect result ) ]
+      Alcotest.(check @@ list (of_pp C.Candidate.pp)) "completed" expect result ) ]

@@ -1,4 +1,14 @@
+open Sxfiler_core
 (** {!Snapshot_history} provides management records in history. *)
+
+module Location_set = Set.Make (struct
+    type t = Location_record.t
+
+    let compare v1 v2 =
+      let v1 = Path.to_string v1.Location_record.location
+      and v2 = Path.to_string v2.Location_record.location in
+      Stdlib.compare v1 v2
+  end)
 
 type t =
   { records : Location_record.t list
@@ -18,7 +28,8 @@ let sort_by_timestamp =
      add_record t ~record
    ]} makes new record and *)
 let add_record t ~record =
-  let records = sort_by_timestamp @@ (record :: t.records) in
+  let set = Location_set.of_list (record :: t.records) in
+  let records = Location_set.to_seq set |> List.of_seq |> sort_by_timestamp in
   if t.max_record_num < List.length records then
     {t with records = List.rev records |> List.tl |> List.rev}
   else {t with records}
