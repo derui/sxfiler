@@ -1,6 +1,7 @@
 import * as keymap from "./keymap";
 import { UIContext } from "@/types/ui-context";
 import { createAppContext } from "./app-context";
+import { compose } from "@/libs/fn";
 
 describe("keymap value object", () => {
   it("can create value object without reference", () => {
@@ -15,14 +16,14 @@ describe("keymap value object", () => {
     const value = [{ key: "a", action: "foo", when: { contexts: [] } }];
     const obj = keymap.createKeymap(value);
 
-    expect(obj.find("a")).toEqual({ key: "a", action: "foo", when: { contexts: [] } });
+    expect(keymap.find("a")(obj)).toEqual({ key: "a", action: "foo", when: { contexts: [] } });
   });
 
   it("shound return null when binding not found", () => {
     const value = [{ key: "a", action: "foo", when: { contexts: [] } }];
     const obj = keymap.createKeymap(value);
 
-    expect(obj.find("b")).toBeUndefined();
+    expect(keymap.find("b")(obj)).toBeUndefined();
   });
 
   it("get allowed binding in the current context", () => {
@@ -32,10 +33,13 @@ describe("keymap value object", () => {
       { key: "a", action: "foobar", when: { contexts: [UIContext.OnSuggestion] } },
     ];
     const context = createAppContext({ current: UIContext.OnFileTree });
-    const obj = keymap.createKeymap(value).allowedWhen(context);
+    const obj = compose(
+      keymap.createKeymap,
+      keymap.allowedInContext(context)
+    )(value);
 
-    expect(obj.find("a")).toEqual(value[0]);
-    expect(obj.find("b")).toEqual(value[1]);
+    expect(keymap.find("a")(obj)).toEqual(value[0]);
+    expect(keymap.find("b")(obj)).toEqual(value[1]);
   });
 
   it("get allowed binding in the current context and sub contexts", () => {
@@ -46,11 +50,14 @@ describe("keymap value object", () => {
       { key: "d", action: "foobar", when: { contexts: [UIContext.ForHistory] } },
     ];
     const context = createAppContext({ current: UIContext.OnFileTree, subContexts: [UIContext.ForHistory] });
-    const obj = keymap.createKeymap(value).allowedWhen(context);
+    const obj = compose(
+      keymap.createKeymap,
+      keymap.allowedInContext(context)
+    )(value);
 
-    expect(obj.find("a")).toEqual(value[0]);
-    expect(obj.find("b")).toEqual(value[1]);
-    expect(obj.find("d")).toEqual(value[3]);
+    expect(keymap.find("a")(obj)).toEqual(value[0]);
+    expect(keymap.find("b")(obj)).toEqual(value[1]);
+    expect(keymap.find("d")(obj)).toEqual(value[3]);
   });
 
   it("overwrite loose context if keymap having same key in allowed by contexts", () => {
@@ -62,10 +69,13 @@ describe("keymap value object", () => {
       { key: "d", action: "foobar", when: { contexts: [UIContext.ForHistory] } },
     ];
     const context = createAppContext({ current: UIContext.OnFileTree, subContexts: [UIContext.ForHistory] });
-    const obj = keymap.createKeymap(value).allowedWhen(context);
+    const obj = compose(
+      keymap.createKeymap,
+      keymap.allowedInContext(context)
+    )(value);
 
-    expect(obj.find("a")).toEqual(value[1]);
-    expect(obj.find("b")).toEqual(value[2]);
-    expect(obj.find("d")).toEqual(value[4]);
+    expect(keymap.find("a")(obj)).toEqual(value[1]);
+    expect(keymap.find("b")(obj)).toEqual(value[2]);
+    expect(keymap.find("d")(obj)).toEqual(value[4]);
   });
 });

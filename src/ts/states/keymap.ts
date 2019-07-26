@@ -1,4 +1,6 @@
-import { Keymap, createKeymap } from "@/domains/keymap";
+import { Keymap, createKeymap, allowedInContext, find } from "@/domains/keymap";
+import { AppContext } from "@/domains/app-context";
+import { compose } from "@/libs/fn";
 
 export type State = {
   // current key map
@@ -7,8 +9,11 @@ export type State = {
 };
 
 /** find key binding by key */
-export function findBinding(state: State, key: string) {
-  return state.current.find(key);
+export function findBinding(state: State, context: AppContext, key: string) {
+  return compose(
+    allowedInContext(context),
+    find(key)
+  )(state.current);
 }
 
 /** return empty state */

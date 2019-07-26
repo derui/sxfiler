@@ -3,7 +3,7 @@ import { actions as otherActions } from "@/actions/notification";
 import { actions } from "@/actions/task";
 import * as historyActions from "@/actions/history";
 import { UIContext } from "@/types/ui-context";
-import { reducer } from "./ui-context";
+import { reducer } from "./app-context";
 import { createSuggestions } from "@/domains/task-suggestion";
 import { createAppContext } from "@/domains/app-context";
 import { Side } from "@/states/file-list";
@@ -11,10 +11,10 @@ import { Side } from "@/states/file-list";
 describe("reducers", () => {
   describe("UI Context state", () => {
     it("should change state to OnFileTree", () => {
-      const state = createAppContext({ current: UIContext.OnSuggestion }).plain();
+      const state = createAppContext({ current: UIContext.OnSuggestion });
       const ret = reducer(state, actions.finished("task"));
 
-      const expected = createAppContext({ current: UIContext.OnFileTree }).plain();
+      const expected = createAppContext({ current: UIContext.OnFileTree });
       expect(ret).toEqual(expected);
     });
 
@@ -44,7 +44,7 @@ describe("reducers", () => {
       const expected = createAppContext({
         current: UIContext.OnCompletion,
         subContexts: [UIContext.ForHistory],
-      }).plain();
+      });
 
       expect(ret).toEqual(expected);
     });
@@ -53,7 +53,7 @@ describe("reducers", () => {
       const ret = reducer(reducer(undefined, historyActions.open(Side.Left)), historyActions.close());
       const expected = createAppContext({
         current: UIContext.OnFileTree,
-      }).plain();
+      });
 
       expect(ret).toEqual(expected);
     });

@@ -38,7 +38,7 @@ const root = styled(Element.Component)`
 const InnerOverlay = styled.div`
   ${Modal.overlayStyle};
 
-  background-color: rgba(black, 0.2);
+  background-color: rgba(0, 0, 0, 0.2);
 
   &[data-state="entering"] {
     opacity: 0.1;

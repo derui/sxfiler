@@ -8,13 +8,13 @@ import { reducer as configReducer } from "./config";
 import { reducer as fileListReducer } from "./file-list";
 import { reducer as keymapReducer } from "./keymap";
 import { reducer as notificationReducer } from "./notification";
-import { reducer as uiContextReducer } from "./ui-context";
+import { reducer as appContextReducer } from "./app-context";
 import { reducer as taskInteractionReducer } from "./task-interaction";
 import { reducer as logEntryReducer } from "./log-entry";
 import { reducer as historyReducer } from "./history";
 
 const reducerMap: ReducersMapObject<AppState, actions.Actions> = {
-  context: uiContextReducer,
+  context: appContextReducer,
   config: configReducer,
   fileList: fileListReducer,
   keymap: keymapReducer,

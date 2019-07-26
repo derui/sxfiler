@@ -5,10 +5,11 @@ import * as Notification from "./notification";
 import * as TaskInteraction from "./task-interaction";
 import * as LogEntry from "./log-entry";
 import * as H from "./history";
+import { AppContext, createAppContext } from "@/domains/app-context";
 import { UIContext } from "@/types/ui-context";
 
 export type AppState = {
-  context: UIContext;
+  context: AppContext;
   config: Config.State;
   fileList: FileList.State;
   keymap: Keymap.State;
@@ -21,7 +22,7 @@ export type AppState = {
 // get empty state
 export const empty = (): AppState => {
   return {
-    context: UIContext.OnFileTree,
+    context: createAppContext({ current: UIContext.OnFileTree }),
     config: Config.empty(),
     fileList: FileList.empty(),
     keymap: Keymap.empty(),

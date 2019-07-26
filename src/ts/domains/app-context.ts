@@ -1,34 +1,8 @@
 import { UIContext } from "@/types/ui-context";
 
-export type AppContextObject = {
+export type AppContext = {
   readonly current: UIContext;
   readonly subContexts: UIContext[];
-};
-
-export type AppContext = AppContextObject & {
-  /**
-     get the plain object
-   */
-  plain(): AppContextObject;
-
-  /**
-     change current context
-   */
-  changeCurrent(context: UIContext): AppContext;
-
-  /**
-     add to a context to sub contexts
-   */
-  addSubContext(context: UIContext): AppContext;
-
-  /**
-     remove from the context to sub contexts
-   */
-  removeSubContext(context: UIContext): AppContext;
-};
-
-type InnerAppContext = AppContext & {
-  _subContexts: Set<UIContext>;
 };
 
 /**
@@ -43,52 +17,42 @@ export const createAppContext = ({
 }): AppContext => {
   return {
     current,
-    get subContexts() {
-      return Array.from(subContexts || []);
-    },
-    plain() {
-      return { current: this.current, subContexts: Array.from(this._subContexts.values()) };
-    },
-    changeCurrent,
-    addSubContext,
-    removeSubContext,
-
-    _subContexts: new Set(subContexts),
-  } as InnerAppContext;
+    subContexts: Array.from(subContexts || []),
+  };
 };
 
 /**
    change context
  */
-function changeCurrent(this: InnerAppContext, context: UIContext) {
+export const changeCurrent = (context: UIContext) => (state: AppContext) => {
   return createAppContext({
     current: context,
-    subContexts: this.subContexts,
+    subContexts: state.subContexts,
   });
-}
+};
 
 /**
    Add a context to AppContext
  */
-function addSubContext(this: InnerAppContext, context: UIContext) {
-  const tmpSet = new Set(this.subContexts);
+export const addSubContext = (context: UIContext) => (state: AppContext) => {
+  const tmpSet = new Set(state.subContexts);
   tmpSet.add(context);
 
   return createAppContext({
-    current: this.current,
+    current: state.current,
     subContexts: Array.from(tmpSet.values()),
   });
-}
+};
 
 /**
    remove the context from AppContext
  */
-function removeSubContext(this: InnerAppContext, context: UIContext) {
-  const tmpSet = new Set(this._subContexts);
+export const removeSubContext = (context: UIContext) => (state: AppContext) => {
+  const tmpSet = new Set(state.subContexts);
   tmpSet.delete(context);
 
   return createAppContext({
-    current: this.current,
+    current: state.current,
     subContexts: Array.from(tmpSet.values()),
   });
-}
+};

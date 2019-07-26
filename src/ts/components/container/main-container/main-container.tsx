@@ -44,7 +44,7 @@ function handleKeyDown(locator: Locator, state: AppState): (ev: React.KeyboardEv
     switch (ev.type) {
       case "keydown": {
         const key = kbd.make(ev.key, { meta: ev.metaKey, ctrl: ev.ctrlKey });
-        const binding = findBinding(state.keymap, kbd.toKeySeq(key));
+        const binding = findBinding(state.keymap, state.context, kbd.toKeySeq(key));
 
         if (!binding) {
           break;
