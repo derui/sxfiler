@@ -1,29 +1,11 @@
-// Capability with method
-export type Capability = CapabilityObject & {
-  /** Return new capability that allows to write */
-  allowToWrite(): Capability;
-
-  /** Return new capability that allows to read */
-  allowToRead(): Capability;
-
-  /** Return new capability that allows to execute */
-  allowToExecute(): Capability;
-
-  /** Return new capability that disallows to write */
-  disallowToWrite(): Capability;
-
-  /** Return new capability that disallows to read */
-  disallowToRead(): Capability;
-
-  /** Return new capability that disallows to execute */
-  disallowToExecute(): Capability;
-
-  /** Return plain CapabilityObject */
-  plain(): CapabilityObject;
-};
+enum CapabilityType {
+  WRITE = "write",
+  READ = "read",
+  EXECUTE = "execute",
+}
 
 // Capability of a target
-export type CapabilityObject = {
+export type Capability = {
   readonly writable: boolean;
   readonly readable: boolean;
   readonly executable: boolean;
@@ -35,10 +17,6 @@ type CreateCapabilityArg = {
   executable: boolean;
 };
 
-function plain(this: Capability): CapabilityObject {
-  return { writable: this.writable, readable: this.readable, executable: this.executable };
-}
-
 /**
    Create capability from argument
  */
@@ -47,38 +25,6 @@ export const createCapability = ({ writable, readable, executable }: CreateCapab
     writable,
     readable,
     executable,
-
-    plain,
-
-    /** Return new capability that allows to write */
-    allowToWrite() {
-      return { ...this, writable: true };
-    },
-
-    /** Return new capability that allows to read */
-    allowToRead() {
-      return { ...this, readable: true };
-    },
-
-    /** Return new capability that allows to execute */
-    allowToExecute() {
-      return { ...this, executable: true };
-    },
-
-    /** Return new capability that disallows to write */
-    disallowToWrite() {
-      return { ...this, writable: false };
-    },
-
-    /** Return new capability that disallows to read */
-    disallowToRead() {
-      return { ...this, readable: false };
-    },
-
-    /** Return new capability that disallows to execute */
-    disallowToExecute() {
-      return { ...this, executable: false };
-    },
   };
 };
 
@@ -92,3 +38,33 @@ export const emptyCapability = (): Capability =>
    Return new capability that have all capability on all roles.
  */
 export const fullCapability = (): Capability => createCapability({ writable: true, readable: true, executable: true });
+
+const allowTo = (typ: CapabilityType) => (capability: Capability) => {
+  switch (typ) {
+    case CapabilityType.WRITE:
+      return createCapability({ ...capability, writable: true });
+    case CapabilityType.READ:
+      return createCapability({ ...capability, readable: true });
+    case CapabilityType.EXECUTE:
+      return createCapability({ ...capability, executable: true });
+  }
+};
+
+const disallowTo = (typ: CapabilityType) => (capability: Capability) => {
+  switch (typ) {
+    case CapabilityType.WRITE:
+      return createCapability({ ...capability, writable: false });
+    case CapabilityType.READ:
+      return createCapability({ ...capability, readable: false });
+    case CapabilityType.EXECUTE:
+      return createCapability({ ...capability, executable: false });
+  }
+};
+
+export const allowToWrite = allowTo(CapabilityType.WRITE);
+export const allowToRead = allowTo(CapabilityType.READ);
+export const allowToExecute = allowTo(CapabilityType.EXECUTE);
+
+export const disallowToWrite = disallowTo(CapabilityType.WRITE);
+export const disallowToRead = disallowTo(CapabilityType.READ);
+export const disallowToExecute = disallowTo(CapabilityType.EXECUTE);

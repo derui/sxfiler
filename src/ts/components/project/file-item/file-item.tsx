@@ -8,6 +8,7 @@ import { Component as Name } from "./name-slot";
 import { Component as Size } from "./size-slot";
 import { Component as Timestamp } from "./timestamp-slot";
 import { ForwardedRef } from "@/components/ui/util";
+import { sizeAsBigInt } from "@/domains/file-stat";
 
 export type Props = ForwardedRef & {
   item: Domain.FileItem;
@@ -47,7 +48,7 @@ export const Component: React.FC<Props> = ({ item, selected, hidden = false, ...
     <Element aria-selected={selected} data-marked={item.marked} aria-hidden={hidden} {...rest}>
       <Mode key="mode" mode={item.stat.mode} isDirectory={item.stat.isDirectory} isSymlink={item.stat.isSymlink} />
       <Timestamp key="timestamp" timestamp={item.stat.mtime} />
-      <Size key="size" size={item.stat.sizeAsBigInt()} />
+      <Size key="size" size={sizeAsBigInt(item.stat)} />
       <Name key="name" name={item.name} isDirectory={item.stat.isDirectory} isSymlink={item.stat.isSymlink} />
     </Element>
   );

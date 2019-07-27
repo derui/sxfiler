@@ -1,4 +1,4 @@
-import { createCandidate } from "./candidate";
+import { createCandidate, splitByMatching } from "./candidate";
 
 describe("Domain", () => {
   describe("Completion Candidate", () => {
@@ -11,7 +11,7 @@ describe("Domain", () => {
       };
       const data = createCandidate(obj);
 
-      expect(data.plain()).toEqual(obj);
+      expect(data).toEqual(obj);
     });
 
     it("fix start position when was greater than length of the value", () => {
@@ -45,7 +45,7 @@ describe("Domain", () => {
           length: 0,
         });
 
-        expect(obj.splitByInput()).toEqual(["", "", "v"]);
+        expect(splitByMatching(obj)).toEqual(["", "", "v"]);
       });
 
       it("return value when has matched", () => {
@@ -56,7 +56,7 @@ describe("Domain", () => {
           length: 2,
         });
 
-        expect(obj.splitByInput()).toEqual(["ab", "cd", "e"]);
+        expect(splitByMatching(obj)).toEqual(["ab", "cd", "e"]);
       });
 
       it("return value when exactly matched", () => {
@@ -67,7 +67,7 @@ describe("Domain", () => {
           length: 5,
         });
 
-        expect(obj.splitByInput()).toEqual(["", "abcde", ""]);
+        expect(splitByMatching(obj)).toEqual(["", "abcde", ""]);
       });
 
       it("return value matched to last of it", () => {
@@ -78,7 +78,7 @@ describe("Domain", () => {
           length: 2,
         });
 
-        expect(obj.splitByInput()).toEqual(["abc", "de", ""]);
+        expect(splitByMatching(obj)).toEqual(["abc", "de", ""]);
       });
     });
   });

@@ -5,25 +5,15 @@ export type LocationRecord = {
   readonly timestamp: Date;
 };
 
-export type LocationHistoryObject = {
+export type LocationHistory = {
   readonly records: LocationRecord[];
   readonly maxRecordNumber: number;
 };
 
-export type LocationHistory = LocationHistoryObject & {
-  plain(): LocationHistoryObject;
-};
-
-// return plain object
-function plain(this: LocationHistory) {
-  return { records: this.records, maxRecordNumber: this.maxRecordNumber };
-}
-
 // creare new LocationHistory
-export const createLocationHistory = ({ records, maxRecordNumber }: LocationHistoryObject): LocationHistory => {
+export const createLocationHistory = ({ records, maxRecordNumber }: LocationHistory): LocationHistory => {
   return {
     records,
     maxRecordNumber,
-    plain,
   };
 };

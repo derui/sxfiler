@@ -6,8 +6,9 @@ import { Theme, ThemeProvider } from "@/components/theme";
 
 import { Component as T } from "./file-item";
 import { createMode } from "@/domains/mode";
-import { emptyCapability } from "@/domains/capability";
+import { emptyCapability, allowToRead, allowToWrite } from "@/domains/capability";
 import { createFileStat } from "@/domains/file-stat";
+import { pipe } from "@/libs/fn";
 
 function makeNode(marked: boolean, isDirectory = false, isSymlink = false) {
   return createFileItem({
@@ -16,11 +17,12 @@ function makeNode(marked: boolean, isDirectory = false, isSymlink = false) {
     marked,
     stat: createFileStat({
       mode: createMode({
-        owner: emptyCapability()
-          .allowToRead()
-          .allowToWrite(),
-        group: emptyCapability().allowToRead(),
-        others: emptyCapability().allowToRead(),
+        owner: pipe(
+          allowToRead,
+          allowToWrite
+        )(emptyCapability()),
+        group: allowToRead(emptyCapability()),
+        others: allowToRead(emptyCapability()),
       }),
       uid: 1000,
       gid: 1000,

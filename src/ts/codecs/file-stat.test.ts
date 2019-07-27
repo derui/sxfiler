@@ -23,7 +23,7 @@ describe("Object Codecs", () => {
         isSymlink: false,
       });
 
-      expect(obj.plain()).toEqual(
+      expect(obj).toEqual(
         createFileStat({
           mode: createMode({
             owner: createCapability({ readable: true, executable: true, writable: true }),
@@ -39,7 +39,7 @@ describe("Object Codecs", () => {
           isDirectory: false,
           isFile: true,
           isSymlink: false,
-        }).plain()
+        })
       );
     });
   });

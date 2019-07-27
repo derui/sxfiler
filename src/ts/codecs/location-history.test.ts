@@ -5,7 +5,7 @@ describe("Encode", () => {
     it("should encode RPC to frontend", () => {
       const obj = E.encode({ records: [], maxRecordNumber: 100 });
 
-      expect(obj.plain()).toEqual({ records: [], maxRecordNumber: 100 });
+      expect(obj).toEqual({ records: [], maxRecordNumber: 100 });
     });
 
     it("should encode record object to frontend", () => {
@@ -19,7 +19,7 @@ describe("Encode", () => {
         maxRecordNumber: 100,
       });
 
-      expect(obj.plain()).toEqual({
+      expect(obj).toEqual({
         records: [
           {
             location: "foo",

@@ -1,9 +1,9 @@
 import * as React from "react";
 import { styled } from "@/components/theme";
-import { CapabilityObject } from "@/domains/capability";
-import { ModeObject } from "@/domains/mode";
+import { Capability } from "@/domains/capability";
+import { Mode } from "@/domains/mode";
 
-function capabilityToString(cap: CapabilityObject) {
+function capabilityToString(cap: Capability) {
   const readable = cap.readable ? "r" : "-";
   const writable = cap.writable ? "w" : "-";
   const executable = cap.executable ? "x" : "-";
@@ -14,7 +14,7 @@ function capabilityToString(cap: CapabilityObject) {
 /**
  * convert mode to string
  */
-function modeToString(mode: ModeObject, isDirectory: boolean, isSymlink: boolean): string {
+function modeToString(mode: Mode, isDirectory: boolean, isSymlink: boolean): string {
   let state = "-";
 
   if (isDirectory && !isSymlink) {
@@ -31,7 +31,7 @@ function modeToString(mode: ModeObject, isDirectory: boolean, isSymlink: boolean
 }
 
 interface Prop {
-  mode: ModeObject;
+  mode: Mode;
   isDirectory: boolean;
   isSymlink: boolean;
 }

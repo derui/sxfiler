@@ -6,6 +6,7 @@ import * as Element from "@/components/ui/element/element";
 import { State } from "@/states/notification";
 import { Component as NotificationList } from "@/components/project/progress-notification-list";
 import { LocatorContext } from "@/locator";
+import { asArray } from "@/domains/progress-notifications";
 
 export type Props = {
   state: State;
@@ -31,7 +32,7 @@ export const Component: React.FC<Props> = ({ state }) => {
 
         return (
           <Root>
-            <NotificationList notifications={state.progresses.notifications} />
+            <NotificationList notifications={asArray(state.progresses)} />
           </Root>
         );
       }}

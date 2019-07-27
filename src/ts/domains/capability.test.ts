@@ -1,4 +1,14 @@
-import { createCapability, emptyCapability, fullCapability } from "./capability";
+import {
+  createCapability,
+  emptyCapability,
+  fullCapability,
+  allowToWrite,
+  allowToRead,
+  allowToExecute,
+  disallowToWrite,
+  disallowToRead,
+  disallowToExecute,
+} from "./capability";
 
 describe("Capability", () => {
   describe("createCapability", () => {
@@ -12,6 +22,35 @@ describe("Capability", () => {
       expect(v.executable).toBeFalsy();
       expect(v.readable).toBeTruthy();
       expect(v.writable).toBeFalsy();
+    });
+  });
+
+  describe("change capability", () => {
+    const empty = emptyCapability();
+    const full = fullCapability();
+
+    it("should be able to allow to write", () => {
+      expect(allowToWrite(empty).writable).toBeTruthy();
+    });
+
+    it("should be able to allow to read", () => {
+      expect(allowToRead(empty).readable).toBeTruthy();
+    });
+
+    it("should be able to allow to execute", () => {
+      expect(allowToExecute(empty).executable).toBeTruthy();
+    });
+
+    it("should be able to disallow to write", () => {
+      expect(disallowToWrite(full).writable).toBeFalsy();
+    });
+
+    it("should be able to change readable", () => {
+      expect(disallowToRead(full).readable).toBeFalsy();
+    });
+
+    it("should be able to change executable", () => {
+      expect(disallowToExecute(full).executable).toBeFalsy();
     });
   });
 

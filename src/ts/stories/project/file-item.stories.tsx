@@ -9,7 +9,7 @@ import { createFileItem } from "@/domains/file-item";
 import { Component as FileItemComponent } from "@/components/project/file-item/file-item";
 import { createFileStat } from "@/domains/file-stat";
 import { emptyMode, createMode } from "@/domains/mode";
-import { fullCapability } from "@/domains/capability";
+import { fullCapability, disallowToWrite } from "@/domains/capability";
 
 storiesOf("Project/File Item Item", module)
   .addParameters({ info: { inline: true } })
@@ -53,7 +53,7 @@ storiesOf("Project/File Item Item", module)
           mode: createMode({
             owner: fullCapability(),
             group: fullCapability(),
-            others: fullCapability().disallowToWrite(),
+            others: disallowToWrite(fullCapability()),
           }),
           uid: 1000,
           gid: 1000,
@@ -86,7 +86,7 @@ storiesOf("Project/File Item Item", module)
           mode: createMode({
             owner: fullCapability(),
             group: fullCapability(),
-            others: fullCapability().disallowToWrite(),
+            others: disallowToWrite(fullCapability()),
           }),
           uid: 1000,
           gid: 1000,
@@ -119,7 +119,7 @@ storiesOf("Project/File Item Item", module)
           mode: createMode({
             owner: fullCapability(),
             group: fullCapability(),
-            others: fullCapability().disallowToWrite(),
+            others: disallowToWrite(fullCapability()),
           }),
           uid: 1000,
           gid: 1000,

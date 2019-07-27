@@ -12,7 +12,7 @@ describe("Object Codecs", () => {
         },
       });
 
-      expect(obj.plain()).toEqual({
+      expect(obj).toEqual({
         id: "id",
         value: "foobar",
         start: 1,

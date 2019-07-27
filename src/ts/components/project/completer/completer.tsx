@@ -4,7 +4,7 @@ import * as List from "@/components/ui/list";
 import * as Element from "@/components/ui/element";
 import * as ListItem from "@/components/ui/list-item";
 import { Transition } from "react-transition-group";
-import { Candidate } from "@/domains/candidate";
+import { Candidate, splitByMatching } from "@/domains/candidate";
 import { styled } from "@/components/theme";
 
 type Item = Candidate;
@@ -149,7 +149,7 @@ const handleChange = (cb: (input: string) => void, cb2: (input: string) => void)
  */
 const makeList = (items: Item[], index: number) => {
   const listItems = items.map((v, i) => {
-    const [before, matched, after] = v.splitByInput();
+    const [before, matched, after] = splitByMatching(v);
     return (
       <CandidateItem selected={i === index} key={v.id}>
         {before}

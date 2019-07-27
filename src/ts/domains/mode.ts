@@ -1,38 +1,10 @@
-import { Capability, emptyCapability, CapabilityObject } from "./capability";
+import { Capability, emptyCapability } from "./capability";
 
 // A plain mode object
-export type ModeObject = {
-  readonly owner: CapabilityObject;
-  readonly group: CapabilityObject;
-  readonly others: CapabilityObject;
-};
-
-// Mode of a FileStat
 export type Mode = {
   readonly owner: Capability;
   readonly group: Capability;
   readonly others: Capability;
-
-  /**
-     Get a new Mode that is changed owner's capability.
-   */
-  changeOwner(cap: Capability): Mode;
-
-  /**
-     Get a new Mode that is changed group's capability.
-   */
-  changeGroup(cap: Capability): Mode;
-
-  /**
-     Get a new Mode that is changed other's capability.
-   */
-  changeOthers(cap: Capability): Mode;
-
-  /**
-     Plain version mode
-   */
-
-  plain(): ModeObject;
 };
 
 type CreateModeArg = {
@@ -49,26 +21,6 @@ export const createMode = ({ owner, group, others }: CreateModeArg): Mode => {
     owner,
     group,
     others,
-
-    plain() {
-      return {
-        owner: this.owner.plain(),
-        group: this.group.plain(),
-        others: this.others.plain(),
-      };
-    },
-
-    changeOwner(cap: Capability): Mode {
-      return { ...this, owner: cap };
-    },
-
-    changeGroup(cap: Capability): Mode {
-      return { ...this, group: cap };
-    },
-
-    changeOthers(cap: Capability): Mode {
-      return { ...this, others: cap };
-    },
   };
 };
 
@@ -77,3 +29,18 @@ export const createMode = ({ owner, group, others }: CreateModeArg): Mode => {
  */
 export const emptyMode = (): Mode =>
   createMode({ owner: emptyCapability(), group: emptyCapability(), others: emptyCapability() });
+
+/**
+   change capability of owner
+ */
+export const changeOwner = (cap: Capability) => (mode: Mode): Mode => createMode({ ...mode, owner: cap });
+
+/**
+   change capability of group
+ */
+export const changeGroup = (cap: Capability) => (mode: Mode): Mode => createMode({ ...mode, group: cap });
+
+/**
+   change capability of others
+ */
+export const changeOthers = (cap: Capability) => (mode: Mode): Mode => createMode({ ...mode, others: cap });

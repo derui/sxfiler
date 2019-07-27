@@ -1,8 +1,8 @@
 import bigInt from "big-integer";
 
-import { createFileStat } from "./file-stat";
+import { createFileStat, sizeAsBigInt } from "./file-stat";
 import { createMode, emptyMode } from "./mode";
-import { createCapability, fullCapability, emptyCapability } from "./capability";
+import { fullCapability, emptyCapability, disallowToExecute, allowToRead } from "./capability";
 
 describe("File Stat", () => {
   it("can get size as bigInt", () => {
@@ -19,7 +19,7 @@ describe("File Stat", () => {
       isSymlink: false,
     });
 
-    expect(stat.sizeAsBigInt()).toEqual(bigInt(1000));
+    expect(sizeAsBigInt(stat)).toEqual(bigInt(1000));
   });
 
   describe("createFileStat", () => {
@@ -27,8 +27,8 @@ describe("File Stat", () => {
       const stat = createFileStat({
         mode: createMode({
           owner: fullCapability(),
-          group: fullCapability().disallowToExecute(),
-          others: emptyCapability().allowToRead(),
+          group: disallowToExecute(fullCapability()),
+          others: allowToRead(emptyCapability()),
         }),
         uid: 1000,
         gid: 1000,
@@ -50,8 +50,8 @@ describe("File Stat", () => {
       const stat = createFileStat({
         mode: createMode({
           owner: fullCapability(),
-          group: fullCapability().disallowToExecute(),
-          others: emptyCapability().allowToRead(),
+          group: disallowToExecute(fullCapability()),
+          others: allowToRead(emptyCapability()),
         }),
         uid: 1000,
         gid: 1000,
@@ -64,7 +64,7 @@ describe("File Stat", () => {
         isSymlink: false,
       });
 
-      expect(stat.sizeAsBigInt().toString()).toEqual("12345678901234567890");
+      expect(sizeAsBigInt(stat).toString()).toEqual("12345678901234567890");
     });
   });
 });

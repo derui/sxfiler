@@ -8,7 +8,7 @@ describe("Domains", () => {
         maxRecordNumber: 100,
       });
 
-      expect(obj.plain()).toEqual({
+      expect(obj).toEqual({
         records: [],
         maxRecordNumber: 100,
       });

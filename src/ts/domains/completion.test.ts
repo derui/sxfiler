@@ -11,13 +11,13 @@ describe("Domains", () => {
     it("should create new object", () => {
       const state = S.createCompletion({});
 
-      expect(state.plain()).toEqual({ cursor: 0, candidates: [] });
+      expect(state).toEqual({ cursor: 0, candidates: [] });
     });
 
     it("should reset cursor when candidates is not given", () => {
       const state = S.createCompletion({ cursor: 10 });
 
-      expect(state.plain()).toEqual({ cursor: 0, candidates: [] });
+      expect(state).toEqual({ cursor: 0, candidates: [] });
     });
 
     it("should be 0 of cursor when cursor is not given", () => {
@@ -25,7 +25,7 @@ describe("Domains", () => {
         candidates,
       });
 
-      expect(state.plain()).toEqual({ cursor: 0, candidates: candidates.map(v => v.plain()) });
+      expect(state).toEqual({ cursor: 0, candidates });
     });
 
     it("should keep cursor when cursor and candidates are given", () => {
@@ -34,7 +34,7 @@ describe("Domains", () => {
         candidates,
       });
 
-      expect(state.plain()).toEqual({ cursor: 1, candidates: candidates.map(v => v.plain()) });
+      expect(state).toEqual({ cursor: 1, candidates });
     });
 
     it("should move cursor to down", () => {
@@ -45,7 +45,7 @@ describe("Domains", () => {
         ],
       });
 
-      expect(state.moveCursor(1).cursor).toEqual(1);
+      expect(S.moveCursor(1)(state).cursor).toEqual(1);
     });
 
     it("should move cursor to up", () => {
@@ -57,14 +57,14 @@ describe("Domains", () => {
         ],
       });
 
-      expect(state.moveCursor(-1).cursor).toEqual(0);
+      expect(S.moveCursor(-1)(state).cursor).toEqual(0);
     });
 
     it("should replace candidate", () => {
       const state = S.createCompletion({});
-      const replaced = state.replaceCandidates(candidates);
+      const replaced = S.replaceCandidates(candidates)(state);
 
-      expect(replaced.plain()).toEqual({ cursor: 0, candidates: candidates.map(v => v.plain()) });
+      expect(replaced).toEqual({ cursor: 0, candidates });
     });
   });
 });

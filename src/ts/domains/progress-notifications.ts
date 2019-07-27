@@ -2,30 +2,7 @@ import { ProgressNotification } from "./progress-notification";
 
 export type ProgressNotifications = {
   // get notifications as array
-  notifications: ProgressNotification[];
-
-  /**
-   * return matched notification
-   * @param id ID of notification
-   */
-  findById(id: string): ProgressNotification | undefined;
-
-  /**
-   * Remove the notification having id
-   * @param id the id of notification to want to remove
-   */
-  remove(id: string): ProgressNotifications;
-
-  /**
-   * append a notification and return new instance.
-   * @param item
-   */
-  append(item: ProgressNotification): ProgressNotifications;
-};
-
-// Used only module internal type
-type InnerDefinition = ProgressNotifications & {
-  _items: { [id: string]: ProgressNotification };
+  readonly values: { [id: string]: ProgressNotification };
 };
 
 /**
@@ -39,37 +16,30 @@ export const createNotifications = (notifications: ProgressNotification[]): Prog
   });
 
   return {
-    _items,
+    values: _items,
+  };
+};
 
-    get notifications(): ProgressNotification[] {
-      return Object.values(this._items).map(v => v);
-    },
+/**
+   get values as array
+ */
+export const asArray = (state: ProgressNotifications): ProgressNotification[] => Object.values(state.values);
 
-    /**
-     * return matched notification
-     * @param id ID of notification
-     */
-    findById(id: string): ProgressNotification | undefined {
-      return this._items[id];
-    },
+/**
+ * Remove the notification having id
+ * @param id the id of notification to want to remove
+ */
+export const remove = (id: string) => (state: ProgressNotifications): ProgressNotifications => {
+  const data = { ...state.values };
+  delete data[id];
 
-    /**
-     * Remove the notification having id
-     * @param id the id of notification to want to remove
-     */
-    remove(id: string): ProgressNotifications {
-      const data = { ...this._items };
-      delete data[id];
+  return createNotifications(Object.values(data));
+};
 
-      return createNotifications(Object.values(data));
-    },
-
-    /**
-     * append a notification and return new instance.
-     * @param item
-     */
-    append(item: ProgressNotification): ProgressNotifications {
-      return createNotifications(Object.values({ ...this._items, [item.id]: item }));
-    },
-  } as InnerDefinition;
+/**
+ * append a notification and return new instance.
+ * @param item
+ */
+export const append = (item: ProgressNotification) => (state: ProgressNotifications): ProgressNotifications => {
+  return createNotifications(Object.values({ ...state.values, [item.id]: item }));
 };

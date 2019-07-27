@@ -3,7 +3,7 @@ import { actions } from "@/actions/notification";
 import { empty, State } from "@/states/notification";
 import { reducer } from "./notification";
 import { createProgress } from "@/domains/progress-notification";
-import { createNotifications } from "@/domains/progress-notifications";
+import { createNotifications, asArray } from "@/domains/progress-notifications";
 
 describe("reducers", () => {
   describe("Notification state", () => {
@@ -21,8 +21,8 @@ describe("reducers", () => {
 
       const ret = reducer(state, actions.timeout("id"));
 
-      expect(ret.progresses.notifications).toHaveLength(1);
-      expect(ret.timeouts.notifications).toHaveLength(1);
+      expect(asArray(ret.progresses)).toHaveLength(1);
+      expect(asArray(ret.timeouts)).toHaveLength(1);
     });
 
     it("should append a new notification when ReceiveNotification action", () => {
@@ -30,7 +30,7 @@ describe("reducers", () => {
 
       const ret = reducer(state, actions.receiveProgress(data));
 
-      expect(ret.progresses.findById("id")).toEqual(data);
+      expect(ret.progresses.values["id"]).toEqual(data);
     });
 
     it("should remove totally when called with Remove action", () => {
@@ -41,8 +41,8 @@ describe("reducers", () => {
 
       const ret = reducer(state, actions.remove(data.id));
 
-      expect(ret.progresses.notifications).toHaveLength(0);
-      expect(ret.timeouts.notifications).toHaveLength(0);
+      expect(ret.progresses.values).toEqual({});
+      expect(ret.timeouts.values).toEqual({});
     });
   });
 });

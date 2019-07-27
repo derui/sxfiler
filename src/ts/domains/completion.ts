@@ -1,47 +1,28 @@
-import { Candidate, CandidateObject, createCandidate } from "./candidate";
+import { Candidate } from "./candidate";
 import { between } from "@/utils";
-
-export type CompletionObject = {
-  // current key map
-  readonly cursor: number;
-  readonly candidates: CandidateObject[];
-};
 
 export type Completion = {
   // current key map
   readonly cursor: number;
   readonly candidates: Candidate[];
-
-  /**
-     replace candidates with new candidates
-   */
-  replaceCandidates(candidates: Candidate[]): Completion;
-
-  /**
-     move cursor to amount value
-   */
-  moveCursor(amount: number): Completion;
-
-  /**
-     return plain object
-   */
-  plain(): CompletionObject;
 };
 
-function replaceCandidates(this: Completion, candidates: CandidateObject[]): Completion {
-  return { ...this, candidates: candidates.map(createCandidate) };
-}
+/**
+   replace candidates
+ */
+export const replaceCandidates = (candidates: Candidate[]) => (state: Completion): Completion => {
+  return { ...state, candidates: Array.from(candidates) };
+};
 
-function moveCursor(this: Completion, amount: number): Completion {
-  return { ...this, cursor: between(this.cursor + amount, this.candidates.length - 1) };
-}
-
-function plain(this: Completion): CompletionObject {
-  return { cursor: this.cursor, candidates: this.candidates.map(v => v.plain()) };
-}
+/**
+   move cursor
+ */
+export const moveCursor = (amount: number) => (state: Completion): Completion => {
+  return { ...state, cursor: between(state.cursor + amount, state.candidates.length - 1) };
+};
 
 /** return empty state */
-export const createCompletion = ({ cursor, candidates }: Partial<CompletionObject>): Completion => {
+export const createCompletion = ({ cursor, candidates }: Partial<Completion>): Completion => {
   if (cursor && candidates) {
     cursor = between(cursor, candidates.length);
   } else if (candidates) {
@@ -50,5 +31,5 @@ export const createCompletion = ({ cursor, candidates }: Partial<CompletionObjec
     cursor = 0;
     candidates = [];
   }
-  return { cursor, candidates: candidates.map(createCandidate), replaceCandidates, plain, moveCursor };
+  return { cursor, candidates: Array.from(candidates) };
 };
