@@ -25,7 +25,7 @@ describe("Context", () => {
     });
     const arg = { foo: "bar" };
 
-    context.use(useCase).execute(arg);
+    context.use(useCase)(arg);
 
     expect(useCase.execute).toBeCalledWith(dispatcher, arg);
   });

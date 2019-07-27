@@ -52,8 +52,8 @@ jrpc.createNotificationServer(jsonrpc, locator.context, {
 });
 
 const initializeState = () => {
-  locator.context.use(Get.createUseCase(client)).execute({});
-  locator.context.use(createUseCase(client)).execute({ location: "." });
+  locator.context.use(Get.createUseCase(client))({});
+  locator.context.use(createUseCase(client))({ location: "." });
 };
 
 ws.onopen = () => {

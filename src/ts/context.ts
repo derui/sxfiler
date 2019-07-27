@@ -9,9 +9,7 @@ export type ContextLike = {
   use<Param>(useCase: UseCaseLike<Actions, Param>): UseCaseExecutor<Param>;
 };
 
-export type UseCaseExecutor<Param> = {
-  execute: (param: Param) => void;
-};
+export type UseCaseExecutor<Param> = (param: Param) => void;
 
 // Context for application
 class Context implements ContextLike {
@@ -34,10 +32,8 @@ class Context implements ContextLike {
    */
   public use<Param>(useCase: UseCaseLike<Actions, Param>): UseCaseExecutor<Param> {
     const dispatcter = this.dispatcher;
-    return {
-      execute(param: Param) {
-        useCase.execute(dispatcter, param);
-      },
+    return param => {
+      useCase.execute(dispatcter, param);
     };
   }
 }

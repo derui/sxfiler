@@ -16,7 +16,7 @@ const handleInput = (locator: Locator) => (input: string) => {
     return;
   }
 
-  context.use(createUseCase(client)).execute({ input });
+  context.use(createUseCase(client))({ input });
 };
 
 export const Component: React.FC<Props> = ({ state }) => {

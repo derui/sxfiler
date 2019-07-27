@@ -20,7 +20,7 @@ export const handleMessageNotification = (context: ContextLike) => (params: any)
   }
 
   const notification = createMessage({ id, level, message: body });
-  context.use(ReceiveMessageNotificationUseCase.createUseCase()).execute({ notification });
+  context.use(ReceiveMessageNotificationUseCase.createUseCase())({ notification });
 };
 
 export const handleProgressNotification = (context: ContextLike) => (params: any) => {
@@ -31,7 +31,7 @@ export const handleProgressNotification = (context: ContextLike) => (params: any
   }
 
   const notification = createProgress(id, body);
-  context.use(ReceiveProgressNotificationUseCase.createUseCase()).execute({ notification });
+  context.use(ReceiveProgressNotificationUseCase.createUseCase())({ notification });
 };
 
 /**
@@ -43,19 +43,19 @@ export const handleTaskInteraction = (context: ContextLike) => (params: {
   suggestions: Suggestion[];
 }) => {
   const suggestions = createSuggestions(params);
-  context.use(TaskRequireInteractionUseCase.createUseCase()).execute({ suggestions });
+  context.use(TaskRequireInteractionUseCase.createUseCase())({ suggestions });
 };
 
 /**
    Handle a notification that contains the task id finished
  */
 export const handleTaskFinished = (context: ContextLike) => (params: string) => {
-  context.use(TaskFinishedUseCase.createUseCase()).execute(params);
+  context.use(TaskFinishedUseCase.createUseCase())(params);
 };
 
 /**
    Handle a notification that contains the task id finished
  */
 export const handleFilerUpdated = (context: ContextLike) => (params: FilerOnRPC) => {
-  context.use(FilerUpdatedUseCase.createUseCase()).execute({ filer: encode(params) });
+  context.use(FilerUpdatedUseCase.createUseCase())({ filer: encode(params) });
 };

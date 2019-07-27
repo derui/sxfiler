@@ -15,14 +15,12 @@ describe("Use Case", () => {
         commandInstance: command,
       });
 
-      const executor = {
-        execute: jest.fn(),
-      };
+      const executor = jest.fn();
       const context = {
         use: () => executor,
       };
       registed.execute("module.command", context, { state: AppState.empty() });
-      expect(executor.execute).toBeCalled;
+      expect(executor).toBeCalled;
     });
 
     it("overwrite command when other command registerd with the same name", () => {
@@ -42,11 +40,9 @@ describe("Use Case", () => {
         commandInstance: command2,
       });
 
-      const executor = (u: CommandLike) => ({
-        execute(arg: any) {
-          u.execute(arg);
-        },
-      });
+      const executor = (u: CommandLike) => (arg: any) => {
+        u.execute(arg);
+      };
       const context = {
         use: (u: any) => executor(u),
       };

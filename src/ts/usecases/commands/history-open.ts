@@ -39,7 +39,7 @@ export const createCommand = (): CommandLike => {
       const source = focused.history.records.map(v => createCandidate({ id: v.location, value: v.location }));
       dispatch.dispatch(actions.open(side));
 
-      await client.call(Apis.Completion.Setup, { source: source.map(v => v.plain()) });
+      await client.call(Apis.Completion.Setup, { source });
       dispatch.dispatch(actions.replaceCandidates(source));
     },
   };

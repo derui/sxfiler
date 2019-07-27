@@ -55,7 +55,7 @@ export const createCommandRegistrar = (
         return;
       }
 
-      context.use(command).execute({ ...arg, client: this._client });
+      context.use(command)({ ...arg, client: this._client });
     },
   } as CommandRegistrarInner;
 };

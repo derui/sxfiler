@@ -80,6 +80,7 @@ const MatchingArea = styled.span`
 const InnerContainer = styled.div`
   ${Modal.containerStyle};
   flex: 0 1 auto;
+  overflow: hidden;
 
   margin: 0px auto auto auto;
   width: 50%;
@@ -116,6 +117,7 @@ const Title = styled.h4`
 const Section = styled.section`
   display: grid;
   grid-template-rows: auto 1fr;
+  grid-template-columns: 100%;
   margin-top: ${props => props.theme.spaces.small};
 `;
 
