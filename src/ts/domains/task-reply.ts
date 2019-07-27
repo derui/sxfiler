@@ -12,14 +12,12 @@ type RenamePayload = {
   readonly newName: string;
 };
 
-type ReplyPayloadObject = OverwritePayload | RenamePayload;
-export type ReplyPayload = ReplyPayloadObject;
+export type ReplyPayload = OverwritePayload | RenamePayload;
 
-type ReplyObject = {
+export type Reply = {
   readonly reply: ReplyPayload;
   readonly taskId: string;
 };
-export type Reply = ReplyObject;
 
 // create payload to overwrite a node
 export const createOverwritePayload = (): ReplyPayload => {

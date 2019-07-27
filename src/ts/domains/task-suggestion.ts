@@ -4,18 +4,15 @@ export enum SuggestionKind {
   Rename = "rename",
 }
 
-type SuggestionObject = {
+export type Suggestion = {
   readonly kind: SuggestionKind;
 };
-export type Suggestion = SuggestionObject;
 
-type SuggestionsObject = {
+export type Suggestions = {
   readonly taskId: string;
   readonly nodeName: string;
   readonly suggestions: Suggestion[];
 };
-
-export type Suggestions = SuggestionsObject;
 
 /**
    The factory function to create interaction from argument
