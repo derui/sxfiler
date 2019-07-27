@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { Component as Completer } from "@/components/project/completer";
 import * as H from "@/states/history";
-import ModalRootContext from "@/modal-root";
+import { ModalRootContext } from "@/modal-root";
 import { LocatorContext, Locator } from "@/locator";
 import { createUseCase } from "@/usecases/history/read";
 

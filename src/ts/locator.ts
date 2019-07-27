@@ -6,9 +6,9 @@ import { ContextLike } from "./context";
 import { CommandRegistrar } from "./usecases/command-registrar";
 
 export type Locator = {
-  context?: ContextLike;
+  readonly context?: ContextLike;
   readonly client?: Client<ApiMethod>;
-  commandRegistrar?: CommandRegistrar;
+  readonly commandRegistrar?: CommandRegistrar;
 };
 
 let locator: Locator = {};

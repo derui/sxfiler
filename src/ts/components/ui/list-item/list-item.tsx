@@ -31,5 +31,4 @@ export function createComponent<T extends Element.Props<H> = Element.Props, H ex
   });
 }
 
-// export default component
 export const Component = createComponent();

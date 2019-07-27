@@ -1,6 +1,6 @@
 import * as React from "react";
 import { State } from "@/states/task-interaction";
-import ModalRootContext from "@/modal-root";
+import { ModalRootContext } from "@/modal-root";
 import * as SuggestionModal from "@/components/project/suggestion-modal/suggestion-modal";
 import { ReplyPayload } from "@/domains/task-reply";
 import { ContextLike } from "@/context";

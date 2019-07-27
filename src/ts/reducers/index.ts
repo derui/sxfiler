@@ -23,6 +23,5 @@ const reducerMap: ReducersMapObject<AppState, actions.Actions> = {
   logEntry: logEntryReducer,
   history: historyReducer,
 };
-const reducer: Reducer<AppState, actions.Actions> = combineReducers(reducerMap);
 
-export default reducer;
+export const reducer: Reducer<AppState, actions.Actions> = combineReducers(reducerMap);

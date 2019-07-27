@@ -1,8 +1,8 @@
 import { Client, ClientImpl } from "./client";
-import NotificationServer, { NotificationMethodMap } from "./notification-server";
+import { NotificationServer, NotificationMethodMap } from "./notification-server";
 import { IDGenerator } from "./type";
 import { WebSocketHandler } from "./websocket-handler";
-import WebSocketRequester from "./websocket-requester";
+import { WebSocketRequester } from "./websocket-requester";
 import { ContextLike } from "@/context";
 
 export interface Jsonrpc {

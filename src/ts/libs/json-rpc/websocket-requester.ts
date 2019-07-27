@@ -3,7 +3,7 @@ import { Handler } from "./websocket-handler";
 
 type Responser = (response: Common.Response) => void;
 
-export default class WebSocketRequester implements Common.Requester, Handler {
+export class WebSocketRequester implements Common.Requester, Handler {
   private requestIdMap: { [key: string]: Responser } = {};
 
   /**

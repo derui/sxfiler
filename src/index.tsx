@@ -12,7 +12,7 @@ import { Dispatcher } from "./ts/dispatcher";
 import * as jrpc from "./ts/libs/json-rpc";
 import { Client } from "./ts/libs/json-rpc/client";
 import { LocatorContext } from "./ts/locator";
-import reducer from "./ts/reducers";
+import { reducer } from "./ts/reducers";
 import { AppState } from "./ts/states";
 
 import { createUseCase } from "./ts/usecases/filer/initialize";
@@ -20,7 +20,7 @@ import { createCommandRegistrar } from "./ts/usecases/command-registrar";
 import { registAllCommand } from "./ts/usecases/commands";
 import * as Get from "./ts/usecases/keymap/get";
 import * as NotificationHandlers from "./ts/notification-handlers";
-import ModalRootContext from "./ts/modal-root";
+import { ModalRootContext } from "./ts/modal-root";
 
 const url = process.env.NODE_ENV === "production" ? process.env.REACT_APP_SERVER : "ws://localhost:50879";
 

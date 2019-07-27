@@ -7,7 +7,7 @@ export type NotificationMethodMap = {
   [key: string]: NotificationMethod;
 };
 
-export default class NotificationServer implements Handler {
+export class NotificationServer implements Handler {
   /**
    * constructor
    * @param methodMap available websocket

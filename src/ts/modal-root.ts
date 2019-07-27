@@ -10,6 +10,4 @@ export type ModalRoot = {
 /**
    the context element to get root element for modal
  */
-const ModalRootContext = createContext<ModalRoot>({ element: null });
-
-export default ModalRootContext;
+export const ModalRootContext = createContext<ModalRoot>({ element: null });
