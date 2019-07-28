@@ -4,9 +4,7 @@ import { Level } from "./domains/message-notification";
 
 describe("Notification handlers", () => {
   describe("Notify handler", () => {
-    let executor = {
-      execute: jest.fn(),
-    };
+    let executor = jest.fn();
     let context: ContextLike = {
       use: useCase => {
         return executor;
@@ -30,7 +28,7 @@ describe("Notification handlers", () => {
       };
       H.handleMessageNotification(context)(obj);
 
-      expect(executor.execute).toBeCalled();
+      expect(executor).toBeCalled();
     });
 
     it("return notification domain for progress of front", () => {
@@ -40,7 +38,7 @@ describe("Notification handlers", () => {
       };
       H.handleProgressNotification(context)(obj);
 
-      expect(executor.execute).toBeCalled();
+      expect(executor).toBeCalled();
     });
   });
 });

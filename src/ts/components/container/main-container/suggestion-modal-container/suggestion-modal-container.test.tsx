@@ -6,7 +6,7 @@ import * as State from "@/states/task-interaction";
 import { Component } from "./suggestion-modal-container";
 import { createSuggestions, createSuggestion, SuggestionKind } from "@/domains/task-suggestion";
 import { LocatorContext, Locator } from "@/locator";
-import ModalRootContext from "@/modal-root";
+import { ModalRootContext } from "@/modal-root";
 import * as SuggestionModal from "@/components/project/suggestion-modal/suggestion-modal";
 import { createOverwritePayload } from "@/domains/task-reply";
 
@@ -22,7 +22,7 @@ describe("Container", () => {
       })
     );
 
-    const executor = { execute: jest.fn() };
+    const executor = jest.fn();
 
     function makeMockedLocator(): Locator {
       return {
@@ -93,7 +93,7 @@ describe("Container", () => {
         .find(SuggestionModal.Component)
         .props()
         .container!!.onReply(payload);
-      expect(executor.execute).toHaveBeenCalled();
+      expect(executor).toHaveBeenCalled();
     });
   });
 });

@@ -1,12 +1,10 @@
 import * as React from "react";
 import { css } from "@/components/theme";
 import * as Element from "@/components/ui/element/element";
-import { applyDisplayName } from "@/components/ui/util";
 
-export type Props<T extends Element.Props<H> = Element.Props, H extends HTMLElement = HTMLElement> = T &
-  React.HTMLAttributes<H> & {
-    selected?: boolean;
-  };
+export type Props<T extends Element.Props<H> = Element.Props, H extends HTMLElement = HTMLElement> = T & {
+  selected?: boolean;
+};
 
 export const style = css`
   display: flex;
@@ -20,15 +18,18 @@ export const style = css`
 
 export function createComponent<T extends Element.Props<H> = Element.Props, H extends HTMLElement = HTMLElement>(
   context: {
-    container?: React.ComponentType<T & React.HTMLAttributes<H>>;
+    container?: React.ComponentType<T & React.RefAttributes<H>>;
   } = {}
-): React.ComponentType<Props<T, H>> {
-  const Container = context.container || Element.createComponent();
+) {
+  const Container = context.container || Element.Component;
 
-  return applyDisplayName("ListItem", ({ selected = false, ...rest }: Props<T, H>) => {
+  const render = ({ selected = false, ...rest }: Props<T, H>, ref: React.Ref<H>) => {
     // TODO: need cast?
-    return <Container role="listitem" aria-selected={selected} {...(rest as T)} />;
-  });
+    return <Container role="listitem" ref={ref} aria-selected={selected} {...(rest as T)} />;
+  };
+  render.displayName = "ListItem";
+
+  return React.forwardRef(render);
 }
 
 export const Component = createComponent();

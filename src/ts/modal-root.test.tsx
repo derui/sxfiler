@@ -1,6 +1,6 @@
 import * as React from "react";
 import { mount } from "enzyme";
-import ModalRootContext from "./modal-root";
+import { ModalRootContext } from "./modal-root";
 
 describe("Contexts", () => {
   describe("ModalRoot", () => {

@@ -9,7 +9,7 @@ import { createFileItem } from "@/domains/file-item";
 import { Component as FileListComponent } from "@/components/project/file-list/file-list";
 import { createFileStat } from "@/domains/file-stat";
 import { createMode } from "@/domains/mode";
-import { fullCapability, emptyCapability } from "@/domains/capability";
+import { fullCapability, emptyCapability, disallowToExecute, allowToRead } from "@/domains/capability";
 
 function makeFileItem(name: string, marked: boolean, isDirectory = false, isSymlink = false) {
   return createFileItem({
@@ -18,9 +18,9 @@ function makeFileItem(name: string, marked: boolean, isDirectory = false, isSyml
     marked: marked,
     stat: createFileStat({
       mode: createMode({
-        owner: fullCapability().disallowToExecute(),
-        group: fullCapability().disallowToExecute(),
-        others: emptyCapability().allowToRead(),
+        owner: disallowToExecute(fullCapability()),
+        group: disallowToExecute(fullCapability()),
+        others: allowToRead(emptyCapability()),
       }),
 
       uid: 1000,

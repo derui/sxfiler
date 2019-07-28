@@ -6,7 +6,6 @@ import { FileItem } from "@/domains/file-item";
 import * as Element from "@/components/ui/element";
 import * as List from "@/components/ui/list";
 import * as ListItem from "@/components/project/file-item";
-import { Component as RootRef } from "@/components/ui/root-ref";
 import { AutoSizer } from "@/libs/auto-sizer";
 
 import { ItemMeasureCache } from "./item-measure-cache";
@@ -109,10 +108,14 @@ export class Component extends React.Component<Props> {
 
     return items.slice(layout.startIndex, layout.stopIndex).map((item, index) => {
       const selected = cursor === index + layout.startIndex && focused;
+      console.log(item);
       return (
-        <RootRef key={index + layout.startIndex} rootRef={e => this.itemMeasureCache.set(index + layout.startIndex, e)}>
-          <ListItem.Component item={item} selected={selected} />
-        </RootRef>
+        <ListItem.Component
+          key={index + layout.startIndex}
+          ref={e => this.itemMeasureCache.set(index + layout.startIndex, e)}
+          item={item}
+          selected={selected}
+        />
       );
     });
   }

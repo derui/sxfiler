@@ -2,7 +2,7 @@
 
 exports[`Container Main Container render correctly when context not initialized and empty state 1`] = `
 <div
-  className="sc-Rmtcm dTDgTB"
+  className="sc-csuQGl gyxyrC"
   onKeyDown={[Function]}
   tabIndex={0}
 >

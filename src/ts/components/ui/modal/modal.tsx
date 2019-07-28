@@ -2,7 +2,6 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { styled, css } from "@/components/theme";
 import * as Element from "@/components/ui/element/element";
-import { applyDisplayName } from "@/components/ui/util";
 
 export const rootStyle = css`
   display: flex;
@@ -71,7 +70,13 @@ export function createComponent<
   const Container = context.container || DefaultContainer;
   const Overlay = context.overlay || DefaultOverlay;
 
-  return applyDisplayName("Dialog", ({ opened, dialogRoot, overlay, container, ...props }) => {
+  const render: React.FC<Props<ContainerProps, OverlayProps, T, H>> = ({
+    opened,
+    dialogRoot,
+    overlay,
+    container,
+    ...props
+  }) => {
     const [closed, setClosed] = React.useState(true);
 
     return ReactDOM.createPortal(
@@ -83,7 +88,10 @@ export function createComponent<
       </Root>,
       dialogRoot
     );
-  });
+  };
+  render.displayName = "dialog";
+
+  return render;
 }
 
 export const Component = createComponent();

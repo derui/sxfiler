@@ -1,12 +1,10 @@
 import * as React from "react";
-import { applyDisplayName } from "@/components/ui/util";
 
-export type ElementProps<H> = {
-  forwardedRef?: React.Ref<H>;
+export type ElementProps = {
   className?: string;
 };
 
-export type Props<H extends HTMLElement = HTMLElement> = React.HTMLAttributes<H> & ElementProps<H>;
+export type Props<H extends HTMLElement = HTMLElement> = React.HTMLAttributes<H> & ElementProps;
 
 // Type of component
 export type ComponentType = React.FC<Props>;
@@ -19,9 +17,11 @@ export function createComponent<H extends HTMLElement = HTMLElement>(
 ): React.ComponentType<Props<H> & React.RefAttributes<H>> {
   const { tagName = "div" } = context;
 
-  return applyDisplayName("Element", ({ forwardedRef, ...props }: Props<H>) => {
-    return React.createElement(tagName, { ...props, ref: forwardedRef });
-  });
+  const render = (props: Props<H>, ref: React.Ref<H>) => {
+    return React.createElement(tagName, { ...props, ref });
+  };
+  /* render.displayName = "Element"; */
+  return React.forwardRef(render);
 }
 
 export const Component = createComponent();

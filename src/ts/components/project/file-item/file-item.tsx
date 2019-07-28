@@ -7,10 +7,9 @@ import { Component as Mode } from "./mode-slot";
 import { Component as Name } from "./name-slot";
 import { Component as Size } from "./size-slot";
 import { Component as Timestamp } from "./timestamp-slot";
-import { ForwardedRef } from "@/components/ui/util";
 import { sizeAsBigInt } from "@/domains/file-stat";
 
-export type Props = ForwardedRef & {
+export type Props = ListItem.Props & {
   item: Domain.FileItem;
   selected: boolean;
   hidden?: boolean;
@@ -43,9 +42,10 @@ ${ListItem.style}
   }
 `;
 
-export const Component: React.FC<Props> = ({ item, selected, hidden = false, ...rest }) => {
+const render = ({ item, selected, hidden = false, ...rest }: Props, ref: React.Ref<HTMLElement>) => {
+  console.log(ref);
   return (
-    <Element aria-selected={selected} data-marked={item.marked} aria-hidden={hidden} {...rest}>
+    <Element selected={selected} data-marked={item.marked} aria-hidden={hidden} ref={ref} {...rest}>
       <Mode key="mode" mode={item.stat.mode} isDirectory={item.stat.isDirectory} isSymlink={item.stat.isSymlink} />
       <Timestamp key="timestamp" timestamp={item.stat.mtime} />
       <Size key="size" size={sizeAsBigInt(item.stat)} />
@@ -53,3 +53,8 @@ export const Component: React.FC<Props> = ({ item, selected, hidden = false, ...
     </Element>
   );
 };
+render.displayName = "FileItem";
+
+export const Component = React.forwardRef(render);
+
+export type ComponentType = React.ComponentType<Props & React.RefAttributes<HTMLElement>>;

@@ -6,7 +6,6 @@ import * as FileListContainer from "./file-list-container";
 import * as NotificationContainer from "./notification-container";
 import * as LogViewerContainer from "./log-viewer-container";
 import * as HistorySelectorContainer from "./history-selector-container";
-import { Component as RootRef } from "@/components/ui/root-ref";
 
 import { LocatorContext, Locator } from "@/locator";
 import { AppState } from "@/states";
@@ -86,15 +85,13 @@ export class Component extends React.Component<Props> {
       <ThemeProvider theme={Theme}>
         <LocatorContext.Consumer>
           {locator => (
-            <RootRef rootRef={this.layoutRef}>
-              <Root tabIndex={0} onKeyDown={handleKeyDown(locator, this.props.state)}>
-                <FileListContainer.Component key="filer" state={fileList} />
-                <LogViewerContainer.Component key="log" state={logEntry} />
-                <NotificationContainer.Component key="notification" state={notification} />
-                <SuggestionModalContainer.Component state={this.props.state.taskInteraction} />
-                <HistorySelectorContainer.Component state={this.props.state.history} />
-              </Root>
-            </RootRef>
+            <Root ref={this.layoutRef} tabIndex={0} onKeyDown={handleKeyDown(locator, this.props.state)}>
+              <FileListContainer.Component key="filer" state={fileList} />
+              <LogViewerContainer.Component key="log" state={logEntry} />
+              <NotificationContainer.Component key="notification" state={notification} />
+              <SuggestionModalContainer.Component state={this.props.state.taskInteraction} />
+              <HistorySelectorContainer.Component state={this.props.state.history} />
+            </Root>
           )}
         </LocatorContext.Consumer>
       </ThemeProvider>
