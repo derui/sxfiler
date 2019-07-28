@@ -57,6 +57,9 @@ const InnerOverlay = styled.div`
 
 const CandidateList = styled(List.Component)`
   ${List.style};
+
+  overflow: hidden;
+  overflow-y: auto;
 `;
 
 const CandidateItem = styled(ListItem.Component)`
@@ -79,6 +82,9 @@ const MatchingArea = styled.span`
 
 const InnerContainer = styled.div`
   ${Modal.containerStyle};
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  grid-template-columns: 100%;
   flex: 0 1 auto;
   overflow: hidden;
 
@@ -114,17 +120,11 @@ const Title = styled.h4`
   box-shadow: ${props => props.theme.headerShadow};
 `;
 
-const Section = styled.section`
-  display: grid;
-  grid-template-rows: auto 1fr;
-  grid-template-columns: 100%;
-  margin-top: ${props => props.theme.spaces.small};
-`;
-
 const InputContainer = styled.div`
   display: flex;
+  margin-top: ${props => props.theme.spaces.small};
   padding: ${props => props.theme.spaces.small};
-  padding-bottom: ${props => props.theme.spaces.small}+ 2px;
+  padding-bottom: ${props => props.theme.spaces.small};
   height: 1.5rem;
 `;
 
@@ -188,12 +188,10 @@ const Container: React.FC<ContainerContextProps> = ({
         return (
           <InnerContainer data-state={transitionState}>
             <Title>{title}</Title>
-            <Section>
-              <InputContainer>
-                <Input type="text" onChange={handleChange(onInput, setState)} value={state} />
-              </InputContainer>
-              {makeList(items, selectedItemIndex)}
-            </Section>
+            <InputContainer>
+              <Input type="text" onChange={handleChange(onInput, setState)} value={state} />
+            </InputContainer>
+            {makeList(items, selectedItemIndex)}
           </InnerContainer>
         );
       }}
