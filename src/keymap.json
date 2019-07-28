@@ -11,8 +11,10 @@
     {"action": "builtin.filer.copy", "key": "c", "when": {contexts: ["onFileTree"]}},
     {"action": "builtin.history.open", "key": "h", "when": {contexts: ["onFileTree"]}},
     {"action": "builtin.history.close", "key": "Escape", "when": {contexts: ["onCompletion", "forHistory"]}},
+    {"action": "builtin.history.cursorUp", "key": "ArrowUp", "when": {contexts: ["onCompletion", "forHistory"]}},
+    {"action": "builtin.history.cursorDown", "key": "ArrowDown", "when": {contexts: ["onCompletion", "forHistory"]}},
     {"action": "builtin.keymap.reload", "key": "R", "when": {contexts: ["onFileTree"]}},
-    {"action": "builtin.task.selectNextReply", "key": "Up", "when": {contexts: ["onSuggestion"]}},
-    {"action": "builtin.task.selectPrevReply", "key": "Down", "when": {contexts: ["onSuggestion"]}}
+    {"action": "builtin.task.selectNextReply", "key": "ArrowUp", "when": {contexts: ["onSuggestion"]}},
+    {"action": "builtin.task.selectPrevReply", "key": "ArrowDown", "when": {contexts: ["onSuggestion"]}}
   ]
 }

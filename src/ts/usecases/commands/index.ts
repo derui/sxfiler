@@ -8,6 +8,8 @@ import * as filerMoveItems from "./filer-move-items";
 import * as filerMoveParent from "./filer-move-parent";
 import * as filerToggleMark from "./filer-toggle-mark";
 import * as historyClose from "./history-close";
+import * as historyCursorDown from "./history-cursor-down";
+import * as historyCursorUp from "./history-cursor-up";
 import * as historyOpen from "./history-open";
 import * as keymapReload from "./keymap-reload";
 import * as taskSelectNextReply from "./task-select-next-reply";
@@ -27,6 +29,8 @@ export const registAllCommand = (registrar: CommandRegistrar): CommandRegistrar 
     filerMoveParent,
     filerToggleMark,
     historyClose,
+    historyCursorDown,
+    historyCursorUp,
     historyOpen,
     keymapReload,
     taskSelectNextReply,
