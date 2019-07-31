@@ -57,6 +57,7 @@ const InnerOverlay = styled.div`
 
 const CandidateList = styled(List.Component)`
   ${List.style};
+  position: relative;
 
   overflow: hidden;
   overflow-y: auto;
@@ -139,29 +140,48 @@ const Input = styled.input`
   background-color: ${props => props.theme.colors.base03};
 `;
 
-const handleChange = (cb: (input: string) => void, cb2: (input: string) => void) => (
-  e: React.ChangeEvent<HTMLInputElement>
-): void => {
-  cb(e.target.value || "");
-  cb2(e.target.value || "");
-};
+function handleChange(cb: (input: string) => void, cb2: (input: string) => void) {
+  return (e: React.ChangeEvent<HTMLInputElement>): void => {
+    cb(e.target.value || "");
+    cb2(e.target.value || "");
+  };
+}
+
+function scrollItemIfNeeded(parent: HTMLElement | null, selected: boolean) {
+  return (e: HTMLElement | null) => {
+    if (!e || !parent || !selected) {
+      return;
+    }
+
+    const parentScrolledViewport = parent.offsetHeight + parent.scrollTop;
+    const offsetBottom = e.offsetTop + e.offsetHeight;
+    const viewedPartialBottom = e.offsetTop <= parent.scrollTop && parent.scrollTop <= offsetBottom;
+    const viewedPartialTop = e.offsetTop <= parentScrolledViewport && parentScrolledViewport <= offsetBottom;
+
+    if (viewedPartialBottom) {
+      e.scrollIntoView(true);
+    } else if (viewedPartialTop) {
+      e.scrollIntoView(false);
+    }
+  };
+}
 
 /**
  * Make list that contains completion items
  */
-const makeList = (items: Item[], index: number) => {
+function makeList(ref: React.RefObject<HTMLElement>, items: Item[], index: number) {
   const listItems = items.map((v, i) => {
     const [before, matched, after] = splitByMatching(v);
     return (
-      <CandidateItem selected={i === index} key={v.id}>
+      <CandidateItem selected={i === index} key={v.id} ref={scrollItemIfNeeded(ref.current, i === index)}>
         {before}
         <MatchingArea>{matched}</MatchingArea>
         {after}
       </CandidateItem>
     );
   });
-  return <CandidateList>{listItems}</CandidateList>;
-};
+  return <CandidateList ref={ref}>{listItems}</CandidateList>;
+}
 
 const Overlay: React.FC<OverlayContextProps> = ({ opened }) => {
   return (
@@ -181,6 +201,7 @@ const Container: React.FC<ContainerContextProps> = ({
   onOpen,
 }) => {
   const [state, setState] = React.useState("");
+  const ref = React.useRef<HTMLElement>(null);
 
   return (
     <Transition in={opened} timeout={200} onEnter={onOpen} onExited={onClose}>
@@ -191,7 +212,7 @@ const Container: React.FC<ContainerContextProps> = ({
             <InputContainer>
               <Input type="text" onChange={handleChange(onInput, setState)} value={state} />
             </InputContainer>
-            {makeList(items, selectedItemIndex)}
+            {makeList(ref, items, selectedItemIndex)}
           </InnerContainer>
         );
       }}

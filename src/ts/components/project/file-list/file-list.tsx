@@ -108,7 +108,6 @@ export class Component extends React.Component<Props> {
 
     return items.slice(layout.startIndex, layout.stopIndex).map((item, index) => {
       const selected = cursor === index + layout.startIndex && focused;
-      console.log(item);
       return (
         <ListItem.Component
           key={index + layout.startIndex}

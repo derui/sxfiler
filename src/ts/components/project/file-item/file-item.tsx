@@ -43,7 +43,6 @@ ${ListItem.style}
 `;
 
 const render = ({ item, selected, hidden = false, ...rest }: Props, ref: React.Ref<HTMLElement>) => {
-  console.log(ref);
   return (
     <Element selected={selected} data-marked={item.marked} aria-hidden={hidden} ref={ref} {...rest}>
       <Mode key="mode" mode={item.stat.mode} isDirectory={item.stat.isDirectory} isSymlink={item.stat.isSymlink} />
