@@ -13,24 +13,24 @@ type ReplaceCandidateAction = AppAction<
   }
 >;
 
-export const cursorUp = (): CursorUpAction => {
+export function cursorUp(): CursorUpAction {
   return { type: ActionTypes.HISTORY_CURSOR_UP };
-};
+}
 
-export const cursorDown = (): CursorDownAction => {
+export function cursorDown(): CursorDownAction {
   return { type: ActionTypes.HISTORY_CURSOR_DOWN };
-};
+}
 
-export const replaceCandidates = (candidates: Candidate[]): ReplaceCandidateAction => {
+export function replaceCandidates(candidates: Candidate[]): ReplaceCandidateAction {
   return { type: ActionTypes.HISTORY_REPLACE_CANDIDATES, candidates };
-};
+}
 
-export const open = (side: Side): OpenAction => {
+export function open(side: Side): OpenAction {
   return { type: ActionTypes.HISTORY_OPEN, side };
-};
+}
 
-export const close = (): CloseAction => {
+export function close(): CloseAction {
   return { type: ActionTypes.HISTORY_CLOSE };
-};
+}
 
 export type Actions = CursorUpAction | CursorDownAction | ReplaceCandidateAction | OpenAction | CloseAction;
