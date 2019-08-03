@@ -2,7 +2,8 @@ import bigInt from "big-integer";
 import Int64 from "node-int64";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { createStore } from "redux";
+import { createStore, Store } from "redux";
+import * as kbd from "@/libs/kbd";
 
 import { Actions } from "./ts/actions";
 import { ApiMethod } from "./ts/apis";
@@ -10,8 +11,7 @@ import { Component as App } from "./ts/app";
 import { createContext } from "./ts/context";
 import { Dispatcher } from "./ts/dispatcher";
 import * as jrpc from "./ts/libs/json-rpc";
-import { Client } from "./ts/libs/json-rpc/client";
-import { LocatorContext } from "./ts/locator";
+import { LocatorContext, Locator } from "./ts/locator";
 import { reducer } from "./ts/reducers";
 import { AppState } from "./ts/states";
 
@@ -21,19 +21,20 @@ import { registAllCommand } from "./ts/usecases/commands";
 import * as Get from "./ts/usecases/keymap/get";
 import * as NotificationHandlers from "./ts/notification-handlers";
 import { ModalRootContext } from "./ts/modal-root";
+import { findBinding } from "@/states/keymap";
 
 const url = process.env.NODE_ENV === "production" ? process.env.REACT_APP_SERVER : "ws://localhost:50879";
 
 const ws = new WebSocket(url || "");
 const jsonrpc = jrpc.initialize(ws);
 
-const client: Client<ApiMethod> = jrpc.createClient(jsonrpc, () => {
+const client = jrpc.createClient<ApiMethod>(jsonrpc, () => {
   return bigInt.randBetween(bigInt(Int64.MIN_INT), bigInt(Int64.MAX_INT)).toString();
 });
 
 const store = createStore(reducer);
 
-const dispatcher: Dispatcher<Actions> = new Dispatcher();
+const dispatcher = new Dispatcher<Actions>();
 dispatcher.subscribe(store.dispatch);
 
 const locator = {
@@ -74,3 +75,38 @@ function render(state: AppState) {
 store.subscribe(() => {
   render(store.getState());
 });
+
+document.body.addEventListener("keydown", ev => handleKeyDown(locator, store)(ev));
+
+/**
+ * handle keyboard event that all keydown event on application
+ * @param props properties of component
+ */
+function handleKeyDown(locator: Locator, store: Store<AppState, Actions>) {
+  return (ev: KeyboardEvent) => {
+    const state = store.getState();
+    const { context, commandRegistrar } = locator;
+
+    switch (ev.type) {
+      case "keydown": {
+        const key = kbd.make(ev.key, { meta: ev.metaKey, ctrl: ev.ctrlKey });
+        const binding = findBinding(state.keymap, state.context, kbd.toKeySeq(key));
+
+        if (!binding) {
+          break;
+        }
+
+        ev.preventDefault();
+        ev.stopPropagation();
+        if (context && commandRegistrar) {
+          commandRegistrar.execute(binding.action, context, { state });
+        }
+        break;
+      }
+      default:
+        break;
+    }
+
+    return;
+  };
+}
