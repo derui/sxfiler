@@ -108,7 +108,7 @@ module Make
     module Filer_move_parent =
       U.Filer.Move_parent.Make (Filer_repo) (Location_scanner_service) (Clock)
 
-    module Filer_jump_location=
+    module Filer_jump_location =
       U.Filer.Jump_location.Make (Filer_repo) (Location_scanner_service) (Clock)
 
     module Filer_enter_directory =
