@@ -10,19 +10,23 @@ export type Completion = {
 /**
    replace candidates
  */
-export const replaceCandidates = (candidates: Candidate[]) => (state: Completion): Completion => {
-  return { ...state, candidates: Array.from(candidates) };
-};
+export function replaceCandidates(candidates: Candidate[]) {
+  return (state: Completion): Completion => {
+    return { ...state, candidates: Array.from(candidates) };
+  };
+}
 
 /**
    move cursor
  */
-export const moveCursor = (amount: number) => (state: Completion): Completion => {
-  return { ...state, cursor: between(state.cursor + amount, state.candidates.length - 1) };
-};
+export function moveCursor(amount: number) {
+  return (state: Completion): Completion => {
+    return { ...state, cursor: between(state.cursor + amount, state.candidates.length - 1) };
+  };
+}
 
 /** return empty state */
-export const createCompletion = ({ cursor, candidates }: Partial<Completion>): Completion => {
+export function createCompletion({ cursor, candidates }: Partial<Completion>): Completion {
   if (cursor && candidates) {
     cursor = between(cursor, candidates.length);
   } else if (candidates) {
@@ -32,4 +36,4 @@ export const createCompletion = ({ cursor, candidates }: Partial<Completion>): C
     candidates = [];
   }
   return { cursor, candidates: Array.from(candidates) };
-};
+}

@@ -1,12 +1,14 @@
 import { Actions } from "@/actions";
-import { actions } from "@/actions/key-map";
+import { actions } from "@/actions/filer";
+import * as historyActions from "@/actions/history";
 import { CommandLike } from "@/usecases/type";
 import { Dispatcher } from "@/types";
 import { CommandRegistrar } from "@/usecases/command-registrar";
 import { Apis } from "@/apis";
+import { currentSelectedCandidate } from "@/states/history";
 
 const belongingModuleId = "builtin";
-const commandId = "keymap.reload";
+const commandId = "history.select";
 
 /**
  * Regist command instance to the registrar
@@ -25,11 +27,26 @@ export function createCommand(): CommandLike {
       if (!args) {
         throw new Error("Do not take store state");
       }
-      const { client } = args;
+      const { state, client } = args;
 
-      const keymap = await client.call(Apis.Keymap.Reload, {});
+      const currentNode = currentSelectedCandidate(state.history);
 
-      dispatch.dispatch(actions.updateKeymap(keymap));
+      dispatch.dispatch(historyActions.close());
+
+      if (!currentNode) {
+        return;
+      }
+
+      const filer = await client.call(Apis.Filer.Jump, {
+        name: state.history.side,
+        location: currentNode.value,
+      });
+
+      if (!filer) {
+        return;
+      }
+
+      dispatch.dispatch(actions.load({ filer }));
     },
   };
 }

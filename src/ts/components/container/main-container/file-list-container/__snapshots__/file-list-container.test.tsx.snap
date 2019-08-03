@@ -5,7 +5,7 @@ exports[`Container File List Container should render correctly 1`] = `
   className="sc-iwsKbI gGKMtz"
 >
   <div
-    className="sc-bZQynM gAHUms"
+    className="sc-bZQynM dZLKNH"
   >
     <header
       className="sc-EHOje eksHn"
@@ -26,7 +26,7 @@ exports[`Container File List Container should render correctly 1`] = `
     className="sc-gZMcBi fZsDTv"
   />
   <div
-    className="sc-bZQynM gAHUms"
+    className="sc-bZQynM dZLKNH"
   >
     <header
       className="sc-EHOje eksHn"

@@ -13,6 +13,7 @@ export enum Methods {
   Move = "filer/move",
   Copy = "filer/copy",
   Delete = "filer/delete",
+  Jump = "filer/jump",
 }
 
 /**
@@ -131,4 +132,22 @@ const Delete: Api<Methods.Delete, { source: string; itemIds: string[] }> = {
   },
 };
 
-export const Apis = { Make, Get, MoveParent, EnterDirectory, ToggleMark, Move, Copy, Delete };
+/**
+   API definition for filer/make
+ */
+const Jump: Api<
+  Methods.Jump,
+  {
+    location: string;
+    name: string;
+  },
+  Filer
+> = {
+  method: Methods.Jump,
+  parametersTransformer: params => params,
+  resultTransformer(ret) {
+    return E.encode(ret);
+  },
+};
+
+export const Apis = { Make, Get, MoveParent, EnterDirectory, ToggleMark, Move, Copy, Delete, Jump };

@@ -2,7 +2,7 @@
 
 exports[`Project Node List should not print before resized 1`] = `
 <div
-  className="sc-bZQynM gAHUms"
+  className="sc-bZQynM dZLKNH"
 >
   <header
     className="sc-EHOje eksHn"
@@ -23,7 +23,7 @@ exports[`Project Node List should not print before resized 1`] = `
 
 exports[`Project Node List should select a node locating same the index of cursor when focused 1`] = `
 <div
-  className="sc-bZQynM gAHUms"
+  className="sc-bZQynM dZLKNH"
 >
   <header
     className="sc-EHOje eksHn"
@@ -44,7 +44,7 @@ exports[`Project Node List should select a node locating same the index of curso
 
 exports[`Project Node List should show dummy content when nodes is empty 1`] = `
 <div
-  className="sc-bZQynM gAHUms"
+  className="sc-bZQynM dZLKNH"
 >
   <header
     className="sc-EHOje eksHn"
