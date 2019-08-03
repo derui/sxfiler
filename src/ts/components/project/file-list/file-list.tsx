@@ -23,8 +23,6 @@ const Root = styled(Element.Component)`
   display: grid;
   grid-template-rows: calc(${props => props.theme.spaces.base} * 2 + 1rem) 1fr;
 
-  width: 100%;
-  height: 100%;
   margin: 0;
   padding: 0;
 
