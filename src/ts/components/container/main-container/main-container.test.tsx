@@ -1,6 +1,8 @@
 import * as React from "react";
-import { empty } from "@/states";
 import renderer from "react-test-renderer";
+
+import { Theme, ThemeProvider } from "@/components/theme";
+import { empty } from "@/states";
 import { Component } from "./main-container";
 import { LocatorContext } from "@/locator";
 
@@ -13,9 +15,11 @@ describe("Container", () => {
 
       const wrapper = renderer
         .create(
-          <LocatorContext.Provider value={locator}>
-            <Component state={state} />
-          </LocatorContext.Provider>
+          <ThemeProvider theme={Theme}>
+            <LocatorContext.Provider value={locator}>
+              <Component state={state} />
+            </LocatorContext.Provider>
+          </ThemeProvider>
         )
         .toJSON();
 

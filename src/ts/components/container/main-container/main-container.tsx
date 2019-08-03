@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { styled, Theme, ThemeProvider } from "@/components/theme";
+import { styled } from "@/components/theme";
 import * as Element from "@/components/ui/element";
 import * as FileListContainer from "./file-list-container";
 import * as NotificationContainer from "./notification-container";
@@ -36,8 +36,8 @@ const Root = styled(Element.Component)`
  * handle keyboard event that all keydown event on application
  * @param props properties of component
  */
-function handleKeyDown(locator: Locator, state: AppState): (ev: React.KeyboardEvent<any>) => void {
-  return ev => {
+function handleKeyDown(locator: Locator, state: AppState) {
+  return (ev: React.KeyboardEvent<any>) => {
     const { context, commandRegistrar } = locator;
 
     switch (ev.type) {
@@ -64,37 +64,25 @@ function handleKeyDown(locator: Locator, state: AppState): (ev: React.KeyboardEv
   };
 }
 
-export class Component extends React.Component<Props> {
-  private layoutRef: React.RefObject<HTMLElement> = React.createRef();
+export const Component: React.FC<Props> = ({ state }) => {
+  const layoutRef: React.RefObject<HTMLElement> = React.useRef(null);
 
-  public componentDidMount() {
-    if (this.layoutRef.current) {
-      this.layoutRef.current.focus();
+  React.useEffect(() => {
+    if (layoutRef.current) {
+      layoutRef.current.focus();
     }
-  }
+  }, [layoutRef.current]);
 
-  public componentDidUpdate() {
-    if (this.layoutRef.current) {
-      this.layoutRef.current.focus();
-    }
-  }
+  const { fileList, notification, logEntry, taskInteraction, history } = state;
+  const locator = React.useContext(LocatorContext);
 
-  public render() {
-    const { fileList, notification, logEntry } = this.props.state;
-    return (
-      <ThemeProvider theme={Theme}>
-        <LocatorContext.Consumer>
-          {locator => (
-            <Root ref={this.layoutRef} tabIndex={0} onKeyDown={handleKeyDown(locator, this.props.state)}>
-              <FileListContainer.Component key="filer" state={fileList} />
-              <LogViewerContainer.Component key="log" state={logEntry} />
-              <NotificationContainer.Component key="notification" state={notification} />
-              <SuggestionModalContainer.Component state={this.props.state.taskInteraction} />
-              <HistorySelectorContainer.Component state={this.props.state.history} />
-            </Root>
-          )}
-        </LocatorContext.Consumer>
-      </ThemeProvider>
-    );
-  }
-}
+  return (
+    <Root ref={layoutRef} tabIndex={0} onKeyDown={handleKeyDown(locator, state)}>
+      <FileListContainer.Component state={fileList} />
+      <LogViewerContainer.Component state={logEntry} />
+      <NotificationContainer.Component state={notification} />
+      <SuggestionModalContainer.Component state={taskInteraction} />
+      <HistorySelectorContainer.Component state={history} />
+    </Root>
+  );
+};

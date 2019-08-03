@@ -11,8 +11,8 @@ export type Props = {
 
 const Root = styled(Element.Component)`
   display: grid;
-  grid-template-rows: 100%;
-  grid-template-columns: 50% auto 50%;
+  grid-template-rows: auto;
+  grid-template-columns: 0.5fr auto 0.5fr;
 
   color: ${props => props.theme.colors.base1};
   overflow: hidden;

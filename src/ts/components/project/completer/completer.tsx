@@ -85,7 +85,7 @@ const InnerContainer = styled.div`
   ${Modal.containerStyle};
   display: grid;
   grid-template-rows: auto auto 1fr;
-  grid-template-columns: 100%;
+  grid-template-columns: auto;
   flex: 0 1 auto;
   overflow: hidden;
 
@@ -202,6 +202,13 @@ const Container: React.FC<ContainerContextProps> = ({
 }) => {
   const [state, setState] = React.useState("");
   const ref = React.useRef<HTMLElement>(null);
+  const refInput = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (opened && refInput.current) {
+      refInput.current.focus();
+    }
+  }, [opened]);
 
   return (
     <Transition in={opened} timeout={200} onEnter={onOpen} onExited={onClose}>
@@ -210,7 +217,7 @@ const Container: React.FC<ContainerContextProps> = ({
           <InnerContainer data-state={transitionState}>
             <Title>{title}</Title>
             <InputContainer>
-              <Input type="text" onChange={handleChange(onInput, setState)} value={state} />
+              <Input type="text" onChange={handleChange(onInput, setState)} value={state} ref={refInput} />
             </InputContainer>
             {makeList(ref, items, selectedItemIndex)}
           </InnerContainer>

@@ -6,7 +6,7 @@ import { Filer, createFiler } from "@/domains/filer";
 /**
  * The sub reducer to handle updateFiler action.
  */
-const updateFiler = (state: State, payload: { filer: Filer }): State => {
+function updateFiler(state: State, payload: { filer: Filer }): State {
   const { filer } = payload;
 
   switch (filer.name) {
@@ -18,12 +18,12 @@ const updateFiler = (state: State, payload: { filer: Filer }): State => {
       console.warn(`Unknown filer: ${filer.name}`);
       return state;
   }
-};
+}
 
 /**
  * The sub reducer to handle loadFiler action.
  */
-const updateFilerByServerState = (state: State, payload: { filer: Filer }): State => {
+function updateFilerByServerState(state: State, payload: { filer: Filer }): State {
   const { filer } = payload;
 
   let updatedFiler = filer;
@@ -48,25 +48,25 @@ const updateFilerByServerState = (state: State, payload: { filer: Filer }): Stat
       console.warn(`Unknown filer: ${filer.name}`);
       return state;
   }
-};
+}
 
-const moveToOtherSide = (current: Side): Side => {
+function moveToOtherSide(current: Side): Side {
   switch (current) {
     case Side.Left:
       return Side.Right;
     case Side.Right:
       return Side.Left;
   }
-};
+}
 
-const reloadFiler = (state: State, filers: [Filer, Filer]): State => {
+function reloadFiler(state: State, filers: [Filer, Filer]): State {
   const left = filers.find(v => v.name === Side.Left);
   const right = filers.find(v => v.name === Side.Right);
 
   return { ...state, left, right };
-};
+}
 
-export const reducer = (state: State = empty(), action: Actions): State => {
+export function reducer(state: State = empty(), action: Actions): State {
   switch (action.type) {
     case ActionTypes.FILER_RELOAD:
       return reloadFiler(state, action.payload.filers);
@@ -78,4 +78,4 @@ export const reducer = (state: State = empty(), action: Actions): State => {
       return { ...state, currentSide: moveToOtherSide(state.currentSide) };
   }
   return state;
-};
+}

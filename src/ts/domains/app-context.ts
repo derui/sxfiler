@@ -8,51 +8,56 @@ export type AppContext = {
 /**
    create AppContext
  */
-export const createAppContext = ({
+export function createAppContext({
   current,
   subContexts,
 }: {
   current: UIContext;
   subContexts?: UIContext[];
-}): AppContext => {
+}): AppContext {
   return {
     current,
     subContexts: Array.from(subContexts || []),
   };
-};
+}
 
 /**
    change context
  */
-export const changeCurrent = (context: UIContext) => (state: AppContext) => {
-  return createAppContext({
-    current: context,
-    subContexts: state.subContexts,
-  });
-};
+export function changeCurrent(context: UIContext) {
+  return (state: AppContext) =>
+    createAppContext({
+      current: context,
+      subContexts: state.subContexts,
+    });
+}
 
 /**
    Add a context to AppContext
  */
-export const addSubContext = (context: UIContext) => (state: AppContext) => {
-  const tmpSet = new Set(state.subContexts);
-  tmpSet.add(context);
+export function addSubContext(context: UIContext) {
+  return (state: AppContext) => {
+    const tmpSet = new Set(state.subContexts);
+    tmpSet.add(context);
 
-  return createAppContext({
-    current: state.current,
-    subContexts: Array.from(tmpSet.values()),
-  });
-};
+    return createAppContext({
+      current: state.current,
+      subContexts: Array.from(tmpSet.values()),
+    });
+  };
+}
 
 /**
    remove the context from AppContext
  */
-export const removeSubContext = (context: UIContext) => (state: AppContext) => {
-  const tmpSet = new Set(state.subContexts);
-  tmpSet.delete(context);
+export function removeSubContext(context: UIContext) {
+  return (state: AppContext) => {
+    const tmpSet = new Set(state.subContexts);
+    tmpSet.delete(context);
 
-  return createAppContext({
-    current: state.current,
-    subContexts: Array.from(tmpSet.values()),
-  });
-};
+    return createAppContext({
+      current: state.current,
+      subContexts: Array.from(tmpSet.values()),
+    });
+  };
+}

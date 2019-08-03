@@ -11,12 +11,10 @@ import { createProgress } from "@/domains/progress-notification";
 
 const context = (done?: (arg: any) => void) => ({
   use<P>(_: UseCaseLike<Actions, P>) {
-    return {
-      execute(args: P) {
-        if (done) {
-          done(args);
-        }
-      },
+    return (args: P) => {
+      if (done) {
+        done(args);
+      }
     };
   },
 });
