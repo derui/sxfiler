@@ -1,6 +1,7 @@
 open Sxfiler_core
-(** {!Snapshot_history} provides management records in history. *)
+open Fun
 
+(** {!Snapshot_history} provides management records in history. *)
 module Location_set = Set.Make (struct
     type t = Location_record.t
 
@@ -23,6 +24,7 @@ let make ?(max_record_num = 100) () = {records = []; max_record_num = max 0 max_
 
 let sort_by_timestamp =
   List.sort (fun a b -> Int64.compare a.Location_record.timestamp b.Location_record.timestamp)
+  %> List.rev
 
 (** {[
      add_record t ~record
