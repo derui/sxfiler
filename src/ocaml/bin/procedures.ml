@@ -16,6 +16,9 @@ let expose_filer_procedures (module Dep : Dependencies.S) : (module Procedure.Sp
   let module Move_gateway = G.Filer.Move.Make (Dep.Usecase.Filer_move) in
   let module Copy_gateway = G.Filer.Copy.Make (Dep.Usecase.Filer_copy) in
   let module Delete_gateway = G.Filer.Delete.Make (Dep.Usecase.Filer_delete) in
+  let module Jump_location_gateway =
+    G.Filer.Jump_location.Make (Dep.System) (Dep.Usecase.Filer_jump_location)
+  in
   [ (module Proc_filer.Make_spec (Make_gateway))
   ; (module Proc_filer.Get_spec (Get_gateway))
   ; (module Proc_filer.Move_parent_spec (Move_parent_gateway))
@@ -23,7 +26,8 @@ let expose_filer_procedures (module Dep : Dependencies.S) : (module Procedure.Sp
   ; (module Proc_filer.Toggle_mark_spec (Toggle_mark_gateway))
   ; (module Proc_filer.Move_spec (Move_gateway))
   ; (module Proc_filer.Copy_spec (Copy_gateway))
-  ; (module Proc_filer.Delete_spec (Delete_gateway)) ]
+  ; (module Proc_filer.Delete_spec (Delete_gateway))
+  ; (module Proc_filer.Jump_location_spec (Jump_location_gateway)) ]
 
 let expose_configuration_procedures (module Dep : Dependencies.S) : (module Procedure.Spec) list =
   let module S = Jsonrpc_yojson.Server in
@@ -53,5 +57,5 @@ let expose_all server (module Dep : Dependencies.S) =
   in
   List.fold_left
     (fun server (module Spec : Procedure.Spec) ->
-       Jsonrpc_server.expose server ~procedure:(module Procedure.Make (Spec)))
+      Jsonrpc_server.expose server ~procedure:(module Procedure.Make (Spec)))
     server procedures

@@ -7,11 +7,11 @@ module G = Sxfiler_server_gateway
 module T = Sxfiler_server_translator
 
 module Factory = D.Filer.Factory.Make (struct
-    type id = D.Filer.id
+  type id = D.Filer.id
 
-    let state = Random.get_state ()
-    let generate () = Uuidm.v4_gen state ()
-  end)
+  let state = Random.get_state ()
+  let generate () = Uuidm.v4_gen state ()
+end)
 
 module Dummy_system = struct
   let getcwd () = "/foo"
@@ -30,6 +30,20 @@ let test_set =
         end in
         let module Gateway = G.Filer.Make.Make (Dummy_system) (Usecase) in
         let%lwt res = Gateway.handle {Gateway.initial_location = "/initial"; name = "foo"} in
+        Alcotest.(check @@ of_pp T.Filer.pp) "created" (T.Filer.of_domain expected) res ;
+        Lwt.return_unit)
+  ; Alcotest_lwt.test_case "jump a location for filer" `Quick (fun _ () ->
+        let file_list =
+          D.File_list.make ~location:(Path.of_string ~env:`Unix "/initial") ~items:[] ()
+        in
+        let expected = Factory.create ~name:"foo" ~file_list ~sort_order:D.Types.Sort_type.Date in
+        let module Usecase = struct
+          include U.Filer.Jump_location.Type
+
+          let execute _ = Lwt.return_ok expected
+        end in
+        let module Gateway = G.Filer.Jump_location.Make (Dummy_system) (Usecase) in
+        let%lwt res = Gateway.handle {Gateway.location = "/initial"; name = "foo"} in
         Alcotest.(check @@ of_pp T.Filer.pp) "created" (T.Filer.of_domain expected) res ;
         Lwt.return_unit)
   ; Alcotest_lwt.test_case "do not create workspace if it exists" `Quick (fun _ () ->

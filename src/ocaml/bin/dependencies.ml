@@ -41,6 +41,7 @@ module type S = sig
     module Filer_move : U.Filer.Move.S
     module Filer_copy : U.Filer.Copy.S
     module Filer_delete : U.Filer.Delete.S
+    module Filer_jump_location : U.Filer.Jump_location.S
     module Task_send_reply : U.Task.Send_reply.S
   end
 end
@@ -106,6 +107,9 @@ module Make
 
     module Filer_move_parent =
       U.Filer.Move_parent.Make (Filer_repo) (Location_scanner_service) (Clock)
+
+    module Filer_jump_location=
+      U.Filer.Jump_location.Make (Filer_repo) (Location_scanner_service) (Clock)
 
     module Filer_enter_directory =
       U.Filer.Enter_directory.Make (Filer_repo) (Location_scanner_service) (Clock)

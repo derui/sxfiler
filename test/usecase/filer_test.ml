@@ -4,11 +4,11 @@ module D = Sxfiler_domain
 module U = Sxfiler_usecase
 
 module Factory = D.Filer.Factory.Make (struct
-    type id = D.Filer.id
+  type id = D.Filer.id
 
-    let state = Random.get_state ()
-    let generate () = Uuidm.v4_gen state ()
-  end)
+  let state = Random.get_state ()
+  let generate () = Uuidm.v4_gen state ()
+end)
 
 let dir_stat = Test_fixtures.File_stat.fixture ~directory:true ()
 
@@ -22,11 +22,11 @@ let test_set =
         in
         let filer = Factory.create ~name:"foo" ~file_list ~sort_order:D.Types.Sort_type.Name in
         let module FR =
-          (val Test_fixtures.Memory_repository.filer_repository ~initial:[filer] ())
+        (val Test_fixtures.Memory_repository.filer_repository ~initial:[filer] ())
         in
         let new_items = [TF.File_item.fixture ~full_path:Path.(of_string "new") dir_stat] in
         let module Svc =
-          (val TF.Service.location_scanner_service Path.(of_string "/bar") new_items)
+        (val TF.Service.location_scanner_service Path.(of_string "/bar") new_items)
         in
         let module Clock = struct
           let unixtime () = Int64.min_int
@@ -35,6 +35,29 @@ let test_set =
         let%lwt result =
           Usecase.execute {name = "foo"; item_id = List.hd file_list.items |> D.File_item.id}
         in
+        let%lwt data = Lwt.(FR.resolve_by_name "foo" >|= Option.get_exn) in
+        Alcotest.(check @@ result (of_pp D.Filer.pp) (of_pp Fmt.nop))
+          "renew filer" (Ok data) result ;
+        Lwt.return_unit)
+  ; Alcotest_lwt.test_case "renewal filer with new location" `Quick (fun _ () ->
+        let file_list =
+          D.File_list.make
+            ~location:Path.(of_string "/bar")
+            ~items:[TF.File_item.fixture dir_stat] ()
+        in
+        let filer = Factory.create ~name:"foo" ~file_list ~sort_order:D.Types.Sort_type.Name in
+        let module FR =
+        (val Test_fixtures.Memory_repository.filer_repository ~initial:[filer] ())
+        in
+        let new_items = [TF.File_item.fixture ~full_path:Path.(of_string "new") dir_stat] in
+        let module Svc =
+        (val TF.Service.location_scanner_service Path.(of_string "/foo") new_items)
+        in
+        let module Clock = struct
+          let unixtime () = Int64.min_int
+        end in
+        let module Usecase = U.Filer.Jump_location.Make (FR) (Svc) (Clock) in
+        let%lwt result = Usecase.execute {name = "foo"; location = Path.of_string "/foo"} in
         let%lwt data = Lwt.(FR.resolve_by_name "foo" >|= Option.get_exn) in
         Alcotest.(check @@ result (of_pp D.Filer.pp) (of_pp Fmt.nop))
           "renew filer" (Ok data) result ;

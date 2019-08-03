@@ -231,3 +231,35 @@ module Copy = struct
       | Error (`Not_found _) -> Lwt.fail Gateway_error.(Gateway_error filer_not_found)
   end
 end
+
+(** the gateway for {!module:Usecase.Filer.Jump_location}*)
+module Jump_location = struct
+  (** request and response definition *)
+  module Type = struct
+    type params =
+      { location : string
+      ; name : string }
+    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+
+    type result = T.Filer.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+  end
+
+  module type S = sig
+    include module type of Type
+    include Core.Gateway with type params := params and type result := result
+  end
+
+  (** Return implementation with some dependency modules *)
+  module Make (System : System.S) (U : Usecase.Filer.Jump_location.S) : S = struct
+    include Type
+
+    let handle param =
+      let params =
+        { U.location = Path.of_string param.location |> Path.resolve (module System)
+        ; name = param.name }
+      in
+      match%lwt U.execute params with
+      | Ok t -> T.Filer.of_domain t |> Lwt.return
+      | Error `Not_found -> Lwt.fail Gateway_error.(Gateway_error filer_not_found)
+  end
+end

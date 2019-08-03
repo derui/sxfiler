@@ -58,3 +58,10 @@ module Delete_spec (Gateway : G.Filer.Delete.S) : P.Spec = struct
   let method_ = "filer/delete"
   let param_requirement = `Required
 end
+
+module Jump_location_spec (Gateway : G.Filer.Jump_location.S) : P.Spec = struct
+  module Gateway = Gateway
+
+  let method_ = "filer/jump"
+  let param_requirement = `Required
+end
