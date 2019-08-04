@@ -107,7 +107,9 @@ module Impl (R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) = struct
       (* Cancel all async threads. *)
       Lwt_mvar.put t.task_mailbox `Rejected
     in
-    Log.info (fun m -> m "Task runner started") ;%lwt Lwt.(accepter <?> worker <?> stopper)
+    Log.info (fun m -> m "Task runner started") ;%lwt
+    let open Lwt in
+    accepter <?> worker <?> stopper >>= fun () -> Log.info (fun m -> m "Task runner finished")
 
   let stop t = Lwt.wakeup t.wakener ()
 end

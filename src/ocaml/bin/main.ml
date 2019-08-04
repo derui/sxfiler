@@ -158,8 +158,22 @@ let load_migemo dict_dir =
       in
       M.Migemo.make ~dict:migemo_dict ?hira_to_kata ?romaji_to_hira ?han_to_zen ()
 
+let persist_app_state global_state file_name =
+  let app_state = App_state.empty in
+  let filers = Root_state.list_filer global_state in
+  let app_state =
+    List.fold_left (fun state filer -> App_state.add_filer_stat filer state) app_state filers
+  in
+  let json = App_state.to_json app_state in
+  Logs.info (fun m -> m "App state persisting...") ;
+  Yojson.Safe.to_file file_name json
+
+let register_cleanup_handlers w =
+  Lwt_unix.on_signal Sys.sigint (fun _ -> Lwt.wakeup_exn w (Failure "Caught SIGINT")) |> ignore
+
 (* main routine. *)
 let () =
+  let executable_dir = Filename.dirname Sys.argv.(0) in
   let option = App_option.parse () in
   Random.init Unix.(gettimeofday () |> int_of_float) ;
   Logs.set_level (Some (if option.App_option.debug then Logs.Debug else Logs.Info)) ;
@@ -168,8 +182,17 @@ let () =
   let port = 50879 in
   let migemo = load_migemo option.migemo_dict_dir in
   (* setup task runner and finalize *)
+  let waiter, wakener = Lwt.wait () in
+  register_cleanup_handlers wakener ;
   let module I = (val Task_runner.get () : T.Runner.Instance) in
-  Lwt_main.at_exit (fun () -> I.Runner.stop I.instance |> Lwt.return) ;
+  let main_thread =
+    initialize_modules ~migemo ~option
+    >>= fun () -> start_server "localhost" port <&> I.Runner.start I.instance
+  in
   Lwt_main.run
-    ( initialize_modules ~migemo ~option
-      >>= fun () -> start_server "localhost" port <&> I.Runner.start I.instance )
+  @@ Lwt.finalize
+    (fun () -> Lwt.choose [main_thread; waiter])
+    (fun () ->
+       I.Runner.stop I.instance ;
+       let%lwt state = Global.Root.get () in
+       persist_app_state state Filename.(concat executable_dir "sxfiler_stat.json") |> Lwt.return)

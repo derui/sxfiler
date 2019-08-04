@@ -12,7 +12,7 @@
  (name main)
  (public_name sxfiler_server)
  (package sxfiler)
- (modules main dependencies jsonrpc_server global procedures)
+ (modules main dependencies jsonrpc_server global procedures app_state)
  (libraries lwt
             websocket
             websocket-lwt-unix.cohttp
@@ -20,5 +20,6 @@
             jsonrpc-ocaml.yojson
             sxfiler.server
             sxfiler.server.task
-            sxfiler.bin.lib)
- (preprocess (pps lwt_ppx)))
+            sxfiler.bin.lib
+            ppx_protocol_conv_json)
+ (preprocess (pps lwt_ppx ppx_deriving.std ppx_protocol_conv)))
