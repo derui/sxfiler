@@ -55,7 +55,8 @@
     "clean": "node ./scripts/clean.js",
     "dev": "npm-run-all -p start electron",
     "storybook": "start-storybook -p 9001 -c .storybook",
-    "generate-commands": "node scripts/generate-commands.js"
+    "generate-commands": "node scripts/generate-commands.js",
+    "install-hook": "cpx .git-hooks/pre-commit .git/hooks/"
   },
   "repository": {
     "type": "git",
