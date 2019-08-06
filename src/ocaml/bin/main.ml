@@ -3,7 +3,6 @@ open Sxfiler_server_core
 module T = Sxfiler_server_task
 module I = Sxfiler_server_infra
 module U = Sxfiler_usecase
-module G = Sxfiler_server_gateway
 module D = Sxfiler_domain
 
 exception Fail_load_migemo
@@ -15,19 +14,22 @@ module App_option = struct
   type t =
     { migemo_dict_dir : string
     ; configuration : string
+    ; stat_file : string
     ; debug : bool }
 
-  let parse () =
+  let parse executable_dir =
     let dict_dir = ref "" in
     let config = ref "./config.json" in
+    let stat_file = ref Filename.(concat executable_dir "sxfiler_stat.json") in
     let debug = ref false in
     let arg_specs =
       [ ("-d", Arg.String (fun v -> dict_dir := v), "Directory of migemo dictionary")
       ; ("--config", Arg.String (fun v -> config := v), "File path for server configuration")
+      ; ("--stat_file", Arg.String (fun v -> stat_file := v), "File path for stat file")
       ; ("--debug", Arg.Unit (fun () -> debug := true), "Verbose mode") ]
     in
     Arg.parse arg_specs ignore "" ;
-    {migemo_dict_dir = !dict_dir; configuration = !config; debug = !debug}
+    {migemo_dict_dir = !dict_dir; configuration = !config; debug = !debug; stat_file = !stat_file}
 end
 
 module Log = (val Logger.make ["main"])
@@ -83,6 +85,12 @@ let load_configuration config =
   let config = Yojson.Safe.from_file config in
   match Y.of_json config with Error _ -> None | Ok v -> Some (Y.to_domain v)
 
+(** Load stat file from specified file *)
+let load_stat config =
+  let module Y = App_state in
+  let config = Yojson.Safe.from_file config in
+  match Y.of_json config with Error _ -> None | Ok v -> Some v
+
 (* Load keymaps from specified file *)
 let load_keymap file =
   let keymap = Yojson.Safe.from_file file in
@@ -99,8 +107,22 @@ let get_config f config () = if Sys.file_exists config then f config else None
 
 let initialize_modules ~migemo ~option =
   let completer = Sxfiler_bin_lib.Migemo_completer.make ~migemo in
-  let config = get_config load_configuration option.App_option.configuration in
+  let stat = get_config load_stat option.App_option.stat_file in
   let () = Global.Completer.set @@ fun () -> completer in
+  let%lwt () =
+    match stat () with
+    | None -> Lwt.return_unit
+    | Some v ->
+      Global.Root.with_lock (fun state ->
+          let%lwt filers =
+            App_state.restore_filer_stats ~scanner:(module I.Location_scanner_service) v
+          in
+          let state =
+            List.fold_left (fun state filer -> Root_state.add_filer ~filer state) state filers
+          in
+          Global.Root.update state)
+  in
+  let config = get_config load_configuration option.App_option.configuration in
   let%lwt () =
     match config () with
     | None ->
@@ -174,7 +196,7 @@ let register_cleanup_handlers w =
 (* main routine. *)
 let () =
   let executable_dir = Filename.dirname Sys.argv.(0) in
-  let option = App_option.parse () in
+  let option = App_option.parse executable_dir in
   Random.init Unix.(gettimeofday () |> int_of_float) ;
   Logs.set_level (Some (if option.App_option.debug then Logs.Debug else Logs.Info)) ;
   Logs.set_reporter @@ Logger.lwt_reporter Format.std_formatter ;
@@ -195,4 +217,4 @@ let () =
     (fun () ->
        I.Runner.stop I.instance ;
        let%lwt state = Global.Root.get () in
-       persist_app_state state Filename.(concat executable_dir "sxfiler_stat.json") |> Lwt.return)
+       persist_app_state state option.App_option.stat_file |> Lwt.return)
