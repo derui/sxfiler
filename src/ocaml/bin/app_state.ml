@@ -32,7 +32,7 @@ let restore_filer_stats ~(scanner : (module S.Location_scanner_service.S)) stat 
   let convert_filer value =
     let v' =
       { T.Filer.id = value.id
-      ; name = value.id
+      ; name = value.name
       ; history = value.history
       ; sort_order = T.Types.Sort_type.Name
       ; marked_items = []

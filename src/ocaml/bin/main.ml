@@ -113,6 +113,7 @@ let initialize_modules ~migemo ~option =
     match stat () with
     | None -> Lwt.return_unit
     | Some v ->
+      Logs.info (fun m -> m "Restoring persisted stats...") ;
       Global.Root.with_lock (fun state ->
           let%lwt filers =
             App_state.restore_filer_stats ~scanner:(module I.Location_scanner_service) v
