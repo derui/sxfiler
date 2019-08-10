@@ -12,20 +12,20 @@ type RemoveAction = AppAction<ActionTypes.NOTIFICATION_REMOVE, { notificationId:
 
 export type Actions = TimeoutAction | ReceiveMessageAction | ReceiveProgressAction | RemoveAction;
 
-const timeout = (notificationId: string): TimeoutAction => {
+function timeout(notificationId: string): TimeoutAction {
   return { type: ActionTypes.NOTIFICATION_TIMEOUT, notificationId };
-};
+}
 
-const receiveProgress = (notification: ProgressNotification): ReceiveProgressAction => {
+function receiveProgress(notification: ProgressNotification): ReceiveProgressAction {
   return { type: ActionTypes.NOTIFICATION_RECEIVE_PROGRESS, notification };
-};
+}
 
-const receiveMessage = (notification: MessageNotification): ReceiveMessageAction => {
+function receiveMessage(notification: MessageNotification): ReceiveMessageAction {
   return { type: ActionTypes.NOTIFICATION_RECEIVE_MESSAGE, notification };
-};
+}
 
-const remove = (notificationId: string): RemoveAction => {
+function remove(notificationId: string): RemoveAction {
   return { type: ActionTypes.NOTIFICATION_REMOVE, notificationId };
-};
+}
 
 export const actions = { timeout, receiveProgress, receiveMessage, remove };
