@@ -90,7 +90,7 @@ const InnerContainer = styled.div`
   overflow: hidden;
 
   margin: 0px auto auto auto;
-  width: 50%;
+  width: 75%;
   max-height: 80%;
 
   border-radius: ${props => props.theme.spaces.small};

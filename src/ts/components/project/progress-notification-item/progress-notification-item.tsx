@@ -66,7 +66,7 @@ export class Component extends React.PureComponent<Props> {
 
   public render() {
     const { body } = this.props;
-    const ratio = Math.min(100, (body.current / body.target) * 100);
+    const ratio = Math.min(100, (body.current / body.targeted) * 100);
 
     return (
       <Root>

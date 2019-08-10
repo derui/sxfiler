@@ -23,19 +23,14 @@ const Root = styled(Element.Component)`
 `;
 
 export const Component: React.FC<Props> = ({ state }) => {
-  return (
-    <LocatorContext.Consumer>
-      {({ context }) => {
-        if (!context) {
-          return null;
-        }
+  const { context } = React.useContext(LocatorContext);
+  if (!context) {
+    return null;
+  }
 
-        return (
-          <Root>
-            <NotificationList notifications={asArray(state.progresses)} />
-          </Root>
-        );
-      }}
-    </LocatorContext.Consumer>
+  return (
+    <Root>
+      <NotificationList notifications={asArray(state.progresses)} />
+    </Root>
   );
 };
