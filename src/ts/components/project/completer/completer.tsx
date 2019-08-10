@@ -208,6 +208,8 @@ const Container: React.FC<ContainerContextProps> = ({
     if (opened && refInput.current) {
       refInput.current.focus();
     }
+
+    return () => setState("");
   }, [opened]);
 
   return (
