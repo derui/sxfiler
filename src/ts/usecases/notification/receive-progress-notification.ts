@@ -18,6 +18,10 @@ export const createUseCase = (): UseCase => {
     execute(dispatcher: Dispatcher<Actions>, arg: Arg) {
       const { notification } = arg;
       dispatcher.dispatch(actions.receiveProgress(notification));
+
+      if (notification.body.current >= notification.body.targeted) {
+        dispatcher.dispatch(actions.remove(notification.id));
+      }
     },
   };
 };

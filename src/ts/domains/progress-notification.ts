@@ -3,7 +3,7 @@
 export type Body = {
   readonly process: string;
   readonly current: number;
-  readonly target: number;
+  readonly targeted: number;
 };
 
 export type ProgressNotification = {
@@ -19,7 +19,7 @@ export type ProgressNotification = {
  */
 export const createProgress = (
   id: string,
-  progress: { process: string; current: number; target: number }
+  progress: { process: string; current: number; targeted: number }
 ): ProgressNotification => {
   return {
     id,

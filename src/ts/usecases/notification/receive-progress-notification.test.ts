@@ -21,6 +21,22 @@ describe("UseCases", () => {
 
         expect(fn.mock.calls[0]).toEqual([actions.receiveProgress(notification)]);
       });
+
+      it("dispatch action to remove when current is greater equal target", () => {
+        const dispatcher = new Dispatcher();
+        const fn = jest.fn();
+
+        dispatcher.subscribe(fn);
+        const notification = createProgress("id", {
+          current: 30,
+          process: "process",
+          target: 30,
+        });
+
+        createUseCase().execute(dispatcher, { notification });
+
+        expect(fn).toHaveBeenCalledWith(actions.remove(notification.id));
+      });
     });
   });
 });
