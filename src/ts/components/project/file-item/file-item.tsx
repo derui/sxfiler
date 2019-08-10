@@ -17,7 +17,7 @@ export type Props = ListItem.Props & {
 
 const Element = styled(ListItem.Component)`
 ${ListItem.style}
-  padding: ${props => props.theme.spaces.base} 0;
+  padding: ${props => props.theme.spaces.small} 0;
   width: 100%;
 
   background-color: ${props => props.theme.colors.base03};
