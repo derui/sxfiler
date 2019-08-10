@@ -14,6 +14,7 @@ type t =
   ; body : body }
 
 let make ~id ~body = {id; body}
+let update_progress ~current ~targeted t = {t with body = {t.body with current; targeted}}
 
 module Json = struct
   (** body describes body of the notification. *)

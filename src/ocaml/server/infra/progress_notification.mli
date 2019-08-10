@@ -16,6 +16,9 @@ type t = private
 val make : id:id -> body:body -> t
 (** [make ~id ~body] is as constructor of [t] *)
 
+val update_progress : current:float -> targeted:float -> t -> t
+(** [update_progress ~current ~targeted t] get the progress updated with [current] and [target] *)
+
 (** Json representation *)
 module Json : sig
   module Body : sig
