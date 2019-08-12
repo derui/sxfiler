@@ -14,7 +14,7 @@ describe("UseCases", () => {
         const notification = createProgress("id", {
           current: 15,
           process: "process",
-          target: 30,
+          targeted: 30,
         });
 
         createUseCase().execute(dispatcher, { notification });
@@ -30,7 +30,7 @@ describe("UseCases", () => {
         const notification = createProgress("id", {
           current: 30,
           process: "process",
-          target: 30,
+          targeted: 30,
         });
 
         createUseCase().execute(dispatcher, { notification });

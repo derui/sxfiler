@@ -4,6 +4,6 @@ import { Theme, ThemeProvider } from "./default-theme";
 /**
    wrap element with default theme.
  */
-export const wrap = (e: React.ReactElement) => {
+export const wrap = function wrap(e: React.ReactElement) {
   return <ThemeProvider theme={Theme}>{e}</ThemeProvider>;
 };

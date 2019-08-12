@@ -16,7 +16,10 @@ export const style = css`
   list-style: none;
 `;
 
-export function createComponent<T extends Element.Props<H> = Element.Props, H extends HTMLElement = HTMLElement>(
+export const createComponent = function createComponent<
+  T extends Element.Props<H> = Element.Props,
+  H extends HTMLElement = HTMLElement
+>(
   context: {
     container?: React.ComponentType<T & React.RefAttributes<H>>;
   } = {}
@@ -30,6 +33,6 @@ export function createComponent<T extends Element.Props<H> = Element.Props, H ex
   render.displayName = "ListItem";
 
   return React.forwardRef(render);
-}
+};
 
 export const Component = createComponent();

@@ -12,7 +12,7 @@ export type ComponentType = React.FC<Props>;
 /**
  * Create element for base element
  */
-export function createComponent<H extends HTMLElement = HTMLElement>(
+export const createComponent = function createComponent<H extends HTMLElement = HTMLElement>(
   context: { tagName?: string } = {}
 ): React.ComponentType<Props<H> & React.RefAttributes<H>> {
   const { tagName = "div" } = context;
@@ -22,6 +22,6 @@ export function createComponent<H extends HTMLElement = HTMLElement>(
   };
   /* render.displayName = "Element"; */
   return React.forwardRef(render);
-}
+};
 
 export const Component = createComponent();

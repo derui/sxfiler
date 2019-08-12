@@ -12,45 +12,45 @@ enum SizeUnit {
   Unknown = "unknown",
 }
 
-interface SizeData {
+type SizeData = {
   sizeUnit: SizeUnit;
   size: bigInt.BigInteger;
   alignedSize: number;
-}
+};
 
-function nextUnit(sizeUnit: SizeUnit): SizeUnit | null {
+const nextUnit = function nextUnit(sizeUnit: SizeUnit): SizeUnit | null {
   switch (sizeUnit) {
-    case "byte":
+    case SizeUnit.Byte:
       return SizeUnit.KByte;
-    case "kbyte":
+    case SizeUnit.KByte:
       return SizeUnit.MByte;
-    case "mbyte":
+    case SizeUnit.MByte:
       return SizeUnit.GByte;
-    case "gbyte":
+    case SizeUnit.GByte:
       return SizeUnit.TByte;
-    case "tbyte":
+    case SizeUnit.TByte:
       return SizeUnit.Unknown;
     default:
       return null;
   }
-}
+};
 
-function sizeUnitToString(sizeUnit: SizeUnit): string {
+const sizeUnitToString = function sizeUnitToString(sizeUnit: SizeUnit): string {
   switch (sizeUnit) {
-    case "byte":
+    case SizeUnit.Byte:
       return "B";
-    case "kbyte":
+    case SizeUnit.KByte:
       return "K";
-    case "mbyte":
+    case SizeUnit.MByte:
       return "M";
-    case "gbyte":
+    case SizeUnit.GByte:
       return "G";
-    case "tbyte":
+    case SizeUnit.TByte:
       return "T";
     default:
       return "-";
   }
-}
+};
 
 class Size {
   private data: SizeData;
@@ -74,11 +74,11 @@ class Size {
    * @return size data
    */
   private toData(size: bigInt.BigInteger): SizeData {
-    function calcUnit(
+    const calcUnit = (
       fileSize: bigInt.BigInteger,
       current: SizeUnit,
       decimal: number
-    ): { current: SizeUnit; size: number } {
+    ): { current: SizeUnit; size: number } => {
       if (bigInt.zero.leq(fileSize) && fileSize.lt(bigInt(1024))) {
         return { current, size: fileSize.toJSNumber() };
       }
@@ -89,7 +89,7 @@ class Size {
       } else {
         return calcUnit(fileSize.divide(bigInt(1024)), unit, fileSize.mod(bigInt(1024)).toJSNumber() / 1024);
       }
-    }
+    };
     const parsedSize = bigInt(size);
     const data = calcUnit(parsedSize, SizeUnit.Byte, 0);
 

@@ -54,7 +54,7 @@ export type Props<
     overlay?: OverlayProps;
   };
 
-export function createComponent<
+export const createComponent = function createComponent<
   ContainerProps extends { className?: string } = Element.Props,
   OverlayProps extends { className?: string } = Element.Props,
   T extends Element.Props<H> = Element.Props,
@@ -92,6 +92,6 @@ export function createComponent<
   render.displayName = "dialog";
 
   return render;
-}
+};
 
 export const Component = createComponent();

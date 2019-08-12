@@ -8,13 +8,13 @@ export type Props = {
 /**
  * format Date to display in item
  */
-function format(timestamp: Date): string {
+const format = function format(timestamp: Date): string {
   const year = `${timestamp.getFullYear()}`.padStart(4, "0");
   const month = `${timestamp.getMonth() + 1}`.padStart(2, "0");
   const date = `${timestamp.getDate()}`.padStart(2, "0");
 
   return `${year}/${month}/${date}`;
-}
+};
 
 const Timestamp = styled.span`
   flex: 0 1 auto;

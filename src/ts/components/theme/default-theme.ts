@@ -65,8 +65,6 @@ export const Theme = {
   },
 };
 
-styledComponents.withTheme;
-
 const { default: styled, css, ThemeProvider } = styledComponents as styledComponents.ThemedStyledComponentsModule<
   Theme
 >;

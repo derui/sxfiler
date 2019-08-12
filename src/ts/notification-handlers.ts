@@ -12,50 +12,56 @@ import { createProgress } from "./domains/progress-notification";
 /**
    Handle common notification that contains message or progress of a server.
  */
-export const handleMessageNotification = (context: ContextLike) => (params: any) => {
-  const { id, level, body } = params;
+export const handleMessageNotification = function handleMessageNotification(context: ContextLike) {
+  return (params: any) => {
+    const { id, level, body } = params;
 
-  if (!id || !level || !body) {
-    throw Error("Invalid parameter format");
-  }
+    if (!id || !level || !body) {
+      throw Error("Invalid parameter format");
+    }
 
-  const notification = createMessage({ id, level, message: body });
-  context.use(ReceiveMessageNotificationUseCase.createUseCase())({ notification });
+    const notification = createMessage({ id, level, message: body });
+    context.use(ReceiveMessageNotificationUseCase.createUseCase())({ notification });
+  };
 };
 
-export const handleProgressNotification = (context: ContextLike) => (params: any) => {
-  const { id, body } = params;
+export const handleProgressNotification = function handleProgressNotification(context: ContextLike) {
+  return (params: any) => {
+    const { id, body } = params;
 
-  if (!id || !body) {
-    throw Error("Invalid parameter format");
-  }
+    if (!id || !body) {
+      throw Error("Invalid parameter format");
+    }
 
-  const notification = createProgress(id, body);
-  context.use(ReceiveProgressNotificationUseCase.createUseCase())({ notification });
+    const notification = createProgress(id, body);
+    context.use(ReceiveProgressNotificationUseCase.createUseCase())({ notification });
+  };
 };
 
 /**
    Handle a notification to require interaction of a task
  */
-export const handleTaskInteraction = (context: ContextLike) => (params: {
-  taskId: string;
-  nodeName: string;
-  suggestions: Suggestion[];
-}) => {
-  const suggestions = createSuggestions(params);
-  context.use(TaskRequireInteractionUseCase.createUseCase())({ suggestions });
+export const handleTaskInteraction = function handleTaskInteraction(context: ContextLike) {
+  return (params: { taskId: string; nodeName: string; suggestions: Suggestion[] }) => {
+    const suggestions = createSuggestions(params);
+    context.use(TaskRequireInteractionUseCase.createUseCase())({ suggestions });
+  };
 };
 
 /**
    Handle a notification that contains the task id finished
  */
-export const handleTaskFinished = (context: ContextLike) => (params: string) => {
-  context.use(TaskFinishedUseCase.createUseCase())(params);
+export const handleTaskFinished = function handleTaskFinished(context: ContextLike) {
+  return (params: string) => {
+    context.use(TaskFinishedUseCase.createUseCase())(params);
+  };
 };
 
 /**
    Handle a notification that contains the task id finished
  */
-export const handleFilerUpdated = (context: ContextLike) => (params: FilerOnRPC) => {
-  context.use(FilerUpdatedUseCase.createUseCase())({ filer: encode(params) });
+export const handleFilerUpdated = function handleFilerUpdated(context: ContextLike) {
+  return (params: FilerOnRPC) => {
+    context.use(FilerUpdatedUseCase.createUseCase())({ filer: encode(params) });
+  };
 };

@@ -140,14 +140,14 @@ const Input = styled.input`
   background-color: ${props => props.theme.colors.base03};
 `;
 
-function handleChange(cb: (input: string) => void, cb2: (input: string) => void) {
+const handleChange = function handleChange(cb: (input: string) => void, cb2: (input: string) => void) {
   return (e: React.ChangeEvent<HTMLInputElement>): void => {
     cb(e.target.value || "");
     cb2(e.target.value || "");
   };
-}
+};
 
-function scrollItemIfNeeded(parent: HTMLElement | null, selected: boolean) {
+const scrollItemIfNeeded = function scrollItemIfNeeded(parent: HTMLElement | null, selected: boolean) {
   return (e: HTMLElement | null) => {
     if (!e || !parent || !selected) {
       return;
@@ -164,12 +164,12 @@ function scrollItemIfNeeded(parent: HTMLElement | null, selected: boolean) {
       e.scrollIntoView(false);
     }
   };
-}
+};
 
 /**
  * Make list that contains completion items
  */
-function makeList(ref: React.RefObject<HTMLElement>, items: Item[], index: number) {
+const makeList = function makeList(ref: React.RefObject<HTMLElement>, items: Item[], index: number) {
   const listItems = items.map((v, i) => {
     const [before, matched, after] = splitByMatching(v);
     return (
@@ -181,7 +181,7 @@ function makeList(ref: React.RefObject<HTMLElement>, items: Item[], index: numbe
     );
   });
   return <CandidateList ref={ref}>{listItems}</CandidateList>;
-}
+};
 
 const Overlay: React.FC<OverlayContextProps> = ({ opened }) => {
   return (

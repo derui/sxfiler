@@ -61,7 +61,7 @@ ws.onopen = () => {
   initializeState();
 };
 
-function render(state: AppState) {
+const render = function render(state: AppState) {
   ReactDOM.render(
     <ModalRootContext.Provider value={{ element: document.getElementById("modal-root") }}>
       <LocatorContext.Provider value={locator}>
@@ -70,19 +70,17 @@ function render(state: AppState) {
     </ModalRootContext.Provider>,
     document.getElementById("root") as HTMLElement
   );
-}
+};
 
 store.subscribe(() => {
   render(store.getState());
 });
 
-document.body.addEventListener("keydown", ev => handleKeyDown(locator, store)(ev));
-
 /**
  * handle keyboard event that all keydown event on application
  * @param props properties of component
  */
-function handleKeyDown(locator: Locator, store: Store<AppState, Actions>) {
+const handleKeyDown = function handleKeyDown(locator: Locator, store: Store<AppState, Actions>) {
   return (ev: KeyboardEvent) => {
     const state = store.getState();
     const { context, commandRegistrar } = locator;
@@ -109,4 +107,6 @@ function handleKeyDown(locator: Locator, store: Store<AppState, Actions>) {
 
     return;
   };
-}
+};
+
+document.body.addEventListener("keydown", ev => handleKeyDown(locator, store)(ev));

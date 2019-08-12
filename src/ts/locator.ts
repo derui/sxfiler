@@ -17,8 +17,8 @@ let locator: Locator = {};
  * Set new locator to global context
  * @param newLocator
  */
-export function setLocator(newLocator: Locator): void {
+export const setLocator = function setLocator(newLocator: Locator) {
   Object.assign(locator, newLocator);
-}
+};
 
 export const LocatorContext: ReactContext<Locator> = createContext(locator);

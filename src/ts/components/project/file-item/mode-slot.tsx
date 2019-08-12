@@ -3,18 +3,18 @@ import { styled } from "@/components/theme";
 import { Capability } from "@/domains/capability";
 import { Mode } from "@/domains/mode";
 
-function capabilityToString(cap: Capability) {
+const capabilityToString = function capabilityToString(cap: Capability) {
   const readable = cap.readable ? "r" : "-";
   const writable = cap.writable ? "w" : "-";
   const executable = cap.executable ? "x" : "-";
 
   return `${readable}${writable}${executable}`;
-}
+};
 
 /**
  * convert mode to string
  */
-function modeToString(mode: Mode, isDirectory: boolean, isSymlink: boolean): string {
+const modeToString = function modeToString(mode: Mode, isDirectory: boolean, isSymlink: boolean): string {
   let state = "-";
 
   if (isDirectory && !isSymlink) {
@@ -28,7 +28,7 @@ function modeToString(mode: Mode, isDirectory: boolean, isSymlink: boolean): str
   const others = capabilityToString(mode.others);
 
   return `${state}${owner}${group}${others}`;
-}
+};
 
 interface Prop {
   mode: Mode;
