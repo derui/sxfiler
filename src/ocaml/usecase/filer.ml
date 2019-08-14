@@ -35,11 +35,11 @@ module Make = struct
       let%lwt v = SR.resolve_by_name params.name in
       match v with
       | None ->
-        let sort_order = config.T.Configuration.default_sort_order in
-        let%lwt file_list = Svc.scan params.initial_location in
-        let t = FC.create ~name:params.name ~file_list ~sort_order in
-        let%lwt () = SR.store t in
-        Lwt.return @@ Ok t
+          let sort_order = config.T.Configuration.default_sort_order in
+          let%lwt file_list = Svc.scan params.initial_location in
+          let t = FC.create ~name:params.name ~file_list ~sort_order in
+          let%lwt () = SR.store t in
+          Lwt.return @@ Ok t
       | Some _ -> Lwt.return @@ Error `Already_exists
   end
 end
@@ -96,10 +96,10 @@ module Jump_location = struct
       match%lwt SR.resolve_by_name params.name with
       | None -> Lwt.return_error `Not_found
       | Some filer ->
-        let%lwt file_list = Svc.scan params.location in
-        let filer' = T.Filer.move_location filer (module Clock) ~file_list in
-        let%lwt () = SR.store filer' in
-        Lwt.return_ok filer'
+          let%lwt file_list = Svc.scan params.location in
+          let filer' = T.Filer.move_location filer (module Clock) ~file_list in
+          let%lwt () = SR.store filer' in
+          Lwt.return_ok filer'
   end
 end
 
@@ -128,11 +128,11 @@ module Move_parent = struct
       match%lwt SR.resolve_by_name params.name with
       | None -> Lwt.return_error `Not_found
       | Some ({file_list; _} as filer) ->
-        let parent_dir = Path.dirname_as_path file_list.location in
-        let%lwt file_list = Svc.scan parent_dir in
-        let filer' = T.Filer.move_location filer (module Clock) ~file_list in
-        let%lwt () = SR.store filer' in
-        Lwt.return_ok filer'
+          let parent_dir = Path.dirname_as_path file_list.location in
+          let%lwt file_list = Svc.scan parent_dir in
+          let filer' = T.Filer.move_location filer (module Clock) ~file_list in
+          let%lwt () = SR.store filer' in
+          Lwt.return_ok filer'
   end
 end
 
@@ -171,12 +171,12 @@ module Enter_directory = struct
       | None, _ -> Lwt.return_error `Not_found_filer
       | _, None -> Lwt.return_error `Not_found_item
       | Some filer, Some item ->
-        if not item.stat.is_directory then Lwt.return_error `Not_directory
-        else
-          let%lwt new_file_list = Svc.scan item.full_path in
-          let filer' = T.Filer.move_location filer (module Clock) ~file_list:new_file_list in
-          let%lwt () = FR.store filer' in
-          Lwt.return_ok filer'
+          if not item.stat.is_directory then Lwt.return_error `Not_directory
+          else
+            let%lwt new_file_list = Svc.scan item.full_path in
+            let filer' = T.Filer.move_location filer (module Clock) ~file_list:new_file_list in
+            let%lwt () = FR.store filer' in
+            Lwt.return_ok filer'
   end
 end
 
@@ -206,20 +206,20 @@ module Toggle_mark = struct
         Option.(
           filer
           >>= lift
-          @@ fun filer ->
-          let marked, not_marked =
-            List.partition
-              (fun v -> T.Filer.Marked_item_set.mem v filer.T.Filer.marked_items)
-              params.item_ids
-          in
-          let filer = T.Filer.remove_mark filer ~ids:marked in
-          T.Filer.add_mark filer ~ids:not_marked)
+              @@ fun filer ->
+              let marked, not_marked =
+                List.partition
+                  (fun v -> T.Filer.Marked_item_set.mem v filer.T.Filer.marked_items)
+                  params.item_ids
+              in
+              let filer = T.Filer.remove_mark filer ~ids:marked in
+              T.Filer.add_mark filer ~ids:not_marked)
       in
       match filer with
       | None -> Lwt.return_error `Not_found
       | Some filer ->
-        let%lwt () = SR.store filer in
-        Lwt.return_ok filer
+          let%lwt () = SR.store filer in
+          Lwt.return_ok filer
   end
 end
 
@@ -258,11 +258,11 @@ module Move = struct
 
   (** The executor of this plan. *)
   module Executor (P : sig
-      val source_filer : T.Filer.t
-      val dest_filer : T.Filer.t
-      val source_items : T.File_item.id list
-    end)
-      (Dep : Dependencies) : T.Task.Executor = struct
+    val source_filer : T.Filer.t
+    val dest_filer : T.Filer.t
+    val source_items : T.File_item.id list
+  end)
+  (Dep : Dependencies) : T.Task.Executor = struct
     let interaction = Lwt_mvar.create_empty ()
     let apply_interaction = `Apply (Lwt_mvar.put interaction)
 
@@ -305,18 +305,18 @@ module Move = struct
         | None, _ -> Lwt.return_error (`Not_found params.source)
         | _, None -> Lwt.return_error (`Not_found params.dest)
         | Some source', Some dest' ->
-          let module Executor =
-            Executor
-              (struct
-                let source_filer = source'
-                let dest_filer = dest'
-                let source_items = params.item_ids
-              end)
-              (Dep)
-          in
-          let task = TF.create ~executor:(module Executor) in
-          let%lwt () = TR.store task in
-          Lwt.return_ok {task_id = task.id; task_name = "Move"}
+            let module Executor =
+              Executor
+                (struct
+                  let source_filer = source'
+                  let dest_filer = dest'
+                  let source_items = params.item_ids
+                end)
+                (Dep)
+            in
+            let task = TF.create ~executor:(module Executor) in
+            let%lwt () = TR.store task in
+            Lwt.return_ok {task_id = task.id; task_name = "Move"}
   end
 end
 
@@ -348,10 +348,10 @@ module Delete = struct
 
   (** Use case to delete items *)
   module Executor (P : sig
-      val filer : T.Filer.t
-      val target_items : T.File_item.id list
-    end)
-      (Dep : Dependencies) : T.Task.Executor = struct
+    val filer : T.Filer.t
+    val target_items : T.File_item.id list
+  end)
+  (Dep : Dependencies) : T.Task.Executor = struct
     let apply_interaction = `No_interaction
 
     let execute _ =
@@ -376,17 +376,17 @@ module Delete = struct
       match source with
       | None -> Lwt.return_error (`Not_found params.source)
       | Some source ->
-        let module E =
-          Executor
-            (struct
-              let filer = source
-              let target_items = params.item_ids
-            end)
-            (Dep)
-        in
-        let task = TF.create ~executor:(module E) in
-        let%lwt () = TR.store task in
-        Lwt.return_ok task.id
+          let module E =
+            Executor
+              (struct
+                let filer = source
+                let target_items = params.item_ids
+              end)
+              (Dep)
+          in
+          let task = TF.create ~executor:(module E) in
+          let%lwt () = TR.store task in
+          Lwt.return_ok task.id
   end
 end
 
@@ -420,11 +420,11 @@ module Copy = struct
 
   (** The executor of this plan. *)
   module Executor (P : sig
-      val source_filer : T.Filer.t
-      val dest_filer : T.Filer.t
-      val source_items : T.File_item.id list
-    end)
-      (Dep : Dependencies) : T.Task.Executor = struct
+    val source_filer : T.Filer.t
+    val dest_filer : T.Filer.t
+    val source_items : T.File_item.id list
+  end)
+  (Dep : Dependencies) : T.Task.Executor = struct
     let interaction = Lwt_mvar.create_empty ()
     let apply_interaction = `Apply (Lwt_mvar.put interaction)
 
@@ -464,17 +464,17 @@ module Copy = struct
       | None, _ -> Lwt.return_error (`Not_found params.source)
       | _, None -> Lwt.return_error (`Not_found params.dest)
       | Some source', Some dest' ->
-        let module Executor =
-          Executor
-            (struct
-              let source_filer = source'
-              let dest_filer = dest'
-              let source_items = params.item_ids
-            end)
-            (Dep)
-        in
-        let task = TF.create ~executor:(module Executor) in
-        let%lwt () = TR.store task in
-        Lwt.return_ok task.id
+          let module Executor =
+            Executor
+              (struct
+                let source_filer = source'
+                let dest_filer = dest'
+                let source_items = params.item_ids
+              end)
+              (Dep)
+          in
+          let task = TF.create ~executor:(module Executor) in
+          let%lwt () = TR.store task in
+          Lwt.return_ok task.id
   end
 end

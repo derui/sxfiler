@@ -16,11 +16,11 @@ let get ~default = function None -> default () | Some v -> v
 let some v = Some v
 
 include Monad.Make (struct
-    type 'a t = 'a option
+  type 'a t = 'a option
 
-    let bind m ~f = match m with None -> None | Some v -> f v
-    let fmap = `Use_bind_to_define
-    let return v = Some v
-  end)
+  let bind m ~f = match m with None -> None | Some v -> f v
+  let fmap = `Use_bind_to_define
+  let return v = Some v
+end)
 
 include Infix

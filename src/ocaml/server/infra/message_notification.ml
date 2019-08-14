@@ -24,8 +24,8 @@ module Json = struct
   module Level = struct
     type t =
       | Info [@name "info"]
-          | Warning [@name "warning"]
-          | Error [@name "error"]
+      | Warning [@name "warning"]
+      | Error [@name "error"]
     [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
   end
 

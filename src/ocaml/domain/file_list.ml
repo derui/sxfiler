@@ -15,14 +15,14 @@ let find_item ~id {items; _} = List.find_opt (fun v -> v.File_item.id = id) item
 (* convert sort type to sort function *)
 let to_sort_fun = function
   | Types.Sort_type.Date ->
-    fun v1 v2 -> Pervasives.compare v1.File_item.stat.mtime v2.File_item.stat.mtime
+      fun v1 v2 -> Pervasives.compare v1.File_item.stat.mtime v2.File_item.stat.mtime
   | Types.Sort_type.Name ->
-    fun v1 v2 ->
-      Pervasives.compare
-        (Path.basename v1.File_item.full_path)
-        (Path.basename v2.File_item.full_path)
+      fun v1 v2 ->
+        Pervasives.compare
+          (Path.basename v1.File_item.full_path)
+          (Path.basename v2.File_item.full_path)
   | Types.Sort_type.Size ->
-    fun v1 v2 -> Pervasives.compare v1.File_item.stat.size v2.File_item.stat.size
+      fun v1 v2 -> Pervasives.compare v1.File_item.stat.size v2.File_item.stat.size
 
 (* sort items with sort_order in [t] *)
 let sort_items t ~order =

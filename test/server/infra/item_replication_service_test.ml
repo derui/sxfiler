@@ -9,18 +9,18 @@ module Dummy_ns = struct
 end
 
 module Message_factory = I.Message_notification_factory.Make (struct
-    type id = Uuidm.t
+  type id = Uuidm.t
 
-    let id = Uuidm.v4_gen (Random.State.make [||]) ()
-    let generate () = id
-  end)
+  let id = Uuidm.v4_gen (Random.State.make [||]) ()
+  let generate () = id
+end)
 
 module Progress_factory = I.Progress_notification_factory.Make (struct
-    type id = Uuidm.t
+  type id = Uuidm.t
 
-    let id = Uuidm.v4_gen (Random.State.make [||]) ()
-    let generate () = id
-  end)
+  let id = Uuidm.v4_gen (Random.State.make [||]) ()
+  let generate () = id
+end)
 
 let test_set =
   let suggest item =
@@ -42,12 +42,12 @@ let test_set =
         let finalizer () = File.remove temp_dir ; File.remove dest ; Lwt.return_unit in
         finalizer
         |> Lwt.finalize (fun () ->
-            let _to = D.File_list.make ~location:Path.(of_string dest) ~items:[] () in
-            let%lwt () = M.replicate ~suggest ~items:[item] ~_to in
-            let dest_file = Filename.basename temp_file |> Filename.concat dest in
-            Alcotest.(check bool) "destination" true (Sys.file_exists dest_file) ;
-            Alcotest.(check bool) "source" true (Sys.file_exists temp_file) ;
-            Lwt.return_unit))
+               let _to = D.File_list.make ~location:Path.(of_string dest) ~items:[] () in
+               let%lwt () = M.replicate ~suggest ~items:[item] ~_to in
+               let dest_file = Filename.basename temp_file |> Filename.concat dest in
+               Alcotest.(check bool) "destination" true (Sys.file_exists dest_file) ;
+               Alcotest.(check bool) "source" true (Sys.file_exists temp_file) ;
+               Lwt.return_unit))
   ; Alcotest_lwt.test_case "replicate items to destination with correction" `Quick (fun _ () ->
         let temp_dir = File.mk_temp_dir "nts" in
         let dest = File.mk_temp_dir "destination" in
@@ -62,9 +62,9 @@ let test_set =
         let finalizer () = File.remove temp_dir ; File.remove dest ; Lwt.return_unit in
         finalizer
         |> Lwt.finalize (fun () ->
-            let _to = D.File_list.make ~location:Path.(of_string dest) ~items:[item_to] () in
-            let%lwt () = M.replicate ~suggest ~items:[item] ~_to in
-            let dest_file = Filename.concat dest "renamed" in
-            Alcotest.(check bool) "destination" true (Sys.file_exists dest_file) ;
-            Alcotest.(check bool) "source" true (Sys.file_exists temp_file) ;
-            Lwt.return_unit)) ]
+               let _to = D.File_list.make ~location:Path.(of_string dest) ~items:[item_to] () in
+               let%lwt () = M.replicate ~suggest ~items:[item] ~_to in
+               let dest_file = Filename.concat dest "renamed" in
+               Alcotest.(check bool) "destination" true (Sys.file_exists dest_file) ;
+               Alcotest.(check bool) "source" true (Sys.file_exists temp_file) ;
+               Lwt.return_unit)) ]

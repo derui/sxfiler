@@ -57,5 +57,5 @@ let expose_all server (module Dep : Dependencies.S) =
   in
   List.fold_left
     (fun server (module Spec : Procedure.Spec) ->
-       Jsonrpc_server.expose server ~procedure:(module Procedure.Make (Spec)))
+      Jsonrpc_server.expose server ~procedure:(module Procedure.Make (Spec)))
     server procedures

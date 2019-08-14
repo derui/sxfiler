@@ -23,7 +23,7 @@ module Send_reply = struct
       match%lwt R.resolve task_id with
       | None -> Lwt.return_error `Not_found
       | Some t ->
-        let open Lwt in
-        Task.apply_interaction ~reply t >>= return_ok
+          let open Lwt in
+          Task.apply_interaction ~reply t >>= return_ok
   end
 end
