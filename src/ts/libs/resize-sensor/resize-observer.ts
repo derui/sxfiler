@@ -9,7 +9,6 @@ import ResizeObserver from "resize-observer-polyfill";
 
 export type ResizeCallback = (entry: ResizeObserverEntry, unobserve: () => void) => void;
 
-const observer = new ResizeObserver(observerCallback);
 const callbackMap: Map<Element, ResizeCallback> = new Map();
 
 const observerCallback = function observerCallback(entries: ResizeObserverEntry[], observer: ResizeObserver) {
@@ -21,6 +20,8 @@ const observerCallback = function observerCallback(entries: ResizeObserverEntry[
     }
   }
 };
+
+const observer = new ResizeObserver(observerCallback);
 
 /**
  * Add an element to observer and callback to handle the event when the element resized.

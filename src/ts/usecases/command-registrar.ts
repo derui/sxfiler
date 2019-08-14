@@ -34,10 +34,10 @@ type CommandRegistrarInner = CommandRegistrar & {
 /**
  * Create new instance of CommandRegistrar
  */
-export const createCommandRegistrar = (
+export const createCommandRegistrar = function createCommandRegistrar(
   client: Client<ApiMethod>,
   commands: { [key: string]: CommandLike } = {}
-): CommandRegistrar => {
+): CommandRegistrar {
   return {
     _client: client,
     _commands: commands,

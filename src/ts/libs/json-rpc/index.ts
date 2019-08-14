@@ -14,7 +14,7 @@ export interface Jsonrpc {
  * initialize JSON-RPC base modules. Calling this function MUST be only once in application
  * @param ws WebSocket
  */
-export function initialize(ws: WebSocket): Jsonrpc {
+export const initialize = function initialize(ws: WebSocket): Jsonrpc {
   const handler = new WebSocketHandler(ws);
   const requester = new WebSocketRequester(ws);
 
@@ -25,7 +25,7 @@ export function initialize(ws: WebSocket): Jsonrpc {
     handler,
     requester,
   };
-}
+};
 
 /**
  * Create notification server with base modules. Calling this function MUST be only once per jsonrpc module.
@@ -33,7 +33,7 @@ export function initialize(ws: WebSocket): Jsonrpc {
  * @param context current system context
  * @param methodMap method map for notification from server
  */
-export function createNotificationServer(
+export const createNotificationServer = function createNotificationServer(
   jsonrpc: Jsonrpc,
   context: ContextLike,
   methodMap: NotificationMethodMap
@@ -43,13 +43,16 @@ export function createNotificationServer(
   jsonrpc.handler.addHandler(server);
 
   return server;
-}
+};
 
 /**
  * Create JSON-RPC client to call or notify to server
  * @param jsonrpc base module
  * @param idGenerator ID generator
  */
-export function createClient<M extends string>(jsonrpc: Jsonrpc, idGenerator: IDGenerator): Client<M> {
+export const createClient = function createClient<M extends string>(
+  jsonrpc: Jsonrpc,
+  idGenerator: IDGenerator
+): Client<M> {
   return new ClientImpl(jsonrpc.requester, idGenerator);
-}
+};

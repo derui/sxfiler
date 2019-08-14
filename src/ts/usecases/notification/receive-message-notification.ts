@@ -1,5 +1,5 @@
 import { Actions } from "@/actions";
-import { actions } from "@/actions/notification";
+import * as actions from "@/actions/notification";
 import { Dispatcher } from "@/types";
 import { UseCaseLike } from "@/usecases/type";
 import { MessageNotification } from "@/domains/message-notification";

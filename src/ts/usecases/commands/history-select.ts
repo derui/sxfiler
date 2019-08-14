@@ -1,5 +1,5 @@
 import { Actions } from "@/actions";
-import { actions } from "@/actions/filer";
+import * as actions from "@/actions/filer";
 import * as historyActions from "@/actions/history";
 import { CommandLike } from "@/usecases/type";
 import { Dispatcher } from "@/types";

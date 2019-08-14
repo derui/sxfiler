@@ -47,13 +47,13 @@ const ProgressIndicator = styled.div<{ ratio: number }>`
 `;
 
 // make a progress bar
-function makeProgressBar(ratio: number) {
+const makeProgressBar = function(ratio: number) {
   return (
     <ProgressBar key="progress-bar">
       <ProgressIndicator ratio={ratio} />
     </ProgressBar>
   );
-}
+};
 
 export type Props = {
   body: Body;

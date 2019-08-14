@@ -10,7 +10,7 @@ type UpdateReplyPayloadAction = AppAction<ActionTypes.TASK_UPDATE_REPLY_PAYLOAD,
 
 export type Actions = RequireInteractionAction | FinishedAction | SelectReplyAction | UpdateReplyPayloadAction;
 
-const requireInteraction = (suggestions: Suggestions): RequireInteractionAction => {
+export const requireInteraction = function requireInteraction(suggestions: Suggestions): RequireInteractionAction {
   return { type: ActionTypes.TASK_REQUIRE_INTERACTION, suggestions };
 };
 

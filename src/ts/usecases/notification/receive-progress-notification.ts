@@ -1,12 +1,12 @@
 import { Actions } from "@/actions";
-import { actions } from "@/actions/notification";
+import * as actions from "@/actions/notification";
 import { Dispatcher } from "@/types";
 import { UseCaseLike } from "@/usecases/type";
 import { ProgressNotification } from "@/domains/progress-notification";
 
-interface Arg {
+type Arg = {
   notification: ProgressNotification;
-}
+};
 
 export type UseCase = UseCaseLike<Actions, Arg>;
 

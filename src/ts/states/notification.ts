@@ -7,9 +7,9 @@ export interface State {
 }
 
 // get empty state
-export function empty(): State {
+export const empty = function empty(): State {
   return {
     progresses: createNotifications([]),
     timeouts: createNotifications([]),
   };
-}
+};

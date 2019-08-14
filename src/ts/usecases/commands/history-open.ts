@@ -14,7 +14,7 @@ const commandId = "history.open";
  * Regist command instance to the registrar
  */
 export const registCommand = function registCommand(registrar: CommandRegistrar) {
-  registrar.regist({
+  return registrar.regist({
     moduleId: belongingModuleId,
     commandId,
     commandInstance: createCommand(),

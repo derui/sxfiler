@@ -1,5 +1,5 @@
 import { Actions } from "@/actions";
-import { actions } from "@/actions/key-map";
+import * as actions from "@/actions/key-map";
 import { CommandLike } from "@/usecases/type";
 import { Dispatcher } from "@/types";
 import { CommandRegistrar } from "@/usecases/command-registrar";

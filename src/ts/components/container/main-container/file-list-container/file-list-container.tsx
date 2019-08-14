@@ -28,7 +28,7 @@ const Separator = styled.div`
 `;
 
 /* create filer from state and key */
-function createFiler(key: string, currentSide: Side, filer?: Filer): FileList.ElementType | null {
+const createFiler = function createFiler(key: string, currentSide: Side, filer?: Filer): FileList.ElementType | null {
   const focused = key === currentSide;
 
   if (!filer) {
@@ -44,7 +44,7 @@ function createFiler(key: string, currentSide: Side, filer?: Filer): FileList.El
       focused={focused}
     />
   );
-}
+};
 
 export type ElementType = React.ReactElement<Props, React.FC<Props>>;
 

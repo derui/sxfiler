@@ -6,6 +6,6 @@ export interface State {
 }
 
 /** return empty state */
-export function empty(): State {
+export const empty = function empty(): State {
   return { current: new Configuration() };
-}
+};

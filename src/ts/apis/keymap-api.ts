@@ -15,7 +15,7 @@ export enum Methods {
    @param keymaps JSON representation for fller
    @return Filer object
  */
-function transformKeymap(keymaps: {
+const transformKeymap = function transformKeymap(keymaps: {
   bindings: [{ key: string; action: string; when: { contexts: string[] } }];
 }): Keymap {
   if (!keymaps) {
@@ -41,7 +41,7 @@ function transformKeymap(keymaps: {
       return { ...v, when: { contexts } };
     })
   );
-}
+};
 
 /**
    API definition for keymap/get

@@ -1,6 +1,6 @@
 // defines use case to initialize filer
 import { Actions } from "@/actions";
-import { actions } from "@/actions/filer";
+import * as actions from "@/actions/filer";
 import { Dispatcher } from "@/types";
 import { UseCaseLike } from "@/usecases/type";
 import { Client } from "@/libs/json-rpc/client";

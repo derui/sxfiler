@@ -1,5 +1,5 @@
 import { Actions } from "@/actions";
-import { actions } from "@/actions/task";
+import * as actions from "@/actions/task";
 import { CommandLike } from "@/usecases/type";
 import { Dispatcher } from "@/types";
 import { CommandRegistrar } from "@/usecases/command-registrar";
@@ -11,7 +11,7 @@ const commandId = "task.selectPreviousReply";
  * Regist command instance to the registrar
  */
 export const registCommand = function registCommand(registrar: CommandRegistrar) {
-  registrar.regist({
+  return registrar.regist({
     moduleId: belongingModuleId,
     commandId,
     commandInstance: createCommand(),

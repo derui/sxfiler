@@ -1,5 +1,5 @@
 import { Actions } from "@/actions";
-import { actions } from "@/actions/filer";
+import * as actions from "@/actions/filer";
 import { CommandLike } from "@/usecases/type";
 import { Dispatcher } from "@/types";
 import { filerOnSide } from "@/states/file-list";
@@ -13,7 +13,7 @@ const commandId = "filer.moveCursorDown";
  * Regist command instance to the registrar
  */
 export const registCommand = function registCommand(registrar: CommandRegistrar) {
-  registrar.regist({
+  return registrar.regist({
     moduleId: belongingModuleId,
     commandId,
     commandInstance: createCommand(),

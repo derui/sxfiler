@@ -19,6 +19,6 @@ export const empty = (): State => {
 /**
    Get current selected candidate
  */
-export function currentSelectedCandidate(state: State): Candidate | undefined {
+export const currentSelectedCandidate = function currentSelectedCandidate(state: State): Candidate | undefined {
   return state.completion.candidates[state.completion.cursor];
-}
+};
