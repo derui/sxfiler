@@ -22,7 +22,7 @@ export type TypeOnRPC = {
    @param obj JSON representation for node
    @return Node object
  */
-export const encode = (obj: TypeOnRPC): FileStat => {
+export const encode = function encode(obj: TypeOnRPC): FileStat {
   return createFileStat({
     ...obj,
     mode: createMode({

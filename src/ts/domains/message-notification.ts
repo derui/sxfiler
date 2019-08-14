@@ -16,7 +16,7 @@ export type MessageNotification = {
  * @param level level of a notification
  * @param message body of a message notification
  */
-export const createMessage = ({
+export const createMessage = function createMessage({
   id,
   level,
   message,
@@ -24,6 +24,6 @@ export const createMessage = ({
   id: string;
   level: Level;
   message: string;
-}): MessageNotification => {
+}): MessageNotification {
   return { id, level, body: message };
 };

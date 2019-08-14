@@ -24,7 +24,7 @@ export type Notification<T extends string, P extends {} = any> = {
   parametersTransformer: (param: P) => any;
 };
 
-export interface Client<M extends string> {
+export type Client<M extends string> = {
   /**
    * call a method with or without request.
    *
@@ -42,7 +42,7 @@ export interface Client<M extends string> {
    * @return promise to handling result of RPC
    */
   notify<P>(api: Notification<M, P>, params: P): void;
-}
+};
 
 /**
  * The client of JSON-RPC

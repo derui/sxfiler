@@ -16,7 +16,7 @@ type CreateModeArg = {
 /**
    create mode from each capabilities
  */
-export const createMode = ({ owner, group, others }: CreateModeArg): Mode => {
+export const createMode = function createMode({ owner, group, others }: CreateModeArg): Mode {
   return {
     owner,
     group,
@@ -27,20 +27,27 @@ export const createMode = ({ owner, group, others }: CreateModeArg): Mode => {
 /**
    Get a new mode that do not have any capability.
  */
-export const emptyMode = (): Mode =>
-  createMode({ owner: emptyCapability(), group: emptyCapability(), others: emptyCapability() });
+export const emptyMode = function emptyMode(): Mode {
+  return createMode({ owner: emptyCapability(), group: emptyCapability(), others: emptyCapability() });
+};
 
 /**
    change capability of owner
  */
-export const changeOwner = (cap: Capability) => (mode: Mode): Mode => createMode({ ...mode, owner: cap });
+export const changeOwner = function changeOwner(cap: Capability) {
+  return (mode: Mode): Mode => createMode({ ...mode, owner: cap });
+};
 
 /**
    change capability of group
  */
-export const changeGroup = (cap: Capability) => (mode: Mode): Mode => createMode({ ...mode, group: cap });
+export const changeGroup = function changeGroup(cap: Capability) {
+  return (mode: Mode): Mode => createMode({ ...mode, group: cap });
+};
 
 /**
    change capability of others
  */
-export const changeOthers = (cap: Capability) => (mode: Mode): Mode => createMode({ ...mode, others: cap });
+export const changeOthers = function changeOthers(cap: Capability) {
+  return (mode: Mode): Mode => createMode({ ...mode, others: cap });
+};

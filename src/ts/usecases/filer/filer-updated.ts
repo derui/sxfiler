@@ -10,7 +10,7 @@ type Args = {
 };
 export type UseCase = UseCaseLike<Actions, Args>;
 
-export const createUseCase = (): UseCase => {
+export const createUseCase = function createUseCase(): UseCase {
   return {
     execute(dispatcher: Dispatcher<Actions>, { filer }: Args) {
       dispatcher.dispatch(actions.load({ filer }));

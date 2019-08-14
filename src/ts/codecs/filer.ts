@@ -22,7 +22,7 @@ export type FilerOnRPC = {
    @param filer JSON representation for fller
    @return Filer object
  */
-export const encode = (obj: FilerOnRPC): Filer => {
+export const encode = function encode(obj: FilerOnRPC): Filer {
   const {
     id,
     name,

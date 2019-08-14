@@ -12,7 +12,7 @@ type UseCaseInner = UseCase & {
   client: Client<ApiMethod>;
 };
 
-export const createUseCase = (client: Client<ApiMethod>): UseCase => {
+export const createUseCase = function createUseCase(client: Client<ApiMethod>): UseCase {
   return {
     client,
     async execute(dispatcher: Dispatcher<Actions>) {

@@ -17,7 +17,7 @@ export type Suggestions = {
 /**
    The factory function to create interaction from argument
  */
-export const createSuggestion = (args: { kind: SuggestionKind }): Suggestion => {
+export const createSuggestion = function createSuggestion(args: { kind: SuggestionKind }): Suggestion {
   return {
     ...args,
   };
@@ -26,11 +26,11 @@ export const createSuggestion = (args: { kind: SuggestionKind }): Suggestion => 
 /**
    The factory function to create suggestions from argument
  */
-export const createSuggestions = (args: {
+export const createSuggestions = function createSuggestions(args: {
   taskId: string;
   nodeName: string;
   suggestions: Suggestion[];
-}): Suggestions => {
+}): Suggestions {
   return {
     ...args,
   };

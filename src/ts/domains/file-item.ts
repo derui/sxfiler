@@ -14,6 +14,6 @@ export type FileItem = {
  * create file item
  * @param args
  */
-export const createFileItem = (args: FileItem): FileItem => {
+export const createFileItem = function createFileItem(args: FileItem): FileItem {
   return { ...args };
 };

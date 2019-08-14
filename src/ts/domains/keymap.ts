@@ -22,37 +22,41 @@ export type Keymap = {
   readonly bindings: Binding[];
 };
 
-const evaluateWithContext = (w: When, context: AppContext) => {
+const evaluateWithContext = function evaluateWithContext(w: When, context: AppContext) {
   const contextSet = new Set(context.subContexts);
   contextSet.add(context.current);
 
   return w.contexts.every(v => contextSet.has(v));
 };
 
-export const allowedInContext = (context: AppContext) => (state: Keymap): Keymap => {
-  const evaluatedKeymap = state.bindings
-    .filter(v => evaluateWithContext(v.when, context))
-    .reduce((map, v) => {
-      const binding = map.get(v.key);
-      if (binding && binding.when.contexts.length < v.when.contexts.length) {
-        map.set(v.key, v);
-      } else {
-        map.set(v.key, v);
-      }
+export const allowedInContext = function allowedInContext(context: AppContext) {
+  return (state: Keymap): Keymap => {
+    const evaluatedKeymap = state.bindings
+      .filter(v => evaluateWithContext(v.when, context))
+      .reduce((map, v) => {
+        const binding = map.get(v.key);
+        if (binding && binding.when.contexts.length < v.when.contexts.length) {
+          map.set(v.key, v);
+        } else {
+          map.set(v.key, v);
+        }
 
-      return map;
-    }, new Map<string, Binding>())
-    .values();
+        return map;
+      }, new Map<string, Binding>())
+      .values();
 
-  return createKeymap(Array.from(evaluatedKeymap));
+    return createKeymap(Array.from(evaluatedKeymap));
+  };
 };
 
-export const createKeymap = (bindings: Binding[] = []): Keymap => {
+export const createKeymap = function createKeymap(bindings: Binding[] = []): Keymap {
   return {
     bindings: Array.from(bindings),
   };
 };
 
-export const find = (key: string) => (state: Keymap): Binding | undefined => {
-  return state.bindings.find(v => v.key === key);
+export const find = function find(key: string) {
+  return (state: Keymap): Binding | undefined => {
+    return state.bindings.find(v => v.key === key);
+  };
 };

@@ -20,7 +20,11 @@ type CreateCapabilityArg = {
 /**
    Create capability from argument
  */
-export const createCapability = ({ writable, readable, executable }: CreateCapabilityArg): Capability => {
+export const createCapability = function createCapability({
+  writable,
+  readable,
+  executable,
+}: CreateCapabilityArg): Capability {
   return {
     writable,
     readable,
@@ -31,34 +35,41 @@ export const createCapability = ({ writable, readable, executable }: CreateCapab
 /**
    Return new capability that have not any work.
  */
-export const emptyCapability = (): Capability =>
-  createCapability({ writable: false, readable: false, executable: false });
+export const emptyCapability = function emptyCapability(): Capability {
+  return createCapability({ writable: false, readable: false, executable: false });
+};
 
 /**
    Return new capability that have all capability on all roles.
  */
-export const fullCapability = (): Capability => createCapability({ writable: true, readable: true, executable: true });
-
-const allowTo = (typ: CapabilityType) => (capability: Capability) => {
-  switch (typ) {
-    case CapabilityType.WRITE:
-      return createCapability({ ...capability, writable: true });
-    case CapabilityType.READ:
-      return createCapability({ ...capability, readable: true });
-    case CapabilityType.EXECUTE:
-      return createCapability({ ...capability, executable: true });
-  }
+export const fullCapability = function fullCapability(): Capability {
+  return createCapability({ writable: true, readable: true, executable: true });
 };
 
-const disallowTo = (typ: CapabilityType) => (capability: Capability) => {
-  switch (typ) {
-    case CapabilityType.WRITE:
-      return createCapability({ ...capability, writable: false });
-    case CapabilityType.READ:
-      return createCapability({ ...capability, readable: false });
-    case CapabilityType.EXECUTE:
-      return createCapability({ ...capability, executable: false });
-  }
+const allowTo = function allowTo(typ: CapabilityType) {
+  return (capability: Capability) => {
+    switch (typ) {
+      case CapabilityType.WRITE:
+        return createCapability({ ...capability, writable: true });
+      case CapabilityType.READ:
+        return createCapability({ ...capability, readable: true });
+      case CapabilityType.EXECUTE:
+        return createCapability({ ...capability, executable: true });
+    }
+  };
+};
+
+const disallowTo = function disallowTo(typ: CapabilityType) {
+  return (capability: Capability) => {
+    switch (typ) {
+      case CapabilityType.WRITE:
+        return createCapability({ ...capability, writable: false });
+      case CapabilityType.READ:
+        return createCapability({ ...capability, readable: false });
+      case CapabilityType.EXECUTE:
+        return createCapability({ ...capability, executable: false });
+    }
+  };
 };
 
 export const allowToWrite = allowTo(CapabilityType.WRITE);

@@ -28,7 +28,7 @@ export type FactoryArg = {
   isSymlink: boolean;
 };
 
-export const sizeAsBigInt = (state: FileStat): bigInt.BigInteger => {
+export const sizeAsBigInt = function sizeAsBigInt(state: FileStat): bigInt.BigInteger {
   return bigInt(state.size);
 };
 
@@ -36,7 +36,7 @@ export const sizeAsBigInt = (state: FileStat): bigInt.BigInteger => {
  * create FileStat
  * @param arg arguments of factory
  */
-export const createFileStat = (arg: FactoryArg): FileStat => {
+export const createFileStat = function createFileStat(arg: FactoryArg): FileStat {
   const { atime, ctime, mtime, mode, ...rest } = arg;
   return {
     ...rest,

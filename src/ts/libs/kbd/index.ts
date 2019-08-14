@@ -22,7 +22,7 @@ const specialKeyMapping = {
  * @param key A key that input from keyborad event
  * @param option option to make key
  */
-export function make(key: string, option: MakeOption = { ctrl: false, meta: false }): Key {
+export const make = function make(key: string, option: MakeOption = { ctrl: false, meta: false }): Key {
   const mapping = Object.entries(specialKeyMapping)
     .map(([k, v]) => ({ key: k, value: v }))
     .find(v => v.key === key);
@@ -32,15 +32,15 @@ export function make(key: string, option: MakeOption = { ctrl: false, meta: fals
     ctrl: option.ctrl || false,
     meta: option.meta || false,
   };
-}
+};
 
 /**
  * convert Key interface to key sequence string representation that is compatible of sxfiler_kbd's.
  * @param key
  */
-export function toKeySeq(key: Key): string {
+export const toKeySeq = function toKeySeq(key: Key): string {
   const meta = key.meta ? "M-" : "";
   const ctrl = key.ctrl ? "C-" : "";
 
   return `${meta}${ctrl}${key.key}`;
-}
+};

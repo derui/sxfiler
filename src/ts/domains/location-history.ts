@@ -11,7 +11,10 @@ export type LocationHistory = {
 };
 
 // creare new LocationHistory
-export const createLocationHistory = ({ records, maxRecordNumber }: LocationHistory): LocationHistory => {
+export const createLocationHistory = function createLocationHistory({
+  records,
+  maxRecordNumber,
+}: LocationHistory): LocationHistory {
   return {
     records,
     maxRecordNumber,

@@ -16,6 +16,6 @@ export type TypeOnRPC = {
    @param obj JSON representation for node
    @return Node object
  */
-export const encode = (obj: TypeOnRPC): Candidate => {
+export const encode = function encode(obj: TypeOnRPC): Candidate {
   return createCandidate({ id: obj.value.id, value: obj.value.value, start: obj.start, length: obj.length });
 };

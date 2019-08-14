@@ -3,16 +3,16 @@ import { actions } from "@/actions/notification";
 import { Dispatcher } from "@/types";
 import { UseCaseLike } from "@/usecases/type";
 
-interface Arg {
+type Arg = {
   notificationId: string;
-}
+};
 
 export type UseCase = UseCaseLike<Actions, Arg>;
 
 /**
  * Create the new use case
  */
-export const createUseCase = (): UseCase => {
+export const createUseCase = function createUseCase(): UseCase {
   return {
     execute(dispatcher: Dispatcher<Actions>, arg: Arg) {
       const { notificationId } = arg;

@@ -8,8 +8,6 @@ export type Actions = UpdateAction;
 /**
    update the key map
  */
-const updateKeymap = (keymap: Keymap): UpdateAction => {
+export const updateKeymap = function updateKeymap(keymap: Keymap): UpdateAction {
   return { type: ActionTypes.KEYMAP_UPDATE, keymap };
 };
-
-export const actions = { updateKeymap };

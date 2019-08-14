@@ -7,7 +7,7 @@ import { Suggestions } from "@/domains/task-suggestion";
 
 export type UseCase = SyncUseCaseLike<Actions, { suggestions: Suggestions }>;
 
-export const createUseCase = (): UseCase => {
+export const createUseCase = function createUseCase(): UseCase {
   return {
     execute(dispatcher: Dispatcher<Actions>, args) {
       if (!args) {

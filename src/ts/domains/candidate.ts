@@ -10,7 +10,7 @@ type FactoryArg = Pick<Candidate, "id" | "value"> & Partial<Pick<Candidate, "sta
 /**
  * Create candidate from candidate object.
  */
-export const createCandidate = ({ id, value, start = 0, length = 0 }: FactoryArg): Candidate => {
+export const createCandidate = function createCandidate({ id, value, start = 0, length = 0 }: FactoryArg): Candidate {
   return {
     id,
     value,
@@ -22,7 +22,7 @@ export const createCandidate = ({ id, value, start = 0, length = 0 }: FactoryArg
 /**
    split candidate that based on matching
  */
-export const splitByMatching = (state: Candidate) => {
+export const splitByMatching = function splitByMatching(state: Candidate) {
   const { value, start, length } = state;
   const beforeMatched = value.substring(0, start);
   const matched = value.substring(start, start + length);

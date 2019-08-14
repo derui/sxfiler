@@ -8,7 +8,7 @@ export type AppContext = {
 /**
    create AppContext
  */
-export function createAppContext({
+export const createAppContext = function createAppContext({
   current,
   subContexts,
 }: {
@@ -19,23 +19,23 @@ export function createAppContext({
     current,
     subContexts: Array.from(subContexts || []),
   };
-}
+};
 
 /**
    change context
  */
-export function changeCurrent(context: UIContext) {
+export const changeCurrent = function changeCurrent(context: UIContext) {
   return (state: AppContext) =>
     createAppContext({
       current: context,
       subContexts: state.subContexts,
     });
-}
+};
 
 /**
    Add a context to AppContext
  */
-export function addSubContext(context: UIContext) {
+export const addSubContext = function addSubContext(context: UIContext) {
   return (state: AppContext) => {
     const tmpSet = new Set(state.subContexts);
     tmpSet.add(context);
@@ -45,12 +45,12 @@ export function addSubContext(context: UIContext) {
       subContexts: Array.from(tmpSet.values()),
     });
   };
-}
+};
 
 /**
    remove the context from AppContext
  */
-export function removeSubContext(context: UIContext) {
+export const removeSubContext = function removeSubContext(context: UIContext) {
   return (state: AppContext) => {
     const tmpSet = new Set(state.subContexts);
     tmpSet.delete(context);
@@ -60,4 +60,4 @@ export function removeSubContext(context: UIContext) {
       subContexts: Array.from(tmpSet.values()),
     });
   };
-}
+};

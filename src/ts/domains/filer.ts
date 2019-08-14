@@ -36,7 +36,7 @@ export type Filer = FilerObject & {
   markedItems: FileItem[];
 };
 
-function moveIndex(this: FilerObject, direction: Direction): Filer {
+const moveIndex = function moveIndex(this: FilerObject, direction: Direction): Filer {
   let index = 0;
 
   switch (direction) {
@@ -49,9 +49,16 @@ function moveIndex(this: FilerObject, direction: Direction): Filer {
   }
 
   return createFiler({ ...this, currentCursorIndex: index });
-}
+};
 
-export const createFiler = ({ id, name, items, location, currentCursorIndex, history }: FactoryArg): Filer => {
+export const createFiler = function createFiler({
+  id,
+  name,
+  items,
+  location,
+  currentCursorIndex,
+  history,
+}: FactoryArg): Filer {
   return {
     id,
     name,

@@ -5,24 +5,24 @@ import "intersection-observer";
 export type RootId = string;
 export type IntersectionChandedHandler = (entry: IntersectionObserverEntry) => void;
 
-export interface IntersectionTarget {
+export type IntersectionTarget = {
   element: Element;
   handler: IntersectionChandedHandler;
-}
+};
 
-interface Observer {
+type Observer = {
   instance: IntersectionObserver | undefined;
   targets: Map<Element, IntersectionTarget>;
-}
+};
 
 const intersectionObserverMap = new Map<RootId, Observer>();
 
 // get observer binded rootId
-function getObserver(rootId: RootId): Observer | undefined {
+const getObserver = function getObserver(rootId: RootId): Observer | undefined {
   return intersectionObserverMap.get(rootId);
-}
+};
 
-export function observingTargets(rootId: RootId): IntersectionTarget[] | undefined {
+export const observingTargets = function observingTargets(rootId: RootId): IntersectionTarget[] | undefined {
   const observer = intersectionObserverMap.get(rootId);
 
   if (!observer) {
@@ -30,10 +30,10 @@ export function observingTargets(rootId: RootId): IntersectionTarget[] | undefin
   }
 
   return Array.from(observer.targets.values());
-}
+};
 
 // observe the element by root
-export function observe(rootId: RootId, target: IntersectionTarget) {
+export const observe = function observe(rootId: RootId, target: IntersectionTarget) {
   const observer = getObserver(rootId);
 
   if (!observer) {
@@ -46,10 +46,10 @@ export function observe(rootId: RootId, target: IntersectionTarget) {
   if (instance) {
     instance.observe(target.element);
   }
-}
+};
 
 // unobserve the element from root
-export function unobserve(target: IntersectionTarget): boolean {
+export const unobserve = function unobserve(target: IntersectionTarget): boolean {
   let deleted = false;
 
   for (let entry of intersectionObserverMap.entries()) {
@@ -61,18 +61,18 @@ export function unobserve(target: IntersectionTarget): boolean {
   }
 
   return deleted;
-}
+};
 
 // create and register new root
-export function createRoot(): RootId {
+export const createRoot = function createRoot(): RootId {
   const id = uuid.v4();
 
   intersectionObserverMap.set(id, { instance: undefined, targets: new Map() });
 
   return id;
-}
+};
 
-export function deleteRoot(rootId: RootId): boolean {
+export const deleteRoot = function deleteRoot(rootId: RootId): boolean {
   const observer = getObserver(rootId);
 
   if (!observer) {
@@ -88,9 +88,9 @@ export function deleteRoot(rootId: RootId): boolean {
   }
 
   return true;
-}
+};
 
-function callback(rootId: RootId): (entries: IntersectionObserverEntry[]) => void {
+const callback = function makeCallback(rootId: RootId): (entries: IntersectionObserverEntry[]) => void {
   return entries => {
     const observer = getObserver(rootId);
 
@@ -105,9 +105,12 @@ function callback(rootId: RootId): (entries: IntersectionObserverEntry[]) => voi
       }
     });
   };
-}
+};
 
-export function registerObserverRoot(rootId: RootId, option: IntersectionObserverInit): IntersectionObserver {
+export const registerObserverRoot = function registerObserverRoot(
+  rootId: RootId,
+  option: IntersectionObserverInit
+): IntersectionObserver {
   const observer = getObserver(rootId);
 
   if (!observer) {
@@ -125,4 +128,4 @@ export function registerObserverRoot(rootId: RootId, option: IntersectionObserve
   observer.instance = newInstance;
   targets.forEach(e => newInstance.observe(e.element));
   return newInstance;
-}
+};

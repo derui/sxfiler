@@ -13,15 +13,15 @@ const commandId = "history.select";
 /**
  * Regist command instance to the registrar
  */
-export function registCommand(registrar: CommandRegistrar) {
+export const registCommand = function registCommand(registrar: CommandRegistrar) {
   return registrar.regist({
     moduleId: belongingModuleId,
     commandId,
     commandInstance: createCommand(),
   });
-}
+};
 
-export function createCommand(): CommandLike {
+export const createCommand = function createCommand(): CommandLike {
   return {
     async execute(dispatch: Dispatcher<Actions>, args) {
       if (!args) {
@@ -49,4 +49,4 @@ export function createCommand(): CommandLike {
       dispatch.dispatch(actions.load({ filer }));
     },
   };
-}
+};

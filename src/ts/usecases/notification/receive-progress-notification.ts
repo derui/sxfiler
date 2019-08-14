@@ -13,7 +13,7 @@ export type UseCase = UseCaseLike<Actions, Arg>;
 /**
  * Create the new use case
  */
-export const createUseCase = (): UseCase => {
+export const createUseCase = function createUseCase(): UseCase {
   return {
     execute(dispatcher: Dispatcher<Actions>, arg: Arg) {
       const { notification } = arg;

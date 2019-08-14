@@ -3,7 +3,7 @@ import { Actions, ActionTypes } from "@/actions";
 import { empty, State } from "@/states/notification";
 import { remove, append } from "@/domains/progress-notifications";
 
-export function reducer(state: State = empty(), action: Actions): State {
+export const reducer = function reducer(state: State = empty(), action: Actions): State {
   switch (action.type) {
     case ActionTypes.NOTIFICATION_REMOVE:
       return {
@@ -21,4 +21,4 @@ export function reducer(state: State = empty(), action: Actions): State {
       return { ...state, progresses: append(action.notification)(state.progresses) };
   }
   return state;
-}
+};

@@ -6,7 +6,10 @@ import { pipe } from "@/libs/fn";
 
 export type State = AppContext;
 
-export function reducer(state = createAppContext({ current: UIContext.OnFileTree }), action: Actions): State {
+export const reducer = function reducer(
+  state = createAppContext({ current: UIContext.OnFileTree }),
+  action: Actions
+): State {
   switch (action.type) {
     case ActionTypes.TASK_REQUIRE_INTERACTION:
       return changeCurrent(UIContext.OnSuggestion)(state);
@@ -25,4 +28,4 @@ export function reducer(state = createAppContext({ current: UIContext.OnFileTree
     default:
       return state;
   }
-}
+};

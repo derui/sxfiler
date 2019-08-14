@@ -3,7 +3,7 @@ import { Actions, ActionTypes } from "@/actions";
 import { State, empty } from "@/states/history";
 import { moveCursor, replaceCandidates } from "@/domains/completion";
 
-export function reducer(state: State = empty(), action: Actions): State {
+export const reducer = function reducer(state: State = empty(), action: Actions): State {
   switch (action.type) {
     case ActionTypes.HISTORY_OPEN:
       return { ...state, opened: true, side: action.side };
@@ -18,4 +18,4 @@ export function reducer(state: State = empty(), action: Actions): State {
     default:
       return state;
   }
-}
+};

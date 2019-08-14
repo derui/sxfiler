@@ -17,22 +17,22 @@ export type State = StateObject & {
   currentReply(): ReplyPayload | undefined;
 };
 
-function currentReply(this: StateObject): ReplyPayload | undefined {
+const currentReply = function currentReply(this: StateObject): ReplyPayload | undefined {
   if (this.currentReplyIndex === undefined || !this.replies) {
     return undefined;
   }
   return this.replies[this.currentReplyIndex];
-}
+};
 
 // create state internally
-const createState = (obj: StateObject): State => {
+const createState = function createState(obj: StateObject): State {
   return {
     ...obj,
     currentReply,
   };
 };
 
-export const empty = (): State => {
+export const empty = function empty(): State {
   return createState({
     operating: false,
     replyQueue: [],
@@ -50,7 +50,7 @@ const suggestionToReplyPayload = (nodeName: string) => (obj: Suggestion): ReplyP
 };
 
 // apply given suggestions to state
-export const giveSuggestions = (state: State, suggestions: Suggestions): State => {
+export const giveSuggestions = function giveSuggestions(state: State, suggestions: Suggestions): State {
   const replies = suggestions.suggestions.map(suggestionToReplyPayload(suggestions.nodeName));
   if (state.currentTaskId) {
     return { ...state, replyQueue: state.replyQueue.concat(replies) };
@@ -60,7 +60,7 @@ export const giveSuggestions = (state: State, suggestions: Suggestions): State =
 };
 
 // select reply
-export const selectReply = (state: State, index: number): State => {
+export const selectReply = function selectReply(state: State, index: number): State {
   let repliesLength = 0;
   if (state.replies) {
     repliesLength = state.replies.length;
@@ -69,7 +69,7 @@ export const selectReply = (state: State, index: number): State => {
   return { ...state, currentReplyIndex: Math.min(Math.max(0, index), repliesLength) };
 };
 
-export const updateCurrentReply = (state: State, payload: ReplyPayload): State => {
+export const updateCurrentReply = function updateCurrentReply(state: State, payload: ReplyPayload): State {
   if (!state.replies) {
     return state;
   }

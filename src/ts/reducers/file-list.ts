@@ -6,7 +6,7 @@ import { Filer, createFiler } from "@/domains/filer";
 /**
  * The sub reducer to handle updateFiler action.
  */
-function updateFiler(state: State, payload: { filer: Filer }): State {
+const updateFiler = function updateFiler(state: State, payload: { filer: Filer }): State {
   const { filer } = payload;
 
   switch (filer.name) {
@@ -18,12 +18,12 @@ function updateFiler(state: State, payload: { filer: Filer }): State {
       console.warn(`Unknown filer: ${filer.name}`);
       return state;
   }
-}
+};
 
 /**
  * The sub reducer to handle loadFiler action.
  */
-function updateFilerByServerState(state: State, payload: { filer: Filer }): State {
+const updateFilerByServerState = function updateFilerByServerState(state: State, payload: { filer: Filer }): State {
   const { filer } = payload;
 
   let updatedFiler = filer;
@@ -48,25 +48,25 @@ function updateFilerByServerState(state: State, payload: { filer: Filer }): Stat
       console.warn(`Unknown filer: ${filer.name}`);
       return state;
   }
-}
+};
 
-function moveToOtherSide(current: Side): Side {
+const moveToOtherSide = function moveToOtherSide(current: Side): Side {
   switch (current) {
     case Side.Left:
       return Side.Right;
     case Side.Right:
       return Side.Left;
   }
-}
+};
 
-function reloadFiler(state: State, filers: [Filer, Filer]): State {
+const reloadFiler = function reloadFiler(state: State, filers: [Filer, Filer]): State {
   const left = filers.find(v => v.name === Side.Left);
   const right = filers.find(v => v.name === Side.Right);
 
   return { ...state, left, right };
-}
+};
 
-export function reducer(state: State = empty(), action: Actions): State {
+export const reducer = function reducer(state: State = empty(), action: Actions): State {
   switch (action.type) {
     case ActionTypes.FILER_RELOAD:
       return reloadFiler(state, action.payload.filers);
@@ -78,4 +78,4 @@ export function reducer(state: State = empty(), action: Actions): State {
       return { ...state, currentSide: moveToOtherSide(state.currentSide) };
   }
   return state;
-}
+};

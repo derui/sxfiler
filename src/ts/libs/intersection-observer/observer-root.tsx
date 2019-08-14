@@ -9,30 +9,21 @@ interface State {
   rootId?: observer.RootId;
 }
 
-export class Component extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {};
-  }
+export const Component: React.FC<Props> = () => {
+  const [state, setState] = React.useState<observer.RootId | undefined>(undefined);
 
-  componentWillMount() {
-    this.setState({
-      rootId: observer.createRoot(),
-    });
-  }
+  React.useEffect(() => {
+    setState(observer.createRoot());
 
-  componentWillUnmount() {
-    const { rootId } = this.state;
+    return () => {
+      if (state) {
+        observer.deleteRoot(state);
+      }
+    };
+  }, [setState]);
 
-    if (rootId) {
-      observer.deleteRoot(rootId);
-    }
+  if (!state) {
+    return null;
   }
-
-  render() {
-    if (!this.state.rootId) {
-      return null;
-    }
-    return this.props.children(this.state.rootId);
-  }
-}
+  return this.props.children(state);
+};

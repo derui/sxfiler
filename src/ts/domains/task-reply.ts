@@ -20,14 +20,14 @@ export type Reply = {
 };
 
 // create payload to overwrite a node
-export const createOverwritePayload = (): ReplyPayload => {
+export const createOverwritePayload = function createOverwritePayload(): ReplyPayload {
   return {
     kind: ReplyKind.Overwrite,
   };
 };
 
 // create payload to rename a node
-export const createRenamePayload = (newName: string): ReplyPayload => {
+export const createRenamePayload = function createRenamePayload(newName: string): ReplyPayload {
   return {
     kind: ReplyKind.Rename,
     newName,
@@ -35,6 +35,6 @@ export const createRenamePayload = (newName: string): ReplyPayload => {
 };
 
 // create object for reply
-export const createReply = (taskId: string, payload: ReplyPayload): Reply => {
+export const createReply = function createReply(taskId: string, payload: ReplyPayload): Reply {
   return { taskId, reply: payload };
 };

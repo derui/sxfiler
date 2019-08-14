@@ -14,20 +14,18 @@ const requireInteraction = (suggestions: Suggestions): RequireInteractionAction 
   return { type: ActionTypes.TASK_REQUIRE_INTERACTION, suggestions };
 };
 
-const finished = (taskId: string): FinishedAction => {
+export const finished = function finished(taskId: string): FinishedAction {
   return { type: ActionTypes.TASK_FINISHED, taskId };
 };
 
-const sendReply = (reply: Reply): SendReplyAction => {
+export const sendReply = function sendReply(reply: Reply): SendReplyAction {
   return { type: ActionTypes.TASK_SEND_REPLY, reply };
 };
 
-const selectReply = (index: number): SelectReplyAction => {
+export const selectReply = function selectReply(index: number): SelectReplyAction {
   return { type: ActionTypes.TASK_SELECT_REPLY, index };
 };
 
-const updateReplyPayload = (payload: ReplyPayload): UpdateReplyPayloadAction => {
+export const updateReplyPayload = function updateReplyPayload(payload: ReplyPayload): UpdateReplyPayloadAction {
   return { type: ActionTypes.TASK_UPDATE_REPLY_PAYLOAD, payload };
 };
-
-export const actions = { requireInteraction, finished, sendReply, selectReply, updateReplyPayload };

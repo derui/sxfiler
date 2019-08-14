@@ -6,7 +6,7 @@ import { SyncUseCaseLike } from "@/usecases/type";
 
 export type UseCase = SyncUseCaseLike<Actions, string>;
 
-export const createUseCase = (): UseCase => {
+export const createUseCase = function createUseCase(): UseCase {
   return {
     execute(dispatcher: Dispatcher<Actions>, args) {
       if (!args) {

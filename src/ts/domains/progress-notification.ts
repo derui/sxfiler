@@ -17,10 +17,10 @@ export type ProgressNotification = {
  * @param level
  * @param progress
  */
-export const createProgress = (
+export const createProgress = function createProgress(
   id: string,
   progress: { process: string; current: number; targeted: number }
-): ProgressNotification => {
+): ProgressNotification {
   return {
     id,
     body: { ...progress },

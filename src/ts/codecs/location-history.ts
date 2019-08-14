@@ -12,7 +12,7 @@ export type LocationHistoryOnRPC = {
   maxRecordNumber: number;
 };
 
-const encodeLocationRecord = (record: LocationRecordOnRPC) => {
+const encodeLocationRecord = function encodeLocationRecord(record: LocationRecordOnRPC) {
   return { location: record.location, timestamp: new Date(Number(record.timestamp)) };
 };
 
@@ -22,7 +22,7 @@ const encodeLocationRecord = (record: LocationRecordOnRPC) => {
    @param obj JSON representation for location history
    @return LocationHistory object
  */
-export const encode = (obj: LocationHistoryOnRPC): LocationHistory => {
+export const encode = function encode(obj: LocationHistoryOnRPC): LocationHistory {
   return createLocationHistory({
     records: obj.records.map(encodeLocationRecord),
     maxRecordNumber: obj.maxRecordNumber,

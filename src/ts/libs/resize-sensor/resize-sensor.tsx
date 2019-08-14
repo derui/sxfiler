@@ -3,11 +3,11 @@ import "resize-observer-polyfill";
 
 import * as Manager from "./resize-observer";
 
-export interface Props {
+export type Props = {
   refName?: string;
   onResize?: (entry: ResizeObserverEntry, unobserve: () => void) => void;
   children: React.ReactElement;
-}
+};
 
 /**
    Resize Sensor provides ability to catch element resized.

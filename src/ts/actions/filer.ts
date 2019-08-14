@@ -33,29 +33,27 @@ type ChangeSideAction = AppAction<ActionTypes.FILER_CHANGE_SIDE>;
 
 export type Actions = ReloadAction | UpdateFilerAction | ChangeSideAction | LoadFilerAction;
 
-const reload = (args: { filers: [Filer, Filer] }): ReloadAction => {
+export const reload = function reload(args: { filers: [Filer, Filer] }): ReloadAction {
   return { type: ActionTypes.FILER_RELOAD, payload: { ...args } };
 };
 
 /**
  * Update filer
  */
-const update = (args: { filer: Filer }): UpdateFilerAction => {
+export const update = function update(args: { filer: Filer }): UpdateFilerAction {
   return { type: ActionTypes.FILER_UPDATE, payload: { ...args } };
 };
 
 /**
  * Load or get filer on the side.
  */
-const load = (args: { filer: Filer }): LoadFilerAction => {
+export const load = function load(args: { filer: Filer }): LoadFilerAction {
   return { type: ActionTypes.FILER_LOAD, payload: { ...args } };
 };
 
 /**
    change current side
 */
-const changeSide = (): ChangeSideAction => {
+export const changeSide = function changeSide(): ChangeSideAction {
   return { type: ActionTypes.FILER_CHANGE_SIDE };
 };
-
-export const actions = { update, changeSide, load, reload };

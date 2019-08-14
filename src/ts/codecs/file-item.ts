@@ -17,7 +17,7 @@ export type FileItemOnRPC = {
    @param obj JSON representation for node
    @return Node object
  */
-export const encode = (obj: FileItemOnRPC & { marked: boolean }): FileItem => {
+export const encode = function encode(obj: FileItemOnRPC & { marked: boolean }): FileItem {
   const { id, parent, name, stat, linkPath, marked } = obj;
 
   return createFileItem({ id, name, linkPath, stat: encodeFileStat(stat), parentDirectory: parent, marked });
