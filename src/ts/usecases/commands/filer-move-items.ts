@@ -11,14 +11,15 @@ const commandId = "filer.move";
 /**
  * Regist command instance to the registrar
  */
-export const registCommand = (registrar: CommandRegistrar) =>
+export const registCommand = function registCommand(registrar: CommandRegistrar) {
   registrar.regist({
     moduleId: belongingModuleId,
     commandId,
     commandInstance: createCommand(),
   });
+};
 
-export const createCommand = (): CommandLike => {
+export const createCommand = function createCommand(): CommandLike {
   return {
     async execute(dispatch: Dispatcher<Actions>, args) {
       if (!args) {
