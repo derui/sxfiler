@@ -1,4 +1,4 @@
-import { actions } from "@/actions/notification";
+import * as actions from "@/actions/notification";
 import { Dispatcher } from "@/dispatcher";
 import { createMessage, Level } from "@/domains/message-notification";
 import { createUseCase } from "./receive-message-notification";

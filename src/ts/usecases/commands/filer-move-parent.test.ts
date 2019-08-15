@@ -3,7 +3,7 @@ import * as AppState from "@/states";
 import { Side } from "@/states/file-list";
 import { createFiler } from "@/domains/filer";
 import { Apis } from "@/apis";
-import { actions } from "@/actions/filer";
+import * as actions from "@/actions/filer";
 import { createLocationHistory } from "@/domains/location-history";
 
 describe("Commands", () => {

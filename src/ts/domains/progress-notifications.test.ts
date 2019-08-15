@@ -5,7 +5,7 @@ describe("Notification", () => {
   const notification = createProgress("id", {
     current: 1,
     process: "test",
-    target: 10,
+    targeted: 10,
   });
 
   it("can find the notification by id", () => {

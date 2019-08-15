@@ -1,6 +1,6 @@
 import * as C from "./task-select-previous-reply";
 import * as AppState from "@/states";
-import { actions } from "@/actions/task";
+import * as actions from "@/actions/task";
 import * as State from "@/states/task-interaction";
 import { createSuggestions, createSuggestion, SuggestionKind } from "@/domains/task-suggestion";
 

@@ -1,5 +1,5 @@
 // reducers for notification
-import { actions } from "@/actions/key-map";
+import * as actions from "@/actions/key-map";
 import { empty, State } from "@/states/keymap";
 import { reducer } from "./keymap";
 import { createKeymap } from "@/domains/keymap";

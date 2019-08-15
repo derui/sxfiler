@@ -1,7 +1,7 @@
 import * as C from "./keymap-reload";
 import * as AppState from "@/states";
 import { Apis } from "@/apis";
-import { actions } from "@/actions/key-map";
+import * as actions from "@/actions/key-map";
 import { createKeymap } from "@/domains/keymap";
 
 const keyMap = createKeymap([{ when: { contexts: [] }, key: "k", action: "action" }]);

@@ -23,7 +23,7 @@ describe("UseCases", () => {
         const useCase = U.createUseCase(client);
         await useCase.execute(dispatcher);
 
-        expect(dispatcher.dispatch).toBeCalledWith(actions.actions.updateKeymap(keymap));
+        expect(dispatcher.dispatch).toBeCalledWith(actions.updateKeymap(keymap));
       });
     });
   });

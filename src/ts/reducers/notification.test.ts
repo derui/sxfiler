@@ -1,5 +1,5 @@
 // reducers for notification
-import { actions } from "@/actions/notification";
+import * as actions from "@/actions/notification";
 import { empty, State } from "@/states/notification";
 import { reducer } from "./notification";
 import { createProgress } from "@/domains/progress-notification";
@@ -10,7 +10,7 @@ describe("reducers", () => {
     const data = createProgress("id", {
       current: 1,
       process: "process",
-      target: 100,
+      targeted: 100,
     });
 
     it("remove the notification specified id in Timeout action", () => {

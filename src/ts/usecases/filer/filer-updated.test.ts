@@ -22,7 +22,7 @@ describe("UseCase", () => {
         });
 
         useCase.execute(dispatcher, { filer });
-        expect(dispatcher.dispatch).toBeCalledWith(actions.actions.load({ filer }));
+        expect(dispatcher.dispatch).toBeCalledWith(actions.load({ filer }));
       });
     });
   });

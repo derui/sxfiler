@@ -12,7 +12,7 @@ describe("Project", () => {
       const notification = Notification.createProgress("id", {
         process: "target process",
         current: 10,
-        target: 100,
+        targeted: 100,
       });
       const tree = renderer.create(wrap(<T body={notification.body} />)).toJSON();
 
@@ -23,7 +23,7 @@ describe("Project", () => {
       const notification = Notification.createProgress("id", {
         process: "target process",
         current: 101,
-        target: 100,
+        targeted: 100,
       });
       const tree = renderer.create(wrap(<T body={notification.body} />)).toJSON();
 
@@ -34,7 +34,7 @@ describe("Project", () => {
       const notification = Notification.createProgress("id", {
         process: "target process",
         current: 101,
-        target: 100,
+        targeted: 100,
       });
       const tree = renderer.create(wrap(<T body={notification.body} />)).toJSON();
 

@@ -12,7 +12,7 @@ describe("Project", () => {
         N.createProgress("id", {
           process: "process",
           current: 10,
-          target: 100,
+          targeted: 100,
         }),
       ];
       const tree = renderer.create(wrap(<T notifications={notifications} />)).toJSON();
@@ -31,12 +31,12 @@ describe("Project", () => {
         N.createProgress("id", {
           process: "foo",
           current: 9,
-          target: 10,
+          targeted: 10,
         }),
         N.createProgress("id2", {
           process: "bar",
           current: 10,
-          target: 11,
+          targeted: 11,
         }),
       ];
       const tree = renderer.create(wrap(<T notifications={notifications} />)).toJSON();

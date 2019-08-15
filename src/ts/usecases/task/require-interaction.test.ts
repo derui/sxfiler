@@ -1,4 +1,4 @@
-import { actions } from "@/actions/task";
+import * as actions from "@/actions/task";
 import { Dispatcher } from "@/dispatcher";
 import { createUseCase } from "./require-interaction";
 import { createSuggestions } from "@/domains/task-suggestion";

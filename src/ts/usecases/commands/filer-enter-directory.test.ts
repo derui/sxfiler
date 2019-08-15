@@ -3,7 +3,7 @@ import * as AppState from "@/states";
 import { Side, initialize } from "@/states/file-list";
 import { createFiler } from "@/domains/filer";
 import { Apis } from "@/apis";
-import { actions } from "@/actions/filer";
+import * as actions from "@/actions/filer";
 import { createFileItem } from "@/domains/file-item";
 import { emptyMode } from "@/domains/mode";
 import { createFileStat } from "@/domains/file-stat";

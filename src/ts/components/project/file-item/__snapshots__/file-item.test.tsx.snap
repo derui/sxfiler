@@ -4,7 +4,7 @@ exports[`Project Node Item should add class correctly when marked 1`] = `
 <div
   aria-hidden={false}
   aria-selected={false}
-  className="sc-ifAKCX kmfGrQ"
+  className="sc-ifAKCX hkHzLb"
   data-marked={true}
   role="listitem"
 >
@@ -37,7 +37,7 @@ exports[`Project Node Item should add class correctly when selected 1`] = `
 <div
   aria-hidden={false}
   aria-selected={true}
-  className="sc-ifAKCX kmfGrQ"
+  className="sc-ifAKCX hkHzLb"
   data-marked={false}
   role="listitem"
 >
@@ -70,7 +70,7 @@ exports[`Project Node Item should add class correctly when selected and marked 1
 <div
   aria-hidden={false}
   aria-selected={true}
-  className="sc-ifAKCX kmfGrQ"
+  className="sc-ifAKCX hkHzLb"
   data-marked={true}
   role="listitem"
 >
@@ -103,7 +103,7 @@ exports[`Project Node Item should print correctly 1`] = `
 <div
   aria-hidden={false}
   aria-selected={false}
-  className="sc-ifAKCX kmfGrQ"
+  className="sc-ifAKCX hkHzLb"
   data-marked={false}
   role="listitem"
 >

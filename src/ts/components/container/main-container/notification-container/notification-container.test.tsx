@@ -27,7 +27,7 @@ describe("Container", () => {
         progresses: createNotifications([
           createProgress("progress", {
             process: "process",
-            target: 100,
+            targeted: 100,
             current: 10,
           }),
         ]),
@@ -52,7 +52,7 @@ describe("Container", () => {
         progresses: createNotifications([
           createProgress("progress", {
             process: "process",
-            target: 100,
+            targeted: 100,
             current: 10,
           }),
         ]),

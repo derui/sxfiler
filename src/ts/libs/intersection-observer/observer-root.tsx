@@ -1,29 +1,26 @@
 import * as React from "react";
 import * as observer from "./observer-manager";
 
-export interface Props {
-  children: (rootId: observer.RootId) => React.ReactNode;
-}
+export type Props = {
+  children: (rootId: observer.RootId) => React.ReactElement;
+};
 
-interface State {
-  rootId?: observer.RootId;
-}
-
-export const Component: React.FC<Props> = () => {
-  const [state, setState] = React.useState<observer.RootId | undefined>(undefined);
+export const Component: React.FC<Props> = props => {
+  const rootId = React.useRef("");
+  const [state, setState] = React.useState<observer.RootId>("");
 
   React.useEffect(() => {
-    setState(observer.createRoot());
+    const id = observer.createRoot();
+    setState(id);
+    rootId.current = id;
 
     return () => {
-      if (state) {
-        observer.deleteRoot(state);
-      }
+      observer.deleteRoot(rootId.current);
     };
   }, [setState]);
 
   if (!state) {
     return null;
   }
-  return this.props.children(state);
+  return props.children(state);
 };

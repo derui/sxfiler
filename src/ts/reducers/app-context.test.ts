@@ -1,6 +1,6 @@
 // reducers for notification
-import { actions as otherActions } from "@/actions/notification";
-import { actions } from "@/actions/task";
+import * as otherActions from "@/actions/notification";
+import * as actions from "@/actions/task";
 import * as historyActions from "@/actions/history";
 import { UIContext } from "@/types/ui-context";
 import { reducer } from "./app-context";
