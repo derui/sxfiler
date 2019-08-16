@@ -30,24 +30,13 @@ describe("Reducers", () => {
     });
 
     it("should open finder when execute open action", () => {
-      const state = reducer(empty(), Action.open(Side.Right, []));
+      const state = reducer(empty(), Action.open(Side.Right));
 
       expect(state.opened).toBeTruthy();
     });
 
-    it("should set initial candidate with items", () => {
-      const state = reducer(empty(), Action.open(Side.Right, [item]));
-
-      expect(state.completion.candidates[0]).toEqual(
-        createCandidate({
-          id: item.id,
-          value: item.name,
-        })
-      );
-    });
-
     it("should close finder when execute close action", () => {
-      const state = reducer(reducer(empty(), Action.open(Side.Left, [])), Action.close());
+      const state = reducer(reducer(empty(), Action.open(Side.Left)), Action.close());
 
       expect(state.opened).toBeFalsy();
     });

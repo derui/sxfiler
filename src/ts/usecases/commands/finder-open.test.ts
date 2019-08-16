@@ -1,14 +1,15 @@
-import * as C from "./history-open";
+import * as C from "./finder-open";
 import * as AppState from "@/states";
 import { Side } from "@/states/file-list";
 import { createFiler } from "@/domains/filer";
 import { Apis } from "@/apis";
-import * as actions from "@/actions/history";
+import * as actions from "@/actions/finder";
 import { createFileItem } from "@/domains/file-item";
 import { createFileStat } from "@/domains/file-stat";
 import { emptyMode } from "@/domains/mode";
 import * as FileListState from "@/states/file-list";
 import { createLocationHistory } from "@/domains/location-history";
+import { createCandidate } from "@/domains/candidate";
 
 const items = [
   createFileItem({
@@ -58,7 +59,9 @@ describe("Commands", () => {
         state.fileList = FileListState.initialize(state.fileList, { left: filer, right: filer });
 
         await command.execute(dispatcher as any, { state, client: client as any });
-        expect(client.call).toBeCalledWith(Apis.Completion.Setup, { source: [] });
+        expect(client.call).toBeCalledWith(Apis.Completion.Setup, {
+          source: items.map(v => createCandidate({ id: v.id, value: v.name })),
+        });
       });
 
       it("update a filer after to toggle mark of the node", async () => {

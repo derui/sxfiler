@@ -5,6 +5,7 @@ import * as Notification from "./notification";
 import * as TaskInteraction from "./task-interaction";
 import * as LogEntry from "./log-entry";
 import * as H from "./history";
+import * as F from "./finder";
 import { AppContext, createAppContext } from "@/domains/app-context";
 import { UIContext } from "@/types/ui-context";
 
@@ -17,10 +18,11 @@ export type AppState = {
   taskInteraction: TaskInteraction.State;
   logEntry: LogEntry.State;
   history: H.State;
+  finder: F.State;
 };
 
 // get empty state
-export const empty = (): AppState => {
+export const empty = function emptyAppState(): AppState {
   return {
     context: createAppContext({ current: UIContext.OnFileTree }),
     config: Config.empty(),
@@ -30,5 +32,6 @@ export const empty = (): AppState => {
     taskInteraction: TaskInteraction.empty(),
     logEntry: LogEntry.empty(),
     history: H.empty(),
+    finder: F.empty(),
   };
 };

@@ -92,3 +92,20 @@ export const createFiler = function createFiler({
     },
   };
 };
+
+/**
+   select item by ID of it
+ */
+export const selectItemById = function selectItemById(itemId: string) {
+  return (filer: Filer) => {
+    let itemIndex = -1;
+
+    filer.items.forEach((v, index) => {
+      if (v.id === itemId) {
+        itemIndex = index;
+      }
+    });
+
+    return createFiler({ ...filer, currentCursorIndex: itemIndex });
+  };
+};

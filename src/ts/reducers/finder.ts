@@ -1,16 +1,7 @@
 // reducer for history completion
 import { Actions, ActionTypes } from "@/actions";
 import { State, empty } from "@/states/finder";
-import { moveCursor, replaceCandidates } from "@/domains/completion";
-import { FileItem } from "@/domains/file-item";
-import { createCandidate } from "@/domains/candidate";
-
-const toCompletion = function convertItemToCompletion(item: FileItem) {
-  return createCandidate({
-    id: item.id,
-    value: item.name,
-  });
-};
+import { moveCursor, replaceCandidates, createCompletion } from "@/domains/completion";
 
 export const reducer = function reducer(state: State = empty(), action: Actions): State {
   switch (action.type) {
@@ -18,7 +9,7 @@ export const reducer = function reducer(state: State = empty(), action: Actions)
       return {
         opened: true,
         side: action.side,
-        completion: replaceCandidates(action.items.map(toCompletion))(state.completion),
+        completion: createCompletion({}),
       };
     case ActionTypes.FINDER_CLOSE:
       return { ...state, opened: false };
