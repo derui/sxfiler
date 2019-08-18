@@ -26,8 +26,8 @@ module Json : sig
   module Level : sig
     type t =
       | Info [@key "info"]
-      | Warning [@key "warning"]
-      | Error [@key "error"]
+          | Warning [@key "warning"]
+          | Error [@key "error"]
     [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
@@ -48,15 +48,15 @@ module Conv : sig
   module Level : sig
     include
       Sxfiler_server_translator.Core.Domain_translator
-        with type t := Json.Level.t
-         and type domain := level
+      with type t := Json.Level.t
+       and type domain := level
   end
 
   module Body : sig
     include
       Sxfiler_server_translator.Core.Domain_translator
-        with type t := Json.Body.t
-         and type domain := body
+      with type t := Json.Body.t
+       and type domain := body
   end
 
   include

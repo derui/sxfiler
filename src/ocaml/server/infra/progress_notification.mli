@@ -41,8 +41,8 @@ module Conv : sig
   module Body : sig
     include
       Sxfiler_server_translator.Core.Domain_translator
-        with type t := Json.Body.t
-         and type domain := body
+      with type t := Json.Body.t
+       and type domain := body
   end
 
   include

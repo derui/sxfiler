@@ -29,29 +29,29 @@ let lex_combination seq =
   match seq with
   | "" -> !types
   | seq ->
-      String.iter
-        (fun c ->
-          let temp_token = !token ^ String.make 1 c in
-          match match_lexer_table temp_token with
-          | None -> token := temp_token
-          | Some typ ->
-              token := "" ;
-              types := typ :: !types)
-        seq ;
-      List.rev (Key !token :: !types)
+    String.iter
+      (fun c ->
+         let temp_token = !token ^ String.make 1 c in
+         match match_lexer_table temp_token with
+         | None -> token := temp_token
+         | Some typ ->
+           token := "" ;
+           types := typ :: !types)
+      seq ;
+    List.rev (Key !token :: !types)
 
 let parse_sequence seq =
   let tokens = lex_combination seq in
   match tokens with
   | [] -> None
   | _ ->
-      let k =
-        List.fold_left
-          (fun item -> function Meta -> {item with meta = true} | Ctrl -> {item with ctrl = true}
-            | Key key -> {item with key})
-          empty tokens
-      in
-      if k.key = "" then None else Some k
+    let k =
+      List.fold_left
+        (fun item -> function Meta -> {item with meta = true} | Ctrl -> {item with ctrl = true}
+                            | Key key -> {item with key})
+        empty tokens
+    in
+    if k.key = "" then None else Some k
 
 let invalid_formats =
   [(fun seq -> seq = ""); (fun seq -> String.length seq > 1 && String.index_opt seq '-' = Some 0)]

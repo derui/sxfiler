@@ -10,18 +10,18 @@ module Dummy_ns () = struct
 end
 
 module Message_factory = I.Message_notification_factory.Make (struct
-  type id = Uuidm.t
+    type id = Uuidm.t
 
-  let id = Uuidm.v4_gen (Random.State.make [||]) ()
-  let generate () = id
-end)
+    let id = Uuidm.v4_gen (Random.State.make [||]) ()
+    let generate () = id
+  end)
 
 module Progress_factory = I.Progress_notification_factory.Make (struct
-  type id = Uuidm.t
+    type id = Uuidm.t
 
-  let id = Uuidm.v4_gen (Random.State.make [||]) ()
-  let generate () = id
-end)
+    let id = Uuidm.v4_gen (Random.State.make [||]) ()
+    let generate () = id
+  end)
 
 let test_set =
   [ Alcotest_lwt.test_case "trash a file" `Quick (fun _ () ->
@@ -39,10 +39,10 @@ let test_set =
         let finalizer () = File.remove temp_dir ; Lwt.return_unit in
         finalizer
         |> Lwt.finalize (fun () ->
-               let _to = Path.of_string dest in
-               let%lwt () = M.trash [item] in
-               Alcotest.(check bool) "source" false (Sys.file_exists temp_file) ;
-               Lwt.return_unit))
+            let _to = Path.of_string dest in
+            let%lwt () = M.trash [item] in
+            Alcotest.(check bool) "source" false (Sys.file_exists temp_file) ;
+            Lwt.return_unit))
   ; Alcotest_lwt.test_case "call notification per item" `Quick (fun _ () ->
         let open Fun in
         let module NS = Dummy_ns () in
@@ -58,7 +58,7 @@ let test_set =
         let finalizer () = File.remove temp_dir ; Lwt.return_unit in
         finalizer
         |> Lwt.finalize (fun () ->
-               let _to = Path.of_string dest in
-               let%lwt () = M.trash [item] in
-               Alcotest.(check int) "count" 2 !NS.called ;
-               Lwt.return_unit)) ]
+            let _to = Path.of_string dest in
+            let%lwt () = M.trash [item] in
+            Alcotest.(check int) "count" 2 !NS.called ;
+            Lwt.return_unit)) ]

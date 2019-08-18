@@ -43,6 +43,6 @@ let restore_filer_stats ~(scanner : (module S.Location_scanner_service.S)) stat 
   let filers = List.map convert_filer stat.filers in
   Lwt_list.map_p
     (fun v ->
-      let%lwt file_list = Scan.scan v.S.Filer.file_list.location in
-      S.Filer.update_list v ~file_list |> Lwt.return)
+       let%lwt file_list = Scan.scan v.S.Filer.file_list.location in
+       S.Filer.update_list v ~file_list |> Lwt.return)
     filers

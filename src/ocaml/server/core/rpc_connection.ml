@@ -43,8 +43,8 @@ module Impl = struct
   let default_input_handler t f =
     match f.W.Frame.opcode with
     | W.Frame.Opcode.Ping ->
-        let f = W.Frame.create ~opcode:W.Frame.Opcode.Pong ~content:f.W.Frame.content () in
-        Lwt.return @@ t.output_writer @@ Some f
+      let f = W.Frame.create ~opcode:W.Frame.Opcode.Pong ~content:f.W.Frame.content () in
+      Lwt.return @@ t.output_writer @@ Some f
     | W.Frame.Opcode.Close -> disconnect t
     | _ as op -> Log.err @@ fun m -> m "Not implemented opcode: %s" (W.Frame.Opcode.to_string op)
 end

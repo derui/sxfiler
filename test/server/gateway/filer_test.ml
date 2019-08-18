@@ -7,11 +7,11 @@ module G = Sxfiler_server_gateway
 module T = Sxfiler_server_translator
 
 module Factory = D.Filer.Factory.Make (struct
-  type id = D.Filer.id
+    type id = D.Filer.id
 
-  let state = Random.get_state ()
-  let generate () = Uuidm.v4_gen state ()
-end)
+    let state = Random.get_state ()
+    let generate () = Uuidm.v4_gen state ()
+  end)
 
 module Dummy_system = struct
   let getcwd () = "/foo"

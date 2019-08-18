@@ -5,10 +5,10 @@ module D = Sxfiler_domain
 module C = Sxfiler_server_core
 
 module Item_name_set = Set.Make (struct
-  type t = string
+    type t = string
 
-  let compare = Stdlib.compare
-end)
+    let compare = Stdlib.compare
+  end)
 
 module File_counter = struct
   type t =
@@ -62,22 +62,22 @@ module Make
     let%lwt source' = Lwt_unix.stat source in
     match source'.Unix.st_kind with
     | Unix.S_DIR ->
-        let%lwt files =
-          Lwt_unix.files_of_directory source
-          |> Lwt_stream.map Filename.basename
-          |> Lwt_stream.filter (function "." | ".." -> false | _ -> true)
-          |> Lwt_stream.to_list
-        in
-        let%lwt () = Lwt_unix.mkdir dest source'.Unix.st_perm in
-        Lwt_list.iter_s
-          (fun source' ->
-            let source = Filename.concat source source' in
-            let dest = Filename.basename source' |> Filename.concat dest in
-            copy_item ~source ~dest ~file_counter ~cb)
-          files
+      let%lwt files =
+        Lwt_unix.files_of_directory source
+        |> Lwt_stream.map Filename.basename
+        |> Lwt_stream.filter (function "." | ".." -> false | _ -> true)
+        |> Lwt_stream.to_list
+      in
+      let%lwt () = Lwt_unix.mkdir dest source'.Unix.st_perm in
+      Lwt_list.iter_s
+        (fun source' ->
+           let source = Filename.concat source source' in
+           let dest = Filename.basename source' |> Filename.concat dest in
+           copy_item ~source ~dest ~file_counter ~cb)
+        files
     | _ ->
-        File_counter.add_total_count 1 file_counter ;%lwt
-        copy_file ~source ~dest ~cb
+      File_counter.add_total_count 1 file_counter ;%lwt
+      copy_file ~source ~dest ~cb
 
   let replicate ~suggest ~items ~_to =
     let name_set_in_to = item_name_set _to in
@@ -99,20 +99,20 @@ module Make
     in
     Lwt_list.iter_s
       (fun item ->
-        let name = Path.basename item.D.File_item.full_path in
-        let to_location = _to.D.File_list.location in
-        let source = Path.to_string item.full_path in
-        let dest = Path.of_list [Path.to_string to_location; name] |> Path.to_string in
-        if Item_name_set.mem name name_set_in_to then
-          let suggestion, interaction = suggest item in
-          let%lwt () = NS.send ~typ:Task_notification.Need_interaction.typ suggestion in
-          match%lwt interaction with
-          | D.Task_interaction.Reply.Overwrite true ->
-              copy_item ~source ~dest ~file_counter ~cb:on_copied
-          | Overwrite false -> Lwt.return_unit
-          | Rename name ->
-              let dest = Path.of_list [Path.to_string to_location; name] |> Path.to_string in
-              copy_item ~source ~dest ~file_counter ~cb:on_copied
-        else copy_item ~source ~dest ~file_counter ~cb:on_copied)
+         let name = Path.basename item.D.File_item.full_path in
+         let to_location = _to.D.File_list.location in
+         let source = Path.to_string item.full_path in
+         let dest = Path.of_list [Path.to_string to_location; name] |> Path.to_string in
+         if Item_name_set.mem name name_set_in_to then
+           let suggestion, interaction = suggest item in
+           let%lwt () = NS.send ~typ:Task_notification.Need_interaction.typ suggestion in
+           match%lwt interaction with
+           | D.Task_interaction.Reply.Overwrite true ->
+             copy_item ~source ~dest ~file_counter ~cb:on_copied
+           | Overwrite false -> Lwt.return_unit
+           | Rename name ->
+             let dest = Path.of_list [Path.to_string to_location; name] |> Path.to_string in
+             copy_item ~source ~dest ~file_counter ~cb:on_copied
+         else copy_item ~source ~dest ~file_counter ~cb:on_copied)
       items
 end

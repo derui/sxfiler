@@ -5,7 +5,7 @@ module Reply : sig
   (** Type of interaction *)
   type typ =
     | Overwrite of bool [@name "overwrite"]
-    | Rename of {new_name : string [@key "newName"]} [@name "rename"]
+          | Rename of {new_name : string [@key "newName"]} [@name "rename"]
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   type t =
@@ -15,8 +15,8 @@ module Reply : sig
 
   include
     Core.Domain_translator
-      with type t := t
-       and type domain := Sxfiler_domain.Task_interaction.Reply.t
+    with type t := t
+     and type domain := Sxfiler_domain.Task_interaction.Reply.t
 end
 
 module Suggestion : sig
@@ -24,7 +24,7 @@ module Suggestion : sig
 
   type typ =
     | Overwrite [@name "overwrite"]
-    | Rename [@name "rename"]
+        | Rename [@name "rename"]
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   type t =
@@ -35,6 +35,6 @@ module Suggestion : sig
 
   include
     Core.Domain_translator
-      with type t := t
-       and type domain := Sxfiler_domain.Task_interaction.Suggestion.t
+    with type t := t
+     and type domain := Sxfiler_domain.Task_interaction.Suggestion.t
 end

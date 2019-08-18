@@ -8,8 +8,8 @@ let lwt_reporter ppf =
     let b = Buffer.create 512 in
     ( Fmt.with_buffer ~like b
     , fun () ->
-        let m = Buffer.contents b in
-        Buffer.reset b ; m )
+      let m = Buffer.contents b in
+      Buffer.reset b ; m )
   in
   let _, app_flush = buf_fmt ~like:Fmt.stdout in
   let _, dst_flush = buf_fmt ~like:Fmt.stderr in

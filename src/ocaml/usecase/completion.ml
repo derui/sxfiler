@@ -12,9 +12,9 @@ module Setup = struct
 
     include
       Common.Usecase
-        with type input := Type.input
-         and type output := Type.output
-         and type error := Type.error
+      with type input := Type.input
+       and type output := Type.output
+       and type error := Type.error
   end
 
   module Make (R : D.Completion.Repository) : S = struct
@@ -35,9 +35,9 @@ module Read = struct
 
   module type S =
     Common.Usecase
-      with type input = Type.input
-       and type output = Type.output
-       and type error = Type.error
+    with type input = Type.input
+     and type output = Type.output
+     and type error = Type.error
 
   module Make (Repo : D.Completion.Repository) (I : D.Completer.Instance) : S = struct
     include Type
