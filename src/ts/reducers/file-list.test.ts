@@ -1,16 +1,49 @@
 // reducers for notification
 import * as actions from "@/actions/filer";
+import * as finderActions from "@/actions/finder";
 import { empty, State, Side, initialize } from "@/states/file-list";
 import { reducer } from "./file-list";
 import { createFiler, Direction } from "@/domains/filer";
 import { createLocationHistory } from "@/domains/location-history";
+import { createFileItem } from "@/domains/file-item";
+import { createFileStat } from "@/domains/file-stat";
+import { emptyMode } from "@/domains/mode";
 
 const history = createLocationHistory({ records: [], maxRecordNumber: 100 });
+const stat = createFileStat({
+  mode: emptyMode(),
+  uid: 1000,
+  gid: 1000,
+  atime: "10",
+  ctime: "11",
+  mtime: "12",
+  size: "100",
+  isDirectory: false,
+  isFile: true,
+  isSymlink: false,
+});
+
+const node1 = createFileItem({
+  id: "node1",
+  name: "name1",
+  stat,
+  parentDirectory: "/",
+  marked: false,
+});
+
+const node2 = createFileItem({
+  id: "node2",
+  name: "name2",
+  stat,
+  parentDirectory: "/",
+  marked: false,
+});
+
 const leftFiler = createFiler({
   id: "left",
   name: Side.Left,
   location: "loc",
-  items: [],
+  items: [node1, node2],
   currentCursorIndex: 0,
   history,
 });
@@ -57,6 +90,15 @@ describe("reducers", () => {
 
       const ret = reducer(state, actions.load({ filer: leftFiler }));
       expect(ret.left).toEqual(leftFiler.moveIndex(Direction.Down));
+    });
+
+    it("should select item when finder closed and selected", () => {
+      let state: State = empty();
+      state = initialize(state, { left: leftFiler, right: rightFiler });
+      state = { ...state, currentSide: Side.Left };
+
+      const ret = reducer(state, finderActions.closeWithSelect(Side.Left, "node2"));
+      expect(ret.left!!.currentFileItem).toEqual(node2);
     });
   });
 });
