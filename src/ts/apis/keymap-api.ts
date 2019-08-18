@@ -26,14 +26,16 @@ const transformKeymap = function transformKeymap(keymaps: {
     keymaps.bindings.map(v => {
       const contexts = v.when.contexts.map(v => {
         switch (v) {
-          case UIContext.OnFileTree:
+          case "onFileTree":
             return UIContext.OnFileTree;
-          case UIContext.OnSuggestion:
+          case "onSuggestion":
             return UIContext.OnSuggestion;
-          case UIContext.OnCompletion:
+          case "onCompletion":
             return UIContext.OnCompletion;
-          case UIContext.ForHistory:
+          case "forHistory":
             return UIContext.ForHistory;
+          case "forFinder":
+            return UIContext.ForFinder;
           default:
             throw new Error(`Unknown context: ${v}`);
         }

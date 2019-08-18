@@ -1,7 +1,7 @@
 // reducers for file list
 import { Actions, ActionTypes } from "@/actions";
 import { empty, State, Side } from "@/states/file-list";
-import { Filer, createFiler } from "@/domains/filer";
+import { Filer, createFiler, selectItemById } from "@/domains/filer";
 
 /**
  * The sub reducer to handle updateFiler action.
@@ -66,6 +66,21 @@ const reloadFiler = function reloadFiler(state: State, filers: [Filer, Filer]): 
   return { ...state, left, right };
 };
 
+const selectItem = function selectItemWhenSelectedByFinder(state: State, side: Side, itemId: string) {
+  switch (side) {
+    case Side.Left:
+      if (!state.left) {
+        return state;
+      }
+      return { ...state, left: selectItemById(itemId)(state.left) };
+    case Side.Right:
+      if (!state.right) {
+        return state;
+      }
+      return { ...state, right: selectItemById(itemId)(state.right) };
+  }
+};
+
 export const reducer = function reducer(state: State = empty(), action: Actions): State {
   switch (action.type) {
     case ActionTypes.FILER_RELOAD:
@@ -76,6 +91,8 @@ export const reducer = function reducer(state: State = empty(), action: Actions)
       return updateFilerByServerState(state, action.payload);
     case ActionTypes.FILER_CHANGE_SIDE:
       return { ...state, currentSide: moveToOtherSide(state.currentSide) };
+    case ActionTypes.FINDER_CLOSE_WITH_SELECT:
+      return selectItem(state, action.side, action.itemId);
   }
   return state;
 };

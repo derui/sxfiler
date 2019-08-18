@@ -25,6 +25,17 @@ export const reducer = function reducer(
         changeCurrent(UIContext.OnFileTree),
         removeSubContext(UIContext.ForHistory)
       )(state);
+    case ActionTypes.FINDER_OPEN:
+      return pipe(
+        changeCurrent(UIContext.OnCompletion),
+        addSubContext(UIContext.ForFinder)
+      )(state);
+    case ActionTypes.FINDER_CLOSE:
+    case ActionTypes.FINDER_CLOSE_WITH_SELECT:
+      return pipe(
+        changeCurrent(UIContext.OnFileTree),
+        removeSubContext(UIContext.ForFinder)
+      )(state);
     default:
       return state;
   }

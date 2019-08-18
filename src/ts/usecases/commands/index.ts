@@ -7,6 +7,11 @@ import * as filerMoveCursorUp from "./filer-move-cursor-up";
 import * as filerMoveItems from "./filer-move-items";
 import * as filerMoveParent from "./filer-move-parent";
 import * as filerToggleMark from "./filer-toggle-mark";
+import * as finderClose from "./finder-close";
+import * as finderCursorDown from "./finder-cursor-down";
+import * as finderCursorUp from "./finder-cursor-up";
+import * as finderOpen from "./finder-open";
+import * as finderSelect from "./finder-select";
 import * as historyClose from "./history-close";
 import * as historyCursorDown from "./history-cursor-down";
 import * as historyCursorUp from "./history-cursor-up";
@@ -29,6 +34,11 @@ export const registAllCommand = (registrar: CommandRegistrar): CommandRegistrar 
     filerMoveItems,
     filerMoveParent,
     filerToggleMark,
+    finderClose,
+    finderCursorDown,
+    finderCursorUp,
+    finderOpen,
+    finderSelect,
     historyClose,
     historyCursorDown,
     historyCursorUp,

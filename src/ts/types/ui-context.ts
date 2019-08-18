@@ -4,4 +4,5 @@ export enum UIContext {
   OnSuggestion = "onSuggestion",
   OnCompletion = "onCompletion",
   ForHistory = "forHistory",
+  ForFinder = "forFinder",
 }

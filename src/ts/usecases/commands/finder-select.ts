@@ -30,6 +30,7 @@ export const createCommand = function createCommand(): CommandLike {
       const currentNode = currentSelectedCandidate(state.finder);
 
       if (!currentNode) {
+        console.log("Did not select any node in completer");
         return;
       }
 

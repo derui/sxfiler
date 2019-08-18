@@ -12,6 +12,7 @@ import { reducer as appContextReducer } from "./app-context";
 import { reducer as taskInteractionReducer } from "./task-interaction";
 import { reducer as logEntryReducer } from "./log-entry";
 import { reducer as historyReducer } from "./history";
+import { reducer as finderReducer } from "./finder";
 
 const reducerMap: ReducersMapObject<AppState, actions.Actions> = {
   context: appContextReducer,
@@ -22,6 +23,7 @@ const reducerMap: ReducersMapObject<AppState, actions.Actions> = {
   taskInteraction: taskInteractionReducer,
   logEntry: logEntryReducer,
   history: historyReducer,
+  finder: finderReducer,
 };
 
 export const reducer: Reducer<AppState, actions.Actions> = combineReducers(reducerMap);

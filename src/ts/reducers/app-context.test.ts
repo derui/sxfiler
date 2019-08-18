@@ -2,6 +2,7 @@
 import * as otherActions from "@/actions/notification";
 import * as actions from "@/actions/task";
 import * as historyActions from "@/actions/history";
+import * as finderActions from "@/actions/finder";
 import { UIContext } from "@/types/ui-context";
 import { reducer } from "./app-context";
 import { createSuggestions } from "@/domains/task-suggestion";
@@ -51,6 +52,25 @@ describe("reducers", () => {
 
     it("should make current context to OnFileTree when history closed", () => {
       const ret = reducer(reducer(undefined, historyActions.open(Side.Left)), historyActions.close());
+      const expected = createAppContext({
+        current: UIContext.OnFileTree,
+      });
+
+      expect(ret).toEqual(expected);
+    });
+
+    it("should make current context to OnCompletion when finder opened", () => {
+      const ret = reducer(undefined, finderActions.open(Side.Left));
+      const expected = createAppContext({
+        current: UIContext.OnCompletion,
+        subContexts: [UIContext.ForFinder],
+      });
+
+      expect(ret).toEqual(expected);
+    });
+
+    it("should make current context to OnFileTree when history closed", () => {
+      const ret = reducer(reducer(undefined, finderActions.open(Side.Left)), finderActions.close());
       const expected = createAppContext({
         current: UIContext.OnFileTree,
       });

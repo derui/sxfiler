@@ -13,6 +13,8 @@ export const reducer = function reducer(state: State = empty(), action: Actions)
       };
     case ActionTypes.FINDER_CLOSE:
       return { ...state, opened: false };
+    case ActionTypes.FINDER_CLOSE_WITH_SELECT:
+      return { ...state, opened: false };
     case ActionTypes.FINDER_CURSOR_UP:
       return { ...state, completion: moveCursor(-1)(state.completion) };
     case ActionTypes.FINDER_CURSOR_DOWN:

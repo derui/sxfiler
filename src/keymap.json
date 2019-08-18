@@ -16,6 +16,11 @@
     {"action": "builtin.history.cursorDown", "key": "ArrowDown", "when": {contexts: ["onCompletion", "forHistory"]}},
     {"action": "builtin.keymap.reload", "key": "R", "when": {contexts: ["onFileTree"]}},
     {"action": "builtin.task.selectNextReply", "key": "ArrowUp", "when": {contexts: ["onSuggestion"]}},
-    {"action": "builtin.task.selectPrevReply", "key": "ArrowDown", "when": {contexts: ["onSuggestion"]}}
+    {"action": "builtin.task.selectPrevReply", "key": "ArrowDown", "when": {contexts: ["onSuggestion"]}},
+    {"action": "builtin.finder.open", "key": "f", "when": {contexts: ["onFileTree"]}},
+    {"action": "builtin.finder.select", "key": "Enter", "when": {contexts: ["onCompletion", "forFinder"]}},
+    {"action": "builtin.finder.close", "key": "Escape", "when": {contexts: ["onCompletion", "forFinder"]}},
+    {"action": "builtin.finder.cursorUp", "key": "ArrowUp", "when": {contexts: ["onCompletion", "forFinder"]}},
+    {"action": "builtin.finder.cursorDown", "key": "ArrowDown", "when": {contexts: ["onCompletion", "forFinder"]}}
   ]
 }
