@@ -16,6 +16,14 @@ export const empty = (): State => {
   };
 };
 
+export const open = function open(side: Side) {
+  return (state: State) => ({ ...state, opened: true, side });
+};
+
+export const close = function close(state: State): State {
+  return { ...state, opened: false };
+};
+
 /**
    Get current selected candidate
  */
