@@ -9,9 +9,8 @@
   "jest": {
     "preset": "ts-jest",
     "collectCoverageFrom": [
-      "src/**/*.{ts,tsx}",
-      "!node_modules/",
-      "!src/ts/stories/**/*"
+      "src/ts/**/*.{ts,tsx}",
+      "!node_modules/"
     ],
     "setupFiles": [
       "react-app-polyfill/jsdom"
@@ -49,6 +48,7 @@
     "start": "BROWSER=none node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",
+    "test:coverage": "node scripts/test.js --env=jsdom --coverage",
     "electron": "ELECTRON_DISABLE_SANDBOX=1 ELECTRON_START_URL=http://localhost:3000 electron .",
     "package": "node ./scripts/package-electron.js",
     "format": "node ./scripts/format.js",
