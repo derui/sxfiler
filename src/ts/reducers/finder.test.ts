@@ -3,32 +3,9 @@ import { reducer } from "./finder";
 import { empty } from "@/states/finder";
 import { Side } from "@/states/file-list";
 import { createCandidate } from "@/domains/candidate";
-import { createFileItem } from "@/domains/file-item";
-import { createFileStat } from "@/domains/file-stat";
-import { emptyMode } from "@/domains/mode";
 
 describe("Reducers", () => {
   describe("Finder", () => {
-    const item = createFileItem({
-      id: "id",
-      name: "name",
-      stat: createFileStat({
-        mode: emptyMode(),
-        uid: 1000,
-        gid: 1000,
-        atime: "0",
-        ctime: "0",
-        mtime: "0",
-        size: "10",
-        isDirectory: false,
-        isFile: true,
-        isSymlink: false,
-      }),
-
-      marked: false,
-      parentDirectory: "",
-    });
-
     it("should open finder when execute open action", () => {
       const state = reducer(empty(), Action.open(Side.Right));
 

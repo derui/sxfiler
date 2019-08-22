@@ -229,10 +229,17 @@ const Container: React.FC<ContainerContextProps> = ({
   );
 };
 
-export type Props = Modal.Props<ContainerProps, OverlayProps>;
+export type Props = ContainerProps & {
+  dialogRoot: HTMLElement;
+  opened: boolean;
+};
 
-export const Component = Modal.createComponent({
+const CustomModal = Modal.createComponent({
   root,
   container: Container,
   overlay: Overlay,
 });
+
+export const Component = ({ dialogRoot, opened, ...rest }: Props) => (
+  <CustomModal dialogRoot={dialogRoot} opened={opened} container={rest} overlay={{}} />
+);

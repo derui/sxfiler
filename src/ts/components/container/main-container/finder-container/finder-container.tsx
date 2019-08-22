@@ -34,13 +34,10 @@ export const Component: React.FC<Props> = ({ state }) => {
     <Completer
       dialogRoot={modalRoot.element}
       opened={state.opened}
-      container={{
-        title: "Find Item",
-        items: state.completion.candidates,
-        selectedItemIndex: state.completion.cursor,
-        onInput: handleInput(locator),
-      }}
-      overlay={{}}
+      title="Find Item"
+      items={state.completion.candidates}
+      selectedItemIndex={state.completion.cursor}
+      onInput={handleInput(locator)}
     />
   );
 };

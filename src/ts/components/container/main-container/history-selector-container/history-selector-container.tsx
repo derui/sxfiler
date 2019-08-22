@@ -20,36 +20,24 @@ const handleInput = (locator: Locator) => (input: string) => {
 };
 
 export const Component: React.FC<Props> = ({ state }) => {
-  return (
-    <LocatorContext.Consumer>
-      {locator => {
-        if (!locator) {
-          return null;
-        }
-        return (
-          <ModalRootContext.Consumer>
-            {modalRoot => {
-              if (!modalRoot.element) {
-                return null;
-              }
+  const locator = React.useContext(LocatorContext);
+  if (!locator) {
+    return null;
+  }
 
-              return (
-                <Completer
-                  dialogRoot={modalRoot.element}
-                  opened={state.opened}
-                  container={{
-                    title: "History",
-                    items: state.completion.candidates,
-                    selectedItemIndex: state.completion.cursor,
-                    onInput: handleInput(locator),
-                  }}
-                  overlay={{}}
-                />
-              );
-            }}
-          </ModalRootContext.Consumer>
-        );
-      }}
-    </LocatorContext.Consumer>
+  const modalRoot = React.useContext(ModalRootContext);
+  if (!modalRoot.element) {
+    return null;
+  }
+
+  return (
+    <Completer
+      dialogRoot={modalRoot.element}
+      opened={state.opened}
+      title="History"
+      items={state.completion.candidates}
+      selectedItemIndex={state.completion.cursor}
+      onInput={handleInput(locator)}
+    />
   );
 };

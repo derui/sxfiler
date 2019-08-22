@@ -18,12 +18,10 @@ describe("Project", () => {
         <Modal.Component
           dialogRoot={root}
           opened={true}
-          container={{
-            title: "test",
-            selectedItemIndex: -1,
-            items: [],
-            onInput: () => {},
-          }}
+          title="test"
+          selectedItemIndex={-1}
+          items={[]}
+          onInput={() => {}}
         />
       );
 
@@ -36,12 +34,10 @@ describe("Project", () => {
         <Modal.Component
           dialogRoot={root}
           opened={true}
-          container={{
-            title: "test",
-            selectedItemIndex: -1,
-            items: [createCandidate({ id: "id", value: "value", start: 0, length: 0 })],
-            onInput: () => {},
-          }}
+          title="test"
+          selectedItemIndex={-1}
+          items={[createCandidate({ id: "id", value: "value", start: 0, length: 0 })]}
+          onInput={() => {}}
         />
       );
 
@@ -54,15 +50,13 @@ describe("Project", () => {
         <Modal.Component
           dialogRoot={root}
           opened={true}
-          container={{
-            title: "test",
-            selectedItemIndex: -1,
-            items: [
-              createCandidate({ id: "id", value: "value", start: 0, length: 0 }),
-              createCandidate({ id: "id2", value: "value2", start: 0, length: 0 }),
-            ],
-            onInput: () => {},
-          }}
+          title="test"
+          selectedItemIndex={-1}
+          items={[
+            createCandidate({ id: "id", value: "value", start: 0, length: 0 }),
+            createCandidate({ id: "id2", value: "value2", start: 0, length: 0 }),
+          ]}
+          onInput={() => {}}
         />
       );
 
@@ -76,17 +70,15 @@ describe("Project", () => {
           <Modal.Component
             dialogRoot={root}
             opened={true}
-            container={{
-              title: "test",
-              selectedItemIndex: -1,
-              items: [
-                createCandidate({ id: "id", value: "value", start: 0, length: 0 }),
-                createCandidate({ id: "id2", value: "value2", start: 0, length: 0 }),
-              ],
-              onInput: v => {
-                expect(v).toEqual("foo");
-                resolve();
-              },
+            title="test"
+            selectedItemIndex={-1}
+            items={[
+              createCandidate({ id: "id", value: "value", start: 0, length: 0 }),
+              createCandidate({ id: "id2", value: "value2", start: 0, length: 0 }),
+            ]}
+            onInput={v => {
+              expect(v).toEqual("foo");
+              resolve();
             }}
           />
         );
