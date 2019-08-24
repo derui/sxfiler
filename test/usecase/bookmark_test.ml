@@ -1,0 +1,56 @@
+open Sxfiler_core
+module D = Sxfiler_domain
+module U = Sxfiler_usecase
+
+let id_gen =
+  let state = Random.State.make [||] in
+  Uuidm.v4_gen state
+
+let data = D.Bookmark.make ~id:(id_gen ()) ~path:Path.(of_list ["foo"; "bar"]) ~order:1
+
+let test_set =
+  [ Alcotest_lwt.test_case "get all bookmark stored" `Quick (fun _ () ->
+        let module KR = (val Test_fixtures.Memory_repository.bookmark_repository [data]) in
+        let module Usecase = U.Bookmark.List_all.Make (KR) in
+        let%lwt result = Usecase.execute () in
+        Alcotest.(check @@ result (list @@ of_pp D.Bookmark.pp) (of_pp Fmt.nop))
+          "bookmarks"
+          (Ok [data])
+          result ;
+        Lwt.return_unit)
+  ; Alcotest_lwt.test_case "should return created bookmark when register path" `Quick (fun _ () ->
+        let module KR = (val Test_fixtures.Memory_repository.bookmark_repository []) in
+        let module Usecase =
+          U.Bookmark.Register.Make
+            (struct
+              type id = D.Bookmark.id
+
+              let generate = id_gen
+            end)
+            (KR)
+        in
+        let%lwt result = Usecase.execute {path = data.path} in
+        let result =
+          match result with
+          | Ok v -> Ok (Path.equal v.path data.path && v.order = 1)
+          | Error e -> Error e
+        in
+        Alcotest.(check @@ result bool (of_pp Fmt.nop)) "bookmark" (Ok true) result ;
+        Lwt.return_unit)
+  ; Alcotest_lwt.test_case "should store created bookmark to repository" `Quick (fun _ () ->
+        let id = id_gen () in
+        let module KR = (val Test_fixtures.Memory_repository.bookmark_repository []) in
+        let module Usecase =
+          U.Bookmark.Register.Make
+            (struct
+              type id = D.Bookmark.id
+
+              let generate () = id
+            end)
+            (KR)
+        in
+        let%lwt _ = Usecase.execute {path = data.path} in
+        let%lwt result = KR.resolve id in
+        let data = D.Bookmark.make ~id ~path:data.path ~order:1 in
+        Alcotest.(check @@ option @@ of_pp D.Bookmark.pp) "bookmark" (Some data) result ;
+        Lwt.return_unit) ]
