@@ -35,8 +35,8 @@ let test_set =
         end in
         let module Read = G.Completion.Read.Make (Usecase) in
         let%lwt res = Read.handle {input = "foo"} in
-        Alcotest.(check @@ list @@ of_pp Fmt.nop)
+        Alcotest.(check @@ result (list @@ of_pp T.Completion.Candidate.pp) (of_pp Fmt.nop))
           "read"
-          (T.Completion.Candidates.of_domain expected)
+          (Ok (T.Completion.Candidates.of_domain expected))
           res ;
         Lwt.return_unit) ]

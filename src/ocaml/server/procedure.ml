@@ -9,7 +9,7 @@ module type Spec = sig
   module Gateway : G.Core.Gateway
 
   val method_ : string
-  val param_requirement : [`Required | `Not_required of Gateway.params]
+  val param_requirement : [`Required | `Not_required of Gateway.input]
 end
 
 module type S = sig
@@ -44,13 +44,14 @@ module Make (S : Spec) : S = struct
         in
         match S.param_requirement with
         | `Not_required param -> S.Gateway.handle param
-        | `Required -> execute_with_param S.Gateway.params_of_json
+        | `Required -> execute_with_param S.Gateway.input_of_json
       in
-      Log.info (fun m -> m "Finish procedure: {%s}" method_) ;%lwt
-      S.Gateway.result_to_json result |> Option.some |> Lwt.return_ok
-    with
-    | G.Gateway_error.Gateway_error e -> Errors.of_gateway_error e
-    | _ as e ->
+      match result with
+      | Error e -> Errors.of_gateway_error e
+      | Ok output ->
+        Log.info (fun m -> m "Finish procedure: {%s}" method_) ;%lwt
+        S.Gateway.output_to_json output |> Option.some |> Lwt.return_ok
+    with _ as e ->
       let exn = Stdlib.Printexc.to_string e in
       let%lwt () = Log.err (fun m -> m "Error occurred: %s" exn) in
       Rpc.(Exception.raise_error (Jsonrpc.Types.Error_code.Server_error (-32000)))

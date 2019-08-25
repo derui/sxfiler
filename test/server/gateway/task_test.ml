@@ -21,7 +21,7 @@ let test_set =
           let execute = f
         end in
         let module Gateway = G.Task.Send_reply.Make (Usecase) in
-        let%lwt () =
+        let%lwt _ =
           Gateway.handle
             {task_id = Uuidm.to_string task_id; reply = T.Task_interaction.Reply.Overwrite true}
         in
