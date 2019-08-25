@@ -45,4 +45,9 @@ let bookmark_repository init =
       let data' = List.filter (fun v -> not @@ D.Bookmark.have_same_id v t) !data |> List.cons t in
       data := data' ;
       Lwt.return_unit
+
+    let remove t =
+      let data' = List.filter (fun v -> not @@ D.Bookmark.have_same_id v t) !data in
+      data := data' ;
+      Lwt.return_unit
   end : D.Bookmark_repository.S )

@@ -13,3 +13,5 @@ let of_gateway_error = function
   | Item_not_found -> Jye.raise_error (E.make ~message:"Item not found" (-4))
   | Task_not_found -> Jye.raise_error (E.make ~message:"Task not found" (-6))
   | Filer_same_filer -> Jye.raise_error (E.make ~message:"Same filer" (-7))
+  | Bookmark_conflict -> Jye.raise_error (E.make ~message:"Same path in bookmark" (-8))
+  | Bookmark_not_found -> Jye.raise_error (E.make ~message:"Not found given bookmark" (-9))

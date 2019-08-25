@@ -9,4 +9,5 @@ let () =
     ; ("location history translator", Location_history_test.test_set)
     ; ("location record translator", Location_record_test.test_set)
     ; ("file_item translator", File_item_test.test_set)
-    ; ("task interaction translator", Task_interaction_test.test_set) ]
+    ; ("task interaction translator", Task_interaction_test.test_set)
+    ; ("bookmark translator", Bookmark_test.test_set) ]

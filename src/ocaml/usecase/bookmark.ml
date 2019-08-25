@@ -56,3 +56,29 @@ module Register = struct
         Lwt.return_ok t
   end
 end
+
+module Delete = struct
+  (** Module to share interface and structure. *)
+  module Type = struct
+    type input = {id : Bookmark.id}
+    type output = Bookmark.t
+    type error = [`Not_found]
+  end
+
+  module type S =
+    Common.Usecase
+    with type input = Type.input
+     and type output = Type.output
+     and type error = Type.error
+
+  module Make (C : Bookmark_repository.S) : S = struct
+    include Type
+
+    let execute {id} =
+      match%lwt C.resolve id with
+      | None -> Lwt.return_error `Not_found
+      | Some v ->
+        let%lwt () = C.remove v in
+        Lwt.return_ok v
+  end
+end

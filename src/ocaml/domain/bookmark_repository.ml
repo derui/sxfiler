@@ -12,4 +12,7 @@ module type S = sig
 
   val find_by_path : Path.t -> Bookmark.t option Lwt.t
   (** [find_by_path path] find a bookmark from the id *)
+
+  val remove : Bookmark.t -> unit Lwt.t
+  (** [remove t] removes [t] from repository *)
 end
