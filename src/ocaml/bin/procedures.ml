@@ -46,6 +46,15 @@ let expose_task_procedures (module Dep : Dependencies.S) : (module Procedure.Spe
   let module Gateway = G.Task.Send_reply.Make (Dep.Usecase.Task_send_reply) in
   [(module Proc_task.Send_reply_spec (Gateway))]
 
+let expose_bookmark_procedures (module Dep : Dependencies.S) : (module Procedure.Spec) list =
+  let module S = Jsonrpc_yojson.Server in
+  let module List_all_gateway = G.Bookmark.List_all.Make (Dep.Usecase.Bookmark_list_all) in
+  let module Regiter_gateway = G.Bookmark.Register.Make (Dep.Usecase.Bookmark_register) in
+  let module Delete_gateway = G.Bookmark.Delete.Make (Dep.Usecase.Bookmark_delete) in
+  [ (module Proc_bookmark.List_all_spec (List_all_gateway))
+  ; (module Proc_bookmark.Register_spec (Regiter_gateway))
+  ; (module Proc_bookmark.Delete_spec (Delete_gateway)) ]
+
 let expose_all server (module Dep : Dependencies.S) =
   let procedures =
     List.concat
@@ -53,7 +62,8 @@ let expose_all server (module Dep : Dependencies.S) =
       ; expose_key_map_procedures (module Dep)
       ; expose_configuration_procedures (module Dep)
       ; expose_completion_procedures (module Dep)
-      ; expose_task_procedures (module Dep) ]
+      ; expose_task_procedures (module Dep)
+      ; expose_bookmark_procedures (module Dep) ]
   in
   List.fold_left
     (fun server (module Spec : Procedure.Spec) ->

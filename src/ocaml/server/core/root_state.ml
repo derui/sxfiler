@@ -15,10 +15,14 @@ module Uuid_map = Map.Make (struct
 type t =
   { configuration : T.Configuration.t
   ; filer_map : T.Filer.t Uuid_map.t
-  ; task_map : T.Task.t Uuid_map.t }
+  ; task_map : T.Task.t Uuid_map.t
+  ; bookmark_map : T.Bookmark.t Uuid_map.t }
 
 let empty =
-  {configuration = T.Configuration.default; filer_map = Uuid_map.empty; task_map = Uuid_map.empty}
+  { configuration = T.Configuration.default
+  ; filer_map = Uuid_map.empty
+  ; task_map = Uuid_map.empty
+  ; bookmark_map = Uuid_map.empty }
 
 let find_filer ~id t =
   match Uuid_map.find_opt id t.filer_map with Some v -> v | None -> raise Not_found

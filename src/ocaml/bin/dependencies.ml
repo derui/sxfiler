@@ -26,6 +26,7 @@ module type S = sig
   module Key_map_resolve_service : D.Key_map_resolve_service.S
   module Task_repo : D.Task.Repository
   module Task_factory : D.Task.Factory.S
+  module Bookmark_repo : D.Bookmark_repository.S
 
   module Usecase : sig
     module Keymap_get : U.Keymap.Get.S
@@ -43,6 +44,9 @@ module type S = sig
     module Filer_delete : U.Filer.Delete.S
     module Filer_jump_location : U.Filer.Jump_location.S
     module Task_send_reply : U.Task.Send_reply.S
+    module Bookmark_list_all : U.Bookmark.List_all.S
+    module Bookmark_register : U.Bookmark.Register.S
+    module Bookmark_delete : U.Bookmark.Delete.S
   end
 end
 
@@ -87,6 +91,7 @@ module Make
 
   module Task_repo = I.Task_repo.Make (Global.Root) (Runner)
   module Task_factory = D.Task.Factory.Make (I.Id_generator.Gen_uuid)
+  module Bookmark_repo = I.Bookmark_repo.Make (Global.Bookmark)
 
   module Usecase = struct
     module Keymap_get = U.Keymap.Get.Make (Condition_repo) (Key_map_repo)
@@ -141,5 +146,8 @@ module Make
       end)
 
     module Task_send_reply = U.Task.Send_reply.Make (Task_repo)
+    module Bookmark_list_all = U.Bookmark.List_all.Make (Bookmark_repo)
+    module Bookmark_register = U.Bookmark.Register.Make (I.Id_generator.Gen_uuid) (Bookmark_repo)
+    module Bookmark_delete = U.Bookmark.Delete.Make (Bookmark_repo)
   end
 end

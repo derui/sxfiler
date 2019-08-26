@@ -46,6 +46,12 @@ module Keymap = C.Statable.Make (struct
     let empty () = D.Key_map.make ()
   end)
 
+module Bookmark = C.Statable.Make (struct
+    type t = D.Bookmark.t list
+
+    let empty () = []
+  end)
+
 module Configuration = C.Statable.Make (struct
     type t = Sxfiler_domain.Configuration.t
 
