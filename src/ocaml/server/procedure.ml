@@ -33,13 +33,14 @@ module Make (S : Spec) : S = struct
           match req with
           | None ->
             Logs.warn (fun m -> m "Required parameter not found") ;
-            Rpc.(Exception.raise_error Jsonrpc.Types.Error_code.Invalid_params)
+            raise Rpc.(Error.Jsonrpc_error (Error.make Jsonrpc.Types.Error_code.Invalid_params))
           | Some params -> (
               match decoder params with
               | Error _ ->
                 Logs.warn (fun m ->
                     m "Required parameter can not encode: %s" (Yojson.Safe.to_string params)) ;
-                Rpc.(Exception.raise_error Jsonrpc.Types.Error_code.Invalid_params)
+                raise
+                  Rpc.(Error.Jsonrpc_error (Error.make Jsonrpc.Types.Error_code.Invalid_params))
               | Ok param -> S.Gateway.handle param )
         in
         match S.param_requirement with
@@ -51,8 +52,13 @@ module Make (S : Spec) : S = struct
       | Ok output ->
         Log.info (fun m -> m "Finish procedure: {%s}" method_) ;%lwt
         S.Gateway.output_to_json output |> Option.some |> Lwt.return_ok
-    with _ as e ->
+    with
+    | Rpc.Error.Jsonrpc_error e as exn ->
+      let%lwt () = Log.err (fun m -> m "Error occurred: %s" Rpc.Error.(to_string e)) in
+      raise exn
+    | _ as e ->
       let exn = Stdlib.Printexc.to_string e in
-      let%lwt () = Log.err (fun m -> m "Error occurred: %s" exn) in
-      Rpc.(Exception.raise_error (Jsonrpc.Types.Error_code.Server_error (-32000)))
+      let%lwt () = Log.err (fun m -> m "Not handled exception: %s" exn) in
+      raise
+        Rpc.(Error.Jsonrpc_error (Error.make (Jsonrpc.Types.Error_code.Server_error (-32000))))
 end
