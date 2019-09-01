@@ -112,3 +112,10 @@ export const updateBookmarks = function updateBookmarks(bookmarks: Bookmark[]) {
     return { ...state, bookmarks: bookmarks.reduce((accum, v) => ({ ...accum, [v.path]: v }), {}) };
   };
 };
+
+/**
+   find the bookmark for the file item
+ */
+export const findBookmark = function findBookmark(fileItem: FileItem) {
+  return (state: State): Bookmark | undefined => state.bookmarks[fileItem.fullPath];
+};

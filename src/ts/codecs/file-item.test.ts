@@ -1,7 +1,6 @@
 import * as E from "./file-item";
 import * as Es from "./file-stat";
 import { createFileItem } from "@/domains/file-item";
-import { createFileStat } from "@/domains/file-stat";
 
 const stat = {
   mode: {
@@ -26,6 +25,7 @@ describe("Object Codecs", () => {
       const obj = E.encode({
         id: "node",
         name: "node",
+        fullPath: "parent/node",
         parent: "parent",
         stat,
         marked: false,
@@ -35,6 +35,7 @@ describe("Object Codecs", () => {
         createFileItem({
           id: "node",
           name: "node",
+          fullPath: "parent/node",
           parentDirectory: "parent",
           stat: Es.encode(stat),
           marked: false,

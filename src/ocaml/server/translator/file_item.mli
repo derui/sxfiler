@@ -2,6 +2,7 @@ type t =
   { id : string
   ; parent : string
   ; name : string
+  ; full_path : string [@key "fullPath"]
   ; stat : File_stat.t
   ; link_path : string option [@key "linkPath"] }
 [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]

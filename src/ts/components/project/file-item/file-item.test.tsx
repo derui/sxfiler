@@ -15,6 +15,7 @@ function makeNode(marked: boolean, isDirectory = false, isSymlink = false) {
     id: "node",
     name: "file.ext",
     marked,
+    fullPath: "/file.ext",
     stat: createFileStat({
       mode: createMode({
         owner: pipe(

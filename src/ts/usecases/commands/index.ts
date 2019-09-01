@@ -1,3 +1,4 @@
+import * as bookmarkToggle from "./bookmark-toggle";
 import * as filerChangePaneSide from "./filer-change-pane-side";
 import * as filerCopyItems from "./filer-copy-items";
 import * as filerDeleteItems from "./filer-delete-items";
@@ -25,6 +26,7 @@ import { CommandRegistrar } from "../command-registrar";
 
 export const registAllCommand = (registrar: CommandRegistrar): CommandRegistrar => {
   const modules = [
+    bookmarkToggle,
     filerChangePaneSide,
     filerCopyItems,
     filerDeleteItems,

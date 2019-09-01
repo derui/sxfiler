@@ -21,6 +21,7 @@ describe("Node value object", () => {
       id: "id",
       name: "file",
       stat,
+      fullPath: "parent/file",
       parentDirectory: "parent",
       linkPath: "foo",
       marked: false,

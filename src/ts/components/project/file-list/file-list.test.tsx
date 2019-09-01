@@ -8,13 +8,14 @@ import { createFileItem } from "@/domains/file-item";
 import { createFileStat } from "@/domains/file-stat";
 import { createMode } from "@/domains/mode";
 import { emptyCapability, allowToRead, allowToWrite } from "@/domains/capability";
-import { compose, pipe } from "@/libs/fn";
+import { pipe } from "@/libs/fn";
 
 function makeNode(name: string, isDirectory = false, isSymlink = false) {
   return createFileItem({
     id: "node",
     name,
     marked: false,
+    fullPath: "fullpath",
     stat: createFileStat({
       mode: createMode({
         owner: pipe(

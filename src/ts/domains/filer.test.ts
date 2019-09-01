@@ -26,6 +26,7 @@ describe("Filer domain", () => {
         id: "node1",
         name: "name",
         stat,
+        fullPath: "/name",
         parentDirectory: "/",
         marked: false,
       });
@@ -33,6 +34,7 @@ describe("Filer domain", () => {
         id: "node2",
         name: "name",
         stat,
+        fullPath: "/name",
         parentDirectory: "/",
         marked: false,
       });
@@ -92,6 +94,7 @@ describe("Filer domain", () => {
         id: "node1",
         name: "name",
         stat,
+        fullPath: "/name",
         parentDirectory: "/",
         marked: false,
       });
@@ -109,9 +112,23 @@ describe("Filer domain", () => {
   });
 
   describe("moving index", () => {
+    const node1 = createFileItem({
+      id: "node1",
+      name: "name",
+      stat,
+      parentDirectory: "/",
+      fullPath: "/name",
+      marked: false,
+    });
+    const node2 = createFileItem({
+      id: "node2",
+      name: "name2",
+      stat,
+      parentDirectory: "/",
+      fullPath: "/name2",
+      marked: false,
+    });
     it("can move index to next node that are sorted on create", () => {
-      const node1 = createFileItem({ id: "node1", name: "name", stat, parentDirectory: "/", marked: false });
-      const node2 = createFileItem({ id: "node2", name: "name2", stat, parentDirectory: "/", marked: false });
       const filer = createFiler({
         id: "id",
         name: "name",
@@ -126,8 +143,6 @@ describe("Filer domain", () => {
     });
 
     it("can move index to next node that are sorted on create", () => {
-      const node1 = createFileItem({ id: "node1", name: "name", stat, parentDirectory: "/", marked: false });
-      const node2 = createFileItem({ id: "node2", name: "name2", stat, parentDirectory: "/", marked: false });
       const filer = createFiler({
         id: "id",
         name: "name",
@@ -142,8 +157,6 @@ describe("Filer domain", () => {
     });
 
     it("should not move to up direction if current is the first of nodes", () => {
-      const node1 = createFileItem({ id: "node1", name: "name", stat, parentDirectory: "/", marked: false });
-      const node2 = createFileItem({ id: "node2", name: "name2", stat, parentDirectory: "/", marked: false });
       const filer = createFiler({
         id: "id",
         name: "name",
@@ -158,8 +171,6 @@ describe("Filer domain", () => {
     });
 
     it("should not move to down direction if current is the last of nodes", () => {
-      const node1 = createFileItem({ id: "node1", name: "name", stat, parentDirectory: "/", marked: false });
-      const node2 = createFileItem({ id: "node2", name: "name2", stat, parentDirectory: "/", marked: false });
       const filer = createFiler({
         id: "id",
         name: "name",
@@ -175,9 +186,12 @@ describe("Filer domain", () => {
   });
 
   describe("property", () => {
+    const node1Data = { id: "node1", name: "name", stat, parentDirectory: "/", marked: false, fullPath: "/name" };
+    const node2Data = { id: "node2", name: "name2", stat, parentDirectory: "/", marked: false, fullPath: "/name2" };
+
     it("should be able to retrieve marked node ", () => {
-      const node1 = createFileItem({ id: "node1", name: "name", stat, parentDirectory: "/", marked: true });
-      const node2 = createFileItem({ id: "node2", name: "name2", stat, parentDirectory: "/", marked: false });
+      const node1 = createFileItem({ ...node1Data, marked: true });
+      const node2 = createFileItem({ ...node2Data, marked: false });
       const filer = createFiler({
         id: "id",
         name: "name",
@@ -191,8 +205,8 @@ describe("Filer domain", () => {
     });
 
     it("return only current focused node", () => {
-      const node1 = createFileItem({ id: "node1", name: "name", stat, parentDirectory: "/", marked: false });
-      const node2 = createFileItem({ id: "node2", name: "name2", stat, parentDirectory: "/", marked: false });
+      const node1 = createFileItem({ ...node1Data });
+      const node2 = createFileItem({ ...node2Data });
       const filer = createFiler({
         id: "id",
         name: "name",
