@@ -4,7 +4,15 @@ import { Actions as KeymapActions } from "./key-map";
 import { Actions as TaskActions } from "./task";
 import { Actions as HistoryActions } from "./history";
 import { Actions as FinderAction } from "./finder";
+import { Actions as BookmarkAction } from "./bookmark";
 
-export type Actions = NotificationActions | FilerActions | KeymapActions | TaskActions | HistoryActions | FinderAction;
+export type Actions =
+  | NotificationActions
+  | FilerActions
+  | KeymapActions
+  | TaskActions
+  | HistoryActions
+  | FinderAction
+  | BookmarkAction;
 
 export { ActionTypes } from "./type";

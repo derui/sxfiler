@@ -1,5 +1,6 @@
 import { Filer } from "@/domains/filer";
 import { FileItem } from "@/domains/file-item";
+import { Bookmark } from "@/domains/bookmark";
 
 export enum Side {
   Left = "left",
@@ -21,19 +22,21 @@ export type State = {
   right?: Filer;
   // current selected side
   currentSide: Side;
+  bookmarks: { [key: string]: Bookmark };
 };
 
 /** factory function create empty state */
-export const empty = (): State => {
+export const empty = function(): State {
   return {
     currentSide: Side.Left,
+    bookmarks: {},
   };
 };
 
 /**
    Initialize a state with filers
  */
-export const initialize = (state: State, { left, right }: { left: Filer; right: Filer }): State => {
+export const initialize = function(state: State, { left, right }: { left: Filer; right: Filer }): State {
   return {
     ...state,
     left,
@@ -47,7 +50,7 @@ export const initialize = (state: State, { left, right }: { left: Filer; right: 
  * @param state The state of file list
  * @param side the side to get filer from state
  */
-export const filerOnSide = (state: State, side: Side): Filer | undefined => {
+export const filerOnSide = function(state: State, side: Side): Filer | undefined {
   switch (side) {
     case Side.Left:
       return state.left;
@@ -63,7 +66,7 @@ export const filerOnSide = (state: State, side: Side): Filer | undefined => {
  * @param pos check position
  * @return state has same position
  */
-export const isCurrent = (state: State, pos: Side): boolean => {
+export const isCurrent = function(state: State, pos: Side): boolean {
   return state.currentSide === pos;
 };
 
@@ -72,7 +75,7 @@ export const isCurrent = (state: State, pos: Side): boolean => {
  * @param state operation target
  * @return side swapped instance
  */
-export const fellowPosition = (state: State): State => {
+export const fellowPosition = function(state: State): State {
   switch (state.currentSide) {
     case Side.Left:
       return { ...state, currentSide: Side.Right };
@@ -86,7 +89,7 @@ export const fellowPosition = (state: State): State => {
  *
  * @param state The state of file list
  */
-export const currentFocusingNode = (state: State): FileItem | undefined => {
+export const currentFocusingNode = function(state: State): FileItem | undefined {
   if (!state.left || !state.right) {
     return undefined;
   }
@@ -99,4 +102,13 @@ export const currentFocusingNode = (state: State): FileItem | undefined => {
     case Side.Right:
       return state.right.currentFileItem;
   }
+};
+
+/**
+   update bookmarks of the state
+ */
+export const updateBookmarks = function updateBookmarks(bookmarks: Bookmark[]) {
+  return (state: State): State => {
+    return { ...state, bookmarks: bookmarks.reduce((accum, v) => ({ ...accum, [v.path]: v }), {}) };
+  };
 };

@@ -31,6 +31,7 @@ describe("Container", () => {
           history,
         }),
         currentSide: Side.Left,
+        bookmarks: {},
       };
       const tree = renderer.create(wrap(<Component state={state} />)).toJSON();
 
@@ -56,6 +57,7 @@ describe("Container", () => {
           history,
         }),
         currentSide: Side.Right,
+        bookmarks: {},
       };
       const wrapper = mount(wrap(<Component state={state} />));
 
