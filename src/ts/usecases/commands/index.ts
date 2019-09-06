@@ -1,5 +1,4 @@
 import * as bookmarkToggle from "./bookmark-toggle";
-import * as completerClose from "./completer-close";
 import * as completerCursorDown from "./completer-cursor-down";
 import * as completerCursorUp from "./completer-cursor-up";
 import * as filerChangePaneSide from "./filer-change-pane-side";
@@ -11,8 +10,10 @@ import * as filerMoveCursorUp from "./filer-move-cursor-up";
 import * as filerMoveItems from "./filer-move-items";
 import * as filerMoveParent from "./filer-move-parent";
 import * as filerToggleMark from "./filer-toggle-mark";
+import * as finderClose from "./finder-close";
 import * as finderOpen from "./finder-open";
 import * as finderSelect from "./finder-select";
+import * as historyClose from "./history-close";
 import * as historyOpen from "./history-open";
 import * as historySelect from "./history-select";
 import * as keymapReload from "./keymap-reload";
@@ -24,7 +25,6 @@ import { CommandRegistrar } from "../command-registrar";
 export const registAllCommand = (registrar: CommandRegistrar): CommandRegistrar => {
   const modules = [
     bookmarkToggle,
-    completerClose,
     completerCursorDown,
     completerCursorUp,
     filerChangePaneSide,
@@ -36,8 +36,10 @@ export const registAllCommand = (registrar: CommandRegistrar): CommandRegistrar 
     filerMoveItems,
     filerMoveParent,
     filerToggleMark,
+    finderClose,
     finderOpen,
     finderSelect,
+    historyClose,
     historyOpen,
     historySelect,
     keymapReload,

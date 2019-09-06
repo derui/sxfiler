@@ -3,6 +3,7 @@ import * as actions from "@/actions/completer";
 import { CommandLike } from "@/usecases/type";
 import { Dispatcher } from "@/types";
 import { CommandRegistrar } from "@/usecases/command-registrar";
+import { UIContext } from "@/types/ui-context";
 
 const belongingModuleId = "builtin";
 const commandId = "completer.close";
@@ -25,7 +26,7 @@ export const createCommand = function createCommand(): CommandLike {
         throw new Error("Do not take store state");
       }
 
-      dispatch.dispatch(actions.close());
+      dispatch.dispatch(actions.close(UIContext.ForFinder));
     },
   };
 };

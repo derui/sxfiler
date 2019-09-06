@@ -1,6 +1,7 @@
-import * as C from "./completer-close";
+import * as C from "./finder-close";
 import * as AppState from "@/states";
 import * as actions from "@/actions/completer";
+import { UIContext } from "@/types/ui-context";
 
 describe("Commands", () => {
   describe("Completer", () => {
@@ -24,7 +25,7 @@ describe("Commands", () => {
         const state = AppState.empty();
 
         await command.execute(dispatcher as any, { state, client: client as any });
-        expect(dispatcher.dispatch).toBeCalledWith(actions.close());
+        expect(dispatcher.dispatch).toBeCalledWith(actions.close(UIContext.ForFinder));
       });
     });
   });
