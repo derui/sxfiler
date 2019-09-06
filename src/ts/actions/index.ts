@@ -5,6 +5,7 @@ import { Actions as TaskActions } from "./task";
 import { Actions as HistoryActions } from "./history";
 import { Actions as FinderAction } from "./finder";
 import { Actions as BookmarkAction } from "./bookmark";
+import { Actions as CompleterAction } from "./completer";
 
 export type Actions =
   | NotificationActions
@@ -13,6 +14,7 @@ export type Actions =
   | TaskActions
   | HistoryActions
   | FinderAction
-  | BookmarkAction;
+  | BookmarkAction
+  | CompleterAction;
 
 export { ActionTypes } from "./type";

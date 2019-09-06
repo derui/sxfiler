@@ -1,4 +1,7 @@
 import * as bookmarkToggle from "./bookmark-toggle";
+import * as completerClose from "./completer-close";
+import * as completerCursorDown from "./completer-cursor-down";
+import * as completerCursorUp from "./completer-cursor-up";
 import * as filerChangePaneSide from "./filer-change-pane-side";
 import * as filerCopyItems from "./filer-copy-items";
 import * as filerDeleteItems from "./filer-delete-items";
@@ -27,6 +30,9 @@ import { CommandRegistrar } from "../command-registrar";
 export const registAllCommand = (registrar: CommandRegistrar): CommandRegistrar => {
   const modules = [
     bookmarkToggle,
+    completerClose,
+    completerCursorDown,
+    completerCursorUp,
     filerChangePaneSide,
     filerCopyItems,
     filerDeleteItems,
