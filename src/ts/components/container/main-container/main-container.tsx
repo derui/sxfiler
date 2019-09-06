@@ -7,6 +7,7 @@ import * as NotificationContainer from "./notification-container";
 import * as LogViewerContainer from "./log-viewer-container";
 import * as HistorySelectorContainer from "./history-selector-container";
 import * as FinderContainer from "./finder-container";
+import * as CompleterContainer from "./completer-container";
 
 import { AppState } from "@/states";
 import * as SuggestionModalContainer from "./suggestion-modal-container";
@@ -31,7 +32,7 @@ const Root = styled(Element.Component)`
 `;
 
 export const Component: React.FC<Props> = ({ state }) => {
-  const { fileList, notification, logEntry, taskInteraction, history, finder } = state;
+  const { fileList, notification, logEntry, taskInteraction, history, finder, completer } = state;
 
   return (
     <Root>
@@ -41,6 +42,7 @@ export const Component: React.FC<Props> = ({ state }) => {
       <SuggestionModalContainer.Component state={taskInteraction} />
       <HistorySelectorContainer.Component state={history} />
       <FinderContainer.Component state={finder} />
+      <CompleterContainer.Component state={completer} />
     </Root>
   );
 };
