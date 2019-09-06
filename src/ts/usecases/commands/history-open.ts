@@ -1,11 +1,12 @@
 import { Actions } from "@/actions";
-import * as actions from "@/actions/history";
+import * as actions from "@/actions/completer";
 import { CommandLike } from "@/usecases/type";
 import { Dispatcher } from "@/types";
 import { CommandRegistrar } from "@/usecases/command-registrar";
 import { Apis } from "@/apis";
 import * as FileListState from "@/states/file-list";
 import { createCandidate } from "@/domains/candidate";
+import { UIContext } from "@/types/ui-context";
 
 const belongingModuleId = "builtin";
 const commandId = "history.open";
@@ -38,7 +39,7 @@ export const createCommand = function createCommand(): CommandLike {
       }
 
       const source = focused.history.records.map(v => createCandidate({ id: v.location, value: v.location }));
-      dispatch.dispatch(actions.open(side));
+      dispatch.dispatch(actions.open("History", UIContext.ForHistory));
 
       await client.call(Apis.Completion.Setup, { source });
       dispatch.dispatch(actions.replaceCandidates(source));

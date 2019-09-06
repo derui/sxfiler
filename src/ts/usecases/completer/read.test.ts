@@ -1,14 +1,14 @@
-import * as U from "./finder-read";
+import * as U from "./read";
 import { Dispatcher } from "@/types";
 import { Actions } from "@/actions";
 import { Client } from "@/libs/json-rpc/client";
 import { ApiMethod } from "@/apis";
-import * as actions from "@/actions/finder";
+import * as actions from "@/actions/completer";
 import { createCandidate } from "@/domains/candidate";
 
 describe("UseCases", () => {
-  describe("Filer", () => {
-    describe("Finder Read", () => {
+  describe("History", () => {
+    describe("Read", () => {
       it("call api to read candidates", async () => {
         const candidates = [createCandidate({ id: "id", value: "foo", start: 0, length: 0 })];
 

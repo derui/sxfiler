@@ -2,19 +2,24 @@ import * as C from "./finder-select";
 import * as AppState from "@/states";
 import { Side } from "@/states/file-list";
 import { createFiler } from "@/domains/filer";
-import * as finderActions from "@/actions/finder";
+import * as filerActions from "@/actions/filer";
+import * as completerActions from "@/actions/completer";
 import { createLocationHistory } from "@/domains/location-history";
-import { createCompletion, moveCursor } from "@/domains/completion";
+import { replaceCandidates } from "@/domains/completion";
 import { createCandidate } from "@/domains/candidate";
+import { compose } from "redux";
+import * as CompleterState from "@/states/completer";
+import { UIContext } from "@/types/ui-context";
 
 describe("Commands", () => {
   describe("Finder", () => {
     const state = AppState.empty();
-    state.finder = {
-      side: Side.Left,
-      opened: true,
-      completion: createCompletion({ cursor: 0, candidates: [createCandidate({ id: "id", value: "value" })] }),
-    };
+    state.completer = compose(
+      CompleterState.open("title"),
+      CompleterState.updateCompletion(
+        replaceCandidates([createCandidate({ id: "id", value: "value" })])(state.completer.completion)
+      )
+    )(state.completer);
 
     describe("Select an item in finder", () => {
       const history = createLocationHistory({ records: [], maxRecordNumber: 100 });
@@ -44,7 +49,8 @@ describe("Commands", () => {
         };
 
         await command.execute(dispatcher, { state, client: client as any });
-        expect(dispatcher.dispatch).toHaveBeenCalledWith(finderActions.closeWithSelect(Side.Left, "id"));
+        expect(dispatcher.dispatch).toHaveBeenCalledWith(completerActions.close(UIContext.ForFinder));
+        expect(dispatcher.dispatch).toHaveBeenCalledWith(filerActions.select(Side.Left, "id"));
       });
     });
   });

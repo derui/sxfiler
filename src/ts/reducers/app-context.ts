@@ -15,26 +15,15 @@ export const reducer = function reducer(
       return changeCurrent(UIContext.OnSuggestion)(state);
     case ActionTypes.TASK_FINISHED:
       return changeCurrent(UIContext.OnFileTree)(state);
-    case ActionTypes.HISTORY_OPEN:
+    case ActionTypes.COMPLETER_OPEN:
       return pipe(
         changeCurrent(UIContext.OnCompletion),
-        addSubContext(UIContext.ForHistory)
+        addSubContext(action.context)
       )(state);
-    case ActionTypes.HISTORY_CLOSE:
+    case ActionTypes.COMPLETER_CLOSE:
       return pipe(
         changeCurrent(UIContext.OnFileTree),
-        removeSubContext(UIContext.ForHistory)
-      )(state);
-    case ActionTypes.FINDER_OPEN:
-      return pipe(
-        changeCurrent(UIContext.OnCompletion),
-        addSubContext(UIContext.ForFinder)
-      )(state);
-    case ActionTypes.FINDER_CLOSE:
-    case ActionTypes.FINDER_CLOSE_WITH_SELECT:
-      return pipe(
-        changeCurrent(UIContext.OnFileTree),
-        removeSubContext(UIContext.ForFinder)
+        removeSubContext(action.context)
       )(state);
     default:
       return state;

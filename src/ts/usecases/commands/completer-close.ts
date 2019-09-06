@@ -1,11 +1,11 @@
 import { Actions } from "@/actions";
-import * as actions from "@/actions/finder";
+import * as actions from "@/actions/completer";
 import { CommandLike } from "@/usecases/type";
 import { Dispatcher } from "@/types";
 import { CommandRegistrar } from "@/usecases/command-registrar";
 
 const belongingModuleId = "builtin";
-const commandId = "finder.close";
+const commandId = "completer.close";
 
 /**
  * Regist command instance to the registrar

@@ -91,7 +91,7 @@ export const reducer = function reducer(state: State = empty(), action: Actions)
       return updateFilerByServerState(state, action.payload);
     case ActionTypes.FILER_CHANGE_SIDE:
       return { ...state, currentSide: moveToOtherSide(state.currentSide) };
-    case ActionTypes.FINDER_CLOSE_WITH_SELECT:
+    case ActionTypes.FILER_SELECT:
       return selectItem(state, action.side, action.itemId);
   }
   return state;

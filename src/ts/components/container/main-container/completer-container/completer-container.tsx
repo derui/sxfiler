@@ -1,13 +1,13 @@
 import * as React from "react";
 
 import { Component as Completer } from "@/components/project/completer";
-import * as F from "@/states/finder";
+import * as C from "@/states/completer";
 import { ModalRootContext } from "@/modal-root";
 import { LocatorContext, Locator } from "@/locator";
-import { createUseCase } from "@/usecases/filer/finder-read";
+import { createUseCase } from "@/usecases/completer/read";
 
 export type Props = {
-  state: F.State;
+  state: C.State;
 };
 
 const handleInput = (locator: Locator) => (input: string) => {
@@ -34,7 +34,7 @@ export const Component: React.FC<Props> = ({ state }) => {
     <Completer
       dialogRoot={modalRoot.element}
       opened={state.opened}
-      title="Find Item"
+      title={state.title}
       items={state.completion.candidates}
       selectedItemIndex={state.completion.cursor}
       onInput={handleInput(locator)}

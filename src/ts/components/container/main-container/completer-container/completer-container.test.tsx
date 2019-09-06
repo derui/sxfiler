@@ -1,14 +1,12 @@
 import * as React from "react";
 import { mount } from "enzyme";
 
-import { Component } from "./history-selector-container";
+import { Component } from "./completer-container";
 import { Theme, ThemeProvider } from "@/components/theme";
 import { Component as Completer } from "@/components/project/completer";
-import * as H from "@/states/history";
+import * as C from "@/states/completer";
 import { ModalRootContext } from "@/modal-root";
 import { LocatorContext, Locator } from "@/locator";
-import { createUseCase } from "@/usecases/history/read";
-import { Side } from "@/states/file-list";
 
 describe("Container", () => {
   const executor = jest.fn();
@@ -39,7 +37,7 @@ describe("Container", () => {
 
   describe("History Selector", () => {
     it("should not open completer when empty", () => {
-      const state = H.empty();
+      const state = C.empty();
       const wrapper = mount(
         <ThemeProvider theme={Theme}>
           <LocatorContext.Provider value={locator!!}>
@@ -54,7 +52,7 @@ describe("Container", () => {
     });
 
     it("should print title", () => {
-      const state = H.open(Side.Left)(H.empty());
+      const state = C.open("History")(C.empty());
       const wrapper = mount(
         <ThemeProvider theme={Theme}>
           <LocatorContext.Provider value={locator!!}>
@@ -69,7 +67,7 @@ describe("Container", () => {
     });
 
     it("should call use case with inputted text", () => {
-      const state = H.open(Side.Left)(H.empty());
+      const state = C.open("title")(C.empty());
       const wrapper = mount(
         <ThemeProvider theme={Theme}>
           <LocatorContext.Provider value={locator!!}>

@@ -1,9 +1,9 @@
-import * as C from "./history-close";
+import * as C from "./completer-close";
 import * as AppState from "@/states";
-import * as actions from "@/actions/history";
+import * as actions from "@/actions/completer";
 
 describe("Commands", () => {
-  describe("History", () => {
+  describe("Completer", () => {
     describe("Close completion", () => {
       it("throw error when pass undefined as argument", async () => {
         const command = C.createCommand();

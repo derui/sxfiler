@@ -1,27 +1,33 @@
 import { Completion, createCompletion } from "@/domains/completion";
-import { Side } from "./file-list";
 import { Candidate } from "@/domains/candidate";
 
 export type State = {
+  readonly title: string;
   readonly opened: boolean;
   readonly completion: Completion;
-  readonly side: Side;
 };
 
-export const empty = (): State => {
+export const empty = function empty(): State {
   return {
+    title: "",
     opened: false,
     completion: createCompletion({}),
-    side: Side.Left,
   };
 };
 
-export const open = function open(side: Side) {
-  return (state: State) => ({ ...state, opened: true, side });
+export const open = function open(title: string) {
+  return (state: State): State => ({ ...state, opened: true, title });
 };
 
 export const close = function close(state: State): State {
   return { ...state, opened: false };
+};
+
+/**
+   simple function to update completion in the state
+ */
+export const updateCompletion = function updateCompletion(completion: Completion) {
+  return (state: State): State => ({ ...state, completion });
 };
 
 /**

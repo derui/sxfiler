@@ -1,6 +1,8 @@
 import { AppAction, ActionTypes } from "./type";
 import { Filer } from "@/domains/filer";
+import { Side } from "@/states/file-list";
 
+type SelectAction = AppAction<ActionTypes.FILER_SELECT, { side: Side; itemId: string }>;
 type ReloadAction = AppAction<
   ActionTypes.FILER_RELOAD,
   {
@@ -31,7 +33,7 @@ type LoadFilerAction = AppAction<
 
 type ChangeSideAction = AppAction<ActionTypes.FILER_CHANGE_SIDE>;
 
-export type Actions = ReloadAction | UpdateFilerAction | ChangeSideAction | LoadFilerAction;
+export type Actions = ReloadAction | UpdateFilerAction | ChangeSideAction | LoadFilerAction | SelectAction;
 
 export const reload = function reload(args: { filers: [Filer, Filer] }): ReloadAction {
   return { type: ActionTypes.FILER_RELOAD, payload: { ...args } };
@@ -56,4 +58,8 @@ export const load = function load(args: { filer: Filer }): LoadFilerAction {
 */
 export const changeSide = function changeSide(): ChangeSideAction {
   return { type: ActionTypes.FILER_CHANGE_SIDE };
+};
+
+export const select = function select(side: Side, itemId: string): SelectAction {
+  return { type: ActionTypes.FILER_SELECT, side, itemId };
 };

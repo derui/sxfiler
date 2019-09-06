@@ -1,15 +1,15 @@
 import * as C from "./finder-open";
 import * as AppState from "@/states";
-import { Side } from "@/states/file-list";
 import { createFiler } from "@/domains/filer";
 import { Apis } from "@/apis";
-import * as actions from "@/actions/finder";
+import * as actions from "@/actions/completer";
 import { createFileItem } from "@/domains/file-item";
 import { createFileStat } from "@/domains/file-stat";
 import { emptyMode } from "@/domains/mode";
 import * as FileListState from "@/states/file-list";
 import { createLocationHistory } from "@/domains/location-history";
 import { createCandidate } from "@/domains/candidate";
+import { UIContext } from "@/types/ui-context";
 
 const items = [
   createFileItem({
@@ -88,7 +88,7 @@ describe("Commands", () => {
         client.call.mockResolvedValue(updatedFiler);
 
         await command.execute(dispatcher as any, { state, client: client as any });
-        await expect(dispatcher.dispatch).toBeCalledWith(actions.open(Side.Left));
+        await expect(dispatcher.dispatch).toBeCalledWith(actions.open("Find Item", UIContext.ForFinder));
       });
     });
   });
