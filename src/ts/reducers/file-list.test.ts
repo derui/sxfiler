@@ -28,6 +28,7 @@ const node1 = createFileItem({
   name: "name1",
   stat,
   parentDirectory: "/",
+  fullPath: "/name1",
   marked: false,
 });
 
@@ -36,6 +37,7 @@ const node2 = createFileItem({
   name: "name2",
   stat,
   parentDirectory: "/",
+  fullPath: "/name2",
   marked: false,
 });
 

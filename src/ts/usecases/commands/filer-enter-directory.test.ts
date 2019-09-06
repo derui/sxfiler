@@ -53,6 +53,7 @@ describe("Commands", () => {
             items: [
               createFileItem({
                 id: "node",
+                fullPath: "parent/dir",
                 parentDirectory: "parent",
                 name: "dir",
                 stat,
@@ -88,6 +89,7 @@ describe("Commands", () => {
               createFileItem({
                 id: "node",
                 name: "node",
+                fullPath: "test/node",
                 parentDirectory: "test",
                 stat,
                 marked: false,

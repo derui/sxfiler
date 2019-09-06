@@ -15,6 +15,7 @@ const items = [
     id: "node1",
     name: "node",
     parentDirectory: "/parent",
+    fullPath: "/parent/node",
     marked: false,
     stat: createFileStat({
       mode: emptyMode(),
