@@ -1,13 +1,11 @@
 // reducers for notification
 import * as otherActions from "@/actions/notification";
 import * as actions from "@/actions/task";
-import * as historyActions from "@/actions/history";
-import * as finderActions from "@/actions/finder";
+import * as completerActions from "@/actions/completer";
 import { UIContext } from "@/types/ui-context";
 import { reducer } from "./app-context";
 import { createSuggestions } from "@/domains/task-suggestion";
 import { createAppContext } from "@/domains/app-context";
-import { Side } from "@/states/file-list";
 
 describe("reducers", () => {
   describe("UI Context state", () => {
@@ -40,8 +38,8 @@ describe("reducers", () => {
       expect(ret.current).toBe(UIContext.OnFileTree);
     });
 
-    it("should make current context to OnCompletion when history opened", () => {
-      const ret = reducer(undefined, historyActions.open(Side.Left));
+    it("should make current context to OnCompletion when completer opened", () => {
+      const ret = reducer(undefined, completerActions.open("title", UIContext.ForHistory));
       const expected = createAppContext({
         current: UIContext.OnCompletion,
         subContexts: [UIContext.ForHistory],
@@ -50,27 +48,11 @@ describe("reducers", () => {
       expect(ret).toEqual(expected);
     });
 
-    it("should make current context to OnFileTree when history closed", () => {
-      const ret = reducer(reducer(undefined, historyActions.open(Side.Left)), historyActions.close());
-      const expected = createAppContext({
-        current: UIContext.OnFileTree,
-      });
-
-      expect(ret).toEqual(expected);
-    });
-
-    it("should make current context to OnCompletion when finder opened", () => {
-      const ret = reducer(undefined, finderActions.open(Side.Left));
-      const expected = createAppContext({
-        current: UIContext.OnCompletion,
-        subContexts: [UIContext.ForFinder],
-      });
-
-      expect(ret).toEqual(expected);
-    });
-
-    it("should make current context to OnFileTree when history closed", () => {
-      const ret = reducer(reducer(undefined, finderActions.open(Side.Left)), finderActions.close());
+    it("should make current context to OnFileTree when completer closed", () => {
+      const ret = reducer(
+        reducer(undefined, completerActions.open("title", UIContext.ForHistory)),
+        completerActions.close(UIContext.ForHistory)
+      );
       const expected = createAppContext({
         current: UIContext.OnFileTree,
       });

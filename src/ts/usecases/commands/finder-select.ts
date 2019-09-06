@@ -1,9 +1,11 @@
 import { Actions } from "@/actions";
-import * as finderActions from "@/actions/finder";
+import * as completerActions from "@/actions/completer";
+import * as filerActions from "@/actions/filer";
 import { CommandLike } from "@/usecases/type";
 import { Dispatcher } from "@/types";
 import { CommandRegistrar } from "@/usecases/command-registrar";
-import { currentSelectedCandidate } from "@/states/finder";
+import { currentSelectedCandidate } from "@/states/completer";
+import { UIContext } from "@/types/ui-context";
 
 const belongingModuleId = "builtin";
 const commandId = "finder.select";
@@ -27,14 +29,17 @@ export const createCommand = function createCommand(): CommandLike {
       }
       const { state } = args;
 
-      const currentNode = currentSelectedCandidate(state.finder);
+      const currentNode = currentSelectedCandidate(state.completer);
 
       if (!currentNode) {
         console.log("Did not select any node in completer");
         return;
       }
 
-      dispatch.dispatch(finderActions.closeWithSelect(state.finder.side, currentNode.id));
+      const side = state.fileList.currentSide;
+
+      dispatch.dispatch(completerActions.close(UIContext.ForFinder));
+      dispatch.dispatch(filerActions.select(side, currentNode.id));
     },
   };
 };

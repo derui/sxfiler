@@ -1,11 +1,12 @@
 import { Actions } from "@/actions";
 import * as actions from "@/actions/filer";
-import * as historyActions from "@/actions/history";
+import * as completerActions from "@/actions/completer";
 import { CommandLike } from "@/usecases/type";
 import { Dispatcher } from "@/types";
 import { CommandRegistrar } from "@/usecases/command-registrar";
 import { Apis } from "@/apis";
-import { currentSelectedCandidate } from "@/states/history";
+import { currentSelectedCandidate } from "@/states/completer";
+import { UIContext } from "@/types/ui-context";
 
 const belongingModuleId = "builtin";
 const commandId = "history.select";
@@ -29,16 +30,17 @@ export const createCommand = function createCommand(): CommandLike {
       }
       const { state, client } = args;
 
-      const currentNode = currentSelectedCandidate(state.history);
+      const currentNode = currentSelectedCandidate(state.completer);
 
-      dispatch.dispatch(historyActions.close());
+      dispatch.dispatch(completerActions.close(UIContext.ForHistory));
 
       if (!currentNode) {
         return;
       }
+      const side = state.fileList.currentSide;
 
       const filer = await client.call(Apis.Filer.Jump, {
-        name: state.history.side,
+        name: side,
         location: currentNode.value,
       });
 

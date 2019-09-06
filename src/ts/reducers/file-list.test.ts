@@ -1,6 +1,5 @@
 // reducers for notification
 import * as actions from "@/actions/filer";
-import * as finderActions from "@/actions/finder";
 import { empty, State, Side, initialize } from "@/states/file-list";
 import { reducer } from "./file-list";
 import { createFiler, Direction } from "@/domains/filer";
@@ -99,7 +98,7 @@ describe("reducers", () => {
       state = initialize(state, { left: leftFiler, right: rightFiler });
       state = { ...state, currentSide: Side.Left };
 
-      const ret = reducer(state, finderActions.closeWithSelect(Side.Left, "node2"));
+      const ret = reducer(state, actions.select(Side.Left, "node2"));
       expect(ret.left!!.currentFileItem).toEqual(node2);
     });
   });

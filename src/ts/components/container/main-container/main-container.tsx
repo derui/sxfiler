@@ -5,8 +5,6 @@ import * as Element from "@/components/ui/element";
 import * as FileListContainer from "./file-list-container";
 import * as NotificationContainer from "./notification-container";
 import * as LogViewerContainer from "./log-viewer-container";
-import * as HistorySelectorContainer from "./history-selector-container";
-import * as FinderContainer from "./finder-container";
 import * as CompleterContainer from "./completer-container";
 
 import { AppState } from "@/states";
@@ -32,7 +30,7 @@ const Root = styled(Element.Component)`
 `;
 
 export const Component: React.FC<Props> = ({ state }) => {
-  const { fileList, notification, logEntry, taskInteraction, history, finder, completer } = state;
+  const { fileList, notification, logEntry, taskInteraction, completer } = state;
 
   return (
     <Root>
@@ -40,8 +38,6 @@ export const Component: React.FC<Props> = ({ state }) => {
       <LogViewerContainer.Component state={logEntry} />
       <NotificationContainer.Component state={notification} />
       <SuggestionModalContainer.Component state={taskInteraction} />
-      <HistorySelectorContainer.Component state={history} />
-      <FinderContainer.Component state={finder} />
       <CompleterContainer.Component state={completer} />
     </Root>
   );
