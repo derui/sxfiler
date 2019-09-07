@@ -134,7 +134,6 @@
     "puppeteer": "^1.17.0",
     "react": "^16.8.3",
     "react-app-polyfill": "^1.0.1",
-    "react-dev-utils": "^9.0.0",
     "react-dom": "^16.8.3",
     "react-test-renderer": "^16.8.3",
     "react-transition-group": "^4.0.0",
