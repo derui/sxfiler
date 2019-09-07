@@ -11,6 +11,7 @@ import { reducer as notificationReducer } from "./notification";
 import { reducer as appContextReducer } from "./app-context";
 import { reducer as taskInteractionReducer } from "./task-interaction";
 import { reducer as logEntryReducer } from "./log-entry";
+import { reducer as completerReducer } from "./completer";
 
 const reducerMap: ReducersMapObject<AppState, actions.Actions> = {
   context: appContextReducer,
@@ -20,6 +21,7 @@ const reducerMap: ReducersMapObject<AppState, actions.Actions> = {
   notification: notificationReducer,
   taskInteraction: taskInteractionReducer,
   logEntry: logEntryReducer,
+  completer: completerReducer,
 };
 
 export const reducer: Reducer<AppState, actions.Actions> = combineReducers(reducerMap);
