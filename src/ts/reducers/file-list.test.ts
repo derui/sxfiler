@@ -1,5 +1,6 @@
 // reducers for notification
 import * as actions from "@/actions/filer";
+import * as bookmarkActions from "@/actions/bookmark";
 import { empty, State, Side, initialize } from "@/states/file-list";
 import { reducer } from "./file-list";
 import { createFiler, Direction } from "@/domains/filer";
@@ -7,6 +8,7 @@ import { createLocationHistory } from "@/domains/location-history";
 import { createFileItem } from "@/domains/file-item";
 import { createFileStat } from "@/domains/file-stat";
 import { emptyMode } from "@/domains/mode";
+import { createBookmark } from "@/domains/bookmark";
 
 const history = createLocationHistory({ records: [], maxRecordNumber: 100 });
 const stat = createFileStat({
@@ -100,6 +102,27 @@ describe("reducers", () => {
 
       const ret = reducer(state, actions.select(Side.Left, "node2"));
       expect(ret.left!!.currentFileItem).toEqual(node2);
+    });
+
+    const bookmark = createBookmark({ id: "bookmark", path: "path", order: 1 });
+
+    it("should add bookmark when get the action to register bookmark", () => {
+      let state: State = empty();
+      state = initialize(state, { left: leftFiler, right: rightFiler });
+      state = { ...state, currentSide: Side.Left };
+
+      const ret = reducer(state, bookmarkActions.registerBookmark(bookmark));
+      expect(ret.bookmarks["bookmark"]).toEqual(bookmark);
+    });
+
+    it("should delete bookmark when get the action to delete bookmark", () => {
+      let state: State = empty();
+      state = initialize(state, { left: leftFiler, right: rightFiler });
+      state = { ...state, currentSide: Side.Left };
+      state = reducer(state, bookmarkActions.registerBookmark(bookmark));
+
+      const ret = reducer(state, bookmarkActions.deleteBookmark(bookmark));
+      expect(ret.bookmarks["bookmark"]).toBeUndefined;
     });
   });
 });
