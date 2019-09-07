@@ -46,7 +46,9 @@
   },
   "scripts": {
     "start": "BROWSER=none webpack-dev-server --config config/webpack.development.js",
-    "build": "node scripts/build.js",
+    "build:prepare": "node scripts/prepare-build.js",
+    "build:bundle": "webpack --config config/webpack.production.js",
+    "build": "npm-run-all build:prepare build:bundle",
     "test": "node scripts/test.js --env=jsdom",
     "test:coverage": "node scripts/test.js --env=jsdom --coverage",
     "electron": "ELECTRON_DISABLE_SANDBOX=1 ELECTRON_START_URL=http://localhost:3000 electron .",
