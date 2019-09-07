@@ -45,8 +45,10 @@
     ]
   },
   "scripts": {
-    "start": "BROWSER=none node scripts/start.js",
-    "build": "node scripts/build.js",
+    "start": "BROWSER=none webpack-dev-server --config config/webpack.development.js",
+    "build:prepare": "node scripts/prepare-build.js",
+    "build:bundle": "webpack --config config/webpack.production.js",
+    "build": "npm-run-all build:prepare build:bundle",
     "test": "node scripts/test.js --env=jsdom",
     "test:coverage": "node scripts/test.js --env=jsdom --coverage",
     "electron": "ELECTRON_DISABLE_SANDBOX=1 ELECTRON_START_URL=http://localhost:3000 electron .",
@@ -132,7 +134,6 @@
     "puppeteer": "^1.17.0",
     "react": "^16.8.3",
     "react-app-polyfill": "^1.0.1",
-    "react-dev-utils": "^9.0.0",
     "react-dom": "^16.8.3",
     "react-test-renderer": "^16.8.3",
     "react-transition-group": "^4.0.0",
@@ -146,6 +147,7 @@
     "url-loader": "1.1.2",
     "uuid": "^3.3.2",
     "webpack": "4.39.2",
+    "webpack-cli": "^3.3.8",
     "webpack-dev-server": "3.8.0",
     "webpack-manifest-plugin": "2.0.4"
   },
