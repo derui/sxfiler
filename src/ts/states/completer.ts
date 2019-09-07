@@ -20,7 +20,7 @@ export const open = function open(title: string) {
 };
 
 export const close = function close(state: State): State {
-  return { ...state, opened: false };
+  return { ...state, completion: createCompletion({}), opened: false };
 };
 
 /**
