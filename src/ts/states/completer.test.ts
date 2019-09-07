@@ -25,5 +25,14 @@ describe("States", () => {
 
       expect(C.currentSelectedCandidate(newState)).toEqual(candidate);
     });
+
+    it("should reset completion when closed", () => {
+      const state = C.empty();
+      const candidate = createCandidate({ id: "foo", value: "value" });
+      const completion = replaceCandidates([candidate])(state.completion);
+      let newState = C.close(C.updateCompletion(completion)(state));
+
+      expect(newState.completion.candidates).toHaveLength(0);
+    });
   });
 });
