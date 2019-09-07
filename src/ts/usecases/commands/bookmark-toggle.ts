@@ -7,7 +7,7 @@ import { currentFocusingNode, findBookmark } from "@/states/file-list";
 import { Apis } from "@/apis/bookmark-api";
 
 const belongingModuleId = "builtin";
-const commandId = "bookmark.register";
+const commandId = "bookmark.toggle";
 
 /**
  * Regist command instance to the registrar

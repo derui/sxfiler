@@ -47,28 +47,35 @@ describe("Project", () => {
   describe("Node Item", () => {
     it("should print correctly", () => {
       const node = makeNode(false);
-      const tree = renderer.create(wrap(<T item={node} selected={false} />)).toJSON();
+      const tree = renderer.create(wrap(<T item={node} selected={false} bookmarked={false} />)).toJSON();
 
       expect(tree).toMatchSnapshot();
     });
 
     it("should add class correctly when marked", () => {
       const node = makeNode(true);
-      const tree = renderer.create(wrap(<T item={node} selected={false} />)).toJSON();
+      const tree = renderer.create(wrap(<T item={node} selected={false} bookmarked={false} />)).toJSON();
 
       expect(tree).toMatchSnapshot();
     });
 
     it("should add class correctly when selected", () => {
       const node = makeNode(false);
-      const tree = renderer.create(wrap(<T item={node} selected={true} />)).toJSON();
+      const tree = renderer.create(wrap(<T item={node} selected={true} bookmarked={false} />)).toJSON();
 
       expect(tree).toMatchSnapshot();
     });
 
     it("should add class correctly when selected and marked", () => {
       const node = makeNode(true);
-      const tree = renderer.create(wrap(<T item={node} selected={true} />)).toJSON();
+      const tree = renderer.create(wrap(<T item={node} selected={true} bookmarked={false} />)).toJSON();
+
+      expect(tree).toMatchSnapshot();
+    });
+
+    it("should add class correctly when it bookmarked", () => {
+      const node = makeNode(true);
+      const tree = renderer.create(wrap(<T item={node} selected={true} bookmarked={true} />)).toJSON();
 
       expect(tree).toMatchSnapshot();
     });

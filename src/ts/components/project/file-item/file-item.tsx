@@ -13,6 +13,7 @@ export type Props = ListItem.Props & {
   item: Domain.FileItem;
   selected: boolean;
   hidden?: boolean;
+  bookmarked: boolean;
 };
 
 const Element = styled(ListItem.Component)`
@@ -33,21 +34,32 @@ ${ListItem.style}
     border-left: 4px solid ${props => props.theme.colors.orange};
   }
 
-  &[aria-hidder="true"] {
+  &[aria-hidden="true"] {
     visibility: hidden;
   }
 
   &[data-marked="true"] {
     background-color: ${props => props.theme.colors.blue}3d;
   }
+
+&[data-bookmarked="true"]{
+    background-color: ${props => props.theme.colors.cyan}3d;
+}
 `;
 
 const render = function renderFileItem(
-  { item, selected, hidden = false, ...rest }: Props,
+  { item, selected, bookmarked, hidden = false, ...rest }: Props,
   ref: React.Ref<HTMLElement>
 ) {
   return (
-    <Element selected={selected} data-marked={item.marked} aria-hidden={hidden} ref={ref} {...rest}>
+    <Element
+      selected={selected}
+      data-marked={item.marked}
+      data-bookmarked={bookmarked}
+      aria-hidden={hidden}
+      ref={ref}
+      {...rest}
+    >
       <Mode key="mode" mode={item.stat.mode} isDirectory={item.stat.isDirectory} isSymlink={item.stat.isSymlink} />
       <Timestamp key="timestamp" timestamp={item.stat.mtime} />
       <Size key="size" size={sizeAsBigInt(item.stat)} />
