@@ -18,6 +18,7 @@
     {"action": "builtin.finder.select", "key": "Enter", "when": {contexts: ["onCompletion", "forFinder"]}},
     {"action": "builtin.completer.close", "key": "Escape", "when": {contexts: ["onCompletion"]}},
     {"action": "builtin.completer.cursorUp", "key": "ArrowUp", "when": {contexts: ["onCompletion"]}},
-    {"action": "builtin.completer.cursorDown", "key": "ArrowDown", "when": {contexts: ["onCompletion"]}}
+    {"action": "builtin.completer.cursorDown", "key": "ArrowDown", "when": {contexts: ["onCompletion"]}},
+    {"action": "builtin.bookmark.toggle", "key": "C-b", "when": {contexts: ["onFileTree"]}}
   ]
 }

@@ -109,7 +109,28 @@ export const currentFocusingNode = function(state: State): FileItem | undefined 
  */
 export const updateBookmarks = function updateBookmarks(bookmarks: Bookmark[]) {
   return (state: State): State => {
-    return { ...state, bookmarks: bookmarks.reduce((accum, v) => ({ ...accum, [v.path]: v }), {}) };
+    return { ...state, bookmarks: bookmarks.reduce((accum, v) => ({ ...accum, [v.id]: v }), {}) };
+  };
+};
+
+/**
+   register a bookmark to the state
+ */
+export const registerBookmark = function registerBookmark(bookmark: Bookmark) {
+  return (state: State): State => {
+    return { ...state, bookmarks: { ...state.bookmarks, [bookmark.id]: bookmark } };
+  };
+};
+
+/**
+   delete a bookmark from the state
+ */
+export const deleteBookmark = function deleteBookmark(bookmark: Bookmark) {
+  return (state: State): State => {
+    const bookmarks = { ...state.bookmarks };
+
+    delete bookmarks[bookmark.id];
+    return { ...state, bookmarks };
   };
 };
 
@@ -117,5 +138,5 @@ export const updateBookmarks = function updateBookmarks(bookmarks: Bookmark[]) {
    find the bookmark for the file item
  */
 export const findBookmark = function findBookmark(fileItem: FileItem) {
-  return (state: State): Bookmark | undefined => state.bookmarks[fileItem.fullPath];
+  return (state: State): Bookmark | undefined => Object.values(state.bookmarks).find(v => v.path === fileItem.fullPath);
 };

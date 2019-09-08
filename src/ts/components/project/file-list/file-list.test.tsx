@@ -9,6 +9,7 @@ import { createFileStat } from "@/domains/file-stat";
 import { createMode } from "@/domains/mode";
 import { emptyCapability, allowToRead, allowToWrite } from "@/domains/capability";
 import { pipe } from "@/libs/fn";
+import { createBookmark } from "@/domains/bookmark";
 
 function makeNode(name: string, isDirectory = false, isSymlink = false) {
   return createFileItem({
@@ -39,24 +40,32 @@ function makeNode(name: string, isDirectory = false, isSymlink = false) {
   });
 }
 
+const bookmarks = [createBookmark({ id: "bookmark", order: 1, path: "fullpath" })];
+
 describe("Project", () => {
   describe("Node List", () => {
     it("should not print before resized", () => {
       const nodes = [makeNode("file.txt")];
-      const tree = renderer.create(wrap(<T items={nodes} location="loc" cursor={0} focused={false} />)).toJSON();
+      const tree = renderer
+        .create(wrap(<T items={nodes} location="loc" cursor={0} focused={false} bookmarks={bookmarks} />))
+        .toJSON();
 
       expect(tree).toMatchSnapshot();
     });
 
     it("should select a node locating same the index of cursor when focused", () => {
       const nodes = [makeNode("file.txt")];
-      const tree = renderer.create(wrap(<T items={nodes} location="loc" cursor={0} focused={true} />)).toJSON();
+      const tree = renderer
+        .create(wrap(<T items={nodes} location="loc" cursor={0} focused={true} bookmarks={bookmarks} />))
+        .toJSON();
 
       expect(tree).toMatchSnapshot();
     });
 
     it("should show dummy content when nodes is empty", () => {
-      const tree = renderer.create(wrap(<T items={[]} location="loc" cursor={0} focused={true} />)).toJSON();
+      const tree = renderer
+        .create(wrap(<T items={[]} location="loc" cursor={0} focused={true} bookmarks={bookmarks} />))
+        .toJSON();
 
       expect(tree).toMatchSnapshot();
     });

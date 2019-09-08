@@ -24,11 +24,6 @@ struct
 
   let store (t : D.Bookmark.t) =
     S.with_lock (fun state ->
-        let state' =
-          List.fold_left
-            (fun state v ->
-               if D.Bookmark.equal_id t.id v.D.Bookmark.id then t :: state else v :: state)
-            [] state
-        in
+        let state' = t :: List.filter (fun v -> not @@ D.Bookmark.have_same_id v t) state in
         S.update state')
 end

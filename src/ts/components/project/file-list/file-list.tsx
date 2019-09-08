@@ -11,10 +11,12 @@ import { AutoSizer } from "@/libs/auto-sizer";
 import { ItemMeasureCache } from "./item-measure-cache";
 import { ListLayoutCalculator, VirtualizedWindow } from "./list-layout-calculator";
 import { Component as Header } from "./header";
+import { Bookmark } from "@/domains/bookmark";
 
 export type Props = {
   location: string;
   items: FileItem[];
+  bookmarks: Bookmark[];
   cursor: number;
   focused: boolean;
 };
@@ -102,7 +104,14 @@ export class Component extends React.Component<Props> {
   }
 
   private makeListItems(layout: VirtualizedWindow): JSX.Element[] {
-    const { items, cursor, focused } = this.props;
+    const { items, cursor, focused, bookmarks } = this.props;
+    let keyAsPathBookmark = bookmarks.reduce(
+      (accum, v) => {
+        accum[v.path] = v;
+        return accum;
+      },
+      {} as { [key: string]: Bookmark }
+    );
 
     return items.slice(layout.startIndex, layout.stopIndex).map((item, index) => {
       const selected = cursor === index + layout.startIndex && focused;
@@ -111,6 +120,7 @@ export class Component extends React.Component<Props> {
           key={index + layout.startIndex}
           ref={e => this.itemMeasureCache.set(index + layout.startIndex, e)}
           item={item}
+          bookmarked={!!keyAsPathBookmark[item.fullPath]}
           selected={selected}
         />
       );
