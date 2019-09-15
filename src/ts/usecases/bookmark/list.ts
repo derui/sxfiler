@@ -15,7 +15,7 @@ export const createUseCase = function createUseCase(client: Client<ApiMethod>): 
   return {
     client,
     async execute(dispatcher: Dispatcher<Actions>) {
-      const bookmarks = await this.client.call(Apis.Bookmark.List, undefined);
+      const bookmarks = await this.client.call(Apis.Bookmark.ListAll, undefined);
 
       dispatcher.dispatch(actions.updateBookmarks(bookmarks));
     },

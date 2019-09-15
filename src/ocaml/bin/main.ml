@@ -106,22 +106,34 @@ let load_keymap file =
 let get_config f config () = if Sys.file_exists config then f config else None
 
 let initialize_modules ~migemo ~option =
-  let completer = Sxfiler_bin_lib.Migemo_completer.make ~migemo in
+  let completer = Migemo_completer.make ~migemo in
   let stat = get_config load_stat option.App_option.stat_file in
   let () = Global.Completer.set @@ fun () -> completer in
   let%lwt () =
     match stat () with
-    | None -> Lwt.return_unit
+    | None ->
+      Logs.info (fun m -> m "Not found application state. Skip restoring") ;
+      Lwt.return_unit
     | Some v ->
       Logs.info (fun m -> m "Restoring persisted stats...") ;
-      Global.Root.with_lock (fun state ->
-          let%lwt filers =
-            App_state.restore_filer_stats ~scanner:(module I.Location_scanner_service) v
-          in
-          let state =
-            List.fold_left (fun state filer -> Root_state.add_filer ~filer state) state filers
-          in
-          Global.Root.update state)
+      Lwt.join
+        [ Global.Root.with_lock (fun state ->
+              Logs_lwt.info (fun m -> m "Restoring persisted filers...") ;%lwt
+              let%lwt filers =
+                App_state.restore_filer_stats ~scanner:(module I.Location_scanner_service) v
+              in
+              let state =
+                List.fold_left
+                  (fun state filer -> Root_state.add_filer ~filer state)
+                  state filers
+              in
+              Global.Root.update state ;%lwt
+              Logs_lwt.info (fun m -> m "Finish restoring persisted filers"))
+        ; Global.Bookmark.with_lock (fun _ ->
+              Logs_lwt.info (fun m -> m "Restoring persisted bookmarks...") ;%lwt
+              let bookmarks = App_state.restore_bookmarks v in
+              Global.Bookmark.update bookmarks ;%lwt
+              Logs_lwt.info (fun m -> m "Finish restoring persisted bookmarks")) ]
   in
   let config = get_config load_configuration option.App_option.configuration in
   let%lwt () =
@@ -181,15 +193,22 @@ let load_migemo dict_dir =
       in
       M.Migemo.make ~dict:migemo_dict ?hira_to_kata ?romaji_to_hira ?han_to_zen ()
 
-let persist_app_state global_state file_name =
+let persist_app_state global_state ~file_name ~bookmarks =
+  Logs.info (fun m -> m "Start app state persisting...") ;
   let app_state = App_state.empty in
   let filers = Root_state.list_filer global_state in
   let app_state =
-    List.fold_left (fun state filer -> App_state.add_filer_stat filer state) app_state filers
+    List.fold_left
+      (fun state filer ->
+         Logs.info (fun m -> m "Persist filer %s..." filer.D.Filer.name) ;
+         App_state.add_filer_stat filer state)
+      app_state filers
   in
+  Logs.info (fun m -> m "Persist bookmarks...") ;
+  let app_state = App_state.put_bookmarks bookmarks app_state in
   let json = App_state.to_json app_state in
-  Logs.info (fun m -> m "App state persisting...") ;
-  Yojson.Safe.to_file file_name json
+  Yojson.Safe.to_file file_name json ;
+  Logs.info (fun m -> m "Finish app state persisting")
 
 let register_cleanup_handlers w =
   Lwt_unix.on_signal Sys.sigint (fun _ -> Lwt.wakeup_exn w (Failure "Caught SIGINT")) |> ignore
@@ -218,4 +237,5 @@ let () =
     (fun () ->
        I.Runner.stop I.instance ;
        let%lwt state = Global.Root.get () in
-       persist_app_state state option.App_option.stat_file |> Lwt.return)
+       let%lwt bookmarks = Global.Bookmark.get () in
+       persist_app_state state ~file_name:option.App_option.stat_file ~bookmarks |> Lwt.return)

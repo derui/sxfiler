@@ -5,7 +5,7 @@ import * as E from "@/codecs/bookmark";
 import { Bookmark } from "@/domains/bookmark";
 
 export enum Methods {
-  List = "bookmark/list",
+  ListAll = "bookmark/listAll",
   Register = "bookmark/register",
   Delete = "bookmark/delete",
 }
@@ -13,8 +13,8 @@ export enum Methods {
 /**
    API definition for keymap/get
  */
-const List: Api<Methods.List, any, Bookmark[]> = {
-  method: Methods.List,
+const ListAll: Api<Methods.ListAll, any, Bookmark[]> = {
+  method: Methods.ListAll,
   parametersTransformer() {
     return undefined;
   },
@@ -58,4 +58,4 @@ const Delete: Api<Methods.Delete, { id: string }, Bookmark> = {
   },
 };
 
-export const Apis = { List, Register, Delete };
+export const Apis = { ListAll, Register, Delete };

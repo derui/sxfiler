@@ -19,6 +19,7 @@ import { createUseCase } from "./ts/usecases/filer/initialize";
 import { createCommandRegistrar } from "./ts/usecases/command-registrar";
 import { registAllCommand } from "./ts/usecases/commands";
 import * as Get from "./ts/usecases/keymap/get";
+import * as List from "./ts/usecases/bookmark/list";
 import * as NotificationHandlers from "./ts/notification-handlers";
 import { ModalRootContext } from "./ts/modal-root";
 import { findBinding } from "@/states/keymap";
@@ -55,6 +56,7 @@ jrpc.createNotificationServer(jsonrpc, locator.context, {
 const initializeState = () => {
   locator.context.use(Get.createUseCase(client))({});
   locator.context.use(createUseCase(client))({ location: "." });
+  locator.context.use(List.createUseCase(client))({});
 };
 
 ws.onopen = () => {

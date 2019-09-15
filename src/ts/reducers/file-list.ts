@@ -1,6 +1,6 @@
 // reducers for file list
 import { Actions, ActionTypes } from "@/actions";
-import { empty, State, Side, registerBookmark, deleteBookmark } from "@/states/file-list";
+import { empty, State, Side, registerBookmark, deleteBookmark, updateBookmarks } from "@/states/file-list";
 import { Filer, createFiler, selectItemById } from "@/domains/filer";
 
 /**
@@ -97,6 +97,8 @@ export const reducer = function reducer(state: State = empty(), action: Actions)
       return registerBookmark(action.bookmark)(state);
     case ActionTypes.BOOKMARK_DELETE:
       return deleteBookmark(action.bookmark)(state);
+    case ActionTypes.BOOKMARK_UPDATE:
+      return updateBookmarks(action.bookmarks)(state);
   }
   return state;
 };
