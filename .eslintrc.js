@@ -21,11 +21,9 @@ module.exports = {
   },
   rules: {
     "func-style": ["error", "expression"],
-    "react/prop-types": false,
-    "import/no-unresolved": false,
-    "react/jsx-uses-vars": ["warn", {
-      "extensions": [".tsx"]
-    }],
+    "react/prop-types": "off",
+    "import/no-unresolved": "off",
+    "react/jsx-uses-vars": "warn",
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/no-unnecessary-type-assertion": "error",
     "prettier/prettier": ['error'],
