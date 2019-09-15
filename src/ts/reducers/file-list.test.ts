@@ -124,5 +124,15 @@ describe("reducers", () => {
       const ret = reducer(state, bookmarkActions.deleteBookmark(bookmark));
       expect(ret.bookmarks["bookmark"]).toBeUndefined;
     });
+
+    it("should update bookmarks when get the action to update bookmark", () => {
+      let state: State = empty();
+      state = initialize(state, { left: leftFiler, right: rightFiler });
+      state = { ...state, currentSide: Side.Left };
+
+      const ret = reducer(state, bookmarkActions.updateBookmarks([bookmark]));
+      expect(Object.values(ret.bookmarks)).toHaveLength(1);
+      expect(ret.bookmarks["bookmark"]).toEqual(bookmark);
+    });
   });
 });

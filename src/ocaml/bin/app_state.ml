@@ -10,10 +10,18 @@ type filer_stat =
   ; history : T.Location_history.t }
 [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
-type t = {filers : filer_stat list}
+type t =
+  { filers : filer_stat list
+  ; bookmarks : T.Bookmark.t list }
 [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
-let empty = {filers = []}
+let empty = {filers = []; bookmarks = []}
+
+let put_bookmarks bookmarks stat =
+  let bookmarks = List.map T.Bookmark.of_domain bookmarks in
+  {stat with bookmarks}
+
+let restore_bookmarks stat = List.map T.Bookmark.to_domain stat.bookmarks
 
 (** [add_filer_stat filer stat] add the filer to stat *)
 let add_filer_stat (filer : S.Filer.t) stat =
@@ -24,7 +32,7 @@ let add_filer_stat (filer : S.Filer.t) stat =
     ; location = filer'.file_list.location
     ; history = filer'.history }
   in
-  {filers = value :: stat.filers}
+  {stat with filers = value :: stat.filers}
 
 (** [add_filer_stat filer stat] add the filer to stat *)
 let restore_filer_stats ~(scanner : (module S.Location_scanner_service.S)) stat =
