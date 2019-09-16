@@ -14,7 +14,7 @@ import { fullCapability, disallowToWrite } from "@/domains/capability";
 storiesOf("Project/File Item Item", module)
   .addParameters({ info: { inline: true } })
   .add(
-    "simple file file item",
+    "simple file item",
     () => {
       const item = createFileItem({
         id: "file item",
@@ -136,6 +136,39 @@ storiesOf("Project/File Item Item", module)
       return (
         <ThemeProvider theme={Theme}>
           <FileItemComponent item={item} selected={boolean("Selected", false)} />
+        </ThemeProvider>
+      );
+    },
+    { decorators: [withInfo, withKnobs] }
+  )
+  .add(
+    "bookmarked file item",
+    () => {
+      const item = createFileItem({
+        id: "file item",
+        name: "file",
+        marked: false,
+        stat: createFileStat({
+          mode: createMode({
+            owner: fullCapability(),
+            group: fullCapability(),
+            others: disallowToWrite(fullCapability()),
+          }),
+          uid: 1000,
+          gid: 1000,
+          atime: "0",
+          ctime: "0",
+          mtime: "0",
+          size: "10",
+          isDirectory: false,
+          isFile: false,
+          isSymlink: true,
+        }),
+        parentDirectory: "/",
+      });
+      return (
+        <ThemeProvider theme={Theme}>
+          <FileItemComponent bookmarked={true} item={item} selected={boolean("Selected", false)} />
         </ThemeProvider>
       );
     },

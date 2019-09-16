@@ -19,7 +19,6 @@ export type Props = ListItem.Props & {
 const Element = styled(ListItem.Component)`
 ${ListItem.style}
   padding: ${props => props.theme.spaces.small} 0;
-  width: 100%;
 
   background-color: ${props => props.theme.colors.base03};
 
@@ -29,6 +28,7 @@ ${ListItem.style}
 
   font-size: 1rem;
   border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
 
   &[aria-selected="true"] {
     border-left: 4px solid ${props => props.theme.colors.orange};
@@ -42,9 +42,9 @@ ${ListItem.style}
     background-color: ${props => props.theme.colors.blue}3d;
   }
 
-&[data-bookmarked="true"]{
-    background-color: ${props => props.theme.colors.cyan}3d;
-}
+  &[data-bookmarked="true"] {
+    border-right: 4px solid ${props => props.theme.colors.cyan};
+  }
 `;
 
 const render = function renderFileItem(
