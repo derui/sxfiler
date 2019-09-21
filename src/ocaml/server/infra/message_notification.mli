@@ -26,8 +26,8 @@ module Json : sig
   module Level : sig
     type t =
       | Info [@key "info"]
-          | Warning [@key "warning"]
-          | Error [@key "error"]
+      | Warning [@key "warning"]
+      | Error [@key "error"]
     [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
   end
 

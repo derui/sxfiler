@@ -5,7 +5,7 @@ module D = Sxfiler_domain.Task_interaction
 module Reply = struct
   type typ =
     | Overwrite of bool [@name "overwrite"]
-          | Rename of {new_name : string [@key "newName"]} [@name "rename"]
+    | Rename of {new_name : string [@key "newName"]} [@name "rename"]
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   type t =
@@ -32,7 +32,7 @@ end
 module Suggestion = struct
   type typ =
     | Overwrite [@name "overwrite"]
-        | Rename [@name "rename"]
+    | Rename [@name "rename"]
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   type t =

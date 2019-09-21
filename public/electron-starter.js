@@ -1,7 +1,7 @@
 const fs = require('fs');
-const electron = require("electron");
-const path = require("path");
-const spawn = require("child_process").spawn;
+const electron = require('electron');
+const path = require('path');
+const spawn = require('child_process').spawn;
 
 if (require.main !== module) {
   process.exit(1);
@@ -9,25 +9,24 @@ if (require.main !== module) {
 
 // get the directory to save user configuration
 function getConfigDir() {
-
   const basePath = process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config');
-  const path =  path.join(basePath, 'sxfiler');
+  const path = path.join(basePath, 'sxfiler');
 
   return path;
 }
 
 // spawn a server
 function spawnServer(configDir) {
-  console.log("Launching server...");
+  console.log('Launching server...');
 
   const configPath = path.join(configDir, 'config.json');
   if (!fs.existsSync(configPath)) {
     fs.copyFileSync(path.join(__dirname, 'config.json'), configPath);
   }
 
-  const server = spawn(path.join(`${__dirname}.unpacked`, 'sxfiler_server'),[`--config=${configPath}`], {
-    stdio: 'inherit'
-  }).on("error", error => {
+  const server = spawn(path.join(`${__dirname}.unpacked`, 'sxfiler_server'), [`--config=${configPath}`], {
+    stdio: 'inherit',
+  }).on('error', error => {
     if (error) {
       throw error;
     }
@@ -35,9 +34,9 @@ function spawnServer(configDir) {
   return server;
 }
 
-const configDir = getConfigDir()
+const configDir = getConfigDir();
 if (!fs.existsSync(configDir)) {
-  fs.mkdirSync(configDir, {recursive: true});
+  fs.mkdirSync(configDir, { recursive: true });
 }
 
 const app = electron.app;
@@ -53,11 +52,11 @@ app.on('ready', () => {
   });
 
   if (!browserWindow) {
-    console.error("Can not open window");
+    console.error('Can not open window');
     process.exit(1);
   }
 
-  browserWindow.loadURL(`file://${path.join(__dirname, "index.html")}`);
+  browserWindow.loadURL(`file://${path.join(__dirname, 'index.html')}`);
   browserWindow.focusOnWebView();
 });
 
