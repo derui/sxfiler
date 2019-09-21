@@ -1,8 +1,0 @@
-(alias
-  (name runtest)
-  (deps (:prog tests.exe) dict_file.txt)
-  (action (run %{prog})))
-
-(test
- (name tests)
- (libraries alcotest sxfiler.bin.lib sxfiler.core sxfiler.domain migemocaml))

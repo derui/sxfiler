@@ -8,5 +8,7 @@
             sxfiler.server.translator
             jsonrpc-ocaml.yojson
             ppx_protocol_conv_json
+            migemocaml
+            re
             unix)
  (preprocess (pps lwt_ppx ppx_deriving.std ppx_protocol_conv)))

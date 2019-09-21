@@ -7,6 +7,10 @@ module D = Sxfiler_domain
 module I = Sxfiler_server_infra
 module TR = Sxfiler_server_task.Runner_intf
 
+module type Option = sig
+  val option : App_option.t
+end
+
 module type S = sig
   module System : Sxfiler_core.System.S
   module Clock : D.Location_record.Clock
@@ -51,6 +55,7 @@ module type S = sig
 end
 
 module Make
+    (Option : Option)
     (Conn : C.Rpc_connection.Instance)
     (Completer : D.Completer.Instance)
     (Runner : TR.Instance) : S = struct
@@ -73,7 +78,11 @@ module Make
   module Progress_notification_factory =
     I.Progress_notification_factory.Make (I.Id_generator.Gen_uuid)
 
-  module Key_map_resolve_service = I.Key_map_resolve_service
+  module Key_map_resolve_service = I.Key_map_resolve_service.Make (struct
+      let path =
+        Sxfiler_core.Path.of_list
+          [Option.option.App_option.configuration; Constants.key_map_file_name]
+    end)
 
   module Item_transporter_service =
     I.Item_transporter_service.Make (Notification_service) (Message_notification_factory)
@@ -97,8 +106,7 @@ module Make
     module Keymap_get = U.Keymap.Get.Make (Condition_repo) (Key_map_repo)
 
     module Keymap_reload =
-      U.Keymap.Reload.Make (Condition_repo) (Configuration_repo) (Key_map_repo)
-        (Key_map_resolve_service)
+      U.Keymap.Reload.Make (Condition_repo) (Key_map_repo) (Key_map_resolve_service)
 
     module Configuration_get = U.Configuration.Get.Make (Configuration_repo)
     module Completion_setup = U.Completion.Setup.Make (Completion_repo)

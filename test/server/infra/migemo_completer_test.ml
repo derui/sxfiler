@@ -1,5 +1,5 @@
 module C = Sxfiler_domain.Completion
-module CM = Sxfiler_bin_lib.Migemo_completer
+module CM = Sxfiler_server_infra.Migemo_completer
 
 let test_set =
   [ ( "can return candidates from collection with input and migemo"
@@ -12,7 +12,7 @@ let test_set =
         ; {C.Item.value = "barfoo"; id = "3"} ]
       in
       let migemo_dict =
-        match Migemocaml.Dict_tree.load_dict "dict_file.txt" with
+        match Migemocaml.Dict_tree.load_dict (Filename.concat "data_real" "dict_file.txt") with
         | None -> Alcotest.fail "Not found dict"
         | Some v -> v
       in

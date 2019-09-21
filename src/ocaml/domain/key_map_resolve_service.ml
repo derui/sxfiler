@@ -5,6 +5,6 @@ open Sxfiler_core
 type location = Path.t
 
 module type S = sig
-  val resolve : location -> Key_map.t Lwt.t
-  (** [resolve path] returns a [Key_map.t] scanned from location [path]. *)
+  val resolve : unit -> Key_map.t Lwt.t
+  (** [resolve ()] returns a [Key_map.t] scanned from something. *)
 end

@@ -1,6 +1,7 @@
 let () =
   Alcotest.run "Server infrastructures"
     [ ("condition repository", Condition_repo_test.test_set)
+    ; ("migemo completer", Migemo_completer_test.test_set)
     ; ("configuration repository", Configuration_repo_test.test_set)
     ; ("filer repository", Filer_repo_test.test_set)
     ; ("key map repository", Key_map_repo_test.test_set)

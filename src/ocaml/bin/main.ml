@@ -8,35 +8,19 @@ module D = Sxfiler_domain
 exception Fail_load_migemo
 
 module Task_runner = Global.Task_runner (I.Id_generator.Gen_uuid)
-
-(* application options *)
-module App_option = struct
-  type t =
-    { migemo_dict_dir : string
-    ; configuration : string
-    ; stat_file : string
-    ; debug : bool }
-
-  let parse executable_dir =
-    let dict_dir = ref "" in
-    let config = ref "./config.json" in
-    let stat_file = ref Filename.(concat executable_dir "sxfiler_stat.json") in
-    let debug = ref false in
-    let arg_specs =
-      [ ("-d", Arg.String (fun v -> dict_dir := v), "Directory of migemo dictionary")
-      ; ("--config", Arg.String (fun v -> config := v), "File path for server configuration")
-      ; ("--stat_file", Arg.String (fun v -> stat_file := v), "File path for stat file")
-      ; ("--debug", Arg.Unit (fun () -> debug := true), "Verbose mode") ]
-    in
-    Arg.parse arg_specs ignore "" ;
-    {migemo_dict_dir = !dict_dir; configuration = !config; debug = !debug; stat_file = !stat_file}
-end
-
 module Log = (val Logger.make ["main"])
 
-let create_server (module C : Rpc_connection.Instance) (module R : T.Runner.Instance) =
+let create_server (module C : Rpc_connection.Instance) (module R : T.Runner.Instance) option =
   let module Completer = (val Global.Completer.get ()) in
-  let module Dep = Dependencies.Make (C) (Completer) (R) in
+  let module Dep =
+    Dependencies.Make
+      (struct
+        let option = option
+      end)
+      (C)
+      (Completer)
+      (R)
+  in
   let subscribe_task_finished task =
     Dep.Notification_service.send ~typ:I.Task_notification.Finished.typ task.D.Task.id
   in
@@ -44,7 +28,7 @@ let create_server (module C : Rpc_connection.Instance) (module R : T.Runner.Inst
   let rpc_server = Jsonrpc_server.make () in
   (Procedures.expose_all rpc_server (module Dep : Dependencies.S), unsubscribe)
 
-let handler (conn : _ * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
+let handler option (conn : _ * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
     (body : Cohttp_lwt.Body.t) =
   let conn_name = Cohttp.Connection.to_string @@ snd conn in
   let%lwt () = Log.info @@ fun m -> m "Connection opened: %s" conn_name in
@@ -62,7 +46,7 @@ let handler (conn : _ * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
     let%lwt () = C.Connection.connect C.instance frames_out_fn in
     Lwt.async (fun () ->
         (* Disable current task when thread is terminated. *)
-        let rpc_server, unsubscribe = create_server (module C) (module R) in
+        let rpc_server, unsubscribe = create_server (module C) (module R) option in
         let thread = Jsonrpc_server.serve_forever rpc_server (module C) in
         Lwt.on_termination thread (fun () ->
             (let%lwt f = unsubscribe in
@@ -80,9 +64,10 @@ let handler (conn : _ * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Request.t)
     Lwt.return (`Response resp)
 
 (** Load configuration from specified file *)
-let load_configuration config =
+let load_configuration dir =
+  let file = Filename.concat dir "config.json" in
   let module Y = Sxfiler_server_translator.Configuration in
-  let config = Yojson.Safe.from_file config in
+  let config = Yojson.Safe.from_file file in
   match Y.of_json config with Error _ -> None | Ok v -> Some (Y.to_domain v)
 
 (** Load stat file from specified file *)
@@ -92,7 +77,8 @@ let load_stat config =
   match Y.of_json config with Error _ -> None | Ok v -> Some v
 
 (* Load keymaps from specified file *)
-let load_keymap file =
+let load_keymap dir =
+  let file = Filename.concat dir "keymap.json" in
   let keymap = Yojson.Safe.from_file file in
   let module Y = Sxfiler_server_translator.Key_map in
   match Y.of_json keymap with
@@ -106,7 +92,7 @@ let load_keymap file =
 let get_config f config () = if Sys.file_exists config then f config else None
 
 let initialize_modules ~migemo ~option =
-  let completer = Migemo_completer.make ~migemo in
+  let completer = I.Migemo_completer.make ~migemo in
   let stat = get_config load_stat option.App_option.stat_file in
   let () = Global.Completer.set @@ fun () -> completer in
   let%lwt () =
@@ -143,16 +129,14 @@ let initialize_modules ~migemo ~option =
       Lwt.return_unit
     | Some config -> Global.Configuration.update config
   in
-  let%lwt config = Global.Configuration.get () in
-  let module P = Sxfiler_core.Path in
-  let keymap = get_config load_keymap @@ P.to_string config.D.Configuration.key_map_file in
+  let keymap = get_config load_keymap option.App_option.configuration in
   match keymap () with
   | None ->
     Logs.warn (fun m -> m "Detect errors when load keymap. Use default keymap.") ;
     Lwt.return_unit
   | Some keymap -> Global.Keymap.update keymap
 
-let start_server _ port =
+let start_server _ port option =
   let conn_closed (ch, _) =
     Logs.info
     @@ fun m ->
@@ -162,7 +146,7 @@ let start_server _ port =
   let%lwt () = Log.info @@ fun m -> m "Listening for HTTP on port %d" port in
   Cohttp_lwt_unix.Server.create
     ~mode:(`TCP (`Port port))
-    (Cohttp_lwt_unix.Server.make_response_action ~callback:handler ~conn_closed ())
+    (Cohttp_lwt_unix.Server.make_response_action ~callback:(handler option) ~conn_closed ())
 
 (* Load migemo from specified directory that contains dictionary and conversions. *)
 let load_migemo dict_dir =
@@ -229,7 +213,7 @@ let () =
   let module I = (val Task_runner.get () : T.Runner.Instance) in
   let main_thread =
     initialize_modules ~migemo ~option
-    >>= fun () -> start_server "localhost" port <&> I.Runner.start I.instance
+    >>= fun () -> start_server "localhost" port option <&> I.Runner.start I.instance
   in
   Lwt_main.run
   @@ Lwt.finalize
