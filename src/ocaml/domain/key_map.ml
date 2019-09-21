@@ -3,7 +3,7 @@ open Sxfiler_core
 module Contexts = struct
   type t = string list [@@deriving show, eq]
 end
-  [@warning "-32"]
+                  [@warning "-32"]
 
 type contexts = Contexts.t
 
@@ -27,7 +27,7 @@ module Value = struct
     ; contexts : Contexts.t }
   [@@deriving show, eq]
 end
-  [@warning "-32"]
+               [@warning "-32"]
 
 type t = {keymap : Value.t list Binding_map.t} [@@deriving show, eq]
 
