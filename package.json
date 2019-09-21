@@ -1,6 +1,6 @@
 {
   "name": "sxfiler",
-  "version": "1.0.0",
+  "version": "0.5.0",
   "description": "This is a **Simple** and **Extensible** , and having *Two screen* filer created by Electron.",
   "main": "src/electron-starter.js",
   "directories": {
@@ -52,7 +52,7 @@
     "test": "node scripts/test.js --env=jsdom",
     "test:coverage": "node scripts/test.js --env=jsdom --coverage",
     "electron": "ELECTRON_DISABLE_SANDBOX=1 ELECTRON_START_URL=http://localhost:3000 electron .",
-    "package": "node ./scripts/package-electron.js",
+    "package": "node ./scripts/create-package.js",
     "format": "node ./scripts/format.js",
     "clean": "node ./scripts/clean.js",
     "dev": "npm-run-all -p start electron",
