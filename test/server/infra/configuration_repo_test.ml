@@ -2,7 +2,7 @@ module D = Sxfiler_domain
 module S = Sxfiler_server_core
 module I = Sxfiler_server_infra
 
-let data = D.Configuration.{default with default_sort_order = D.Types.Sort_type.Date}
+let data = D.Configuration.{default_sort_order = D.Types.Sort_type.Date}
 
 let test_set =
   [ Alcotest_lwt.test_case "can store configuration to state" `Quick (fun _ () ->

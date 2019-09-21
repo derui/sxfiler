@@ -1,13 +1,8 @@
-open Sxfiler_core
 (** Configuration domain has all configurations of application. *)
 
-type t =
-  { default_sort_order : Types.Sort_type.t
-  ; key_map_file : Path.t }
-[@@deriving show, eq]
+type t = {default_sort_order : Types.Sort_type.t} [@@deriving show, eq]
 
-let default =
-  {default_sort_order = Types.Sort_type.Name; key_map_file = Path.(of_string "./keymap.json")}
+let default = {default_sort_order = Types.Sort_type.Name}
 
 module type Repository = sig
   val resolve : unit -> t Lwt.t

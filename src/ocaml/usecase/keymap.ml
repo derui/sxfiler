@@ -42,14 +42,12 @@ module Reload = struct
   (** This module defines usecase interface to store key map with repository *)
   module Make
       (CNDR : Condition.Repository)
-      (CR : Configuration.Repository)
       (R : Key_map_repository.S)
       (S : Key_map_resolve_service.S) : S = struct
     include Type
 
     let execute () =
-      let%lwt config = CR.resolve () in
-      let%lwt key_map = S.resolve config.key_map_file in
+      let%lwt key_map = S.resolve () in
       let%lwt () = R.store key_map in
       Lwt.return_ok key_map
   end

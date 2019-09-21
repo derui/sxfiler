@@ -10,8 +10,6 @@
             sxfiler.server
             sxfiler.server.task
             sxfiler.domain
-            migemocaml
             logs
-            re
             ppx_protocol_conv_json)
  (preprocess (pps lwt_ppx ppx_deriving.std ppx_protocol_conv)))
