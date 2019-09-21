@@ -24,5 +24,11 @@ glob('{src,test}/**/*.{ml,mli}', (er, files) => {
 execFileSync('prettier', ['--single-quote', '--trailing-comma', 'es5', '--write', 'scripts/*.js'], {
   stdio: 'inherit',
 });
+execFileSync('prettier', ['--single-quote', '--trailing-comma', 'es5', '--write', 'public/*.js'], {
+  stdio: 'inherit',
+});
+execFileSync('prettier', ['--single-quote', '--trailing-comma', 'es5', '--write', 'config/*.js'], {
+  stdio: 'inherit',
+});
 
 execFileSync('prettier', ['--parser', 'typescript', '--write', 'src/ts/**/*.{ts,tsx}'], { stdio: 'inherit' });
