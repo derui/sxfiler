@@ -2,6 +2,7 @@ const fs = require('fs');
 const electron = require('electron');
 const path = require('path');
 const spawn = require('child_process').spawn;
+const os = require('os');
 
 if (require.main !== module) {
   process.exit(1);
@@ -10,9 +11,9 @@ if (require.main !== module) {
 // get the directory to save user configuration
 function getConfigDir() {
   const basePath = process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config');
-  const path = path.join(basePath, 'sxfiler');
+  const configDir = path.join(basePath, 'sxfiler');
 
-  return path;
+  return configDir;
 }
 
 // spawn a server
@@ -21,12 +22,20 @@ function spawnServer(configDir) {
 
   const configPath = path.join(configDir, 'config.json');
   if (!fs.existsSync(configPath)) {
-    fs.copyFileSync(path.join(__dirname, 'config.json'), configPath);
+    fs.copyFileSync(path.join(__dirname, 'defaults', 'config.json'), configPath);
+  }
+  const keyMapPath = path.join(configDir, 'keymap.json');
+  if (!fs.existsSync(keyMapPath)) {
+    fs.copyFileSync(path.join(__dirname, 'defaults', 'keymap.json'), keyMapPath);
   }
 
-  const server = spawn(path.join(`${__dirname}.unpacked`, 'sxfiler_server'), [`--config=${configPath}`], {
-    stdio: 'inherit',
-  }).on('error', error => {
+  const server = spawn(
+    path.join(`${__dirname}.unpacked`, 'sxfiler_server'),
+    [`--config=${configPath}`, '-d', path.join(configDir, 'dict')],
+    {
+      stdio: 'inherit',
+    }
+  ).on('error', error => {
     if (error) {
       throw error;
     }
