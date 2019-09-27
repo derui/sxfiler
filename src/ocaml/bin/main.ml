@@ -136,16 +136,16 @@ let initialize_modules ~migemo ~option =
     Lwt.return_unit
   | Some keymap -> Global.Keymap.update keymap
 
-let start_server _ port option =
+let start_server _ option =
   let conn_closed (ch, _) =
     Logs.info
     @@ fun m ->
     m "Connection closed: %s closed"
       (Sexplib.Sexp.to_string_hum (Conduit_lwt_unix.sexp_of_flow ch))
   in
-  let%lwt () = Log.info @@ fun m -> m "Listening for HTTP on port %d" port in
+  let%lwt () = Log.info @@ fun m -> m "Listening for HTTP on port %d" option.App_option.port in
   Cohttp_lwt_unix.Server.create
-    ~mode:(`TCP (`Port port))
+    ~mode:(`TCP (`Port option.App_option.port))
     (Cohttp_lwt_unix.Server.make_response_action ~callback:(handler option) ~conn_closed ())
 
 (* Load migemo from specified directory that contains dictionary and conversions. *)
@@ -205,7 +205,6 @@ let () =
   Logs.set_level (Some (if option.App_option.debug then Logs.Debug else Logs.Info)) ;
   Logs.set_reporter @@ Logger.lwt_reporter Format.std_formatter ;
   let module D = Sxfiler_domain in
-  let port = 50879 in
   let migemo = load_migemo option.migemo_dict_dir in
   (* setup task runner and finalize *)
   let waiter, wakener = Lwt.wait () in
@@ -213,7 +212,7 @@ let () =
   let module I = (val Task_runner.get () : T.Runner.Instance) in
   let main_thread =
     initialize_modules ~migemo ~option
-    >>= fun () -> start_server "localhost" port option <&> I.Runner.start I.instance
+    >>= fun () -> start_server "localhost" option <&> I.Runner.start I.instance
   in
   Lwt_main.run
   @@ Lwt.finalize
