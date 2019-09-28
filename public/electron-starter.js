@@ -101,7 +101,7 @@ async function launch() {
       resizable: true,
       acceptFirstMouse: true,
       webPreferences: {
-        nodeIntegration: true,
+        preload: path.join(app.getAppPath(), 'preload.js'),
       },
     });
 

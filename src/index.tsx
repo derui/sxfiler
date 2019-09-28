@@ -23,9 +23,14 @@ import * as List from "./ts/usecases/bookmark/list";
 import * as NotificationHandlers from "./ts/notification-handlers";
 import { ModalRootContext } from "./ts/modal-root";
 import { findBinding } from "@/states/keymap";
-import { remote } from "electron";
 
-const url = process.env.NODE_ENV === "production" ? remote.process.env.SERVER_URL : "ws://localhost:50879";
+declare var window: Window & {
+  applicationConfig: {
+    serverURL: string;
+  };
+};
+
+const url = process.env.NODE_ENV === "production" ? window.applicationConfig.serverURL : "ws://localhost:50879";
 
 const ws = new WebSocket(url || "");
 const jsonrpc = jrpc.initialize(ws);
