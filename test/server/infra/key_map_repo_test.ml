@@ -11,10 +11,10 @@ let data =
 let test_set =
   [ Alcotest_lwt.test_case "can store keymap to state" `Quick (fun _ () ->
         let module State = S.Statable.Make (struct
-            type t = D.Key_map.t
+          type t = D.Key_map.t
 
-            let empty () = D.Key_map.make ()
-          end) in
+          let empty () = D.Key_map.make ()
+        end) in
         let module R = I.Key_map_repo.Make (State) in
         let%lwt () = R.store data in
         let%lwt actual = State.get () in
@@ -22,10 +22,10 @@ let test_set =
         Lwt.return_unit)
   ; Alcotest_lwt.test_case "can get keymap stored" `Quick (fun _ () ->
         let module State = S.Statable.Make (struct
-            type t = D.Key_map.t
+          type t = D.Key_map.t
 
-            let empty () = data
-          end) in
+          let empty () = data
+        end) in
         let module R = I.Key_map_repo.Make (State) in
         let%lwt actual = R.resolve () in
         Alcotest.(check @@ of_pp Fmt.nop) "stored" data actual ;

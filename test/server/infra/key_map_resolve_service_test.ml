@@ -23,8 +23,8 @@ let test_set =
         let to_path s = Path.of_string s |> Path.resolve (module Dummy) in
         let path = to_path "./data_real/key_map/test.json" in
         let module M = I.Key_map_resolve_service.Make (struct
-            let path = path
-          end) in
+          let path = path
+        end) in
         let%lwt resolved = M.resolve () in
         Alcotest.(check @@ F.Testable.key_map) "key_map" resolved key_map ;
         Lwt.return_unit) ]

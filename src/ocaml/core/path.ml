@@ -27,8 +27,8 @@ let equal p1 p2 =
   match (p1.resolved, p2.resolved) with
   | true, false | false, true -> false (* can not compare between resolved and unresolved *)
   | _, _ ->
-    let drop_current_comp = List.filter (function Comp_current -> false | _ -> true) in
-    p1.root = p2.root && drop_current_comp p1.components = drop_current_comp p2.components
+      let drop_current_comp = List.filter (function Comp_current -> false | _ -> true) in
+      p1.root = p2.root && drop_current_comp p1.components = drop_current_comp p2.components
 
 let resolve_sep env =
   let sep_of_env = function `Unix -> '/' | `Win -> '\\' in
@@ -83,8 +83,8 @@ let normalize_path ?env path =
     match list with
     | [] -> List.rev accum
     | (Comp_current as v) :: rest ->
-      if cwd_continue then remove_duplicated_cwd rest cwd_continue accum
-      else remove_duplicated_cwd rest true (v :: accum)
+        if cwd_continue then remove_duplicated_cwd rest cwd_continue accum
+        else remove_duplicated_cwd rest true (v :: accum)
     | head :: rest -> remove_duplicated_cwd rest false (head :: accum)
   in
   let initial, rest = ([], path) in
@@ -102,8 +102,8 @@ let find_root ?env components =
   match (components, env) with
   | Comp_empty :: _, `Unix -> Some "/"
   | Comp_filename v :: _, `Win when is_drive_letter v ->
-    let sep = resolve_sep (Some env) in
-    Some (v ^ Char.escaped sep)
+      let sep = resolve_sep (Some env) in
+      Some (v ^ Char.escaped sep)
   | _ -> None
 
 (** [of_string ?env path] converts [path] to Path object. *)
@@ -122,17 +122,17 @@ let resolve ?env sys path =
       match comps with
       | [] -> List.rev accum
       | head :: rest -> (
-          match head with
-          | Comp_current -> resolve_relatives rest accum
-          | Comp_empty -> resolve_relatives rest accum
-          | Comp_parent -> resolve_relatives rest (List.tl accum)
-          | Comp_filename _ as a -> resolve_relatives rest (a :: accum) )
+        match head with
+        | Comp_current -> resolve_relatives rest accum
+        | Comp_empty -> resolve_relatives rest accum
+        | Comp_parent -> resolve_relatives rest (List.tl accum)
+        | Comp_filename _ as a -> resolve_relatives rest (a :: accum) )
     in
     let root, components =
       match path.root with
       | None ->
-        let cwd = of_string ?env @@ S.getcwd () in
-        (cwd.root, cwd.components @ path.components)
+          let cwd = of_string ?env @@ S.getcwd () in
+          (cwd.root, cwd.components @ path.components)
       | Some _ -> (path.root, path.components)
     in
     {root; resolved = true; components = resolve_relatives components []}
@@ -143,10 +143,10 @@ let to_string ?env path =
   let comps =
     List.filter (function Comp_empty -> false | _ -> true) path.components
     |> List.map (function
-        | Comp_current -> Filename.current_dir_name
-        | Comp_parent -> Filename.parent_dir_name
-        | Comp_empty -> ""
-        | Comp_filename f -> f)
+         | Comp_current -> Filename.current_dir_name
+         | Comp_parent -> Filename.parent_dir_name
+         | Comp_empty -> ""
+         | Comp_filename f -> f)
   in
   let concatted = String.concat (String.make 1 sep) comps in
   match path.root with None -> concatted | Some v -> v ^ concatted
@@ -155,9 +155,9 @@ let of_list ?env paths =
   match paths with
   | [] -> raise Empty_path
   | _ ->
-    let sep = resolve_sep env in
-    let path = String.concat (String.make 1 sep) paths in
-    of_string ?env path
+      let sep = resolve_sep env in
+      let path = String.concat (String.make 1 sep) paths in
+      of_string ?env path
 
 let basename path =
   let components = List.rev path.components in

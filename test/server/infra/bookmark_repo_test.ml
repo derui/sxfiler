@@ -14,10 +14,10 @@ let obj2 =
 let test_set =
   [ Alcotest_lwt.test_case "should store a bookmark" `Quick (fun _ () ->
         let module State = S.Statable.Make (struct
-            type t = D.Bookmark.t list
+          type t = D.Bookmark.t list
 
-            let empty () = []
-          end) in
+          let empty () = []
+        end) in
         let module R = I.Bookmark_repo.Make (State) in
         let%lwt () = R.store obj in
         let%lwt obj' = R.resolve obj.id in
@@ -25,10 +25,10 @@ let test_set =
         Lwt.return_unit)
   ; Alcotest_lwt.test_case "should store some bookmarks" `Quick (fun _ () ->
         let module State = S.Statable.Make (struct
-            type t = D.Bookmark.t list
+          type t = D.Bookmark.t list
 
-            let empty () = []
-          end) in
+          let empty () = []
+        end) in
         let module R = I.Bookmark_repo.Make (State) in
         let%lwt () = R.store obj in
         let%lwt () = R.store obj2 in

@@ -1,0 +1,14 @@
+FROM alpine:3.10
+
+RUN apk add --no-cache opam make m4 coreutils bash git musl-dev nodejs npm \
+    && ln -s /usr/bin/x86_64-alpine-linux-musl-gcc /usr/bin/musl-gcc \
+    && opam init -n --disable-sandboxing \
+    && opam switch install 4.08.1 \
+    && npm install -g yarn \
+    && opam clean
+
+WORKDIR /sxfiler
+
+COPY scripts/entrypoint.sh /entrypoint.sh
+RUN chmod a+x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]

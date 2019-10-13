@@ -47,16 +47,16 @@ let test_set =
         Alcotest.(check @@ option @@ of_pp D.Bookmark.pp) "bookmark" (Some data) result ;
         Lwt.return_unit)
   ; Alcotest_lwt.test_case "should return conflict error when same path already registered" `Quick
-        (fun _ () ->
-           let data' = D.Bookmark.make ~id:(id_gen ()) ~path:data.path ~order:1 in
-           let module KR = (val Test_fixtures.Memory_repository.bookmark_repository [data']) in
-           let module Usecase = U.Bookmark.Register.Make ((val make_mock ())) (KR) in
-           let%lwt result = Usecase.execute {path = data.path} in
-           Alcotest.(check @@ result (of_pp D.Bookmark.pp) (of_pp Fmt.nop))
-             "bookmark"
-             (Error `Conflict)
-             result ;
-           Lwt.return_unit)
+      (fun _ () ->
+        let data' = D.Bookmark.make ~id:(id_gen ()) ~path:data.path ~order:1 in
+        let module KR = (val Test_fixtures.Memory_repository.bookmark_repository [data']) in
+        let module Usecase = U.Bookmark.Register.Make ((val make_mock ())) (KR) in
+        let%lwt result = Usecase.execute {path = data.path} in
+        Alcotest.(check @@ result (of_pp D.Bookmark.pp) (of_pp Fmt.nop))
+          "bookmark"
+          (Error `Conflict)
+          result ;
+        Lwt.return_unit)
   ; Alcotest_lwt.test_case "should return the bookmark deleted" `Quick (fun _ () ->
         let data' = D.Bookmark.make ~id:(id_gen ()) ~path:data.path ~order:1 in
         let module KR = (val Test_fixtures.Memory_repository.bookmark_repository [data']) in

@@ -19,7 +19,7 @@ module Setup = struct
       let source = T.Collection.to_domain param.source in
       match%lwt U.execute {source} with
       | Ok () -> Lwt.return_ok ()
-      | Error () -> Lwt.return_error Gateway_error.(unknown_error "unknown error")
+      | Error () -> Lwt.return_error Gateway_error.(Unknown_error "unknown error")
   end
 end
 
@@ -38,6 +38,6 @@ module Read = struct
       let%lwt result = Usecase.execute {input = param.input} in
       match result with
       | Ok v -> Lwt.return_ok @@ T.Candidates.of_domain v
-      | Error () -> Lwt.return_error Gateway_error.(unknown_error "unknown error")
+      | Error () -> Lwt.return_error Gateway_error.(Unknown_error "unknown error")
   end
 end

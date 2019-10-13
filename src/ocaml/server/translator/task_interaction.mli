@@ -15,8 +15,8 @@ module Reply : sig
 
   include
     Core.Domain_translator
-    with type t := t
-     and type domain := Sxfiler_domain.Task_interaction.Reply.t
+      with type t := t
+       and type domain := Sxfiler_domain.Task_interaction.Reply.t
 end
 
 module Suggestion : sig
@@ -35,6 +35,6 @@ module Suggestion : sig
 
   include
     Core.Domain_translator
-    with type t := t
-     and type domain := Sxfiler_domain.Task_interaction.Suggestion.t
+      with type t := t
+       and type domain := Sxfiler_domain.Task_interaction.Suggestion.t
 end

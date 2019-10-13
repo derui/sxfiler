@@ -20,7 +20,7 @@ module List_all = struct
     let handle () =
       match%lwt Usecase.execute () with
       | Ok result -> List.map T.Bookmark.of_domain result |> Lwt.return_ok
-      | Error () -> Gateway_error.(unknown_error "unknown error") |> Lwt.return_error
+      | Error () -> Gateway_error.(Unknown_error "unknown error") |> Lwt.return_error
   end
 end
 
@@ -40,7 +40,7 @@ module Register = struct
     let handle {path} =
       match%lwt Usecase.execute {path = Path.of_string path} with
       | Ok result -> T.Bookmark.of_domain result |> Lwt.return_ok
-      | Error `Conflict -> Gateway_error.(bookmark_conflict) |> Lwt.return_error
+      | Error `Conflict -> Gateway_error.(Bookmark_conflict) |> Lwt.return_error
   end
 end
 
@@ -60,7 +60,7 @@ module Delete = struct
     let handle {id} =
       let id' =
         match Uuidm.of_string id with
-        | None -> Error Gateway_error.(unknown_error "invalid identity format")
+        | None -> Error Gateway_error.(Unknown_error "invalid identity format")
         | Some id -> Ok id
       in
       match id' with
@@ -68,6 +68,6 @@ module Delete = struct
       | Ok id -> (
           match%lwt Usecase.execute {id} with
           | Ok result -> T.Bookmark.of_domain result |> Lwt.return_ok
-          | Error `Not_found -> Gateway_error.(bookmark_not_found) |> Lwt.return_error )
+          | Error `Not_found -> Gateway_error.(Bookmark_not_found) |> Lwt.return_error )
   end
 end

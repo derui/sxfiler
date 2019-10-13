@@ -1,0 +1,108 @@
+version: 2
+jobs:
+  build_linux:
+    docker:
+      - image: derui/sxfiler-builder:alpine
+    steps:
+      - checkout
+      - restore_cache:
+          key: opam-cache-{{ checksum "sxfiler.opam" }}
+      - run:
+          name: build for linux
+          command: bash scripts/build.sh linux
+      - save_cache:
+          key: opam-cache-{{ checksum "sxfiler.opam" }}
+          paths:
+            - /root/.opam
+      - persist_to_workspace:
+          # working_directory からの相対パスか絶対パスを指定します。
+          # これは Workspace のルートディレクトリとなるコンテナ内のディレクトリです
+          root: _build/install/default/bin
+          # root からの相対パスを指定します
+          paths:
+            - sxfiler_server
+  package_linux:
+    docker:
+      - image: derui/sxfiler-packager:alpine
+    steps:
+      - attach_workspace:
+          at: _build/install/default/bin
+      - restore_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install dependencies
+          command: yarn
+      - run:
+          name: Package for linux
+          command: yarn package linux
+      - run:
+          name: Fix sandbox permission
+          command: bash scripts/prepare-chrome-sandbox.sh dist/sxfiler-linux-x64/chrome-sandbox
+      - save_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - run:
+          name: Zip dist
+          command: zip -r sxfiler-linux-x64.zip dist/sxfiler-linux-x64
+      - store_artifacts:
+          path: sxfiler-linux-x64.zip
+  build_windows:
+    docker:
+      - image: derui/sxfiler-builder:debian
+    steps:
+      - checkout
+      - restore_cache:
+          key: opam-cache-{{ checksum "sxfiler-windows.opam" }}
+      - run:
+          name: build for windows
+          command: bash scripts/build.sh windows
+      - save_cache:
+          key: opam-cache-{{ checksum "sxfiler-windows.opam" }}
+          paths:
+            - /root/.opam
+      - persist_to_workspace:
+          # working_directory からの相対パスか絶対パスを指定します。
+          # これは Workspace のルートディレクトリとなるコンテナ内のディレクトリです
+          root: _build/install/default.windows/bin
+          # root からの相対パスを指定します
+          paths:
+            - sxfiler_server
+  package_windows:
+    docker:
+      - image: derui/sxfiler-packager:debian
+    steps:
+      - attach_workspace:
+          at: _build/install/default.windows/bin
+      - restore_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install dependencies
+          command: yarn
+      - run:
+          name: Package for linux
+          command: yarn package win32
+      - run:
+          name: Fix sandbox permission
+          command: bash scripts/prepare-chrome-sandbox.sh dist/sxfiler-linux-x64/chrome-sandbox
+      - save_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - run:
+          name: Zip dist
+          command: zip -r sxfiler-win32-x64.zip dist/sxfiler-win32-x64
+      - store_artifacts:
+          path: sxfiler-win32-x64.zip
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build_linux:
+          filters:
+            branches:
+              only: master
+      - build_windows:
+          filters:
+            branches:
+              only: master

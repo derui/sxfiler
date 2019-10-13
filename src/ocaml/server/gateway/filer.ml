@@ -31,7 +31,7 @@ module Make = struct
       in
       match%lwt U.execute input with
       | Ok t -> T.Filer.of_domain t |> Lwt.return_ok
-      | Error `Already_exists -> Lwt.return_error Gateway_error.(filer_already_exists)
+      | Error `Already_exists -> Lwt.return_error Gateway_error.(Filer_already_exists)
   end
 end
 
@@ -56,7 +56,7 @@ module Get = struct
       let input = {U.name = param.name} in
       match%lwt U.execute input with
       | Ok s -> T.Filer.of_domain s |> Lwt.return_ok
-      | Error `Not_found -> Lwt.return_error Gateway_error.(filer_not_found)
+      | Error `Not_found -> Lwt.return_error Gateway_error.(Filer_not_found)
   end
 end
 
@@ -81,7 +81,7 @@ module Move_parent = struct
       let input = {U.name = param.name} in
       match%lwt U.execute input with
       | Ok s -> Lwt.return_ok @@ T.Filer.of_domain s
-      | Error `Not_found -> Lwt.return_error Gateway_error.(filer_not_found)
+      | Error `Not_found -> Lwt.return_error Gateway_error.(Filer_not_found)
   end
 end
 
@@ -110,9 +110,9 @@ module Enter_directory = struct
       let input = {U.name = param.name; item_id = param.item_id} in
       match%lwt U.execute input with
       | Ok s -> Lwt.return_ok @@ T.Filer.of_domain s
-      | Error `Not_found_filer -> Lwt.return_error Gateway_error.(filer_not_found)
+      | Error `Not_found_filer -> Lwt.return_error Gateway_error.(Filer_not_found)
       | Error `Not_found_item -> Lwt.return_error Gateway_error.(Item_not_found)
-      | Error `Not_directory -> Lwt.return_error Gateway_error.(filer_not_directory)
+      | Error `Not_directory -> Lwt.return_error Gateway_error.(Filer_not_directory)
   end
 end
 
@@ -138,7 +138,7 @@ module Toggle_mark = struct
       let input = {U.name = input.name; item_ids = input.item_ids} in
       match%lwt U.execute input with
       | Ok s -> Lwt.return_ok @@ T.Filer.of_domain s
-      | Error `Not_found -> Lwt.return_error Gateway_error.(filer_not_found)
+      | Error `Not_found -> Lwt.return_error Gateway_error.(Filer_not_found)
   end
 end
 
@@ -168,8 +168,8 @@ module Move = struct
       let input = {U.source = input.source; dest = input.dest; item_ids = input.item_ids} in
       match%lwt U.execute input with
       | Ok s -> Lwt.return_ok {task_id = s.task_id |> Uuidm.to_string; task_name = s.task_name}
-      | Error (`Not_found _) -> Lwt.return_error Gateway_error.(filer_not_found)
-      | Error `Same_filer -> Lwt.return_error Gateway_error.(filer_same_filer)
+      | Error (`Not_found _) -> Lwt.return_error Gateway_error.(Filer_not_found)
+      | Error `Same_filer -> Lwt.return_error Gateway_error.(Filer_same_filer)
   end
 end
 
@@ -198,7 +198,7 @@ module Delete = struct
       let input = {U.source = input.source; item_ids = input.item_ids} in
       match%lwt U.execute input with
       | Ok s -> Lwt.return_ok {task_id = s |> Uuidm.to_string; task_name = "Delete"}
-      | Error (`Not_found _) -> Lwt.return_error Gateway_error.(filer_not_found)
+      | Error (`Not_found _) -> Lwt.return_error Gateway_error.(Filer_not_found)
   end
 end
 
@@ -228,7 +228,7 @@ module Copy = struct
       let input = {U.source = input.source; dest = input.dest; item_ids = input.item_ids} in
       match%lwt U.execute input with
       | Ok s -> Lwt.return_ok {task_id = s |> Uuidm.to_string; task_name = "Copy"}
-      | Error (`Not_found _) -> Lwt.return_error Gateway_error.(filer_not_found)
+      | Error (`Not_found _) -> Lwt.return_error Gateway_error.(Filer_not_found)
   end
 end
 
@@ -260,6 +260,6 @@ module Jump_location = struct
       in
       match%lwt U.execute input with
       | Ok t -> T.Filer.of_domain t |> Lwt.return_ok
-      | Error `Not_found -> Lwt.return_error Gateway_error.(filer_not_found)
+      | Error `Not_found -> Lwt.return_error Gateway_error.(Filer_not_found)
   end
 end

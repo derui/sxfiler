@@ -10,6 +10,5 @@ type t =
   | Task_not_found
   | Bookmark_conflict
   | Bookmark_not_found
-[@@deriving variants]
 
 exception Gateway_error of t

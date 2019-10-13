@@ -32,16 +32,16 @@ module Make (S : Spec) : S = struct
         let execute_with_param decoder =
           match req with
           | None ->
-            Logs.warn (fun m -> m "Required parameter not found") ;
-            raise Rpc.(Error.Jsonrpc_error (Error.make Jsonrpc.Types.Error_code.Invalid_params))
+              Logs.warn (fun m -> m "Required parameter not found") ;
+              raise Rpc.(Error.Jsonrpc_error (Error.make Jsonrpc.Types.Error_code.Invalid_params))
           | Some params -> (
-              match decoder params with
-              | Error _ ->
+            match decoder params with
+            | Error _ ->
                 Logs.warn (fun m ->
                     m "Required parameter can not encode: %s" (Yojson.Safe.to_string params)) ;
                 raise
                   Rpc.(Error.Jsonrpc_error (Error.make Jsonrpc.Types.Error_code.Invalid_params))
-              | Ok param -> S.Gateway.handle param )
+            | Ok param -> S.Gateway.handle param )
         in
         match S.param_requirement with
         | `Not_required param -> S.Gateway.handle param
@@ -50,15 +50,15 @@ module Make (S : Spec) : S = struct
       match result with
       | Error e -> Errors.of_gateway_error e
       | Ok output ->
-        Log.info (fun m -> m "Finish procedure: {%s}" method_) ;%lwt
-        S.Gateway.output_to_json output |> Option.some |> Lwt.return_ok
+          Log.info (fun m -> m "Finish procedure: {%s}" method_) ;%lwt
+          S.Gateway.output_to_json output |> Option.some |> Lwt.return_ok
     with
     | Rpc.Error.Jsonrpc_error e as exn ->
-      let%lwt () = Log.err (fun m -> m "Error occurred: %s" Rpc.Error.(to_string e)) in
-      raise exn
+        let%lwt () = Log.err (fun m -> m "Error occurred: %s" Rpc.Error.(to_string e)) in
+        raise exn
     | _ as e ->
-      let exn = Stdlib.Printexc.to_string e in
-      let%lwt () = Log.err (fun m -> m "Not handled exception: %s" exn) in
-      raise
-        Rpc.(Error.Jsonrpc_error (Error.make (Jsonrpc.Types.Error_code.Server_error (-32000))))
+        let exn = Stdlib.Printexc.to_string e in
+        let%lwt () = Log.err (fun m -> m "Not handled exception: %s" exn) in
+        raise
+          Rpc.(Error.Jsonrpc_error (Error.make (Jsonrpc.Types.Error_code.Server_error (-32000))))
 end

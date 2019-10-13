@@ -1,4 +1,4 @@
 (test
  (name tests)
  (libraries alcotest alcotest-lwt sxfiler_server spy ppx_protocol_conv_json)
- (preprocess (pps lwt_ppx ppx_protocol_conv)))
+ (preprocess (pps lwt_ppx-windows ppx_protocol_conv)))

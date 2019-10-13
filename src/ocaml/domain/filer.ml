@@ -5,10 +5,10 @@ type id = Uuidm.t [@@deriving eq, show]
 
 module Marked_item_set = struct
   include Set.Make (struct
-      type t = File_item.id
+    type t = File_item.id
 
-      let compare = Stdlib.compare
-    end)
+    let compare = Stdlib.compare
+  end)
 
   let pp fmt t =
     let ids = to_seq t |> List.of_seq |> List.sort Stdlib.compare in

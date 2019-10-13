@@ -10,9 +10,9 @@ module Get = struct
 
   module type S =
     Common.Usecase
-    with type input = Type.input
-     and type output = Type.output
-     and type error = Type.error
+      with type input = Type.input
+       and type output = Type.output
+       and type error = Type.error
 
   (** This module defines usecase interface to get current key bindings. Replace [json] on
       implementation to match rpc. *)
@@ -35,9 +35,9 @@ module Reload = struct
 
   module type S =
     Common.Usecase
-    with type input = Type.input
-     and type output = Type.output
-     and type error = Type.error
+      with type input = Type.input
+       and type output = Type.output
+       and type error = Type.error
 
   (** This module defines usecase interface to store key map with repository *)
   module Make
@@ -63,9 +63,9 @@ module Store = struct
 
   module type S =
     Common.Usecase
-    with type input = Type.input
-     and type output = Type.output
-     and type error = Type.error
+      with type input = Type.input
+       and type output = Type.output
+       and type error = Type.error
 
   (** This module defines usecase interface to store key map with repository *)
   module Make (R : Key_map_repository.S) : S = struct

@@ -9,9 +9,9 @@ module Get = struct
 
   module type S =
     Common.Usecase
-    with type input = Type.input
-     and type output = Type.output
-     and type error = Type.error
+      with type input = Type.input
+       and type output = Type.output
+       and type error = Type.error
 
   (** This module defines rpc interface to manage application configuration. *)
   module Make (R : T.Configuration.Repository) : S = struct
@@ -32,9 +32,9 @@ module Store = struct
 
   module type S =
     Common.Usecase
-    with type input = Type.input
-     and type output = Type.output
-     and type error = Type.error
+      with type input = Type.input
+       and type output = Type.output
+       and type error = Type.error
 
   (** This module defines rpc interface to store application configuration. *)
   module Make (R : T.Configuration.Repository) : S = struct

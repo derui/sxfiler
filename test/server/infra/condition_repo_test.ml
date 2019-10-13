@@ -5,20 +5,20 @@ module I = Sxfiler_server_infra
 let test_set =
   [ Alcotest_lwt.test_case "can get current condition" `Quick (fun _ () ->
         let module State = S.Statable.Make (struct
-            type t = D.Condition.t
+          type t = D.Condition.t
 
-            let empty () = D.Condition.empty
-          end) in
+          let empty () = D.Condition.empty
+        end) in
         let module R = I.Condition_repo.Make (State) in
         let%lwt cond = R.resolve () in
         Alcotest.(check bool) "stored" true D.Condition.(equal empty cond) ;
         Lwt.return_unit)
   ; Alcotest_lwt.test_case "can enable/disable context" `Quick (fun _ () ->
         let module State = S.Statable.Make (struct
-            type t = D.Condition.t
+          type t = D.Condition.t
 
-            let empty () = D.Condition.empty
-          end) in
+          let empty () = D.Condition.empty
+        end) in
         let module R = I.Condition_repo.Make (State) in
         let expected = D.Condition.(empty |> enable ~context:"context") in
         let%lwt () = R.store expected in

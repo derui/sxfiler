@@ -17,16 +17,16 @@ module Reply = struct
     { task_id = Ty.show_id task_id
     ; reply =
         ( match reply with
-          | D.Reply.Overwrite b -> Overwrite b
-          | Rename new_name -> Rename {new_name} ) }
+        | D.Reply.Overwrite b -> Overwrite b
+        | Rename new_name -> Rename {new_name} ) }
 
   let to_domain {task_id; reply} =
     let open Sxfiler_core in
     { D.Reply.task_id = Uuidm.of_string task_id |> Option.get_exn
     ; reply =
         ( match reply with
-          | Overwrite b -> D.Reply.Overwrite b
-          | Rename {new_name} -> Rename new_name ) }
+        | Overwrite b -> D.Reply.Overwrite b
+        | Rename {new_name} -> Rename new_name ) }
 end
 
 module Suggestion = struct
