@@ -11,9 +11,9 @@ module List_all = struct
 
   module type S =
     Common.Usecase
-    with type input = Type.input
-     and type output = Type.output
-     and type error = Type.error
+      with type input = Type.input
+       and type output = Type.output
+       and type error = Type.error
 
   (** This module defines usecase interface to get current key bindings. Replace [json] on
       implementation to match rpc. *)
@@ -36,9 +36,9 @@ module Register = struct
 
   module type S =
     Common.Usecase
-    with type input = Type.input
-     and type output = Type.output
-     and type error = Type.error
+      with type input = Type.input
+       and type output = Type.output
+       and type error = Type.error
 
   module Make
       (Id : Id_generator_intf.Gen_random with type id = Bookmark.id)
@@ -49,11 +49,11 @@ module Register = struct
       match%lwt C.find_by_path path with
       | Some _ -> Lwt.return_error `Conflict
       | None ->
-        let%lwt list = C.find_all () in
-        let length = List.length list in
-        let t = Bookmark.make ~id:Id.(generate ()) ~order:(succ length) ~path in
-        let%lwt () = C.store t in
-        Lwt.return_ok t
+          let%lwt list = C.find_all () in
+          let length = List.length list in
+          let t = Bookmark.make ~id:Id.(generate ()) ~order:(succ length) ~path in
+          let%lwt () = C.store t in
+          Lwt.return_ok t
   end
 end
 
@@ -67,9 +67,9 @@ module Delete = struct
 
   module type S =
     Common.Usecase
-    with type input = Type.input
-     and type output = Type.output
-     and type error = Type.error
+      with type input = Type.input
+       and type output = Type.output
+       and type error = Type.error
 
   module Make (C : Bookmark_repository.S) : S = struct
     include Type
@@ -78,7 +78,7 @@ module Delete = struct
       match%lwt C.resolve id with
       | None -> Lwt.return_error `Not_found
       | Some v ->
-        let%lwt () = C.remove v in
-        Lwt.return_ok v
+          let%lwt () = C.remove v in
+          Lwt.return_ok v
   end
 end

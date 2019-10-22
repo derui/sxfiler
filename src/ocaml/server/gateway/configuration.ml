@@ -18,7 +18,7 @@ module Get = struct
     let handle () =
       match%lwt Usecase.execute () with
       | Ok output -> Lwt.return_ok @@ T.Configuration.of_domain output
-      | Error () -> Lwt.return_error Gateway_error.(unknown_error "unknown error")
+      | Error () -> Lwt.return_error Gateway_error.(Unknown_error "unknown error")
   end
 end
 
@@ -39,6 +39,6 @@ module Store = struct
     let handle input =
       match%lwt Usecase.execute @@ T.Configuration.to_domain input with
       | Ok () -> Lwt.return_ok ()
-      | Error () -> Lwt.return_error Gateway_error.(unknown_error "unknown error")
+      | Error () -> Lwt.return_error Gateway_error.(Unknown_error "unknown error")
   end
 end

@@ -1,10 +1,10 @@
 (* Condition defines condition to handle timing to enable key binding.*)
 module Context_set = struct
   include Set.Make (struct
-      type t = string
+    type t = string
 
-      let compare = Pervasives.compare
-    end)
+    let compare = Stdlib.compare
+  end)
 
   let pp fmt v = Format.fprintf fmt "%s" (to_seq v |> List.of_seq |> String.concat ",")
 end

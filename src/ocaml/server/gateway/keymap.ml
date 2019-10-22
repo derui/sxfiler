@@ -17,7 +17,7 @@ module Get = struct
     let handle () =
       match%lwt Usecase.execute () with
       | Ok output -> Lwt.return_ok @@ T.Key_map.of_domain output
-      | Error () -> Lwt.return_error Gateway_error.(unknown_error "unknown error")
+      | Error () -> Lwt.return_error Gateway_error.(Unknown_error "unknown error")
   end
 end
 
@@ -35,7 +35,7 @@ module Reload = struct
     let handle () =
       match%lwt Usecase.execute () with
       | Ok output -> Lwt.return_ok @@ T.Key_map.of_domain output
-      | Error () -> Lwt.return_error Gateway_error.(unknown_error "unknown error")
+      | Error () -> Lwt.return_error Gateway_error.(Unknown_error "unknown error")
   end
 end
 
@@ -55,6 +55,6 @@ module Store = struct
     let handle param =
       match%lwt Usecase.execute @@ T.Key_map.to_domain param with
       | Ok () -> Lwt.return_ok ()
-      | Error () -> Lwt.return_error Gateway_error.(unknown_error "unknown error")
+      | Error () -> Lwt.return_error Gateway_error.(Unknown_error "unknown error")
   end
 end

@@ -79,10 +79,10 @@ module Make
     I.Progress_notification_factory.Make (I.Id_generator.Gen_uuid)
 
   module Key_map_resolve_service = I.Key_map_resolve_service.Make (struct
-      let path =
-        Sxfiler_core.Path.of_list
-          [Option.option.App_option.configuration; Constants.key_map_file_name]
-    end)
+    let path =
+      Sxfiler_core.Path.of_list
+        [Option.option.App_option.configuration; Constants.key_map_file_name]
+  end)
 
   module Item_transporter_service =
     I.Item_transporter_service.Make (Notification_service) (Message_notification_factory)
@@ -130,28 +130,28 @@ module Make
     module Filer_toggle_mark = U.Filer.Toggle_mark.Make (Filer_repo)
 
     module Filer_move = U.Filer.Move.Make (struct
-        module FR = Filer_repo
-        module TF = Task_factory
-        module TR = Task_repo
-        module Scan = Location_scanner_service
-        module Transport = Item_transporter_service
-      end)
+      module FR = Filer_repo
+      module TF = Task_factory
+      module TR = Task_repo
+      module Scan = Location_scanner_service
+      module Transport = Item_transporter_service
+    end)
 
     module Filer_copy = U.Filer.Copy.Make (struct
-        module FR = Filer_repo
-        module TF = Task_factory
-        module TR = Task_repo
-        module Scan = Location_scanner_service
-        module Replicate = Item_replication_service
-      end)
+      module FR = Filer_repo
+      module TF = Task_factory
+      module TR = Task_repo
+      module Scan = Location_scanner_service
+      module Replicate = Item_replication_service
+    end)
 
     module Filer_delete = U.Filer.Delete.Make (struct
-        module FR = Filer_repo
-        module TF = Task_factory
-        module TR = Task_repo
-        module Scan = Location_scanner_service
-        module Trash = Item_trash_service
-      end)
+      module FR = Filer_repo
+      module TF = Task_factory
+      module TR = Task_repo
+      module Scan = Location_scanner_service
+      module Trash = Item_trash_service
+    end)
 
     module Task_send_reply = U.Task.Send_reply.Make (Task_repo)
     module Bookmark_list_all = U.Bookmark.List_all.Make (Bookmark_repo)

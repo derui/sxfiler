@@ -13,7 +13,7 @@ end
 type t =
   { id : id
   ; executor : (module Executor) [@printer fun _ _ -> ()] }
-[@@deriving show, fields]
+[@@deriving show]
 (** [!t] is . *)
 
 (** [make ~id ~operation] makes new plan [t] instance from. *)

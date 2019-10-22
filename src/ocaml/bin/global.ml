@@ -3,10 +3,10 @@ module C = Sxfiler_server_core
 module T = Sxfiler_server_task
 
 module Root = C.Statable.Make (struct
-    type t = C.Root_state.t
+  type t = C.Root_state.t
 
-    let empty () = C.Root_state.empty
-  end)
+  let empty () = C.Root_state.empty
+end)
 
 module Completer = struct
   type t = unit -> (module D.Completer.Instance)
@@ -21,10 +21,10 @@ end
 
 (* Cached source to complete in next operation. *)
 module Cached_source = C.Statable.Make (struct
-    type t = Sxfiler_domain.Completion.collection
+  type t = Sxfiler_domain.Completion.collection
 
-    let empty () = []
-  end)
+  let empty () = []
+end)
 
 module Task_runner (G : D.Id_generator_intf.Gen_random with type id = Uuidm.t) : sig
   val get : unit -> (module T.Runner.Instance)
@@ -34,35 +34,35 @@ end = struct
   let get () =
     match !t with
     | None ->
-      let v = T.Runner.make (module G) in
-      t := Some v ;
-      v
+        let v = T.Runner.make (module G) in
+        t := Some v ;
+        v
     | Some t -> t
 end
 
 module Keymap = C.Statable.Make (struct
-    type t = D.Key_map.t
+  type t = D.Key_map.t
 
-    let empty () = D.Key_map.make ()
-  end)
+  let empty () = D.Key_map.make ()
+end)
 
 module Bookmark = C.Statable.Make (struct
-    type t = D.Bookmark.t list
+  type t = D.Bookmark.t list
 
-    let empty () = []
-  end)
+  let empty () = []
+end)
 
 module Configuration = C.Statable.Make (struct
-    type t = Sxfiler_domain.Configuration.t
+  type t = Sxfiler_domain.Configuration.t
 
-    let empty () = Sxfiler_domain.Configuration.default
-  end)
+  let empty () = Sxfiler_domain.Configuration.default
+end)
 
 module Condition = C.Statable.Make (struct
-    type t = Sxfiler_domain.Condition.t
+  type t = Sxfiler_domain.Condition.t
 
-    let empty () = Sxfiler_domain.Condition.empty
-  end)
+  let empty () = Sxfiler_domain.Condition.empty
+end)
 
 (* Clock module to get current unix time *)
 module Clock : D.Location_record.Clock = struct

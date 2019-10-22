@@ -3,13 +3,13 @@ open Fun
 
 (** {!Snapshot_history} provides management records in history. *)
 module Location_set = Set.Make (struct
-    type t = Location_record.t
+  type t = Location_record.t
 
-    let compare v1 v2 =
-      let v1 = Path.to_string v1.Location_record.location
-      and v2 = Path.to_string v2.Location_record.location in
-      Stdlib.compare v1 v2
-  end)
+  let compare v1 v2 =
+    let v1 = Path.to_string v1.Location_record.location
+    and v2 = Path.to_string v2.Location_record.location in
+    Stdlib.compare v1 v2
+end)
 
 type t =
   { records : Location_record.t list

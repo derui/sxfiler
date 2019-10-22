@@ -15,10 +15,10 @@ module Core = struct
     List.map (fun s -> (Re.exec_opt regexp s.T.Completion.Item.value, s)) collection
     |> List.filter (fun v -> is_some @@ fst v)
     |> List.map (function
-        | None, _ -> failwith "Invalid branch"
-        | Some group, v ->
-          let start, length = Re.Group.offset group 0 in
-          {T.Completion.Candidate.start; length = length - start; value = v})
+         | None, _ -> failwith "Invalid branch"
+         | Some group, v ->
+             let start, length = Re.Group.offset group 0 in
+             {T.Completion.Candidate.start; length = length - start; value = v})
 end
 
 let make ~migemo =

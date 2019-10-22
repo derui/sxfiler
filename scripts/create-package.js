@@ -1,5 +1,6 @@
 const packager = require('electron-packager');
 const util = require('util');
+const rimraf = require('rimraf');
 
 let { execFileSync, execFile } = require('child_process');
 execFile = util.promisify(execFile);
@@ -8,16 +9,6 @@ const glob = require('glob');
 const paths = require('../config/paths');
 const fs = require('fs-extra');
 const path = require('path');
-
-execFileSync('dune', ['build', '--profile=production'], { stdio: 'inherit' });
-fs.copySync(
-  path.resolve('_build', 'install', 'default', 'bin', 'sxfiler_server'),
-  path.join(paths.appBuild, 'sxfiler_server'),
-  {
-    dereference: true,
-    filter: file => file !== paths.appHtml,
-  }
-);
 
 function getPlatforms() {
   const args = process.argv.slice(2);
@@ -37,6 +28,30 @@ async function bundleElectronApp(options) {
 const platforms = getPlatforms();
 
 platforms.map(platform => {
+  rimraf.sync(path.join(paths.appBuild, 'sxfiler_server*'));
+  switch (platform) {
+    case 'linux':
+      fs.copySync(
+        path.resolve('_build', 'install', 'default', 'bin', 'sxfiler_server'),
+        path.join(paths.appBuild, 'sxfiler_server'),
+        {
+          dereference: true,
+          filter: file => file !== paths.appHtml,
+        }
+      );
+      break;
+    case 'win32':
+      fs.copySync(
+        path.resolve('_build', 'install', 'default.windows', 'bin', 'sxfiler_server'),
+        path.join(paths.appBuild, 'sxfiler_server'),
+        {
+          dereference: true,
+          filter: file => file !== paths.appHtml,
+        }
+      );
+      break;
+  }
+
   const options = {
     dir: './build',
     out: './dist',

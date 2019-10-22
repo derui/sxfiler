@@ -5,10 +5,10 @@ module Log = (val Sxfiler_server_core.Logger.make ["task"])
 include Runner_intf
 
 module Task_state = Set.Make (struct
-    type t = Uuidm.t
+  type t = Uuidm.t
 
-    let compare = Uuidm.compare
-  end)
+  let compare = Uuidm.compare
+end)
 
 module Subscriber = struct
   type t =
@@ -46,11 +46,11 @@ module Impl (R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) = struct
       let%lwt task = Lwt_mvar.take t.task_mailbox in
       match task with
       | `Accepted task ->
-        Log.info (fun m -> m "Task accepted") ;%lwt
-        Lwt.return @@ t.task_queue_writer (Some task) >>= loop
+          Log.info (fun m -> m "Task accepted") ;%lwt
+          Lwt.return @@ t.task_queue_writer (Some task) >>= loop
       | `Rejected ->
-        Log.info (fun m -> m "Rejected") ;%lwt
-        Lwt.return_unit
+          Log.info (fun m -> m "Rejected") ;%lwt
+          Lwt.return_unit
     in
     loop ()
 
@@ -69,20 +69,20 @@ module Impl (R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) = struct
     let module C = Sxfiler_server_core in
     t.task_queue
     |> Lwt_stream.iter_p (fun task ->
-        let%lwt () = add_state t task.D.Task.id in
-        Lwt.finalize
-          (fun () ->
-             Log.info (fun m -> m "Start executing task...") ;%lwt
-             let%lwt () = D.Task.(execute task) in
-             Log.info (fun m -> m "Finish executing task"))
-          (fun () ->
-             let%lwt () =
-               Lwt_mutex.with_lock t.task_state_lock (fun () ->
-                   Subscriber_set.to_seq t.subscribers
-                   |> Seq.map (fun v -> v.Subscriber.f task)
-                   |> List.of_seq |> Lwt.join)
-             in
-             remove_state t task.D.Task.id))
+           let%lwt () = add_state t task.D.Task.id in
+           Lwt.finalize
+             (fun () ->
+               Log.info (fun m -> m "Start executing task...") ;%lwt
+               let%lwt () = D.Task.(execute task) in
+               Log.info (fun m -> m "Finish executing task"))
+             (fun () ->
+               let%lwt () =
+                 Lwt_mutex.with_lock t.task_state_lock (fun () ->
+                     Subscriber_set.to_seq t.subscribers
+                     |> Seq.map (fun v -> v.Subscriber.f task)
+                     |> List.of_seq |> Lwt.join)
+               in
+               remove_state t task.D.Task.id))
 
   (** [add_task task] add [task] to mailbox of task accepter. *)
   let add_task t ~task = Lwt_mvar.put t.task_mailbox (`Accepted task)
