@@ -4,7 +4,7 @@ import * as ReceiveMessageNotificationUseCase from "./usecases/notification/rece
 import * as ReceiveProgressNotificationUseCase from "./usecases/notification/receive-progress-notification";
 import * as TaskFinishedUseCase from "./usecases/task/finished";
 import * as FilerUpdatedUseCase from "./usecases/filer/filer-updated";
-import { createSuggestions, Suggestion } from "./domains/task-suggestion";
+import { createSuggestions, SuggestionKind } from "./domains/task-suggestion";
 import { FilerOnRPC, encode } from "./codecs/filer";
 import { createMessage } from "./domains/message-notification";
 import { createProgress } from "./domains/progress-notification";
@@ -42,7 +42,7 @@ export const handleProgressNotification = function handleProgressNotification(co
    Handle a notification to require interaction of a task
  */
 export const handleTaskInteraction = function handleTaskInteraction(context: ContextLike) {
-  return (params: { taskId: string; nodeName: string; suggestions: Suggestion[] }) => {
+  return (params: { taskId: string; itemName: string; suggestions: SuggestionKind[] }) => {
     const suggestions = createSuggestions(params);
     context.use(TaskRequireInteractionUseCase.createUseCase())({ suggestions });
   };

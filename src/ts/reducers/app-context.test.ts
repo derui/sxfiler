@@ -23,7 +23,7 @@ describe("reducers", () => {
         actions.requireInteraction(
           createSuggestions({
             taskId: "task",
-            nodeName: "node",
+            itemName: "node",
             suggestions: [],
           })
         )

@@ -54,8 +54,8 @@ const locator = {
 jrpc.createNotificationServer(jsonrpc, locator.context, {
   "notification/message": NotificationHandlers.handleMessageNotification,
   "notification/progress": NotificationHandlers.handleProgressNotification,
-  "notification/taskFinished": NotificationHandlers.handleTaskFinished,
-  "notification/taskInteraction": NotificationHandlers.handleTaskInteraction,
+  "notification/task/finished": NotificationHandlers.handleTaskFinished,
+  "notification/task/needInteraction": NotificationHandlers.handleTaskInteraction,
   "notification/filerUpdated": NotificationHandlers.handleFilerUpdated,
 });
 

@@ -8,7 +8,7 @@ module Make
   let resolve id = S.with_lock (fun state -> C.Root_state.find_task ~id state |> Lwt.return)
 
   let store task =
-    let%lwt _ = S.with_lock (fun state -> C.Root_state.add_task ~task state |> Lwt.return) in
+    let%lwt _ = S.with_lock (fun state -> C.Root_state.add_task ~task state |> S.update) in
     (* Add task queue *)
     Runner.(Runner.add_task instance ~task)
 

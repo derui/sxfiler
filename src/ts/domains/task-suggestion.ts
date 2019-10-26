@@ -4,23 +4,10 @@ export enum SuggestionKind {
   Rename = "rename",
 }
 
-export type Suggestion = {
-  readonly kind: SuggestionKind;
-};
-
 export type Suggestions = {
   readonly taskId: string;
-  readonly nodeName: string;
-  readonly suggestions: Suggestion[];
-};
-
-/**
-   The factory function to create interaction from argument
- */
-export const createSuggestion = function createSuggestion(args: { kind: SuggestionKind }): Suggestion {
-  return {
-    ...args,
-  };
+  readonly itemName: string;
+  readonly suggestions: SuggestionKind[];
 };
 
 /**
@@ -28,8 +15,8 @@ export const createSuggestion = function createSuggestion(args: { kind: Suggesti
  */
 export const createSuggestions = function createSuggestions(args: {
   taskId: string;
-  nodeName: string;
-  suggestions: Suggestion[];
+  itemName: string;
+  suggestions: SuggestionKind[];
 }): Suggestions {
   return {
     ...args,

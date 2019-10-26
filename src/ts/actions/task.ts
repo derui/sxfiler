@@ -8,7 +8,12 @@ type FinishedAction = AppAction<ActionTypes.TASK_FINISHED, { taskId: string }>;
 type SelectReplyAction = AppAction<ActionTypes.TASK_SELECT_REPLY, { index: number }>;
 type UpdateReplyPayloadAction = AppAction<ActionTypes.TASK_UPDATE_REPLY_PAYLOAD, { payload: ReplyPayload }>;
 
-export type Actions = RequireInteractionAction | FinishedAction | SelectReplyAction | UpdateReplyPayloadAction;
+export type Actions =
+  | RequireInteractionAction
+  | FinishedAction
+  | SelectReplyAction
+  | UpdateReplyPayloadAction
+  | SendReplyAction;
 
 export const requireInteraction = function requireInteraction(suggestions: Suggestions): RequireInteractionAction {
   return { type: ActionTypes.TASK_REQUIRE_INTERACTION, suggestions };

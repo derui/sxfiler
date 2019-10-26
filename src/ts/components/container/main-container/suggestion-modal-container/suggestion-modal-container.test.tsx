@@ -4,7 +4,7 @@ import { wrap } from "@/components/theme/test-util";
 
 import * as State from "@/states/task-interaction";
 import { Component } from "./suggestion-modal-container";
-import { createSuggestions, createSuggestion, SuggestionKind } from "@/domains/task-suggestion";
+import { createSuggestions, SuggestionKind } from "@/domains/task-suggestion";
 import { LocatorContext, Locator } from "@/locator";
 import { ModalRootContext } from "@/modal-root";
 import * as SuggestionModal from "@/components/project/suggestion-modal/suggestion-modal";
@@ -17,8 +17,8 @@ describe("Container", () => {
       state,
       createSuggestions({
         taskId: "task",
-        nodeName: "node",
-        suggestions: [createSuggestion({ kind: SuggestionKind.Overwrite })],
+        itemName: "node",
+        suggestions: [SuggestionKind.Overwrite],
       })
     );
 

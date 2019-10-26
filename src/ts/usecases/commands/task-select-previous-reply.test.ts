@@ -2,7 +2,7 @@ import * as C from "./task-select-previous-reply";
 import * as AppState from "@/states";
 import * as actions from "@/actions/task";
 import * as State from "@/states/task-interaction";
-import { createSuggestions, createSuggestion, SuggestionKind } from "@/domains/task-suggestion";
+import { createSuggestions, SuggestionKind } from "@/domains/task-suggestion";
 
 describe("Commands", () => {
   describe("Task", () => {
@@ -24,17 +24,14 @@ describe("Commands", () => {
           State.empty(),
           createSuggestions({
             taskId: "task",
-            nodeName: "node",
-            suggestions: [
-              createSuggestion({ kind: SuggestionKind.Overwrite }),
-              createSuggestion({ kind: SuggestionKind.Rename }),
-            ],
+            itemName: "node",
+            suggestions: [SuggestionKind.Overwrite, SuggestionKind.Rename],
           })
         );
         state.taskInteraction = State.selectReply(state.taskInteraction, 1);
 
         await command.execute(dispatcher as any, { state, client: jest.fn() as any });
-        await expect(dispatcher.dispatch).toBeCalledWith(actions.selectReply(0));
+        expect(dispatcher.dispatch).toBeCalledWith(actions.selectReply(0));
       });
 
       it("do not anything when no any reply", async () => {
@@ -45,7 +42,7 @@ describe("Commands", () => {
         const state = AppState.empty();
 
         await command.execute(dispatcher as any, { state, client: jest.fn() as any });
-        await expect(dispatcher.dispatch).not.toBeCalled;
+        expect(dispatcher.dispatch).not.toBeCalled;
       });
     });
   });

@@ -9,7 +9,7 @@ export enum Methods {
 const replyToServerRepresentation = (reply: ReplyPayload): any[] => {
   switch (reply.kind) {
     case ReplyKind.Overwrite:
-      return [ReplyKind.Overwrite];
+      return [ReplyKind.Overwrite, true];
     case ReplyKind.Rename:
       return [ReplyKind.Rename, { newName: reply.newName }];
     default:
@@ -20,7 +20,7 @@ const replyToServerRepresentation = (reply: ReplyPayload): any[] => {
 /**
    API definition for keymap/get
  */
-const SendInteraction = {
+const SendReply = {
   method: Methods.SendReply,
   parametersTransformer(param: Reply) {
     const { taskId, reply } = param;
@@ -34,4 +34,4 @@ const SendInteraction = {
   },
 };
 
-export const Apis = { SendInteraction };
+export const Apis = { SendReply };

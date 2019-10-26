@@ -11,7 +11,7 @@ describe("UseCases", () => {
         const fn = jest.fn();
 
         dispatcher.subscribe(fn);
-        const suggestions = createSuggestions({ taskId: "task", nodeName: "node", suggestions: [] });
+        const suggestions = createSuggestions({ taskId: "task", itemName: "node", suggestions: [] });
 
         createUseCase().execute(dispatcher, { suggestions });
 
