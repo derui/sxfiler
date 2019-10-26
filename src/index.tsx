@@ -30,7 +30,7 @@ declare var window: Window & {
   };
 };
 
-const url = process.env.NODE_ENV === "production" ? window.applicationConfig.serverURL : "ws://localhost:50879";
+const url = process.env.NODE_ENV === "production" ? window.applicationConfig.serverURL : "ws://localhost:50789";
 
 const ws = new WebSocket(url || "");
 const jsonrpc = jrpc.initialize(ws);
