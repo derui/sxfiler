@@ -92,7 +92,14 @@ let load_keymap dir =
 let get_config f config () = if Sys.file_exists config then f config else None
 
 let initialize_modules ~migemo ~option =
-  let completer = I.Migemo_completer.make ~migemo in
+  let completer =
+    match migemo with
+    | None ->
+        Logs.warn (fun m ->
+            m "Use fallback completer via forward-match completer because can not load migemo") ;
+        I.Forward_match_completer.make ()
+    | Some migemo -> I.Migemo_completer.make ~migemo
+  in
   let stat = get_config load_stat option.App_option.stat_file in
   let () = Global.Completer.set @@ fun () -> completer in
   let%lwt () =
@@ -156,14 +163,14 @@ let load_migemo dict_dir =
   and han_to_zen = "han2zen.dat" in
   let dict_file = Filename.concat dict_dir migemo_dict in
   if not @@ Sys.file_exists dict_file then (
-    Logs.err (fun m -> m "Dict file not found: %s\n" dict_file) ;
-    raise Fail_load_migemo )
+    Logs.err (fun m -> m "Dict file not found: %s" dict_file) ;
+    None )
   else
     let module M = Migemocaml in
     match M.Dict_tree.load_dict dict_file with
     | None ->
         Logs.err (fun m -> m "Dict can not load: %s" dict_file) ;
-        raise Fail_load_migemo
+        None
     | Some migemo_dict ->
         let hira_to_kata =
           Logs.info (fun m -> m "Loading %s" hira_to_kata) ;
@@ -175,7 +182,7 @@ let load_migemo dict_dir =
           Logs.info (fun m -> m "Loading %s" han_to_zen) ;
           M.Dict_tree.load_conv @@ Filename.concat dict_dir han_to_zen
         in
-        M.Migemo.make ~dict:migemo_dict ?hira_to_kata ?romaji_to_hira ?han_to_zen ()
+        Some (M.Migemo.make ~dict:migemo_dict ?hira_to_kata ?romaji_to_hira ?han_to_zen ())
 
 let persist_app_state global_state ~file_name ~bookmarks =
   Logs.info (fun m -> m "Start app state persisting...") ;

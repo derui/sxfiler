@@ -12,4 +12,5 @@ let () =
     ; ("item transporter service", Item_transporter_service_test.test_set)
     ; ("item replication service", Item_replication_service_test.test_set)
     ; ("item trash service", Item_trash_service_test.test_set)
-    ; ("key map resolve service", Key_map_resolve_service_test.test_set) ]
+    ; ("key map resolve service", Key_map_resolve_service_test.test_set)
+    ; ("forward match completer", Forward_match_completer_test.test_set) ]
