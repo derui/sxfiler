@@ -1,6 +1,6 @@
 import * as S from "./task-interaction";
-import { createSuggestions, createSuggestion, SuggestionKind } from "@/domains/task-suggestion";
-import { createRenamePayload, createOverwritePayload } from "@/domains/task-reply";
+import { createSuggestions, SuggestionKind } from "@/domains/task-suggestion";
+import { createRenamePayload, createOverwritePayload, createReply } from "@/domains/task-reply";
 
 describe("States", () => {
   describe("Task Interaction", () => {
@@ -16,8 +16,8 @@ describe("States", () => {
     it("give suggestions when current state is empty", () => {
       const suggestions = createSuggestions({
         taskId: "task",
-        nodeName: "node",
-        suggestions: [createSuggestion({ kind: SuggestionKind.Overwrite })],
+        itemName: "node",
+        suggestions: [SuggestionKind.Overwrite],
       });
       const state = S.giveSuggestions(S.empty(), suggestions);
 
@@ -30,13 +30,13 @@ describe("States", () => {
     it("queue interaction when operating other interaction", () => {
       const suggestions_1 = createSuggestions({
         taskId: "task1",
-        nodeName: "node",
-        suggestions: [createSuggestion({ kind: SuggestionKind.Overwrite })],
+        itemName: "node",
+        suggestions: [SuggestionKind.Overwrite],
       });
       const suggestions_2 = createSuggestions({
         taskId: "task2",
-        nodeName: "node",
-        suggestions: [createSuggestion({ kind: SuggestionKind.Rename })],
+        itemName: "node",
+        suggestions: [SuggestionKind.Rename],
       });
       let state = S.giveSuggestions(S.empty(), suggestions_1);
       state = S.giveSuggestions(state, suggestions_2);
@@ -47,25 +47,31 @@ describe("States", () => {
     it("change suggestion index that is current selected", () => {
       const suggestions = createSuggestions({
         taskId: "task1",
-        nodeName: "node",
-        suggestions: [
-          createSuggestion({ kind: SuggestionKind.Overwrite }),
-          createSuggestion({ kind: SuggestionKind.Rename }),
-        ],
+        itemName: "node",
+        suggestions: [SuggestionKind.Overwrite, SuggestionKind.Rename],
       });
       const state = S.selectReply(S.giveSuggestions(S.empty(), suggestions), 1);
 
       expect(state.currentReplyIndex).toEqual(1);
     });
 
+    it("do not allow to select index over the size of suggestions", () => {
+      const suggestions = createSuggestions({
+        taskId: "task1",
+        itemName: "node",
+        suggestions: [SuggestionKind.Overwrite],
+      });
+
+      const state = S.selectReply(S.giveSuggestions(S.empty(), suggestions), 2);
+
+      expect(state.currentReplyIndex).toEqual(0);
+    });
+
     it("do not allow to select index outer available suggestions", () => {
       const suggestions = createSuggestions({
         taskId: "task1",
-        nodeName: "node",
-        suggestions: [
-          createSuggestion({ kind: SuggestionKind.Overwrite }),
-          createSuggestion({ kind: SuggestionKind.Rename }),
-        ],
+        itemName: "node",
+        suggestions: [SuggestionKind.Overwrite, SuggestionKind.Rename],
       });
       const state = S.selectReply(S.giveSuggestions(S.empty(), suggestions), -1);
 
@@ -75,17 +81,14 @@ describe("States", () => {
     it("update payload in state", () => {
       const suggestions = createSuggestions({
         taskId: "task1",
-        nodeName: "node",
-        suggestions: [
-          createSuggestion({ kind: SuggestionKind.Overwrite }),
-          createSuggestion({ kind: SuggestionKind.Rename }),
-        ],
+        itemName: "node",
+        suggestions: [SuggestionKind.Overwrite, SuggestionKind.Rename],
       });
       const payload = createRenamePayload("new_node");
       let state = S.selectReply(S.giveSuggestions(S.empty(), suggestions), 1);
       state = S.updateCurrentReply(state, payload);
 
-      expect(state.currentReply()).toEqual(payload);
+      expect(state.currentReply()).toEqual(createReply("task1", payload));
     });
   });
 });

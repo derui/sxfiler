@@ -1,5 +1,5 @@
-import { Suggestions, Suggestion, SuggestionKind } from "@/domains/task-suggestion";
-import { ReplyPayload, createOverwritePayload, createRenamePayload } from "@/domains/task-reply";
+import { Suggestions, SuggestionKind } from "@/domains/task-suggestion";
+import { Reply, ReplyPayload, createOverwritePayload, createRenamePayload, createReply } from "@/domains/task-reply";
 
 // Task interaction manages the state for task suggestions and replys
 
@@ -14,14 +14,16 @@ type StateObject = {
 };
 
 export type State = StateObject & {
-  currentReply(): ReplyPayload | undefined;
+  currentReply(): Reply | undefined;
 };
 
-const currentReply = function currentReply(this: StateObject): ReplyPayload | undefined {
-  if (this.currentReplyIndex === undefined || !this.replies) {
+const currentReply = function currentReply(this: StateObject): Reply | undefined {
+  const taskId = this.currentTaskId;
+
+  if (this.currentReplyIndex === undefined || !this.replies || !taskId) {
     return undefined;
   }
-  return this.replies[this.currentReplyIndex];
+  return createReply(taskId, this.replies[this.currentReplyIndex]);
 };
 
 // create state internally
@@ -40,23 +42,38 @@ export const empty = function empty(): State {
 };
 
 // convert the suggestion to the payload of reply
-const suggestionToReplyPayload = (nodeName: string) => (obj: Suggestion): ReplyPayload => {
-  switch (obj.kind) {
+const suggestionToReplyPayload = (itemName: string) => (obj: SuggestionKind): ReplyPayload => {
+  switch (obj) {
     case SuggestionKind.Overwrite:
       return createOverwritePayload();
     case SuggestionKind.Rename:
-      return createRenamePayload(nodeName);
+      return createRenamePayload(itemName);
   }
 };
 
 // apply given suggestions to state
 export const giveSuggestions = function giveSuggestions(state: State, suggestions: Suggestions): State {
-  const replies = suggestions.suggestions.map(suggestionToReplyPayload(suggestions.nodeName));
+  const replies = suggestions.suggestions.map(suggestionToReplyPayload(suggestions.itemName));
   if (state.currentTaskId) {
     return { ...state, replyQueue: state.replyQueue.concat(replies) };
   }
 
   return { ...state, operating: true, currentTaskId: suggestions.taskId, replies, currentReplyIndex: 0 };
+};
+
+// Update state when the task finished
+export const finishTask = function finishTask(state: State, taskId: string): State {
+  if (state.currentTaskId !== taskId) {
+    return state;
+  }
+
+  return {
+    ...state,
+    replyQueue: state.replyQueue.splice(1),
+    operating: false,
+    currentTaskId: undefined,
+    replies: undefined,
+  };
 };
 
 // select reply
@@ -66,7 +83,7 @@ export const selectReply = function selectReply(state: State, index: number): St
     repliesLength = state.replies.length;
   }
 
-  return { ...state, currentReplyIndex: Math.min(Math.max(0, index), repliesLength) };
+  return { ...state, currentReplyIndex: Math.min(Math.max(0, index), repliesLength - 1) };
 };
 
 export const updateCurrentReply = function updateCurrentReply(state: State, payload: ReplyPayload): State {

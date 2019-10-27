@@ -46,11 +46,11 @@ const InnerContainer = styled.div`
     transition: transform ease-out 200ms;
   }
 
-  &[data-state="exiting"] {
+  &[data-state="exited"] {
     transform: translateY(0);
   }
 
-  &[data-state="exited"] {
+  &[data-state="exiting"] {
     transition: transform ease-in 200ms;
     transform: translateY(-100%);
   }
@@ -71,7 +71,7 @@ const PanelContainer = styled.section`
 const InnerOverlay = styled.div`
   ${Modal.overlayStyle};
 
-  background-color: rgba(black, 0.2);
+  background-color: rgba(0, 0, 0, 0.2);
 
   &[data-state="entering"] {
     opacity: 0.1;
@@ -112,9 +112,9 @@ const makeSuggestionPanel = (index: number, replies: ReplyPayload[], handleReply
 const Container: React.FC<ContainerContextProps> = ({ replies, focusedReply, onReply, opened, onClose, onOpen }) => {
   return (
     <Transition in={opened} timeout={200} onEnter={onOpen} onExited={onClose}>
-      {() => {
+      {state => {
         return (
-          <InnerContainer>
+          <InnerContainer data-state={state}>
             <Header>Suggestions</Header>
             <PanelContainer>{makeSuggestionPanel(focusedReply, replies, onReply)}</PanelContainer>
           </InnerContainer>

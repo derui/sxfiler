@@ -72,9 +72,9 @@ module Impl (R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) = struct
            let%lwt () = add_state t task.D.Task.id in
            Lwt.finalize
              (fun () ->
-               Log.info (fun m -> m "Start executing task...") ;%lwt
+               Log.info (fun m -> m "Start executing task [%s]..." Uuidm.(to_string task.id)) ;%lwt
                let%lwt () = D.Task.(execute task) in
-               Log.info (fun m -> m "Finish executing task"))
+               Log.info (fun m -> m "Finish executing task [%s]" Uuidm.(to_string task.id)))
              (fun () ->
                let%lwt () =
                  Lwt_mutex.with_lock t.task_state_lock (fun () ->

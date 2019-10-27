@@ -19,6 +19,7 @@ import * as historySelect from "./history-select";
 import * as keymapReload from "./keymap-reload";
 import * as taskSelectNextReply from "./task-select-next-reply";
 import * as taskSelectPreviousReply from "./task-select-previous-reply";
+import * as taskSendReply from "./task-send-reply";
 
 import { CommandRegistrar } from "../command-registrar";
 
@@ -45,6 +46,7 @@ export const registAllCommand = (registrar: CommandRegistrar): CommandRegistrar 
     keymapReload,
     taskSelectNextReply,
     taskSelectPreviousReply,
+    taskSendReply,
   ];
 
   return modules.reduce((accum, module) => module.registCommand(accum), registrar);
