@@ -33,7 +33,7 @@ platforms.map(platform => {
     case 'linux':
       fs.copySync(
         path.resolve('_build', 'install', 'default', 'bin', 'sxfiler_server'),
-        path.join(paths.appBuild, 'sxfiler_server'),
+        path.join(paths.appBuild, 'sxfiler_server.exe'),
         {
           dereference: true,
           filter: file => file !== paths.appHtml,
@@ -43,7 +43,7 @@ platforms.map(platform => {
     case 'win32':
       fs.copySync(
         path.resolve('_build', 'install', 'default.windows', 'bin', 'sxfiler_server'),
-        path.join(paths.appBuild, 'sxfiler_server'),
+        path.join(paths.appBuild, 'sxfiler_server.exe'),
         {
           dereference: true,
           filter: file => file !== paths.appHtml,
@@ -60,7 +60,7 @@ platforms.map(platform => {
     arch: 'x64',
     overwrite: true,
     asar: {
-      unpack: 'sxfiler_server',
+      unpack: 'sxfiler_server.exe',
     },
   };
   bundleElectronApp(options);

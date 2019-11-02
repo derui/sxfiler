@@ -68,7 +68,7 @@ function spawnServer(configDir, port) {
   console.log('Launching server...');
 
   const server = spawn(
-    path.join(`${__dirname}.unpacked`, 'sxfiler_server'),
+    path.join(`${__dirname}.unpacked`, 'sxfiler_server.exe'),
     ['--config', configDir, '-d', path.join(configDir, 'dict'), '--port', port],
     {
       stdio: 'inherit',
