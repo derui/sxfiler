@@ -9,7 +9,7 @@ opam install -y /opt/libs/migemocaml /opt/libs/jsonrpc-ocaml
 opam install -y --deps-only ./sxfiler.opam
 
 if [[ $BUILD_MODE == "linux" ]]; then
-    dune build --display=short --profile release
+    dune build --display=short --profile prod
 fi
 
 if [[ $BUILD_MODE == "windows" ]]; then

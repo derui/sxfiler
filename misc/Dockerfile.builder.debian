@@ -2,20 +2,18 @@ FROM debian:bullseye
 
 RUN apt update \
     && apt install -y --no-install-recommends opam gcc-mingw-w64-x86-64 gawk m4 git ca-certificates \
-    && dpkg --add-architecture i386 \
-    && apt update \
-    && apt install -y --no-install-recommends wine wine32 \
-    && rm -rf /var/cache/apt/archives
-RUN opam init -n --disable-sandboxing \
+    && rm -rf /var/cache/apt/archives \
+    && opam init -n --disable-sandboxing --bare \
     && opam switch install 4.08.0 \
     && opam repository --all add windows git://github.com/derui/sxfiler-repo-windows \
     && eval $(opam env) \
     && opam install -y conf-flambda-windows \
     && opam install -y ocaml-windows64 \
-    && opam install -y ocaml-windows
+    && opam install -y ocaml-windows \
+    && opam clean
 
 WORKDIR /sxfiler
 
-COPY scripts/entrypoint.sh /entrypoint.sh
+COPY misc/entrypoint.sh /entrypoint.sh
 RUN chmod a+x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]

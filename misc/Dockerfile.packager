@@ -1,0 +1,9 @@
+FROM debian:bullseye
+
+RUN dpkg --add-architecture i386 \
+    && apt update \
+    && apt install -y --no-install-recommends wine wine32 npm unzip \
+    && npm install -g yarn \
+    && rm -rf /var/cache/apt/archives
+
+WORKDIR /sxfiler
