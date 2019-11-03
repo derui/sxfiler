@@ -10,9 +10,9 @@ module Make = struct
     type input =
       { initial_location : string [@key "initialLocation"]
       ; name : string }
-    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+    [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
 
-    type output = T.Filer.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+    type output = T.Filer.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = sig
@@ -39,8 +39,8 @@ end
 module Get = struct
   (** request and response for gateway *)
   module Type = struct
-    type input = {name : string} [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
-    type output = T.Filer.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+    type input = {name : string} [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+    type output = T.Filer.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = sig
@@ -64,8 +64,8 @@ end
 module Move_parent = struct
   (** gateway for Move_parent use case. *)
   module Type = struct
-    type input = {name : string} [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
-    type output = T.Filer.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+    type input = {name : string} [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+    type output = T.Filer.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = sig
@@ -92,9 +92,9 @@ module Enter_directory = struct
     type input =
       { name : string
       ; item_id : string [@key "itemId"] }
-    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+    [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
 
-    type output = T.Filer.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+    type output = T.Filer.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = sig
@@ -121,9 +121,9 @@ module Toggle_mark = struct
     type input =
       { name : string
       ; item_ids : string list [@key "itemIds"] }
-    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+    [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
 
-    type output = T.Filer.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+    type output = T.Filer.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = sig
@@ -148,12 +148,12 @@ module Move = struct
       { source : string
       ; dest : string
       ; item_ids : string list [@key "itemIds"] }
-    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+    [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
 
     type output =
       { task_id : string [@key "taskId"]
       ; task_name : string [@key "taskName"] }
-    [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+    [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = sig
@@ -178,12 +178,12 @@ module Delete = struct
     type input =
       { source : string
       ; item_ids : string list [@key "itemIds"] }
-    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+    [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
 
     type output =
       { task_id : string [@key "taskId"]
       ; task_name : string [@key "taskName"] }
-    [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+    [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = sig
@@ -208,12 +208,12 @@ module Copy = struct
       { source : string
       ; dest : string
       ; item_ids : string list [@key "itemIds"] }
-    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+    [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
 
     type output =
       { task_id : string [@key "taskId"]
       ; task_name : string [@key "taskName"] }
-    [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+    [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = sig
@@ -239,9 +239,9 @@ module Jump_location = struct
     type input =
       { location : string
       ; name : string }
-    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+    [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
 
-    type output = T.Filer.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+    type output = T.Filer.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = sig

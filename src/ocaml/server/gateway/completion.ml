@@ -5,9 +5,9 @@ module Usecase = Sxfiler_usecase.Completion
 module Setup = struct
   module Type = struct
     type input = {source : T.Collection.t}
-    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
+    [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
 
-    type output = unit [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+    type output = unit [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -25,8 +25,8 @@ end
 
 module Read = struct
   module Type = struct
-    type input = {input : string} [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
-    type output = T.Candidates.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+    type input = {input : string} [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+    type output = T.Candidates.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output

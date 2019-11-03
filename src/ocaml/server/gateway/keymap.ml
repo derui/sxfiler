@@ -3,8 +3,8 @@ module T = Sxfiler_server_translator
 
 module Get = struct
   module Type = struct
-    type input = unit [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
-    type output = T.Key_map.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+    type input = unit [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+    type output = T.Key_map.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -23,8 +23,8 @@ end
 
 module Reload = struct
   module Type = struct
-    type input = unit [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
-    type output = T.Key_map.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+    type input = unit [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+    type output = T.Key_map.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -41,8 +41,8 @@ end
 
 module Store = struct
   module Type = struct
-    type input = T.Key_map.t [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
-    type output = unit [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+    type input = T.Key_map.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+    type output = unit [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output

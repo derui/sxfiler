@@ -4,10 +4,8 @@ module T = Sxfiler_server_translator
 (** The gateway for Use Case of {!Rpc.Configuration.Get} *)
 module Get = struct
   module Type = struct
-    type input = unit [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
-
-    type output = T.Configuration.t
-    [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+    type input = unit [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+    type output = T.Configuration.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -25,10 +23,8 @@ end
 (** The gateway for use case of {!Rpc.Configuration.Store} *)
 module Store = struct
   module Type = struct
-    type input = T.Configuration.t
-    [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
-
-    type output = unit [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+    type input = T.Configuration.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+    type output = unit [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output

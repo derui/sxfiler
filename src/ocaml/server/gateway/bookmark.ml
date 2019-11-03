@@ -4,10 +4,8 @@ module T = Sxfiler_server_translator
 
 module List_all = struct
   module Type = struct
-    type input = unit [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
-
-    type output = T.Bookmark.t list
-    [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+    type input = unit [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+    type output = T.Bookmark.t list [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -26,8 +24,8 @@ end
 
 module Register = struct
   module Type = struct
-    type input = {path : string} [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
-    type output = T.Bookmark.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+    type input = {path : string} [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+    type output = T.Bookmark.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -46,8 +44,8 @@ end
 
 module Delete = struct
   module Type = struct
-    type input = {id : string} [@@deriving of_protocol ~driver:(module Protocol_conv_json.Json)]
-    type output = T.Bookmark.t [@@deriving to_protocol ~driver:(module Protocol_conv_json.Json)]
+    type input = {id : string} [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+    type output = T.Bookmark.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
