@@ -1,0 +1,13 @@
+(executable
+ (name rpc_tester)
+ (public_name rpc_tester)
+ (package sxfiler)
+ (libraries lwt
+            websocket
+            websocket-lwt-unix
+            logs.fmt
+            jsonrpc-ocaml.yojson
+            sxfiler.server
+            logs
+            ppx_protocol_conv_json)
+ (preprocess (pps ppx_let lwt_ppx ppx_deriving.std ppx_protocol_conv)))
