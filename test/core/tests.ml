@@ -82,12 +82,18 @@ let path_tests =
         let expected = ".\\a\\b" in
         Alcotest.(check string) "win" expected
         @@ Path.(to_string ~env:`Win @@ of_string ~env:`Win ".\\a\\b") )
-  ; ( "ignore cwd if path is absolute"
+  ; ( "ignore cwd if path is absolute on Unix"
     , `Quick
     , fun () ->
         let expected = "/bar/a" in
         Alcotest.(check string) "absolute" expected
         @@ Path.(to_string ~env:`Unix @@ of_string ~env:`Unix "/bar/a") )
+  ; ( "ignore cwd if path is absolute on Windows"
+    , `Quick
+    , fun () ->
+        let expected = "C:\\bar\\a" in
+        Alcotest.(check string) "absolute" expected
+        @@ Path.(to_string ~env:`Win @@ of_string ~env:`Win "C:\\bar\\a") )
   ; ( "allow to use windows device name"
     , `Quick
     , fun () ->
@@ -96,7 +102,7 @@ let path_tests =
         end in
         let expected = "c:\\foo\\a" in
         Alcotest.(check string) "absolute" expected
-        @@ Path.(to_string ~env:`Win @@ resolve (module S) @@ of_string ~env:`Win "a") )
+        @@ Path.(to_string ~env:`Win @@ resolve (module S) @@ of_string ~env:`Win ".\\a") )
   ; ( "allow to contain . and .."
     , `Quick
     , fun () ->

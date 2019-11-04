@@ -100,18 +100,19 @@ let find_root ?env components =
     && match str.[0] with 'a' .. 'z' | 'A' .. 'Z' -> true | _ -> false
   in
   match (components, env) with
-  | Comp_empty :: _, `Unix -> Some "/"
-  | Comp_filename v :: _, `Win when is_drive_letter v ->
+  | Comp_empty :: _, `Unix -> (Some "/", components)
+  | Comp_filename v :: rest, `Win when is_drive_letter v ->
       let sep = resolve_sep (Some env) in
-      Some (v ^ Char.escaped sep)
-  | _ -> None
+      let sep = String.make 1 sep in
+      (Some (v ^ sep), rest)
+  | _ -> (None, components)
 
 (** [of_string ?env path] converts [path] to Path object. *)
 let of_string ?env path =
   if path = "" then raise Empty_path
   else
     let components = normalize_path ?env path in
-    let root = find_root ?env components in
+    let root, components = find_root ?env components in
     {root; components; resolved = false}
 
 let resolve ?env sys path =
