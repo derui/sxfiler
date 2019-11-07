@@ -5,28 +5,33 @@ module D = Sxfiler_domain.Task_interaction
 module Reply = struct
   type typ =
     | Overwrite of bool [@name "overwrite"]
-    | Rename of {new_name : string [@key "newName"]} [@name "rename"]
+    | Rename of { new_name : string [@key "newName"] } [@name "rename"]
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
-  type t =
-    { reply : typ [@key "reply"]
-    ; task_id : string [@key "taskId"] }
+  type t = {
+    reply : typ; [@key "reply"]
+    task_id : string; [@key "taskId"]
+  }
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
-  let of_domain {D.Reply.task_id; reply} =
-    { task_id = Ty.show_id task_id
-    ; reply =
+  let of_domain { D.Reply.task_id; reply } =
+    {
+      task_id = Ty.show_id task_id;
+      reply =
         ( match reply with
         | D.Reply.Overwrite b -> Overwrite b
-        | Rename new_name -> Rename {new_name} ) }
+        | Rename new_name -> Rename { new_name } );
+    }
 
-  let to_domain {task_id; reply} =
+  let to_domain { task_id; reply } =
     let open Sxfiler_core in
-    { D.Reply.task_id = Uuidm.of_string task_id |> Option.get_exn
-    ; reply =
+    {
+      D.Reply.task_id = Uuidm.of_string task_id |> Option.get_exn;
+      reply =
         ( match reply with
         | Overwrite b -> D.Reply.Overwrite b
-        | Rename {new_name} -> Rename new_name ) }
+        | Rename { new_name } -> Rename new_name );
+    }
 end
 
 module Suggestion = struct
@@ -35,22 +40,27 @@ module Suggestion = struct
     | Rename [@name "rename"]
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
-  type t =
-    { suggestions : typ list [@key "suggestions"]
-    ; item_name : string [@key "itemName"]
-    ; task_id : string [@key "taskId"] }
+  type t = {
+    suggestions : typ list; [@key "suggestions"]
+    item_name : string; [@key "itemName"]
+    task_id : string; [@key "taskId"]
+  }
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
-  let of_domain {D.Suggestion.task_id; suggestions; item_name} =
-    { task_id = Ty.show_id task_id
-    ; item_name
-    ; suggestions =
-        List.map (function D.Suggestion.Overwrite -> Overwrite | Rename -> Rename) suggestions }
+  let of_domain { D.Suggestion.task_id; suggestions; item_name } =
+    {
+      task_id = Ty.show_id task_id;
+      item_name;
+      suggestions =
+        List.map (function D.Suggestion.Overwrite -> Overwrite | Rename -> Rename) suggestions;
+    }
 
-  let to_domain {task_id; suggestions; item_name} =
+  let to_domain { task_id; suggestions; item_name } =
     let open Sxfiler_core in
-    { D.Suggestion.task_id = Uuidm.of_string task_id |> Option.get_exn
-    ; item_name
-    ; suggestions =
-        List.map (function Overwrite -> D.Suggestion.Overwrite | Rename -> Rename) suggestions }
+    {
+      D.Suggestion.task_id = Uuidm.of_string task_id |> Option.get_exn;
+      item_name;
+      suggestions =
+        List.map (function Overwrite -> D.Suggestion.Overwrite | Rename -> Rename) suggestions;
+    }
 end

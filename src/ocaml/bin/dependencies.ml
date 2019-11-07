@@ -71,9 +71,7 @@ module Make
     I.Configuration_repo.Make (Global.Configuration)
 
   module Completion_repo = I.Completion_repo.Make (Global.Cached_source)
-
-  module Message_notification_factory =
-    I.Message_notification_factory.Make (I.Id_generator.Gen_uuid)
+  module Message_notification_factory = I.Message_notification_factory.Make (I.Id_generator.Gen_uuid)
 
   module Progress_notification_factory =
     I.Progress_notification_factory.Make (I.Id_generator.Gen_uuid)
@@ -81,7 +79,7 @@ module Make
   module Key_map_resolve_service = I.Key_map_resolve_service.Make (struct
     let path =
       Sxfiler_core.Path.of_list
-        [Option.option.App_option.configuration; Constants.key_map_file_name]
+        [ Option.option.App_option.configuration; Constants.key_map_file_name ]
   end)
 
   module Item_transporter_service =
@@ -113,8 +111,7 @@ module Make
     module Completion_read = U.Completion.Read.Make (Completion_repo) (Completer)
 
     module Filer_make =
-      U.Filer.Make.Make (Configuration_repo) (Filer_repo) (Filer_factory)
-        (Location_scanner_service)
+      U.Filer.Make.Make (Configuration_repo) (Filer_repo) (Filer_factory) (Location_scanner_service)
 
     module Filer_get = U.Filer.Get.Make (Filer_repo)
 

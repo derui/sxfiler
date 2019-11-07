@@ -10,8 +10,8 @@ let validate_command command args =
   match command with
   | _ as v when v = A.filer_make._method ->
       Ok
-        ( A.filer_make
-        , S.Filer.Make.Type.{initial_location = List.nth args 0; name = List.nth args 1} )
+        ( A.filer_make,
+          S.Filer.Make.Type.{ initial_location = List.nth args 0; name = List.nth args 1 } )
   | _ -> Error "Not implemented"
 
 let rpc_shell ~client ~content =
@@ -51,11 +51,10 @@ let client uri =
   let client = Rpc_client.get_client send in
   let rec react_forever () = recv () >>= react >>= react_forever in
   let rec pushf () =
-    Lwt_io.(read_line_opt stdin)
-    >>= function
+    Lwt_io.(read_line_opt stdin) >>= function
     | None ->
-        Lwt_log.debug ~section "Got EOF. Sending a close frame."
-        >>= fun () -> send @@ Frame.close 1000 >>= pushf
+        Lwt_log.debug ~section "Got EOF. Sending a close frame." >>= fun () ->
+        send @@ Frame.close 1000 >>= pushf
     | Some content ->
         ( match rpc_shell ~client ~content with
         | Error e -> Lwt_log.error ~section e
@@ -71,8 +70,8 @@ let apply_loglevel = function
 
 let () =
   let uri = ref "" in
-  let speclist = Arg.align [("-loglevel", Arg.Int apply_loglevel, "1-3 Set loglevel")] in
+  let speclist = Arg.align [ ("-loglevel", Arg.Int apply_loglevel, "1-3 Set loglevel") ] in
   let anon_fun s = uri := s in
   let usage_msg = "Usage: " ^ Sys.argv.(0) ^ " <options> uri\nOptions are:" in
-  Arg.parse speclist anon_fun usage_msg ;
+  Arg.parse speclist anon_fun usage_msg;
   Lwt_main.run (client (Uri.of_string !uri))

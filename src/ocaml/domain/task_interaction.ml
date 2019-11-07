@@ -6,9 +6,10 @@ module Reply = struct
     | Rename of string
   [@@deriving show, eq]
 
-  type t =
-    { task_id : id
-    ; reply : typ }
+  type t = {
+    task_id : id;
+    reply : typ;
+  }
   [@@deriving show, eq]
 end
 
@@ -18,9 +19,10 @@ module Suggestion = struct
     | Rename
   [@@deriving show, eq]
 
-  type t =
-    { task_id : id
-    ; item_name : string
-    ; suggestions : typ list }
+  type t = {
+    task_id : id;
+    item_name : string;
+    suggestions : typ list;
+  }
   [@@deriving show, eq]
 end

@@ -29,9 +29,9 @@ end
 module Register = struct
   (** Module to share interface and structure. *)
   module Type = struct
-    type input = {path : C.Path.t}
+    type input = { path : C.Path.t }
     type output = Bookmark.t
-    type error = [`Conflict]
+    type error = [ `Conflict ]
   end
 
   module type S =
@@ -45,7 +45,7 @@ module Register = struct
       (C : Bookmark_repository.S) : S = struct
     include Type
 
-    let execute {path} =
+    let execute { path } =
       match%lwt C.find_by_path path with
       | Some _ -> Lwt.return_error `Conflict
       | None ->
@@ -60,9 +60,9 @@ end
 module Delete = struct
   (** Module to share interface and structure. *)
   module Type = struct
-    type input = {id : Bookmark.id}
+    type input = { id : Bookmark.id }
     type output = Bookmark.t
-    type error = [`Not_found]
+    type error = [ `Not_found ]
   end
 
   module type S =
@@ -74,7 +74,7 @@ module Delete = struct
   module Make (C : Bookmark_repository.S) : S = struct
     include Type
 
-    let execute {id} =
+    let execute { id } =
       match%lwt C.resolve id with
       | None -> Lwt.return_error `Not_found
       | Some v ->

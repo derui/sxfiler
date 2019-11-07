@@ -2,7 +2,7 @@ module D = Sxfiler_domain
 
 module Setup = struct
   module Type = struct
-    type input = {source : D.Completion.collection}
+    type input = { source : D.Completion.collection }
     type output = unit
     type error = unit
   end
@@ -28,7 +28,7 @@ end
 
 module Read = struct
   module Type = struct
-    type input = {input : string}
+    type input = { input : string }
     type output = D.Completion.candidates
     type error = unit
   end

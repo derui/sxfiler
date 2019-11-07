@@ -12,7 +12,8 @@ let obj2 =
   D.Bookmark.make ~id:Uuidm.(v4_gen state ()) ~path:Path.(of_string ~env:`Unix "/foo/baz") ~order:2
 
 let test_set =
-  [ Alcotest_lwt.test_case "should store a bookmark" `Quick (fun _ () ->
+  [
+    Alcotest_lwt.test_case "should store a bookmark" `Quick (fun _ () ->
         let module State = S.Statable.Make (struct
           type t = D.Bookmark.t list
 
@@ -21,9 +22,9 @@ let test_set =
         let module R = I.Bookmark_repo.Make (State) in
         let%lwt () = R.store obj in
         let%lwt obj' = R.resolve obj.id in
-        Alcotest.(check bool) "stored" true D.Bookmark.(equal obj Option.(get_exn obj')) ;
-        Lwt.return_unit)
-  ; Alcotest_lwt.test_case "should store some bookmarks" `Quick (fun _ () ->
+        Alcotest.(check bool) "stored" true D.Bookmark.(equal obj Option.(get_exn obj'));
+        Lwt.return_unit);
+    Alcotest_lwt.test_case "should store some bookmarks" `Quick (fun _ () ->
         let module State = S.Statable.Make (struct
           type t = D.Bookmark.t list
 
@@ -34,5 +35,6 @@ let test_set =
         let%lwt () = R.store obj2 in
         let%lwt actual = R.find_all () in
         let actual = List.sort (fun v1 v2 -> compare v1.D.Bookmark.order v2.order) actual in
-        Alcotest.(check @@ list @@ of_pp D.Bookmark.pp) "stored" [obj; obj2] actual ;
-        Lwt.return_unit) ]
+        Alcotest.(check @@ list @@ of_pp D.Bookmark.pp) "stored" [ obj; obj2 ] actual;
+        Lwt.return_unit);
+  ]

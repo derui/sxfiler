@@ -24,7 +24,7 @@ end
 
 module Register = struct
   module Type = struct
-    type input = {path : string} [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+    type input = { path : string } [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
     type output = T.Bookmark.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
@@ -35,8 +35,8 @@ module Register = struct
   module Make (Usecase : Usecase.Bookmark.Register.S) : S = struct
     include Type
 
-    let handle {path} =
-      match%lwt Usecase.execute {path = Path.of_string path} with
+    let handle { path } =
+      match%lwt Usecase.execute { path = Path.of_string path } with
       | Ok result -> T.Bookmark.of_domain result |> Lwt.return_ok
       | Error `Conflict -> Gateway_error.(Bookmark_conflict) |> Lwt.return_error
   end
@@ -44,7 +44,7 @@ end
 
 module Delete = struct
   module Type = struct
-    type input = {id : string} [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+    type input = { id : string } [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
     type output = T.Bookmark.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
@@ -55,7 +55,7 @@ module Delete = struct
   module Make (Usecase : Usecase.Bookmark.Delete.S) : S = struct
     include Type
 
-    let handle {id} =
+    let handle { id } =
       let id' =
         match Uuidm.of_string id with
         | None -> Error Gateway_error.(Unknown_error "invalid identity format")
@@ -64,7 +64,7 @@ module Delete = struct
       match id' with
       | Error e -> Lwt.return_error e
       | Ok id -> (
-          match%lwt Usecase.execute {id} with
+          match%lwt Usecase.execute { id } with
           | Ok result -> T.Bookmark.of_domain result |> Lwt.return_ok
           | Error `Not_found -> Gateway_error.(Bookmark_not_found) |> Lwt.return_error )
   end

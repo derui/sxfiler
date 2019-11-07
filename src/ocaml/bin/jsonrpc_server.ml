@@ -3,16 +3,16 @@ module W = Websocket
 module J = Jsonrpc
 module Jy = Jsonrpc_yojson
 
-type t = {method_handler : Jy.Server.t}
+type t = { method_handler : Jy.Server.t }
 
 let make () =
   let method_handler = Jy.Server.make () in
-  {method_handler}
+  { method_handler }
 
 let expose t ~procedure =
   let module P = (val procedure : Procedure.S) in
   let _method = P.method_ and handler = P.handle in
-  {method_handler = Jy.Server.expose ~_method ~handler t.method_handler}
+  { method_handler = Jy.Server.expose ~_method ~handler t.method_handler }
 
 let res_to_frame res =
   let json = Jy.Response.to_json res in
@@ -32,9 +32,11 @@ let request_handler t conn =
           | Error _ ->
               let%lwt res =
                 Lwt.return @@ res_to_frame
-                @@ { Jy.Response.result = None
-                   ; id = None
-                   ; error = Some (Jy.Error.make J.Types.Error_code.Parse_error) }
+                @@ {
+                     Jy.Response.result = None;
+                     id = None;
+                     error = Some (Jy.Error.make J.Types.Error_code.Parse_error);
+                   }
               in
               Lwt.return @@ C.Connection.write_output conn ~frame:res
           | Ok req ->

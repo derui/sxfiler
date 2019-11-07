@@ -5,12 +5,13 @@ module Reply : sig
   (** Type of interaction *)
   type typ =
     | Overwrite of bool [@name "overwrite"]
-    | Rename of {new_name : string [@key "newName"]} [@name "rename"]
+    | Rename of { new_name : string [@key "newName"] } [@name "rename"]
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
-  type t =
-    { reply : typ [@key "reply"]
-    ; task_id : string [@key "taskId"] }
+  type t = {
+    reply : typ; [@key "reply"]
+    task_id : string; [@key "taskId"]
+  }
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   include
@@ -27,10 +28,11 @@ module Suggestion : sig
     | Rename [@name "rename"]
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
-  type t =
-    { suggestions : typ list [@key "suggestions"]
-    ; item_name : string [@key "itemName"]
-    ; task_id : string [@key "taskId"] }
+  type t = {
+    suggestions : typ list; [@key "suggestions"]
+    item_name : string; [@key "itemName"]
+    task_id : string; [@key "taskId"]
+  }
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   include

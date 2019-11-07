@@ -3,8 +3,10 @@ module D = Sxfiler_domain
 module Tr = Sxfiler_server_translator
 
 let filer_updated_api =
-  { Notification_service.to_method = (fun _ -> "notification/filerUpdated")
-  ; to_json = (fun v -> Tr.Filer.(of_domain v |> to_json)) }
+  {
+    Notification_service.to_method = (fun _ -> "notification/filerUpdated");
+    to_json = (fun v -> Tr.Filer.(of_domain v |> to_json));
+  }
 
 (** Make filer repository with backend. *)
 module Make (S : C.Statable.S with type state = C.Root_state.t) (NS : Notification_service.S) :

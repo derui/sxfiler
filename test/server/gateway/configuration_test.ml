@@ -6,8 +6,9 @@ module T = Sxfiler_server_translator
 module U = Sxfiler_usecase
 
 let test_set =
-  [ Alcotest_lwt.test_case "get current configuration" `Quick (fun _ () ->
-        let expected = D.Configuration.{default_sort_order = D.Types.Sort_type.Date} in
+  [
+    Alcotest_lwt.test_case "get current configuration" `Quick (fun _ () ->
+        let expected = D.Configuration.{ default_sort_order = D.Types.Sort_type.Date } in
         let module Usecase = struct
           type input = unit
           type output = D.Configuration.t
@@ -20,5 +21,6 @@ let test_set =
         Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
           "current"
           (Ok (T.Configuration.of_domain expected))
-          res ;
-        Lwt.return_unit) ]
+          res;
+        Lwt.return_unit);
+  ]

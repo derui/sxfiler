@@ -5,7 +5,7 @@ module Send_reply = struct
   module Type = struct
     type input = Task_interaction.Reply.t
     type output = unit
-    type error = [`Not_found]
+    type error = [ `Not_found ]
   end
 
   module type S = sig
@@ -19,7 +19,7 @@ module Send_reply = struct
   module Make (R : Task.Repository) : S = struct
     include Type
 
-    let execute {Task_interaction.Reply.task_id; reply} =
+    let execute { Task_interaction.Reply.task_id; reply } =
       match%lwt R.resolve task_id with
       | None -> Lwt.return_error `Not_found
       | Some t ->

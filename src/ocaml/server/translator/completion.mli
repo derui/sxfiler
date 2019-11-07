@@ -1,15 +1,17 @@
 module Item : sig
-  type t =
-    { id : string
-    ; value : string }
+  type t = {
+    id : string;
+    value : string;
+  }
   [@@deriving show]
 end
 
 module Candidate : sig
-  type t =
-    { start : int
-    ; length : int
-    ; value : Item.t }
+  type t = {
+    start : int;
+    length : int;
+    value : Item.t;
+  }
   [@@deriving show]
 end
 

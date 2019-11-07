@@ -7,9 +7,10 @@ module D = Sxfiler_domain
 module Make = struct
   (** request and response definition *)
   module Type = struct
-    type input =
-      { initial_location : string [@key "initialLocation"]
-      ; name : string }
+    type input = {
+      initial_location : string; [@key "initialLocation"]
+      name : string;
+    }
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
 
     type output = T.Filer.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
@@ -26,8 +27,10 @@ module Make = struct
 
     let handle param =
       let input =
-        { U.initial_location = Path.of_string param.initial_location |> Path.resolve (module System)
-        ; name = param.name }
+        {
+          U.initial_location = Path.of_string param.initial_location |> Path.resolve (module System);
+          name = param.name;
+        }
       in
       match%lwt U.execute input with
       | Ok t -> T.Filer.of_domain t |> Lwt.return_ok
@@ -39,7 +42,7 @@ end
 module Get = struct
   (** request and response for gateway *)
   module Type = struct
-    type input = {name : string} [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+    type input = { name : string } [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
     type output = T.Filer.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
@@ -53,7 +56,7 @@ module Get = struct
     include Type
 
     let handle param =
-      let input = {U.name = param.name} in
+      let input = { U.name = param.name } in
       match%lwt U.execute input with
       | Ok s -> T.Filer.of_domain s |> Lwt.return_ok
       | Error `Not_found -> Lwt.return_error Gateway_error.(Filer_not_found)
@@ -64,7 +67,7 @@ end
 module Move_parent = struct
   (** gateway for Move_parent use case. *)
   module Type = struct
-    type input = {name : string} [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+    type input = { name : string } [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
     type output = T.Filer.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
@@ -78,7 +81,7 @@ module Move_parent = struct
     include Type
 
     let handle param =
-      let input = {U.name = param.name} in
+      let input = { U.name = param.name } in
       match%lwt U.execute input with
       | Ok s -> Lwt.return_ok @@ T.Filer.of_domain s
       | Error `Not_found -> Lwt.return_error Gateway_error.(Filer_not_found)
@@ -89,9 +92,10 @@ end
 module Enter_directory = struct
   (** Request and response of gateway *)
   module Type = struct
-    type input =
-      { name : string
-      ; item_id : string [@key "itemId"] }
+    type input = {
+      name : string;
+      item_id : string; [@key "itemId"]
+    }
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
 
     type output = T.Filer.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
@@ -107,7 +111,7 @@ module Enter_directory = struct
     include Type
 
     let handle param =
-      let input = {U.name = param.name; item_id = param.item_id} in
+      let input = { U.name = param.name; item_id = param.item_id } in
       match%lwt U.execute input with
       | Ok s -> Lwt.return_ok @@ T.Filer.of_domain s
       | Error `Not_found_filer -> Lwt.return_error Gateway_error.(Filer_not_found)
@@ -118,9 +122,10 @@ end
 
 module Toggle_mark = struct
   module Type = struct
-    type input =
-      { name : string
-      ; item_ids : string list [@key "itemIds"] }
+    type input = {
+      name : string;
+      item_ids : string list; [@key "itemIds"]
+    }
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
 
     type output = T.Filer.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
@@ -135,7 +140,7 @@ module Toggle_mark = struct
     include Type
 
     let handle input =
-      let input = {U.name = input.name; item_ids = input.item_ids} in
+      let input = { U.name = input.name; item_ids = input.item_ids } in
       match%lwt U.execute input with
       | Ok s -> Lwt.return_ok @@ T.Filer.of_domain s
       | Error `Not_found -> Lwt.return_error Gateway_error.(Filer_not_found)
@@ -144,15 +149,17 @@ end
 
 module Move = struct
   module Type = struct
-    type input =
-      { source : string
-      ; dest : string
-      ; item_ids : string list [@key "itemIds"] }
+    type input = {
+      source : string;
+      dest : string;
+      item_ids : string list; [@key "itemIds"]
+    }
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
 
-    type output =
-      { task_id : string [@key "taskId"]
-      ; task_name : string [@key "taskName"] }
+    type output = {
+      task_id : string; [@key "taskId"]
+      task_name : string; [@key "taskName"]
+    }
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
@@ -165,9 +172,9 @@ module Move = struct
     include Type
 
     let handle input =
-      let input = {U.source = input.source; dest = input.dest; item_ids = input.item_ids} in
+      let input = { U.source = input.source; dest = input.dest; item_ids = input.item_ids } in
       match%lwt U.execute input with
-      | Ok s -> Lwt.return_ok {task_id = s.task_id |> Uuidm.to_string; task_name = s.task_name}
+      | Ok s -> Lwt.return_ok { task_id = s.task_id |> Uuidm.to_string; task_name = s.task_name }
       | Error (`Not_found _) -> Lwt.return_error Gateway_error.(Filer_not_found)
       | Error `Same_filer -> Lwt.return_error Gateway_error.(Filer_same_filer)
   end
@@ -175,14 +182,16 @@ end
 
 module Delete = struct
   module Type = struct
-    type input =
-      { source : string
-      ; item_ids : string list [@key "itemIds"] }
+    type input = {
+      source : string;
+      item_ids : string list; [@key "itemIds"]
+    }
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
 
-    type output =
-      { task_id : string [@key "taskId"]
-      ; task_name : string [@key "taskName"] }
+    type output = {
+      task_id : string; [@key "taskId"]
+      task_name : string; [@key "taskName"]
+    }
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
@@ -195,24 +204,26 @@ module Delete = struct
     include Type
 
     let handle input =
-      let input = {U.source = input.source; item_ids = input.item_ids} in
+      let input = { U.source = input.source; item_ids = input.item_ids } in
       match%lwt U.execute input with
-      | Ok s -> Lwt.return_ok {task_id = s |> Uuidm.to_string; task_name = "Delete"}
+      | Ok s -> Lwt.return_ok { task_id = s |> Uuidm.to_string; task_name = "Delete" }
       | Error (`Not_found _) -> Lwt.return_error Gateway_error.(Filer_not_found)
   end
 end
 
 module Copy = struct
   module Type = struct
-    type input =
-      { source : string
-      ; dest : string
-      ; item_ids : string list [@key "itemIds"] }
+    type input = {
+      source : string;
+      dest : string;
+      item_ids : string list; [@key "itemIds"]
+    }
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
 
-    type output =
-      { task_id : string [@key "taskId"]
-      ; task_name : string [@key "taskName"] }
+    type output = {
+      task_id : string; [@key "taskId"]
+      task_name : string; [@key "taskName"]
+    }
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
@@ -225,9 +236,9 @@ module Copy = struct
     include Type
 
     let handle input =
-      let input = {U.source = input.source; dest = input.dest; item_ids = input.item_ids} in
+      let input = { U.source = input.source; dest = input.dest; item_ids = input.item_ids } in
       match%lwt U.execute input with
-      | Ok s -> Lwt.return_ok {task_id = s |> Uuidm.to_string; task_name = "Copy"}
+      | Ok s -> Lwt.return_ok { task_id = s |> Uuidm.to_string; task_name = "Copy" }
       | Error (`Not_found _) -> Lwt.return_error Gateway_error.(Filer_not_found)
   end
 end
@@ -236,9 +247,10 @@ end
 module Jump_location = struct
   (** request and response definition *)
   module Type = struct
-    type input =
-      { location : string
-      ; name : string }
+    type input = {
+      location : string;
+      name : string;
+    }
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
 
     type output = T.Filer.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
@@ -255,8 +267,10 @@ module Jump_location = struct
 
     let handle param =
       let input =
-        { U.location = Path.of_string param.location |> Path.resolve (module System)
-        ; name = param.name }
+        {
+          U.location = Path.of_string param.location |> Path.resolve (module System);
+          name = param.name;
+        }
       in
       match%lwt U.execute input with
       | Ok t -> T.Filer.of_domain t |> Lwt.return_ok

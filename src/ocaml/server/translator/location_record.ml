@@ -1,25 +1,27 @@
 open Sxfiler_core
 module D = Sxfiler_domain.Location_record
 
-type t =
-  { location : string
-  ; timestamp : string }
+type t = {
+  location : string;
+  timestamp : string;
+}
 [@@deriving show]
 
-let to_json t = `Assoc [("location", `String t.location); ("timestamp", `String t.timestamp)]
+let to_json t = `Assoc [ ("location", `String t.location); ("timestamp", `String t.timestamp) ]
 
 let of_json js =
   let open Yojson.Safe.Util in
   try
     let location = js |> member "location" |> to_string
     and timestamp = js |> member "timestamp" |> to_string in
-    Ok {location; timestamp}
+    Ok { location; timestamp }
   with Type_error (s, value) -> Error (Protocol_conv_json.Json.make_error ~value s)
 
 let of_json_exn js =
   match of_json js with Ok v -> v | Error e -> raise (Protocol_conv_json.Json.Protocol_error e)
 
 let of_domain t =
-  {location = Path.to_string t.D.location; timestamp = Int64.to_string t.D.timestamp}
+  { location = Path.to_string t.D.location; timestamp = Int64.to_string t.D.timestamp }
 
-let to_domain t = {D.location = Path.of_string t.location; timestamp = Int64.of_string t.timestamp}
+let to_domain t =
+  { D.location = Path.of_string t.location; timestamp = Int64.of_string t.timestamp }

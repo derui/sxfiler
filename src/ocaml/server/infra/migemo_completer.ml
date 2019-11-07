@@ -4,10 +4,10 @@ module T = Sxfiler_domain
 include T.Completer
 
 module Core = struct
-  type t = {migemo : Migemocaml.Migemo.t}
+  type t = { migemo : Migemocaml.Migemo.t }
   (** The type of completer. *)
 
-  let make ~migemo = {migemo}
+  let make ~migemo = { migemo }
   let is_some = function Some _ -> true | None -> false
 
   let read t ~input ~collection =
@@ -18,7 +18,7 @@ module Core = struct
          | None, _ -> failwith "Invalid branch"
          | Some group, v ->
              let start, length = Re.Group.offset group 0 in
-             {T.Completion.Candidate.start; length = length - start; value = v})
+             { T.Completion.Candidate.start; length = length - start; value = v })
 end
 
 let make ~migemo =

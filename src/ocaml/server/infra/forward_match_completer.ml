@@ -19,7 +19,7 @@ module Core = struct
          | None, _ -> failwith "Invalid branch"
          | Some group, v ->
              let start, length = Re.Group.offset group 0 in
-             {T.Completion.Candidate.start; length = length - start; value = v})
+             { T.Completion.Candidate.start; length = length - start; value = v })
 end
 
 let make () =

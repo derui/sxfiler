@@ -12,12 +12,13 @@ type body = string
 type id = Uuidm.t
 (** Identifier of the notification. Each notifications has global unique identifier. *)
 
-type t =
-  { id : id
-  ; level : level
-  ; body : body }
+type t = {
+  id : id;
+  level : level;
+  body : body;
+}
 
-let make ~id ~level ~body = {id; level; body}
+let make ~id ~level ~body = { id; level; body }
 
 module Json = struct
   (** level of notification. *)
@@ -34,10 +35,11 @@ module Json = struct
     type t = string [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
-  type t =
-    { id : string
-    ; level : Level.t
-    ; body : Body.t }
+  type t = {
+    id : string;
+    level : Level.t;
+    body : Body.t;
+  }
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 end
 
@@ -54,7 +56,7 @@ module Conv = struct
 
   let of_domain t =
     let level = Level.of_domain t.level in
-    {Json.id = Uuidm.to_string t.id; body = Body.of_domain t.body; level}
+    { Json.id = Uuidm.to_string t.id; body = Body.of_domain t.body; level }
 
   let to_domain t =
     let open Sxfiler_core in
@@ -65,4 +67,4 @@ end
 
 let notification_typ : t Notification_service.typ =
   let open Sxfiler_core.Fun in
-  {to_method = (fun _ -> "notification/message"); to_json = Conv.of_domain %> Json.to_json}
+  { to_method = (fun _ -> "notification/message"); to_json = Conv.of_domain %> Json.to_json }

@@ -9,11 +9,12 @@ module Dummy_system = struct
   let getcwd () = "/foo"
 end
 
-let random_state = Random.State.make [|0|]
+let random_state = Random.State.make [| 0 |]
 let task_id = Uuidm.v4_gen random_state ()
 
 let test_set =
-  [ Alcotest_lwt.test_case "execute use case with the parameters" `Quick (fun _ () ->
+  [
+    Alcotest_lwt.test_case "execute use case with the parameters" `Quick (fun _ () ->
         let spy, f = Spy.wrap (fun _ -> Lwt.return_ok ()) in
         let module Usecase = struct
           include U.Task.Send_reply.Type
@@ -23,10 +24,11 @@ let test_set =
         let module Gateway = G.Task.Send_reply.Make (Usecase) in
         let%lwt _ =
           Gateway.handle
-            {task_id = Uuidm.to_string task_id; reply = T.Task_interaction.Reply.Overwrite true}
+            { task_id = Uuidm.to_string task_id; reply = T.Task_interaction.Reply.Overwrite true }
         in
         Alcotest.(check @@ list @@ of_pp Fmt.nop)
           "called"
-          [{D.Task_interaction.Reply.task_id; reply = D.Task_interaction.Reply.Overwrite true}]
-          (Spy.Wrap.called_args spy) ;
-        Lwt.return_unit) ]
+          [ { D.Task_interaction.Reply.task_id; reply = D.Task_interaction.Reply.Overwrite true } ]
+          (Spy.Wrap.called_args spy);
+        Lwt.return_unit);
+  ]

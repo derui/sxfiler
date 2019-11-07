@@ -1,6 +1,7 @@
-type t =
-  { location : string
-  ; timestamp : string }
+type t = {
+  location : string;
+  timestamp : string;
+}
 [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 (** the type that is JSON friendly for {!Sxfiler_domain.Location_record.t} *)
 

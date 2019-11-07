@@ -12,10 +12,11 @@ type body = string
 type id = Uuidm.t
 (** Identifier of the notification. Each notifications has global unique identifier. *)
 
-type t = private
-  { id : id
-  ; level : level
-  ; body : body }
+type t = private {
+  id : id;
+  level : level;
+  body : body;
+}
 
 val make : id:id -> level:level -> body:body -> t
 (** [make ~id ~level ~body] is as constructor of [t] *)
@@ -35,10 +36,11 @@ module Json : sig
     type t = string [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
-  type t =
-    { id : string
-    ; level : Level.t
-    ; body : Body.t }
+  type t = {
+    id : string;
+    level : Level.t;
+    body : Body.t;
+  }
   [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
   (** the type that is JSON friendly for {!Sxfiler_domain.Notification.t} *)
 end

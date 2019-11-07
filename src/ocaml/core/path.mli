@@ -9,7 +9,8 @@ type t
 
 type env =
   [ `Unix
-  | `Win ]
+  | `Win
+  ]
 
 val equal : t -> t -> bool
 (** [equal v1 v2] equals between [v1] and [v2]. *)

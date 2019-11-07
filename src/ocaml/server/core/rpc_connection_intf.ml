@@ -21,8 +21,7 @@ module type Connection = sig
       saved as global. *)
 
   val disconnect : t -> unit Lwt.t
-  (** [disconnect t] kills global connection. Notice disconnected connection can not use after
-      this. *)
+  (** [disconnect t] kills global connection. Notice disconnected connection can not use after this. *)
 
   val default_input_handler : t -> W.Frame.t -> unit Lwt.t
   (** [default_input_handler t f] handles frame [f] with default behavior. Handling frame with

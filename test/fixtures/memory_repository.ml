@@ -6,7 +6,7 @@ module D = Sxfiler_domain
 (** make new in-memory repository for Filer *)
 let filer_repository ?(initial = []) () =
   let hash : (D.Filer.id, D.Filer.t) Hashtbl.t = Hashtbl.create 10 in
-  List.iter (fun t -> Hashtbl.add hash t.D.Filer.id t) initial ;
+  List.iter (fun t -> Hashtbl.add hash t.D.Filer.id t) initial;
   ( module struct
     let resolve id = Hashtbl.find hash id |> Lwt.return
 
@@ -25,7 +25,7 @@ let key_map_repository init =
     let resolve () = Lwt.return !data
 
     let store t =
-      data := t ;
+      data := t;
       Lwt.return_unit
   end : D.Key_map_repository.S )
 
@@ -43,11 +43,11 @@ let bookmark_repository init =
 
     let store t =
       let data' = List.filter (fun v -> not @@ D.Bookmark.have_same_id v t) !data |> List.cons t in
-      data := data' ;
+      data := data';
       Lwt.return_unit
 
     let remove t =
       let data' = List.filter (fun v -> not @@ D.Bookmark.have_same_id v t) !data in
-      data := data' ;
+      data := data';
       Lwt.return_unit
   end : D.Bookmark_repository.S )

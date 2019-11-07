@@ -2,11 +2,12 @@ open Sxfiler_core
 
 type id = Uuidm.t [@@deriving show, eq]
 
-type t = private
-  { (* path of the node *)
-    id : id
-  ; path : Path.t
-  ; order : int }
+type t = private {
+  (* path of the node *)
+  id : id;
+  path : Path.t;
+  order : int;
+}
 [@@deriving show, eq]
 
 val make : id:id -> path:Path.t -> order:int -> t

@@ -6,9 +6,11 @@ module F = Test_fixtures
 let key_map =
   let module K = Sxfiler_kbd in
   let bindings =
-    [ ([], K.of_keyseq "k" |> Option.get_exn, "action1")
-    ; (["foo"], K.of_keyseq "j" |> Option.get_exn, "action2")
-    ; (["bar"], K.of_keyseq "h" |> Option.get_exn, "action3") ]
+    [
+      ([], K.of_keyseq "k" |> Option.get_exn, "action1");
+      ([ "foo" ], K.of_keyseq "j" |> Option.get_exn, "action2");
+      ([ "bar" ], K.of_keyseq "h" |> Option.get_exn, "action3");
+    ]
   in
   let key_map = D.Key_map.make () in
   List.fold_left
@@ -16,7 +18,8 @@ let key_map =
     key_map bindings
 
 let test_set =
-  [ Alcotest_lwt.test_case "resolve key map from path" `Quick (fun _ () ->
+  [
+    Alcotest_lwt.test_case "resolve key map from path" `Quick (fun _ () ->
         let module Dummy = struct
           let getcwd () = Sys.getcwd ()
         end in
@@ -26,5 +29,6 @@ let test_set =
           let path = path
         end) in
         let%lwt resolved = M.resolve () in
-        Alcotest.(check @@ F.Testable.key_map) "key_map" resolved key_map ;
-        Lwt.return_unit) ]
+        Alcotest.(check @@ F.Testable.key_map) "key_map" resolved key_map;
+        Lwt.return_unit);
+  ]

@@ -13,7 +13,7 @@ module Make (L : Location) : D.Key_map_resolve_service.S = struct
     match Y.of_json keymap with
     | Error err ->
         Logs.warn (fun m ->
-            m "Error occurred: %s" @@ Protocol_conv_json.Json.error_to_string_hum err) ;
+            m "Error occurred: %s" @@ Protocol_conv_json.Json.error_to_string_hum err);
         Lwt.fail_with "Invalid key map"
     | Ok v -> Lwt.return @@ Y.to_domain v
 end

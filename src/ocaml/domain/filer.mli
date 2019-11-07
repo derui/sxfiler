@@ -8,13 +8,14 @@ module Marked_item_set : sig
   val pp : Format.formatter -> t -> unit
 end
 
-type t = private
-  { id : id
-  ; name : string
-  ; file_list : File_list.t
-  ; history : Location_history.t
-  ; marked_items : Marked_item_set.t
-  ; sort_order : Types.Sort_type.t }
+type t = private {
+  id : id;
+  name : string;
+  file_list : File_list.t;
+  history : Location_history.t;
+  marked_items : Marked_item_set.t;
+  sort_order : Types.Sort_type.t;
+}
 [@@deriving eq, show, make]
 
 (* sort items with sort_order in [t] *)

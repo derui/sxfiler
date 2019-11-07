@@ -6,8 +6,7 @@ module E = Jsonrpc.Types.Error_code
 
 let of_gateway_error = function
   | G.Gateway_error.Unknown_error v ->
-      raise
-        Jye.(Jsonrpc_error (make (E.make ~message:Printf.(sprintf "Unknown error: %s" v) (-1))))
+      raise Jye.(Jsonrpc_error (make (E.make ~message:Printf.(sprintf "Unknown error: %s" v) (-1))))
   | Filer_already_exists ->
       raise Jye.(Jsonrpc_error (make @@ E.make ~message:"Filer already exists" (-3)))
   | Filer_not_found -> raise Jye.(Jsonrpc_error (make @@ E.make ~message:"Filer not found" (-2)))

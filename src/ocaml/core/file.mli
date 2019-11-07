@@ -1,5 +1,4 @@
-(** File module provides utility functions for file management such as creating temporary
-    directory. *)
+(** File module provides utility functions for file management such as creating temporary directory. *)
 
 val mk_temp_dir : ?mode:int -> ?dir:string -> string -> string
 (** [with_temp_dir ?mode ?dir pat] returns name of temporary directory in [dir]. Using

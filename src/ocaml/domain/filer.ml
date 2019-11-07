@@ -16,16 +16,17 @@ module Marked_item_set = struct
     Format.fprintf fmt "%s" @@ printer ids
 end
 
-type t =
-  { id : id
-  ; name : string
-  ; file_list : File_list.t
-  ; history : Location_history.t
-  ; marked_items : Marked_item_set.t
-  ; sort_order : Types.Sort_type.t }
+type t = {
+  id : id;
+  name : string;
+  file_list : File_list.t;
+  history : Location_history.t;
+  marked_items : Marked_item_set.t;
+  sort_order : Types.Sort_type.t;
+}
 [@@deriving eq, show, make]
 
-let has_same_id {id = id1; _} {id = id2; _} = equal_id id1 id2
+let has_same_id { id = id1; _ } { id = id2; _ } = equal_id id1 id2
 let find_item t = File_list.find_item t.file_list
 
 let update_list t ~file_list =
@@ -37,25 +38,23 @@ let update_list t ~file_list =
       Marked_item_set.inter t.marked_items current_items
     else Marked_item_set.empty
   in
-  {t with file_list = File_list.sort_items file_list ~order:t.sort_order; marked_items}
+  { t with file_list = File_list.sort_items file_list ~order:t.sort_order; marked_items }
 
 let move_location t ~file_list clock =
   let record = Location_record.record_of ~location:file_list.File_list.location clock in
   let history = Location_history.add_record t.history ~record in
   let t' = update_list t ~file_list in
-  {t' with history}
+  { t' with history }
 
 let add_mark t ~ids =
-  let marked_items =
-    List.fold_left (fun set id -> Marked_item_set.add id set) t.marked_items ids
-  in
-  {t with marked_items}
+  let marked_items = List.fold_left (fun set id -> Marked_item_set.add id set) t.marked_items ids in
+  { t with marked_items }
 
 let remove_mark t ~ids =
   let marked_items =
     List.fold_left (fun set id -> Marked_item_set.remove id set) t.marked_items ids
   in
-  {t with marked_items}
+  { t with marked_items }
 
 module type Repository = Filer_intf.Repository with type t := t and type id := id
 

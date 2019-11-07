@@ -4,7 +4,7 @@ module G = Sxfiler_server_gateway
 let expose_key_map_procedures (module Dep : Dependencies.S) : (module Procedure.Spec) list =
   let module Get_gateway = G.Keymap.Get.Make (Dep.Usecase.Keymap_get) in
   let module Reload_gateway = G.Keymap.Reload.Make (Dep.Usecase.Keymap_reload) in
-  [(module Proc_keymap.Get_spec (Get_gateway)); (module Proc_keymap.Reload_spec (Reload_gateway))]
+  [ (module Proc_keymap.Get_spec (Get_gateway)); (module Proc_keymap.Reload_spec (Reload_gateway)) ]
 
 let expose_filer_procedures (module Dep : Dependencies.S) : (module Procedure.Spec) list =
   let module Make_gateway = G.Filer.Make.Make (Dep.System) (Dep.Usecase.Filer_make) in
@@ -19,51 +19,59 @@ let expose_filer_procedures (module Dep : Dependencies.S) : (module Procedure.Sp
   let module Jump_location_gateway =
     G.Filer.Jump_location.Make (Dep.System) (Dep.Usecase.Filer_jump_location)
   in
-  [ (module Proc_filer.Make_spec (Make_gateway))
-  ; (module Proc_filer.Get_spec (Get_gateway))
-  ; (module Proc_filer.Move_parent_spec (Move_parent_gateway))
-  ; (module Proc_filer.Enter_directory_spec (Enter_directory_gateway))
-  ; (module Proc_filer.Toggle_mark_spec (Toggle_mark_gateway))
-  ; (module Proc_filer.Move_spec (Move_gateway))
-  ; (module Proc_filer.Copy_spec (Copy_gateway))
-  ; (module Proc_filer.Delete_spec (Delete_gateway))
-  ; (module Proc_filer.Jump_location_spec (Jump_location_gateway)) ]
+  [
+    (module Proc_filer.Make_spec (Make_gateway));
+    (module Proc_filer.Get_spec (Get_gateway));
+    (module Proc_filer.Move_parent_spec (Move_parent_gateway));
+    (module Proc_filer.Enter_directory_spec (Enter_directory_gateway));
+    (module Proc_filer.Toggle_mark_spec (Toggle_mark_gateway));
+    (module Proc_filer.Move_spec (Move_gateway));
+    (module Proc_filer.Copy_spec (Copy_gateway));
+    (module Proc_filer.Delete_spec (Delete_gateway));
+    (module Proc_filer.Jump_location_spec (Jump_location_gateway));
+  ]
 
 let expose_configuration_procedures (module Dep : Dependencies.S) : (module Procedure.Spec) list =
   let module S = Jsonrpc_yojson.Server in
   let module Gateway = G.Configuration.Get.Make (Dep.Usecase.Configuration_get) in
-  [(module Proc_configuration.Get_spec (Gateway))]
+  [ (module Proc_configuration.Get_spec (Gateway)) ]
 
 let expose_completion_procedures (module Dep : Dependencies.S) : (module Procedure.Spec) list =
   let module S = Jsonrpc_yojson.Server in
   let module Setup_gateway = G.Completion.Setup.Make (Dep.Usecase.Completion_setup) in
   let module Read_gateway = G.Completion.Read.Make (Dep.Usecase.Completion_read) in
-  [ (module Proc_completion.Setup_spec (Setup_gateway))
-  ; (module Proc_completion.Read_spec (Read_gateway)) ]
+  [
+    (module Proc_completion.Setup_spec (Setup_gateway));
+    (module Proc_completion.Read_spec (Read_gateway));
+  ]
 
 let expose_task_procedures (module Dep : Dependencies.S) : (module Procedure.Spec) list =
   let module S = Jsonrpc_yojson.Server in
   let module Gateway = G.Task.Send_reply.Make (Dep.Usecase.Task_send_reply) in
-  [(module Proc_task.Send_reply_spec (Gateway))]
+  [ (module Proc_task.Send_reply_spec (Gateway)) ]
 
 let expose_bookmark_procedures (module Dep : Dependencies.S) : (module Procedure.Spec) list =
   let module S = Jsonrpc_yojson.Server in
   let module List_all_gateway = G.Bookmark.List_all.Make (Dep.Usecase.Bookmark_list_all) in
   let module Regiter_gateway = G.Bookmark.Register.Make (Dep.Usecase.Bookmark_register) in
   let module Delete_gateway = G.Bookmark.Delete.Make (Dep.Usecase.Bookmark_delete) in
-  [ (module Proc_bookmark.List_all_spec (List_all_gateway))
-  ; (module Proc_bookmark.Register_spec (Regiter_gateway))
-  ; (module Proc_bookmark.Delete_spec (Delete_gateway)) ]
+  [
+    (module Proc_bookmark.List_all_spec (List_all_gateway));
+    (module Proc_bookmark.Register_spec (Regiter_gateway));
+    (module Proc_bookmark.Delete_spec (Delete_gateway));
+  ]
 
 let expose_all server (module Dep : Dependencies.S) =
   let procedures =
     List.concat
-      [ expose_filer_procedures (module Dep)
-      ; expose_key_map_procedures (module Dep)
-      ; expose_configuration_procedures (module Dep)
-      ; expose_completion_procedures (module Dep)
-      ; expose_task_procedures (module Dep)
-      ; expose_bookmark_procedures (module Dep) ]
+      [
+        expose_filer_procedures (module Dep);
+        expose_key_map_procedures (module Dep);
+        expose_configuration_procedures (module Dep);
+        expose_completion_procedures (module Dep);
+        expose_task_procedures (module Dep);
+        expose_bookmark_procedures (module Dep);
+      ]
   in
   List.fold_left
     (fun server (module Spec : Procedure.Spec) ->

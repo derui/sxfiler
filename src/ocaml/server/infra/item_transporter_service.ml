@@ -14,7 +14,7 @@ module Make
     (NS : Notification_service.S)
     (MF : Message_notification_factory.S)
     (PF : Progress_notification_factory.S) : D.Item_transporter_service.S = struct
-  module Log = (val C.Logger.make ["infra"; "item_transport"])
+  module Log = (val C.Logger.make [ "infra"; "item_transport" ])
 
   let item_name_set file_tree =
     let item_names_in_to =
@@ -31,7 +31,7 @@ module Make
         let name = Path.basename item.D.File_item.full_path in
         let to_location = _to.D.File_list.location in
         let source = Path.to_string item.D.File_item.full_path in
-        let dest = Path.of_list [Path.to_string to_location; name] |> Path.to_string in
+        let dest = Path.of_list [ Path.to_string to_location; name ] |> Path.to_string in
         let move dst = Lwt_unix.rename source dst in
         let%lwt () =
           if Item_name_set.mem name name_set_in_to then
@@ -41,11 +41,11 @@ module Make
             | D.Task_interaction.Reply.Overwrite true -> move dest
             | Overwrite false -> Lwt.return_unit
             | Rename name ->
-                let dest = Path.of_list [Path.to_string to_location; name] |> Path.to_string in
+                let dest = Path.of_list [ Path.to_string to_location; name ] |> Path.to_string in
                 move dest
           else move dest
         in
-        Log.debug (fun m -> m "Move file: [%s] -> [%s]" source dest) ;%lwt
+        Log.debug (fun m -> m "Move file: [%s] -> [%s]" source dest);%lwt
         MF.create ~level:Message_notification.Info
           ~body:Printf.(sprintf "Move file: [%s] -> [%s]" dest source)
         |> NS.send ~typ:Message_notification.notification_typ)

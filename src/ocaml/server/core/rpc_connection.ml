@@ -5,10 +5,11 @@ open Rpc_connection_abbrev
 include Rpc_connection_intf
 
 module Impl = struct
-  type t =
-    { mutable output_writer : W.Frame.t option -> unit
-    ; input_stream : W.Frame.t Lwt_stream.t
-    ; input_writer : W.Frame.t option -> unit }
+  type t = {
+    mutable output_writer : W.Frame.t option -> unit;
+    input_stream : W.Frame.t Lwt_stream.t;
+    input_writer : W.Frame.t option -> unit;
+  }
   (** Type of Rpc_connection. output_writer is created by Websocket_cohttp_lwt.upgrade_connection,
       and do not get stream of it. *)
 
@@ -16,7 +17,7 @@ module Impl = struct
   let process_input t ~f = Lwt_stream.iter_s f t.input_stream
   let push_input t ~frame = t.input_writer frame
 
-  module Log = (val Logger.make ["rpc_connection"])
+  module Log = (val Logger.make [ "rpc_connection" ])
 
   let connect t output_writer =
     if Lwt_stream.is_closed t.input_stream then
@@ -24,7 +25,7 @@ module Impl = struct
       Lwt.return_unit
     else
       let%lwt () = Log.info @@ fun m -> m "Connection connected with Websocket" in
-      t.output_writer <- output_writer ;
+      t.output_writer <- output_writer;
       Lwt.return_unit
 
   let disconnect t =
@@ -32,8 +33,8 @@ module Impl = struct
       let%lwt () = Log.warn @@ fun m -> m "Detected disconnect with disconnected connection" in
       Lwt.return_unit
     else (
-      t.input_writer None ;
-      t.output_writer <- (fun _ -> ()) ;
+      t.input_writer None;
+      t.output_writer <- (fun _ -> ());
       let%lwt () = Log.info @@ fun m -> m "Connection disconnected" in
       Lwt_stream.closed t.input_stream )
 
@@ -51,7 +52,7 @@ end
 
 let make () =
   let input_stream, input_writer = Lwt_stream.create () in
-  let t = {Impl.output_writer = (fun _ -> ()); input_stream; input_writer} in
+  let t = { Impl.output_writer = (fun _ -> ()); input_stream; input_writer } in
   ( module struct
     module Connection = Impl
 

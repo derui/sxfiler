@@ -6,11 +6,13 @@ let perm_to_mode perm =
     let readable = v land 0o4 = 0o4
     and writable = v land 0o2 = 0o2
     and executable = v land 0o1 = 0o1 in
-    {D.File_stat.readable; writable; executable}
+    { D.File_stat.readable; writable; executable }
   in
-  { D.File_stat.owner = int_to_cap (owner lsr 6)
-  ; group = int_to_cap (group lsr 3)
-  ; others = int_to_cap others }
+  {
+    D.File_stat.owner = int_to_cap (owner lsr 6);
+    group = int_to_cap (group lsr 3);
+    others = int_to_cap others;
+  }
 
 let stat_to_file_stat stat =
   let module F = Sxfiler_domain.File_stat in

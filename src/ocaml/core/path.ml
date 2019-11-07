@@ -14,14 +14,16 @@ type component =
 
 (* / on *nix, "" on Windows *)
 
-type t =
-  { root : string option
-  ; components : component list
-  ; resolved : bool }
+type t = {
+  root : string option;
+  components : component list;
+  resolved : bool;
+}
 
 type env =
   [ `Unix
-  | `Win ]
+  | `Win
+  ]
 
 let equal p1 p2 =
   match (p1.resolved, p2.resolved) with
@@ -40,8 +42,8 @@ let resolve_sep env =
     If path does not have separator, return tuple that first element is [path], and second is empty
     string.
 
-    Default separator is platform dependent separator such as [/] on *nix or [\\] on Windows when
-    do not pass separator. *)
+    Default separator is platform dependent separator such as [/] on *nix or [\\] on Windows when do
+    not pass separator. *)
 let split_path_sep ?env path =
   let length = String.length path in
   let sep = resolve_sep env in
@@ -62,10 +64,10 @@ let split_path_sep ?env path =
 
 (** [normalize_path ?env path] splits [path] with [env] as {!component}.
 
-    - {[ "/" => [Comp_empty] ]}
-    - {[ "C:\\" => [Comp_filename "C:"] ]}
-    - {[ "c/f" => [Comp_current;Comp_filename "c";Comp_filename "f"] ]}
-    - {[ "/a/b" => [Comp_empty;Comp_filename "a";Comp_filename "b"] ]} *)
+    - {[ "/" => [ Comp_empty ] ]}
+    - {[ "C:\\" => [ Comp_filename "C:" ] ]}
+    - {[ "c/f" => [ Comp_current; Comp_filename "c"; Comp_filename "f" ] ]}
+    - {[ "/a/b" => [ Comp_empty; Comp_filename "a"; Comp_filename "b" ] ]} *)
 let normalize_path ?env path =
   let path_to_component = function
     | "" -> Comp_empty
@@ -113,7 +115,7 @@ let of_string ?env path =
   else
     let components = normalize_path ?env path in
     let root, components = find_root ?env components in
-    {root; components; resolved = false}
+    { root; components; resolved = false }
 
 let resolve ?env sys path =
   if path.resolved then path
@@ -123,11 +125,11 @@ let resolve ?env sys path =
       match comps with
       | [] -> List.rev accum
       | head :: rest -> (
-        match head with
-        | Comp_current -> resolve_relatives rest accum
-        | Comp_empty -> resolve_relatives rest accum
-        | Comp_parent -> resolve_relatives rest (List.tl accum)
-        | Comp_filename _ as a -> resolve_relatives rest (a :: accum) )
+          match head with
+          | Comp_current -> resolve_relatives rest accum
+          | Comp_empty -> resolve_relatives rest accum
+          | Comp_parent -> resolve_relatives rest (List.tl accum)
+          | Comp_filename _ as a -> resolve_relatives rest (a :: accum) )
     in
     let root, components =
       match path.root with
@@ -136,7 +138,7 @@ let resolve ?env sys path =
           (cwd.root, cwd.components @ path.components)
       | Some _ -> (path.root, path.components)
     in
-    {root; resolved = true; components = resolve_relatives components []}
+    { root; resolved = true; components = resolve_relatives components [] }
 
 (** [to_string ?env path] get a string representation of [path] *)
 let to_string ?env path =
@@ -167,7 +169,7 @@ let basename path =
 let dirname_as_path path =
   match List.rev path.components with
   | [] -> path
-  | _ as components -> {path with components = List.rev @@ List.tl components}
+  | _ as components -> { path with components = List.rev @@ List.tl components }
 
 let dirname ?env path =
   let path' = dirname_as_path path in

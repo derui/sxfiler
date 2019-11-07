@@ -2,18 +2,22 @@
 
 (** Item is only type to complete by RPC with any value. *)
 module Item = struct
-  type t =
-    { id : string
-    ; value : string }
+  type t = {
+    id : string;
+    value : string;
+  }
   [@@deriving show]
 end
 
 (** {!Candidate} defines type of result of completion. *)
 module Candidate = struct
-  type t =
-    { start : int (* 0-origin index of match *)
-    ; length : int (* length of match started from [start] *)
-    ; value : Item.t }
+  type t = {
+    start : int;
+    (* 0-origin index of match *)
+    length : int;
+    (* length of match started from [start] *)
+    value : Item.t;
+  }
   [@@deriving show]
 
   (* shortcut functions for {!t} *)

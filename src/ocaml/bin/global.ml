@@ -35,7 +35,7 @@ end = struct
     match !t with
     | None ->
         let v = T.Runner.make (module G) in
-        t := Some v ;
+        t := Some v;
         v
     | Some t -> t
 end

@@ -1,6 +1,6 @@
 module G = Sxfiler_server_gateway
 module Rpc = Jsonrpc_yojson
-module Log = (val Sxfiler_server_core.Logger.make ["rpc"])
+module Log = (val Sxfiler_server_core.Logger.make [ "rpc" ])
 
 (** Types of spec of RPC to create procedure handler. This interface requires to define result and
     param always if procedure not required. *)
@@ -9,7 +9,7 @@ module type Spec = sig
   module Gateway : G.Core.Gateway
 
   val method_ : string
-  val param_requirement : [`Required | `Not_required of Gateway.input]
+  val param_requirement : [ `Required | `Not_required of Gateway.input ]
 end
 
 module type S = sig
@@ -27,21 +27,21 @@ module Make (S : Spec) : S = struct
     try%lwt
       Log.info (fun m ->
           m "Start procedure: {%s}, param: %s" method_
-            (Option.get ~default:(fun () -> `Null) req |> Yojson.Safe.to_string)) ;%lwt
+            (Option.get ~default:(fun () -> `Null) req |> Yojson.Safe.to_string));%lwt
       let%lwt result =
         let execute_with_param decoder =
           match req with
           | None ->
-              Logs.warn (fun m -> m "Required parameter not found") ;
+              Logs.warn (fun m -> m "Required parameter not found");
               raise Rpc.(Error.Jsonrpc_error (Error.make Jsonrpc.Types.Error_code.Invalid_params))
           | Some params -> (
-            match decoder params with
-            | Error _ ->
-                Logs.warn (fun m ->
-                    m "Required parameter can not encode: %s" (Yojson.Safe.to_string params)) ;
-                raise
-                  Rpc.(Error.Jsonrpc_error (Error.make Jsonrpc.Types.Error_code.Invalid_params))
-            | Ok param -> S.Gateway.handle param )
+              match decoder params with
+              | Error _ ->
+                  Logs.warn (fun m ->
+                      m "Required parameter can not encode: %s" (Yojson.Safe.to_string params));
+                  raise
+                    Rpc.(Error.Jsonrpc_error (Error.make Jsonrpc.Types.Error_code.Invalid_params))
+              | Ok param -> S.Gateway.handle param )
         in
         match S.param_requirement with
         | `Not_required param -> S.Gateway.handle param
@@ -50,7 +50,7 @@ module Make (S : Spec) : S = struct
       match result with
       | Error e -> Errors.of_gateway_error e
       | Ok output ->
-          Log.info (fun m -> m "Finish procedure: {%s}" method_) ;%lwt
+          Log.info (fun m -> m "Finish procedure: {%s}" method_);%lwt
           S.Gateway.output_to_json output |> Option.some |> Lwt.return_ok
     with
     | Rpc.Error.Jsonrpc_error e as exn ->

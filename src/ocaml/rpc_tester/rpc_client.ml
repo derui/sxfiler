@@ -4,9 +4,11 @@ module S = Sxfiler_server_gateway
 
 module Api = struct
   let filer_make : (S.Filer.Make.Type.input, S.Filer.Make.Type.output) Base.api_def =
-    { _method = "filer/make"
-    ; params_to_json = S.Filer.Make.Type.input_to_json
-    ; result_of_json = S.Filer.Make.Type.output_of_json_exn }
+    {
+      _method = "filer/make";
+      params_to_json = S.Filer.Make.Type.input_to_json;
+      result_of_json = S.Filer.Make.Type.output_of_json_exn;
+    }
 end
 
 let get_client send =

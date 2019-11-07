@@ -5,12 +5,13 @@ module T = Sxfiler_domain
 
 module Make = struct
   module Type = struct
-    type input =
-      { initial_location : Path.t
-      ; name : string }
+    type input = {
+      initial_location : Path.t;
+      name : string;
+    }
 
     type output = T.Filer.t
-    type error = [`Already_exists]
+    type error = [ `Already_exists ]
   end
 
   (** {!Make_sync} module defines interface to make filer. *)
@@ -46,9 +47,9 @@ end
 
 module Get = struct
   module Type = struct
-    type input = {name : string}
+    type input = { name : string }
     type output = T.Filer.t
-    type error = [`Not_found]
+    type error = [ `Not_found ]
   end
 
   module type S = sig
@@ -71,12 +72,13 @@ end
 module Jump_location = struct
   (* change current location of filer to new location *)
   module Type = struct
-    type input =
-      { name : string
-      ; location : Path.t }
+    type input = {
+      name : string;
+      location : Path.t;
+    }
 
     type output = T.Filer.t
-    type error = [`Not_found]
+    type error = [ `Not_found ]
   end
 
   module type S = sig
@@ -106,9 +108,9 @@ end
 module Move_parent = struct
   (* move parent location from current location of filer *)
   module Type = struct
-    type input = {name : string}
+    type input = { name : string }
     type output = T.Filer.t
-    type error = [`Not_found]
+    type error = [ `Not_found ]
   end
 
   module type S = sig
@@ -127,7 +129,7 @@ module Move_parent = struct
     let execute (params : input) =
       match%lwt SR.resolve_by_name params.name with
       | None -> Lwt.return_error `Not_found
-      | Some ({file_list; _} as filer) ->
+      | Some ({ file_list; _ } as filer) ->
           let parent_dir = Path.dirname_as_path file_list.location in
           let%lwt file_list = Svc.scan parent_dir in
           let filer' = T.Filer.move_location filer (module Clock) ~file_list in
@@ -139,16 +141,18 @@ end
 module Enter_directory = struct
   (* move to location of the item in filer *)
   module Type = struct
-    type input =
-      { name : string
-      ; item_id : string }
+    type input = {
+      name : string;
+      item_id : string;
+    }
 
     type output = T.Filer.t
 
     type error =
       [ `Not_found_filer
       | `Not_found_item
-      | `Not_directory ]
+      | `Not_directory
+      ]
   end
 
   module type S = sig
@@ -182,12 +186,13 @@ end
 
 module Toggle_mark = struct
   module Type = struct
-    type input =
-      { name : string
-      ; item_ids : T.File_item.id list }
+    type input = {
+      name : string;
+      item_ids : T.File_item.id list;
+    }
 
     type output = T.Filer.t
-    type error = [`Not_found]
+    type error = [ `Not_found ]
   end
 
   module type S = sig
@@ -205,8 +210,7 @@ module Toggle_mark = struct
       let filer =
         Option.(
           filer
-          >>= lift
-              @@ fun filer ->
+          >>= lift @@ fun filer ->
               let marked, not_marked =
                 List.partition
                   (fun v -> T.Filer.Marked_item_set.mem v filer.T.Filer.marked_items)
@@ -227,18 +231,21 @@ end
 module Move = struct
   (* Make plan to move items in filer to the location of another filer. *)
   module Type = struct
-    type input =
-      { source : string
-      ; dest : string
-      ; item_ids : T.File_item.id list }
+    type input = {
+      source : string;
+      dest : string;
+      item_ids : T.File_item.id list;
+    }
 
-    type output =
-      { task_id : T.Task_types.id
-      ; task_name : string }
+    type output = {
+      task_id : T.Task_types.id;
+      task_name : string;
+    }
 
     type error =
       [ `Not_found of string
-      | `Same_filer ]
+      | `Same_filer
+      ]
   end
 
   module type S = sig
@@ -266,15 +273,17 @@ module Move = struct
     let interaction = Lwt_mvar.create_empty ()
     let apply_interaction = `Apply (Lwt_mvar.put interaction)
 
-    let execute {T.Task_types.Context.task_id} =
+    let execute { T.Task_types.Context.task_id } =
       let open Dep in
       let source_filer = P.source_filer and dest_filer = P.dest_filer in
       let suggest item =
         let suggestion =
           T.Task_interaction.Suggestion.
-            { task_id
-            ; item_name = Path.basename item.T.File_item.full_path
-            ; suggestions = [Rename; Overwrite] }
+            {
+              task_id;
+              item_name = Path.basename item.T.File_item.full_path;
+              suggestions = [ Rename; Overwrite ];
+            }
         in
         (suggestion, Lwt_mvar.take interaction)
       in
@@ -288,7 +297,7 @@ module Move = struct
       and to_tree = Scan.scan dest_filer.file_list.location in
       let from_filer = T.Filer.update_list source_filer ~file_list:from_tree
       and to_filer = T.Filer.update_list dest_filer ~file_list:to_tree in
-      Lwt.(join [FR.store from_filer; FR.store to_filer])
+      Lwt.(join [ FR.store from_filer; FR.store to_filer ])
   end
 
   module Make (Dep : Dependencies) : S = struct
@@ -316,19 +325,20 @@ module Move = struct
             in
             let task = TF.create ~executor:(module Executor) in
             let%lwt () = TR.store task in
-            Lwt.return_ok {task_id = task.id; task_name = "Move"}
+            Lwt.return_ok { task_id = task.id; task_name = "Move" }
   end
 end
 
 (** Make plan to delete items *)
 module Delete = struct
   module Type = struct
-    type input =
-      { source : string
-      ; item_ids : T.File_item.id list }
+    type input = {
+      source : string;
+      item_ids : T.File_item.id list;
+    }
 
     type output = T.Task_types.id
-    type error = [`Not_found of string]
+    type error = [ `Not_found of string ]
   end
 
   module type S = sig
@@ -394,13 +404,14 @@ end
 module Copy = struct
   (* Make plan to move items in filer to the location of another filer. *)
   module Type = struct
-    type input =
-      { source : string
-      ; dest : string
-      ; item_ids : T.File_item.id list }
+    type input = {
+      source : string;
+      dest : string;
+      item_ids : T.File_item.id list;
+    }
 
     type output = T.Task_types.id
-    type error = [`Not_found of string]
+    type error = [ `Not_found of string ]
   end
 
   module type S = sig
@@ -428,15 +439,17 @@ module Copy = struct
     let interaction = Lwt_mvar.create_empty ()
     let apply_interaction = `Apply (Lwt_mvar.put interaction)
 
-    let execute {T.Task_types.Context.task_id} =
+    let execute { T.Task_types.Context.task_id } =
       let open Dep in
       let source_filer = P.source_filer and dest_filer = P.dest_filer in
       let suggest item =
         let suggestion =
           T.Task_interaction.Suggestion.
-            { task_id
-            ; item_name = Path.basename item.T.File_item.full_path
-            ; suggestions = [Rename; Overwrite] }
+            {
+              task_id;
+              item_name = Path.basename item.T.File_item.full_path;
+              suggestions = [ Rename; Overwrite ];
+            }
         in
         (suggestion, Lwt_mvar.take interaction)
       in
@@ -450,7 +463,7 @@ module Copy = struct
       and to_list = Scan.scan dest_filer.file_list.location in
       let from_filer = T.Filer.update_list source_filer ~file_list:from_list
       and to_filer = T.Filer.update_list dest_filer ~file_list:to_list in
-      Lwt.(join [FR.store from_filer; FR.store to_filer])
+      Lwt.(join [ FR.store from_filer; FR.store to_filer ])
   end
 
   module Make (Dep : Dependencies) : S = struct
@@ -458,8 +471,7 @@ module Copy = struct
 
     let execute (params : input) =
       let open Dep in
-      let%lwt source = FR.resolve_by_name params.source
-      and dest = FR.resolve_by_name params.dest in
+      let%lwt source = FR.resolve_by_name params.source and dest = FR.resolve_by_name params.dest in
       match (source, dest) with
       | None, _ -> Lwt.return_error (`Not_found params.source)
       | _, None -> Lwt.return_error (`Not_found params.dest)

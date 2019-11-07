@@ -2,7 +2,7 @@ open Task_types
 
 (** {!S} is signature to do the task. *)
 module type Executor = sig
-  val apply_interaction : [`No_interaction | `Apply of Task_interaction.Reply.typ -> unit Lwt.t]
+  val apply_interaction : [ `No_interaction | `Apply of Task_interaction.Reply.typ -> unit Lwt.t ]
   (** [apply_interaction interaction] applies an interaction to the executor. The Executor is able
       to do not define anything for interaction. *)
 
@@ -10,19 +10,20 @@ module type Executor = sig
   (** [execute ()] runs the task body. *)
 end
 
-type t =
-  { id : id
-  ; executor : (module Executor) [@printer fun _ _ -> ()] }
+type t = {
+  id : id;
+  executor : (module Executor); [@printer fun _ _ -> ()]
+}
 [@@deriving show]
 (** [!t] is . *)
 
 (** [make ~id ~operation] makes new plan [t] instance from. *)
-let make ~id ~executor = {id; executor}
+let make ~id ~executor = { id; executor }
 
 (** [execute t] execute the plan [t] with {!Executor}. *)
 let execute t =
   let module E = (val t.executor) in
-  E.execute {task_id = t.id}
+  E.execute { task_id = t.id }
 
 (** [apply_interaction ~interaction t] apply an interaction to the task *)
 let apply_interaction ~reply t =

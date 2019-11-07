@@ -1,7 +1,7 @@
 (** This module will run tasks with task queue. *)
 
 module D = Sxfiler_domain
-module Log = (val Sxfiler_server_core.Logger.make ["task"])
+module Log = (val Sxfiler_server_core.Logger.make [ "task" ])
 include Runner_intf
 
 module Task_state = Set.Make (struct
@@ -11,9 +11,10 @@ module Task_state = Set.Make (struct
 end)
 
 module Subscriber = struct
-  type t =
-    { id : Uuidm.t
-    ; f : subscriber }
+  type t = {
+    id : Uuidm.t;
+    f : subscriber;
+  }
 
   let compare v1 v2 = Uuidm.compare v1.id v2.id
 end
@@ -23,45 +24,47 @@ module Subscriber_set = Set.Make (Subscriber)
 module Impl (R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) = struct
   type thread_state =
     [ `Accepted of D.Task.t
-    | `Rejected ]
+    | `Rejected
+    ]
   (** only entry point to add task to task queue in this module. *)
 
-  type t =
-    { task_queue : D.Task.t Lwt_stream.t
-    ; task_queue_writer : D.Task.t option -> unit
-    ; mutable task_state : Task_state.t
-    ; task_state_lock : Lwt_mutex.t
-    ; task_mailbox : thread_state Lwt_mvar.t
-    ; wakener : unit Lwt.u
-    ; waiter : unit Lwt.t
-    ; handler_lock : Lwt_mutex.t
-    ; mutable subscribers : Subscriber_set.t
-    ; subscribers_lock : Lwt_mutex.t }
+  type t = {
+    task_queue : D.Task.t Lwt_stream.t;
+    task_queue_writer : D.Task.t option -> unit;
+    mutable task_state : Task_state.t;
+    task_state_lock : Lwt_mutex.t;
+    task_mailbox : thread_state Lwt_mvar.t;
+    wakener : unit Lwt.u;
+    waiter : unit Lwt.t;
+    handler_lock : Lwt_mutex.t;
+    mutable subscribers : Subscriber_set.t;
+    subscribers_lock : Lwt_mutex.t;
+  }
 
   (** Forever loop to accept task. Running this function must be in other thread of worker thread. *)
   let accept_task_loop t =
     let rec loop () =
       let open Lwt in
-      Log.info (fun m -> m "Waiting task entry...") ;%lwt
+      Log.info (fun m -> m "Waiting task entry...");%lwt
       let%lwt task = Lwt_mvar.take t.task_mailbox in
       match task with
       | `Accepted task ->
-          Log.info (fun m -> m "Task accepted") ;%lwt
+          Log.info (fun m -> m "Task accepted");%lwt
           Lwt.return @@ t.task_queue_writer (Some task) >>= loop
       | `Rejected ->
-          Log.info (fun m -> m "Rejected") ;%lwt
+          Log.info (fun m -> m "Rejected");%lwt
           Lwt.return_unit
     in
     loop ()
 
   let add_state t id =
     Lwt_mutex.with_lock t.task_state_lock (fun () ->
-        t.task_state <- Task_state.add id t.task_state ;
+        t.task_state <- Task_state.add id t.task_state;
         Lwt.return_unit)
 
   let remove_state t id =
     Lwt_mutex.with_lock t.task_state_lock (fun () ->
-        t.task_state <- Task_state.remove id t.task_state ;
+        t.task_state <- Task_state.remove id t.task_state;
         Lwt.return_unit)
 
   (** Forever loop to run task. *)
@@ -72,7 +75,7 @@ module Impl (R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) = struct
            let%lwt () = add_state t task.D.Task.id in
            Lwt.finalize
              (fun () ->
-               Log.info (fun m -> m "Start executing task [%s]..." Uuidm.(to_string task.id)) ;%lwt
+               Log.info (fun m -> m "Start executing task [%s]..." Uuidm.(to_string task.id));%lwt
                let%lwt () = D.Task.(execute task) in
                Log.info (fun m -> m "Finish executing task [%s]" Uuidm.(to_string task.id)))
              (fun () ->
@@ -89,15 +92,15 @@ module Impl (R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) = struct
 
   let subscribe t ~f =
     let id = R.generate () in
-    let f' = {Subscriber.id; f} in
+    let f' = { Subscriber.id; f } in
     let unsubscribe () =
       Lwt_mutex.with_lock t.subscribers_lock (fun () ->
-          t.subscribers <- Subscriber_set.remove f' t.subscribers ;
+          t.subscribers <- Subscriber_set.remove f' t.subscribers;
           Lwt.return_unit)
     in
     Lwt_mutex.with_lock t.task_state_lock (fun () ->
-        t.subscribers <- Subscriber_set.add f' t.subscribers ;
-        Lwt.return_unit) ;%lwt
+        t.subscribers <- Subscriber_set.add f' t.subscribers;
+        Lwt.return_unit);%lwt
     Lwt.return unsubscribe
 
   let start t =
@@ -109,7 +112,7 @@ module Impl (R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) = struct
       (* Cancel all async threads. *)
       Lwt_mvar.put t.task_mailbox `Rejected
     in
-    Log.info (fun m -> m "Task runner started") ;%lwt
+    Log.info (fun m -> m "Task runner started");%lwt
     let open Lwt in
     accepter <?> worker <?> stopper >>= fun () -> Log.info (fun m -> m "Task runner finished")
 
@@ -130,14 +133,16 @@ let make (module R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) =
     module Runner = Runner
 
     let instance =
-      { Runner.task_queue
-      ; task_queue_writer
-      ; task_state
-      ; task_state_lock
-      ; task_mailbox
-      ; waiter
-      ; wakener
-      ; handler_lock
-      ; subscribers
-      ; subscribers_lock }
+      {
+        Runner.task_queue;
+        task_queue_writer;
+        task_state;
+        task_state_lock;
+        task_mailbox;
+        waiter;
+        wakener;
+        handler_lock;
+        subscribers;
+        subscribers_lock;
+      }
   end : Instance )

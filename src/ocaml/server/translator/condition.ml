@@ -1,11 +1,11 @@
 module D = Sxfiler_domain.Condition
 
-type t = {contexts : string list}
+type t = { contexts : string list }
 [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
 let of_domain t =
   let module T = Sxfiler_domain in
-  {contexts = T.Condition.to_list t}
+  { contexts = T.Condition.to_list t }
 
 let to_domain t =
   let empty = D.empty in

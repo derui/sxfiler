@@ -1,12 +1,13 @@
-type when_ = {contexts : string list} [@@deriving show]
+type when_ = { contexts : string list } [@@deriving show]
 
-type binding =
-  { key : string
-  ; action : string
-  ; when_ : when_ [@key "when"] }
+type binding = {
+  key : string;
+  action : string;
+  when_ : when_; [@key "when"]
+}
 [@@deriving show]
 
-type t = {bindings : binding list}
+type t = { bindings : binding list }
 [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 (** the type that is JSON friendly for {!Sxfiler_domain.Key_map.t} *)
 

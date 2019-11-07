@@ -3,12 +3,12 @@ module type Base = sig
   type 'a t
 
   val bind : 'a t -> f:('a -> 'b t) -> 'b t
-  val fmap : [`Use_bind_to_define | `Use_original of 'a t -> f:('a -> 'b) -> 'b t]
+  val fmap : [ `Use_bind_to_define | `Use_original of 'a t -> f:('a -> 'b) -> 'b t ]
   val return : 'a -> 'a t
 end
 
-(** module interface of monad. This interface apply to single placeholder only, but you can use
-    this interface with type having placeholder more than two if you specify other placeholders. *)
+(** module interface of monad. This interface apply to single placeholder only, but you can use this
+    interface with type having placeholder more than two if you specify other placeholders. *)
 module type S = sig
   type 'a t
 
@@ -36,7 +36,7 @@ module type Base2 = sig
   type ('a, 'b) t
 
   val bind : ('a, 'b) t -> f:('a -> ('c, 'b) t) -> ('c, 'b) t
-  val fmap : [`Use_bind_to_define | `Use_original of ('a, 'b) t -> f:('a -> 'c) -> ('c, 'b) t]
+  val fmap : [ `Use_bind_to_define | `Use_original of ('a, 'b) t -> f:('a -> 'c) -> ('c, 'b) t ]
   val return : 'a -> ('a, 'b) t
 end
 
