@@ -8,7 +8,7 @@ module D = Sxfiler_domain
 exception Fail_load_migemo
 
 module Task_runner = Global.Task_runner (I.Id_generator.Gen_uuid)
-module Log = (val Logger.make ["main"])
+module Log = (val Logger.make [ "main" ])
 
 let create_server (module C : Rpc_connection.Instance) (module R : T.Runner.Instance) option =
   let module Completer = (val Global.Completer.get ()) in
@@ -52,8 +52,8 @@ let handler option (conn : _ * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Reque
               (let%lwt f = unsubscribe in
                let%lwt () = f () in
                Logs.info (fun m -> m "Terminate thread") |> Lwt.return)
-              |> Lwt.ignore_result) ;
-          Lwt.join [thread]) ;
+              |> Lwt.ignore_result);
+          Lwt.join [ thread ]);
       Lwt.return resp
   | _ ->
       let%lwt resp =
@@ -83,8 +83,7 @@ let load_keymap dir =
   let module Y = Sxfiler_server_translator.Key_map in
   match Y.of_json keymap with
   | Error err ->
-      Logs.warn (fun m ->
-          m "Error occurred: %s" @@ Protocol_conv_json.Json.error_to_string_hum err) ;
+      Logs.warn (fun m -> m "Error occurred: %s" @@ Protocol_conv_json.Json.error_to_string_hum err);
       None
   | Ok v -> Some (Y.to_domain v)
 
@@ -96,7 +95,7 @@ let initialize_modules ~migemo ~option =
     match migemo with
     | None ->
         Logs.warn (fun m ->
-            m "Use fallback completer via forward-match completer because can not load migemo") ;
+            m "Use fallback completer via forward-match completer because can not load migemo");
         I.Forward_match_completer.make ()
     | Some migemo -> I.Migemo_completer.make ~migemo
   in
@@ -105,50 +104,48 @@ let initialize_modules ~migemo ~option =
   let%lwt () =
     match stat () with
     | None ->
-        Logs.info (fun m -> m "Not found application state. Skip restoring") ;
+        Logs.info (fun m -> m "Not found application state. Skip restoring");
         Lwt.return_unit
     | Some v ->
-        Logs.info (fun m -> m "Restoring persisted stats...") ;
+        Logs.info (fun m -> m "Restoring persisted stats...");
         Lwt.join
-          [ Global.Root.with_lock (fun state ->
-                Logs_lwt.info (fun m -> m "Restoring persisted filers...") ;%lwt
+          [
+            Global.Root.with_lock (fun state ->
+                Logs_lwt.info (fun m -> m "Restoring persisted filers...");%lwt
                 let%lwt filers =
                   App_state.restore_filer_stats ~scanner:(module I.Location_scanner_service) v
                 in
                 let state =
-                  List.fold_left
-                    (fun state filer -> Root_state.add_filer ~filer state)
-                    state filers
+                  List.fold_left (fun state filer -> Root_state.add_filer ~filer state) state filers
                 in
-                Global.Root.update state ;%lwt
-                Logs_lwt.info (fun m -> m "Finish restoring persisted filers"))
-          ; Global.Bookmark.with_lock (fun _ ->
-                Logs_lwt.info (fun m -> m "Restoring persisted bookmarks...") ;%lwt
+                Global.Root.update state;%lwt
+                Logs_lwt.info (fun m -> m "Finish restoring persisted filers"));
+            Global.Bookmark.with_lock (fun _ ->
+                Logs_lwt.info (fun m -> m "Restoring persisted bookmarks...");%lwt
                 let bookmarks = App_state.restore_bookmarks v in
-                Global.Bookmark.update bookmarks ;%lwt
-                Logs_lwt.info (fun m -> m "Finish restoring persisted bookmarks")) ]
+                Global.Bookmark.update bookmarks;%lwt
+                Logs_lwt.info (fun m -> m "Finish restoring persisted bookmarks"));
+          ]
   in
   let config = get_config load_configuration option.App_option.configuration in
   let%lwt () =
     match config () with
     | None ->
-        Logs.warn (fun m -> m "Detect errors when load configuration. Use default configuration.") ;
+        Logs.warn (fun m -> m "Detect errors when load configuration. Use default configuration.");
         Lwt.return_unit
     | Some config -> Global.Configuration.update config
   in
   let keymap = get_config load_keymap option.App_option.configuration in
   match keymap () with
   | None ->
-      Logs.warn (fun m -> m "Detect errors when load keymap. Use default keymap.") ;
+      Logs.warn (fun m -> m "Detect errors when load keymap. Use default keymap.");
       Lwt.return_unit
   | Some keymap -> Global.Keymap.update keymap
 
 let start_server _ option =
   let conn_closed (ch, _) =
-    Logs.info
-    @@ fun m ->
-    m "Connection closed: %s closed"
-      (Sexplib.Sexp.to_string_hum (Conduit_lwt_unix.sexp_of_flow ch))
+    Logs.info @@ fun m ->
+    m "Connection closed: %s closed" (Sexplib.Sexp.to_string_hum (Conduit_lwt_unix.sexp_of_flow ch))
   in
   let%lwt () = Log.info @@ fun m -> m "Listening for HTTP on port %d" option.App_option.port in
   Cohttp_lwt_unix.Server.create
@@ -163,69 +160,70 @@ let load_migemo dict_dir =
   and han_to_zen = "han2zen.dat" in
   let dict_file = Filename.concat dict_dir migemo_dict in
   if not @@ Sys.file_exists dict_file then (
-    Logs.err (fun m -> m "Dict file not found: %s" dict_file) ;
+    Logs.err (fun m -> m "Dict file not found: %s" dict_file);
     None )
   else
     let module M = Migemocaml in
     match M.Dict_tree.load_dict dict_file with
     | None ->
-        Logs.err (fun m -> m "Dict can not load: %s" dict_file) ;
+        Logs.err (fun m -> m "Dict can not load: %s" dict_file);
         None
     | Some migemo_dict ->
         let hira_to_kata =
-          Logs.info (fun m -> m "Loading %s" hira_to_kata) ;
+          Logs.info (fun m -> m "Loading %s" hira_to_kata);
           M.Dict_tree.load_conv @@ Filename.concat dict_dir hira_to_kata
         and romaji_to_hira =
-          Logs.info (fun m -> m "Loading %s" roma_to_hira) ;
+          Logs.info (fun m -> m "Loading %s" roma_to_hira);
           M.Dict_tree.load_conv @@ Filename.concat dict_dir roma_to_hira
         and han_to_zen =
-          Logs.info (fun m -> m "Loading %s" han_to_zen) ;
+          Logs.info (fun m -> m "Loading %s" han_to_zen);
           M.Dict_tree.load_conv @@ Filename.concat dict_dir han_to_zen
         in
         Some (M.Migemo.make ~dict:migemo_dict ?hira_to_kata ?romaji_to_hira ?han_to_zen ())
 
 let persist_app_state global_state ~file_name ~bookmarks =
-  Logs.info (fun m -> m "Start app state persisting...") ;
+  Logs.info (fun m -> m "Start app state persisting...");
   let app_state = App_state.empty in
   let filers = Root_state.list_filer global_state in
   let app_state =
     List.fold_left
       (fun state filer ->
-        Logs.info (fun m -> m "Persist filer %s..." filer.D.Filer.name) ;
+        Logs.info (fun m -> m "Persist filer %s..." filer.D.Filer.name);
         App_state.add_filer_stat filer state)
       app_state filers
   in
-  Logs.info (fun m -> m "Persist bookmarks...") ;
+  Logs.info (fun m -> m "Persist bookmarks...");
   let app_state = App_state.put_bookmarks bookmarks app_state in
   let json = App_state.to_json app_state in
-  Yojson.Safe.to_file file_name json ;
+  Yojson.Safe.to_file file_name json;
   Logs.info (fun m -> m "Finish app state persisting")
 
-let register_cleanup_handlers w =
-  Lwt_unix.on_signal Sys.sigint (fun _ -> Lwt.wakeup_exn w (Failure "Caught SIGINT")) |> ignore
+let register_cleanup_handlers w = Lwt_unix.on_signal Sys.sigint (fun _ -> Lwt.wakeup w ()) |> ignore
 
 (* main routine. *)
 let () =
   let executable_dir = Filename.dirname Sys.argv.(0) in
   let option = App_option.parse executable_dir in
-  Random.init Unix.(gettimeofday () |> int_of_float) ;
-  Logs.set_level (Some (if option.App_option.debug then Logs.Debug else Logs.Info)) ;
-  Logs.set_reporter @@ Logger.lwt_reporter Format.std_formatter ;
+  Random.init Unix.(gettimeofday () |> int_of_float);
+  Logs.set_level (Some (if option.App_option.debug then Logs.Debug else Logs.Info));
+  Logs.set_reporter @@ Logger.lwt_reporter Format.std_formatter;
   let module D = Sxfiler_domain in
   let migemo = load_migemo option.migemo_dict_dir in
   (* setup task runner and finalize *)
   let waiter, wakener = Lwt.wait () in
-  register_cleanup_handlers wakener ;
+  register_cleanup_handlers wakener;
+
   let module I = (val Task_runner.get () : T.Runner.Instance) in
   let main_thread =
-    initialize_modules ~migemo ~option
-    >>= fun () -> start_server "localhost" option <&> I.Runner.start I.instance
+    initialize_modules ~migemo ~option >>= fun () ->
+    start_server "localhost" option <&> I.Runner.start I.instance
   in
+
   Lwt_main.run
   @@ Lwt.finalize
-       (fun () -> Lwt.choose [main_thread; waiter])
+       (fun () -> Lwt.choose [ main_thread; waiter ])
        (fun () ->
-         I.Runner.stop I.instance ;
+         I.Runner.stop I.instance;
          let%lwt state = Global.Root.get () in
          let%lwt bookmarks = Global.Bookmark.get () in
          persist_app_state state ~file_name:option.App_option.stat_file ~bookmarks |> Lwt.return)
