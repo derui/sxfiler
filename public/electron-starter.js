@@ -67,12 +67,12 @@ function setupConfigurations(configDir) {
 function spawnServer(configDir, port) {
   console.log('Launching server...');
 
-  const out = fs.openSync('./server.log', 'a');
+  const out = fs.openSync('./server.log', 'w');
   const server = spawn(
     path.join(`${__dirname}.unpacked`, 'sxfiler_server.exe'),
     ['--config', configDir, '-d', path.join(configDir, 'dict'), '--port', port],
     {
-      stdio: ['ignore', out, out],
+      stdio: ['pipe', out, out],
     }
   ).on('error', error => {
     if (error) {
@@ -93,6 +93,9 @@ async function launch() {
   const app = electron.app;
 
   const server = spawnServer(configDir, port);
+  const serverClosed = new Promise(resolve => {
+    server.on('exit', resolve);
+  });
   process.env.SERVER_URL = `ws://localhost:${port}`;
 
   app.on('ready', () => {
@@ -115,20 +118,17 @@ async function launch() {
     browserWindow.focusOnWebView();
   });
 
-  app.on('window-all-closed', () => {
-    server.kill();
+  const exitHandler = async () => {
+    if (!server.stdin.writableEnded) {
+      server.stdin.end('quit\n');
+    }
+    await serverClosed;
     app.quit();
-  });
+  };
 
-  app.on('quit', () => {
-    server.kill();
-    app.quit();
-  });
-
-  electron.ipcMain.on('quit', () => {
-    server.kill();
-    app.quit();
-  });
+  app.on('window-all-closed', () => app.quit());
+  app.on('quit', exitHandler);
+  electron.ipcMain.on('quit', () => app.quit());
 }
 
 launch();
