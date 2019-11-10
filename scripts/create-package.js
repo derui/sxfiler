@@ -20,9 +20,46 @@ function getPlatforms() {
   }
 }
 
-async function bundleElectronApp(options) {
+// Get suffix for a archive from the platform
+function archiveSuffixOfPlatform(platform) {
+  switch (platform) {
+    case 'linux':
+      return 'tar.gz';
+    case 'win32':
+      return 'zip';
+    default:
+      throw Error(`Unknown platform: ${platform}`);
+  }
+}
+
+// Create archiver for the platform
+function createArchiverForPlatform(platform) {
+  const archiver = require('archiver');
+  switch (platform) {
+    case 'linux':
+      return archiver('tar', { gzip: true });
+    case 'win32':
+      return archiver('zip');
+    default:
+      throw Error(`Unknown platform: ${platform}`);
+  }
+}
+
+async function bundleElectronApp(options, platform) {
   const appPaths = await packager(options);
   console.log(`Electron app bundles created:\n${appPaths.join('\n')}`);
+  console.log(`Archiving for ${appPaths[0]}...`);
+
+  const output = fs.createWriteStream(`${appPaths[0]}.${archiveSuffixOfPlatform(platform)}`);
+  const archive = createArchiverForPlatform(platform);
+  archive.pipe(output);
+
+  archive.directory(appPaths[0], path.parse(appPaths[0]).base);
+  archive.finalize();
+
+  output.on('close', () => {
+    console.log('Archiving finished');
+  });
 }
 
 const platforms = getPlatforms();
@@ -63,5 +100,5 @@ platforms.map(platform => {
       unpack: 'sxfiler_server.exe',
     },
   };
-  bundleElectronApp(options);
+  bundleElectronApp(options, platform);
 });
