@@ -198,8 +198,6 @@ let persist_app_state global_state ~file_name ~bookmarks =
   Yojson.Safe.to_file file_name json;
   Logs.info (fun m -> m "Finish app state persisting")
 
-let register_cleanup_handlers w = Lwt_unix.on_signal Sys.sigint (fun _ -> Lwt.wakeup w ()) |> ignore
-
 (* main routine. *)
 let () =
   let executable_dir = Filename.dirname Sys.argv.(0) in
@@ -209,21 +207,23 @@ let () =
   Logs.set_reporter @@ Logger.lwt_reporter Format.std_formatter;
   let module D = Sxfiler_domain in
   let migemo = load_migemo option.migemo_dict_dir in
-  (* setup task runner and finalize *)
-  let waiter, wakener = Lwt.wait () in
-  register_cleanup_handlers wakener;
 
+  (* setup task runner and finalize *)
   let module I = (val Task_runner.get () : T.Runner.Instance) in
   let main_thread =
     initialize_modules ~migemo ~option >>= fun () ->
     start_server "localhost" option <&> I.Runner.start I.instance
   in
-
-  Lwt_main.run
-  @@ Lwt.finalize
-       (fun () -> Lwt.choose [ main_thread; waiter ])
-       (fun () ->
-         I.Runner.stop I.instance;
-         let%lwt state = Global.Root.get () in
-         let%lwt bookmarks = Global.Bookmark.get () in
-         persist_app_state state ~file_name:option.App_option.stat_file ~bookmarks |> Lwt.return)
+  Lwt_main.at_exit (fun () ->
+      I.Runner.stop I.instance;
+      Log.err (fun m -> m "Exiting in Lwt...");%lwt
+      let%lwt state = Global.Root.get () in
+      let%lwt bookmarks = Global.Bookmark.get () in
+      persist_app_state state ~file_name:option.App_option.stat_file ~bookmarks |> Lwt.return);
+  let waiter, wakener = Lwt.task () in
+  let rec exit_handler () =
+    match%lwt Lwt_io.read_line_opt Lwt_io.stdin with
+    | Some "quit" -> Lwt.wakeup wakener () |> Lwt.return
+    | Some _ | None -> exit_handler ()
+  in
+  Lwt_main.run @@ Lwt.choose [ main_thread <&> exit_handler (); waiter ]
