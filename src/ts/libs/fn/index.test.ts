@@ -9,12 +9,7 @@ describe("fn library", () => {
     it("should return result applied functions first to last", () => {
       const fn1 = (v: string) => `fn1(${v})`;
       const fn2 = (v: string) => `fn2(${v})`;
-      expect(
-        pipe(
-          fn1,
-          fn2
-        )("inner")
-      ).toEqual("fn2(fn1(inner))");
+      expect(pipe(fn1, fn2)("inner")).toEqual("fn2(fn1(inner))");
     });
   });
 

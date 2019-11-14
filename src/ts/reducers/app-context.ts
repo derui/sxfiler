@@ -16,15 +16,9 @@ export const reducer = function reducer(
     case ActionTypes.TASK_FINISHED:
       return changeCurrent(UIContext.OnFileTree)(state);
     case ActionTypes.COMPLETER_OPEN:
-      return pipe(
-        changeCurrent(UIContext.OnCompletion),
-        addSubContext(action.context)
-      )(state);
+      return pipe(changeCurrent(UIContext.OnCompletion), addSubContext(action.context))(state);
     case ActionTypes.COMPLETER_CLOSE:
-      return pipe(
-        changeCurrent(UIContext.OnFileTree),
-        removeSubContext(action.context)
-      )(state);
+      return pipe(changeCurrent(UIContext.OnFileTree), removeSubContext(action.context))(state);
     default:
       return state;
   }

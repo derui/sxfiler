@@ -33,10 +33,7 @@ describe("keymap value object", () => {
       { key: "a", action: "foobar", when: { contexts: [UIContext.OnSuggestion] } },
     ];
     const context = createAppContext({ current: UIContext.OnFileTree });
-    const obj = compose(
-      keymap.createKeymap,
-      keymap.allowedInContext(context)
-    )(value);
+    const obj = compose(keymap.createKeymap, keymap.allowedInContext(context))(value);
 
     expect(keymap.find("a")(obj)).toEqual(value[0]);
     expect(keymap.find("b")(obj)).toEqual(value[1]);
@@ -50,10 +47,7 @@ describe("keymap value object", () => {
       { key: "d", action: "foobar", when: { contexts: [UIContext.ForHistory] } },
     ];
     const context = createAppContext({ current: UIContext.OnFileTree, subContexts: [UIContext.ForHistory] });
-    const obj = compose(
-      keymap.createKeymap,
-      keymap.allowedInContext(context)
-    )(value);
+    const obj = compose(keymap.createKeymap, keymap.allowedInContext(context))(value);
 
     expect(keymap.find("a")(obj)).toEqual(value[0]);
     expect(keymap.find("b")(obj)).toEqual(value[1]);
@@ -70,10 +64,7 @@ describe("keymap value object", () => {
       { key: "e", action: "zoo", when: { contexts: [UIContext.ForHistory, UIContext.OnFileTree] } },
     ];
     const context = createAppContext({ current: UIContext.OnFileTree, subContexts: [UIContext.ForHistory] });
-    const obj = compose(
-      keymap.createKeymap,
-      keymap.allowedInContext(context)
-    )(value);
+    const obj = compose(keymap.createKeymap, keymap.allowedInContext(context))(value);
 
     expect(keymap.find("a")(obj)).toEqual(value[1]);
     expect(keymap.find("b")(obj)).toEqual(value[2]);

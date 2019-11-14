@@ -19,10 +19,7 @@ function makeNode(name: string, isDirectory = false, isSymlink = false) {
     fullPath: "fullpath",
     stat: createFileStat({
       mode: createMode({
-        owner: pipe(
-          allowToRead,
-          allowToWrite
-        )(emptyCapability()),
+        owner: pipe(allowToRead, allowToWrite)(emptyCapability()),
         group: allowToRead(emptyCapability()),
         others: allowToRead(emptyCapability()),
       }),

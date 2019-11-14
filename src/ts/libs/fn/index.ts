@@ -2,7 +2,10 @@
 
 // pipe multiple function at once
 export const pipe = function pipe<T extends any[], R>(fn1: (...args: T) => R, ...fns: Array<(arg: R) => R>) {
-  const piped = fns.reduce((prev, current) => value => prev(current(value)), value => value);
+  const piped = fns.reduce(
+    (prev, current) => value => prev(current(value)),
+    value => value
+  );
 
   return (...args: T) => piped(fn1(...args));
 };

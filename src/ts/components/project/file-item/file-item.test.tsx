@@ -18,10 +18,7 @@ function makeNode(marked: boolean, isDirectory = false, isSymlink = false) {
     fullPath: "/file.ext",
     stat: createFileStat({
       mode: createMode({
-        owner: pipe(
-          allowToRead,
-          allowToWrite
-        )(emptyCapability()),
+        owner: pipe(allowToRead, allowToWrite)(emptyCapability()),
         group: allowToRead(emptyCapability()),
         others: allowToRead(emptyCapability()),
       }),

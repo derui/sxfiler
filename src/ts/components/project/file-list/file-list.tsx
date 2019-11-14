@@ -105,13 +105,10 @@ export class Component extends React.Component<Props> {
 
   private makeListItems(layout: VirtualizedWindow): JSX.Element[] {
     const { items, cursor, focused, bookmarks } = this.props;
-    let keyAsPathBookmark = bookmarks.reduce(
-      (accum, v) => {
-        accum[v.path] = v;
-        return accum;
-      },
-      {} as { [key: string]: Bookmark }
-    );
+    let keyAsPathBookmark = bookmarks.reduce((accum, v) => {
+      accum[v.path] = v;
+      return accum;
+    }, {} as { [key: string]: Bookmark });
 
     return items.slice(layout.startIndex, layout.stopIndex).map((item, index) => {
       const selected = cursor === index + layout.startIndex && focused;

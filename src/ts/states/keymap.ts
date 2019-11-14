@@ -10,10 +10,7 @@ export type State = {
 
 /** find key binding by key */
 export const findBinding = function findBinding(state: State, context: AppContext, key: string) {
-  return compose(
-    allowedInContext(context),
-    find(key)
-  )(state.current);
+  return compose(allowedInContext(context), find(key))(state.current);
 };
 
 /** return empty state */
