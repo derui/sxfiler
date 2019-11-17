@@ -16,13 +16,14 @@ import { reducer } from "./ts/reducers";
 import { AppState } from "./ts/states";
 
 import { createUseCase } from "./ts/usecases/filer/initialize";
-import { createCommandRegistrar } from "./ts/usecases/command-registrar";
-import { registAllCommand } from "./ts/usecases/commands";
+import { createCommandRegistrar } from "./ts/commands/command-registrar";
+import { registAllCommand } from "./ts/commands/builtins";
 import * as Get from "./ts/usecases/keymap/get";
 import * as List from "./ts/usecases/bookmark/list";
 import * as NotificationHandlers from "./ts/notification-handlers";
 import { ModalRootContext } from "./ts/modal-root";
 import { findBinding } from "@/states/keymap";
+import { ipcRenderer } from "electron";
 
 declare var window: Window & {
   applicationConfig: {
@@ -47,7 +48,19 @@ dispatcher.subscribe(store.dispatch);
 const locator = {
   context: createContext({ client, dispatcher }),
   client,
-  commandRegistrar: registAllCommand(createCommandRegistrar(client)),
+  commandRegistrar: registAllCommand(
+    createCommandRegistrar({
+      apiClient: () => client,
+      appClient() {
+        return {
+          quit() {
+            // send quit event to main process
+            ipcRenderer.send("quit");
+          },
+        };
+      },
+    })
+  ),
 };
 
 // register notification handlers

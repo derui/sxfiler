@@ -2,7 +2,7 @@ const path = require('path');
 const glob = require('glob');
 const fs = require('fs');
 
-const OUTPUT_FILE_NAME = path.resolve('src/ts/usecases/commands/index.ts');
+const OUTPUT_FILE_NAME = path.resolve('src/ts/commands/builtins/index.ts');
 const generateCommandModule = modules => {
   const importList = modules.map(([path, module]) => `import * as ${module} from "./${path}"`).join('\n');
 
@@ -26,7 +26,7 @@ const kebabToCamel = str => {
   return str.replace(/[-_](.)/g, (match, group1) => group1.toUpperCase());
 };
 
-glob('src/ts/usecases/commands/**/*.ts', (er, files) => {
+glob('src/ts/commands/builtins/**/*.ts', (er, files) => {
   const extractModuleName = v => path.basename(v, path.extname(v));
 
   const moduleNames = files

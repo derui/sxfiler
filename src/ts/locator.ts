@@ -3,7 +3,7 @@ import { Context as ReactContext, createContext } from "react";
 import { ApiMethod } from "./apis";
 import { Client } from "./libs/json-rpc/client";
 import { ContextLike } from "./context";
-import { CommandRegistrar } from "./usecases/command-registrar";
+import { CommandRegistrar } from "./commands/command-registrar";
 
 export type Locator = {
   readonly context?: ContextLike;
