@@ -17,6 +17,7 @@ import * as historyClose from "./history-close";
 import * as historyOpen from "./history-open";
 import * as historySelect from "./history-select";
 import * as keymapReload from "./keymap-reload";
+import * as quit from "./quit";
 import * as taskSelectNextReply from "./task-select-next-reply";
 import * as taskSelectPreviousReply from "./task-select-previous-reply";
 import * as taskSendReply from "./task-send-reply";
@@ -44,6 +45,7 @@ export const registAllCommand = (registrar: CommandRegistrar): CommandRegistrar 
     historyOpen,
     historySelect,
     keymapReload,
+    quit,
     taskSelectNextReply,
     taskSelectPreviousReply,
     taskSendReply,

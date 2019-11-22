@@ -23,9 +23,9 @@ import * as List from "./ts/usecases/bookmark/list";
 import * as NotificationHandlers from "./ts/notification-handlers";
 import { ModalRootContext } from "./ts/modal-root";
 import { findBinding } from "@/states/keymap";
-import { ipcRenderer } from "electron";
 
 declare var window: Window & {
+  ipcRenderer: any;
   applicationConfig: {
     serverURL: string;
   };
@@ -55,7 +55,7 @@ const locator = {
         return {
           quit() {
             // send quit event to main process
-            ipcRenderer.send("quit");
+            window.ipcRenderer.send("quit");
           },
         };
       },

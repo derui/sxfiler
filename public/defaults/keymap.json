@@ -1,5 +1,6 @@
 {
   "bindings": [
+    {"action": "builtin.quit", "key": "q", "when": {contexts: ["onFileTree"]}},
     {"action": "builtin.filer.moveCursorDown", "key": "j", "when": {contexts: ["onFileTree"]}},
     {"action": "builtin.filer.moveCursorUp", "key": "k", "when": {contexts: ["onFileTree"]}},
     {"action": "builtin.filer.changePaneSide", "key": "Tab", "when": {contexts: ["onFileTree"]}},

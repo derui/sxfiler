@@ -14,7 +14,9 @@ app.on('ready', () => {
     width: 800,
     resizable: true,
     acceptFirstMouse: true,
-    webPreferences: undefined,
+    webPreferences: {
+      preload: path.join(app.getAppPath(), 'public', 'preload.js'),
+    },
   });
 
   if (!browserWindow) {
