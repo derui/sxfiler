@@ -36,6 +36,15 @@ const Root = styled(Element.Component)`
 
 const InnerContainer = styled.div`
   ${Modal.containerStyle};
+  display: grid;
+  grid-template-rows: auto auto;
+  grid-template-columns: auto;
+  flex: 0 1 auto;
+  overflow: hidden;
+  margin: 0px auto auto auto;
+
+  border-radius: 0px 0px ${props => props.theme.spaces.small} ${props => props.theme.spaces.small};
+  box-shadow: ${props => props.theme.boxShadow};
 
   &[data-state="entering"] {
     transform: translateY(-100%);
@@ -61,6 +70,7 @@ const Header = styled.h4`
   color: ${props => props.theme.colors.base03};
   background-color: ${props => props.theme.colors.base3};
   padding: ${props => props.theme.spaces.large};
+  box-shadow: ${props => props.theme.headerShadow};
 `;
 
 const PanelContainer = styled.section`
@@ -68,7 +78,7 @@ const PanelContainer = styled.section`
   background-color: ${props => props.theme.colors.base03};
 `;
 
-const InnerOverlay = styled.div`
+const InnerOverlay = styled(Element.Component)`
   ${Modal.overlayStyle};
 
   background-color: rgba(0, 0, 0, 0.2);

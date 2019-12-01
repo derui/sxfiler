@@ -34,6 +34,7 @@ export const Component: React.FC<Props> = ({ state }): ElementType | null => {
                 <SuggestionModal.Component
                   dialogRoot={element}
                   opened={state.operating}
+                  overlay={{}}
                   container={{
                     focusedReply: state.currentReplyIndex || 0,
                     replies: state.replies || [],

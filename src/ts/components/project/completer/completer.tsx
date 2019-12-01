@@ -93,7 +93,7 @@ const InnerContainer = styled.div`
   width: 75%;
   max-height: 80%;
 
-  border-radius: ${props => props.theme.spaces.small};
+  border-radius: 0px 0px ${props => props.theme.spaces.small} ${props => props.theme.spaces.small};
   background-color: ${props => props.theme.colors.base02};
 
   box-shadow: ${props => props.theme.boxShadow};
