@@ -51,3 +51,21 @@ let bookmark_repository init =
       data := data';
       Lwt.return_unit
   end : D.Bookmark_repository.S )
+
+(** make new in-memory repository for Task *)
+let task_repository init =
+  let data = ref init in
+  ( module struct
+    let resolve id =
+      List.find_opt (fun v -> D.Task_types.equal_id v.D.Task.id id) !data |> Lwt.return
+
+    let store t =
+      let data' = List.filter (fun v -> not @@ D.Task.have_same_id v t) !data |> List.cons t in
+      data := data';
+      Lwt.return_unit
+
+    let remove t =
+      let data' = List.filter (fun v -> not @@ D.Task.have_same_id v t) !data in
+      data := data';
+      Lwt.return_unit
+  end : D.Task.Repository )

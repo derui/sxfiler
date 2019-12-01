@@ -27,3 +27,31 @@ module Send_reply = struct
           Task.apply_interaction ~reply t >>= return_ok
   end
 end
+
+(** For use case to cancel a task. *)
+module Cancel = struct
+  module Type = struct
+    type input = Task_types.id
+    type output = unit
+    type error = [ `Not_found ]
+  end
+
+  module type S = sig
+    (* trick to avoid error to unbound record field *)
+    include module type of Type
+
+    include
+      Common.Usecase with type input := input and type output := output and type error := error
+  end
+
+  module Make (R : Task.Repository) : S = struct
+    include Type
+
+    let execute id =
+      match%lwt R.resolve id with
+      | None -> Lwt.return_error `Not_found
+      | Some t ->
+          let open Lwt in
+          R.remove t >>= return_ok
+  end
+end

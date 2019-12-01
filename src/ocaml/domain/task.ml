@@ -30,6 +30,8 @@ let apply_interaction ~reply t =
   let module E = (val t.executor) in
   match E.apply_interaction with `No_interaction -> Lwt.return_unit | `Apply f -> f reply
 
+let have_same_id t1 t2 = equal_id t1.id t2.id
+
 module type Repository = sig
   val store : t -> unit Lwt.t
   (** [store t] saves instance [t] *)

@@ -48,6 +48,7 @@ module type S = sig
     module Filer_delete : U.Filer.Delete.S
     module Filer_jump_location : U.Filer.Jump_location.S
     module Task_send_reply : U.Task.Send_reply.S
+    module Task_cancel : U.Task.Cancel.S
     module Bookmark_list_all : U.Bookmark.List_all.S
     module Bookmark_register : U.Bookmark.Register.S
     module Bookmark_delete : U.Bookmark.Delete.S
@@ -151,6 +152,7 @@ module Make
     end)
 
     module Task_send_reply = U.Task.Send_reply.Make (Task_repo)
+    module Task_cancel = U.Task.Cancel.Make (Task_repo)
     module Bookmark_list_all = U.Bookmark.List_all.Make (Bookmark_repo)
     module Bookmark_register = U.Bookmark.Register.Make (I.Id_generator.Gen_uuid) (Bookmark_repo)
     module Bookmark_delete = U.Bookmark.Delete.Make (Bookmark_repo)
