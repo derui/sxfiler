@@ -36,7 +36,7 @@ describe("Project", () => {
       const wrapper = mount(wrap(<Component selected={true} onUpdated={handler} nodeName="bar" />));
       wrapper.find("input").simulate("change", {
         target: {
-          nodeValue: "foo",
+          value: "foo",
         },
       });
     });

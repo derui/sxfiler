@@ -20,15 +20,26 @@ const Input = styled.input`
   padding: ${props => props.theme.spaces.small};
 `;
 
-const handleChange = (handler: Handler) => (ev: React.ChangeEvent) =>
-  handler(createRenamePayload(ev.target.nodeValue || ""));
+const handleChange = (cb: (input: string) => void, handler: Handler) => (ev: React.ChangeEvent<HTMLInputElement>) => {
+  cb(ev.target.value || "");
+  handler(createRenamePayload(ev.target.value || ""));
+};
 
 export const Component: React.FC<Props> = ({ selected, nodeName, onUpdated }) => {
+  const [state, setState] = React.useState(nodeName);
+  const refInput = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (refInput.current) {
+      refInput.current.focus();
+    }
+  }, []);
+
   return (
     <Root aria-selected={selected}>
       <p>Rename</p>
       <label>
-        <Input type="text" value={nodeName} onChange={handleChange(onUpdated)} />
+        <Input type="text" value={state} onChange={handleChange(setState, onUpdated)} ref={refInput} />
       </label>
     </Root>
   );
