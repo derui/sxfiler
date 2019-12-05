@@ -156,14 +156,7 @@ module.exports = function(webpackEnv) {
       rules: [
         // Disable require.ensure as it's not a standard language feature.
         { parser: { requireEnsure: false } },
-        {
-          enforce: 'pre',
-          test: /\.(ts|tsx)$/,
-          exclude: /node_modules/,
-          loader: 'eslint-loader',
-        },
 
-        // First, run the linter.
         {
           // "oneOf" will traverse all following loaders until one will
           // match the requirements. When no loader matches it will fall
@@ -174,7 +167,7 @@ module.exports = function(webpackEnv) {
               include: paths.appSrc,
               use: [
                 {
-                  loader: require.resolve('ts-loader'),
+                  loader: 'ts-loader',
                   options: {
                     configFile: paths.appTsConfig,
                     transpileOnly: true,
@@ -230,6 +223,7 @@ module.exports = function(webpackEnv) {
         typescript: resolve.sync('typescript', {
           basedir: paths.appNodeModules,
         }),
+        eslint: true,
         checkSyntacticErrors: true,
         tsconfig: paths.appTsConfig,
         reportFiles: [
