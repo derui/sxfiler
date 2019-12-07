@@ -17,6 +17,43 @@ let task_runner =
         let%lwt () = stopper in
         Alcotest.(check @@ of_pp @@ Fmt.nop) "thread stopped" (Lwt.Return ()) (Lwt.state stopper);
         Lwt.return_unit);
+    Alcotest_lwt.test_case "stop task that is running" `Quick (fun _ () ->
+        let module T = Sxfiler_server_task in
+        let module Tasker = (val T.Runner.make (module G) : T.Runner.Instance) in
+        let stopper = Tasker.Runner.start Tasker.instance in
+        let waiter, wakener = Lwt.task () in
+        let task_id = G.generate () in
+        let task =
+          D.Task.make ~id:task_id
+            ~executor:
+              ( module struct
+                let apply_interaction = `No_interaction
+                let cancel () = ()
+
+                let execute _ =
+                  let count = ref 0 in
+                  let rec loop () =
+                    let open Lwt in
+                    if !count > 3 then Lwt.wakeup wakener () else ();
+                    incr count;
+                    Lwt_unix.sleep 0.5 >>= loop
+                  in
+                  loop ()
+              end )
+        in
+        let _ =
+          Tasker.(
+            Runner.subscribe instance ~f:(fun t ->
+                if D.Task_types.equal_id t.id task_id then Lwt.return Tasker.(Runner.stop instance)
+                else Lwt.return_unit))
+        in
+        let%lwt () = Tasker.(Runner.add_task instance ~task) in
+        let%lwt () = waiter in
+        let%lwt () = Tasker.(Runner.stop_task instance ~task:task_id) in
+        let%lwt () = stopper in
+
+        Alcotest.(check @@ of_pp @@ Fmt.nop) "thread stopped" (Lwt.Return ()) (Lwt.state stopper);
+        Lwt.return_unit);
     Alcotest_lwt.test_case "allow to run task immediately" `Quick (fun _ () ->
         let module T = Sxfiler_server_task in
         let module Tasker = (val T.Runner.make (module G) : T.Runner.Instance) in
@@ -27,6 +64,7 @@ let task_runner =
             ~executor:
               ( module struct
                 let apply_interaction = `No_interaction
+                let cancel () = ()
 
                 let execute _ =
                   incr data;
@@ -48,6 +86,7 @@ let task_runner =
             ~executor:
               ( module struct
                 let apply_interaction = `No_interaction
+                let cancel () = ()
                 let execute _ = Lwt.return_unit
               end )
         in

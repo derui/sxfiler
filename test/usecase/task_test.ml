@@ -10,6 +10,7 @@ let test_set =
             ~executor:
               ( module struct
                 let apply_interaction = `No_interaction
+                let cancel () = ()
                 let execute _ = failwith "mocked"
               end : D.Task.Executor )
         in

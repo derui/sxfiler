@@ -272,6 +272,8 @@ module Move = struct
   (Dep : Dependencies) : T.Task.Executor = struct
     let interaction = Lwt_mvar.create_empty ()
     let apply_interaction = `Apply (Lwt_mvar.put interaction)
+    let canceled, do_cancel = Lwt.task ()
+    let cancel () = Lwt.wakeup do_cancel ()
 
     let execute { T.Task_types.Context.task_id } =
       let open Dep in
@@ -297,7 +299,7 @@ module Move = struct
       and to_tree = Scan.scan dest_filer.file_list.location in
       let from_filer = T.Filer.update_list source_filer ~file_list:from_tree
       and to_filer = T.Filer.update_list dest_filer ~file_list:to_tree in
-      Lwt.(join [ FR.store from_filer; FR.store to_filer ])
+      Lwt.(join [ FR.store from_filer; FR.store to_filer ] <?> canceled)
   end
 
   module Make (Dep : Dependencies) : S = struct
@@ -363,6 +365,8 @@ module Delete = struct
   end)
   (Dep : Dependencies) : T.Task.Executor = struct
     let apply_interaction = `No_interaction
+    let canceled, do_cancel = Lwt.task ()
+    let cancel () = Lwt.wakeup do_cancel ()
 
     let execute _ =
       let open Dep in
@@ -374,7 +378,7 @@ module Delete = struct
       in
       let%lwt () = Trash.trash items in
       let%lwt file_list = Scan.scan file_list.T.File_list.location in
-      T.Filer.update_list P.filer ~file_list |> FR.store
+      Lwt.(T.Filer.update_list P.filer ~file_list |> FR.store <?> canceled)
   end
 
   module Make (Dep : Dependencies) : S = struct
@@ -438,6 +442,8 @@ module Copy = struct
   (Dep : Dependencies) : T.Task.Executor = struct
     let interaction = Lwt_mvar.create_empty ()
     let apply_interaction = `Apply (Lwt_mvar.put interaction)
+    let canceled, do_cancel = Lwt.task ()
+    let cancel () = Lwt.wakeup do_cancel ()
 
     let execute { T.Task_types.Context.task_id } =
       let open Dep in
@@ -463,7 +469,7 @@ module Copy = struct
       and to_list = Scan.scan dest_filer.file_list.location in
       let from_filer = T.Filer.update_list source_filer ~file_list:from_list
       and to_filer = T.Filer.update_list dest_filer ~file_list:to_list in
-      Lwt.(join [ FR.store from_filer; FR.store to_filer ])
+      Lwt.(join [ FR.store from_filer; FR.store to_filer ] <?> canceled)
   end
 
   module Make (Dep : Dependencies) : S = struct

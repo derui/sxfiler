@@ -18,9 +18,16 @@ module Finished = struct
   let typ : t Notification_service.typ =
     {
       to_method = (fun _ -> "notification/task/finished");
-      to_json =
-        (fun v ->
-          let v' = Uuidm.to_string v in
-          `String v');
+      to_json = (fun v -> `String (D.Task_types.show_id v));
+    }
+end
+
+module Canceled = struct
+  type t = D.Task_types.id
+
+  let typ : t Notification_service.typ =
+    {
+      to_method = (fun _ -> "notification/task/canceled");
+      to_json = (fun v -> `String (D.Task_types.show_id v));
     }
 end

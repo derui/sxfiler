@@ -8,6 +8,10 @@ module type Executor = sig
 
   val execute : Context.t -> unit Lwt.t
   (** [execute ()] runs the task body. *)
+
+  val cancel : unit -> unit
+  (** [cancel ()] cancel this task immediately. Requires an implementation to implement to stop
+      thread returned from [execute]. *)
 end
 
 type t = {
@@ -24,6 +28,10 @@ let make ~id ~executor = { id; executor }
 let execute t =
   let module E = (val t.executor) in
   E.execute { task_id = t.id }
+
+let cancel t =
+  let module E = (val t.executor) in
+  E.cancel ()
 
 (** [apply_interaction ~interaction t] apply an interaction to the task *)
 let apply_interaction ~reply t =

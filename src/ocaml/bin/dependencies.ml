@@ -97,7 +97,7 @@ module Make
     I.Item_trash_service.Make (Notification_service) (Message_notification_factory)
       (Progress_notification_factory)
 
-  module Task_repo = I.Task_repo.Make (Global.Root) (Runner)
+  module Task_repo = I.Task_repo.Make (Global.Root) (Runner) (Notification_service)
   module Task_factory = D.Task.Factory.Make (I.Id_generator.Gen_uuid)
   module Bookmark_repo = I.Bookmark_repo.Make (Global.Bookmark)
 

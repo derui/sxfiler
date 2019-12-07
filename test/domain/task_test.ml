@@ -22,6 +22,7 @@ let test_set =
           ~executor:
             ( module struct
               let apply_interaction = `No_interaction
+              let cancel () = ()
 
               let execute { D.Task_types.Context.task_id } =
                 Alcotest.(check @@ of_pp Uuidm.pp) "subset" Id_gen.id task_id;
@@ -42,6 +43,7 @@ let test_set =
           ~executor:
             ( module struct
               let apply_interaction = `Apply f
+              let cancel () = ()
               let execute _ = Lwt.return_unit
             end )
       in

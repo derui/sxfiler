@@ -8,7 +8,10 @@ module type S = sig
   type t
 
   val add_task : t -> task:Task.t -> unit Lwt.t
-  (** [add_task ~task t] add task to task queue. *)
+  (** [add_task ~task t] add the task to task queue. *)
+
+  val stop_task : t -> task:Task_types.id -> unit Lwt.t
+  (** [stop_task ~task t] stop the task from task queue *)
 
   val subscribe : t -> f:subscriber -> unsubscribe Lwt.t
   (** [subscribe ~f t] register a function as subscriber to subscribe event to finish task. if want

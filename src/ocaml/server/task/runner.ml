@@ -4,7 +4,7 @@ module D = Sxfiler_domain
 module Log = (val Sxfiler_server_core.Logger.make [ "task" ])
 include Runner_intf
 
-module Task_state = Set.Make (struct
+module Task_state = Map.Make (struct
   type t = Uuidm.t
 
   let compare = Uuidm.compare
@@ -31,7 +31,7 @@ module Impl (R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) = struct
   type t = {
     task_queue : D.Task.t Lwt_stream.t;
     task_queue_writer : D.Task.t option -> unit;
-    mutable task_state : Task_state.t;
+    mutable task_state : D.Task.t Task_state.t;
     task_state_lock : Lwt_mutex.t;
     task_mailbox : thread_state Lwt_mvar.t;
     wakener : unit Lwt.u;
@@ -57,9 +57,9 @@ module Impl (R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) = struct
     in
     loop ()
 
-  let add_state t id =
+  let add_state t id thread =
     Lwt_mutex.with_lock t.task_state_lock (fun () ->
-        t.task_state <- Task_state.add id t.task_state;
+        t.task_state <- Task_state.add id thread t.task_state;
         Lwt.return_unit)
 
   let remove_state t id =
@@ -72,12 +72,13 @@ module Impl (R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) = struct
     let module C = Sxfiler_server_core in
     t.task_queue
     |> Lwt_stream.iter_p (fun task ->
-           let%lwt () = add_state t task.D.Task.id in
            Lwt.finalize
              (fun () ->
-               Log.info (fun m -> m "Start executing task [%s]..." Uuidm.(to_string task.id));%lwt
+               Log.info (fun m ->
+                   m "Start executing task [%s]..." D.Task_types.(show_id task.D.Task.id));%lwt
+               let%lwt () = add_state t task.id task in
                let%lwt () = D.Task.(execute task) in
-               Log.info (fun m -> m "Finish executing task [%s]" Uuidm.(to_string task.id)))
+               Log.info (fun m -> m "Finish executing task [%s]" D.Task_types.(show_id task.id)))
              (fun () ->
                let%lwt () =
                  Lwt_mutex.with_lock t.task_state_lock (fun () ->
@@ -89,6 +90,19 @@ module Impl (R : D.Id_generator_intf.Gen_random with type id = Uuidm.t) = struct
 
   (** [add_task task] add [task] to mailbox of task accepter. *)
   let add_task t ~task = Lwt_mvar.put t.task_mailbox (`Accepted task)
+
+  let stop_task t ~task =
+    Lwt_mutex.with_lock t.task_state_lock (fun () ->
+        match Task_state.find_opt task t.task_state with
+        | Some task ->
+            D.Task.cancel task;
+            t.task_state <- Task_state.remove task.id t.task_state;
+            Log.warn (fun m -> m "The task is canceled: %s" D.Task_types.(show_id task.id));%lwt
+            Lwt.return_unit
+        | None ->
+            Log.warn (fun m ->
+                m "The task already finished, canceled or not starting yet: %s"
+                  D.Task_types.(show_id task)))
 
   let subscribe t ~f =
     let id = R.generate () in
