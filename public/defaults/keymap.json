@@ -17,6 +17,7 @@
     {"action": "builtin.task.selectPreviousReply", "key": "ArrowUp", "when": {contexts: ["onSuggestion"]}},
     {"action": "builtin.task.selectPreviousReply", "key": "ArrowUp", "when": {contexts: ["onSuggestion"]}},
     {"action": "builtin.task.sendReply", "key": "Enter", "when": {contexts: ["onSuggestion"]}},
+    {"action": "builtin.task.cancel", "key": "Escape", "when": {contexts: ["onSuggestion"]}},
     {"action": "builtin.finder.open", "key": "f", "when": {contexts: ["onFileTree"]}},
     {"action": "builtin.finder.select", "key": "Enter", "when": {contexts: ["onCompletion", "forFinder"]}},
     {"action": "builtin.completer.close", "key": "Escape", "when": {contexts: ["onCompletion"]}},

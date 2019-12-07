@@ -4,6 +4,7 @@ import { Reply, ReplyPayload, ReplyKind } from "@/domains/task-reply";
 
 export enum Methods {
   SendReply = "task/sendReply",
+  Cancel = "task/cancel",
 }
 
 const replyToServerRepresentation = (reply: ReplyPayload): any[] => {
@@ -18,7 +19,7 @@ const replyToServerRepresentation = (reply: ReplyPayload): any[] => {
 };
 
 /**
-   API definition for keymap/get
+   API definition for task/sendReply
  */
 const SendReply = {
   method: Methods.SendReply,
@@ -34,4 +35,17 @@ const SendReply = {
   },
 };
 
-export const Apis = { SendReply };
+/**
+   API definition to cancel the task
+ */
+const Cancel = {
+  method: Methods.Cancel,
+  parametersTransformer(taskId: string) {
+    return taskId;
+  },
+  resultTransformer() {
+    return undefined;
+  },
+};
+
+export const Apis = { SendReply, Cancel };

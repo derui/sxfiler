@@ -19,33 +19,24 @@ const handleReply = (context: ContextLike) => (reply: ReplyPayload) => {
 
 // Stateless container to render filer
 export const Component: React.FC<Props> = ({ state }): ElementType | null => {
-  return (
-    <LocatorContext.Consumer>
-      {locator => {
-        const context = locator.context;
-        if (!context) {
-          return null;
-        }
+  const locator = React.useContext(LocatorContext);
+  const { element } = React.useContext(ModalRootContext);
+  const context = locator.context;
 
-        return (
-          <ModalRootContext.Consumer>
-            {({ element }) =>
-              element && (
-                <SuggestionModal.Component
-                  dialogRoot={element}
-                  opened={state.operating}
-                  overlay={{}}
-                  container={{
-                    focusedReply: state.currentReplyIndex || 0,
-                    replies: state.replies || [],
-                    onReply: handleReply(context),
-                  }}
-                />
-              )
-            }
-          </ModalRootContext.Consumer>
-        );
+  if (!context || !element) {
+    return null;
+  }
+
+  return (
+    <SuggestionModal.Component
+      dialogRoot={element}
+      opened={state.operating}
+      overlay={{}}
+      container={{
+        focusedReply: state.currentReplyIndex || 0,
+        replies: state.replies || [],
+        onReply: handleReply(context),
       }}
-    </LocatorContext.Consumer>
+    />
   );
 };

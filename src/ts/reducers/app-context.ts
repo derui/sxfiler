@@ -15,6 +15,8 @@ export const reducer = function reducer(
       return changeCurrent(UIContext.OnSuggestion)(state);
     case ActionTypes.TASK_FINISHED:
       return changeCurrent(UIContext.OnFileTree)(state);
+    case ActionTypes.TASK_CANCELED:
+      return changeCurrent(UIContext.OnFileTree)(state);
     case ActionTypes.COMPLETER_OPEN:
       return pipe(changeCurrent(UIContext.OnCompletion), addSubContext(action.context))(state);
     case ActionTypes.COMPLETER_CLOSE:

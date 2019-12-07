@@ -4,6 +4,7 @@ import * as ReceiveMessageNotificationUseCase from "./usecases/notification/rece
 import * as ReceiveProgressNotificationUseCase from "./usecases/notification/receive-progress-notification";
 import * as TaskFinishedUseCase from "./usecases/task/finished";
 import * as FilerUpdatedUseCase from "./usecases/filer/filer-updated";
+import * as TaskCanceledUseCase from "./usecases/task/canceled";
 import { createSuggestions, SuggestionKind } from "./domains/task-suggestion";
 import { FilerOnRPC, encode } from "./codecs/filer";
 import { createMessage } from "./domains/message-notification";
@@ -54,6 +55,15 @@ export const handleTaskInteraction = function handleTaskInteraction(context: Con
 export const handleTaskFinished = function handleTaskFinished(context: ContextLike) {
   return (params: string) => {
     context.use(TaskFinishedUseCase.createUseCase())(params);
+  };
+};
+
+/**
+   Handle a notification that contains the task id finished
+ */
+export const handleTaskCanceled = function handleTaskCanceled(context: ContextLike) {
+  return (params: string) => {
+    context.use(TaskCanceledUseCase.createUseCase())(params);
   };
 };
 

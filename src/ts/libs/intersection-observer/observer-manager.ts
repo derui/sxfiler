@@ -53,7 +53,7 @@ export const unobserve = function unobserve(target: IntersectionTarget): boolean
   let deleted = false;
 
   for (let entry of intersectionObserverMap.entries()) {
-    let [_, observer] = entry;
+    let observer = entry[1];
     if (observer.instance) {
       observer.instance.unobserve(target.element);
     }

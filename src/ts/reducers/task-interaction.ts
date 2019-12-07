@@ -8,6 +8,8 @@ export const reducer = function reducer(state = TaskInteractionState.empty(), ac
       return TaskInteractionState.giveSuggestions(state, action.suggestions);
     case ActionTypes.TASK_FINISHED:
       return TaskInteractionState.finishTask(state, action.taskId);
+    case ActionTypes.TASK_CANCELED:
+      return TaskInteractionState.cancelTask(state, action.taskId);
     case ActionTypes.TASK_SELECT_REPLY:
       return TaskInteractionState.selectReply(state, action.index);
     case ActionTypes.TASK_UPDATE_REPLY_PAYLOAD:

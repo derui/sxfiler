@@ -76,6 +76,20 @@ export const finishTask = function finishTask(state: State, taskId: string): Sta
   };
 };
 
+// Cancel the task
+export const cancelTask = function cancelTask(state: State, taskId: string): State {
+  if (state.currentTaskId !== taskId) {
+    return state;
+  }
+
+  return {
+    ...state,
+    operating: false,
+    currentTaskId: undefined,
+    replies: undefined,
+  };
+};
+
 // select reply
 export const selectReply = function selectReply(state: State, index: number): State {
   let repliesLength = 0;
