@@ -12,10 +12,14 @@ const Root = styled(Element.Component)`
   ${Panel.rootStyle}
 `;
 
+const Label = styled.p`
+  margin: 0px;
+`;
+
 export const Component: React.FC<Props> = ({ selected }) => {
   return (
     <Root aria-selected={selected}>
-      <p>Overwrite</p>
+      <Label>Overwrite</Label>
     </Root>
   );
 };

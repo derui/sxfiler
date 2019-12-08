@@ -16,6 +16,10 @@ const Root = styled(Element.Component)`
   ${Panel.rootStyle}
 `;
 
+const Label = styled.p`
+  margin: 0px;
+`;
+
 const Input = styled.input`
   padding: ${props => props.theme.spaces.small};
 `;
@@ -37,9 +41,15 @@ export const Component: React.FC<Props> = ({ selected, nodeName, onUpdated }) =>
 
   return (
     <Root aria-selected={selected}>
-      <p>Rename</p>
+      <Label>Rename</Label>
       <label>
-        <Input type="text" value={state} onChange={handleChange(setState, onUpdated)} ref={refInput} />
+        <Input
+          type="text"
+          placeholder="New name of the node"
+          value={state}
+          onChange={handleChange(setState, onUpdated)}
+          ref={refInput}
+        />
       </label>
     </Root>
   );

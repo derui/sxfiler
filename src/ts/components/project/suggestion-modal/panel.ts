@@ -8,7 +8,7 @@ export const rootStyle = css`
   padding: ${props => props.theme.spaces.base};
   margin: 0 $baseSpace;
 
-  border-left: ${props => props.theme.spaces.base} solid transparent;
+  border-left: ${props => props.theme.spaces.small} solid transparent;
 
   color: ${props => props.theme.colors.base3};
   background-color: ${props => props.theme.colors.base03};

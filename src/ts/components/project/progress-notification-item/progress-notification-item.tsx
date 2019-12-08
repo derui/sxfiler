@@ -12,7 +12,7 @@ ${ListItem.style}
 const ProcessLabel = styled.span`
   flex: 0 0 20%;
   padding: ${props => props.theme.spaces.small};
-  color: $sol_base2;
+  color: ${props => props.theme.colors.base2};
 
   border-right: ${props => props.theme.spaces.small} solid ${props => props.theme.colors.base3};
   max-width: 20%;
@@ -59,20 +59,13 @@ export type Props = {
   body: Body;
 };
 
-export class Component extends React.PureComponent<Props> {
-  constructor(props: Props) {
-    super(props);
-  }
+export const Component: React.FC<Props> = ({ body }) => {
+  const ratio = Math.min(100, (body.current / body.targeted) * 100);
 
-  public render() {
-    const { body } = this.props;
-    const ratio = Math.min(100, (body.current / body.targeted) * 100);
-
-    return (
-      <Root>
-        <ProcessLabel>{body.process}</ProcessLabel>
-        {makeProgressBar(ratio)}
-      </Root>
-    );
-  }
-}
+  return (
+    <Root>
+      <ProcessLabel>{body.process}</ProcessLabel>
+      {makeProgressBar(ratio)}
+    </Root>
+  );
+};
