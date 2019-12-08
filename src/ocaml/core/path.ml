@@ -42,7 +42,7 @@ let resolve_sep env =
     If path does not have separator, return tuple that first element is [path], and second is empty
     string.
 
-    Default separator is platform dependent separator such as [/] on *nix or [\\] on Windows when do
+    Default separator is platform dependent separator such as "/" on *nix or "\\" on Windows when do
     not pass separator. *)
 let split_path_sep ?env path =
   let length = String.length path in
