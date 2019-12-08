@@ -25,8 +25,9 @@ module Make (S : Spec) : S = struct
     let module Res = Rpc.Response in
     let open Sxfiler_core in
     try%lwt
-      Log.info (fun m ->
-          m "Start procedure: {%s}, param: %s" method_
+      Log.info (fun m -> m "Start procedure: {%s}" method_);%lwt
+      Log.debug (fun m ->
+          m "Given parameters: %s"
             (Option.get ~default:(fun () -> `Null) req |> Yojson.Safe.to_string));%lwt
       let%lwt result =
         let execute_with_param decoder =
