@@ -72,7 +72,6 @@ export const finishTask = function finishTask(state: State, taskId: string): Sta
     replyQueue: state.replyQueue.splice(1),
     operating: false,
     currentTaskId: undefined,
-    replies: undefined,
   };
 };
 
@@ -86,7 +85,6 @@ export const cancelTask = function cancelTask(state: State, taskId: string): Sta
     ...state,
     operating: false,
     currentTaskId: undefined,
-    replies: undefined,
   };
 };
 
