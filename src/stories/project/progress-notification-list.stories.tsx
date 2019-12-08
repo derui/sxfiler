@@ -20,12 +20,12 @@ storiesOf("Project/Progress Notification List", module)
     "with notifications",
     () => {
       const current = number("Current", 0);
-      const target = number("Target", 100);
+      const targeted = number("Target", 100);
       const process = text("Process name", "process");
       const item = N.createProgress("id", {
         process,
         current,
-        target,
+        targeted,
       });
       const item2 = N.createProgress("id", {
         process: "fixed process",

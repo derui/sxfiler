@@ -26,12 +26,10 @@ storiesOf("Project/Completer", module)
             <Completer
               dialogRoot={root}
               opened={boolean("opened", false)}
-              container={{
-                title: "completion",
-                items: [],
-                selectedItemIndex: number("item", 0),
-                onInput: () => {},
-              }}
+              title={"completion"}
+              items={[]}
+              selectedItemIndex={number("selected item", 0)}
+              onInput={() => {}}
               overlay={{}}
             />
           </div>
@@ -59,12 +57,10 @@ storiesOf("Project/Completer", module)
             <Completer
               dialogRoot={root}
               opened={true}
-              container={{
-                title: "completion",
-                items,
-                selectedItemIndex: number("item", 0),
-                onInput: () => {},
-              }}
+              title={"completion"}
+              items={items}
+              selectedItemIndex={number("item", 0)}
+              onInput={() => {}}
               overlay={{}}
             />
           </div>
