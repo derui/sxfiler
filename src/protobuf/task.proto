@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+// types
+message TaskReply {
+  message Rename {
+    string newName = 1;
+  }
+
+  oneof reply {
+    bool overwrite = 1;
+    Rename rename = 2;
+  }
+  string taskId = 3;
+}
+
+// request/response
+message TaskSendReplyRequest {
+  TaskReply reply = 1;
+}
+
+message TaskSendReplyResponse {}
+
+message TaskCancelRequest {
+  string taskId = 1;
+}
+
+message TaskCancelResponse {}
