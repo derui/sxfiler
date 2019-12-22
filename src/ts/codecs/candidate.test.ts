@@ -1,16 +1,18 @@
 import * as E from "./candidate";
+import { Candidate, Item } from "@/generated/completion_pb";
 
 describe("Object Codecs", () => {
   describe("Candidate", () => {
     it("convert JSON representation to frontend domain", () => {
-      const obj = E.encode({
-        length: 10,
-        start: 1,
-        value: {
-          id: "id",
-          value: "foobar",
-        },
-      });
+      const candidate = new Candidate();
+      const item = new Item();
+      item.setId("id");
+      item.setValue("foobar");
+      candidate.setLength(10);
+      candidate.setStart(1);
+      candidate.setValue(item);
+
+      const obj = E.encode(candidate);
 
       expect(obj).toEqual({
         id: "id",

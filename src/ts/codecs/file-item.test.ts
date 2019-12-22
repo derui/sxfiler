@@ -1,35 +1,46 @@
 import * as E from "./file-item";
 import * as Es from "./file-stat";
 import { createFileItem } from "@/domains/file-item";
+import { FileItem, FileStat, Mode, Capability } from "@/generated/filer_pb";
 
-const stat = {
-  mode: {
-    owner: { readable: true, executable: true, writable: true },
-    group: { readable: true, executable: true, writable: false },
-    others: { readable: true, executable: false, writable: false },
-  },
-  uid: 1000,
-  gid: 500,
-  atime: "3",
-  ctime: "4",
-  mtime: "5",
-  size: "10",
-  isDirectory: false,
-  isFile: true,
-  isSymlink: false,
+function makeCap(writable: boolean, readable: boolean, executable: boolean) {
+  const cap = new Capability();
+  cap.setWritable(writable);
+  cap.setReadable(readable);
+  cap.setExecutable(executable);
+  return cap;
+}
+
+const reqStat = () => {
+  const ret = new FileStat();
+  const mode = new Mode();
+
+  mode.setOwner(makeCap(true, true, true));
+  mode.setGroup(makeCap(false, true, true));
+  mode.setOthers(makeCap(false, true, false));
+  ret.setMode(mode);
+  ret.setUid(1000);
+  ret.setGid(500);
+  ret.setAtime("3");
+  ret.setCtime("4");
+  ret.setMtime("5");
+  ret.setSize("10");
+  ret.setIsdirectory(false);
+  ret.setIsfile(true);
+  ret.setIssymlink(false);
+  return ret;
 };
 
 describe("Object Codecs", () => {
   describe("File Item", () => {
     it("can encode RPC domain to Frontend domain", () => {
-      const obj = E.encode({
-        id: "node",
-        name: "node",
-        fullPath: "parent/node",
-        parent: "parent",
-        stat,
-        marked: false,
-      });
+      const req = new FileItem();
+      req.setId("node");
+      req.setName("node");
+      req.setFullpath("parent/node");
+      req.setParent("parent");
+      req.setStat(reqStat());
+      const obj = E.encode(req, false);
 
       expect(obj).toEqual(
         createFileItem({
@@ -37,7 +48,7 @@ describe("Object Codecs", () => {
           name: "node",
           fullPath: "parent/node",
           parentDirectory: "parent",
-          stat: Es.encode(stat),
+          stat: Es.encode(reqStat()),
           marked: false,
         })
       );

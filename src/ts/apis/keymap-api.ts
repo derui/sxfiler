@@ -1,8 +1,15 @@
 // defines API signature for Filer group.
 
 import { Api } from "@/libs/json-rpc/client";
-import { createKeymap, Keymap } from "@/domains/keymap";
+import { createKeymap, Keymap as Domain } from "@/domains/keymap";
 import { UIContext } from "@/types/ui-context";
+import {
+  KeymapGetRequest,
+  KeymapGetResponse,
+  Keymap,
+  KeymapReloadRequest,
+  KeymapReloadResponse,
+} from "@/generated/keymap_pb";
 
 export enum Methods {
   Get = "keymap/get",
@@ -15,16 +22,10 @@ export enum Methods {
    @param keymaps JSON representation for fller
    @return Filer object
  */
-const transformKeymap = function transformKeymap(keymaps: {
-  bindings: [{ key: string; action: string; when: { contexts: string[] } }];
-}): Keymap {
-  if (!keymaps) {
-    throw new Error("Keymap should not be undefined or null");
-  }
-
+const transformKeymap = function transformKeymap(keymaps: Keymap): Domain {
   return createKeymap(
-    keymaps.bindings.map(v => {
-      const contexts = v.when.contexts.map(v => {
+    keymaps.getBindingsList().map(v => {
+      const contexts = v.getContextsList().map(v => {
         switch (v) {
           case "onFileTree":
             return UIContext.OnFileTree;
@@ -40,7 +41,7 @@ const transformKeymap = function transformKeymap(keymaps: {
             throw new Error(`Unknown context: ${v}`);
         }
       });
-      return { ...v, when: { contexts } };
+      return { key: v.getKey(), action: v.getAction(), when: { contexts } };
     })
   );
 };
@@ -48,34 +49,37 @@ const transformKeymap = function transformKeymap(keymaps: {
 /**
    API definition for keymap/get
  */
-const Get: Api<Methods.Get, any, Keymap> = {
+const Get: Api<Methods.Get, void, KeymapGetRequest, KeymapGetResponse, Domain | undefined> = {
   method: Methods.Get,
   parametersTransformer() {
-    return undefined;
+    return new KeymapGetRequest();
   },
   resultTransformer(ret, error) {
     if (!ret && error) {
       throw Error(error.message);
     }
+    const keymap = ret?.getKeymap();
 
-    return transformKeymap(ret);
+    return keymap && transformKeymap(keymap);
   },
 };
 
 /**
    API definition for keymap/get
  */
-const Reload: Api<Methods.Reload, any, Keymap> = {
+const Reload: Api<Methods.Reload, void, KeymapReloadRequest, KeymapReloadResponse, Domain | undefined> = {
   method: Methods.Reload,
   parametersTransformer() {
-    return undefined;
+    return new KeymapReloadRequest();
   },
   resultTransformer(ret, error) {
-    if (!ret && error) {
+    if (error) {
       throw Error(error.message);
     }
 
-    return transformKeymap(ret);
+    const keymap = ret?.getKeymap();
+
+    return keymap && transformKeymap(keymap);
   },
 };
 

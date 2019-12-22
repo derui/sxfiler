@@ -1,11 +1,5 @@
-import { Bookmark, createBookmark } from "@/domains/bookmark";
-
-// define codec that is between filer domain and RPC
-export type TypeOnRPC = {
-  id: string;
-  path: string;
-  order: number;
-};
+import { Bookmark as Domain, createBookmark } from "@/domains/bookmark";
+import { Bookmark } from "@/generated/bookmark_pb";
 
 /**
    encode node object from RPC to frontend domain.
@@ -13,6 +7,10 @@ export type TypeOnRPC = {
    @param obj JSON representation for node
    @return Node object
  */
-export const encode = function encode(obj: TypeOnRPC): Bookmark {
-  return createBookmark(obj);
+export const encode = function encode(obj: Bookmark): Domain {
+  return createBookmark({
+    id: obj.getId(),
+    path: obj.getPath(),
+    order: obj.getOrder(),
+  });
 };

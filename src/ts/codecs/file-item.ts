@@ -1,16 +1,6 @@
-import { FileItem, createFileItem } from "@/domains/file-item";
-import { encode as encodeFileStat, TypeOnRPC as FileStatOnRPC } from "./file-stat";
-
-// define codec that is between filer domain and RPC
-
-export type FileItemOnRPC = {
-  id: string;
-  parent: string;
-  name: string;
-  fullPath: string;
-  stat: FileStatOnRPC;
-  linkPath?: string;
-};
+import { FileItem as Domain, createFileItem } from "@/domains/file-item";
+import { encode as encodeFileStat } from "./file-stat";
+import { FileItem } from "@/generated/filer_pb";
 
 /**
    encode node object from RPC to frontend domain.
@@ -18,8 +8,20 @@ export type FileItemOnRPC = {
    @param obj JSON representation for node
    @return Node object
  */
-export const encode = function encode(obj: FileItemOnRPC & { marked: boolean }): FileItem {
-  const { id, parent, fullPath, name, stat, linkPath, marked } = obj;
+export const encode = function encode(obj: FileItem, marked: boolean): Domain {
+  const stat = obj.getStat();
 
-  return createFileItem({ id, name, fullPath, linkPath, stat: encodeFileStat(stat), parentDirectory: parent, marked });
+  if (!stat) {
+    throw Error("file item must have file stat");
+  }
+
+  return createFileItem({
+    id: obj.getId(),
+    name: obj.getName(),
+    fullPath: obj.getFullpath(),
+    linkPath: obj.getHaslinkpath() ? obj.getLinkpath() : undefined,
+    stat: encodeFileStat(stat),
+    parentDirectory: obj.getParent(),
+    marked: marked,
+  });
 };

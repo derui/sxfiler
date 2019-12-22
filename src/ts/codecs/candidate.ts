@@ -1,14 +1,5 @@
-import { Candidate, createCandidate } from "@/domains/candidate";
-
-// define codec that is between filer domain and RPC
-export type TypeOnRPC = {
-  start: number;
-  length: number;
-  value: {
-    id: string;
-    value: string;
-  };
-};
+import { Candidate as Domain, createCandidate } from "@/domains/candidate";
+import { Candidate } from "@/generated/completion_pb";
 
 /**
    encode node object from RPC to frontend domain.
@@ -16,6 +7,11 @@ export type TypeOnRPC = {
    @param obj JSON representation for node
    @return Node object
  */
-export const encode = function encode(obj: TypeOnRPC): Candidate {
-  return createCandidate({ id: obj.value.id, value: obj.value.value, start: obj.start, length: obj.length });
+export const encode = function encode(obj: Candidate): Domain {
+  return createCandidate({
+    id: obj.getValue()?.getId() || "",
+    value: obj.getValue()?.getValue() || "",
+    start: obj.getStart(),
+    length: obj.getLength(),
+  });
 };

@@ -1,20 +1,8 @@
-import { Filer, createFiler } from "@/domains/filer";
-import { FileItemOnRPC, encode as encodeFileItem } from "./file-item";
-import { LocationHistoryOnRPC, encode as encodeLocationHistory } from "./location-history";
-
-// define codec that is between filer domain and RPC
-
-export type FilerOnRPC = {
-  id: string;
-  name: string;
-  fileList: {
-    location: string;
-    items: FileItemOnRPC[];
-  };
-  markedItems: string[];
-  sortOrder: string;
-  history: LocationHistoryOnRPC;
-};
+import { Filer as Domain, createFiler } from "@/domains/filer";
+import { encode as encodeFileItem } from "./file-item";
+import { encode as encodeLocationHistory } from "./location-history";
+import { Filer } from "@/generated/filer_pb";
+import { createLocationHistory } from "@/domains/location-history";
 
 /**
    encode filer object from RPC to frontend domain.
@@ -22,26 +10,23 @@ export type FilerOnRPC = {
    @param filer JSON representation for fller
    @return Filer object
  */
-export const encode = function encode(obj: FilerOnRPC): Filer {
-  const {
-    id,
-    name,
-    fileList: { location, items },
-    markedItems,
-    history,
-  } = obj;
-
+export const encode = function encode(obj: Filer): Domain {
+  const markedItems = obj.getMarkeditemsList();
   return createFiler({
-    id,
-    name,
-    location,
-    items: items
-      .map(v => ({
-        ...v,
-        marked: markedItems.includes(v.id),
-      }))
-      .map(encodeFileItem),
+    id: obj.getId(),
+    name: obj.getName(),
+    location: obj.getFilelist()?.getLocation() || "",
+    items:
+      obj
+        .getFilelist()
+        ?.getItemsList()
+        ?.map(v => encodeFileItem(v, markedItems.includes(v.getId()))) || [],
     currentCursorIndex: 0,
-    history: encodeLocationHistory(history),
+    history:
+      encodeLocationHistory(obj.getHistory()) ||
+      createLocationHistory({
+        records: [],
+        maxRecordNumber: 0,
+      }),
   });
 };

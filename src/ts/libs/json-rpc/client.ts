@@ -1,18 +1,18 @@
 import * as Common from "./type";
 
 // P and Res only use to define api
-export type Api<T extends string, P extends any = any, Res extends any = any> = {
+export type Api<T extends string, P, Req, Res extends any = any, Result extends any = any> = {
   method: T;
 
   /**
      Transformer for param of the method
    */
-  parametersTransformer: (param: P) => any;
+  parametersTransformer: (param: P) => Req;
 
   /**
      Transformer for result of the method
    */
-  resultTransformer: (res: any, error?: Common.RPCError) => Res;
+  resultTransformer: (res: Res | undefined, error?: Common.RPCError) => Result;
 };
 
 export type Notification<T extends string, P extends {} = any> = {

@@ -1,19 +1,8 @@
-import { LocationHistory, createLocationHistory } from "@/domains/location-history";
+import { LocationHistory as Domain, createLocationHistory } from "@/domains/location-history";
+import { LocationRecord, LocationHistory } from "@/generated/filer_pb";
 
-// define codec that is between filer domain and RPC
-
-type LocationRecordOnRPC = {
-  location: string;
-  timestamp: string;
-};
-
-export type LocationHistoryOnRPC = {
-  records: LocationRecordOnRPC[];
-  maxRecordNumber: number;
-};
-
-const encodeLocationRecord = function encodeLocationRecord(record: LocationRecordOnRPC) {
-  return { location: record.location, timestamp: new Date(Number(record.timestamp)) };
+const encodeLocationRecord = function encodeLocationRecord(record: LocationRecord) {
+  return { location: record.getLocation(), timestamp: new Date(Number(record.getTimestamp())) };
 };
 
 /**
@@ -22,9 +11,9 @@ const encodeLocationRecord = function encodeLocationRecord(record: LocationRecor
    @param obj JSON representation for location history
    @return LocationHistory object
  */
-export const encode = function encode(obj: LocationHistoryOnRPC): LocationHistory {
+export const encode = function encode(obj: LocationHistory): Domain {
   return createLocationHistory({
-    records: obj.records.map(encodeLocationRecord),
-    maxRecordNumber: obj.maxRecordNumber,
+    records: obj.getRecordsList().map(encodeLocationRecord),
+    maxRecordNumber: obj.getMaxrecordnumber(),
   });
 };
