@@ -3,6 +3,7 @@ module G = Sxfiler_server_gateway
 module Co = Sxfiler_domain.Completion
 module T = Sxfiler_server_translator
 module U = Sxfiler_usecase
+module Gen = Sxfiler_server_generated
 
 let test_set =
   [
@@ -23,7 +24,7 @@ let test_set =
             { Co.Item.id = "3"; value = "bar ball" };
           ]
         in
-        let%lwt _ = Setup.handle { source = T.Completion.Collection.of_domain expected } in
+        let%lwt _ = Setup.handle @@ T.Completion.Collection.of_domain expected in
         Alcotest.(check @@ list @@ of_pp Fmt.nop) "called" expected !called;
         Lwt.return_unit);
     Alcotest_lwt.test_case "can complete from common source stored before" `Quick (fun _ () ->
@@ -39,8 +40,8 @@ let test_set =
           let execute _ = Lwt.return_ok expected
         end in
         let module Read = G.Completion.Read.Make (Usecase) in
-        let%lwt res = Read.handle { input = "foo" } in
-        Alcotest.(check @@ result (list @@ of_pp T.Completion.Candidate.pp) (of_pp Fmt.nop))
+        let%lwt res = Read.handle "foo" in
+        Alcotest.(check @@ result (list @@ of_pp Gen.Completion.Candidate.pp) (of_pp Fmt.nop))
           "read"
           (Ok (T.Completion.Candidates.of_domain expected))
           res;

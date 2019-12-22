@@ -2,18 +2,19 @@
 
 module S = Sxfiler_domain
 module T = Sxfiler_server_translator
+module G = Sxfiler_server_generated
 
 type filer_stat = {
   id : string;
   name : string;
   location : string;
-  history : T.Location_history.t;
+  history : G.Filer.LocationHistory.t option;
 }
 [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
 type t = {
   filers : filer_stat list;
-  bookmarks : T.Bookmark.t list;
+  bookmarks : G.Bookmark.Bookmark.t list;
 }
 [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
@@ -32,7 +33,7 @@ let add_filer_stat (filer : S.Filer.t) stat =
     {
       id = filer'.id;
       name = filer'.name;
-      location = filer'.file_list.location;
+      location = (match filer'.fileList with Some l -> l.location | None -> "");
       history = filer'.history;
     }
   in
@@ -44,12 +45,12 @@ let restore_filer_stats ~(scanner : (module S.Location_scanner_service.S)) stat 
   let convert_filer value =
     let v' =
       {
-        T.Filer.id = value.id;
+        G.Filer.Filer.id = value.id;
         name = value.name;
         history = value.history;
-        sort_order = T.Types.Sort_type.Name;
-        marked_items = [];
-        file_list = { location = value.location; items = [] };
+        sortOrder = G.Types.SortType.Name;
+        markedItems = [];
+        fileList = Some { G.Filer.FileList.location = value.location; items = [] };
       }
     in
     T.Filer.to_domain v'

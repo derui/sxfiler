@@ -1,5 +1,6 @@
 open Sxfiler_core
 module D = Sxfiler_domain
+module Gen = Sxfiler_server_generated.Keymap
 
 module type Location = sig
   val path : Path.t
@@ -10,7 +11,7 @@ module Make (L : Location) : D.Key_map_resolve_service.S = struct
     let path = Path.to_string L.path in
     let keymap = Yojson.Safe.from_file path in
     let module Y = Sxfiler_server_translator.Key_map in
-    match Y.of_json keymap with
+    match Gen.Keymap.of_json keymap with
     | Error err ->
         Logs.warn (fun m ->
             m "Error occurred: %s" @@ Protocol_conv_json.Json.error_to_string_hum err);

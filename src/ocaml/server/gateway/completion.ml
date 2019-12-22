@@ -1,13 +1,12 @@
 module C = Sxfiler_domain.Completion
 module T = Sxfiler_server_translator.Completion
+module G = Sxfiler_server_generated.Completion
 module Usecase = Sxfiler_usecase.Completion
 
 module Setup = struct
   module Type = struct
-    type input = { source : T.Collection.t }
-    [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
-
-    type output = unit [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+    type input = G.SetupRequest.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+    type output = G.SetupResponse.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -16,7 +15,7 @@ module Setup = struct
     include Type
 
     let handle param =
-      let source = T.Collection.to_domain param.source in
+      let source = T.Collection.to_domain param in
       match%lwt U.execute { source } with
       | Ok () -> Lwt.return_ok ()
       | Error () -> Lwt.return_error Gateway_error.(Unknown_error "unknown error")
@@ -25,8 +24,8 @@ end
 
 module Read = struct
   module Type = struct
-    type input = { input : string } [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
-    type output = T.Candidates.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+    type input = G.ReadRequest.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+    type output = G.ReadResponse.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -35,7 +34,7 @@ module Read = struct
     include Type
 
     let handle param =
-      let%lwt result = Usecase.execute { input = param.input } in
+      let%lwt result = Usecase.execute { input = param } in
       match result with
       | Ok v -> Lwt.return_ok @@ T.Candidates.of_domain v
       | Error () -> Lwt.return_error Gateway_error.(Unknown_error "unknown error")

@@ -2,6 +2,7 @@ module D = Sxfiler_domain
 module U = Sxfiler_usecase
 module G = Sxfiler_server_gateway
 module Tr = Sxfiler_server_translator
+module Gen = Sxfiler_server_generated
 
 let test_set =
   [
@@ -21,9 +22,9 @@ let test_set =
         end in
         let module Gateway = G.Keymap.Get.Make (Usecase) in
         let%lwt res = Gateway.handle () in
-        Alcotest.(check @@ result (of_pp Tr.Key_map.pp) (of_pp Fmt.nop))
+        Alcotest.(check @@ result (option @@ of_pp Gen.Keymap.Keymap.pp) (of_pp Fmt.nop))
           "current"
-          (Ok (Tr.Key_map.of_domain expected))
+          (Ok (Some (Tr.Key_map.of_domain expected)))
           res;
         Lwt.return_unit);
   ]

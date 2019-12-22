@@ -8,11 +8,7 @@ message Keymap {
 message Binding {
   string key = 1;
   string action = 2;
-  When when = 3;
-}
-
-message When {
-  repeated string contexts = 1;
+  repeated string contexts = 3;
 }
 
 // request/response

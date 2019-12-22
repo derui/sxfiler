@@ -13,11 +13,4 @@ let test_set =
         Alcotest.(check @@ of_pp D.Location_history.pp)
           "domain" data
           Tr.Location_history.(to_domain @@ of_domain data) );
-    ( "can translate to/from yojson",
-      `Quick,
-      fun () ->
-        let data = Tr.Location_history.of_domain data in
-        Alcotest.(check @@ result (of_pp Tr.Location_history.pp) (of_pp Fmt.nop))
-          "yojson" (Ok data)
-          Tr.Location_history.(of_json @@ to_json data) );
   ]

@@ -1,15 +1,28 @@
 syntax = "proto3";
+enum ReplyType {
+  Overwrite = 0;
+  Rename = 1;
+}
 
 // types
 message TaskReply {
+
   message Rename {
     string newName = 1;
   }
 
+  ReplyType type = 1;
   oneof reply {
-    bool overwrite = 1;
-    Rename rename = 2;
+    bool overwrite = 2;
+    Rename rename = 3;
   }
+  string taskId = 4;
+}
+
+// types
+message TaskSuggestion {
+  repeated ReplyType suggestions = 1;
+  string itemName = 2;
   string taskId = 3;
 }
 

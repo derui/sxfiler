@@ -43,7 +43,7 @@ and Binding : sig
   type t = {
     key : string;
     action : string;
-    when' : When.t option;
+    contexts : string list;
   }
   [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
@@ -55,56 +55,31 @@ end = struct
   type t = {
     key : string;
     action : string;
-    when' : When.t option;
+    contexts : string list;
   }
   [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f:f' { key; action; when' } = f' key action when' in
+    let apply ~f:f' { key; action; contexts } = f' key action contexts in
     let spec =
       Ocaml_protoc_plugin.Serialize.C.(
         basic (1, string, proto3)
         ^:: basic (2, string, proto3)
-        ^:: basic_opt (3, message When.to_proto)
+        ^:: repeated (3, string, packed)
         ^:: nil)
     in
     let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor key action when' = { key; action; when' } in
+    let constructor key action contexts = { key; action; contexts } in
     let spec =
       Ocaml_protoc_plugin.Deserialize.C.(
         basic (1, string, proto3)
         ^:: basic (2, string, proto3)
-        ^:: basic_opt (3, message When.from_proto)
+        ^:: repeated (3, string, packed)
         ^:: nil)
     in
-    let deserialize = Ocaml_protoc_plugin.Deserialize.deserialize spec constructor in
-    fun writer -> deserialize writer
-end
-
-and When : sig
-  val name' : unit -> string
-
-  type t = string list [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
-
-  val to_proto : t -> Ocaml_protoc_plugin.Writer.t
-  val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
-end = struct
-  let name' () = "Keymap.When"
-
-  type t = string list [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
-
-  let to_proto =
-    let apply ~f a = f a in
-    let spec = Ocaml_protoc_plugin.Serialize.C.(repeated (1, string, packed) ^:: nil) in
-    let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
-    fun t -> apply ~f:(serialize ()) t
-
-  let from_proto =
-    let constructor a = a in
-    let spec = Ocaml_protoc_plugin.Deserialize.C.(repeated (1, string, packed) ^:: nil) in
     let deserialize = Ocaml_protoc_plugin.Deserialize.deserialize spec constructor in
     fun writer -> deserialize writer
 end

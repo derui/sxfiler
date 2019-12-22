@@ -7,7 +7,25 @@
 (* Source: task.proto Syntax: proto3 Parameters: annot='[@@deriving eq, show, protocol
    ~driver:(module Protocol_conv_json.Json)]' debug=false opens=[] int64_as_int=true
    int32_as_int=true fixed_as_int=false singleton_record=false *)
-module rec TaskReply : sig
+module rec ReplyType : sig
+  type t =
+    | Overwrite
+    | Rename
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+
+  val to_int : t -> int
+  val from_int : int -> t Ocaml_protoc_plugin.Result.t
+end = struct
+  type t =
+    | Overwrite
+    | Rename
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+
+  let to_int = function Overwrite -> 0 | Rename -> 1
+  let from_int = function 0 -> Ok Overwrite | 1 -> Ok Rename | n -> Error (`Unknown_enum_value n)
+end
+
+and TaskReply : sig
   module rec Rename : sig
     val name' : unit -> string
 
@@ -20,6 +38,7 @@ module rec TaskReply : sig
   val name' : unit -> string
 
   type t = {
+    type' : ReplyType.t;
     reply : [ `Overwrite of bool | `Rename of Rename.t ];
     taskId : string;
   }
@@ -56,18 +75,71 @@ end = struct
   let name' () = "Task.TaskReply"
 
   type t = {
+    type' : ReplyType.t;
     reply : [ `Overwrite of bool | `Rename of Rename.t ];
     taskId : string;
   }
   [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f:f' { reply; taskId } = f' reply taskId in
+    let apply ~f:f' { type'; reply; taskId } = f' type' reply taskId in
     let spec =
       Ocaml_protoc_plugin.Serialize.C.(
-        oneof (function
-          | `Overwrite v -> oneof_elem (1, bool, v)
-          | `Rename v -> oneof_elem (2, message Rename.to_proto, v))
+        basic (1, enum ReplyType.to_int, proto3)
+        ^:: oneof (function
+              | `Overwrite v -> oneof_elem (2, bool, v)
+              | `Rename v -> oneof_elem (3, message Rename.to_proto, v))
+        ^:: basic (4, string, proto3)
+        ^:: nil)
+    in
+    let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
+    fun t -> apply ~f:(serialize ()) t
+
+  let from_proto =
+    let constructor type' reply taskId = { type'; reply; taskId } in
+    let spec =
+      Ocaml_protoc_plugin.Deserialize.C.(
+        basic (1, enum ReplyType.from_int, proto3)
+        ^:: oneof
+              [
+                oneof_elem (2, bool, fun v -> `Overwrite v);
+                oneof_elem (3, message Rename.from_proto, fun v -> `Rename v);
+              ]
+        ^:: basic (4, string, proto3)
+        ^:: nil)
+    in
+    let deserialize = Ocaml_protoc_plugin.Deserialize.deserialize spec constructor in
+    fun writer -> deserialize writer
+end
+
+and TaskSuggestion : sig
+  val name' : unit -> string
+
+  type t = {
+    suggestions : ReplyType.t list;
+    itemName : string;
+    taskId : string;
+  }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+
+  val to_proto : t -> Ocaml_protoc_plugin.Writer.t
+  val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
+end = struct
+  let name' () = "Task.TaskSuggestion"
+
+  type t = {
+    suggestions : ReplyType.t list;
+    itemName : string;
+    taskId : string;
+  }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+
+  let to_proto =
+    let apply ~f:f' { suggestions; itemName; taskId } = f' suggestions itemName taskId in
+    let spec =
+      Ocaml_protoc_plugin.Serialize.C.(
+        repeated (1, enum ReplyType.to_int, packed)
+        ^:: basic (2, string, proto3)
         ^:: basic (3, string, proto3)
         ^:: nil)
     in
@@ -75,14 +147,11 @@ end = struct
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor reply taskId = { reply; taskId } in
+    let constructor suggestions itemName taskId = { suggestions; itemName; taskId } in
     let spec =
       Ocaml_protoc_plugin.Deserialize.C.(
-        oneof
-          [
-            oneof_elem (1, bool, fun v -> `Overwrite v);
-            oneof_elem (2, message Rename.from_proto, fun v -> `Rename v);
-          ]
+        repeated (1, enum ReplyType.from_int, packed)
+        ^:: basic (2, string, proto3)
         ^:: basic (3, string, proto3)
         ^:: nil)
     in

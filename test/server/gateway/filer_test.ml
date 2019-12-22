@@ -1,10 +1,9 @@
 open Sxfiler_core
 module D = Sxfiler_domain
-module S = Sxfiler_server
 module U = Sxfiler_usecase
-module C = Sxfiler_server_core
 module G = Sxfiler_server_gateway
 module T = Sxfiler_server_translator
+module Gen = Sxfiler_server_generated
 
 module Factory = D.Filer.Factory.Make (struct
   type id = D.Filer.id
@@ -30,10 +29,10 @@ let test_set =
           let execute _ = Lwt.return_ok expected
         end in
         let module Gateway = G.Filer.Make.Make (Dummy_system) (Usecase) in
-        let%lwt res = Gateway.handle { Gateway.initial_location = "/initial"; name = "foo" } in
-        Alcotest.(check @@ result (of_pp T.Filer.pp) (of_pp Fmt.nop))
+        let%lwt res = Gateway.handle { initialLocation = "/initial"; name = "foo" } in
+        Alcotest.(check @@ result (option @@ of_pp Gen.Filer.Filer.pp) (of_pp Fmt.nop))
           "created"
-          (Ok (T.Filer.of_domain expected))
+          (Ok (Some (T.Filer.of_domain expected)))
           res;
         Lwt.return_unit);
     Alcotest_lwt.test_case "jump a location for filer" `Quick (fun _ () ->
@@ -47,10 +46,10 @@ let test_set =
           let execute _ = Lwt.return_ok expected
         end in
         let module Gateway = G.Filer.Jump_location.Make (Dummy_system) (Usecase) in
-        let%lwt res = Gateway.handle { Gateway.location = "/initial"; name = "foo" } in
-        Alcotest.(check @@ result (of_pp T.Filer.pp) (of_pp Fmt.nop))
+        let%lwt res = Gateway.handle { location = "/initial"; name = "foo" } in
+        Alcotest.(check @@ result (option @@ of_pp Gen.Filer.Filer.pp) (of_pp Fmt.nop))
           "created"
-          (Ok (T.Filer.of_domain expected))
+          (Ok (Some (T.Filer.of_domain expected)))
           res;
         Lwt.return_unit);
     Alcotest_lwt.test_case "do not create workspace if it exists" `Quick (fun _ () ->
@@ -60,8 +59,8 @@ let test_set =
           let execute _ = Lwt.return_error `Already_exists
         end in
         let module Gateway = G.Filer.Make.Make (Dummy_system) (Usecase) in
-        let%lwt ret = Gateway.handle { initial_location = "/initial"; name = "foo" } in
-        Alcotest.(check @@ result (of_pp T.Filer.pp) (of_pp Fmt.nop))
+        let%lwt ret = Gateway.handle { initialLocation = "/initial"; name = "foo" } in
+        Alcotest.(check @@ result (option @@ of_pp Gen.Filer.Filer.pp) (of_pp Fmt.nop))
           "thrown any exception" (Error G.Gateway_error.Filer_already_exists) ret;
         Lwt.return_unit);
     Alcotest_lwt.test_case "move_parent raise error if filer is not found" `Quick (fun _ () ->
@@ -71,8 +70,8 @@ let test_set =
           let execute _ = Lwt.return_error `Not_found
         end in
         let module Gateway = G.Filer.Move_parent.Make (Usecase) in
-        let%lwt ret = Gateway.handle { name = "foo" } in
-        Alcotest.(check @@ result (of_pp T.Filer.pp) (of_pp Fmt.nop))
+        let%lwt ret = Gateway.handle "foo" in
+        Alcotest.(check @@ result (option @@ of_pp Gen.Filer.Filer.pp) (of_pp Fmt.nop))
           "thrown any exception" (Error G.Gateway_error.Filer_not_found) ret;
         Lwt.return_unit);
     Alcotest_lwt.test_case "toggle_mark raise error if filer is not found" `Quick (fun _ () ->
@@ -82,8 +81,8 @@ let test_set =
           let execute _ = Lwt.return_error `Not_found
         end in
         let module Gateway = G.Filer.Toggle_mark.Make (Usecase) in
-        let%lwt ret = Gateway.handle { name = "foo"; item_ids = [ "id1" ] } in
-        Alcotest.(check @@ result (of_pp T.Filer.pp) (of_pp Fmt.nop))
+        let%lwt ret = Gateway.handle { name = "foo"; itemIds = [ "id1" ] } in
+        Alcotest.(check @@ result (option @@ of_pp Gen.Filer.Filer.pp) (of_pp Fmt.nop))
           "thrown any exception" (Error G.Gateway_error.Filer_not_found) ret;
         Lwt.return_unit);
     Alcotest_lwt.test_case "move raise error if filer is not found" `Quick (fun _ () ->
@@ -93,7 +92,7 @@ let test_set =
           let execute _ = Lwt.return_error (`Not_found "foo")
         end in
         let module Gateway = G.Filer.Move.Make (Usecase) in
-        let%lwt ret = Gateway.handle { source = "foo"; dest = "dest"; item_ids = [ "id1" ] } in
+        let%lwt ret = Gateway.handle { source = "foo"; dest = "dest"; itemIds = [ "id1" ] } in
         Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
           "thrown any exception" (Error G.Gateway_error.Filer_not_found) ret;
         Lwt.return_unit);
@@ -104,7 +103,7 @@ let test_set =
           let execute _ = Lwt.return_error `Same_filer
         end in
         let module Gateway = G.Filer.Move.Make (Usecase) in
-        let%lwt ret = Gateway.handle { source = "foo"; dest = "dest"; item_ids = [ "id1" ] } in
+        let%lwt ret = Gateway.handle { source = "foo"; dest = "dest"; itemIds = [ "id1" ] } in
         Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
           "thrown any exception" (Error G.Gateway_error.Filer_same_filer) ret;
         Lwt.return_unit);
@@ -115,7 +114,7 @@ let test_set =
           let execute _ = Lwt.return_error (`Not_found "foo")
         end in
         let module Gateway = G.Filer.Delete.Make (Usecase) in
-        let%lwt ret = Gateway.handle { source = "foo"; item_ids = [ "id1" ] } in
+        let%lwt ret = Gateway.handle { source = "foo"; itemIds = [ "id1" ] } in
         Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
           "thrown any exception" (Error G.Gateway_error.Filer_not_found) ret;
         Lwt.return_unit);
@@ -126,7 +125,7 @@ let test_set =
           let execute _ = Lwt.return_error (`Not_found "foo")
         end in
         let module Gateway = G.Filer.Copy.Make (Usecase) in
-        let%lwt ret = Gateway.handle { source = "foo"; dest = "dest"; item_ids = [ "id1" ] } in
+        let%lwt ret = Gateway.handle { source = "foo"; dest = "dest"; itemIds = [ "id1" ] } in
         Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
           "thrown any exception" (Error G.Gateway_error.Filer_not_found) ret;
         Lwt.return_unit);

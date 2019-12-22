@@ -2,16 +2,18 @@ open Lwt.Infix
 open Websocket
 open Websocket_lwt_unix
 module S = Sxfiler_server_gateway
+module Gen = Sxfiler_server_generated
 
 let section = Lwt_log.Section.make "rpc tester"
 
-let validate_command command args =
+let validate_command command (args : string list) =
   let module A = Rpc_client.Api in
   match command with
   | _ as v when v = A.filer_make._method ->
       Ok
         ( A.filer_make,
-          S.Filer.Make.Type.{ initial_location = List.nth args 0; name = List.nth args 1 } )
+          { Gen.Filer.FilerMakeRequest.initialLocation = List.nth args 0; name = List.nth args 1 }
+        )
   | _ -> Error "Not implemented"
 
 let rpc_shell ~client ~content =

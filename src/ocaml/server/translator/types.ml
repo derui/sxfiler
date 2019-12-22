@@ -1,19 +1,7 @@
 module D = Sxfiler_domain.Types
+module G = Sxfiler_server_generated
 
 module Sort_type = struct
-  type t =
-    | Name [@name "name"]
-    | Size [@name "size"]
-    | Date [@name "date"]
-  [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
-
-  let to_domain = function
-    | Name -> D.Sort_type.Name
-    | Date -> D.Sort_type.Date
-    | Size -> D.Sort_type.Size
-
-  let of_domain = function
-    | D.Sort_type.Name -> Name
-    | D.Sort_type.Date -> Date
-    | D.Sort_type.Size -> Size
+  let to_domain = function G.Types.SortType.Name -> D.Sort_type.Name | Date -> Date | Size -> Size
+  let of_domain = function D.Sort_type.Name -> G.Types.SortType.Name | Date -> Date | Size -> Size
 end
