@@ -7297,7 +7297,7 @@ good-listener@^1.2.2:
   dependencies:
     delegate "^3.1.2"
 
-google-protobuf@^3.6.1:
+google-protobuf@^3.11.2, google-protobuf@^3.6.1:
   version "3.11.2"
   resolved "https://registry.yarnpkg.com/google-protobuf/-/google-protobuf-3.11.2.tgz#43272974521a5cec35a21f62730cf517a5a8e38c"
   integrity sha512-T4fin7lcYLUPj2ChUZ4DvfuuHtg3xi1621qeRZt2J7SvOQusOzq+sDT4vbotWTCjUXJoR36CA016LlhtPy80uQ==

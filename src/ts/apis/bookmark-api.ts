@@ -10,7 +10,7 @@ import {
   RegisterResponse,
   DeleteRequest,
   DeleteResponse,
-} from "@/generated/bookmark_pb";
+} from "../generated/bookmark_pb";
 
 export enum Methods {
   ListAll = "bookmark/listAll",

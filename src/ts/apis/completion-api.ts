@@ -3,7 +3,7 @@
 import { Api } from "@/libs/json-rpc/client";
 import * as E from "@/codecs/candidate";
 import { Candidate } from "@/domains/candidate";
-import { SetupRequest, SetupResponse, ReadRequest, ReadResponse, Item } from "@/generated/completion_pb";
+import { SetupRequest, SetupResponse, ReadRequest, ReadResponse, Item } from "../generated/completion_pb";
 
 export enum Methods {
   Setup = "completion/setup",

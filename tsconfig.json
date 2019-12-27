@@ -21,11 +21,13 @@
     "jsx": "react",
     "incremental": true,
     "baseUrl": "./",
+    "outDir": "generated",
     "paths": {
       "@/*": ["src/ts/*"]
     }
   },
   "include": [
+    "src/ts/generated/*.js",
     "src/ts/**/*.ts",
     "src/ts/**/*.tsx",
     "src/index.tsx"

@@ -1,4 +1,4 @@
-import { Reply, ReplyPayload, ReplyKind } from "@/domains/task-reply";
+import { Reply, ReplyKind } from "@/domains/task-reply";
 import {
   TaskSendReplyRequest,
   TaskSendReplyResponse,
@@ -6,7 +6,7 @@ import {
   ReplyType,
   TaskCancelRequest,
   TaskCancelResponse,
-} from "@/generated/task_pb";
+} from "../generated/task_pb";
 import { Api } from "@/libs/json-rpc/client";
 
 // defines API signature for Task group.

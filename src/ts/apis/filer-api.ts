@@ -22,7 +22,7 @@ import {
   FilerDeleteResponse,
   FilerJumpLocationRequest,
   FilerJumpLocationResponse,
-} from "@/generated/filer_pb";
+} from "../generated/filer_pb";
 
 export enum Methods {
   Make = "filer/make",

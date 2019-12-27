@@ -9,7 +9,7 @@ import {
   Keymap,
   KeymapReloadRequest,
   KeymapReloadResponse,
-} from "@/generated/keymap_pb";
+} from "../generated/keymap_pb";
 
 export enum Methods {
   Get = "keymap/get",
