@@ -60,7 +60,7 @@ export class ClientImpl<M extends string> implements Client<M> {
     const rpcRequest: Common.Request = {
       jsonrpc: "2.0",
       method: api.method,
-      params: api.parametersTransformer(params),
+      params: api.parametersTransformer(params).toObject(),
       id: this.idGenerator(),
     };
 
@@ -74,7 +74,7 @@ export class ClientImpl<M extends string> implements Client<M> {
     const rpcRequest: Common.Request = {
       jsonrpc: "2.0",
       method: api.method,
-      params: api.parametersTransformer(params),
+      params: api.parametersTransformer(params).toObject(),
     };
 
     this.requester.notify(rpcRequest);

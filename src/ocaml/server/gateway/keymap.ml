@@ -10,6 +10,9 @@ module Get = struct
 
     type output = Gen.Keymap.KeymapGetResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let input_from_pb = Gen.Keymap.KeymapGetRequest.from_proto
+    let output_to_pb = Gen.Keymap.KeymapGetResponse.to_proto
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -33,6 +36,9 @@ module Reload = struct
 
     type output = Gen.Keymap.KeymapReloadResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let input_from_pb = Gen.Keymap.KeymapReloadRequest.from_proto
+    let output_to_pb = Gen.Keymap.KeymapReloadResponse.to_proto
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -54,6 +60,9 @@ module Store = struct
 
     type output = Gen.Keymap.KeymapStoreResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let input_from_pb = Gen.Keymap.KeymapStoreRequest.from_proto
+    let output_to_pb = Gen.Keymap.KeymapStoreResponse.to_proto
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output

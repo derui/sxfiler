@@ -185,7 +185,6 @@ and FileItem : sig
     stat : FileStat.t option;
     hasLinkPath : bool;
     linkPath : string;
-    marked : bool;
   }
   [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
@@ -202,13 +201,12 @@ end = struct
     stat : FileStat.t option;
     hasLinkPath : bool;
     linkPath : string;
-    marked : bool;
   }
   [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f:f' { id; parent; name; fullPath; stat; hasLinkPath; linkPath; marked } =
-      f' id parent name fullPath stat hasLinkPath linkPath marked
+    let apply ~f:f' { id; parent; name; fullPath; stat; hasLinkPath; linkPath } =
+      f' id parent name fullPath stat hasLinkPath linkPath
     in
     let spec =
       Ocaml_protoc_plugin.Serialize.C.(
@@ -219,15 +217,14 @@ end = struct
         ^:: basic_opt (5, message FileStat.to_proto)
         ^:: basic (6, bool, proto3)
         ^:: basic (7, string, proto3)
-        ^:: basic (8, bool, proto3)
         ^:: nil)
     in
     let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor id parent name fullPath stat hasLinkPath linkPath marked =
-      { id; parent; name; fullPath; stat; hasLinkPath; linkPath; marked }
+    let constructor id parent name fullPath stat hasLinkPath linkPath =
+      { id; parent; name; fullPath; stat; hasLinkPath; linkPath }
     in
     let spec =
       Ocaml_protoc_plugin.Deserialize.C.(
@@ -238,7 +235,6 @@ end = struct
         ^:: basic_opt (5, message FileStat.from_proto)
         ^:: basic (6, bool, proto3)
         ^:: basic (7, string, proto3)
-        ^:: basic (8, bool, proto3)
         ^:: nil)
     in
     let deserialize = Ocaml_protoc_plugin.Deserialize.deserialize spec constructor in

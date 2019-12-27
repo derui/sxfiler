@@ -148,9 +148,6 @@ export class FileItem extends jspb.Message {
   getLinkpath(): string;
   setLinkpath(value: string): void;
 
-  getMarked(): boolean;
-  setMarked(value: boolean): void;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): FileItem.AsObject;
   static toObject(includeInstance: boolean, msg: FileItem): FileItem.AsObject;
@@ -170,7 +167,6 @@ export namespace FileItem {
     stat?: FileStat.AsObject;
     haslinkpath: boolean;
     linkpath: string;
-    marked: boolean;
   };
 }
 

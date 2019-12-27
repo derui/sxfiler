@@ -1,6 +1,4 @@
 module D = Sxfiler_domain
-module S = Sxfiler_server
-module C = Sxfiler_server_core
 module G = Sxfiler_server_gateway
 module T = Sxfiler_server_translator
 module U = Sxfiler_usecase
@@ -20,7 +18,7 @@ let test_set =
         let%lwt res = Gateway.handle () in
         Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
           "current"
-          (Ok (T.Configuration.of_domain expected))
+          (Ok (Some (T.Configuration.of_domain expected)))
           res;
         Lwt.return_unit);
   ]

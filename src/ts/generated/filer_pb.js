@@ -1435,8 +1435,7 @@ proto.FileItem.toObject = function(includeInstance, msg) {
     fullpath: jspb.Message.getFieldWithDefault(msg, 4, ""),
     stat: (f = msg.getStat()) && proto.FileStat.toObject(includeInstance, f),
     haslinkpath: jspb.Message.getBooleanFieldWithDefault(msg, 6, false),
-    linkpath: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    marked: jspb.Message.getBooleanFieldWithDefault(msg, 8, false)
+    linkpath: jspb.Message.getFieldWithDefault(msg, 7, "")
   };
 
   if (includeInstance) {
@@ -1501,10 +1500,6 @@ proto.FileItem.deserializeBinaryFromReader = function(msg, reader) {
     case 7:
       var value = /** @type {string} */ (reader.readString());
       msg.setLinkpath(value);
-      break;
-    case 8:
-      var value = /** @type {boolean} */ (reader.readBool());
-      msg.setMarked(value);
       break;
     default:
       reader.skipField();
@@ -1582,13 +1577,6 @@ proto.FileItem.serializeBinaryToWriter = function(message, writer) {
   if (f.length > 0) {
     writer.writeString(
       7,
-      f
-    );
-  }
-  f = message.getMarked();
-  if (f) {
-    writer.writeBool(
-      8,
       f
     );
   }
@@ -1715,21 +1703,6 @@ proto.FileItem.prototype.getLinkpath = function() {
 /** @param {string} value */
 proto.FileItem.prototype.setLinkpath = function(value) {
   jspb.Message.setProto3StringField(this, 7, value);
-};
-
-
-/**
- * optional bool marked = 8;
- * @return {boolean}
- */
-proto.FileItem.prototype.getMarked = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 8, false));
-};
-
-
-/** @param {boolean} value */
-proto.FileItem.prototype.setMarked = function(value) {
-  jspb.Message.setProto3BooleanField(this, 8, value);
 };
 
 

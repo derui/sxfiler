@@ -7,6 +7,9 @@ module Setup = struct
   module Type = struct
     type input = G.SetupRequest.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
     type output = G.SetupResponse.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let input_from_pb = G.SetupRequest.from_proto
+    let output_to_pb = G.SetupResponse.to_proto
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -26,6 +29,9 @@ module Read = struct
   module Type = struct
     type input = G.ReadRequest.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
     type output = G.ReadResponse.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let input_from_pb = G.ReadRequest.from_proto
+    let output_to_pb = G.ReadResponse.to_proto
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output

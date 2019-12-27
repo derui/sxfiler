@@ -12,6 +12,9 @@ module Make = struct
 
     type output = G.FilerMakeResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let input_from_pb = G.FilerMakeRequest.from_proto
+    let output_to_pb = G.FilerMakeResponse.to_proto
   end
 
   module type S = sig
@@ -44,6 +47,9 @@ module Get = struct
 
     type output = G.FilerGetResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let input_from_pb = G.FilerGetRequest.from_proto
+    let output_to_pb = G.FilerGetResponse.to_proto
   end
 
   module type S = sig
@@ -72,6 +78,9 @@ module Move_parent = struct
 
     type output = G.FilerMoveParentResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let input_from_pb = G.FilerMoveParentRequest.from_proto
+    let output_to_pb = G.FilerMoveParentResponse.to_proto
   end
 
   module type S = sig
@@ -100,6 +109,9 @@ module Enter_directory = struct
 
     type output = G.FilerEnterDirectoryResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let input_from_pb = G.FilerEnterDirectoryRequest.from_proto
+    let output_to_pb = G.FilerEnterDirectoryResponse.to_proto
   end
 
   module type S = sig
@@ -128,6 +140,9 @@ module Toggle_mark = struct
 
     type output = G.FilerToggleMarkResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let input_from_pb = G.FilerToggleMarkRequest.from_proto
+    let output_to_pb = G.FilerToggleMarkResponse.to_proto
   end
 
   module type S = sig
@@ -152,6 +167,9 @@ module Move = struct
 
     type output = G.FilerMoveResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let input_from_pb = G.FilerMoveRequest.from_proto
+    let output_to_pb = G.FilerMoveResponse.to_proto
   end
 
   module type S = sig
@@ -180,6 +198,9 @@ module Delete = struct
 
     type output = G.FilerDeleteResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let input_from_pb = G.FilerDeleteRequest.from_proto
+    let output_to_pb = G.FilerDeleteResponse.to_proto
   end
 
   module type S = sig
@@ -205,6 +226,9 @@ module Copy = struct
 
     type output = G.FilerCopyResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let input_from_pb = G.FilerCopyRequest.from_proto
+    let output_to_pb = G.FilerCopyResponse.to_proto
   end
 
   module type S = sig
@@ -233,6 +257,9 @@ module Jump_location = struct
 
     type output = G.FilerJumpLocationResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let input_from_pb = G.FilerJumpLocationRequest.from_proto
+    let output_to_pb = G.FilerJumpLocationResponse.to_proto
   end
 
   module type S = sig

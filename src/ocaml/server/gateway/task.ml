@@ -11,6 +11,9 @@ module Send_reply = struct
 
     type output = Gen.TaskSendReplyResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let input_from_pb = Gen.TaskSendReplyRequest.from_proto
+    let output_to_pb = Gen.TaskSendReplyResponse.to_proto
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -33,6 +36,9 @@ module Cancel = struct
 
     type output = Gen.TaskCancelResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let input_from_pb = Gen.TaskCancelRequest.from_proto
+    let output_to_pb = Gen.TaskCancelResponse.to_proto
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output

@@ -36,7 +36,6 @@ message FileItem {
   FileStat stat = 5;
   bool hasLinkPath = 6;
   string linkPath = 7;
-  bool marked = 8;
 }
 
 message FileList {

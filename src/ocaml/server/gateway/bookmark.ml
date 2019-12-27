@@ -10,6 +10,9 @@ module List_all = struct
 
     type output = G.Bookmark.ListAllResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let input_from_pb = G.Bookmark.ListAllRequest.from_proto
+    let output_to_pb = G.Bookmark.ListAllResponse.to_proto
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -33,6 +36,9 @@ module Register = struct
 
     type output = G.Bookmark.RegisterResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let input_from_pb = G.Bookmark.RegisterRequest.from_proto
+    let output_to_pb = G.Bookmark.RegisterResponse.to_proto
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -56,6 +62,9 @@ module Delete = struct
 
     type output = G.Bookmark.DeleteResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let input_from_pb = G.Bookmark.DeleteRequest.from_proto
+    let output_to_pb = G.Bookmark.DeleteResponse.to_proto
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
