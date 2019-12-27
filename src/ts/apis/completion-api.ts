@@ -10,7 +10,7 @@ export enum Methods {
   Read = "completion/read",
 }
 
-type Item = {
+type SourceItem = {
   id: string;
   value: string;
 };
@@ -18,7 +18,7 @@ type Item = {
 /**
    API definition for completion/setup
  */
-const Setup: Api<Methods.Setup, { source: Item[] }, SetupRequest, SetupResponse> = {
+const Setup: Api<Methods.Setup, { source: SourceItem[] }, SetupRequest, SetupResponse> = {
   method: Methods.Setup,
   parametersTransformer({ source }) {
     const items = source.map(v => {

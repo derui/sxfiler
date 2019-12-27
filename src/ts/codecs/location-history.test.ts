@@ -14,7 +14,7 @@ describe("Encode", () => {
       const req = new LocationHistory();
       const obj = E.encode(req);
 
-      expect(obj).toEqual({ records: [], maxRecordNumber: 100 });
+      expect(obj).toEqual({ records: [], maxRecordNumber: 0 });
     });
 
     it("should encode record object to frontend", () => {

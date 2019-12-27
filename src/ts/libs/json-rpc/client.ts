@@ -32,7 +32,7 @@ export type Client<M extends string> = {
    * @param params object for RPC
    * @return promise to handling result of RPC
    */
-  call<P, Res>(api: Api<M, P, Res>, params: P): Promise<Res>;
+  call<P, Req, Res, Result>(api: Api<M, P, Req, Res, Result>, params: P): Promise<Result>;
 
   /**
    * send notification with or without request
@@ -56,7 +56,7 @@ export class ClientImpl<M extends string> implements Client<M> {
     this.idGenerator = idGenerator;
   }
 
-  public async call<P, Res>(api: Api<M, P, Res>, params: P): Promise<Res> {
+  public async call<P, Req, Res, Result>(api: Api<M, P, Req, Res, Result>, params: P): Promise<Result> {
     const rpcRequest: Common.Request = {
       jsonrpc: "2.0",
       method: api.method,

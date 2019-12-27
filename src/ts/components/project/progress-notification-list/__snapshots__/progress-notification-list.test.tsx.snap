@@ -11,7 +11,7 @@ exports[`Project Progress Notification List can render correctly 1`] = `
     role="listitem"
   >
     <span
-      className="sc-bwzfXH fCwXYg"
+      className="sc-bwzfXH cJKlyb"
     >
       process
     </span>
@@ -44,7 +44,7 @@ exports[`Project Progress Notification List should render progresses 1`] = `
     role="listitem"
   >
     <span
-      className="sc-bwzfXH fCwXYg"
+      className="sc-bwzfXH cJKlyb"
     >
       foo
     </span>
@@ -62,7 +62,7 @@ exports[`Project Progress Notification List should render progresses 1`] = `
     role="listitem"
   >
     <span
-      className="sc-bwzfXH fCwXYg"
+      className="sc-bwzfXH cJKlyb"
     >
       bar
     </span>
