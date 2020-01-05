@@ -2,7 +2,7 @@
 
 import { Api } from "@/libs/json-rpc/client";
 import * as E from "@/codecs/bookmark";
-import { Bookmark } from "@/domains/bookmark";
+import { Bookmark as Domain } from "@/domains/bookmark";
 import {
   ListAllRequest,
   ListAllResponse,
@@ -10,6 +10,7 @@ import {
   RegisterResponse,
   DeleteRequest,
   DeleteResponse,
+  Bookmark,
 } from "../generated/bookmark_pb";
 
 export enum Methods {
@@ -21,7 +22,7 @@ export enum Methods {
 /**
    API definition for keymap/get
  */
-const ListAll: Api<Methods.ListAll, void, ListAllRequest, ListAllResponse, Bookmark[]> = {
+const ListAll: Api<Methods.ListAll, void, ListAllRequest, ListAllResponse, Domain[]> = {
   method: Methods.ListAll,
   parametersTransformer() {
     return new ListAllRequest();
@@ -31,19 +32,18 @@ const ListAll: Api<Methods.ListAll, void, ListAllRequest, ListAllResponse, Bookm
       throw Error(error.message);
     }
 
-    return ret?.getBookmarksList().map(E.encode) || [];
+    return ret?.bookmarks.map(v => E.encode(Bookmark.create(v))) || [];
   },
 };
 
 /**
    API definition for keymap/get
  */
-const Register: Api<Methods.Register, string, RegisterRequest, RegisterResponse, Bookmark> = {
+const Register: Api<Methods.Register, string, RegisterRequest, RegisterResponse, Domain> = {
   method: Methods.Register,
   parametersTransformer(path) {
-    const req = new RegisterRequest();
+    const req = new RegisterRequest({ path });
 
-    req.setPath(path);
     return req;
   },
   resultTransformer(ret, error) {
@@ -51,20 +51,19 @@ const Register: Api<Methods.Register, string, RegisterRequest, RegisterResponse,
       throw Error(error.message);
     }
 
-    const bookmark = ret?.getBookmark();
+    const bookmark = ret?.bookmark;
     if (!bookmark) {
       throw Error("unknown error");
     }
 
-    return E.encode(bookmark);
+    return E.encode(Bookmark.create(bookmark));
   },
 };
 
-const Delete: Api<Methods.Delete, string, DeleteRequest, DeleteResponse, Bookmark> = {
+const Delete: Api<Methods.Delete, string, DeleteRequest, DeleteResponse, Domain> = {
   method: Methods.Delete,
   parametersTransformer(id) {
-    const req = new DeleteRequest();
-    req.setId(id);
+    const req = new DeleteRequest({ id });
     return req;
   },
   resultTransformer(ret, error) {
@@ -72,12 +71,12 @@ const Delete: Api<Methods.Delete, string, DeleteRequest, DeleteResponse, Bookmar
       throw Error(error.message);
     }
 
-    const bookmark = ret?.getDeletedbookmark();
+    const bookmark = ret?.deletedBookmark;
     if (!bookmark) {
       throw Error("Can not get deleted bookmark");
     }
 
-    return E.encode(bookmark);
+    return E.encode(Bookmark.create(bookmark));
   },
 };
 

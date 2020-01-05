@@ -23,23 +23,24 @@ const SendReply: Api<Methods.SendReply, Reply, TaskSendReplyRequest, TaskSendRep
   method: Methods.SendReply,
   parametersTransformer(param: Reply) {
     const { taskId, reply } = param;
-    const req = new TaskSendReplyRequest();
-    const reqReply = new TaskReply();
-    reqReply.setTaskid(taskId);
+    const reqReply = new TaskReply({
+      taskId,
+    });
+
     switch (reply.kind) {
       case ReplyKind.Overwrite:
-        reqReply.setType(ReplyType.OVERWRITE);
-        reqReply.setOverwrite(true);
+        reqReply.type = ReplyType.Overwrite;
+        reqReply.overwrite = true;
         break;
       case ReplyKind.Rename:
-        reqReply.setType(ReplyType.RENAME);
-        const rename = new TaskReply.Rename();
-        rename.setNewname(reply.newName);
-        reqReply.setRename(rename);
+        reqReply.type = ReplyType.Rename;
+        const rename = new TaskReply.Rename({
+          newName: reply.newName,
+        });
+        reqReply.rename = rename;
         break;
     }
-    req.setReply(reqReply);
-    return req;
+    return TaskSendReplyRequest.create({ reply: reqReply });
   },
   resultTransformer() {},
 };
@@ -50,8 +51,7 @@ const SendReply: Api<Methods.SendReply, Reply, TaskSendReplyRequest, TaskSendRep
 const Cancel: Api<Methods.Cancel, string, TaskCancelRequest, TaskCancelResponse> = {
   method: Methods.Cancel,
   parametersTransformer(taskId: string) {
-    const req = new TaskCancelRequest();
-    req.setTaskid(taskId);
+    const req = TaskCancelRequest.create({ taskId });
     return req;
   },
   resultTransformer() {

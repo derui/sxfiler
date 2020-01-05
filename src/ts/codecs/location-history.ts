@@ -2,7 +2,7 @@ import { LocationHistory as Domain, createLocationHistory } from "@/domains/loca
 import { LocationRecord, LocationHistory } from "@/generated/filer_pb";
 
 const encodeLocationRecord = function encodeLocationRecord(record: LocationRecord) {
-  return { location: record.getLocation(), timestamp: new Date(Number(record.getTimestamp())) };
+  return { location: record.location, timestamp: new Date(Number(record.timestamp)) };
 };
 
 /**
@@ -13,7 +13,7 @@ const encodeLocationRecord = function encodeLocationRecord(record: LocationRecor
  */
 export const encode = function encode(obj: LocationHistory): Domain {
   return createLocationHistory({
-    records: obj.getRecordsList().map(encodeLocationRecord),
-    maxRecordNumber: obj.getMaxrecordnumber(),
+    records: obj.records.map(LocationRecord.create).map(encodeLocationRecord),
+    maxRecordNumber: obj.maxRecordNumber,
   });
 };

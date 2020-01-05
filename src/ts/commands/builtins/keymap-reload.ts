@@ -27,7 +27,10 @@ export const createCommand = function createCommand(): CommandLike {
       }
       const { clientResolver } = args;
 
-      const keymap = await clientResolver.apiClient().call(Apis.Keymap.Reload, {});
+      const keymap = await clientResolver.apiClient().call(Apis.Keymap.Reload, undefined);
+      if (!keymap) {
+        throw new Error("Can not reload keymap");
+      }
 
       dispatch.dispatch(actions.updateKeymap(keymap));
     },

@@ -11,21 +11,21 @@ const defaultMode = createMode({
 
 const encodeCap = function encodeCapability(cap: Capability) {
   return createCapability({
-    writable: cap.getWritable(),
-    readable: cap.getReadable(),
-    executable: cap.getExecutable(),
+    writable: cap.writable,
+    readable: cap.readable,
+    executable: cap.executable,
   });
 };
 
 const encodeMode = function encodeMode(mode: Mode) {
-  const owner = mode.getOwner();
-  const group = mode.getGroup();
-  const others = mode.getOthers();
+  const owner = mode.owner;
+  const group = mode.group;
+  const others = mode.others;
 
   return createMode({
-    owner: owner ? encodeCap(owner) : emptyCapability(),
-    group: group ? encodeCap(group) : emptyCapability(),
-    others: others ? encodeCap(others) : emptyCapability(),
+    owner: owner ? encodeCap(Capability.create(owner)) : emptyCapability(),
+    group: group ? encodeCap(Capability.create(group)) : emptyCapability(),
+    others: others ? encodeCap(Capability.create(others)) : emptyCapability(),
   });
 };
 
@@ -36,17 +36,17 @@ const encodeMode = function encodeMode(mode: Mode) {
    @return Node object
  */
 export const encode = function encode(obj: FileStat): Domain {
-  const mode = obj.getMode();
+  const mode = obj.mode;
   return createFileStat({
-    mode: mode ? encodeMode(mode) : defaultMode,
-    uid: obj.getUid(),
-    gid: obj.getGid(),
-    atime: obj.getAtime(),
-    ctime: obj.getCtime(),
-    mtime: obj.getMtime(),
-    size: obj.getSize(),
-    isDirectory: obj.getIsdirectory(),
-    isFile: obj.getIsfile(),
-    isSymlink: obj.getIssymlink(),
+    mode: mode ? encodeMode(Mode.create(mode)) : defaultMode,
+    uid: obj.uid,
+    gid: obj.gid,
+    atime: obj.atime,
+    ctime: obj.ctime,
+    mtime: obj.mtime,
+    size: obj.size,
+    isDirectory: obj.isDirectory,
+    isFile: obj.isFile,
+    isSymlink: obj.isSymlink,
   });
 };

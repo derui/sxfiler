@@ -1,24 +1,36 @@
-/**
- * @fileoverview
- * @enhanceable
- * @suppress {messageConventions} JS Compiler reports an error if a variable or
- *     field starts with 'MSG_' and isn't a translatable message.
- * @public
- */
-// GENERATED CODE -- DO NOT EDIT!
+/*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
+(function(global, factory) { /* global define, require, module */
 
-var jspb = require('google-protobuf');
-var goog = jspb;
-var global = Function('return this')();
+    /* AMD */ if (typeof define === 'function' && define.amd)
+        define(["protobufjs/minimal"], factory);
 
-goog.exportSymbol('proto.SortType', null, global);
-/**
- * @enum {number}
- */
-proto.SortType = {
-  NAME: 0,
-  SIZE: 1,
-  DATE: 2
-};
+    /* CommonJS */ else if (typeof require === 'function' && typeof module === 'object' && module && module.exports)
+        module.exports = factory(require("protobufjs/minimal"));
 
-goog.object.extend(exports, proto);
+})(this, function($protobuf) {
+    "use strict";
+
+    // Common aliases
+    var $Reader = $protobuf.Reader, $Writer = $protobuf.Writer, $util = $protobuf.util;
+    
+    // Exported root namespace
+    var $root = $protobuf.roots["default"] || ($protobuf.roots["default"] = {});
+    
+    /**
+     * SortType enum.
+     * @exports SortType
+     * @enum {string}
+     * @property {number} Name=0 Name value
+     * @property {number} Size=1 Size value
+     * @property {number} Date=2 Date value
+     */
+    $root.SortType = (function() {
+        var valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "Name"] = 0;
+        values[valuesById[1] = "Size"] = 1;
+        values[valuesById[2] = "Date"] = 2;
+        return values;
+    })();
+
+    return $root;
+});

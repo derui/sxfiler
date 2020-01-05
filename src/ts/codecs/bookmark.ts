@@ -9,8 +9,8 @@ import { Bookmark } from "@/generated/bookmark_pb";
  */
 export const encode = function encode(obj: Bookmark): Domain {
   return createBookmark({
-    id: obj.getId(),
-    path: obj.getPath(),
-    order: obj.getOrder(),
+    id: obj.id,
+    path: obj.path,
+    order: obj.order,
   });
 };

@@ -26,7 +26,7 @@ describe("Commands", () => {
         apiClient.call.mockResolvedValue(keyMap);
 
         await command.execute(dispatcher, { state, clientResolver });
-        expect(apiClient.call).toBeCalledWith(Apis.Keymap.Reload, {});
+        expect(apiClient.call).toBeCalledWith(Apis.Keymap.Reload, undefined);
       });
 
       it("dispatch an action to reload keymap", async () => {

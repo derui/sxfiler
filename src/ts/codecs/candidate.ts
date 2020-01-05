@@ -9,9 +9,9 @@ import { Candidate } from "@/generated/completion_pb";
  */
 export const encode = function encode(obj: Candidate): Domain {
   return createCandidate({
-    id: obj.getValue()?.getId() || "",
-    value: obj.getValue()?.getValue() || "",
-    start: obj.getStart(),
-    length: obj.getLength(),
+    id: obj.value?.id || "",
+    value: obj.value?.value || "",
+    start: obj.start,
+    length: obj.length,
   });
 };

@@ -9,6 +9,7 @@ import {
   Keymap,
   KeymapReloadRequest,
   KeymapReloadResponse,
+  Binding,
 } from "../generated/keymap_pb";
 
 export enum Methods {
@@ -24,8 +25,9 @@ export enum Methods {
  */
 const transformKeymap = function transformKeymap(keymaps: Keymap): Domain {
   return createKeymap(
-    keymaps.getBindingsList().map(v => {
-      const contexts = v.getContextsList().map(v => {
+    keymaps.bindings.map(v => {
+      const binding = Binding.create(v);
+      const contexts = binding.contexts.map(v => {
         switch (v) {
           case "onFileTree":
             return UIContext.OnFileTree;
@@ -41,7 +43,7 @@ const transformKeymap = function transformKeymap(keymaps: Keymap): Domain {
             throw new Error(`Unknown context: ${v}`);
         }
       });
-      return { key: v.getKey(), action: v.getAction(), when: { contexts } };
+      return { key: binding.key, action: binding.action, when: { contexts } };
     })
   );
 };
@@ -58,16 +60,19 @@ const Get: Api<Methods.Get, void, KeymapGetRequest, KeymapGetResponse, Domain | 
     if (!ret && error) {
       throw Error(error.message);
     }
-    const keymap = ret?.getKeymap();
+    const keymap = ret?.keymap;
+    if (!keymap) {
+      return undefined;
+    }
 
-    return keymap && transformKeymap(keymap);
+    return transformKeymap(Keymap.create(keymap));
   },
 };
 
 /**
    API definition for keymap/get
  */
-const Reload: Api<Methods.Reload, void, KeymapReloadRequest, KeymapReloadResponse, Domain | undefined> = {
+const Reload: Api<Methods.Reload, any, KeymapReloadRequest, KeymapReloadResponse, Domain | undefined> = {
   method: Methods.Reload,
   parametersTransformer() {
     return new KeymapReloadRequest();
@@ -77,9 +82,12 @@ const Reload: Api<Methods.Reload, void, KeymapReloadRequest, KeymapReloadRespons
       throw Error(error.message);
     }
 
-    const keymap = ret?.getKeymap();
+    const keymap = ret?.keymap;
+    if (!keymap) {
+      return undefined;
+    }
 
-    return keymap && transformKeymap(keymap);
+    return transformKeymap(Keymap.create(keymap));
   },
 };
 

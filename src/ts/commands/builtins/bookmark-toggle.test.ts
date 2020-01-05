@@ -59,7 +59,7 @@ describe("Commands", () => {
         state.fileList = initialize(state.fileList, { left, right });
 
         await command.execute(dispatcher, { state, clientResolver });
-        expect(apiClient.call).toBeCalledWith(Apis.Bookmark.Register, { path: "/parent/node" });
+        expect(apiClient.call).toBeCalledWith(Apis.Bookmark.Register, "/parent/node");
       });
 
       it("dispatch an action to register bookmark", async () => {
@@ -80,7 +80,7 @@ describe("Commands", () => {
         state.fileList = updateBookmarks([bookmark])(initialize(state.fileList, { left, right }));
 
         await command.execute(dispatcher, { state, clientResolver });
-        expect(apiClient.call).toBeCalledWith(Apis.Bookmark.Delete, { id: "1" });
+        expect(apiClient.call).toBeCalledWith(Apis.Bookmark.Delete, "1");
       });
 
       it("dispatch an action to delete bookmark", async () => {

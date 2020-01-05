@@ -5,30 +5,33 @@ import { createCapability } from "@/domains/capability";
 import { Capability, FileStat, Mode } from "@/generated/filer_pb";
 
 function makeCap(writable: boolean, readable: boolean, executable: boolean) {
-  const cap = new Capability();
-  cap.setWritable(writable);
-  cap.setReadable(readable);
-  cap.setExecutable(executable);
+  const cap = new Capability({
+    writable,
+    readable,
+    executable,
+  });
   return cap;
 }
 
 const reqStat = () => {
-  const ret = new FileStat();
-  const mode = new Mode();
+  const mode = new Mode({
+    owner: makeCap(true, true, true),
+    group: makeCap(false, true, true),
+    others: makeCap(false, true, false),
+  });
 
-  mode.setOwner(makeCap(true, true, true));
-  mode.setGroup(makeCap(false, true, true));
-  mode.setOthers(makeCap(false, true, false));
-  ret.setMode(mode);
-  ret.setUid(1000);
-  ret.setGid(500);
-  ret.setAtime("3");
-  ret.setCtime("4");
-  ret.setMtime("5");
-  ret.setSize("10");
-  ret.setIsdirectory(false);
-  ret.setIsfile(true);
-  ret.setIssymlink(false);
+  const ret = new FileStat({
+    mode,
+    uid: 1000,
+    gid: 500,
+    atime: "3",
+    ctime: "4",
+    mtime: "5",
+    size: "10",
+    isDirectory: false,
+    isFile: true,
+    isSymlink: false,
+  });
   return ret;
 };
 

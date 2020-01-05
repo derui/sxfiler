@@ -1,7 +1,7 @@
 import { Filer as Domain, createFiler } from "@/domains/filer";
 import { encode as encodeFileItem } from "./file-item";
 import { encode as encodeLocationHistory } from "./location-history";
-import { Filer } from "@/generated/filer_pb";
+import { Filer, FileList, FileItem, LocationHistory } from "@/generated/filer_pb";
 import { createLocationHistory } from "@/domains/location-history";
 
 /**
@@ -11,22 +11,18 @@ import { createLocationHistory } from "@/domains/location-history";
    @return Filer object
  */
 export const encode = function encode(obj: Filer): Domain {
-  const markedItems = obj.getMarkeditemsList();
+  const markedItems = obj.markedItems;
   return createFiler({
-    id: obj.getId(),
-    name: obj.getName(),
-    location: obj.getFilelist()?.getLocation() || "",
-    items:
-      obj
-        .getFilelist()
-        ?.getItemsList()
-        ?.map(v => encodeFileItem(v, markedItems.includes(v.getId()))) || [],
+    id: obj.id,
+    name: obj.name,
+    location: obj.fileList?.location || "",
+    items: obj.fileList?.items?.map(FileItem.create)?.map(v => encodeFileItem(v, markedItems.includes(v.id))) || [],
     currentCursorIndex: 0,
-    history:
-      encodeLocationHistory(obj.getHistory()) ||
-      createLocationHistory({
-        records: [],
-        maxRecordNumber: 0,
-      }),
+    history: obj.history
+      ? encodeLocationHistory(LocationHistory.create(obj.history))
+      : createLocationHistory({
+          records: [],
+          maxRecordNumber: 0,
+        }),
   });
 };

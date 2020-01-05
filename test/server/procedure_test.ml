@@ -12,8 +12,6 @@ let test_set =
             type output = Test.TestResponse.t
             [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
 
-            let input_from_pb = Test.TestRequest.from_proto
-            let output_to_pb = Test.TestResponse.to_proto
             let _, f = Spy.wrap (fun (_ : input) -> Lwt.return_ok 100)
             let handle params = f params
           end
@@ -30,8 +28,7 @@ let test_set =
         let module G = Sxfiler_server_gateway in
         Alcotest.(check @@ result (of_pp Fmt.nop) (of_pp Fmt.nop))
           "current" res
-          (Ok
-             (Some (`String (Spec.Gateway.output_to_pb 100 |> Ocaml_protoc_plugin.Writer.contents))));
+          (Ok (Some (Spec.Gateway.output_to_json 100)));
         Lwt.return_unit);
     Alcotest_lwt.test_case "use default value when parameter not required" `Quick (fun _ () ->
         let module Spec = struct
@@ -42,8 +39,6 @@ let test_set =
             type output = Test.TestResponse.t
             [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
 
-            let input_from_pb = Test.TestRequest.from_proto
-            let output_to_pb = Test.TestResponse.to_proto
             let spy, f = Spy.wrap (fun (_ : input) -> Lwt.return_ok 100)
             let handle params = f params
           end

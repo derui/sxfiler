@@ -1,7 +1,7 @@
 // defines API signature for Filer group.
 
 import { Api } from "@/libs/json-rpc/client";
-import { Filer } from "@/domains/filer";
+import { Filer as Domain } from "@/domains/filer";
 import * as E from "@/codecs/filer";
 import {
   FilerMakeRequest,
@@ -22,6 +22,7 @@ import {
   FilerDeleteResponse,
   FilerJumpLocationRequest,
   FilerJumpLocationResponse,
+  Filer,
 } from "../generated/filer_pb";
 
 export enum Methods {
@@ -39,12 +40,19 @@ export enum Methods {
 /**
    API definition for filer/make
  */
-const Make: Api<Methods.Make, { initialLocation: string; name: string }, FilerMakeRequest, FilerMakeResponse, Filer> = {
+const Make: Api<
+  Methods.Make,
+  { initialLocation: string; name: string },
+  FilerMakeRequest,
+  FilerMakeResponse,
+  Domain
+> = {
   method: Methods.Make,
   parametersTransformer({ initialLocation, name }) {
-    const req = new FilerMakeRequest();
-    req.setName(name);
-    req.setInitiallocation(initialLocation);
+    const req = new FilerMakeRequest({
+      name,
+      initialLocation,
+    });
     return req;
   },
   resultTransformer(ret, error) {
@@ -52,20 +60,19 @@ const Make: Api<Methods.Make, { initialLocation: string; name: string }, FilerMa
       throw Error(error.message);
     }
 
-    const filer = ret?.getFiler();
+    const filer = ret?.filer;
     if (!filer) {
       throw Error("unknown error");
     }
 
-    return E.encode(filer);
+    return E.encode(Filer.create(filer));
   },
 };
 
-const Get: Api<Methods.Get, string, FilerGetRequest, FilerGetResponse, Filer | undefined> = {
+const Get: Api<Methods.Get, string, FilerGetRequest, FilerGetResponse, Domain | undefined> = {
   method: Methods.Get,
   parametersTransformer(name) {
-    const req = new FilerGetRequest();
-    req.setName(name);
+    const req = new FilerGetRequest({ name });
     return req;
   },
   resultTransformer(ret, error) {
@@ -73,9 +80,12 @@ const Get: Api<Methods.Get, string, FilerGetRequest, FilerGetResponse, Filer | u
       return undefined;
     }
 
-    const filer = ret?.getFiler();
+    const filer = ret?.filer;
+    if (!filer) {
+      return undefined;
+    }
 
-    return filer && E.encode(filer);
+    return E.encode(Filer.create(filer));
   },
 };
 
@@ -84,12 +94,11 @@ const MoveParent: Api<
   string,
   FilerMoveParentRequest,
   FilerMoveParentResponse,
-  Filer | undefined
+  Domain | undefined
 > = {
   method: Methods.MoveParent,
   parametersTransformer(name) {
-    const req = new FilerMoveParentRequest();
-    req.setName(name);
+    const req = new FilerMoveParentRequest({ name });
     return req;
   },
   resultTransformer(ret, error) {
@@ -97,9 +106,12 @@ const MoveParent: Api<
       return undefined;
     }
 
-    const filer = ret?.getFiler();
+    const filer = ret?.filer;
+    if (!filer) {
+      return undefined;
+    }
 
-    return filer && E.encode(filer);
+    return E.encode(Filer.create(filer));
   },
 };
 
@@ -108,22 +120,26 @@ const EnterDirectory: Api<
   { name: string; itemId: string },
   FilerEnterDirectoryRequest,
   FilerEnterDirectoryResponse,
-  Filer | undefined
+  Domain | undefined
 > = {
   method: Methods.EnterDirectory,
   parametersTransformer({ name, itemId }) {
-    const request = new FilerEnterDirectoryRequest();
-    request.setName(name);
-    request.setItemid(itemId);
+    const request = new FilerEnterDirectoryRequest({
+      name,
+      itemId,
+    });
     return request;
   },
   resultTransformer(ret, error) {
     if (!ret && error && error.hasCode(-2)) {
       return undefined;
     }
-    const filer = ret?.getFiler();
+    const filer = ret?.filer;
+    if (!filer) {
+      return undefined;
+    }
 
-    return filer && E.encode(filer);
+    return E.encode(Filer.create(filer));
   },
 };
 
@@ -132,13 +148,14 @@ const ToggleMark: Api<
   { name: string; itemIds: string[] },
   FilerToggleMarkRequest,
   FilerToggleMarkResponse,
-  Filer | undefined
+  Domain | undefined
 > = {
   method: Methods.ToggleMark,
   parametersTransformer({ name, itemIds }) {
-    const req = new FilerToggleMarkRequest();
-    req.setName(name);
-    req.setItemidsList(itemIds);
+    const req = new FilerToggleMarkRequest({
+      name,
+      itemIds,
+    });
     return req;
   },
   resultTransformer(ret, error) {
@@ -146,9 +163,12 @@ const ToggleMark: Api<
       return undefined;
     }
 
-    const filer = ret?.getFiler();
+    const filer = ret?.filer;
+    if (!filer) {
+      return undefined;
+    }
 
-    return filer && E.encode(filer);
+    return E.encode(Filer.create(filer));
   },
 };
 
@@ -161,10 +181,11 @@ const Move: Api<
 > = {
   method: Methods.Move,
   parametersTransformer({ source, dest, itemIds }) {
-    const req = new FilerMoveRequest();
-    req.setSource(source);
-    req.setDest(dest);
-    req.setItemidsList(itemIds);
+    const req = new FilerMoveRequest({
+      source,
+      dest,
+      itemIds,
+    });
     return req;
   },
   resultTransformer(ret, error) {
@@ -185,10 +206,11 @@ const Copy: Api<
 > = {
   method: Methods.Copy,
   parametersTransformer({ source, dest, itemIds }) {
-    const req = new FilerCopyRequest();
-    req.setSource(source);
-    req.setDest(dest);
-    req.setItemidsList(itemIds);
+    const req = new FilerCopyRequest({
+      source,
+      dest,
+      itemIds,
+    });
     return req;
   },
   resultTransformer(ret, error) {
@@ -203,9 +225,10 @@ const Copy: Api<
 const Delete: Api<Methods.Delete, { source: string; itemIds: string[] }, FilerDeleteRequest, FilerDeleteResponse> = {
   method: Methods.Delete,
   parametersTransformer({ source, itemIds }) {
-    const req = new FilerDeleteRequest();
-    req.setSource(source);
-    req.setItemidsList(itemIds);
+    const req = new FilerDeleteRequest({
+      source,
+      itemIds,
+    });
     return req;
   },
   resultTransformer(ret, error) {
@@ -228,13 +251,14 @@ const Jump: Api<
   },
   FilerJumpLocationRequest,
   FilerJumpLocationResponse,
-  Filer | undefined
+  Domain | undefined
 > = {
   method: Methods.Jump,
   parametersTransformer({ location, name }) {
-    const req = new FilerJumpLocationRequest();
-    req.setLocation(location);
-    req.setName(name);
+    const req = new FilerJumpLocationRequest({
+      location,
+      name,
+    });
     return req;
   },
   resultTransformer(ret, error) {
@@ -242,9 +266,12 @@ const Jump: Api<
       throw Error(error.message);
     }
 
-    const filer = ret?.getFiler();
+    const filer = ret?.filer;
+    if (!filer) {
+      return undefined;
+    }
 
-    return filer && E.encode(filer);
+    return E.encode(Filer.create(filer));
   },
 };
 
