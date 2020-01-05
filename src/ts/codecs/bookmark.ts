@@ -1,5 +1,5 @@
 import { Bookmark as Domain, createBookmark } from "@/domains/bookmark";
-import { Bookmark } from "@/generated/bookmark_pb";
+import { Bookmark } from "../generated/bookmark_pb";
 
 /**
    encode node object from RPC to frontend domain.

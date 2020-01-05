@@ -6,7 +6,7 @@
 (************************************************)
 (* Source: task.proto Syntax: proto3 Parameters: annot='[@@deriving eq, show, protocol
    ~driver:(module Protocol_conv_json.Json)]' debug=false opens=[] int64_as_int=true
-   int32_as_int=true fixed_as_int=false singleton_record=false *)
+   int32_as_int=true fixed_as_int=false singleton_record=true *)
 module rec ReplyType : sig
   type t =
     | Overwrite
@@ -29,7 +29,8 @@ and TaskReply : sig
   module rec Rename : sig
     val name' : unit -> string
 
-    type t = string [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+    type t = { newName : string }
+    [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
     val to_proto : t -> Ocaml_protoc_plugin.Writer.t
     val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
@@ -50,23 +51,25 @@ end = struct
   module rec Rename : sig
     val name' : unit -> string
 
-    type t = string [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+    type t = { newName : string }
+    [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
     val to_proto : t -> Ocaml_protoc_plugin.Writer.t
     val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
   end = struct
     let name' () = "Task.TaskReply.Rename"
 
-    type t = string [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+    type t = { newName : string }
+    [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
     let to_proto =
-      let apply ~f a = f a in
+      let apply ~f:f' { newName } = f' newName in
       let spec = Ocaml_protoc_plugin.Serialize.C.(basic (1, string, proto3) ^:: nil) in
       let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
       fun t -> apply ~f:(serialize ()) t
 
     let from_proto =
-      let constructor a = a in
+      let constructor newName = { newName } in
       let spec = Ocaml_protoc_plugin.Deserialize.C.(basic (1, string, proto3) ^:: nil) in
       let deserialize = Ocaml_protoc_plugin.Deserialize.deserialize spec constructor in
       fun writer -> deserialize writer
@@ -162,7 +165,7 @@ end
 and TaskSendReplyRequest : sig
   val name' : unit -> string
 
-  type t = TaskReply.t option
+  type t = { reply : TaskReply.t option }
   [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
@@ -170,11 +173,11 @@ and TaskSendReplyRequest : sig
 end = struct
   let name' () = "Task.TaskSendReplyRequest"
 
-  type t = TaskReply.t option
+  type t = { reply : TaskReply.t option }
   [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { reply } = f' reply in
     let spec =
       Ocaml_protoc_plugin.Serialize.C.(basic_opt (1, message TaskReply.to_proto) ^:: nil)
     in
@@ -182,7 +185,7 @@ end = struct
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor reply = { reply } in
     let spec =
       Ocaml_protoc_plugin.Deserialize.C.(basic_opt (1, message TaskReply.from_proto) ^:: nil)
     in
@@ -218,23 +221,25 @@ end
 and TaskCancelRequest : sig
   val name' : unit -> string
 
-  type t = string [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { taskId : string }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
   val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
 end = struct
   let name' () = "Task.TaskCancelRequest"
 
-  type t = string [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { taskId : string }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { taskId } = f' taskId in
     let spec = Ocaml_protoc_plugin.Serialize.C.(basic (1, string, proto3) ^:: nil) in
     let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor taskId = { taskId } in
     let spec = Ocaml_protoc_plugin.Deserialize.C.(basic (1, string, proto3) ^:: nil) in
     let deserialize = Ocaml_protoc_plugin.Deserialize.deserialize spec constructor in
     fun writer -> deserialize writer

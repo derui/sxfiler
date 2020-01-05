@@ -6,7 +6,7 @@
 (************************************************)
 (* Source: completion.proto Syntax: proto3 Parameters: annot='[@@deriving eq, show, protocol
    ~driver:(module Protocol_conv_json.Json)]' debug=false opens=[] int64_as_int=true
-   int32_as_int=true fixed_as_int=false singleton_record=false *)
+   int32_as_int=true fixed_as_int=false singleton_record=true *)
 module rec Item : sig
   val name' : unit -> string
 
@@ -96,17 +96,19 @@ end
 and SetupRequest : sig
   val name' : unit -> string
 
-  type t = Item.t list [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { source : Item.t list }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
   val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
 end = struct
   let name' () = "Completion.SetupRequest"
 
-  type t = Item.t list [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { source : Item.t list }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { source } = f' source in
     let spec =
       Ocaml_protoc_plugin.Serialize.C.(repeated (1, message Item.to_proto, not_packed) ^:: nil)
     in
@@ -114,7 +116,7 @@ end = struct
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor source = { source } in
     let spec =
       Ocaml_protoc_plugin.Deserialize.C.(repeated (1, message Item.from_proto, not_packed) ^:: nil)
     in
@@ -150,23 +152,25 @@ end
 and ReadRequest : sig
   val name' : unit -> string
 
-  type t = string [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { input : string }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
   val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
 end = struct
   let name' () = "Completion.ReadRequest"
 
-  type t = string [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { input : string }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { input } = f' input in
     let spec = Ocaml_protoc_plugin.Serialize.C.(basic (1, string, proto3) ^:: nil) in
     let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor input = { input } in
     let spec = Ocaml_protoc_plugin.Deserialize.C.(basic (1, string, proto3) ^:: nil) in
     let deserialize = Ocaml_protoc_plugin.Deserialize.deserialize spec constructor in
     fun writer -> deserialize writer
@@ -175,17 +179,19 @@ end
 and ReadResponse : sig
   val name' : unit -> string
 
-  type t = Candidate.t list [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { candidates : Candidate.t list }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
   val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
 end = struct
   let name' () = "Completion.ReadResponse"
 
-  type t = Candidate.t list [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { candidates : Candidate.t list }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { candidates } = f' candidates in
     let spec =
       Ocaml_protoc_plugin.Serialize.C.(repeated (1, message Candidate.to_proto, not_packed) ^:: nil)
     in
@@ -193,7 +199,7 @@ end = struct
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor candidates = { candidates } in
     let spec =
       Ocaml_protoc_plugin.Deserialize.C.(
         repeated (1, message Candidate.from_proto, not_packed) ^:: nil)

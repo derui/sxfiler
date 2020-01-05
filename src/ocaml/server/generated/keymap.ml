@@ -6,21 +6,23 @@
 (************************************************)
 (* Source: keymap.proto Syntax: proto3 Parameters: annot='[@@deriving eq, show, protocol
    ~driver:(module Protocol_conv_json.Json)]' debug=false opens=[] int64_as_int=true
-   int32_as_int=true fixed_as_int=false singleton_record=false *)
+   int32_as_int=true fixed_as_int=false singleton_record=true *)
 module rec Keymap : sig
   val name' : unit -> string
 
-  type t = Binding.t list [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { bindings : Binding.t list }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
   val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
 end = struct
   let name' () = "Keymap.Keymap"
 
-  type t = Binding.t list [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { bindings : Binding.t list }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { bindings } = f' bindings in
     let spec =
       Ocaml_protoc_plugin.Serialize.C.(repeated (1, message Binding.to_proto, not_packed) ^:: nil)
     in
@@ -28,7 +30,7 @@ end = struct
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor bindings = { bindings } in
     let spec =
       Ocaml_protoc_plugin.Deserialize.C.(
         repeated (1, message Binding.from_proto, not_packed) ^:: nil)
@@ -112,23 +114,25 @@ end
 and KeymapGetResponse : sig
   val name' : unit -> string
 
-  type t = Keymap.t option [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { keymap : Keymap.t option }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
   val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
 end = struct
   let name' () = "Keymap.KeymapGetResponse"
 
-  type t = Keymap.t option [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { keymap : Keymap.t option }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { keymap } = f' keymap in
     let spec = Ocaml_protoc_plugin.Serialize.C.(basic_opt (1, message Keymap.to_proto) ^:: nil) in
     let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor keymap = { keymap } in
     let spec =
       Ocaml_protoc_plugin.Deserialize.C.(basic_opt (1, message Keymap.from_proto) ^:: nil)
     in
@@ -164,23 +168,25 @@ end
 and KeymapReloadResponse : sig
   val name' : unit -> string
 
-  type t = Keymap.t option [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { keymap : Keymap.t option }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
   val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
 end = struct
   let name' () = "Keymap.KeymapReloadResponse"
 
-  type t = Keymap.t option [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { keymap : Keymap.t option }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { keymap } = f' keymap in
     let spec = Ocaml_protoc_plugin.Serialize.C.(basic_opt (1, message Keymap.to_proto) ^:: nil) in
     let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor keymap = { keymap } in
     let spec =
       Ocaml_protoc_plugin.Deserialize.C.(basic_opt (1, message Keymap.from_proto) ^:: nil)
     in
@@ -191,23 +197,25 @@ end
 and KeymapStoreRequest : sig
   val name' : unit -> string
 
-  type t = Keymap.t option [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { keymap : Keymap.t option }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
   val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
 end = struct
   let name' () = "Keymap.KeymapStoreRequest"
 
-  type t = Keymap.t option [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { keymap : Keymap.t option }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { keymap } = f' keymap in
     let spec = Ocaml_protoc_plugin.Serialize.C.(basic_opt (1, message Keymap.to_proto) ^:: nil) in
     let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor keymap = { keymap } in
     let spec =
       Ocaml_protoc_plugin.Deserialize.C.(basic_opt (1, message Keymap.from_proto) ^:: nil)
     in

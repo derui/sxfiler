@@ -11,9 +11,6 @@ module Send_reply = struct
 
     type output = Gen.TaskSendReplyResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let input_from_pb = Gen.TaskSendReplyRequest.from_proto
-    let output_to_pb = Gen.TaskSendReplyResponse.to_proto
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -21,8 +18,8 @@ module Send_reply = struct
   module Make (Usecase : Usecase.Task.Send_reply.S) : S = struct
     include Type
 
-    let handle param =
-      let reply = Option.get_exn param |> T.Task_interaction.Reply.to_domain in
+    let handle (param : Gen.TaskSendReplyRequest.t) =
+      let reply = Option.get_exn param.reply |> T.Task_interaction.Reply.to_domain in
       match%lwt Usecase.execute reply with
       | Ok () -> Lwt.return_ok ()
       | Error `Not_found -> Lwt.return_error Gateway_error.(Task_not_found)
@@ -36,9 +33,6 @@ module Cancel = struct
 
     type output = Gen.TaskCancelResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let input_from_pb = Gen.TaskCancelRequest.from_proto
-    let output_to_pb = Gen.TaskCancelResponse.to_proto
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -47,7 +41,7 @@ module Cancel = struct
     include Type
 
     let handle param =
-      let reply = T.Task_types.Task_id.to_domain param in
+      let reply = T.Task_types.Task_id.to_domain param.Gen.TaskCancelRequest.taskId in
       match%lwt Usecase.execute reply with
       | Ok () -> Lwt.return_ok ()
       | Error `Not_found -> Lwt.return_error Gateway_error.(Task_not_found)

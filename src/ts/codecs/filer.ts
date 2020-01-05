@@ -1,7 +1,7 @@
 import { Filer as Domain, createFiler } from "@/domains/filer";
 import { encode as encodeFileItem } from "./file-item";
 import { encode as encodeLocationHistory } from "./location-history";
-import { Filer, FileList, FileItem, LocationHistory } from "@/generated/filer_pb";
+import { Filer, FileItem, LocationHistory } from "../generated/filer_pb";
 import { createLocationHistory } from "@/domains/location-history";
 
 /**

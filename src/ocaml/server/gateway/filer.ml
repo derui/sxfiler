@@ -12,21 +12,15 @@ module Make = struct
 
     type output = G.FilerMakeResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let input_from_pb = G.FilerMakeRequest.from_proto
-    let output_to_pb = G.FilerMakeResponse.to_proto
   end
 
-  module type S = sig
-    include module type of Type
-    include Core.Gateway with type input := input and type output := output
-  end
+  module type S = Core.Gateway with type input = Type.input and type output = Type.output
 
   (** Return implementation with some dependency modules *)
   module Make (System : System.S) (U : Usecase.Filer.Make.S) : S = struct
     include Type
 
-    let handle (param : input) =
+    let handle (param : G.FilerMakeRequest.t) =
       let input =
         {
           U.initial_location = Path.of_string param.initialLocation |> Path.resolve (module System);
@@ -34,7 +28,7 @@ module Make = struct
         }
       in
       match%lwt U.execute input with
-      | Ok t -> T.Filer.of_domain t |> Option.some |> Lwt.return_ok
+      | Ok t -> { G.FilerMakeResponse.filer = T.Filer.of_domain t |> Option.some } |> Lwt.return_ok
       | Error `Already_exists -> Lwt.return_error Gateway_error.(Filer_already_exists)
   end
 end
@@ -52,19 +46,16 @@ module Get = struct
     let output_to_pb = G.FilerGetResponse.to_proto
   end
 
-  module type S = sig
-    include module type of Type
-    include Core.Gateway with type input := input and type output := output
-  end
+  module type S = Core.Gateway with type input = Type.input and type output = Type.output
 
   (** Return implementation with some dependency modules *)
   module Make (U : Usecase.Filer.Get.S) : S = struct
     include Type
 
-    let handle param =
-      let input = { U.name = param } in
+    let handle (param : G.FilerGetRequest.t) =
+      let input = { U.name = param.name } in
       match%lwt U.execute input with
-      | Ok s -> T.Filer.of_domain s |> Option.some |> Lwt.return_ok
+      | Ok s -> { G.FilerGetResponse.filer = T.Filer.of_domain s |> Option.some } |> Lwt.return_ok
       | Error `Not_found -> Lwt.return_error Gateway_error.(Filer_not_found)
   end
 end
@@ -78,24 +69,19 @@ module Move_parent = struct
 
     type output = G.FilerMoveParentResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let input_from_pb = G.FilerMoveParentRequest.from_proto
-    let output_to_pb = G.FilerMoveParentResponse.to_proto
   end
 
-  module type S = sig
-    include module type of Type
-    include Core.Gateway with type input := input and type output := output
-  end
+  module type S = Core.Gateway with type input = Type.input and type output = Type.output
 
   (** Return implementation with some dependency modules *)
   module Make (U : Usecase.Filer.Move_parent.S) : S = struct
     include Type
 
-    let handle param =
-      let input = { U.name = param } in
+    let handle (param : G.FilerMoveParentRequest.t) =
+      let input = { U.name = param.name } in
       match%lwt U.execute input with
-      | Ok s -> T.Filer.of_domain s |> Option.some |> Lwt.return_ok
+      | Ok s ->
+          { G.FilerMoveParentResponse.filer = T.Filer.of_domain s |> Option.some } |> Lwt.return_ok
       | Error `Not_found -> Lwt.return_error Gateway_error.(Filer_not_found)
   end
 end
@@ -109,15 +95,9 @@ module Enter_directory = struct
 
     type output = G.FilerEnterDirectoryResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let input_from_pb = G.FilerEnterDirectoryRequest.from_proto
-    let output_to_pb = G.FilerEnterDirectoryResponse.to_proto
   end
 
-  module type S = sig
-    include module type of Type
-    include Core.Gateway with type input := input and type output := output
-  end
+  module type S = Core.Gateway with type input = Type.input and type output = Type.output
 
   (** Return implementation with dependency modules *)
   module Make (U : Usecase.Filer.Enter_directory.S) : S = struct
@@ -126,7 +106,9 @@ module Enter_directory = struct
     let handle (param : input) =
       let input = { U.name = param.name; item_id = param.itemId } in
       match%lwt U.execute input with
-      | Ok s -> T.Filer.of_domain s |> Option.some |> Lwt.return_ok
+      | Ok s ->
+          { G.FilerEnterDirectoryResponse.filer = T.Filer.of_domain s |> Option.some }
+          |> Lwt.return_ok
       | Error `Not_found_filer -> Lwt.return_error Gateway_error.(Filer_not_found)
       | Error `Not_found_item -> Lwt.return_error Gateway_error.(Item_not_found)
       | Error `Not_directory -> Lwt.return_error Gateway_error.(Filer_not_directory)
@@ -140,15 +122,9 @@ module Toggle_mark = struct
 
     type output = G.FilerToggleMarkResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let input_from_pb = G.FilerToggleMarkRequest.from_proto
-    let output_to_pb = G.FilerToggleMarkResponse.to_proto
   end
 
-  module type S = sig
-    include module type of Type
-    include Core.Gateway with type input := input and type output := output
-  end
+  module type S = Core.Gateway with type input = Type.input and type output = Type.output
 
   module Make (U : Usecase.Filer.Toggle_mark.S) : S = struct
     include Type
@@ -156,7 +132,8 @@ module Toggle_mark = struct
     let handle (input : input) =
       let input = { U.name = input.name; item_ids = input.itemIds } in
       match%lwt U.execute input with
-      | Ok s -> T.Filer.of_domain s |> Option.some |> Lwt.return_ok
+      | Ok s ->
+          { G.FilerToggleMarkResponse.filer = T.Filer.of_domain s |> Option.some } |> Lwt.return_ok
       | Error `Not_found -> Lwt.return_error Gateway_error.(Filer_not_found)
   end
 end
@@ -167,15 +144,9 @@ module Move = struct
 
     type output = G.FilerMoveResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let input_from_pb = G.FilerMoveRequest.from_proto
-    let output_to_pb = G.FilerMoveResponse.to_proto
   end
 
-  module type S = sig
-    include module type of Type
-    include Core.Gateway with type input := input and type output := output
-  end
+  module type S = Core.Gateway with type input = Type.input and type output = Type.output
 
   module Make (U : Usecase.Filer.Move.S) : S = struct
     include Type
@@ -198,15 +169,9 @@ module Delete = struct
 
     type output = G.FilerDeleteResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let input_from_pb = G.FilerDeleteRequest.from_proto
-    let output_to_pb = G.FilerDeleteResponse.to_proto
   end
 
-  module type S = sig
-    include module type of Type
-    include Core.Gateway with type input := input and type output := output
-  end
+  module type S = Core.Gateway with type input = Type.input and type output = Type.output
 
   module Make (U : Usecase.Filer.Delete.S) : S = struct
     include Type
@@ -226,15 +191,9 @@ module Copy = struct
 
     type output = G.FilerCopyResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let input_from_pb = G.FilerCopyRequest.from_proto
-    let output_to_pb = G.FilerCopyResponse.to_proto
   end
 
-  module type S = sig
-    include module type of Type
-    include Core.Gateway with type input := input and type output := output
-  end
+  module type S = Core.Gateway with type input = Type.input and type output = Type.output
 
   module Make (U : Usecase.Filer.Copy.S) : S = struct
     include Type
@@ -257,15 +216,9 @@ module Jump_location = struct
 
     type output = G.FilerJumpLocationResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let input_from_pb = G.FilerJumpLocationRequest.from_proto
-    let output_to_pb = G.FilerJumpLocationResponse.to_proto
   end
 
-  module type S = sig
-    include module type of Type
-    include Core.Gateway with type input := input and type output := output
-  end
+  module type S = Core.Gateway with type input = Type.input and type output = Type.output
 
   (** Return implementation with some dependency modules *)
   module Make (System : System.S) (U : Usecase.Filer.Jump_location.S) : S = struct
@@ -279,7 +232,9 @@ module Jump_location = struct
         }
       in
       match%lwt U.execute input with
-      | Ok t -> T.Filer.of_domain t |> Option.some |> Lwt.return_ok
+      | Ok t ->
+          { G.FilerJumpLocationResponse.filer = T.Filer.of_domain t |> Option.some }
+          |> Lwt.return_ok
       | Error `Not_found -> Lwt.return_error Gateway_error.(Filer_not_found)
   end
 end

@@ -8,9 +8,6 @@ module Get = struct
   module Type = struct
     type input = G.GetRequest.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
     type output = G.GetResponse.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let input_from_pb = G.GetRequest.from_proto
-    let output_to_pb = G.GetResponse.to_proto
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -20,7 +17,9 @@ module Get = struct
 
     let handle () =
       match%lwt Usecase.execute () with
-      | Ok output -> Lwt.return_ok @@ Option.some @@ T.Configuration.of_domain output
+      | Ok output ->
+          Lwt.return_ok
+            { G.GetResponse.configuration = T.Configuration.of_domain output |> Option.some }
       | Error () -> Lwt.return_error Gateway_error.(Unknown_error "unknown error")
   end
 end
@@ -30,9 +29,6 @@ module Store = struct
   module Type = struct
     type input = G.StoreRequest.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
     type output = G.StoreResponse.t [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let input_from_pb = G.StoreRequest.from_proto
-    let output_to_pb = G.StoreResponse.to_proto
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -40,8 +36,8 @@ module Store = struct
   module Make (Usecase : Usecase.Configuration.Store.S) : S = struct
     include Type
 
-    let handle input =
-      match input with
+    let handle (input : G.StoreRequest.t) =
+      match input.configuration with
       | None -> Lwt.return_error Gateway_error.(Unknown_error "unknown error")
       | Some input -> (
           match%lwt Usecase.execute @@ T.Configuration.to_domain input with

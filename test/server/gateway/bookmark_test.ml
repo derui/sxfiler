@@ -22,8 +22,10 @@ let test_set =
         let module Usecase = U.Bookmark.List_all.Make (BR) in
         let module Gateway = G.Bookmark.List_all.Make (Usecase) in
         let%lwt res = Gateway.handle () in
-        let expected = List.map Tr.Bookmark.of_domain data in
-        Alcotest.(check @@ result (list @@ of_pp Gen.Bookmark.Bookmark.pp) (of_pp Fmt.nop))
+        let expected =
+          { Gen.Bookmark.ListAllResponse.bookmarks = List.map Tr.Bookmark.of_domain data }
+        in
+        Alcotest.(check @@ result (of_pp Gen.Bookmark.ListAllResponse.pp) (of_pp Fmt.nop))
           "current" (Ok expected) res;
         Lwt.return_unit);
     Alcotest_lwt.test_case "throw error when register same path" `Quick (fun _ () ->
@@ -33,8 +35,8 @@ let test_set =
           let execute _ = Lwt.return_error `Conflict
         end in
         let module Gateway = G.Bookmark.Register.Make (Usecase) in
-        let%lwt res = Gateway.handle "/foo" in
-        Alcotest.(check @@ result (option @@ of_pp Gen.Bookmark.Bookmark.pp) (of_pp Fmt.nop))
+        let%lwt res = Gateway.handle { Gen.Bookmark.RegisterRequest.path = "/foo" } in
+        Alcotest.(check @@ result (of_pp Gen.Bookmark.RegisterResponse.pp) (of_pp Fmt.nop))
           "current" (Error G.Gateway_error.Bookmark_conflict) res;
         Lwt.return_unit);
   ]

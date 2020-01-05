@@ -10,9 +10,6 @@ module Get = struct
 
     type output = Gen.Keymap.KeymapGetResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let input_from_pb = Gen.Keymap.KeymapGetRequest.from_proto
-    let output_to_pb = Gen.Keymap.KeymapGetResponse.to_proto
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -24,7 +21,11 @@ module Get = struct
 
     let handle () =
       match%lwt Usecase.execute () with
-      | Ok output -> Lwt.return_ok @@ Option.some @@ T.Key_map.of_domain output
+      | Ok output ->
+          let res =
+            Gen.Keymap.KeymapGetResponse.{ keymap = Option.some @@ T.Key_map.of_domain output }
+          in
+          Lwt.return_ok res
       | Error () -> Lwt.return_error Gateway_error.(Unknown_error "unknown error")
   end
 end
@@ -36,9 +37,6 @@ module Reload = struct
 
     type output = Gen.Keymap.KeymapReloadResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let input_from_pb = Gen.Keymap.KeymapReloadRequest.from_proto
-    let output_to_pb = Gen.Keymap.KeymapReloadResponse.to_proto
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -48,7 +46,11 @@ module Reload = struct
 
     let handle () =
       match%lwt Usecase.execute () with
-      | Ok output -> Lwt.return_ok @@ Option.some @@ T.Key_map.of_domain output
+      | Ok output ->
+          let res =
+            Gen.Keymap.KeymapReloadResponse.{ keymap = Option.some @@ T.Key_map.of_domain output }
+          in
+          Lwt.return_ok res
       | Error () -> Lwt.return_error Gateway_error.(Unknown_error "unknown error")
   end
 end
@@ -60,9 +62,6 @@ module Store = struct
 
     type output = Gen.Keymap.KeymapStoreResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let input_from_pb = Gen.Keymap.KeymapStoreRequest.from_proto
-    let output_to_pb = Gen.Keymap.KeymapStoreResponse.to_proto
   end
 
   module type S = Core.Gateway with type input = Type.input and type output = Type.output
@@ -72,8 +71,8 @@ module Store = struct
   module Make (Usecase : Usecase.Keymap.Store.S) : S = struct
     include Type
 
-    let handle param =
-      match param with
+    let handle (param : Gen.Keymap.KeymapStoreRequest.t) =
+      match param.keymap with
       | Some param -> (
           match%lwt Usecase.execute @@ T.Key_map.to_domain param with
           | Ok () -> Lwt.return_ok ()

@@ -23,12 +23,15 @@ let test_set =
         let module Gateway = G.Task.Send_reply.Make (Usecase) in
         let%lwt _ =
           Gateway.handle
-            (Some
-               {
-                 taskId = Uuidm.to_string task_id;
-                 reply = `Overwrite true;
-                 type' = Gen.Task.ReplyType.Overwrite;
-               })
+            {
+              Gen.Task.TaskSendReplyRequest.reply =
+                Some
+                  {
+                    taskId = Uuidm.to_string task_id;
+                    reply = `Overwrite true;
+                    type' = Gen.Task.ReplyType.Overwrite;
+                  };
+            }
         in
         Alcotest.(check @@ list @@ of_pp Fmt.nop)
           "called"

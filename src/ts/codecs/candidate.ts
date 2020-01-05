@@ -1,5 +1,5 @@
 import { Candidate as Domain, createCandidate } from "@/domains/candidate";
-import { Candidate } from "@/generated/completion_pb";
+import { Candidate } from "../generated/completion_pb";
 
 /**
    encode node object from RPC to frontend domain.

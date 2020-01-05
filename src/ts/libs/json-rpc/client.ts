@@ -77,6 +77,7 @@ export class ClientImpl<M extends string> implements Client<M> {
     };
 
     return this.requester.call(rpcRequest).then(req => {
+      console.log(req);
       const error = req.error ? new Common.RPCError(req.error.message, req.error) : undefined;
       return api.resultTransformer(req.result, error);
     });

@@ -23,6 +23,8 @@ import {
   FilerJumpLocationRequest,
   FilerJumpLocationResponse,
   Filer,
+  IFilerMakeResponse,
+  IFilerGetResponse,
 } from "../generated/filer_pb";
 
 export enum Methods {
@@ -44,7 +46,7 @@ const Make: Api<
   Methods.Make,
   { initialLocation: string; name: string },
   FilerMakeRequest,
-  FilerMakeResponse,
+  IFilerMakeResponse,
   Domain
 > = {
   method: Methods.Make,
@@ -69,7 +71,7 @@ const Make: Api<
   },
 };
 
-const Get: Api<Methods.Get, string, FilerGetRequest, FilerGetResponse, Domain | undefined> = {
+const Get: Api<Methods.Get, string, FilerGetRequest, IFilerGetResponse, Domain | undefined> = {
   method: Methods.Get,
   parametersTransformer(name) {
     const req = new FilerGetRequest({ name });

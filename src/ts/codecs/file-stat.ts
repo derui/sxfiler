@@ -1,7 +1,7 @@
 import { FileStat as Domain, createFileStat } from "@/domains/file-stat";
 import { createCapability, emptyCapability } from "@/domains/capability";
 import { createMode } from "@/domains/mode";
-import { FileStat, Mode, Capability } from "@/generated/filer_pb";
+import { FileStat, Mode, Capability } from "../generated/filer_pb";
 
 const defaultMode = createMode({
   owner: emptyCapability(),

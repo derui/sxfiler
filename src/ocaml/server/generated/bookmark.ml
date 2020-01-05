@@ -6,7 +6,7 @@
 (************************************************)
 (* Source: bookmark.proto Syntax: proto3 Parameters: annot='[@@deriving eq, show, protocol
    ~driver:(module Protocol_conv_json.Json)]' debug=false opens=[] int64_as_int=true
-   int32_as_int=true fixed_as_int=false singleton_record=false *)
+   int32_as_int=true fixed_as_int=false singleton_record=true *)
 module rec Bookmark : sig
   val name' : unit -> string
 
@@ -82,17 +82,19 @@ end
 and ListAllResponse : sig
   val name' : unit -> string
 
-  type t = Bookmark.t list [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { bookmarks : Bookmark.t list }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
   val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
 end = struct
   let name' () = "Bookmark.ListAllResponse"
 
-  type t = Bookmark.t list [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { bookmarks : Bookmark.t list }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { bookmarks } = f' bookmarks in
     let spec =
       Ocaml_protoc_plugin.Serialize.C.(repeated (1, message Bookmark.to_proto, not_packed) ^:: nil)
     in
@@ -100,7 +102,7 @@ end = struct
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor bookmarks = { bookmarks } in
     let spec =
       Ocaml_protoc_plugin.Deserialize.C.(
         repeated (1, message Bookmark.from_proto, not_packed) ^:: nil)
@@ -112,23 +114,25 @@ end
 and RegisterRequest : sig
   val name' : unit -> string
 
-  type t = string [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { path : string }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
   val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
 end = struct
   let name' () = "Bookmark.RegisterRequest"
 
-  type t = string [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { path : string }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { path } = f' path in
     let spec = Ocaml_protoc_plugin.Serialize.C.(basic (1, string, proto3) ^:: nil) in
     let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor path = { path } in
     let spec = Ocaml_protoc_plugin.Deserialize.C.(basic (1, string, proto3) ^:: nil) in
     let deserialize = Ocaml_protoc_plugin.Deserialize.deserialize spec constructor in
     fun writer -> deserialize writer
@@ -137,7 +141,7 @@ end
 and RegisterResponse : sig
   val name' : unit -> string
 
-  type t = Bookmark.t option
+  type t = { bookmark : Bookmark.t option }
   [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
@@ -145,17 +149,17 @@ and RegisterResponse : sig
 end = struct
   let name' () = "Bookmark.RegisterResponse"
 
-  type t = Bookmark.t option
+  type t = { bookmark : Bookmark.t option }
   [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { bookmark } = f' bookmark in
     let spec = Ocaml_protoc_plugin.Serialize.C.(basic_opt (1, message Bookmark.to_proto) ^:: nil) in
     let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor bookmark = { bookmark } in
     let spec =
       Ocaml_protoc_plugin.Deserialize.C.(basic_opt (1, message Bookmark.from_proto) ^:: nil)
     in
@@ -166,23 +170,23 @@ end
 and DeleteRequest : sig
   val name' : unit -> string
 
-  type t = string [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { id : string } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
   val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
 end = struct
   let name' () = "Bookmark.DeleteRequest"
 
-  type t = string [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { id : string } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { id } = f' id in
     let spec = Ocaml_protoc_plugin.Serialize.C.(basic (1, string, proto3) ^:: nil) in
     let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor id = { id } in
     let spec = Ocaml_protoc_plugin.Deserialize.C.(basic (1, string, proto3) ^:: nil) in
     let deserialize = Ocaml_protoc_plugin.Deserialize.deserialize spec constructor in
     fun writer -> deserialize writer
@@ -191,7 +195,7 @@ end
 and DeleteResponse : sig
   val name' : unit -> string
 
-  type t = Bookmark.t option
+  type t = { deletedBookmark : Bookmark.t option }
   [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
@@ -199,17 +203,17 @@ and DeleteResponse : sig
 end = struct
   let name' () = "Bookmark.DeleteResponse"
 
-  type t = Bookmark.t option
+  type t = { deletedBookmark : Bookmark.t option }
   [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { deletedBookmark } = f' deletedBookmark in
     let spec = Ocaml_protoc_plugin.Serialize.C.(basic_opt (1, message Bookmark.to_proto) ^:: nil) in
     let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor deletedBookmark = { deletedBookmark } in
     let spec =
       Ocaml_protoc_plugin.Deserialize.C.(basic_opt (1, message Bookmark.from_proto) ^:: nil)
     in

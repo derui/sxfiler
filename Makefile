@@ -26,7 +26,7 @@ PROTO_FILE_DEPS += types
 
 define generate_for_ocaml
 	protoc -I src/protobuf --ocaml_out=src/ocaml/server/generated \
-		--ocaml_opt='annot=[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]' \
+		--ocaml_opt='singleton_record=true;annot=[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]' \
 		src/protobuf/$1.proto
 
 endef

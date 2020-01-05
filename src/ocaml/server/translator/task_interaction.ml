@@ -6,7 +6,9 @@ module Gen = Sxfiler_server_generated
 module Reply = struct
   let of_domain { D.Reply.task_id; reply } =
     let reply =
-      match reply with D.Reply.Overwrite b -> `Overwrite b | D.Reply.Rename s -> `Rename s
+      match reply with
+      | D.Reply.Overwrite b -> `Overwrite b
+      | D.Reply.Rename s -> `Rename { Gen.Task.TaskReply.Rename.newName = s }
     and type' =
       match reply with
       | D.Reply.Rename _ -> Gen.Task.ReplyType.Rename
@@ -21,7 +23,7 @@ module Reply = struct
       reply =
         ( match t.reply with
         | `Overwrite b -> D.Reply.Overwrite b
-        | `Rename new_name -> Rename new_name );
+        | `Rename rename -> Rename rename.Gen.Task.TaskReply.Rename.newName );
     }
 end
 

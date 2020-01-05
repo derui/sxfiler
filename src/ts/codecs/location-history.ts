@@ -1,5 +1,5 @@
 import { LocationHistory as Domain, createLocationHistory } from "@/domains/location-history";
-import { LocationRecord, LocationHistory } from "@/generated/filer_pb";
+import { LocationRecord, LocationHistory } from "../generated/filer_pb";
 
 const encodeLocationRecord = function encodeLocationRecord(record: LocationRecord) {
   return { location: record.location, timestamp: new Date(Number(record.timestamp)) };

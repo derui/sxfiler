@@ -6,7 +6,7 @@
 (************************************************)
 (* Source: types.proto Syntax: proto3 Parameters: annot='[@@deriving eq, show, protocol
    ~driver:(module Protocol_conv_json.Json)]' debug=false opens=[] int64_as_int=true
-   int32_as_int=true fixed_as_int=false singleton_record=false *)
+   int32_as_int=true fixed_as_int=false singleton_record=true *)
 module rec SortType : sig
   type t =
     | Name

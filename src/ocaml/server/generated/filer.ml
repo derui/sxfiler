@@ -6,7 +6,7 @@
 (************************************************)
 (* Source: filer.proto Syntax: proto3 Parameters: annot='[@@deriving eq, show, protocol
    ~driver:(module Protocol_conv_json.Json)]' debug=false opens=[] int64_as_int=true
-   int32_as_int=true fixed_as_int=false singleton_record=false *)
+   int32_as_int=true fixed_as_int=false singleton_record=true *)
 module rec Capability : sig
   val name' : unit -> string
 
@@ -467,23 +467,25 @@ end
 and FilerMakeResponse : sig
   val name' : unit -> string
 
-  type t = Filer.t option [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { filer : Filer.t option }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
   val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
 end = struct
   let name' () = "Filer.FilerMakeResponse"
 
-  type t = Filer.t option [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { filer : Filer.t option }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { filer } = f' filer in
     let spec = Ocaml_protoc_plugin.Serialize.C.(basic_opt (1, message Filer.to_proto) ^:: nil) in
     let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor filer = { filer } in
     let spec =
       Ocaml_protoc_plugin.Deserialize.C.(basic_opt (1, message Filer.from_proto) ^:: nil)
     in
@@ -494,23 +496,25 @@ end
 and FilerGetRequest : sig
   val name' : unit -> string
 
-  type t = string [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { name : string }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
   val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
 end = struct
   let name' () = "Filer.FilerGetRequest"
 
-  type t = string [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { name : string }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { name } = f' name in
     let spec = Ocaml_protoc_plugin.Serialize.C.(basic (1, string, proto3) ^:: nil) in
     let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor name = { name } in
     let spec = Ocaml_protoc_plugin.Deserialize.C.(basic (1, string, proto3) ^:: nil) in
     let deserialize = Ocaml_protoc_plugin.Deserialize.deserialize spec constructor in
     fun writer -> deserialize writer
@@ -519,23 +523,25 @@ end
 and FilerGetResponse : sig
   val name' : unit -> string
 
-  type t = Filer.t option [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { filer : Filer.t option }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
   val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
 end = struct
   let name' () = "Filer.FilerGetResponse"
 
-  type t = Filer.t option [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { filer : Filer.t option }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { filer } = f' filer in
     let spec = Ocaml_protoc_plugin.Serialize.C.(basic_opt (1, message Filer.to_proto) ^:: nil) in
     let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor filer = { filer } in
     let spec =
       Ocaml_protoc_plugin.Deserialize.C.(basic_opt (1, message Filer.from_proto) ^:: nil)
     in
@@ -546,23 +552,25 @@ end
 and FilerMoveParentRequest : sig
   val name' : unit -> string
 
-  type t = string [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { name : string }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
   val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
 end = struct
   let name' () = "Filer.FilerMoveParentRequest"
 
-  type t = string [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { name : string }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { name } = f' name in
     let spec = Ocaml_protoc_plugin.Serialize.C.(basic (1, string, proto3) ^:: nil) in
     let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor name = { name } in
     let spec = Ocaml_protoc_plugin.Deserialize.C.(basic (1, string, proto3) ^:: nil) in
     let deserialize = Ocaml_protoc_plugin.Deserialize.deserialize spec constructor in
     fun writer -> deserialize writer
@@ -571,23 +579,25 @@ end
 and FilerMoveParentResponse : sig
   val name' : unit -> string
 
-  type t = Filer.t option [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { filer : Filer.t option }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
   val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
 end = struct
   let name' () = "Filer.FilerMoveParentResponse"
 
-  type t = Filer.t option [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { filer : Filer.t option }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { filer } = f' filer in
     let spec = Ocaml_protoc_plugin.Serialize.C.(basic_opt (1, message Filer.to_proto) ^:: nil) in
     let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor filer = { filer } in
     let spec =
       Ocaml_protoc_plugin.Deserialize.C.(basic_opt (1, message Filer.from_proto) ^:: nil)
     in
@@ -637,23 +647,25 @@ end
 and FilerEnterDirectoryResponse : sig
   val name' : unit -> string
 
-  type t = Filer.t option [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { filer : Filer.t option }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
   val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
 end = struct
   let name' () = "Filer.FilerEnterDirectoryResponse"
 
-  type t = Filer.t option [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { filer : Filer.t option }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { filer } = f' filer in
     let spec = Ocaml_protoc_plugin.Serialize.C.(basic_opt (1, message Filer.to_proto) ^:: nil) in
     let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor filer = { filer } in
     let spec =
       Ocaml_protoc_plugin.Deserialize.C.(basic_opt (1, message Filer.from_proto) ^:: nil)
     in
@@ -703,23 +715,25 @@ end
 and FilerToggleMarkResponse : sig
   val name' : unit -> string
 
-  type t = Filer.t option [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { filer : Filer.t option }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
   val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
 end = struct
   let name' () = "Filer.FilerToggleMarkResponse"
 
-  type t = Filer.t option [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { filer : Filer.t option }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { filer } = f' filer in
     let spec = Ocaml_protoc_plugin.Serialize.C.(basic_opt (1, message Filer.to_proto) ^:: nil) in
     let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor filer = { filer } in
     let spec =
       Ocaml_protoc_plugin.Deserialize.C.(basic_opt (1, message Filer.from_proto) ^:: nil)
     in
@@ -1019,23 +1033,25 @@ end
 and FilerJumpLocationResponse : sig
   val name' : unit -> string
 
-  type t = Filer.t option [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { filer : Filer.t option }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Ocaml_protoc_plugin.Writer.t
   val from_proto : Ocaml_protoc_plugin.Reader.t -> t Ocaml_protoc_plugin.Result.t
 end = struct
   let name' () = "Filer.FilerJumpLocationResponse"
 
-  type t = Filer.t option [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { filer : Filer.t option }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f a = f a in
+    let apply ~f:f' { filer } = f' filer in
     let spec = Ocaml_protoc_plugin.Serialize.C.(basic_opt (1, message Filer.to_proto) ^:: nil) in
     let serialize = Ocaml_protoc_plugin.Serialize.serialize spec in
     fun t -> apply ~f:(serialize ()) t
 
   let from_proto =
-    let constructor a = a in
+    let constructor filer = { filer } in
     let spec =
       Ocaml_protoc_plugin.Deserialize.C.(basic_opt (1, message Filer.from_proto) ^:: nil)
     in
