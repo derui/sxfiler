@@ -12,11 +12,4 @@ let test_set =
         Alcotest.(check @@ of_pp D.File_list.pp)
           "domain" data
           Tr.File_list.(to_domain @@ of_domain data) );
-    ( "can translate to/from yojson",
-      `Quick,
-      fun () ->
-        let data = Tr.File_list.of_domain data in
-        Alcotest.(check @@ result (of_pp Tr.File_list.pp) (of_pp Fmt.nop))
-          "yojson" (Ok data)
-          Tr.File_list.(of_json @@ to_json data) );
   ]

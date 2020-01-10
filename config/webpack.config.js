@@ -227,7 +227,8 @@ module.exports = function(webpackEnv) {
         checkSyntacticErrors: true,
         tsconfig: paths.appTsConfig,
         reportFiles: [
-          '**',
+          '**/*.ts$',
+          '**/*.tsx$',
           '!**/*.json',
           '!**/__tests__/**',
           '!**/?(*.)(spec|test).*',

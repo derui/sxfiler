@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+import "types.proto";
+
+message Configuration {
+  SortType defaultSortOrder = 1;
+}
+
+message GetRequest {}
+message GetResponse {
+  Configuration configuration = 1;
+}
+
+message StoreRequest {
+  Configuration configuration = 1;
+}
+message StoreResponse {}

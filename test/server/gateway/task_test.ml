@@ -1,9 +1,8 @@
 module D = Sxfiler_domain
-module S = Sxfiler_server
 module U = Sxfiler_usecase
-module C = Sxfiler_server_core
 module G = Sxfiler_server_gateway
 module T = Sxfiler_server_translator
+module Gen = Sxfiler_server_generated
 
 module Dummy_system = struct
   let getcwd () = "/foo"
@@ -24,7 +23,15 @@ let test_set =
         let module Gateway = G.Task.Send_reply.Make (Usecase) in
         let%lwt _ =
           Gateway.handle
-            { task_id = Uuidm.to_string task_id; reply = T.Task_interaction.Reply.Overwrite true }
+            {
+              Gen.Task.TaskSendReplyRequest.reply =
+                Some
+                  {
+                    taskId = Uuidm.to_string task_id;
+                    reply = `Overwrite true;
+                    type' = Gen.Task.ReplyType.Overwrite;
+                  };
+            }
         in
         Alcotest.(check @@ list @@ of_pp Fmt.nop)
           "called"

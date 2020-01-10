@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+enum SortType {
+  Name = 0;
+  Size = 1;
+  Date = 2;
+}

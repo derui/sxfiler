@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+message Bookmark {
+  string id = 1;
+  string path = 2;
+  int32 order = 3;
+}
+
+message ListAllRequest {}
+message ListAllResponse {
+  repeated Bookmark bookmarks = 1;
+}
+
+message RegisterRequest {
+  string path= 1;
+}
+
+message RegisterResponse {
+  Bookmark bookmark = 1;
+}
+
+message DeleteRequest {
+  string id = 1;
+}
+
+message DeleteResponse {
+  Bookmark deletedBookmark = 1;
+}

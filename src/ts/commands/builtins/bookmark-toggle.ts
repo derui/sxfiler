@@ -36,10 +36,10 @@ export const createCommand = function createCommand(): CommandLike {
       let bookmark = findBookmark(node)(appState.fileList);
       const apiClient = args.clientResolver.apiClient();
       if (!bookmark) {
-        bookmark = await apiClient.call(Apis.Register, { path: node.fullPath });
+        bookmark = await apiClient.call(Apis.Register, node.fullPath);
         dispatcher.dispatch(actions.registerBookmark(bookmark));
       } else {
-        bookmark = await apiClient.call(Apis.Delete, { id: bookmark.id });
+        bookmark = await apiClient.call(Apis.Delete, bookmark.id);
         dispatcher.dispatch(actions.deleteBookmark(bookmark));
       }
     },

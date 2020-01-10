@@ -15,7 +15,9 @@ describe("JSON-RPC library", () => {
         client.call(
           {
             method: "method",
-            parametersTransformer: jest.fn(),
+            parametersTransformer() {
+              return { toJSON: jest.fn() };
+            },
             resultTransformer: (ret, err) => {
               expect(ret).toBeUndefined();
               expect(err).toBeUndefined();
@@ -45,7 +47,11 @@ describe("JSON-RPC library", () => {
             method: "method",
             parametersTransformer(req: number) {
               expect(req).toEqual(100);
-              return req * 100;
+              return {
+                toJSON() {
+                  return req * 100;
+                },
+              };
             },
           },
           100

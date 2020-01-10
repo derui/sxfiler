@@ -14,7 +14,7 @@ end
 
 module type S = sig
   val method_ : string
-  val handle : Rpc.Server.handler
+  val handle : Yojson.Safe.t option -> (Yojson.Safe.t option, Rpc.Error.t) result Lwt.t
 end
 
 module Make (S : Spec) : S = struct
@@ -36,10 +36,9 @@ module Make (S : Spec) : S = struct
               Logs.warn (fun m -> m "Required parameter not found");
               raise Rpc.(Error.Jsonrpc_error (Error.make Jsonrpc.Types.Error_code.Invalid_params))
           | Some params -> (
+              (* all messages are protobuf. Protobuf in OCaml is pure string, so get directly it *)
               match decoder params with
               | Error _ ->
-                  Logs.warn (fun m ->
-                      m "Required parameter can not encode: %s" (Yojson.Safe.to_string params));
                   raise
                     Rpc.(Error.Jsonrpc_error (Error.make Jsonrpc.Types.Error_code.Invalid_params))
               | Ok param -> S.Gateway.handle param )

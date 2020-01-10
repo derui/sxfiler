@@ -1,12 +1,8 @@
 module D = Sxfiler_domain.Condition
+module G = Sxfiler_server_generated
 
-type t = { contexts : string list }
-[@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
+let of_domain (t : D.t) = D.to_list t
 
-let of_domain t =
-  let module T = Sxfiler_domain in
-  { contexts = T.Condition.to_list t }
-
-let to_domain t =
+let to_domain (t : string list) =
   let empty = D.empty in
-  List.fold_left (fun cond context -> D.enable cond ~context) empty t.contexts
+  List.fold_left (fun cond context -> D.enable cond ~context) empty t

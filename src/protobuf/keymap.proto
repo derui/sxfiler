@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+// types
+message Keymap {
+  repeated Binding bindings = 1;
+}
+
+message Binding {
+  string key = 1;
+  string action = 2;
+  repeated string contexts = 3;
+}
+
+// request/response
+message KeymapGetRequest {}
+
+message KeymapGetResponse {
+  Keymap keymap = 1;
+}
+
+message KeymapReloadRequest {}
+
+message KeymapReloadResponse {
+  Keymap keymap = 1;
+}
+
+message KeymapStoreRequest {
+  Keymap keymap = 1;
+}
+
+message KeymapStoreResponse {}

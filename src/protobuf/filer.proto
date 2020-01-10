@@ -1,0 +1,149 @@
+syntax = "proto3";
+
+// types
+import "types.proto";
+
+message Capability {
+  bool writable = 1;
+  bool readable = 2;
+  bool executable = 3;
+}
+
+message Mode {
+  Capability owner = 1;
+  Capability group = 2;
+  Capability others = 3;
+}
+
+message FileStat {
+  Mode mode = 1;
+  int32 uid = 2;
+  int32 gid = 3;
+  string atime = 4;
+  string ctime = 5;
+  string mtime = 6;
+  string size = 7;
+  bool isDirectory = 8;
+  bool isFile = 9;
+  bool isSymlink = 10;
+}
+
+message FileItem {
+  string id = 1;
+  string parent = 2;
+  string name = 3;
+  string fullPath = 4;
+  FileStat stat = 5;
+  bool hasLinkPath = 6;
+  string linkPath = 7;
+}
+
+message FileList {
+  string location = 1;
+  repeated FileItem items = 2;
+}
+
+message LocationHistory {
+  repeated LocationRecord records = 1;
+  int32 maxRecordNumber = 2;
+}
+
+message LocationRecord {
+  string location = 1;
+  string timestamp = 2;
+}
+
+// domain representation type
+message Filer {
+  string id = 1;
+  string name = 2;
+  FileList fileList = 3;
+  LocationHistory history = 4;
+  repeated string markedItems = 5;
+  SortType sortOrder = 6;
+}
+
+// the request to make filer
+message FilerMakeRequest {
+  string initialLocation = 1;
+  string name = 2;
+}
+
+message FilerMakeResponse {
+  Filer filer = 1;
+}
+
+message FilerGetRequest {
+  string name = 1;
+}
+
+message FilerGetResponse {
+  Filer filer = 1;
+}
+
+message FilerMoveParentRequest {
+  string name = 1;
+}
+
+message FilerMoveParentResponse {
+  Filer filer = 1;
+}
+
+message FilerEnterDirectoryRequest {
+  string name = 1;
+  string itemId = 2;
+}
+
+message FilerEnterDirectoryResponse {
+  Filer filer = 1;
+}
+
+message FilerToggleMarkRequest {
+  string name = 1;
+  repeated string itemIds = 2;
+}
+
+message FilerToggleMarkResponse {
+  Filer filer = 1;
+}
+
+message FilerMoveRequest {
+  string source = 1;
+  string dest = 2;
+  repeated string itemIds = 3;
+}
+
+message FilerMoveResponse {
+  string taskId = 1;
+  string taskName = 2;
+}
+
+message FilerDeleteRequest {
+  string source = 1;
+  repeated string itemIds = 2;
+}
+
+message FilerDeleteResponse {
+  string taskId = 1;
+  string taskName = 2;
+}
+
+message FilerCopyRequest {
+  string source = 1;
+  string dest = 2;
+  repeated string itemIds = 3;
+}
+
+message FilerCopyResponse {
+  string taskId = 1;
+  string taskName = 2;
+}
+
+message FilerJumpLocationRequest {
+  string location = 1;
+  string name = 2;
+}
+
+message FilerJumpLocationResponse {
+  Filer filer = 1;
+}

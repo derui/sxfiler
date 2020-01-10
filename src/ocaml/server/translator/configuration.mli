@@ -1,4 +1,4 @@
-type t = { default_sort_order : Types.Sort_type.t [@key "defaultSortOrder"] }
+type t = Sxfiler_server_generated.Configuration.Configuration.t
 [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 (** the type that is JSON friendly for {!Sxfiler_domain.Configuration.t} *)
 

@@ -1,7 +1,5 @@
-{
-  "bindings": [
-    {"action": "action1", "key": "k", "when": {contexts: []}},
-    {"action": "action2", "key": "j", "when": {contexts: ["foo"]}},
-    {"action": "action3", "key": "h", "when": {contexts: ["bar"]}}
-  ]
-}
+{"bindings": [
+  {"action": "action1", "key": "k", "contexts": []},
+  {"action": "action2", "key": "j", "contexts": ["foo"]},
+  {"action": "action3", "key": "h", "contexts": ["bar"]}
+]}

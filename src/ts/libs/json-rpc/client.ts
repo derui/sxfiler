@@ -1,18 +1,24 @@
 import * as Common from "./type";
 
 // P and Res only use to define api
-export type Api<T extends string, P extends any = any, Res extends any = any> = {
+export type Api<
+  T extends string,
+  P,
+  Req extends { toJSON(): { [key: string]: any } },
+  Res extends any = any,
+  Result extends any = any
+> = {
   method: T;
 
   /**
      Transformer for param of the method
    */
-  parametersTransformer: (param: P) => any;
+  parametersTransformer: (param: P) => Req;
 
   /**
      Transformer for result of the method
    */
-  resultTransformer: (res: any, error?: Common.RPCError) => Res;
+  resultTransformer: (res: Res | undefined, error?: Common.RPCError) => Result;
 };
 
 export type Notification<T extends string, P extends {} = any> = {
@@ -32,7 +38,10 @@ export type Client<M extends string> = {
    * @param params object for RPC
    * @return promise to handling result of RPC
    */
-  call<P, Res>(api: Api<M, P, Res>, params: P): Promise<Res>;
+  call<P, Req extends { toJSON(): { [key: string]: any } }, Res, Result>(
+    api: Api<M, P, Req, Res, Result>,
+    params: P
+  ): Promise<Result>;
 
   /**
    * send notification with or without request
@@ -56,11 +65,14 @@ export class ClientImpl<M extends string> implements Client<M> {
     this.idGenerator = idGenerator;
   }
 
-  public async call<P, Res>(api: Api<M, P, Res>, params: P): Promise<Res> {
+  public async call<P, Req extends { toJSON(): { [key: string]: any } }, Res, Result>(
+    api: Api<M, P, Req, Res, Result>,
+    params: P
+  ): Promise<Result> {
     const rpcRequest: Common.Request = {
       jsonrpc: "2.0",
       method: api.method,
-      params: api.parametersTransformer(params),
+      params: api.parametersTransformer(params).toJSON(),
       id: this.idGenerator(),
     };
 
@@ -74,7 +86,7 @@ export class ClientImpl<M extends string> implements Client<M> {
     const rpcRequest: Common.Request = {
       jsonrpc: "2.0",
       method: api.method,
-      params: api.parametersTransformer(params),
+      params: api.parametersTransformer(params).toJSON(),
     };
 
     this.requester.notify(rpcRequest);

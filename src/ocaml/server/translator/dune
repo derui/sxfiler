@@ -1,5 +1,7 @@
 (library
  (name sxfiler_server_translator)
  (public_name sxfiler.server.translator)
- (libraries sxfiler.domain ppx_protocol_conv_json)
+ (libraries sxfiler.domain
+            sxfiler.server.generated
+            ppx_protocol_conv_json)
  (preprocess (pps ppx_deriving.std ppx_protocol_conv)))

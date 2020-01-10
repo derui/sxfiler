@@ -1,11 +1,12 @@
 module C = Sxfiler_server_core
 module D = Sxfiler_domain
 module Tr = Sxfiler_server_translator
+module G = Sxfiler_server_generated
 
 let filer_updated_api =
   {
     Notification_service.to_method = (fun _ -> "notification/filerUpdated");
-    to_json = (fun v -> Tr.Filer.(of_domain v |> to_json));
+    to_json = (fun v -> Tr.Filer.(of_domain v |> G.Filer.Filer.to_json));
   }
 
 (** Make filer repository with backend. *)

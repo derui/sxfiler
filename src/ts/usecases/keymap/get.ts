@@ -17,6 +17,9 @@ export const createUseCase = function createUseCase(client: Client<ApiMethod>): 
     client,
     async execute(dispatcher: Dispatcher<Actions>) {
       const keymap = await this.client.call(Apis.Keymap.Get, undefined);
+      if (!keymap) {
+        throw new Error("can not get keymap");
+      }
 
       dispatcher.dispatch(actions.updateKeymap(keymap));
     },

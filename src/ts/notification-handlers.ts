@@ -6,9 +6,10 @@ import * as TaskFinishedUseCase from "./usecases/task/finished";
 import * as FilerUpdatedUseCase from "./usecases/filer/filer-updated";
 import * as TaskCanceledUseCase from "./usecases/task/canceled";
 import { createSuggestions, SuggestionKind } from "./domains/task-suggestion";
-import { FilerOnRPC, encode } from "./codecs/filer";
+import { encode } from "./codecs/filer";
 import { createMessage } from "./domains/message-notification";
 import { createProgress } from "./domains/progress-notification";
+import { Filer } from "./generated/filer_pb";
 
 /**
    Handle common notification that contains message or progress of a server.
@@ -71,7 +72,7 @@ export const handleTaskCanceled = function handleTaskCanceled(context: ContextLi
    Handle a notification that contains the task id finished
  */
 export const handleFilerUpdated = function handleFilerUpdated(context: ContextLike) {
-  return (params: FilerOnRPC) => {
+  return (params: Filer) => {
     context.use(FilerUpdatedUseCase.createUseCase())({ filer: encode(params) });
   };
 };

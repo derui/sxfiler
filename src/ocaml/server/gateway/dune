@@ -3,6 +3,7 @@
  (public_name sxfiler.server.gateway)
  (libraries sxfiler.domain
             sxfiler.usecase
+            sxfiler.server.generated
             sxfiler.server.translator
             sxfiler.server.core
             yojson

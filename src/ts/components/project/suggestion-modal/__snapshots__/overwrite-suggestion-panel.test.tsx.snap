@@ -3,9 +3,11 @@
 exports[`Project Overwrite suggestion change style when selected 1`] = `
 <div
   aria-selected={true}
-  className="sc-bdVaJa hTXxV"
+  className="sc-bdVaJa hKzaqc"
 >
-  <p>
+  <p
+    className="sc-bwzfXH jndcBU"
+  >
     Overwrite
   </p>
 </div>
@@ -14,9 +16,11 @@ exports[`Project Overwrite suggestion change style when selected 1`] = `
 exports[`Project Overwrite suggestion render with overwrite suggestion 1`] = `
 <div
   aria-selected={false}
-  className="sc-bdVaJa hTXxV"
+  className="sc-bdVaJa hKzaqc"
 >
-  <p>
+  <p
+    className="sc-bwzfXH jndcBU"
+  >
     Overwrite
   </p>
 </div>

@@ -1,23 +1,29 @@
 import * as E from "./location-history";
+import { LocationHistory, LocationRecord } from "@/generated/filer_pb";
+
+function makeRecord(location: string, timestamp: string) {
+  const ret = new LocationRecord({
+    location,
+    timestamp,
+  });
+  return ret;
+}
 
 describe("Encode", () => {
   describe("Location History", () => {
     it("should encode RPC to frontend", () => {
-      const obj = E.encode({ records: [], maxRecordNumber: 100 });
+      const req = new LocationHistory();
+      const obj = E.encode(req);
 
-      expect(obj).toEqual({ records: [], maxRecordNumber: 100 });
+      expect(obj).toEqual({ records: [], maxRecordNumber: 0 });
     });
 
     it("should encode record object to frontend", () => {
-      const obj = E.encode({
-        records: [
-          {
-            location: "foo",
-            timestamp: "1234567890",
-          },
-        ],
+      const req = new LocationHistory({
+        records: [makeRecord("foo", "1234567890")],
         maxRecordNumber: 100,
       });
+      const obj = E.encode(req);
 
       expect(obj).toEqual({
         records: [

@@ -14,7 +14,7 @@ exports[`Container Notification Container should render correctly when context i
       role="listitem"
     >
       <span
-        className="sc-bwzfXH fCwXYg"
+        className="sc-bwzfXH cJKlyb"
       >
         process
       </span>

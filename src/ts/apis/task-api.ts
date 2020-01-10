@@ -1,4 +1,13 @@
-import { Reply, ReplyPayload, ReplyKind } from "@/domains/task-reply";
+import { Reply, ReplyKind } from "@/domains/task-reply";
+import {
+  TaskSendReplyRequest,
+  TaskSendReplyResponse,
+  TaskReply,
+  ReplyType,
+  TaskCancelRequest,
+  TaskCancelResponse,
+} from "../generated/task_pb";
+import { Api } from "@/libs/json-rpc/client";
 
 // defines API signature for Task group.
 
@@ -7,41 +16,43 @@ export enum Methods {
   Cancel = "task/cancel",
 }
 
-const replyToServerRepresentation = (reply: ReplyPayload): any[] => {
-  switch (reply.kind) {
-    case ReplyKind.Overwrite:
-      return [ReplyKind.Overwrite, true];
-    case ReplyKind.Rename:
-      return [ReplyKind.Rename, { newName: reply.newName }];
-    default:
-      throw Error("Unknown reply kind");
-  }
-};
-
 /**
    API definition for task/sendReply
  */
-const SendReply = {
+const SendReply: Api<Methods.SendReply, Reply, TaskSendReplyRequest, TaskSendReplyResponse> = {
   method: Methods.SendReply,
   parametersTransformer(param: Reply) {
     const { taskId, reply } = param;
-    return {
+    const reqReply = new TaskReply({
       taskId,
-      reply: replyToServerRepresentation(reply),
-    };
+    });
+
+    switch (reply.kind) {
+      case ReplyKind.Overwrite:
+        reqReply.type = ReplyType.Overwrite;
+        reqReply.overwrite = true;
+        break;
+      case ReplyKind.Rename:
+        reqReply.type = ReplyType.Rename;
+        const rename = new TaskReply.Rename({
+          newName: reply.newName,
+        });
+        reqReply.rename = rename;
+        break;
+    }
+    return TaskSendReplyRequest.create({ reply: reqReply });
   },
-  resultTransformer() {
-    return undefined;
-  },
+  resultTransformer() {},
 };
 
 /**
    API definition to cancel the task
  */
-const Cancel = {
+const Cancel: Api<Methods.Cancel, string, TaskCancelRequest, TaskCancelResponse> = {
   method: Methods.Cancel,
   parametersTransformer(taskId: string) {
-    return taskId;
+    const req = TaskCancelRequest.create({ taskId });
+    return req;
   },
   resultTransformer() {
     return undefined;

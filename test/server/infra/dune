@@ -1,5 +1,5 @@
-(alias
- (name runtest)
+(rule
+ (alias runtest)
  (deps (source_tree data_real/))
  (action (run ./tests.exe)))
 

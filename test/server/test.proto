@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+// types
+message TestRequest {
+  string foo = 1;
+}
+
+message TestResponse {
+  int32 result = 1;
+}

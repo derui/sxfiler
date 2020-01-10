@@ -1,23 +1,18 @@
-import * as E from "./candidate";
+import * as E from "./bookmark";
+import { Bookmark } from "@/generated/bookmark_pb";
+import { createBookmark } from "@/domains/bookmark";
 
 describe("Object Codecs", () => {
   describe("Candidate", () => {
     it("convert JSON representation to frontend domain", () => {
-      const obj = E.encode({
-        length: 10,
-        start: 1,
-        value: {
-          id: "id",
-          value: "foobar",
-        },
-      });
-
-      expect(obj).toEqual({
+      const bookmark = new Bookmark({
         id: "id",
-        value: "foobar",
-        start: 1,
-        length: 6,
+        path: "/path",
+        order: 1,
       });
+      const obj = E.encode(bookmark);
+
+      expect(obj).toEqual(createBookmark({ id: "id", path: "/path", order: 1 }));
     });
   });
 });

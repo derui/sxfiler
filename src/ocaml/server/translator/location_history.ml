@@ -1,13 +1,11 @@
 module D = Sxfiler_domain.Location_history
+module G = Sxfiler_server_generated
 
-type t = {
-  records : Location_record.t list;
-  max_record_num : int; [@key "maxRecordNumber"]
-}
-[@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
+let of_domain (t : D.t) =
+  {
+    G.Filer.LocationHistory.records = List.map Location_record.of_domain t.D.records;
+    maxRecordNumber = t.max_record_num;
+  }
 
-let of_domain t =
-  { records = List.map Location_record.of_domain t.D.records; max_record_num = t.max_record_num }
-
-let to_domain t =
-  { D.records = List.map Location_record.to_domain t.records; max_record_num = t.max_record_num }
+let to_domain (t : G.Filer.LocationHistory.t) =
+  { D.records = List.map Location_record.to_domain t.records; max_record_num = t.maxRecordNumber }

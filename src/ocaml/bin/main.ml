@@ -81,7 +81,8 @@ let load_keymap dir =
   let file = Filename.concat dir "keymap.json" in
   let keymap = Yojson.Safe.from_file file in
   let module Y = Sxfiler_server_translator.Key_map in
-  match Y.of_json keymap with
+  let module G = Sxfiler_server_generated.Keymap in
+  match G.Keymap.of_json keymap with
   | Error err ->
       Logs.warn (fun m -> m "Error occurred: %s" @@ Protocol_conv_json.Json.error_to_string_hum err);
       None
