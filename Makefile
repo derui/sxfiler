@@ -13,6 +13,7 @@ coverage : clean
 	  _build/default/test/bisect*.out _build/default/test/*/bisect*.out
 	@echo See $(COVERAGE)/index.html
 
+OCAML_OUT_DIR=src/ocaml/server/generated
 # Directory to write generated code to (.js and .d.ts files)
 TS_OUT_DIR=./src/ts/generated
 
@@ -25,7 +26,7 @@ PROTO_FILE_DEPS += task
 PROTO_FILE_DEPS += types
 
 define generate_for_ocaml
-	protoc -I src/protobuf --ocaml_out=src/ocaml/server/generated \
+	protoc -I src/protobuf --ocaml_out=$(OCAML_OUT_DIR) \
 		--ocaml_opt='singleton_record=true;annot=[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]' \
 		src/protobuf/$1.proto
 
@@ -47,6 +48,10 @@ endef
 
 .PHONY: generate
 generate:
+	rm -f $(OCAML_OUT_DIR)/*.ml
+	mkdir -p $(OCAML_OUT_DIR)
 	$(foreach f,$(PROTO_FILE_DEPS),$(call generate_for_ocaml,$f))
+
+	rm -rf $(TS_OUT_DIR)
 	mkdir -p $(TS_OUT_DIR)
 	$(foreach f,$(PROTO_FILE_DEPS),$(call generate_for_typescript,$f))

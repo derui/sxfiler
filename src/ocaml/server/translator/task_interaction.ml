@@ -23,7 +23,8 @@ module Reply = struct
       reply =
         ( match t.reply with
         | `Overwrite b -> D.Reply.Overwrite b
-        | `Rename rename -> Rename rename.Gen.Task.TaskReply.Rename.newName );
+        | `Rename rename -> Rename rename.Gen.Task.TaskReply.Rename.newName
+        | `not_set -> failwith "Must set some reply" );
     }
 end
 
