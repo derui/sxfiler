@@ -6,10 +6,10 @@ mkdir -p /opt/libs
 git clone https://github.com/derui/migemocaml /opt/libs/migemocaml
 git clone https://github.com/derui/jsonrpc-ocaml /opt/libs/jsonrpc-ocaml
 opam install -y /opt/libs/migemocaml /opt/libs/jsonrpc-ocaml
-opam install -y --deps-only ./sxfiler.opam
+opam install -y --deps-only -t ./sxfiler.opam
 
 if [[ $BUILD_MODE == "linux" ]]; then
-    dune build --display=short --profile prod
+    dune build --display=short --profile release
 fi
 
 if [[ $BUILD_MODE == "windows" ]]; then

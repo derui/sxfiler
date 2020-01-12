@@ -1,13 +1,19 @@
 FROM alpine:3.10
 
-RUN apk add --no-cache opam make m4 coreutils bash git musl-dev \
+RUN apk add --no-cache opam make m4 coreutils bash git musl-dev protobuf-dev shadow \
+    && useradd -m builder \
+    && apk del shadow \
     && ln -s /usr/bin/x86_64-alpine-linux-musl-gcc /usr/bin/musl-gcc \
-    && opam init -n --disable-sandboxing --bare \
-    && opam switch install 4.08.1 \
-    && opam clean
+    && chmod a+w /opt
 
 WORKDIR /sxfiler
 
 COPY misc/entrypoint.sh /entrypoint.sh
 RUN chmod a+x /entrypoint.sh
+
+USER builder
+RUN opam init -n --disable-sandboxing --bare \
+    && opam switch install 4.08.1 \
+    && opam clean
+
 ENTRYPOINT ["/entrypoint.sh"]
