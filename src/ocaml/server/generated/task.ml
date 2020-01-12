@@ -28,97 +28,6 @@ end = struct
   let from_int = function 0 -> Ok Overwrite | 1 -> Ok Rename | n -> Error (`Unknown_enum_value n)
 end
 
-and TaskReply : sig
-  module rec Rename : sig
-    val name' : unit -> string
-
-    type t = { newName : string }
-    [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
-
-    val to_proto : t -> Runtime'.Writer.t
-    val from_proto : Runtime'.Reader.t -> (t, [> Runtime'.Result.error ]) result
-  end
-
-  val name' : unit -> string
-
-  type t = {
-    type' : ReplyType.t;
-    reply : [ `not_set | `Overwrite of bool | `Rename of TaskReply.Rename.t ];
-    taskId : string;
-  }
-  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
-
-  val to_proto : t -> Runtime'.Writer.t
-  val from_proto : Runtime'.Reader.t -> (t, [> Runtime'.Result.error ]) result
-end = struct
-  module rec Rename : sig
-    val name' : unit -> string
-
-    type t = { newName : string }
-    [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
-
-    val to_proto : t -> Runtime'.Writer.t
-    val from_proto : Runtime'.Reader.t -> (t, [> Runtime'.Result.error ]) result
-  end = struct
-    let name' () = "task.TaskReply.Rename"
-
-    type t = { newName : string }
-    [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let to_proto =
-      let apply ~f:f' { newName } = f' [] newName in
-      let spec = Runtime'.Serialize.C.(basic (1, string, proto3) ^:: nil) in
-      let serialize = Runtime'.Serialize.serialize [] spec in
-      fun t -> apply ~f:serialize t
-
-    let from_proto =
-      let constructor _extensions newName = { newName } in
-      let spec = Runtime'.Deserialize.C.(basic (1, string, proto3) ^:: nil) in
-      let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
-      fun writer -> deserialize writer |> Runtime'.Result.open_error
-  end
-
-  let name' () = "task.TaskReply"
-
-  type t = {
-    type' : ReplyType.t;
-    reply : [ `not_set | `Overwrite of bool | `Rename of TaskReply.Rename.t ];
-    taskId : string;
-  }
-  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
-
-  let to_proto =
-    let apply ~f:f' { type'; reply; taskId } = f' [] type' reply taskId in
-    let spec =
-      Runtime'.Serialize.C.(
-        basic (1, enum ReplyType.to_int, proto3)
-        ^:: oneof (function
-              | `not_set -> failwith "This case should never _ever_ happen"
-              | `Overwrite v -> oneof_elem (2, bool, v)
-              | `Rename v -> oneof_elem (3, message (fun t -> TaskReply.Rename.to_proto t), v))
-        ^:: basic (4, string, proto3)
-        ^:: nil)
-    in
-    let serialize = Runtime'.Serialize.serialize [] spec in
-    fun t -> apply ~f:serialize t
-
-  let from_proto =
-    let constructor _extensions type' reply taskId = { type'; reply; taskId } in
-    let spec =
-      Runtime'.Deserialize.C.(
-        basic (1, enum ReplyType.from_int, proto3)
-        ^:: oneof
-              [
-                oneof_elem (2, bool, fun v -> `Overwrite v);
-                oneof_elem (3, message (fun t -> TaskReply.Rename.from_proto t), fun v -> `Rename v);
-              ]
-        ^:: basic (4, string, proto3)
-        ^:: nil)
-    in
-    let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
-    fun writer -> deserialize writer |> Runtime'.Result.open_error
-end
-
 and TaskSuggestion : sig
   val name' : unit -> string
 
@@ -166,38 +75,44 @@ end = struct
     fun writer -> deserialize writer |> Runtime'.Result.open_error
 end
 
-and TaskSendReplyRequest : sig
+and TaskReplyToOverwriteRequest : sig
   val name' : unit -> string
 
-  type t = { reply : TaskReply.t option }
+  type t = {
+    taskId : string;
+    overwrite : bool;
+  }
   [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   val to_proto : t -> Runtime'.Writer.t
   val from_proto : Runtime'.Reader.t -> (t, [> Runtime'.Result.error ]) result
 end = struct
-  let name' () = "task.TaskSendReplyRequest"
+  let name' () = "task.TaskReplyToOverwriteRequest"
 
-  type t = { reply : TaskReply.t option }
+  type t = {
+    taskId : string;
+    overwrite : bool;
+  }
   [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
   let to_proto =
-    let apply ~f:f' { reply } = f' [] reply in
+    let apply ~f:f' { taskId; overwrite } = f' [] taskId overwrite in
     let spec =
-      Runtime'.Serialize.C.(basic_opt (1, message (fun t -> TaskReply.to_proto t)) ^:: nil)
+      Runtime'.Serialize.C.(basic (1, string, proto3) ^:: basic (2, bool, proto3) ^:: nil)
     in
     let serialize = Runtime'.Serialize.serialize [] spec in
     fun t -> apply ~f:serialize t
 
   let from_proto =
-    let constructor _extensions reply = { reply } in
+    let constructor _extensions taskId overwrite = { taskId; overwrite } in
     let spec =
-      Runtime'.Deserialize.C.(basic_opt (1, message (fun t -> TaskReply.from_proto t)) ^:: nil)
+      Runtime'.Deserialize.C.(basic (1, string, proto3) ^:: basic (2, bool, proto3) ^:: nil)
     in
     let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
     fun writer -> deserialize writer |> Runtime'.Result.open_error
 end
 
-and TaskSendReplyResponse : sig
+and TaskReplyToOverwriteResponse : sig
   val name' : unit -> string
 
   type t = unit [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
@@ -205,7 +120,69 @@ and TaskSendReplyResponse : sig
   val to_proto : t -> Runtime'.Writer.t
   val from_proto : Runtime'.Reader.t -> (t, [> Runtime'.Result.error ]) result
 end = struct
-  let name' () = "task.TaskSendReplyResponse"
+  let name' () = "task.TaskReplyToOverwriteResponse"
+
+  type t = unit [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+
+  let to_proto =
+    let apply ~f () = f [] in
+    let spec = Runtime'.Serialize.C.(nil) in
+    let serialize = Runtime'.Serialize.serialize [] spec in
+    fun t -> apply ~f:serialize t
+
+  let from_proto =
+    let constructor _extension = () in
+    let spec = Runtime'.Deserialize.C.(nil) in
+    let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
+    fun writer -> deserialize writer |> Runtime'.Result.open_error
+end
+
+and TaskReplyToRenameRequest : sig
+  val name' : unit -> string
+
+  type t = {
+    taskId : string;
+    newName : string;
+  }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+
+  val to_proto : t -> Runtime'.Writer.t
+  val from_proto : Runtime'.Reader.t -> (t, [> Runtime'.Result.error ]) result
+end = struct
+  let name' () = "task.TaskReplyToRenameRequest"
+
+  type t = {
+    taskId : string;
+    newName : string;
+  }
+  [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+
+  let to_proto =
+    let apply ~f:f' { taskId; newName } = f' [] taskId newName in
+    let spec =
+      Runtime'.Serialize.C.(basic (1, string, proto3) ^:: basic (2, string, proto3) ^:: nil)
+    in
+    let serialize = Runtime'.Serialize.serialize [] spec in
+    fun t -> apply ~f:serialize t
+
+  let from_proto =
+    let constructor _extensions taskId newName = { taskId; newName } in
+    let spec =
+      Runtime'.Deserialize.C.(basic (1, string, proto3) ^:: basic (2, string, proto3) ^:: nil)
+    in
+    let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
+    fun writer -> deserialize writer |> Runtime'.Result.open_error
+end
+
+and TaskReplyToRenameResponse : sig
+  val name' : unit -> string
+
+  type t = unit [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+
+  val to_proto : t -> Runtime'.Writer.t
+  val from_proto : Runtime'.Reader.t -> (t, [> Runtime'.Result.error ]) result
+end = struct
+  let name' () = "task.TaskReplyToRenameResponse"
 
   type t = unit [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 

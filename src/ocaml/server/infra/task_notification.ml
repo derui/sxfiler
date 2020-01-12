@@ -9,7 +9,8 @@ module Need_interaction = struct
   let typ : t Notification_service.typ =
     {
       to_method = (fun _ -> "notification/task/needInteraction");
-      to_json = Fun.(Tr.Task_interaction.Suggestion.of_domain %> Gen.Task.TaskSuggestion.to_json);
+      to_json =
+        Fun.(Tr.Task_interaction.Suggestion.of_domain %> Tr.Task_interaction.Suggestion.to_json);
     }
 end
 

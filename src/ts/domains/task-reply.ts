@@ -1,14 +1,14 @@
 export enum ReplyKind {
-  Overwrite = "overwrite",
-  Rename = "rename",
+  Overwrite = "Overwrite",
+  Rename = "Rename",
 }
 
 type OverwritePayload = {
-  readonly kind: "overwrite";
+  readonly kind: "Overwrite";
 };
 
 type RenamePayload = {
-  readonly kind: "rename";
+  readonly kind: "Rename";
   readonly newName: string;
 };
 

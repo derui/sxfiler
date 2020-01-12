@@ -30,491 +30,6 @@
         return values;
     })();
     
-    $root.TaskReply = (function() {
-    
-        /**
-         * Properties of a TaskReply.
-         * @exports ITaskReply
-         * @interface ITaskReply
-         * @property {ReplyType|null} [type] TaskReply type
-         * @property {boolean|null} [overwrite] TaskReply overwrite
-         * @property {TaskReply.IRename|null} [rename] TaskReply rename
-         * @property {string|null} [taskId] TaskReply taskId
-         */
-    
-        /**
-         * Constructs a new TaskReply.
-         * @exports TaskReply
-         * @classdesc Represents a TaskReply.
-         * @implements ITaskReply
-         * @constructor
-         * @param {ITaskReply=} [properties] Properties to set
-         */
-        function TaskReply(properties) {
-            if (properties)
-                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                    if (properties[keys[i]] != null)
-                        this[keys[i]] = properties[keys[i]];
-        }
-    
-        /**
-         * TaskReply type.
-         * @member {ReplyType} type
-         * @memberof TaskReply
-         * @instance
-         */
-        TaskReply.prototype.type = 0;
-    
-        /**
-         * TaskReply overwrite.
-         * @member {boolean} overwrite
-         * @memberof TaskReply
-         * @instance
-         */
-        TaskReply.prototype.overwrite = false;
-    
-        /**
-         * TaskReply rename.
-         * @member {TaskReply.IRename|null|undefined} rename
-         * @memberof TaskReply
-         * @instance
-         */
-        TaskReply.prototype.rename = null;
-    
-        /**
-         * TaskReply taskId.
-         * @member {string} taskId
-         * @memberof TaskReply
-         * @instance
-         */
-        TaskReply.prototype.taskId = "";
-    
-        // OneOf field names bound to virtual getters and setters
-        var $oneOfFields;
-    
-        /**
-         * TaskReply reply.
-         * @member {"overwrite"|"rename"|undefined} reply
-         * @memberof TaskReply
-         * @instance
-         */
-        Object.defineProperty(TaskReply.prototype, "reply", {
-            get: $util.oneOfGetter($oneOfFields = ["overwrite", "rename"]),
-            set: $util.oneOfSetter($oneOfFields)
-        });
-    
-        /**
-         * Creates a new TaskReply instance using the specified properties.
-         * @function create
-         * @memberof TaskReply
-         * @static
-         * @param {ITaskReply=} [properties] Properties to set
-         * @returns {TaskReply} TaskReply instance
-         */
-        TaskReply.create = function create(properties) {
-            return new TaskReply(properties);
-        };
-    
-        /**
-         * Encodes the specified TaskReply message. Does not implicitly {@link TaskReply.verify|verify} messages.
-         * @function encode
-         * @memberof TaskReply
-         * @static
-         * @param {ITaskReply} message TaskReply message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        TaskReply.encode = function encode(message, writer) {
-            if (!writer)
-                writer = $Writer.create();
-            if (message.type != null && message.hasOwnProperty("type"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.type);
-            if (message.overwrite != null && message.hasOwnProperty("overwrite"))
-                writer.uint32(/* id 2, wireType 0 =*/16).bool(message.overwrite);
-            if (message.rename != null && message.hasOwnProperty("rename"))
-                $root.TaskReply.Rename.encode(message.rename, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
-            if (message.taskId != null && message.hasOwnProperty("taskId"))
-                writer.uint32(/* id 4, wireType 2 =*/34).string(message.taskId);
-            return writer;
-        };
-    
-        /**
-         * Encodes the specified TaskReply message, length delimited. Does not implicitly {@link TaskReply.verify|verify} messages.
-         * @function encodeDelimited
-         * @memberof TaskReply
-         * @static
-         * @param {ITaskReply} message TaskReply message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        TaskReply.encodeDelimited = function encodeDelimited(message, writer) {
-            return this.encode(message, writer).ldelim();
-        };
-    
-        /**
-         * Decodes a TaskReply message from the specified reader or buffer.
-         * @function decode
-         * @memberof TaskReply
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @param {number} [length] Message length if known beforehand
-         * @returns {TaskReply} TaskReply
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        TaskReply.decode = function decode(reader, length) {
-            if (!(reader instanceof $Reader))
-                reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.TaskReply();
-            while (reader.pos < end) {
-                var tag = reader.uint32();
-                switch (tag >>> 3) {
-                case 1:
-                    message.type = reader.int32();
-                    break;
-                case 2:
-                    message.overwrite = reader.bool();
-                    break;
-                case 3:
-                    message.rename = $root.TaskReply.Rename.decode(reader, reader.uint32());
-                    break;
-                case 4:
-                    message.taskId = reader.string();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-                }
-            }
-            return message;
-        };
-    
-        /**
-         * Decodes a TaskReply message from the specified reader or buffer, length delimited.
-         * @function decodeDelimited
-         * @memberof TaskReply
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {TaskReply} TaskReply
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        TaskReply.decodeDelimited = function decodeDelimited(reader) {
-            if (!(reader instanceof $Reader))
-                reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
-        };
-    
-        /**
-         * Verifies a TaskReply message.
-         * @function verify
-         * @memberof TaskReply
-         * @static
-         * @param {Object.<string,*>} message Plain object to verify
-         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-         */
-        TaskReply.verify = function verify(message) {
-            if (typeof message !== "object" || message === null)
-                return "object expected";
-            var properties = {};
-            if (message.type != null && message.hasOwnProperty("type"))
-                switch (message.type) {
-                default:
-                    return "type: enum value expected";
-                case 0:
-                case 1:
-                    break;
-                }
-            if (message.overwrite != null && message.hasOwnProperty("overwrite")) {
-                properties.reply = 1;
-                if (typeof message.overwrite !== "boolean")
-                    return "overwrite: boolean expected";
-            }
-            if (message.rename != null && message.hasOwnProperty("rename")) {
-                if (properties.reply === 1)
-                    return "reply: multiple values";
-                properties.reply = 1;
-                {
-                    var error = $root.TaskReply.Rename.verify(message.rename);
-                    if (error)
-                        return "rename." + error;
-                }
-            }
-            if (message.taskId != null && message.hasOwnProperty("taskId"))
-                if (!$util.isString(message.taskId))
-                    return "taskId: string expected";
-            return null;
-        };
-    
-        /**
-         * Creates a TaskReply message from a plain object. Also converts values to their respective internal types.
-         * @function fromObject
-         * @memberof TaskReply
-         * @static
-         * @param {Object.<string,*>} object Plain object
-         * @returns {TaskReply} TaskReply
-         */
-        TaskReply.fromObject = function fromObject(object) {
-            if (object instanceof $root.TaskReply)
-                return object;
-            var message = new $root.TaskReply();
-            switch (object.type) {
-            case "Overwrite":
-            case 0:
-                message.type = 0;
-                break;
-            case "Rename":
-            case 1:
-                message.type = 1;
-                break;
-            }
-            if (object.overwrite != null)
-                message.overwrite = Boolean(object.overwrite);
-            if (object.rename != null) {
-                if (typeof object.rename !== "object")
-                    throw TypeError(".TaskReply.rename: object expected");
-                message.rename = $root.TaskReply.Rename.fromObject(object.rename);
-            }
-            if (object.taskId != null)
-                message.taskId = String(object.taskId);
-            return message;
-        };
-    
-        /**
-         * Creates a plain object from a TaskReply message. Also converts values to other types if specified.
-         * @function toObject
-         * @memberof TaskReply
-         * @static
-         * @param {TaskReply} message TaskReply
-         * @param {$protobuf.IConversionOptions} [options] Conversion options
-         * @returns {Object.<string,*>} Plain object
-         */
-        TaskReply.toObject = function toObject(message, options) {
-            if (!options)
-                options = {};
-            var object = {};
-            if (options.defaults) {
-                object.type = options.enums === String ? "Overwrite" : 0;
-                object.taskId = "";
-            }
-            if (message.type != null && message.hasOwnProperty("type"))
-                object.type = options.enums === String ? $root.ReplyType[message.type] : message.type;
-            if (message.overwrite != null && message.hasOwnProperty("overwrite")) {
-                object.overwrite = message.overwrite;
-                if (options.oneofs)
-                    object.reply = "overwrite";
-            }
-            if (message.rename != null && message.hasOwnProperty("rename")) {
-                object.rename = $root.TaskReply.Rename.toObject(message.rename, options);
-                if (options.oneofs)
-                    object.reply = "rename";
-            }
-            if (message.taskId != null && message.hasOwnProperty("taskId"))
-                object.taskId = message.taskId;
-            return object;
-        };
-    
-        /**
-         * Converts this TaskReply to JSON.
-         * @function toJSON
-         * @memberof TaskReply
-         * @instance
-         * @returns {Object.<string,*>} JSON object
-         */
-        TaskReply.prototype.toJSON = function toJSON() {
-            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-        };
-    
-        TaskReply.Rename = (function() {
-    
-            /**
-             * Properties of a Rename.
-             * @memberof TaskReply
-             * @interface IRename
-             * @property {string|null} [newName] Rename newName
-             */
-    
-            /**
-             * Constructs a new Rename.
-             * @memberof TaskReply
-             * @classdesc Represents a Rename.
-             * @implements IRename
-             * @constructor
-             * @param {TaskReply.IRename=} [properties] Properties to set
-             */
-            function Rename(properties) {
-                if (properties)
-                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                        if (properties[keys[i]] != null)
-                            this[keys[i]] = properties[keys[i]];
-            }
-    
-            /**
-             * Rename newName.
-             * @member {string} newName
-             * @memberof TaskReply.Rename
-             * @instance
-             */
-            Rename.prototype.newName = "";
-    
-            /**
-             * Creates a new Rename instance using the specified properties.
-             * @function create
-             * @memberof TaskReply.Rename
-             * @static
-             * @param {TaskReply.IRename=} [properties] Properties to set
-             * @returns {TaskReply.Rename} Rename instance
-             */
-            Rename.create = function create(properties) {
-                return new Rename(properties);
-            };
-    
-            /**
-             * Encodes the specified Rename message. Does not implicitly {@link TaskReply.Rename.verify|verify} messages.
-             * @function encode
-             * @memberof TaskReply.Rename
-             * @static
-             * @param {TaskReply.IRename} message Rename message or plain object to encode
-             * @param {$protobuf.Writer} [writer] Writer to encode to
-             * @returns {$protobuf.Writer} Writer
-             */
-            Rename.encode = function encode(message, writer) {
-                if (!writer)
-                    writer = $Writer.create();
-                if (message.newName != null && message.hasOwnProperty("newName"))
-                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.newName);
-                return writer;
-            };
-    
-            /**
-             * Encodes the specified Rename message, length delimited. Does not implicitly {@link TaskReply.Rename.verify|verify} messages.
-             * @function encodeDelimited
-             * @memberof TaskReply.Rename
-             * @static
-             * @param {TaskReply.IRename} message Rename message or plain object to encode
-             * @param {$protobuf.Writer} [writer] Writer to encode to
-             * @returns {$protobuf.Writer} Writer
-             */
-            Rename.encodeDelimited = function encodeDelimited(message, writer) {
-                return this.encode(message, writer).ldelim();
-            };
-    
-            /**
-             * Decodes a Rename message from the specified reader or buffer.
-             * @function decode
-             * @memberof TaskReply.Rename
-             * @static
-             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-             * @param {number} [length] Message length if known beforehand
-             * @returns {TaskReply.Rename} Rename
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            Rename.decode = function decode(reader, length) {
-                if (!(reader instanceof $Reader))
-                    reader = $Reader.create(reader);
-                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.TaskReply.Rename();
-                while (reader.pos < end) {
-                    var tag = reader.uint32();
-                    switch (tag >>> 3) {
-                    case 1:
-                        message.newName = reader.string();
-                        break;
-                    default:
-                        reader.skipType(tag & 7);
-                        break;
-                    }
-                }
-                return message;
-            };
-    
-            /**
-             * Decodes a Rename message from the specified reader or buffer, length delimited.
-             * @function decodeDelimited
-             * @memberof TaskReply.Rename
-             * @static
-             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-             * @returns {TaskReply.Rename} Rename
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            Rename.decodeDelimited = function decodeDelimited(reader) {
-                if (!(reader instanceof $Reader))
-                    reader = new $Reader(reader);
-                return this.decode(reader, reader.uint32());
-            };
-    
-            /**
-             * Verifies a Rename message.
-             * @function verify
-             * @memberof TaskReply.Rename
-             * @static
-             * @param {Object.<string,*>} message Plain object to verify
-             * @returns {string|null} `null` if valid, otherwise the reason why it is not
-             */
-            Rename.verify = function verify(message) {
-                if (typeof message !== "object" || message === null)
-                    return "object expected";
-                if (message.newName != null && message.hasOwnProperty("newName"))
-                    if (!$util.isString(message.newName))
-                        return "newName: string expected";
-                return null;
-            };
-    
-            /**
-             * Creates a Rename message from a plain object. Also converts values to their respective internal types.
-             * @function fromObject
-             * @memberof TaskReply.Rename
-             * @static
-             * @param {Object.<string,*>} object Plain object
-             * @returns {TaskReply.Rename} Rename
-             */
-            Rename.fromObject = function fromObject(object) {
-                if (object instanceof $root.TaskReply.Rename)
-                    return object;
-                var message = new $root.TaskReply.Rename();
-                if (object.newName != null)
-                    message.newName = String(object.newName);
-                return message;
-            };
-    
-            /**
-             * Creates a plain object from a Rename message. Also converts values to other types if specified.
-             * @function toObject
-             * @memberof TaskReply.Rename
-             * @static
-             * @param {TaskReply.Rename} message Rename
-             * @param {$protobuf.IConversionOptions} [options] Conversion options
-             * @returns {Object.<string,*>} Plain object
-             */
-            Rename.toObject = function toObject(message, options) {
-                if (!options)
-                    options = {};
-                var object = {};
-                if (options.defaults)
-                    object.newName = "";
-                if (message.newName != null && message.hasOwnProperty("newName"))
-                    object.newName = message.newName;
-                return object;
-            };
-    
-            /**
-             * Converts this Rename to JSON.
-             * @function toJSON
-             * @memberof TaskReply.Rename
-             * @instance
-             * @returns {Object.<string,*>} JSON object
-             */
-            Rename.prototype.toJSON = function toJSON() {
-                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-            };
-    
-            return Rename;
-        })();
-    
-        return TaskReply;
-    })();
-    
     $root.TaskSuggestion = (function() {
     
         /**
@@ -787,24 +302,25 @@
         return TaskSuggestion;
     })();
     
-    $root.TaskSendReplyRequest = (function() {
+    $root.TaskReplyToOverwriteRequest = (function() {
     
         /**
-         * Properties of a TaskSendReplyRequest.
-         * @exports ITaskSendReplyRequest
-         * @interface ITaskSendReplyRequest
-         * @property {ITaskReply|null} [reply] TaskSendReplyRequest reply
+         * Properties of a TaskReplyToOverwriteRequest.
+         * @exports ITaskReplyToOverwriteRequest
+         * @interface ITaskReplyToOverwriteRequest
+         * @property {string|null} [taskId] TaskReplyToOverwriteRequest taskId
+         * @property {boolean|null} [overwrite] TaskReplyToOverwriteRequest overwrite
          */
     
         /**
-         * Constructs a new TaskSendReplyRequest.
-         * @exports TaskSendReplyRequest
-         * @classdesc Represents a TaskSendReplyRequest.
-         * @implements ITaskSendReplyRequest
+         * Constructs a new TaskReplyToOverwriteRequest.
+         * @exports TaskReplyToOverwriteRequest
+         * @classdesc Represents a TaskReplyToOverwriteRequest.
+         * @implements ITaskReplyToOverwriteRequest
          * @constructor
-         * @param {ITaskSendReplyRequest=} [properties] Properties to set
+         * @param {ITaskReplyToOverwriteRequest=} [properties] Properties to set
          */
-        function TaskSendReplyRequest(properties) {
+        function TaskReplyToOverwriteRequest(properties) {
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -812,75 +328,88 @@
         }
     
         /**
-         * TaskSendReplyRequest reply.
-         * @member {ITaskReply|null|undefined} reply
-         * @memberof TaskSendReplyRequest
+         * TaskReplyToOverwriteRequest taskId.
+         * @member {string} taskId
+         * @memberof TaskReplyToOverwriteRequest
          * @instance
          */
-        TaskSendReplyRequest.prototype.reply = null;
+        TaskReplyToOverwriteRequest.prototype.taskId = "";
     
         /**
-         * Creates a new TaskSendReplyRequest instance using the specified properties.
-         * @function create
-         * @memberof TaskSendReplyRequest
-         * @static
-         * @param {ITaskSendReplyRequest=} [properties] Properties to set
-         * @returns {TaskSendReplyRequest} TaskSendReplyRequest instance
+         * TaskReplyToOverwriteRequest overwrite.
+         * @member {boolean} overwrite
+         * @memberof TaskReplyToOverwriteRequest
+         * @instance
          */
-        TaskSendReplyRequest.create = function create(properties) {
-            return new TaskSendReplyRequest(properties);
+        TaskReplyToOverwriteRequest.prototype.overwrite = false;
+    
+        /**
+         * Creates a new TaskReplyToOverwriteRequest instance using the specified properties.
+         * @function create
+         * @memberof TaskReplyToOverwriteRequest
+         * @static
+         * @param {ITaskReplyToOverwriteRequest=} [properties] Properties to set
+         * @returns {TaskReplyToOverwriteRequest} TaskReplyToOverwriteRequest instance
+         */
+        TaskReplyToOverwriteRequest.create = function create(properties) {
+            return new TaskReplyToOverwriteRequest(properties);
         };
     
         /**
-         * Encodes the specified TaskSendReplyRequest message. Does not implicitly {@link TaskSendReplyRequest.verify|verify} messages.
+         * Encodes the specified TaskReplyToOverwriteRequest message. Does not implicitly {@link TaskReplyToOverwriteRequest.verify|verify} messages.
          * @function encode
-         * @memberof TaskSendReplyRequest
+         * @memberof TaskReplyToOverwriteRequest
          * @static
-         * @param {ITaskSendReplyRequest} message TaskSendReplyRequest message or plain object to encode
+         * @param {ITaskReplyToOverwriteRequest} message TaskReplyToOverwriteRequest message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        TaskSendReplyRequest.encode = function encode(message, writer) {
+        TaskReplyToOverwriteRequest.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.reply != null && message.hasOwnProperty("reply"))
-                $root.TaskReply.encode(message.reply, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.taskId != null && message.hasOwnProperty("taskId"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.taskId);
+            if (message.overwrite != null && message.hasOwnProperty("overwrite"))
+                writer.uint32(/* id 2, wireType 0 =*/16).bool(message.overwrite);
             return writer;
         };
     
         /**
-         * Encodes the specified TaskSendReplyRequest message, length delimited. Does not implicitly {@link TaskSendReplyRequest.verify|verify} messages.
+         * Encodes the specified TaskReplyToOverwriteRequest message, length delimited. Does not implicitly {@link TaskReplyToOverwriteRequest.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof TaskSendReplyRequest
+         * @memberof TaskReplyToOverwriteRequest
          * @static
-         * @param {ITaskSendReplyRequest} message TaskSendReplyRequest message or plain object to encode
+         * @param {ITaskReplyToOverwriteRequest} message TaskReplyToOverwriteRequest message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        TaskSendReplyRequest.encodeDelimited = function encodeDelimited(message, writer) {
+        TaskReplyToOverwriteRequest.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
     
         /**
-         * Decodes a TaskSendReplyRequest message from the specified reader or buffer.
+         * Decodes a TaskReplyToOverwriteRequest message from the specified reader or buffer.
          * @function decode
-         * @memberof TaskSendReplyRequest
+         * @memberof TaskReplyToOverwriteRequest
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {TaskSendReplyRequest} TaskSendReplyRequest
+         * @returns {TaskReplyToOverwriteRequest} TaskReplyToOverwriteRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        TaskSendReplyRequest.decode = function decode(reader, length) {
+        TaskReplyToOverwriteRequest.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.TaskSendReplyRequest();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.TaskReplyToOverwriteRequest();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.reply = $root.TaskReply.decode(reader, reader.uint32());
+                    message.taskId = reader.string();
+                    break;
+                case 2:
+                    message.overwrite = reader.bool();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -891,111 +420,115 @@
         };
     
         /**
-         * Decodes a TaskSendReplyRequest message from the specified reader or buffer, length delimited.
+         * Decodes a TaskReplyToOverwriteRequest message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof TaskSendReplyRequest
+         * @memberof TaskReplyToOverwriteRequest
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {TaskSendReplyRequest} TaskSendReplyRequest
+         * @returns {TaskReplyToOverwriteRequest} TaskReplyToOverwriteRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        TaskSendReplyRequest.decodeDelimited = function decodeDelimited(reader) {
+        TaskReplyToOverwriteRequest.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
     
         /**
-         * Verifies a TaskSendReplyRequest message.
+         * Verifies a TaskReplyToOverwriteRequest message.
          * @function verify
-         * @memberof TaskSendReplyRequest
+         * @memberof TaskReplyToOverwriteRequest
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        TaskSendReplyRequest.verify = function verify(message) {
+        TaskReplyToOverwriteRequest.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.reply != null && message.hasOwnProperty("reply")) {
-                var error = $root.TaskReply.verify(message.reply);
-                if (error)
-                    return "reply." + error;
-            }
+            if (message.taskId != null && message.hasOwnProperty("taskId"))
+                if (!$util.isString(message.taskId))
+                    return "taskId: string expected";
+            if (message.overwrite != null && message.hasOwnProperty("overwrite"))
+                if (typeof message.overwrite !== "boolean")
+                    return "overwrite: boolean expected";
             return null;
         };
     
         /**
-         * Creates a TaskSendReplyRequest message from a plain object. Also converts values to their respective internal types.
+         * Creates a TaskReplyToOverwriteRequest message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof TaskSendReplyRequest
+         * @memberof TaskReplyToOverwriteRequest
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {TaskSendReplyRequest} TaskSendReplyRequest
+         * @returns {TaskReplyToOverwriteRequest} TaskReplyToOverwriteRequest
          */
-        TaskSendReplyRequest.fromObject = function fromObject(object) {
-            if (object instanceof $root.TaskSendReplyRequest)
+        TaskReplyToOverwriteRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.TaskReplyToOverwriteRequest)
                 return object;
-            var message = new $root.TaskSendReplyRequest();
-            if (object.reply != null) {
-                if (typeof object.reply !== "object")
-                    throw TypeError(".TaskSendReplyRequest.reply: object expected");
-                message.reply = $root.TaskReply.fromObject(object.reply);
-            }
+            var message = new $root.TaskReplyToOverwriteRequest();
+            if (object.taskId != null)
+                message.taskId = String(object.taskId);
+            if (object.overwrite != null)
+                message.overwrite = Boolean(object.overwrite);
             return message;
         };
     
         /**
-         * Creates a plain object from a TaskSendReplyRequest message. Also converts values to other types if specified.
+         * Creates a plain object from a TaskReplyToOverwriteRequest message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof TaskSendReplyRequest
+         * @memberof TaskReplyToOverwriteRequest
          * @static
-         * @param {TaskSendReplyRequest} message TaskSendReplyRequest
+         * @param {TaskReplyToOverwriteRequest} message TaskReplyToOverwriteRequest
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        TaskSendReplyRequest.toObject = function toObject(message, options) {
+        TaskReplyToOverwriteRequest.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             var object = {};
-            if (options.defaults)
-                object.reply = null;
-            if (message.reply != null && message.hasOwnProperty("reply"))
-                object.reply = $root.TaskReply.toObject(message.reply, options);
+            if (options.defaults) {
+                object.taskId = "";
+                object.overwrite = false;
+            }
+            if (message.taskId != null && message.hasOwnProperty("taskId"))
+                object.taskId = message.taskId;
+            if (message.overwrite != null && message.hasOwnProperty("overwrite"))
+                object.overwrite = message.overwrite;
             return object;
         };
     
         /**
-         * Converts this TaskSendReplyRequest to JSON.
+         * Converts this TaskReplyToOverwriteRequest to JSON.
          * @function toJSON
-         * @memberof TaskSendReplyRequest
+         * @memberof TaskReplyToOverwriteRequest
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        TaskSendReplyRequest.prototype.toJSON = function toJSON() {
+        TaskReplyToOverwriteRequest.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
     
-        return TaskSendReplyRequest;
+        return TaskReplyToOverwriteRequest;
     })();
     
-    $root.TaskSendReplyResponse = (function() {
+    $root.TaskReplyToOverwriteResponse = (function() {
     
         /**
-         * Properties of a TaskSendReplyResponse.
-         * @exports ITaskSendReplyResponse
-         * @interface ITaskSendReplyResponse
+         * Properties of a TaskReplyToOverwriteResponse.
+         * @exports ITaskReplyToOverwriteResponse
+         * @interface ITaskReplyToOverwriteResponse
          */
     
         /**
-         * Constructs a new TaskSendReplyResponse.
-         * @exports TaskSendReplyResponse
-         * @classdesc Represents a TaskSendReplyResponse.
-         * @implements ITaskSendReplyResponse
+         * Constructs a new TaskReplyToOverwriteResponse.
+         * @exports TaskReplyToOverwriteResponse
+         * @classdesc Represents a TaskReplyToOverwriteResponse.
+         * @implements ITaskReplyToOverwriteResponse
          * @constructor
-         * @param {ITaskSendReplyResponse=} [properties] Properties to set
+         * @param {ITaskReplyToOverwriteResponse=} [properties] Properties to set
          */
-        function TaskSendReplyResponse(properties) {
+        function TaskReplyToOverwriteResponse(properties) {
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -1003,60 +536,60 @@
         }
     
         /**
-         * Creates a new TaskSendReplyResponse instance using the specified properties.
+         * Creates a new TaskReplyToOverwriteResponse instance using the specified properties.
          * @function create
-         * @memberof TaskSendReplyResponse
+         * @memberof TaskReplyToOverwriteResponse
          * @static
-         * @param {ITaskSendReplyResponse=} [properties] Properties to set
-         * @returns {TaskSendReplyResponse} TaskSendReplyResponse instance
+         * @param {ITaskReplyToOverwriteResponse=} [properties] Properties to set
+         * @returns {TaskReplyToOverwriteResponse} TaskReplyToOverwriteResponse instance
          */
-        TaskSendReplyResponse.create = function create(properties) {
-            return new TaskSendReplyResponse(properties);
+        TaskReplyToOverwriteResponse.create = function create(properties) {
+            return new TaskReplyToOverwriteResponse(properties);
         };
     
         /**
-         * Encodes the specified TaskSendReplyResponse message. Does not implicitly {@link TaskSendReplyResponse.verify|verify} messages.
+         * Encodes the specified TaskReplyToOverwriteResponse message. Does not implicitly {@link TaskReplyToOverwriteResponse.verify|verify} messages.
          * @function encode
-         * @memberof TaskSendReplyResponse
+         * @memberof TaskReplyToOverwriteResponse
          * @static
-         * @param {ITaskSendReplyResponse} message TaskSendReplyResponse message or plain object to encode
+         * @param {ITaskReplyToOverwriteResponse} message TaskReplyToOverwriteResponse message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        TaskSendReplyResponse.encode = function encode(message, writer) {
+        TaskReplyToOverwriteResponse.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
             return writer;
         };
     
         /**
-         * Encodes the specified TaskSendReplyResponse message, length delimited. Does not implicitly {@link TaskSendReplyResponse.verify|verify} messages.
+         * Encodes the specified TaskReplyToOverwriteResponse message, length delimited. Does not implicitly {@link TaskReplyToOverwriteResponse.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof TaskSendReplyResponse
+         * @memberof TaskReplyToOverwriteResponse
          * @static
-         * @param {ITaskSendReplyResponse} message TaskSendReplyResponse message or plain object to encode
+         * @param {ITaskReplyToOverwriteResponse} message TaskReplyToOverwriteResponse message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        TaskSendReplyResponse.encodeDelimited = function encodeDelimited(message, writer) {
+        TaskReplyToOverwriteResponse.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
     
         /**
-         * Decodes a TaskSendReplyResponse message from the specified reader or buffer.
+         * Decodes a TaskReplyToOverwriteResponse message from the specified reader or buffer.
          * @function decode
-         * @memberof TaskSendReplyResponse
+         * @memberof TaskReplyToOverwriteResponse
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {TaskSendReplyResponse} TaskSendReplyResponse
+         * @returns {TaskReplyToOverwriteResponse} TaskReplyToOverwriteResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        TaskSendReplyResponse.decode = function decode(reader, length) {
+        TaskReplyToOverwriteResponse.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.TaskSendReplyResponse();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.TaskReplyToOverwriteResponse();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -1069,74 +602,444 @@
         };
     
         /**
-         * Decodes a TaskSendReplyResponse message from the specified reader or buffer, length delimited.
+         * Decodes a TaskReplyToOverwriteResponse message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof TaskSendReplyResponse
+         * @memberof TaskReplyToOverwriteResponse
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {TaskSendReplyResponse} TaskSendReplyResponse
+         * @returns {TaskReplyToOverwriteResponse} TaskReplyToOverwriteResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        TaskSendReplyResponse.decodeDelimited = function decodeDelimited(reader) {
+        TaskReplyToOverwriteResponse.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
     
         /**
-         * Verifies a TaskSendReplyResponse message.
+         * Verifies a TaskReplyToOverwriteResponse message.
          * @function verify
-         * @memberof TaskSendReplyResponse
+         * @memberof TaskReplyToOverwriteResponse
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        TaskSendReplyResponse.verify = function verify(message) {
+        TaskReplyToOverwriteResponse.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             return null;
         };
     
         /**
-         * Creates a TaskSendReplyResponse message from a plain object. Also converts values to their respective internal types.
+         * Creates a TaskReplyToOverwriteResponse message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof TaskSendReplyResponse
+         * @memberof TaskReplyToOverwriteResponse
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {TaskSendReplyResponse} TaskSendReplyResponse
+         * @returns {TaskReplyToOverwriteResponse} TaskReplyToOverwriteResponse
          */
-        TaskSendReplyResponse.fromObject = function fromObject(object) {
-            if (object instanceof $root.TaskSendReplyResponse)
+        TaskReplyToOverwriteResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.TaskReplyToOverwriteResponse)
                 return object;
-            return new $root.TaskSendReplyResponse();
+            return new $root.TaskReplyToOverwriteResponse();
         };
     
         /**
-         * Creates a plain object from a TaskSendReplyResponse message. Also converts values to other types if specified.
+         * Creates a plain object from a TaskReplyToOverwriteResponse message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof TaskSendReplyResponse
+         * @memberof TaskReplyToOverwriteResponse
          * @static
-         * @param {TaskSendReplyResponse} message TaskSendReplyResponse
+         * @param {TaskReplyToOverwriteResponse} message TaskReplyToOverwriteResponse
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        TaskSendReplyResponse.toObject = function toObject() {
+        TaskReplyToOverwriteResponse.toObject = function toObject() {
             return {};
         };
     
         /**
-         * Converts this TaskSendReplyResponse to JSON.
+         * Converts this TaskReplyToOverwriteResponse to JSON.
          * @function toJSON
-         * @memberof TaskSendReplyResponse
+         * @memberof TaskReplyToOverwriteResponse
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        TaskSendReplyResponse.prototype.toJSON = function toJSON() {
+        TaskReplyToOverwriteResponse.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
     
-        return TaskSendReplyResponse;
+        return TaskReplyToOverwriteResponse;
+    })();
+    
+    $root.TaskReplyToRenameRequest = (function() {
+    
+        /**
+         * Properties of a TaskReplyToRenameRequest.
+         * @exports ITaskReplyToRenameRequest
+         * @interface ITaskReplyToRenameRequest
+         * @property {string|null} [taskId] TaskReplyToRenameRequest taskId
+         * @property {string|null} [newName] TaskReplyToRenameRequest newName
+         */
+    
+        /**
+         * Constructs a new TaskReplyToRenameRequest.
+         * @exports TaskReplyToRenameRequest
+         * @classdesc Represents a TaskReplyToRenameRequest.
+         * @implements ITaskReplyToRenameRequest
+         * @constructor
+         * @param {ITaskReplyToRenameRequest=} [properties] Properties to set
+         */
+        function TaskReplyToRenameRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+    
+        /**
+         * TaskReplyToRenameRequest taskId.
+         * @member {string} taskId
+         * @memberof TaskReplyToRenameRequest
+         * @instance
+         */
+        TaskReplyToRenameRequest.prototype.taskId = "";
+    
+        /**
+         * TaskReplyToRenameRequest newName.
+         * @member {string} newName
+         * @memberof TaskReplyToRenameRequest
+         * @instance
+         */
+        TaskReplyToRenameRequest.prototype.newName = "";
+    
+        /**
+         * Creates a new TaskReplyToRenameRequest instance using the specified properties.
+         * @function create
+         * @memberof TaskReplyToRenameRequest
+         * @static
+         * @param {ITaskReplyToRenameRequest=} [properties] Properties to set
+         * @returns {TaskReplyToRenameRequest} TaskReplyToRenameRequest instance
+         */
+        TaskReplyToRenameRequest.create = function create(properties) {
+            return new TaskReplyToRenameRequest(properties);
+        };
+    
+        /**
+         * Encodes the specified TaskReplyToRenameRequest message. Does not implicitly {@link TaskReplyToRenameRequest.verify|verify} messages.
+         * @function encode
+         * @memberof TaskReplyToRenameRequest
+         * @static
+         * @param {ITaskReplyToRenameRequest} message TaskReplyToRenameRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        TaskReplyToRenameRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.taskId != null && message.hasOwnProperty("taskId"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.taskId);
+            if (message.newName != null && message.hasOwnProperty("newName"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.newName);
+            return writer;
+        };
+    
+        /**
+         * Encodes the specified TaskReplyToRenameRequest message, length delimited. Does not implicitly {@link TaskReplyToRenameRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof TaskReplyToRenameRequest
+         * @static
+         * @param {ITaskReplyToRenameRequest} message TaskReplyToRenameRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        TaskReplyToRenameRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+    
+        /**
+         * Decodes a TaskReplyToRenameRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof TaskReplyToRenameRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {TaskReplyToRenameRequest} TaskReplyToRenameRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        TaskReplyToRenameRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.TaskReplyToRenameRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.taskId = reader.string();
+                    break;
+                case 2:
+                    message.newName = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+    
+        /**
+         * Decodes a TaskReplyToRenameRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof TaskReplyToRenameRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {TaskReplyToRenameRequest} TaskReplyToRenameRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        TaskReplyToRenameRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+    
+        /**
+         * Verifies a TaskReplyToRenameRequest message.
+         * @function verify
+         * @memberof TaskReplyToRenameRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        TaskReplyToRenameRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.taskId != null && message.hasOwnProperty("taskId"))
+                if (!$util.isString(message.taskId))
+                    return "taskId: string expected";
+            if (message.newName != null && message.hasOwnProperty("newName"))
+                if (!$util.isString(message.newName))
+                    return "newName: string expected";
+            return null;
+        };
+    
+        /**
+         * Creates a TaskReplyToRenameRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof TaskReplyToRenameRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {TaskReplyToRenameRequest} TaskReplyToRenameRequest
+         */
+        TaskReplyToRenameRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.TaskReplyToRenameRequest)
+                return object;
+            var message = new $root.TaskReplyToRenameRequest();
+            if (object.taskId != null)
+                message.taskId = String(object.taskId);
+            if (object.newName != null)
+                message.newName = String(object.newName);
+            return message;
+        };
+    
+        /**
+         * Creates a plain object from a TaskReplyToRenameRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof TaskReplyToRenameRequest
+         * @static
+         * @param {TaskReplyToRenameRequest} message TaskReplyToRenameRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        TaskReplyToRenameRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.taskId = "";
+                object.newName = "";
+            }
+            if (message.taskId != null && message.hasOwnProperty("taskId"))
+                object.taskId = message.taskId;
+            if (message.newName != null && message.hasOwnProperty("newName"))
+                object.newName = message.newName;
+            return object;
+        };
+    
+        /**
+         * Converts this TaskReplyToRenameRequest to JSON.
+         * @function toJSON
+         * @memberof TaskReplyToRenameRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        TaskReplyToRenameRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+    
+        return TaskReplyToRenameRequest;
+    })();
+    
+    $root.TaskReplyToRenameResponse = (function() {
+    
+        /**
+         * Properties of a TaskReplyToRenameResponse.
+         * @exports ITaskReplyToRenameResponse
+         * @interface ITaskReplyToRenameResponse
+         */
+    
+        /**
+         * Constructs a new TaskReplyToRenameResponse.
+         * @exports TaskReplyToRenameResponse
+         * @classdesc Represents a TaskReplyToRenameResponse.
+         * @implements ITaskReplyToRenameResponse
+         * @constructor
+         * @param {ITaskReplyToRenameResponse=} [properties] Properties to set
+         */
+        function TaskReplyToRenameResponse(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+    
+        /**
+         * Creates a new TaskReplyToRenameResponse instance using the specified properties.
+         * @function create
+         * @memberof TaskReplyToRenameResponse
+         * @static
+         * @param {ITaskReplyToRenameResponse=} [properties] Properties to set
+         * @returns {TaskReplyToRenameResponse} TaskReplyToRenameResponse instance
+         */
+        TaskReplyToRenameResponse.create = function create(properties) {
+            return new TaskReplyToRenameResponse(properties);
+        };
+    
+        /**
+         * Encodes the specified TaskReplyToRenameResponse message. Does not implicitly {@link TaskReplyToRenameResponse.verify|verify} messages.
+         * @function encode
+         * @memberof TaskReplyToRenameResponse
+         * @static
+         * @param {ITaskReplyToRenameResponse} message TaskReplyToRenameResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        TaskReplyToRenameResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            return writer;
+        };
+    
+        /**
+         * Encodes the specified TaskReplyToRenameResponse message, length delimited. Does not implicitly {@link TaskReplyToRenameResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof TaskReplyToRenameResponse
+         * @static
+         * @param {ITaskReplyToRenameResponse} message TaskReplyToRenameResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        TaskReplyToRenameResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+    
+        /**
+         * Decodes a TaskReplyToRenameResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof TaskReplyToRenameResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {TaskReplyToRenameResponse} TaskReplyToRenameResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        TaskReplyToRenameResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.TaskReplyToRenameResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+    
+        /**
+         * Decodes a TaskReplyToRenameResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof TaskReplyToRenameResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {TaskReplyToRenameResponse} TaskReplyToRenameResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        TaskReplyToRenameResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+    
+        /**
+         * Verifies a TaskReplyToRenameResponse message.
+         * @function verify
+         * @memberof TaskReplyToRenameResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        TaskReplyToRenameResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            return null;
+        };
+    
+        /**
+         * Creates a TaskReplyToRenameResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof TaskReplyToRenameResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {TaskReplyToRenameResponse} TaskReplyToRenameResponse
+         */
+        TaskReplyToRenameResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.TaskReplyToRenameResponse)
+                return object;
+            return new $root.TaskReplyToRenameResponse();
+        };
+    
+        /**
+         * Creates a plain object from a TaskReplyToRenameResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof TaskReplyToRenameResponse
+         * @static
+         * @param {TaskReplyToRenameResponse} message TaskReplyToRenameResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        TaskReplyToRenameResponse.toObject = function toObject() {
+            return {};
+        };
+    
+        /**
+         * Converts this TaskReplyToRenameResponse to JSON.
+         * @function toJSON
+         * @memberof TaskReplyToRenameResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        TaskReplyToRenameResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+    
+        return TaskReplyToRenameResponse;
     })();
     
     $root.TaskCancelRequest = (function() {

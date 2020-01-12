@@ -1,7 +1,7 @@
 // type of interaction
 export enum SuggestionKind {
-  Overwrite = "overwrite",
-  Rename = "rename",
+  Overwrite = "Overwrite",
+  Rename = "Rename",
 }
 
 export type Suggestions = {

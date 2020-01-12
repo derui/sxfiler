@@ -29,14 +29,16 @@ const SendReply: Api<Methods.SendReply, Reply, TaskSendReplyRequest, TaskSendRep
 
     switch (reply.kind) {
       case ReplyKind.Overwrite:
-        reqReply.type = ReplyType.Overwrite;
+        reqReply.replyType = ReplyType.Overwrite;
+        reqReply.reply = "overwrite";
         reqReply.overwrite = true;
         break;
       case ReplyKind.Rename:
-        reqReply.type = ReplyType.Rename;
+        reqReply.replyType = ReplyType.Rename;
         const rename = new TaskReply.Rename({
           newName: reply.newName,
         });
+        reqReply.reply = "rename";
         reqReply.rename = rename;
         break;
     }
