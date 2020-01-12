@@ -4,6 +4,7 @@ import { CommandLike } from "../type";
 import { Dispatcher } from "@/types";
 import { CommandRegistrar } from "../command-registrar";
 import { Apis } from "@/apis/task-api";
+import { ReplyKind } from "@/domains/task-reply";
 
 const belongingModuleId = "builtin";
 const commandId = "task.sendReply";
@@ -33,7 +34,14 @@ export const createCommand = function createCommand(): CommandLike {
         return;
       }
 
-      await clientResolver.apiClient().call(Apis.SendReply, reply);
+      switch (reply.reply.kind) {
+        case ReplyKind.Overwrite:
+          await clientResolver.apiClient().call(Apis.ReplyToOverwrite, reply);
+          break;
+        case ReplyKind.Rename:
+          await clientResolver.apiClient().call(Apis.ReplyToRename, reply);
+          break;
+      }
 
       dispatch.dispatch(actions.sendReply(reply));
     },

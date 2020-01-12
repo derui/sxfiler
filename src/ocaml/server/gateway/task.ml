@@ -4,12 +4,12 @@ module Usecase = Sxfiler_usecase
 module T = Sxfiler_server_translator
 module Gen = Sxfiler_server_generated.Task
 
-module Send_reply = struct
+module Reply_to_overwrite = struct
   module Type = struct
-    type input = Gen.TaskSendReplyRequest.t
+    type input = Gen.TaskReplyToOverwriteRequest.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
 
-    type output = Gen.TaskSendReplyResponse.t
+    type output = Gen.TaskReplyToOverwriteResponse.t
     [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
   end
 
@@ -18,8 +18,40 @@ module Send_reply = struct
   module Make (Usecase : Usecase.Task.Send_reply.S) : S = struct
     include Type
 
-    let handle (param : Gen.TaskSendReplyRequest.t) =
-      let reply = Option.get_exn param.reply |> T.Task_interaction.Reply.to_domain in
+    let handle (param : Gen.TaskReplyToOverwriteRequest.t) =
+      let reply =
+        {
+          D.Task_interaction.Reply.task_id = Uuidm.of_string param.taskId |> Option.get_exn;
+          reply = D.Task_interaction.Reply.Overwrite param.overwrite;
+        }
+      in
+      match%lwt Usecase.execute reply with
+      | Ok () -> Lwt.return_ok ()
+      | Error `Not_found -> Lwt.return_error Gateway_error.(Task_not_found)
+  end
+end
+
+module Reply_to_rename = struct
+  module Type = struct
+    type input = Gen.TaskReplyToRenameRequest.t
+    [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+
+    type output = Gen.TaskReplyToRenameResponse.t
+    [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+  end
+
+  module type S = Core.Gateway with type input = Type.input and type output = Type.output
+
+  module Make (Usecase : Usecase.Task.Send_reply.S) : S = struct
+    include Type
+
+    let handle (param : Gen.TaskReplyToRenameRequest.t) =
+      let reply =
+        {
+          D.Task_interaction.Reply.task_id = Uuidm.of_string param.taskId |> Option.get_exn;
+          reply = D.Task_interaction.Reply.Rename param.newName;
+        }
+      in
       match%lwt Usecase.execute reply with
       | Ok () -> Lwt.return_ok ()
       | Error `Not_found -> Lwt.return_error Gateway_error.(Task_not_found)

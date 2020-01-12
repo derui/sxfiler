@@ -47,9 +47,14 @@ let expose_completion_procedures (module Dep : Dependencies.S) : (module Procedu
 
 let expose_task_procedures (module Dep : Dependencies.S) : (module Procedure.Spec) list =
   let module S = Jsonrpc_yojson.Server in
-  let module Send_reply_gw = G.Task.Send_reply.Make (Dep.Usecase.Task_send_reply) in
+  let module Reply_to_overwrite_gw = G.Task.Reply_to_overwrite.Make (Dep.Usecase.Task_send_reply) in
+  let module Reply_to_rename_gw = G.Task.Reply_to_rename.Make (Dep.Usecase.Task_send_reply) in
   let module Cancel_gw = G.Task.Cancel.Make (Dep.Usecase.Task_cancel) in
-  [ (module Proc_task.Send_reply_spec (Send_reply_gw)); (module Proc_task.Cancel_spec (Cancel_gw)) ]
+  [
+    (module Proc_task.Reply_to_overwrite_spec (Reply_to_overwrite_gw));
+    (module Proc_task.Reply_to_rename_spec (Reply_to_rename_gw));
+    (module Proc_task.Cancel_spec (Cancel_gw));
+  ]
 
 let expose_bookmark_procedures (module Dep : Dependencies.S) : (module Procedure.Spec) list =
   let module S = Jsonrpc_yojson.Server in

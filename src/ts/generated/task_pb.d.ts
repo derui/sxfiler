@@ -8,190 +8,6 @@ namespace ReplyType {
   let Rename: number;
 }
 
-/** Represents a TaskReply. */
-export class TaskReply implements ITaskReply {
-  /**
-   * Constructs a new TaskReply.
-   * @param [properties] Properties to set
-   */
-  constructor(properties?: ITaskReply);
-
-  /** TaskReply type. */
-  public type: ReplyType;
-
-  /** TaskReply overwrite. */
-  public overwrite: boolean;
-
-  /** TaskReply rename. */
-  public rename?: TaskReply.IRename | null;
-
-  /** TaskReply taskId. */
-  public taskId: string;
-
-  /** TaskReply reply. */
-  public reply?: "overwrite" | "rename";
-
-  /**
-   * Creates a new TaskReply instance using the specified properties.
-   * @param [properties] Properties to set
-   * @returns TaskReply instance
-   */
-  public static create(properties?: ITaskReply): TaskReply;
-
-  /**
-   * Encodes the specified TaskReply message. Does not implicitly {@link TaskReply.verify|verify} messages.
-   * @param message TaskReply message or plain object to encode
-   * @param [writer] Writer to encode to
-   * @returns Writer
-   */
-  public static encode(message: ITaskReply, writer?: $protobuf.Writer): $protobuf.Writer;
-
-  /**
-   * Encodes the specified TaskReply message, length delimited. Does not implicitly {@link TaskReply.verify|verify} messages.
-   * @param message TaskReply message or plain object to encode
-   * @param [writer] Writer to encode to
-   * @returns Writer
-   */
-  public static encodeDelimited(message: ITaskReply, writer?: $protobuf.Writer): $protobuf.Writer;
-
-  /**
-   * Decodes a TaskReply message from the specified reader or buffer.
-   * @param reader Reader or buffer to decode from
-   * @param [length] Message length if known beforehand
-   * @returns TaskReply
-   * @throws {Error} If the payload is not a reader or valid buffer
-   * @throws {$protobuf.util.ProtocolError} If required fields are missing
-   */
-  public static decode(reader: $protobuf.Reader | Uint8Array, length?: number): TaskReply;
-
-  /**
-   * Decodes a TaskReply message from the specified reader or buffer, length delimited.
-   * @param reader Reader or buffer to decode from
-   * @returns TaskReply
-   * @throws {Error} If the payload is not a reader or valid buffer
-   * @throws {$protobuf.util.ProtocolError} If required fields are missing
-   */
-  public static decodeDelimited(reader: $protobuf.Reader | Uint8Array): TaskReply;
-
-  /**
-   * Verifies a TaskReply message.
-   * @param message Plain object to verify
-   * @returns `null` if valid, otherwise the reason why it is not
-   */
-  public static verify(message: { [k: string]: any }): string | null;
-
-  /**
-   * Creates a TaskReply message from a plain object. Also converts values to their respective internal types.
-   * @param object Plain object
-   * @returns TaskReply
-   */
-  public static fromObject(object: { [k: string]: any }): TaskReply;
-
-  /**
-   * Creates a plain object from a TaskReply message. Also converts values to other types if specified.
-   * @param message TaskReply
-   * @param [options] Conversion options
-   * @returns Plain object
-   */
-  public static toObject(message: TaskReply, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-  /**
-   * Converts this TaskReply to JSON.
-   * @returns JSON object
-   */
-  public toJSON(): { [k: string]: any };
-}
-
-export namespace TaskReply {
-  /** Properties of a Rename. */
-  interface IRename {
-    /** Rename newName */
-    newName?: string | null;
-  }
-
-  /** Represents a Rename. */
-  class Rename implements IRename {
-    /**
-     * Constructs a new Rename.
-     * @param [properties] Properties to set
-     */
-    constructor(properties?: TaskReply.IRename);
-
-    /** Rename newName. */
-    public newName: string;
-
-    /**
-     * Creates a new Rename instance using the specified properties.
-     * @param [properties] Properties to set
-     * @returns Rename instance
-     */
-    public static create(properties?: TaskReply.IRename): TaskReply.Rename;
-
-    /**
-     * Encodes the specified Rename message. Does not implicitly {@link TaskReply.Rename.verify|verify} messages.
-     * @param message Rename message or plain object to encode
-     * @param [writer] Writer to encode to
-     * @returns Writer
-     */
-    public static encode(message: TaskReply.IRename, writer?: $protobuf.Writer): $protobuf.Writer;
-
-    /**
-     * Encodes the specified Rename message, length delimited. Does not implicitly {@link TaskReply.Rename.verify|verify} messages.
-     * @param message Rename message or plain object to encode
-     * @param [writer] Writer to encode to
-     * @returns Writer
-     */
-    public static encodeDelimited(message: TaskReply.IRename, writer?: $protobuf.Writer): $protobuf.Writer;
-
-    /**
-     * Decodes a Rename message from the specified reader or buffer.
-     * @param reader Reader or buffer to decode from
-     * @param [length] Message length if known beforehand
-     * @returns Rename
-     * @throws {Error} If the payload is not a reader or valid buffer
-     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-     */
-    public static decode(reader: $protobuf.Reader | Uint8Array, length?: number): TaskReply.Rename;
-
-    /**
-     * Decodes a Rename message from the specified reader or buffer, length delimited.
-     * @param reader Reader or buffer to decode from
-     * @returns Rename
-     * @throws {Error} If the payload is not a reader or valid buffer
-     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-     */
-    public static decodeDelimited(reader: $protobuf.Reader | Uint8Array): TaskReply.Rename;
-
-    /**
-     * Verifies a Rename message.
-     * @param message Plain object to verify
-     * @returns `null` if valid, otherwise the reason why it is not
-     */
-    public static verify(message: { [k: string]: any }): string | null;
-
-    /**
-     * Creates a Rename message from a plain object. Also converts values to their respective internal types.
-     * @param object Plain object
-     * @returns Rename
-     */
-    public static fromObject(object: { [k: string]: any }): TaskReply.Rename;
-
-    /**
-     * Creates a plain object from a Rename message. Also converts values to other types if specified.
-     * @param message Rename
-     * @param [options] Conversion options
-     * @returns Plain object
-     */
-    public static toObject(message: TaskReply.Rename, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-    /**
-     * Converts this Rename to JSON.
-     * @returns JSON object
-     */
-    public toJSON(): { [k: string]: any };
-  }
-}
-
 /** Represents a TaskSuggestion. */
 export class TaskSuggestion implements ITaskSuggestion {
   /**
@@ -280,162 +96,341 @@ export class TaskSuggestion implements ITaskSuggestion {
   public toJSON(): { [k: string]: any };
 }
 
-/** Represents a TaskSendReplyRequest. */
-export class TaskSendReplyRequest implements ITaskSendReplyRequest {
+/** Represents a TaskReplyToOverwriteRequest. */
+export class TaskReplyToOverwriteRequest implements ITaskReplyToOverwriteRequest {
   /**
-   * Constructs a new TaskSendReplyRequest.
+   * Constructs a new TaskReplyToOverwriteRequest.
    * @param [properties] Properties to set
    */
-  constructor(properties?: ITaskSendReplyRequest);
+  constructor(properties?: ITaskReplyToOverwriteRequest);
 
-  /** TaskSendReplyRequest reply. */
-  public reply?: ITaskReply | null;
+  /** TaskReplyToOverwriteRequest taskId. */
+  public taskId: string;
+
+  /** TaskReplyToOverwriteRequest overwrite. */
+  public overwrite: boolean;
 
   /**
-   * Creates a new TaskSendReplyRequest instance using the specified properties.
+   * Creates a new TaskReplyToOverwriteRequest instance using the specified properties.
    * @param [properties] Properties to set
-   * @returns TaskSendReplyRequest instance
+   * @returns TaskReplyToOverwriteRequest instance
    */
-  public static create(properties?: ITaskSendReplyRequest): TaskSendReplyRequest;
+  public static create(properties?: ITaskReplyToOverwriteRequest): TaskReplyToOverwriteRequest;
 
   /**
-   * Encodes the specified TaskSendReplyRequest message. Does not implicitly {@link TaskSendReplyRequest.verify|verify} messages.
-   * @param message TaskSendReplyRequest message or plain object to encode
+   * Encodes the specified TaskReplyToOverwriteRequest message. Does not implicitly {@link TaskReplyToOverwriteRequest.verify|verify} messages.
+   * @param message TaskReplyToOverwriteRequest message or plain object to encode
    * @param [writer] Writer to encode to
    * @returns Writer
    */
-  public static encode(message: ITaskSendReplyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+  public static encode(message: ITaskReplyToOverwriteRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
   /**
-   * Encodes the specified TaskSendReplyRequest message, length delimited. Does not implicitly {@link TaskSendReplyRequest.verify|verify} messages.
-   * @param message TaskSendReplyRequest message or plain object to encode
+   * Encodes the specified TaskReplyToOverwriteRequest message, length delimited. Does not implicitly {@link TaskReplyToOverwriteRequest.verify|verify} messages.
+   * @param message TaskReplyToOverwriteRequest message or plain object to encode
    * @param [writer] Writer to encode to
    * @returns Writer
    */
-  public static encodeDelimited(message: ITaskSendReplyRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+  public static encodeDelimited(message: ITaskReplyToOverwriteRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
   /**
-   * Decodes a TaskSendReplyRequest message from the specified reader or buffer.
+   * Decodes a TaskReplyToOverwriteRequest message from the specified reader or buffer.
    * @param reader Reader or buffer to decode from
    * @param [length] Message length if known beforehand
-   * @returns TaskSendReplyRequest
+   * @returns TaskReplyToOverwriteRequest
    * @throws {Error} If the payload is not a reader or valid buffer
    * @throws {$protobuf.util.ProtocolError} If required fields are missing
    */
-  public static decode(reader: $protobuf.Reader | Uint8Array, length?: number): TaskSendReplyRequest;
+  public static decode(reader: $protobuf.Reader | Uint8Array, length?: number): TaskReplyToOverwriteRequest;
 
   /**
-   * Decodes a TaskSendReplyRequest message from the specified reader or buffer, length delimited.
+   * Decodes a TaskReplyToOverwriteRequest message from the specified reader or buffer, length delimited.
    * @param reader Reader or buffer to decode from
-   * @returns TaskSendReplyRequest
+   * @returns TaskReplyToOverwriteRequest
    * @throws {Error} If the payload is not a reader or valid buffer
    * @throws {$protobuf.util.ProtocolError} If required fields are missing
    */
-  public static decodeDelimited(reader: $protobuf.Reader | Uint8Array): TaskSendReplyRequest;
+  public static decodeDelimited(reader: $protobuf.Reader | Uint8Array): TaskReplyToOverwriteRequest;
 
   /**
-   * Verifies a TaskSendReplyRequest message.
+   * Verifies a TaskReplyToOverwriteRequest message.
    * @param message Plain object to verify
    * @returns `null` if valid, otherwise the reason why it is not
    */
   public static verify(message: { [k: string]: any }): string | null;
 
   /**
-   * Creates a TaskSendReplyRequest message from a plain object. Also converts values to their respective internal types.
+   * Creates a TaskReplyToOverwriteRequest message from a plain object. Also converts values to their respective internal types.
    * @param object Plain object
-   * @returns TaskSendReplyRequest
+   * @returns TaskReplyToOverwriteRequest
    */
-  public static fromObject(object: { [k: string]: any }): TaskSendReplyRequest;
+  public static fromObject(object: { [k: string]: any }): TaskReplyToOverwriteRequest;
 
   /**
-   * Creates a plain object from a TaskSendReplyRequest message. Also converts values to other types if specified.
-   * @param message TaskSendReplyRequest
+   * Creates a plain object from a TaskReplyToOverwriteRequest message. Also converts values to other types if specified.
+   * @param message TaskReplyToOverwriteRequest
    * @param [options] Conversion options
    * @returns Plain object
    */
-  public static toObject(message: TaskSendReplyRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+  public static toObject(
+    message: TaskReplyToOverwriteRequest,
+    options?: $protobuf.IConversionOptions
+  ): { [k: string]: any };
 
   /**
-   * Converts this TaskSendReplyRequest to JSON.
+   * Converts this TaskReplyToOverwriteRequest to JSON.
    * @returns JSON object
    */
   public toJSON(): { [k: string]: any };
 }
 
-/** Represents a TaskSendReplyResponse. */
-export class TaskSendReplyResponse implements ITaskSendReplyResponse {
+/** Represents a TaskReplyToOverwriteResponse. */
+export class TaskReplyToOverwriteResponse implements ITaskReplyToOverwriteResponse {
   /**
-   * Constructs a new TaskSendReplyResponse.
+   * Constructs a new TaskReplyToOverwriteResponse.
    * @param [properties] Properties to set
    */
-  constructor(properties?: ITaskSendReplyResponse);
+  constructor(properties?: ITaskReplyToOverwriteResponse);
 
   /**
-   * Creates a new TaskSendReplyResponse instance using the specified properties.
+   * Creates a new TaskReplyToOverwriteResponse instance using the specified properties.
    * @param [properties] Properties to set
-   * @returns TaskSendReplyResponse instance
+   * @returns TaskReplyToOverwriteResponse instance
    */
-  public static create(properties?: ITaskSendReplyResponse): TaskSendReplyResponse;
+  public static create(properties?: ITaskReplyToOverwriteResponse): TaskReplyToOverwriteResponse;
 
   /**
-   * Encodes the specified TaskSendReplyResponse message. Does not implicitly {@link TaskSendReplyResponse.verify|verify} messages.
-   * @param message TaskSendReplyResponse message or plain object to encode
+   * Encodes the specified TaskReplyToOverwriteResponse message. Does not implicitly {@link TaskReplyToOverwriteResponse.verify|verify} messages.
+   * @param message TaskReplyToOverwriteResponse message or plain object to encode
    * @param [writer] Writer to encode to
    * @returns Writer
    */
-  public static encode(message: ITaskSendReplyResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+  public static encode(message: ITaskReplyToOverwriteResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
   /**
-   * Encodes the specified TaskSendReplyResponse message, length delimited. Does not implicitly {@link TaskSendReplyResponse.verify|verify} messages.
-   * @param message TaskSendReplyResponse message or plain object to encode
+   * Encodes the specified TaskReplyToOverwriteResponse message, length delimited. Does not implicitly {@link TaskReplyToOverwriteResponse.verify|verify} messages.
+   * @param message TaskReplyToOverwriteResponse message or plain object to encode
    * @param [writer] Writer to encode to
    * @returns Writer
    */
-  public static encodeDelimited(message: ITaskSendReplyResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+  public static encodeDelimited(message: ITaskReplyToOverwriteResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
   /**
-   * Decodes a TaskSendReplyResponse message from the specified reader or buffer.
+   * Decodes a TaskReplyToOverwriteResponse message from the specified reader or buffer.
    * @param reader Reader or buffer to decode from
    * @param [length] Message length if known beforehand
-   * @returns TaskSendReplyResponse
+   * @returns TaskReplyToOverwriteResponse
    * @throws {Error} If the payload is not a reader or valid buffer
    * @throws {$protobuf.util.ProtocolError} If required fields are missing
    */
-  public static decode(reader: $protobuf.Reader | Uint8Array, length?: number): TaskSendReplyResponse;
+  public static decode(reader: $protobuf.Reader | Uint8Array, length?: number): TaskReplyToOverwriteResponse;
 
   /**
-   * Decodes a TaskSendReplyResponse message from the specified reader or buffer, length delimited.
+   * Decodes a TaskReplyToOverwriteResponse message from the specified reader or buffer, length delimited.
    * @param reader Reader or buffer to decode from
-   * @returns TaskSendReplyResponse
+   * @returns TaskReplyToOverwriteResponse
    * @throws {Error} If the payload is not a reader or valid buffer
    * @throws {$protobuf.util.ProtocolError} If required fields are missing
    */
-  public static decodeDelimited(reader: $protobuf.Reader | Uint8Array): TaskSendReplyResponse;
+  public static decodeDelimited(reader: $protobuf.Reader | Uint8Array): TaskReplyToOverwriteResponse;
 
   /**
-   * Verifies a TaskSendReplyResponse message.
+   * Verifies a TaskReplyToOverwriteResponse message.
    * @param message Plain object to verify
    * @returns `null` if valid, otherwise the reason why it is not
    */
   public static verify(message: { [k: string]: any }): string | null;
 
   /**
-   * Creates a TaskSendReplyResponse message from a plain object. Also converts values to their respective internal types.
+   * Creates a TaskReplyToOverwriteResponse message from a plain object. Also converts values to their respective internal types.
    * @param object Plain object
-   * @returns TaskSendReplyResponse
+   * @returns TaskReplyToOverwriteResponse
    */
-  public static fromObject(object: { [k: string]: any }): TaskSendReplyResponse;
+  public static fromObject(object: { [k: string]: any }): TaskReplyToOverwriteResponse;
 
   /**
-   * Creates a plain object from a TaskSendReplyResponse message. Also converts values to other types if specified.
-   * @param message TaskSendReplyResponse
+   * Creates a plain object from a TaskReplyToOverwriteResponse message. Also converts values to other types if specified.
+   * @param message TaskReplyToOverwriteResponse
    * @param [options] Conversion options
    * @returns Plain object
    */
-  public static toObject(message: TaskSendReplyResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+  public static toObject(
+    message: TaskReplyToOverwriteResponse,
+    options?: $protobuf.IConversionOptions
+  ): { [k: string]: any };
 
   /**
-   * Converts this TaskSendReplyResponse to JSON.
+   * Converts this TaskReplyToOverwriteResponse to JSON.
+   * @returns JSON object
+   */
+  public toJSON(): { [k: string]: any };
+}
+
+/** Represents a TaskReplyToRenameRequest. */
+export class TaskReplyToRenameRequest implements ITaskReplyToRenameRequest {
+  /**
+   * Constructs a new TaskReplyToRenameRequest.
+   * @param [properties] Properties to set
+   */
+  constructor(properties?: ITaskReplyToRenameRequest);
+
+  /** TaskReplyToRenameRequest taskId. */
+  public taskId: string;
+
+  /** TaskReplyToRenameRequest newName. */
+  public newName: string;
+
+  /**
+   * Creates a new TaskReplyToRenameRequest instance using the specified properties.
+   * @param [properties] Properties to set
+   * @returns TaskReplyToRenameRequest instance
+   */
+  public static create(properties?: ITaskReplyToRenameRequest): TaskReplyToRenameRequest;
+
+  /**
+   * Encodes the specified TaskReplyToRenameRequest message. Does not implicitly {@link TaskReplyToRenameRequest.verify|verify} messages.
+   * @param message TaskReplyToRenameRequest message or plain object to encode
+   * @param [writer] Writer to encode to
+   * @returns Writer
+   */
+  public static encode(message: ITaskReplyToRenameRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+  /**
+   * Encodes the specified TaskReplyToRenameRequest message, length delimited. Does not implicitly {@link TaskReplyToRenameRequest.verify|verify} messages.
+   * @param message TaskReplyToRenameRequest message or plain object to encode
+   * @param [writer] Writer to encode to
+   * @returns Writer
+   */
+  public static encodeDelimited(message: ITaskReplyToRenameRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+  /**
+   * Decodes a TaskReplyToRenameRequest message from the specified reader or buffer.
+   * @param reader Reader or buffer to decode from
+   * @param [length] Message length if known beforehand
+   * @returns TaskReplyToRenameRequest
+   * @throws {Error} If the payload is not a reader or valid buffer
+   * @throws {$protobuf.util.ProtocolError} If required fields are missing
+   */
+  public static decode(reader: $protobuf.Reader | Uint8Array, length?: number): TaskReplyToRenameRequest;
+
+  /**
+   * Decodes a TaskReplyToRenameRequest message from the specified reader or buffer, length delimited.
+   * @param reader Reader or buffer to decode from
+   * @returns TaskReplyToRenameRequest
+   * @throws {Error} If the payload is not a reader or valid buffer
+   * @throws {$protobuf.util.ProtocolError} If required fields are missing
+   */
+  public static decodeDelimited(reader: $protobuf.Reader | Uint8Array): TaskReplyToRenameRequest;
+
+  /**
+   * Verifies a TaskReplyToRenameRequest message.
+   * @param message Plain object to verify
+   * @returns `null` if valid, otherwise the reason why it is not
+   */
+  public static verify(message: { [k: string]: any }): string | null;
+
+  /**
+   * Creates a TaskReplyToRenameRequest message from a plain object. Also converts values to their respective internal types.
+   * @param object Plain object
+   * @returns TaskReplyToRenameRequest
+   */
+  public static fromObject(object: { [k: string]: any }): TaskReplyToRenameRequest;
+
+  /**
+   * Creates a plain object from a TaskReplyToRenameRequest message. Also converts values to other types if specified.
+   * @param message TaskReplyToRenameRequest
+   * @param [options] Conversion options
+   * @returns Plain object
+   */
+  public static toObject(
+    message: TaskReplyToRenameRequest,
+    options?: $protobuf.IConversionOptions
+  ): { [k: string]: any };
+
+  /**
+   * Converts this TaskReplyToRenameRequest to JSON.
+   * @returns JSON object
+   */
+  public toJSON(): { [k: string]: any };
+}
+
+/** Represents a TaskReplyToRenameResponse. */
+export class TaskReplyToRenameResponse implements ITaskReplyToRenameResponse {
+  /**
+   * Constructs a new TaskReplyToRenameResponse.
+   * @param [properties] Properties to set
+   */
+  constructor(properties?: ITaskReplyToRenameResponse);
+
+  /**
+   * Creates a new TaskReplyToRenameResponse instance using the specified properties.
+   * @param [properties] Properties to set
+   * @returns TaskReplyToRenameResponse instance
+   */
+  public static create(properties?: ITaskReplyToRenameResponse): TaskReplyToRenameResponse;
+
+  /**
+   * Encodes the specified TaskReplyToRenameResponse message. Does not implicitly {@link TaskReplyToRenameResponse.verify|verify} messages.
+   * @param message TaskReplyToRenameResponse message or plain object to encode
+   * @param [writer] Writer to encode to
+   * @returns Writer
+   */
+  public static encode(message: ITaskReplyToRenameResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+  /**
+   * Encodes the specified TaskReplyToRenameResponse message, length delimited. Does not implicitly {@link TaskReplyToRenameResponse.verify|verify} messages.
+   * @param message TaskReplyToRenameResponse message or plain object to encode
+   * @param [writer] Writer to encode to
+   * @returns Writer
+   */
+  public static encodeDelimited(message: ITaskReplyToRenameResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+  /**
+   * Decodes a TaskReplyToRenameResponse message from the specified reader or buffer.
+   * @param reader Reader or buffer to decode from
+   * @param [length] Message length if known beforehand
+   * @returns TaskReplyToRenameResponse
+   * @throws {Error} If the payload is not a reader or valid buffer
+   * @throws {$protobuf.util.ProtocolError} If required fields are missing
+   */
+  public static decode(reader: $protobuf.Reader | Uint8Array, length?: number): TaskReplyToRenameResponse;
+
+  /**
+   * Decodes a TaskReplyToRenameResponse message from the specified reader or buffer, length delimited.
+   * @param reader Reader or buffer to decode from
+   * @returns TaskReplyToRenameResponse
+   * @throws {Error} If the payload is not a reader or valid buffer
+   * @throws {$protobuf.util.ProtocolError} If required fields are missing
+   */
+  public static decodeDelimited(reader: $protobuf.Reader | Uint8Array): TaskReplyToRenameResponse;
+
+  /**
+   * Verifies a TaskReplyToRenameResponse message.
+   * @param message Plain object to verify
+   * @returns `null` if valid, otherwise the reason why it is not
+   */
+  public static verify(message: { [k: string]: any }): string | null;
+
+  /**
+   * Creates a TaskReplyToRenameResponse message from a plain object. Also converts values to their respective internal types.
+   * @param object Plain object
+   * @returns TaskReplyToRenameResponse
+   */
+  public static fromObject(object: { [k: string]: any }): TaskReplyToRenameResponse;
+
+  /**
+   * Creates a plain object from a TaskReplyToRenameResponse message. Also converts values to other types if specified.
+   * @param message TaskReplyToRenameResponse
+   * @param [options] Conversion options
+   * @returns Plain object
+   */
+  public static toObject(
+    message: TaskReplyToRenameResponse,
+    options?: $protobuf.IConversionOptions
+  ): { [k: string]: any };
+
+  /**
+   * Converts this TaskReplyToRenameResponse to JSON.
    * @returns JSON object
    */
   public toJSON(): { [k: string]: any };

@@ -3,10 +3,17 @@
 module G = Sxfiler_server_gateway
 module P = Procedure
 
-module Send_reply_spec (G : G.Task.Send_reply.S) : P.Spec = struct
+module Reply_to_overwrite_spec (G : G.Task.Reply_to_overwrite.S) : P.Spec = struct
   module Gateway = G
 
-  let method_ = "task/sendReply"
+  let method_ = "task/reply/overwrite"
+  let param_requirement = `Required
+end
+
+module Reply_to_rename_spec (G : G.Task.Reply_to_rename.S) : P.Spec = struct
+  module Gateway = G
+
+  let method_ = "task/reply/rename"
   let param_requirement = `Required
 end
 

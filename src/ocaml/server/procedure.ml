@@ -38,7 +38,10 @@ module Make (S : Spec) : S = struct
           | Some params -> (
               (* all messages are protobuf. Protobuf in OCaml is pure string, so get directly it *)
               match decoder params with
-              | Error _ ->
+              | Error e ->
+                  Logs.warn (fun m ->
+                      m "Required parameter not found %s"
+                      @@ Protocol_conv_json.Json.error_to_string_hum e);
                   raise
                     Rpc.(Error.Jsonrpc_error (Error.make Jsonrpc.Types.Error_code.Invalid_params))
               | Ok param -> S.Gateway.handle param )
