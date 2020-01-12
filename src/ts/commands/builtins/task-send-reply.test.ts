@@ -29,11 +29,11 @@ describe("Commands", () => {
         await expect(command.execute(dispatcher, undefined)).rejects.toThrowError();
       });
 
-      it("call API to reload key map on the server", async () => {
+      it("call API to reply to overwrite", async () => {
         const command = C.createCommand();
 
         await command.execute(dispatcher, { state, clientResolver });
-        expect(apiClient.call).toBeCalledWith(Apis.Task.SendReply, state.taskInteraction.currentReply());
+        expect(apiClient.call).toBeCalledWith(Apis.Task.ReplyToOverwrite, state.taskInteraction.currentReply());
       });
 
       it("dispatch an action to send reply", async () => {

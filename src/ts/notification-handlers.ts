@@ -10,6 +10,8 @@ import { encode } from "./codecs/filer";
 import { createMessage } from "./domains/message-notification";
 import { createProgress } from "./domains/progress-notification";
 import { Filer } from "./generated/filer_pb";
+import { TaskSuggestion, ReplyType } from "./generated/task_pb";
+import { ReplyKind } from "./domains/task-reply";
 
 /**
    Handle common notification that contains message or progress of a server.
@@ -45,7 +47,19 @@ export const handleProgressNotification = function handleProgressNotification(co
  */
 export const handleTaskInteraction = function handleTaskInteraction(context: ContextLike) {
   return (params: { taskId: string; itemName: string; suggestions: SuggestionKind[] }) => {
-    const suggestions = createSuggestions(params);
+    let converted = TaskSuggestion.create(params);
+    converted = Object.assign(converted, {
+      suggestions: converted.suggestions.map(v => {
+        switch (v) {
+          case ReplyType.Overwrite:
+            return ReplyKind.Overwrite;
+          case ReplyType.Rename:
+            return ReplyKind.Rename;
+        }
+      }),
+    });
+
+    const suggestions = createSuggestions(converted);
     context.use(TaskRequireInteractionUseCase.createUseCase())({ suggestions });
   };
 };

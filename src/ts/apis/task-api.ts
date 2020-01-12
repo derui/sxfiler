@@ -1,52 +1,73 @@
 import { Reply, ReplyKind } from "@/domains/task-reply";
 import {
-  TaskSendReplyRequest,
-  TaskSendReplyResponse,
-  TaskReply,
   ReplyType,
   TaskCancelRequest,
   TaskCancelResponse,
+  TaskReplyToOverwriteRequest,
+  TaskReplyToOverwriteResponse,
+  TaskReplyToRenameRequest,
+  TaskReplyToRenameResponse,
 } from "../generated/task_pb";
 import { Api } from "@/libs/json-rpc/client";
 
 // defines API signature for Task group.
 
 export enum Methods {
-  SendReply = "task/sendReply",
+  ReplyToOverwrite = "task/reply/overwrite",
+  ReplyToRename = "task/reply/rename",
   Cancel = "task/cancel",
 }
 
 /**
-   API definition for task/sendReply
+   API definition for task/reply/overwrite
  */
-const SendReply: Api<Methods.SendReply, Reply, TaskSendReplyRequest, TaskSendReplyResponse> = {
-  method: Methods.SendReply,
+const ReplyToOverwrite: Api<
+  Methods.ReplyToOverwrite,
+  Reply,
+  TaskReplyToOverwriteRequest,
+  TaskReplyToOverwriteResponse
+> = {
+  method: Methods.ReplyToOverwrite,
   parametersTransformer(param: Reply) {
     const { taskId, reply } = param;
-    const reqReply = new TaskReply({
+    const reqReply = new TaskReplyToOverwriteRequest({
       taskId,
     });
 
     switch (reply.kind) {
       case ReplyKind.Overwrite:
-        reqReply.replyType = ReplyType.Overwrite;
-        reqReply.reply = "overwrite";
         reqReply.overwrite = true;
         break;
-      case ReplyKind.Rename:
-        reqReply.replyType = ReplyType.Rename;
-        const rename = new TaskReply.Rename({
-          newName: reply.newName,
-        });
-        reqReply.reply = "rename";
-        reqReply.rename = rename;
-        break;
+      default:
+        throw new Error(`Illegal reply kind given: ${reply.kind}`);
     }
-    return TaskSendReplyRequest.create({ reply: reqReply });
+    return reqReply;
   },
   resultTransformer() {},
 };
 
+/**
+   API definition for task/reply/overwrite
+ */
+const ReplyToRename: Api<Methods.ReplyToRename, Reply, TaskReplyToRenameRequest, TaskReplyToRenameResponse> = {
+  method: Methods.ReplyToRename,
+  parametersTransformer(param: Reply) {
+    const { taskId, reply } = param;
+    const reqReply = new TaskReplyToRenameRequest({
+      taskId,
+    });
+
+    switch (reply.kind) {
+      case ReplyKind.Rename:
+        reqReply.newName = reply.newName;
+        break;
+      default:
+        throw new Error(`Illegal reply kind given: ${reply.kind}`);
+    }
+    return reqReply;
+  },
+  resultTransformer() {},
+};
 /**
    API definition to cancel the task
  */
@@ -61,4 +82,4 @@ const Cancel: Api<Methods.Cancel, string, TaskCancelRequest, TaskCancelResponse>
   },
 };
 
-export const Apis = { SendReply, Cancel };
+export const Apis = { ReplyToOverwrite, ReplyToRename, Cancel };
