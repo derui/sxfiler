@@ -1,7 +1,7 @@
 FROM debian:bullseye
 
 RUN apt update \
-    && apt install -y --no-install-recommends opam gcc-mingw-w64-x86-64 gawk m4 git ca-certificates \
+    && apt install -y --no-install-recommends opam gcc-mingw-w64-x86-64 gawk m4 git ca-certificates protobuf-compiler libprotobuf-dev \
     && rm -rf /var/cache/apt/archives \
     && useradd -m builder \
     && chmod a+w /opt
@@ -14,7 +14,7 @@ RUN chmod a+x /entrypoint.sh
 USER builder
 RUN opam init -n --disable-sandboxing --bare \
     && opam switch install 4.08.0 \
-    && opam repository --all add windows git://github.com/derui/sxfiler-repo-windows \
+    && opam repository --all add windows git+https://github.com/derui/sxfiler-repo-windows \
     && eval $(opam env) \
     && opam install -y conf-flambda-windows \
     && opam install -y ocaml-windows64 \
