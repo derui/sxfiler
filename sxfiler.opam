@@ -14,7 +14,7 @@ build: [
   ["dune" "runtest" "-p" name] {with-test}
 ]
 depends: [
-  "dune" {build & >= "1.0.0"}
+  "dune" { >= "2.0.0"}
   "ppx_protocol_conv_json" {build & >= "5.0"}
   "ppx_fields_conv" {build & >= "v0.11.0"}
   "ppx_let" {build & >= "v0.12.0"}
