@@ -1,3 +1,4 @@
+open Sxfiler_core
 open Lwt.Infix
 open Websocket
 open Websocket_lwt_unix
@@ -17,15 +18,13 @@ let validate_command command (args : string list) =
   | _ -> Error "Not implemented"
 
 let rpc_shell ~client ~content =
-  let module Let_syntax = struct
-    let bind v ~f = match v with Error _ as e -> e | Ok v -> f v
-  end in
-  let%bind command, args =
+  let open Result in
+  let* command, args =
     match String.split_on_char ' ' content with
     | command :: args -> Ok (command, args)
     | _ -> Error "Invalid input"
   in
-  let%bind api, params = validate_command command args in
+  let* api, params = validate_command command args in
   let module C = (val client : Rpc_client.Base.S) in
   Ok (C.notify ~api ~params ())
 

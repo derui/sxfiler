@@ -33,6 +33,15 @@ let option_tests =
         let open Option.Infix in
         Alcotest.(check @@ option int) "option" (Some 10 >>= fun v -> Some (succ v))
         @@ Option.some 11 );
+    ( "allow to use option as monad with binding operator",
+      `Quick,
+      fun () ->
+        let open Option.Infix in
+        let v =
+          let* v = Some 10 in
+          Some (succ v)
+        in
+        Alcotest.(check @@ option int) "option" v @@ Option.some 11 );
     ( "allow to handle none with monadic operator",
       `Quick,
       fun () ->
@@ -44,6 +53,11 @@ let option_tests =
         let open Option.Infix in
         Alcotest.(check @@ option string) "option" (Some "bar" >|= fun v -> v ^ "foo")
         @@ Option.some "barfoo" );
+    ( "convert to list",
+      `Quick,
+      fun () ->
+        Alcotest.(check @@ list int) "option" (Option.to_list (Some 10)) [ 10 ];
+        Alcotest.(check @@ list int) "option" (Option.to_list None) [] );
   ]
 
 let result_tests =
@@ -53,6 +67,15 @@ let result_tests =
       fun () ->
         let open Result.Infix in
         Alcotest.(check @@ result int string) "result" (Ok 10 >>= fun v -> Ok (succ v)) @@ Ok 11 );
+    ( "allow to use result as monad with binding operator",
+      `Quick,
+      fun () ->
+        let open Result.Infix in
+        let v =
+          let* v = Ok 10 in
+          Ok (succ v)
+        in
+        Alcotest.(check @@ result int string) "result" v @@ Ok 11 );
     ( "allow to handle none with monadic operator",
       `Quick,
       fun () ->

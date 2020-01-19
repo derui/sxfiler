@@ -16,7 +16,6 @@ build: [
 depends: [
   "dune" {< "3.0.0"}
   "ppx_protocol_conv_json-windows" {< "6.0"}
-  "ppx_let-windows" {build & < "v0.14.0"}
   "ppx_deriving-windows" {>= "4.2.1"}
   "lwt-windows" {>= "4.0.0"}
   "lwt_ppx-windows" {build}
@@ -35,4 +34,4 @@ depends: [
   "jsonrpc-ocaml-windows"
   "migemocaml-windows"
 ]
-available: ["ocaml" >= "4.05.0"]
+available: ["ocaml" >= "4.08.0"]

@@ -1,3 +1,5 @@
+open Sxfiler_core
+
 module T = Sxfiler_domain
 (** Completer provides simple completion interface via string. *)
 
@@ -8,17 +10,19 @@ module Core = struct
   (** The type of completer. *)
 
   let make ~migemo = { migemo }
-  let is_some = function Some _ -> true | None -> false
 
   let read t ~input ~collection =
     let regexp = Migemocaml.Migemo.query ~query:input t.migemo |> Re.Posix.compile_pat in
-    List.map (fun s -> (Re.exec_opt regexp s.T.Completion.Item.value, s)) collection
-    |> List.filter (fun v -> is_some @@ fst v)
-    |> List.map (function
-         | None, _ -> failwith "Invalid branch"
-         | Some group, v ->
-             let start, length = Re.Group.offset group 0 in
-             { T.Completion.Candidate.start; length = length - start; value = v })
+    List.map
+      (fun s ->
+        let open Option in
+        let+ group = Re.exec_opt regexp s.T.Completion.Item.value in
+        (group, s))
+      collection
+    |> List.map Option.to_list |> List.concat
+    |> List.map (function group, v ->
+           let start, length = Re.Group.offset group 0 in
+           { T.Completion.Candidate.start; length = length - start; value = v })
 end
 
 let make ~migemo =

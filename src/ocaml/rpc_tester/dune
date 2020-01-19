@@ -10,4 +10,4 @@
             sxfiler.server
             logs
             ppx_protocol_conv_json)
- (preprocess (pps ppx_let lwt_ppx ppx_deriving.std ppx_protocol_conv)))
+ (preprocess (pps lwt_ppx ppx_deriving.std ppx_protocol_conv)))
