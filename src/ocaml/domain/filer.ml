@@ -33,7 +33,7 @@ let update_list t ~file_list =
   let marked_items =
     if Path.equal file_list.File_list.location t.file_list.location then
       let current_items =
-        List.map File_item.id file_list.File_list.items |> Marked_item_set.of_list
+        List.map (fun v -> v.File_item.id) file_list.File_list.items |> Marked_item_set.of_list
       in
       Marked_item_set.inter t.marked_items current_items
     else Marked_item_set.empty

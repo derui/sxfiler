@@ -10,7 +10,7 @@ type t = {
   stat : File_stat.t;
   link_path : Path.t option;
 }
-[@@deriving eq, show, fields]
+[@@deriving eq, show]
 (** [link_path] will have target of the link if item pointed to full_path is *link. *)
 
 let has_same_id v1 v2 = equal_id v1.id v2.id
