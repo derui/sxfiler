@@ -2,4 +2,4 @@
  (name sxfiler_domain)
  (public_name sxfiler.domain)
  (libraries sxfiler.kbd sxfiler.core lwt uuidm fmt)
- (preprocess (pps ppx_deriving.std ppx_fields_conv)))
+ (preprocess (pps ppx_deriving.std)))

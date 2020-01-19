@@ -23,7 +23,8 @@ let test_set =
         let%lwt file_list = I.Location_scanner_service.scan path in
         let module N = Sxfiler_domain.File_item in
         let nodes =
-          List.map N.full_path file_list.items |> List.map Path.to_string |> List.sort compare
+          List.map (fun v -> v.N.full_path) file_list.items
+          |> List.map Path.to_string |> List.sort compare
         in
         Alcotest.(check @@ list string)
           "nodes"

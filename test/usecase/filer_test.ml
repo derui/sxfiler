@@ -34,7 +34,8 @@ let test_set =
         end in
         let module Usecase = U.Filer.Enter_directory.Make (FR) (Svc) (Clock) in
         let%lwt result =
-          Usecase.execute { name = "foo"; item_id = List.hd file_list.items |> D.File_item.id }
+          Usecase.execute
+            { name = "foo"; item_id = (List.hd file_list.items |> fun v -> v.D.File_item.id) }
         in
         let%lwt data = Lwt.(FR.resolve_by_name "foo" >|= Option.get_exn) in
         Alcotest.(check @@ result (of_pp D.Filer.pp) (of_pp Fmt.nop)) "renew filer" (Ok data) result;
