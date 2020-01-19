@@ -29,39 +29,39 @@ module Make (S : Spec) : S = struct
       Log.debug (fun m ->
           m "Given parameters: %s"
             (Option.get ~default:(fun () -> `Null) req |> Yojson.Safe.to_string));%lwt
-      let%lwt result =
-        let execute_with_param decoder =
+      let handle param =
+        match%lwt S.Gateway.handle param with
+        | Error e -> Errors.of_gateway_error e |> Lwt.return_error
+        | Ok output ->
+            Log.info (fun m -> m "Finish procedure: {%s}" method_);%lwt
+            S.Gateway.output_to_json output |> Option.some |> Lwt.return_ok
+      in
+      let decode_params decoder =
+        let open Result.Infix in
+        let* param =
           match req with
           | None ->
               Logs.warn (fun m -> m "Required parameter not found");
-              raise Rpc.(Error.Jsonrpc_error (Error.make Jsonrpc.Types.Error_code.Invalid_params))
-          | Some params -> (
-              (* all messages are protobuf. Protobuf in OCaml is pure string, so get directly it *)
-              match decoder params with
-              | Error e ->
-                  Logs.warn (fun m ->
-                      m "Required parameter not found %s"
-                      @@ Protocol_conv_json.Json.error_to_string_hum e);
-                  raise
-                    Rpc.(Error.Jsonrpc_error (Error.make Jsonrpc.Types.Error_code.Invalid_params))
-              | Ok param -> S.Gateway.handle param )
+              Error Rpc.(Error.make Jsonrpc.Types.Error_code.Invalid_params)
+          | Some params -> Ok params
         in
-        match S.param_requirement with
-        | `Not_required param -> S.Gateway.handle param
-        | `Required -> execute_with_param S.Gateway.input_of_json
+        (* all messages are protobuf. Protobuf in OCaml is pure string, so get directly it *)
+        match decoder param with
+        | Error e ->
+            Logs.warn (fun m ->
+                m "Required parameter not found %s" @@ Protocol_conv_json.Json.error_to_string_hum e);
+
+            Error Rpc.(Error.make Jsonrpc.Types.Error_code.Invalid_params)
+        | Ok param -> Ok param
       in
-      match result with
-      | Error e -> Errors.of_gateway_error e
-      | Ok output ->
-          Log.info (fun m -> m "Finish procedure: {%s}" method_);%lwt
-          S.Gateway.output_to_json output |> Option.some |> Lwt.return_ok
-    with
-    | Rpc.Error.Jsonrpc_error e as exn ->
-        let%lwt () = Log.err (fun m -> m "Error occurred: %s" Rpc.Error.(to_string e)) in
-        raise exn
-    | _ as e ->
-        let exn = Stdlib.Printexc.to_string e in
-        let%lwt () = Log.err (fun m -> m "Not handled exception: %s" exn) in
-        raise
-          Rpc.(Error.Jsonrpc_error (Error.make (Jsonrpc.Types.Error_code.Server_error (-32000))))
+      match S.param_requirement with
+      | `Not_required param -> handle param
+      | `Required -> (
+          match decode_params S.Gateway.input_of_json with
+          | Error e -> Lwt.return_error e
+          | Ok param -> handle param )
+    with _ as e ->
+      let exn = Stdlib.Printexc.to_string e in
+      let%lwt () = Log.err (fun m -> m "Not handled exception: %s" exn) in
+      Lwt.return_error Rpc.(Error.make (Jsonrpc.Types.Error_code.Server_error (-32000)))
 end

@@ -48,10 +48,8 @@ module Register = struct
       let path = param.path in
       match%lwt Usecase.execute { path = Path.of_string path } with
       | Ok result ->
-          let res =
-            G.Bookmark.RegisterResponse.{ bookmark = T.Bookmark.of_domain result |> Option.some }
-          in
-          Lwt.return_ok res
+          G.Bookmark.RegisterResponse.{ bookmark = T.Bookmark.of_domain result |> Option.some }
+          |> Lwt.return_ok
       | Error `Conflict -> Gateway_error.(Bookmark_conflict) |> Lwt.return_error
   end
 end
@@ -79,16 +77,14 @@ module Delete = struct
         | None -> Error Gateway_error.(Unknown_error "invalid identity format")
         | Some id -> Ok id
       in
-      match id' with
-      | Error e -> Lwt.return_error e
-      | Ok id -> (
-          match%lwt Usecase.execute { id } with
-          | Ok result ->
-              let res =
-                G.Bookmark.DeleteResponse.
-                  { deletedBookmark = T.Bookmark.of_domain result |> Option.some }
-              in
-              Lwt.return_ok res
-          | Error `Not_found -> Gateway_error.(Bookmark_not_found) |> Lwt.return_error )
+      let run id =
+        match%lwt Usecase.execute { id } with
+        | Ok result ->
+            G.Bookmark.DeleteResponse.
+              { deletedBookmark = T.Bookmark.of_domain result |> Option.some }
+            |> Lwt.return_ok
+        | Error `Not_found -> Gateway_error.(Bookmark_not_found) |> Lwt.return_error
+      in
+      match id' with Error e -> Lwt.return_error e | Ok id -> run id
   end
 end

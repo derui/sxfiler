@@ -15,6 +15,8 @@ let get ~default = function None -> default () | Some v -> v
 (** [some v] construct [Some v] as functional way. *)
 let some v = Some v
 
+let to_list = function None -> [] | Some v -> [ v ]
+
 include Monad.Make (struct
   type 'a t = 'a option
 

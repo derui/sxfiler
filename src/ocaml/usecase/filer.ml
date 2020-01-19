@@ -208,16 +208,15 @@ module Toggle_mark = struct
     let execute (params : input) =
       let%lwt filer = SR.resolve_by_name params.name in
       let filer =
-        Option.(
-          filer
-          >>= lift @@ fun filer ->
-              let marked, not_marked =
-                List.partition
-                  (fun v -> T.Filer.Marked_item_set.mem v filer.T.Filer.marked_items)
-                  params.item_ids
-              in
-              let filer = T.Filer.remove_mark filer ~ids:marked in
-              T.Filer.add_mark filer ~ids:not_marked)
+        let open Option.Infix in
+        let+ filer = filer in
+        let marked, not_marked =
+          List.partition
+            (fun v -> T.Filer.Marked_item_set.mem v filer.T.Filer.marked_items)
+            params.item_ids
+        in
+        let filer = T.Filer.remove_mark filer ~ids:marked in
+        T.Filer.add_mark filer ~ids:not_marked
       in
       match filer with
       | None -> Lwt.return_error `Not_found
