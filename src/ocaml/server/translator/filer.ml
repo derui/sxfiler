@@ -14,12 +14,12 @@ let of_domain (t : D.t) =
   }
 
 let to_domain (t : G.Filer.Filer.t) =
-  let id = Uuidm.of_string t.id |> Option.get_exn in
+  let id = Uuidm.of_string t.id |> Option.get in
   let history =
-    Option.(t.history >|= Location_history.to_domain) |> Option.get ~default:(fun () -> L.make ())
+    Option.(t.history >|= Location_history.to_domain) |> Option.value ~default:(L.make ())
   in
   D.make ~id ~name:t.name
-    ~file_list:(Option.get_exn t.fileList |> File_list.to_domain)
+    ~file_list:(Option.get t.fileList |> File_list.to_domain)
     ~sort_order:(Types.Sort_type.to_domain t.sortOrder)
     ~marked_items:(D.Marked_item_set.of_list t.markedItems)
     ~history

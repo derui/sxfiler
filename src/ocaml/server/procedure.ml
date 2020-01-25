@@ -27,8 +27,7 @@ module Make (S : Spec) : S = struct
     try%lwt
       Log.info (fun m -> m "Start procedure: {%s}" method_);%lwt
       Log.debug (fun m ->
-          m "Given parameters: %s"
-            (Option.get ~default:(fun () -> `Null) req |> Yojson.Safe.to_string));%lwt
+          m "Given parameters: %s" (Option.value ~default:`Null req |> Yojson.Safe.to_string));%lwt
       let handle param =
         match%lwt S.Gateway.handle param with
         | Error e -> Errors.of_gateway_error e |> Lwt.return_error

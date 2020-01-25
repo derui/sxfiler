@@ -34,8 +34,8 @@ let equal p1 p2 =
 
 let resolve_sep env =
   let sep_of_env = function `Unix -> '/' | `Win -> '\\' in
-  let f v = Option.fmap v ~f:sep_of_env in
-  Option.get ~default:(fun () -> sep_of_env (if Sys.unix then `Unix else `Win)) @@ f env
+  let f v = Option.map sep_of_env v in
+  match f env with None -> sep_of_env (if Sys.unix then `Unix else `Win) | Some v -> v
 
 (** [split_path_sep ?env path] splits from first separator '/' on *nix, or "\\" on Windows.
 

@@ -17,7 +17,7 @@ let test_set =
         Lwt.return_unit);
     Alcotest_lwt.test_case "store key map" `Quick (fun _ () ->
         let keymap = D.Key_map.make () in
-        let key = Fun.(Sxfiler_kbd.of_keyseq %> Option.get_exn) "k" in
+        let key = Fun.(Sxfiler_kbd.of_keyseq %> Option.get) "k" in
         let keymap' = D.Key_map.add ~contexts:[ "contexts" ] ~key ~value:"foo" keymap in
         let module KR = (val Test_fixtures.Memory_repository.key_map_repository keymap) in
         let module Usecase = U.Keymap.Store.Make (KR) in

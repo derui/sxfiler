@@ -7,7 +7,7 @@ let test_set =
       `Quick,
       fun () ->
         let id = Uuidm.v4_gen (Random.get_state ()) () in
-        let copied_id1 = Uuidm.to_string id |> Uuidm.of_string |> Option.get_exn
-        and copied_id2 = Uuidm.to_string id |> Uuidm.of_string |> Option.get_exn in
+        let copied_id1 = Uuidm.to_string id |> Uuidm.of_string |> Option.get
+        and copied_id2 = Uuidm.to_string id |> Uuidm.of_string |> Option.get in
         Alcotest.(check bool) "subset" true B.(equal_id copied_id1 copied_id2) );
   ]

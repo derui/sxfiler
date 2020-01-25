@@ -12,15 +12,14 @@ let of_domain (t : D.t) =
     stat = File_stat.of_domain t.D.stat |> Option.some;
     parent = Path.dirname t.D.full_path;
     hasLinkPath = Option.is_some t.link_path;
-    linkPath =
-      Option.(t.link_path >|= fun v -> Path.to_string v) |> Option.get ~default:(fun () -> "");
+    linkPath = Option.(t.link_path >|= fun v -> Path.to_string v) |> Option.value ~default:"";
   }
 
 let to_domain (t : t) =
   {
     D.id = t.id;
     full_path = Path.of_string t.fullPath;
-    stat = Option.get_exn t.stat |> File_stat.to_domain;
+    stat = Option.get t.stat |> File_stat.to_domain;
     link_path =
       (match t.hasLinkPath with true -> Path.of_string t.linkPath |> Option.some | false -> None);
   }

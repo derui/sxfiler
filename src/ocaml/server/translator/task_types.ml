@@ -9,5 +9,5 @@ module Task_id = struct
 
   let to_domain id =
     let open Sxfiler_core in
-    Uuidm.of_string id |> Option.get_exn
+    Uuidm.of_string id |> Option.get
 end

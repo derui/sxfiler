@@ -1,6 +1,6 @@
 let mk_temp_dir ?mode ?dir pat =
-  let dir = Option.get ~default:Filename.get_temp_dir_name dir
-  and mode = Option.get ~default:Fun.(const 0o755) mode in
+  let dir = match dir with None -> Filename.get_temp_dir_name () | Some v -> v
+  and mode = match mode with None -> 0o755 | Some v -> v in
   let make_pattern () =
     let rand = Random.int 0x1000000 in
     Printf.sprintf "%s%06x" pat rand

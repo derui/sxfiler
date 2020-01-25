@@ -62,7 +62,7 @@ module Conv = struct
     let open Sxfiler_core in
     let level = Level.to_domain t.Json.level in
     let body = Body.to_domain t.body in
-    make ~id:(Uuidm.of_string t.id |> Option.get_exn) ~body ~level
+    make ~id:(Uuidm.of_string t.id |> Option.get) ~body ~level
 end
 
 let notification_typ : t Notification_service.typ =

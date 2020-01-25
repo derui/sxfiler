@@ -37,7 +37,7 @@ let test_set =
           Usecase.execute
             { name = "foo"; item_id = (List.hd file_list.items |> fun v -> v.D.File_item.id) }
         in
-        let%lwt data = Lwt.(FR.resolve_by_name "foo" >|= Option.get_exn) in
+        let%lwt data = Lwt.(FR.resolve_by_name "foo" >|= Option.get) in
         Alcotest.(check @@ result (of_pp D.Filer.pp) (of_pp Fmt.nop)) "renew filer" (Ok data) result;
         Lwt.return_unit);
     Alcotest_lwt.test_case "renewal filer with new location" `Quick (fun _ () ->
@@ -59,7 +59,7 @@ let test_set =
         end in
         let module Usecase = U.Filer.Jump_location.Make (FR) (Svc) (Clock) in
         let%lwt result = Usecase.execute { name = "foo"; location = Path.of_string "/foo" } in
-        let%lwt data = Lwt.(FR.resolve_by_name "foo" >|= Option.get_exn) in
+        let%lwt data = Lwt.(FR.resolve_by_name "foo" >|= Option.get) in
         Alcotest.(check @@ result (of_pp D.Filer.pp) (of_pp Fmt.nop)) "renew filer" (Ok data) result;
         Lwt.return_unit);
     Alcotest_lwt.test_case "error when filer not found" `Quick (fun _ () ->

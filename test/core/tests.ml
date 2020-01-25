@@ -2,31 +2,6 @@ open Sxfiler_core
 
 let option_tests =
   [
-    ( "detect none",
-      `Quick,
-      fun () ->
-        Alcotest.(check bool) "none is true" true (Option.is_none None);
-        Alcotest.(check bool) "some is false" false (Option.is_none (Some 2)) );
-    ( "detect some",
-      `Quick,
-      fun () ->
-        Alcotest.(check bool) "none is true" true (Option.is_some (Some 1));
-        Alcotest.(check bool) "none is false" false (Option.is_some None) );
-    ( "get value from option with some",
-      `Quick,
-      fun () -> Alcotest.(check int) "some" 1 (Option.get_exn (Some 1)) );
-    ( "raise exception when None",
-      `Quick,
-      fun () -> Alcotest.check_raises "none" Option.Not_some (fun () -> Option.get_exn None) );
-    ( "get value from option with some",
-      `Quick,
-      fun () -> Alcotest.(check int) "some" 1 @@ Option.get ~default:(fun () -> 100) (Some 1) );
-    ( "get default value",
-      `Quick,
-      fun () -> Alcotest.(check int) "none" 100 @@ Option.get ~default:(fun () -> 100) None );
-    ( "get Some with some",
-      `Quick,
-      fun () -> Alcotest.(check @@ option int) "option" (Some 10) @@ Option.some 10 );
     ( "allow to use option as monad",
       `Quick,
       fun () ->
@@ -53,11 +28,6 @@ let option_tests =
         let open Option.Infix in
         Alcotest.(check @@ option string) "option" (Some "bar" >|= fun v -> v ^ "foo")
         @@ Option.some "barfoo" );
-    ( "convert to list",
-      `Quick,
-      fun () ->
-        Alcotest.(check @@ list int) "option" (Option.to_list (Some 10)) [ 10 ];
-        Alcotest.(check @@ list int) "option" (Option.to_list None) [] );
   ]
 
 let result_tests =
@@ -88,11 +58,6 @@ let result_tests =
         let open Result.Infix in
         Alcotest.(check @@ result string string) "result" (Ok "bar" >|= fun v -> v ^ "foo")
         @@ Ok "barfoo" );
-    ( "allow to convert result to option",
-      `Quick,
-      fun () ->
-        Alcotest.(check @@ option string) "result" (Result.to_option (Ok "bar")) (Some "bar");
-        Alcotest.(check @@ option string) "result" (Result.to_option (Error "bar")) None );
   ]
 
 let path_tests =

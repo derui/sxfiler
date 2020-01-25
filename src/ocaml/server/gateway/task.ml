@@ -21,7 +21,7 @@ module Reply_to_overwrite = struct
     let handle (param : Gen.TaskReplyToOverwriteRequest.t) =
       let reply =
         {
-          D.Task_interaction.Reply.task_id = Uuidm.of_string param.taskId |> Option.get_exn;
+          D.Task_interaction.Reply.task_id = Uuidm.of_string param.taskId |> Option.get;
           reply = D.Task_interaction.Reply.Overwrite param.overwrite;
         }
       in
@@ -48,7 +48,7 @@ module Reply_to_rename = struct
     let handle (param : Gen.TaskReplyToRenameRequest.t) =
       let reply =
         {
-          D.Task_interaction.Reply.task_id = Uuidm.of_string param.taskId |> Option.get_exn;
+          D.Task_interaction.Reply.task_id = Uuidm.of_string param.taskId |> Option.get;
           reply = D.Task_interaction.Reply.Rename param.newName;
         }
       in

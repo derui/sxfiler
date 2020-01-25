@@ -40,9 +40,9 @@ module Domain = struct
 
   let mode_to_domain (t : mode) =
     {
-      D.owner = Option.get_exn t.owner |> capability_to_domain;
-      group = Option.get_exn t.group |> capability_to_domain;
-      others = Option.get_exn t.others |> capability_to_domain;
+      D.owner = Option.get t.owner |> capability_to_domain;
+      group = Option.get t.group |> capability_to_domain;
+      others = Option.get t.others |> capability_to_domain;
     }
 
   let of_domain (t : D.t) =
@@ -61,7 +61,7 @@ module Domain = struct
 
   let to_domain (t : t) =
     {
-      D.mode = Option.get_exn t.mode |> mode_to_domain;
+      D.mode = Option.get t.mode |> mode_to_domain;
       uid = t.uid;
       gid = t.gid;
       atime = Int64.of_string t.atime;

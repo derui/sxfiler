@@ -7,9 +7,9 @@ let key_map =
   let module K = Sxfiler_kbd in
   let bindings =
     [
-      ([], K.of_keyseq "k" |> Option.get_exn, "action1");
-      ([ "foo" ], K.of_keyseq "j" |> Option.get_exn, "action2");
-      ([ "bar" ], K.of_keyseq "h" |> Option.get_exn, "action3");
+      ([], K.of_keyseq "k" |> Option.get, "action1");
+      ([ "foo" ], K.of_keyseq "j" |> Option.get, "action2");
+      ([ "bar" ], K.of_keyseq "h" |> Option.get, "action3");
     ]
   in
   let key_map = D.Key_map.make () in

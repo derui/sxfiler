@@ -33,7 +33,7 @@ module Suggestion = struct
     in
     let open Sxfiler_core in
     {
-      D.Suggestion.task_id = Uuidm.of_string taskId |> Option.get_exn;
+      D.Suggestion.task_id = Uuidm.of_string taskId |> Option.get;
       item_name = itemName;
       suggestions;
     }

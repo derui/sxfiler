@@ -22,7 +22,7 @@ let test_set =
         let module R = I.Bookmark_repo.Make (State) in
         let%lwt () = R.store obj in
         let%lwt obj' = R.resolve obj.id in
-        Alcotest.(check bool) "stored" true D.Bookmark.(equal obj Option.(get_exn obj'));
+        Alcotest.(check bool) "stored" true D.Bookmark.(equal obj Option.(get obj'));
         Lwt.return_unit);
     Alcotest_lwt.test_case "should store some bookmarks" `Quick (fun _ () ->
         let module State = S.Statable.Make (struct

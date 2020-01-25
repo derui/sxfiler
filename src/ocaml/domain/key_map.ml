@@ -38,7 +38,7 @@ let update t ~contexts ~key ~value =
   Binding_map.update key
     (fun v ->
       let map_value = { Value.value; contexts } in
-      let values = Option.get ~default:(fun () -> []) v |> List.filter (fun v -> v <> map_value) in
+      let values = Option.value ~default:[] v |> List.filter (fun v -> v <> map_value) in
       Some (map_value :: values))
     t
 
@@ -52,7 +52,7 @@ let remove t ~contexts ~key =
     Binding_map.update key
       (fun v ->
         let v =
-          Option.get ~default:(fun () -> []) v
+          Option.value ~default:[] v
           |> List.filter (fun v -> not @@ Contexts.equal v.Value.contexts contexts)
         in
         Some v)
@@ -66,5 +66,5 @@ let bindings t =
          let open Option in
          Sxfiler_kbd.of_keyseq key >|= fun kbd ->
          List.map (fun value -> (value.Value.contexts, kbd, value.value)) values)
-  |> List.map (Option.get ~default:(fun () -> []))
+  |> List.map (Option.value ~default:[])
   |> List.flatten

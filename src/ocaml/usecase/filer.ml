@@ -291,7 +291,7 @@ module Move = struct
       let items =
         P.source_items
         |> List.map (fun id -> T.Filer.find_item source_filer ~id)
-        |> List.filter Option.is_some |> List.map Option.get_exn
+        |> List.filter Option.is_some |> List.map Option.get
       in
       let%lwt () = Dep.Transport.transport ~items ~suggest ~_to:dest_filer.file_list in
       let%lwt from_tree = Scan.scan source_filer.file_list.location
@@ -373,7 +373,7 @@ module Delete = struct
       let items =
         P.target_items
         |> List.map (fun v -> T.Filer.(find_item P.filer ~id:v))
-        |> List.filter Option.is_some |> List.map Option.get_exn
+        |> List.filter Option.is_some |> List.map Option.get
       in
       let%lwt () = Trash.trash items in
       let%lwt file_list = Scan.scan file_list.T.File_list.location in
@@ -461,7 +461,7 @@ module Copy = struct
       let items =
         P.source_items
         |> List.map (fun id -> T.Filer.find_item source_filer ~id)
-        |> List.filter Option.is_some |> List.map Option.get_exn
+        |> List.filter Option.is_some |> List.map Option.get
       in
       let%lwt () = Dep.Replicate.replicate ~items ~suggest ~_to:dest_filer.file_list in
       let%lwt from_list = Scan.scan source_filer.file_list.location
