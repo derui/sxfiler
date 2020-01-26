@@ -1,3 +1,4 @@
 (env
  (release
   (flags (:standard -ccopt -static))))
+(data_only_dirs node_modules)

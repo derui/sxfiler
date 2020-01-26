@@ -307,6 +307,41 @@ let error_tests =
             raise @@ Error.to_exn error) );
   ]
 
+let time_tests =
+  [
+    ( "get time of epoch",
+      `Quick,
+      fun () ->
+        let time = Time.of_float 0. |> Option.fmap ~f:Time.to_int64 in
+        Alcotest.(check @@ option int64) "time" (Some 0L) time );
+    ( "get time of epoch",
+      `Quick,
+      fun () ->
+        let time = Time.of_float 1.05 |> Option.fmap ~f:Time.to_int64 in
+        Alcotest.(check @@ option int64) "time" (Some 1_050_000L) time );
+    ( "get seconds in float of epoch",
+      `Quick,
+      fun () ->
+        let v = 1.123456 in
+        let time = Time.of_float v |> Option.fmap ~f:Time.to_float in
+        Alcotest.(check @@ option @@ float 0.0000001) "time" (Some v) time );
+    ( "get rfc3399 of epoch",
+      `Quick,
+      fun () ->
+        let time = Time.of_float 0. |> Option.fmap ~f:Time.to_rfc3399 in
+        Alcotest.(check @@ option string) "time" (Some "1970-01-01T00:00:00.000000-00:00") time );
+    ( "get valid date for leap year by epoch time",
+      `Quick,
+      fun () ->
+        let time = Time.of_float 1580002902.025 |> Option.fmap ~f:Time.to_rfc3399 in
+        Alcotest.(check @@ option string) "time" (Some "2020-01-26T01:41:42.025000-00:00") time );
+    ( "print maximum time to be able to handle this module",
+      `Quick,
+      fun () ->
+        Alcotest.(check string)
+          "maximum" "9999-12-31T23:59:59.999999-00:00" (Time.to_rfc3399 Time.max) );
+  ]
+
 let testcases =
   [
     ("Option", option_tests);
@@ -314,6 +349,7 @@ let testcases =
     ("Path", path_tests);
     ("Result", result_tests);
     ("Error", error_tests);
+    ("Time", time_tests);
   ]
 
 let () = Alcotest.run "Core functionally" testcases
