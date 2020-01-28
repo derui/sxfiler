@@ -1,14 +1,20 @@
 import { withInfo } from "@storybook/addon-info";
 import { number, withKnobs, boolean } from "@storybook/addon-knobs";
-import { storiesOf } from "@storybook/react";
-import * as React from "react";
-import { Theme, ThemeProvider } from "@/components/theme";
-
-import { Component as Completer } from "@/components/project/completer/completer";
-import { createCandidate } from "@/domains/candidate";
+import { storiesOf } from "@storybook/preact";
+import { h } from "preact";
+import { Component as Completer } from "@/components/project/completer";
 
 const style = {
   height: "100px",
+};
+
+const createCandidate = (obj: { id: string; value: string; start: number; length: number }) => {
+  return {
+    id: obj.id,
+    before: "",
+    after: "",
+    matched: "",
+  };
 };
 
 storiesOf("Project/Completer", module)
@@ -21,19 +27,16 @@ storiesOf("Project/Completer", module)
         return <span />;
       }
       return (
-        <ThemeProvider theme={Theme}>
-          <div style={style}>
-            <Completer
-              dialogRoot={root}
-              opened={boolean("opened", false)}
-              title={"completion"}
-              items={[]}
-              selectedItemIndex={number("selected item", 0)}
-              onInput={() => {}}
-              overlay={{}}
-            />
-          </div>
-        </ThemeProvider>
+        <div class="theme__default" style={style}>
+          <Completer
+            dialogRoot={root}
+            opened={boolean("opened", false)}
+            title={"completion"}
+            items={[]}
+            selectedItemIndex={number("selected item", 0)}
+            onInput={() => {}}
+          />
+        </div>
       );
     },
     { decorators: [withInfo, withKnobs] }
@@ -52,19 +55,16 @@ storiesOf("Project/Completer", module)
       ];
 
       return (
-        <ThemeProvider theme={Theme}>
-          <div style={style}>
-            <Completer
-              dialogRoot={root}
-              opened={true}
-              title={"completion"}
-              items={items}
-              selectedItemIndex={number("item", 0)}
-              onInput={() => {}}
-              overlay={{}}
-            />
-          </div>
-        </ThemeProvider>
+        <div class="theme__default" style={style}>
+          <Completer
+            dialogRoot={root}
+            opened={true}
+            title={"completion"}
+            items={items}
+            selectedItemIndex={number("item", 0)}
+            onInput={() => {}}
+          />
+        </div>
       );
     },
     { decorators: [withInfo, withKnobs] }

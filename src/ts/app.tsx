@@ -1,14 +1,19 @@
-import * as React from "react";
-import { Theme, ThemeProvider } from "@/components/theme";
+import { h } from "preact";
 import * as MainContainer from "./components/container/main-container";
-import { AppState } from "./states";
+import { State } from "@/modules";
+import { ThemeContext } from "./theme";
+import { getCurrentTheme } from "./modules/configuration/selectors";
 
 export type Props = {
-  state: AppState;
+  state: State;
 };
 
-export const Component: React.FC<Props> = ({ state }) => (
-  <ThemeProvider theme={Theme}>
-    <MainContainer.Component state={state} />
-  </ThemeProvider>
-);
+export const Component: preact.FunctionComponent<Props> = ({ state }) => {
+  const theme = getCurrentTheme(state.configuration);
+
+  return (
+    <ThemeContext.Provider value={theme}>
+      <MainContainer.Component state={state} />
+    </ThemeContext.Provider>
+  );
+};

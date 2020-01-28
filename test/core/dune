@@ -1,4 +1,4 @@
 
 (test
  (name tests)
- (libraries alcotest alcotest-lwt sxfiler.core))
+ (libraries alcotest sxfiler.core))

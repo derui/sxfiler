@@ -1,5 +1,4 @@
-(** This module provides simple functions for more functional style and to fill the gap of OCaml's
-    stdlib. *)
+(** This module provides simple functions for more functional style and to fill the gap of OCaml's stdlib. *)
 
 let ident : 'a -> 'a = fun v -> v
 
@@ -12,7 +11,17 @@ let bracket ~setup ~teardown f =
   teardown data
 
 let flip f x y = f y x
+
 let const x _ = x
-let ( %> ) f g x = g (f x)
-let ( %< ) f g x = f (g x)
-let ( & ) f v = f v
+
+let pipe f g x = g (f x)
+
+let compose f g x = f (g x)
+
+module Infix = struct
+  let ( %> ) = pipe
+
+  let ( % ) = compose
+
+  let ( & ) = ( @@ )
+end

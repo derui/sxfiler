@@ -1,9 +1,0 @@
-(library
- (name sxfiler_server_core)
- (public_name sxfiler.server.core)
- (libraries sxfiler.domain
-            lwt logs.fmt logs.lwt lwt.unix
-            websocket websocket-lwt-unix.cohttp
-            jsonrpc-ocaml.yojson)
-            (preprocess (pps lwt_ppx))
- )

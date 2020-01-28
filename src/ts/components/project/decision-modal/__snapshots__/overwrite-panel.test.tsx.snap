@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Project Overwrite decision change style when selected 1`] = `"<div class=\\"decision-modal__panel\\" data-testid=\\"decisionModal-overwritePanel\\" aria-selected><p class=\\"decision-modal__label\\" data-testid=\\"decisionModal-overwriteLabel\\">Overwrite</p></div>"`;
+
+exports[`Project Overwrite decision render with overwrite decision 1`] = `"<div class=\\"decision-modal__panel\\" data-testid=\\"decisionModal-overwritePanel\\"><p class=\\"decision-modal__label\\" data-testid=\\"decisionModal-overwriteLabel\\">Overwrite</p></div>"`;

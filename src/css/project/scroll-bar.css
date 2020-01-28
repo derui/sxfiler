@@ -1,0 +1,17 @@
+.scroll-bar__root {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  width: var(--space-small);
+  height: 100%;
+  background-color: transparent;
+  padding: var(--space-base);
+}
+
+.scroll-bar__bar {
+  position: relative;
+  display: inline-block;
+  border-radius: var(--space-small);
+  background-color: rgb(var(--color-base01));
+}

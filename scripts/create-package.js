@@ -64,7 +64,7 @@ async function bundleElectronApp(options, platform) {
 
 const platforms = getPlatforms();
 
-platforms.map(platform => {
+platforms.map((platform) => {
   rimraf.sync(path.join(paths.appBuild, 'sxfiler_server*'));
   switch (platform) {
     case 'linux':
@@ -73,7 +73,7 @@ platforms.map(platform => {
         path.join(paths.appBuild, 'sxfiler_server.exe'),
         {
           dereference: true,
-          filter: file => file !== paths.appHtml,
+          filter: (file) => file !== paths.appHtml,
         }
       );
       break;
@@ -83,7 +83,7 @@ platforms.map(platform => {
         path.join(paths.appBuild, 'sxfiler_server.exe'),
         {
           dereference: true,
-          filter: file => file !== paths.appHtml,
+          filter: (file) => file !== paths.appHtml,
         }
       );
       break;

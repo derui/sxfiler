@@ -1,0 +1,8 @@
+(test
+ (name tests)
+ (libraries alcotest alcotest-lwt
+             sxfiler.translator
+             sxfiler.domain
+             sxfiler.core
+             test_fixtures)
+ (preprocess (pps lwt_ppx)))

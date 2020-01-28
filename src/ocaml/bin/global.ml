@@ -1,11 +1,10 @@
 module D = Sxfiler_domain
-module C = Sxfiler_server_core
-module T = Sxfiler_server_task
+module I = Sxfiler_infrastructure
 
-module Root = C.Statable.Make (struct
-  type t = C.Root_state.t
+module Filer = I.Statable.Make (struct
+  type t = D.Filer.t option
 
-  let empty () = C.Root_state.empty
+  let empty () = None
 end)
 
 module Completer = struct
@@ -20,51 +19,32 @@ module Completer = struct
 end
 
 (* Cached source to complete in next operation. *)
-module Cached_source = C.Statable.Make (struct
-  type t = Sxfiler_domain.Completion.collection
+module Cached_collection = I.Statable.Make (struct
+  type t = D.Completer.collection
 
   let empty () = []
 end)
 
-module Task_runner (G : D.Id_generator_intf.Gen_random with type id = Uuidm.t) : sig
-  val get : unit -> (module T.Runner.Instance)
-end = struct
-  let t = ref None
+module Keymap = I.Statable.Make (struct
+  type t = D.Keymap.t
 
-  let get () =
-    match !t with
-    | None ->
-        let v = T.Runner.make (module G) in
-        t := Some v;
-        v
-    | Some t -> t
-end
-
-module Keymap = C.Statable.Make (struct
-  type t = D.Key_map.t
-
-  let empty () = D.Key_map.make ()
+  let empty () = D.Keymap.empty
 end)
 
-module Bookmark = C.Statable.Make (struct
-  type t = D.Bookmark.t list
+module Bookmarks = I.Statable.Make (struct
+  type t = D.Bookmarks.t
 
-  let empty () = []
+  let empty () = D.Bookmarks.empty
 end)
 
-module Configuration = C.Statable.Make (struct
-  type t = Sxfiler_domain.Configuration.t
+module Configuration = I.Statable.Make (struct
+  type t = D.Configuration.t
 
-  let empty () = Sxfiler_domain.Configuration.default
+  let empty () = D.Configuration.default
 end)
 
-module Condition = C.Statable.Make (struct
-  type t = Sxfiler_domain.Condition.t
+module Context = I.Statable.Make (struct
+  type t = D.Context.t
 
-  let empty () = Sxfiler_domain.Condition.empty
+  let empty () = D.Context.empty
 end)
-
-(* Clock module to get current unix time *)
-module Clock : D.Location_record.Clock = struct
-  let unixtime () = Int64.of_float @@ Unix.gettimeofday ()
-end

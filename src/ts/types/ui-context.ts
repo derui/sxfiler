@@ -6,3 +6,16 @@ export enum UIContext {
   ForHistory = "forHistory",
   ForFinder = "forFinder",
 }
+
+/**
+ * convert string to UIContext.
+ */
+export const toUIContext = function toUIContext(value: string): UIContext | undefined {
+  for (let v of Object.entries(UIContext)) {
+    if (v[1] === value) {
+      return v[1];
+    }
+  }
+
+  return undefined;
+};

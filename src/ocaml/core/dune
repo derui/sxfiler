@@ -1,3 +1,9 @@
 (library
  (name sxfiler_core)
  (public_name sxfiler.core))
+
+(menhir
+ (modules time_parser))
+
+(ocamllex
+ (modules time_lexer))

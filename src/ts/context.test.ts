@@ -1,17 +1,16 @@
-import { Actions } from "./actions";
 import { createContext } from "./context";
-import { UseCaseLike } from "./usecases/type";
+import { CommandLike, CommandState } from "@/commands/type";
 
 describe("Context", () => {
   let client = {
-    call: jest.fn(),
-    notify: jest.fn(),
+    use: jest.fn(),
   };
   let dispatcher = {
     dispatch: jest.fn(),
   };
-  let useCase: UseCaseLike<Actions, { foo: string }> = {
+  let useCase: CommandLike<{ foo: string }> = {
     execute: jest.fn(),
+    identifier: "test",
   };
 
   afterEach(() => {
@@ -20,13 +19,13 @@ describe("Context", () => {
 
   it("make executor for us case execution", () => {
     const context = createContext({
-      client,
       dispatcher,
     });
     const arg = { foo: "bar" };
+    const state = {} as CommandState;
 
-    context.use(useCase)(arg);
+    context.use(useCase)(state, arg);
 
-    expect(useCase.execute).toBeCalledWith(dispatcher, arg);
+    expect(useCase.execute).toBeCalledWith(dispatcher, state, arg);
   });
 });

@@ -1,0 +1,40 @@
+.log-viewer__root {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  background-color: rgb(var(--color-base03));
+  color: rgb(var(--color-base2));
+  height: 100%;
+  font-size: 1rem;
+  overflow-x: auto;
+  overflow-y: scroll;
+  font-family: monospace;
+}
+
+.log-viewer__log-item {
+  display: flex;
+  flex-direction: row;
+  padding: var(--space-nano) 0;
+}
+
+.log-viewer__item-level {
+  flex: 0 0 4rem;
+  white-space: pre;
+  margin-right: 1rem;
+
+  &[data-level="info"] {
+    color: rgb(var(--color-blue));
+  }
+
+  &[data-level="warning"] {
+    color: rgb(var(--color-orange));
+  }
+
+  &[data-level="error"] {
+    color: rgb(var(--color-red));
+  }
+}
+
+.log-viewer__item-message {
+  flex: 0 0 auto;
+}

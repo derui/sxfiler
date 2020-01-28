@@ -1,9 +1,14 @@
 let () =
-  Alcotest.run "Domains"
-    [
-      ("condition", Condition_test.test_set);
-      ("filer", Filer_test.test_set);
-      ("key map", Key_map_test.test_set);
-      ("task", Task_test.test_set);
-      ("bookmark", Bookmark_test.test_set);
-    ]
+  Lwt_main.run
+  @@ Alcotest_lwt.run "Domains"
+       [
+         ("Common", Common_test.test_set);
+         ("Context", Context_test.test_set);
+         ("File stat", File_stat_test.test_set);
+         ("File item", File_item_test.test_set);
+         ("File list", File_list_test.test_set);
+         ("File window", File_window_test.test_set);
+         ("Bookmarks", Bookmarks_test.test_set);
+         ("Keymap", Keymap_test.test_set);
+         ("Filer", Filer_test.test_set);
+       ]

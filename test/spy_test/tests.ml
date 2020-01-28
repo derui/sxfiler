@@ -27,9 +27,7 @@ let single_arg_test_set =
         wrapped [ "foo"; "bar" ];
         wrapped [ "one"; "two" ];
         Alcotest.(check @@ list @@ list string)
-          "curried"
-          [ [ "foo"; "bar" ]; [ "one"; "two" ] ]
-          (Spy.Wrap.called_args t) );
+          "curried" [ [ "foo"; "bar" ]; [ "one"; "two" ] ] (Spy.Wrap.called_args t) );
   ]
 
 let multiple_arg_test_set =
@@ -43,6 +41,4 @@ let multiple_arg_test_set =
         Alcotest.(check @@ list @@ pair int int) "called" [ (1, 2) ] (Spy.Wrap2.called_args t) );
   ]
 
-let () =
-  Alcotest.run "spy"
-    [ ("single argument", single_arg_test_set); ("multiple arguments", multiple_arg_test_set) ]
+let () = Alcotest.run "spy" [ ("single argument", single_arg_test_set); ("multiple arguments", multiple_arg_test_set) ]

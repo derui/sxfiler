@@ -1,9 +1,11 @@
-import * as React from "react";
-import { styled } from "@/components/theme";
-import { Capability } from "@/domains/capability";
-import { Mode } from "@/domains/mode";
+import { h } from "preact";
+import { Capability, Mode } from "@/generated/filer_pb";
 
-const capabilityToString = function capabilityToString(cap: Capability) {
+const capabilityToString = function capabilityToString(cap: Capability.AsObject | undefined) {
+  if (!cap) {
+    return "---";
+  }
+
   const readable = cap.readable ? "r" : "-";
   const writable = cap.writable ? "w" : "-";
   const executable = cap.executable ? "x" : "-";
@@ -14,7 +16,7 @@ const capabilityToString = function capabilityToString(cap: Capability) {
 /**
  * convert mode to string
  */
-const modeToString = function modeToString(mode: Mode, isDirectory: boolean, isSymlink: boolean): string {
+const modeToString = function modeToString(mode: Mode.AsObject, isDirectory: boolean, isSymlink: boolean): string {
   let state = "-";
 
   if (isDirectory && !isSymlink) {
@@ -31,20 +33,21 @@ const modeToString = function modeToString(mode: Mode, isDirectory: boolean, isS
 };
 
 interface Prop {
-  mode: Mode;
+  mode?: Mode.AsObject;
   isDirectory: boolean;
   isSymlink: boolean;
 }
 
-const Mode = styled.span`
-  flex: 0 1 auto;
-  padding: 0 ${props => props.theme.spaces.small};
+export const Component: preact.FunctionComponent<Prop> = ({ mode, isDirectory, isSymlink }) => {
+  if (!mode) {
+    return null;
+  }
 
-  white-space: nowrap;
-`;
+  const data = modeToString(mode, isDirectory, isSymlink);
 
-export const Component: React.FC<Prop> = prop => {
-  const data = modeToString(prop.mode, prop.isDirectory, prop.isSymlink);
-
-  return <Mode>{data}</Mode>;
+  return (
+    <span class="file-item__item-mode" data-testid="fileItem-modeSlot">
+      {data}
+    </span>
+  );
 };

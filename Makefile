@@ -13,17 +13,19 @@ coverage : clean
 	  _build/default/test/bisect*.out _build/default/test/*/bisect*.out
 	@echo See $(COVERAGE)/index.html
 
-OCAML_OUT_DIR=src/ocaml/server/generated
+OCAML_OUT_DIR=src/ocaml/generated
 # Directory to write generated code to (.js and .d.ts files)
 TS_OUT_DIR=./src/ts/generated
+# Path to this plugin
+PROTOC_GEN_TS_PATH="./node_modules/.bin/protoc-gen-ts"
 
 PROTO_FILE_DEPS += bookmark
-PROTO_FILE_DEPS += completion
+PROTO_FILE_DEPS += completer
 PROTO_FILE_DEPS += configuration
 PROTO_FILE_DEPS += filer
 PROTO_FILE_DEPS += keymap
-PROTO_FILE_DEPS += task
 PROTO_FILE_DEPS += types
+PROTO_FILE_DEPS += service
 
 define generate_for_ocaml
 	protoc -I src/protobuf --ocaml_out=$(OCAML_OUT_DIR) \
@@ -33,22 +35,17 @@ define generate_for_ocaml
 endef
 
 define generate_for_typescript
-	npx pbjs \
-		-p src/protobuf \
-		-t static-module \
-		--keep-case \
-		-o ${TS_OUT_DIR}/$1_pb.js \
+	 protoc -I src/protobuf \
+		--plugin="protoc-gen-ts=${PROTOC_GEN_TS_PATH}" \
+		--js_out="import_style=commonjs,binary:${TS_OUT_DIR}" \
+		--ts_out="${TS_OUT_DIR}" \
 		src/protobuf/$1.proto
-
-	npx pbts \
-		-o ${TS_OUT_DIR}/$1_pb.d.ts \
-		${TS_OUT_DIR}/$1_pb.js
 
 endef
 
 .PHONY: generate
 generate:
-	rm -f $(OCAML_OUT_DIR)/*.ml
+	$(foreach f,$(PROTO_FILE_DEPS), $(rm $(OCAML_OUT_DIR)/$f.ml))
 	mkdir -p $(OCAML_OUT_DIR)
 	$(foreach f,$(PROTO_FILE_DEPS),$(call generate_for_ocaml,$f))
 

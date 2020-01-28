@@ -1,6 +1,6 @@
-import * as React from "react";
-import { mount } from "enzyme";
-import renderer from "react-test-renderer";
+import { h } from "preact";
+import { render as mount } from "@testing-library/preact";
+import { render } from "preact-render-to-string";
 
 import { AutoSizer } from "./index";
 
@@ -9,24 +9,22 @@ describe("Auto Sizer", () => {
     const wrapper = mount(
       <AutoSizer>
         {() => {
-          return <span>foo</span>;
+          return <span data-testid="test">foo</span>;
         }}
       </AutoSizer>
     );
 
-    expect(wrapper.find("span").length).toEqual(0);
+    expect(wrapper.queryByTestId("test")).toBeNull();
   });
 
   it("can set container element", () => {
-    const tree = renderer
-      .create(
-        <AutoSizer container="section">
-          {() => {
-            return <span>foo</span>;
-          }}
-        </AutoSizer>
-      )
-      .toJSON();
+    const tree = render(
+      <AutoSizer container="section">
+        {() => {
+          return <span>foo</span>;
+        }}
+      </AutoSizer>
+    );
 
     expect(tree).toMatchSnapshot();
   });

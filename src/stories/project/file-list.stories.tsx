@@ -1,39 +1,32 @@
 import { withInfo } from "@storybook/addon-info";
 import { boolean, number, withKnobs } from "@storybook/addon-knobs";
-import { storiesOf } from "@storybook/react";
-import * as React from "react";
-import { Theme, ThemeProvider } from "@/components/theme";
+import { storiesOf } from "@storybook/preact";
+import { h } from "preact";
 
-import { createFileItem } from "@/domains/file-item";
-
-import { Component as FileListComponent } from "@/components/project/file-list/file-list";
-import { createFileStat } from "@/domains/file-stat";
-import { createMode } from "@/domains/mode";
-import { fullCapability, emptyCapability, disallowToExecute, allowToRead } from "@/domains/capability";
+import { Component as FileListComponent } from "@/components/project/file-list";
+import { also } from "@/libs/fn";
+import { FileItem, FileStat, Mode } from "@/generated/filer_pb";
 
 function makeFileItem(name: string, marked: boolean, isDirectory = false, isSymlink = false) {
-  return createFileItem({
-    id: "fileItem",
-    name,
-    marked: marked,
-    stat: createFileStat({
-      mode: createMode({
-        owner: disallowToExecute(fullCapability()),
-        group: disallowToExecute(fullCapability()),
-        others: allowToRead(emptyCapability()),
-      }),
-
-      uid: 1000,
-      gid: 1000,
-      atime: "0",
-      ctime: "0",
-      mtime: "0",
-      size: "10",
-      isDirectory,
-      isFile: !isDirectory && !isSymlink,
-      isSymlink,
-    }),
-    parentDirectory: "/",
+  return also(new FileItem(), v => {
+    v.setId(name);
+    v.setName(name);
+    v.setMarked(marked);
+    v.setStat(
+      also(new FileStat(), v => {
+        v.setMode(new Mode());
+        v.setUid(1000);
+        v.setGid(1000);
+        v.setAtime("0");
+        v.setCtime("0");
+        v.setMtime("0");
+        v.setSize("10");
+        v.setIsDirectory(isDirectory);
+        v.setIsFile(!isDirectory && !isSymlink);
+        v.setIsSymlink(isSymlink);
+      })
+    );
+    v.setParent("/");
   });
 }
 
@@ -47,16 +40,15 @@ storiesOf("Project/File List", module)
     "empty list",
     () => {
       return (
-        <ThemeProvider theme={Theme}>
-          <div style={style}>
-            <FileListComponent
-              items={[]}
-              location="loc"
-              cursor={number("cursor", 0)}
-              focused={boolean("focused", false)}
-            />
-          </div>
-        </ThemeProvider>
+        <div class="theme__default" style={style}>
+          <FileListComponent
+            items={[]}
+            location="loc"
+            bookmarks={[]}
+            cursor={number("cursor", 0)}
+            focused={boolean("focused", false)}
+          />
+        </div>
       );
     },
     { decorators: [withInfo, withKnobs] }
@@ -68,18 +60,17 @@ storiesOf("Project/File List", module)
         makeFileItem("file.txt", true),
         makeFileItem("dir", false, true),
         makeFileItem("link.txt", false, false, false),
-      ];
+      ].map(v => v.toObject());
       return (
-        <ThemeProvider theme={Theme}>
-          <div style={style}>
-            <FileListComponent
-              items={fileItems}
-              location="loc"
-              cursor={number("cursor", 0)}
-              focused={boolean("focused", false)}
-            />
-          </div>
-        </ThemeProvider>
+        <div class="theme__default" style={style}>
+          <FileListComponent
+            items={fileItems}
+            bookmarks={[]}
+            location="loc"
+            cursor={number("cursor", 0)}
+            focused={boolean("focused", false)}
+          />
+        </div>
       );
     },
     { decorators: [withInfo, withKnobs] }

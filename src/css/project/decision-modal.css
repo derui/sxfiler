@@ -1,0 +1,49 @@
+.decision-modal__inner-container {
+  display: grid;
+  grid-template-rows: auto auto;
+  grid-template-columns: auto;
+  flex: 0 1 auto;
+  overflow: hidden;
+  margin: 0 auto auto auto;
+  border-radius: 0 0 var(--space-small) var(--space-small);
+  box-shadow: var(--box-shadow);
+}
+
+.decision-modal__header {
+  margin: 0;
+  color: rgb(var(--color-base03));
+  background-color: rgb(var(--color-base3));
+  padding: var(--space-large);
+  box-shadow: var(--header-shadow);
+}
+
+.decision-modal__panel-container {
+  padding: var(--space-base);
+  background-color: rgb(var(--color-base03));
+}
+
+.decision-modal__panel {
+  display: grid;
+  grid-template-columns: 10em 1fr;
+  align-items: center;
+  padding: var(--space-base);
+  margin: 0 $baseSpace;
+  border-left: var(--space-small) solid transparent;
+  color: rgb(var(--color-base3));
+  background-color: rgb(var(--color-base03));
+  transition: background-color ease-out 150ms, color ease-out 150ms;
+
+  &[aria-selected="true"] {
+    color: rgb(var(--color-base03));
+    background-color: rgb(var(--color-base3));
+    border-left: var(--space-small) solid rgb(var(--color-red));
+  }
+}
+
+.decision-modal__label {
+  margin: 0;
+}
+
+.decision-modal__input {
+  padding: var(--space-small);
+}

@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Project Node List should not print before resized 1`] = `"<div class=\\"file-list__root\\" data-testid=\\"fileList-root\\"><header class=\\"file-list__header\\" data-testid=\\"fileList-header\\">loc</header><div style=\\"overflow: visible;\\" class=\\"file-list__autosizer\\"></div></div>"`;
+
+exports[`Project Node List should select a node locating same the index of cursor when focused 1`] = `"<div class=\\"file-list__root\\" data-testid=\\"fileList-root\\"><header class=\\"file-list__header\\" data-testid=\\"fileList-header\\" data-focused>loc</header><div style=\\"overflow: visible;\\" class=\\"file-list__autosizer\\"></div></div>"`;
+
+exports[`Project Node List should show dummy content when nodes is empty 1`] = `"<div class=\\"file-list__root\\" data-testid=\\"fileList-root\\"><header class=\\"file-list__header\\" data-testid=\\"fileList-header\\" data-focused>loc</header><div style=\\"overflow: visible;\\" class=\\"file-list__autosizer\\"></div></div>"`;

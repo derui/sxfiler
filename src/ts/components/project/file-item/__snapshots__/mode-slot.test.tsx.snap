@@ -1,33 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Project Node Item Mode slot should print directory mode 1`] = `
-<span
-  className="sc-bdVaJa fIwzXV"
->
-  dr--------
-</span>
-`;
+exports[`Project Node Item Mode slot should print directory mode 1`] = `"<span class=\\"file-item__item-mode\\" data-testid=\\"fileItem-modeSlot\\">dr--------</span>"`;
 
-exports[`Project Node Item Mode slot should print name simply 1`] = `
-<span
-  className="sc-bdVaJa fIwzXV"
->
-  ----------
-</span>
-`;
+exports[`Project Node Item Mode slot should print name simply 1`] = `"<span class=\\"file-item__item-mode\\" data-testid=\\"fileItem-modeSlot\\">----------</span>"`;
 
-exports[`Project Node Item Mode slot should print symlink mode 1`] = `
-<span
-  className="sc-bdVaJa fIwzXV"
->
-  lr--------
-</span>
-`;
+exports[`Project Node Item Mode slot should print symlink mode 1`] = `"<span class=\\"file-item__item-mode\\" data-testid=\\"fileItem-modeSlot\\">lr--------</span>"`;
 
-exports[`Project Node Item Mode slot should print symlink when directory and symlink are true 1`] = `
-<span
-  className="sc-bdVaJa fIwzXV"
->
-  lr--------
-</span>
-`;
+exports[`Project Node Item Mode slot should print symlink when directory and symlink are true 1`] = `"<span class=\\"file-item__item-mode\\" data-testid=\\"fileItem-modeSlot\\">lr--------</span>"`;

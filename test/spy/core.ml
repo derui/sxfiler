@@ -10,6 +10,7 @@ module Wrap = struct
     (t, wrapped_f)
 
   let called_args { called_args } = List.rev called_args
+
   let called_count { called_args } = List.length called_args
 end
 
@@ -25,8 +26,10 @@ module Wrap2 = struct
     (t, wrapped_f)
 
   let called_args { called_args } = List.rev called_args
+
   let called_count { called_args } = List.length called_args
 end
 
 let wrap = Wrap.wrap
+
 let wrap2 = Wrap2.wrap

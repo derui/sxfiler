@@ -1,0 +1,6 @@
+(library
+ (name sxfiler_translator)
+ (public_name sxfiler.translator)
+ (libraries sxfiler.domain
+            sxfiler.generated)
+ (preprocess (pps ppx_deriving.std)))

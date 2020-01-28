@@ -1,16 +1,18 @@
-import * as React from "react";
-import { mount } from "enzyme";
+import { h } from "preact";
+import { render, cleanup } from "@testing-library/preact";
 import { ModalRootContext } from "./modal-root";
 
 describe("Contexts", () => {
   describe("ModalRoot", () => {
+    afterEach(cleanup);
+
     it("get undefined when default provider", () => {
-      const wrapper = mount(
+      const wrapper = render(
         <ModalRootContext.Provider value={{ element: null }}>
           <ModalRootContext.Consumer>
-            {context => {
+            {(context) => {
               if (context.element) {
-                return <span>give element</span>;
+                return <span data-testid="test">give element</span>;
               }
               return null;
             }}
@@ -18,17 +20,17 @@ describe("Contexts", () => {
         </ModalRootContext.Provider>
       );
 
-      expect(wrapper.find("span")).toHaveLength(0);
+      expect(wrapper.queryByTestId("test")).toBeNull();
     });
 
     it("get root element", () => {
       const element = document.createElement("div");
-      const wrapper = mount(
+      const wrapper = render(
         <ModalRootContext.Provider value={{ element }}>
           <ModalRootContext.Consumer>
-            {context => {
+            {(context) => {
               if (context.element) {
-                return <span>give element</span>;
+                return <span data-testid="test">give element</span>;
               }
               return null;
             }}
@@ -36,7 +38,7 @@ describe("Contexts", () => {
         </ModalRootContext.Provider>
       );
 
-      expect(wrapper.find("span")).toHaveLength(1);
+      expect(wrapper.getByTestId("test")).toBeDefined();
     });
   });
 });

@@ -1,7 +1,4 @@
-import * as React from "react";
-import bigInt from "big-integer";
-
-import { styled } from "@/components/theme";
+import { h } from "preact";
 
 enum SizeUnit {
   Byte = "byte",
@@ -14,8 +11,8 @@ enum SizeUnit {
 
 type SizeData = {
   sizeUnit: SizeUnit;
-  size: bigInt.BigInteger;
-  alignedSize: number;
+  size: bigint;
+  alignedSize: bigint;
 };
 
 const nextUnit = function nextUnit(sizeUnit: SizeUnit): SizeUnit | null {
@@ -55,7 +52,7 @@ const sizeUnitToString = function sizeUnitToString(sizeUnit: SizeUnit): string {
 class Size {
   private data: SizeData;
 
-  constructor(size: bigInt.BigInteger) {
+  constructor(size: bigint) {
     this.data = this.toData(size);
   }
   /**
@@ -63,7 +60,7 @@ class Size {
    */
   public toString(): string {
     const unit = sizeUnitToString(this.data.sizeUnit);
-    const fixed = this.data.alignedSize.toFixed(1);
+    const fixed = this.data.alignedSize.toString();
     const padded = fixed.padStart(5, " ");
     return `${padded}${unit}`;
   }
@@ -73,49 +70,40 @@ class Size {
    * @param size string representation of size
    * @return size data
    */
-  private toData(size: bigInt.BigInteger): SizeData {
-    const calcUnit = (
-      fileSize: bigInt.BigInteger,
-      current: SizeUnit,
-      decimal: number
-    ): { current: SizeUnit; size: number } => {
-      if (bigInt.zero.leq(fileSize) && fileSize.lt(bigInt(1024))) {
-        return { current, size: fileSize.toJSNumber() };
+  private toData(size: bigint): SizeData {
+    const kb = BigInt(1024);
+    const calcUnit = (fileSize: bigint, current: SizeUnit, decimal: bigint): { current: SizeUnit; size: bigint } => {
+      if (BigInt(0) <= fileSize && fileSize < kb) {
+        return { current, size: fileSize };
       }
 
       const unit = nextUnit(current);
       if (unit == null) {
-        return { current, size: fileSize.toJSNumber() + decimal };
+        return { current, size: fileSize + decimal };
       } else {
-        return calcUnit(fileSize.divide(bigInt(1024)), unit, fileSize.mod(bigInt(1024)).toJSNumber() / 1024);
+        return calcUnit(fileSize / kb, unit, (fileSize % kb) / kb);
       }
     };
-    const parsedSize = bigInt(size);
-    const data = calcUnit(parsedSize, SizeUnit.Byte, 0);
+    const data = calcUnit(size, SizeUnit.Byte, BigInt(0));
 
     return {
       sizeUnit: data.current,
       alignedSize: data.size,
-      size: parsedSize,
+      size,
     };
   }
 }
 
 export type Props = {
-  size: bigInt.BigInteger;
+  size: bigint;
 };
 
-const SizeNode = styled.pre`
-  flex: 0 1 auto;
-  padding: 0 ${props => props.theme.spaces.base};
-  margin: 0;
-  text-align: right;
-
-  white-space: pre;
-`;
-
-export const Component: React.FC<Props> = prop => {
+export const Component: preact.FunctionComponent<Props> = (prop) => {
   const size = new Size(prop.size);
 
-  return <SizeNode>{size.toString()}</SizeNode>;
+  return (
+    <span class="file-item__item-size" data-testid="fileItem-sizeSlot">
+      {size.toString()}
+    </span>
+  );
 };

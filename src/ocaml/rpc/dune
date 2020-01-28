@@ -1,0 +1,15 @@
+(library
+ (name sxfiler_rpc)
+ (public_name sxfiler.rpc)
+ (libraries lwt
+            logs.lwt
+            logs.fmt
+            ocaml-protoc-plugin
+            websocket
+            websocket-lwt-unix.cohttp
+            sxfiler.domain
+            sxfiler.translator
+            sxfiler.workflow
+            sxfiler.infrastructure
+            sxfiler.generated)
+ (preprocess (pps lwt_ppx)))

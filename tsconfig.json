@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es2016",
+    "target": "es2018",
     "lib": [
-      "es2017",
+      "es2018",
       "dom",
       "dom.iterable",
       "esnext"
@@ -18,16 +18,24 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react",
+    "jsx": "preserve",
+    "jsxFactory": "h",
     "incremental": true,
     "baseUrl": "./",
     "outDir": "generated",
     "paths": {
-      "@/*": ["src/ts/*"]
-    }
+      "@/*": [
+        "src/ts/*"
+      ]
+    },
+    "rootDirs": [
+      "src/ts",
+      "src/stories"
+    ]
   },
   "include": [
     "src/ts/generated/*.js",
+    "src/stories/**/*.tsx",
     "src/ts/**/*.ts",
     "src/ts/**/*.tsx",
     "src/index.tsx"

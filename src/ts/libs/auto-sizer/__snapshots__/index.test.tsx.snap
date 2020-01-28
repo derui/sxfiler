@@ -1,11 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Auto Sizer can set container element 1`] = `
-<section
-  style={
-    Object {
-      "overflow": "visible",
-    }
-  }
-/>
-`;
+exports[`Auto Sizer can set container element 1`] = `"<section style=\\"overflow: visible;\\"></section>"`;

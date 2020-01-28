@@ -12,7 +12,7 @@ module.exports = {
     browser: true,
   },
   parserOptions:  {
-    ecmaVersion:  2018,  // Allows for the parsing of modern ECMAScript features
+    ecmaVersion:  2020,  // Allows for the parsing of modern ECMAScript features
     sourceType:  'module',  // Allows for the use of imports
     ecmaFeatures:  {
       jsx: true,  // Allows for the parsing of JSX
@@ -30,7 +30,7 @@ module.exports = {
   },
   settings:  {
     "import/parsers": {
-      "@typescript-eslint/parser": [".ts", ".tsx"]
+      "@typescript-eslint/parser": [".ts", ".tsx", ".js"]
     },
     "import/resolver": {
       node: {

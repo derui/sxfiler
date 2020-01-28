@@ -22,7 +22,7 @@ const useTypeScript = fs.existsSync(paths.appTsConfig);
 
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
-module.exports = function(webpackEnv) {
+module.exports = function (webpackEnv) {
   const isEnvDevelopment = webpackEnv === 'development';
   const isEnvProduction = webpackEnv === 'production';
 
@@ -72,8 +72,8 @@ module.exports = function(webpackEnv) {
       publicPath: publicPath,
       // Point sourcemap entries to original disk location (format as URL on Windows)
       devtoolModuleFilenameTemplate: isEnvProduction
-        ? info => path.relative(paths.appSrc, info.absoluteResourcePath).replace(/\\/g, '/')
-        : isEnvDevelopment && (info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
+        ? (info) => path.relative(paths.appSrc, info.absoluteResourcePath).replace(/\\/g, '/')
+        : isEnvDevelopment && ((info) => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
     },
     optimization: {
       minimize: isEnvProduction,
@@ -142,38 +142,51 @@ module.exports = function(webpackEnv) {
         // It is guaranteed to exist because we tweak it in `env.js`
         process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
       ),
+      alias: {
+        react: 'preact/compat',
+        'react-dom': 'preact/compat',
+        '@': path.resolve(paths.appSrc, 'ts'),
+      },
       // These are the reasonable defaults supported by the Node ecosystem.
       // We also include JSX as a common component filename extension to support
       // some tools, although we do not recommend using it, see:
       // https://github.com/facebook/create-react-app/issues/290
       // `web` extension prefixes have been added for better support
       // for React Native Web.
-      extensions: paths.moduleFileExtensions.map(ext => `.${ext}`),
+      extensions: paths.moduleFileExtensions.map((ext) => `.${ext}`),
       plugins: [new TsconfigPathsPlugin()],
     },
     module: {
       strictExportPresence: true,
       rules: [
         // Disable require.ensure as it's not a standard language feature.
-        { parser: { requireEnsure: false } },
-
         {
-          // "oneOf" will traverse all following loaders until one will
-          // match the requirements. When no loader matches it will fall
-          // back to the "file" loader at the end of the loader list.
-          oneOf: [
+          test: /\.(ts|tsx)$/,
+          include: paths.appSrc,
+          use: [
+            // babel-loader
             {
-              test: /\.(ts|tsx)$/,
-              include: paths.appSrc,
-              use: [
-                {
-                  loader: 'ts-loader',
-                  options: {
-                    configFile: paths.appTsConfig,
-                    transpileOnly: true,
-                  },
-                },
-              ],
+              loader: 'babel-loader',
+              options: {
+                plugins: [
+                  [
+                    '@babel/plugin-transform-react-jsx',
+                    {
+                      pragma: 'h',
+                      pragmaFrag: 'Fragment',
+                      runtime: 'classic',
+                    },
+                  ],
+                ],
+              },
+            },
+            // ts-loader
+            {
+              loader: 'ts-loader',
+              options: {
+                configFile: paths.appTsConfig,
+                transpileOnly: true,
+              },
             },
           ],
         },
@@ -226,15 +239,7 @@ module.exports = function(webpackEnv) {
         eslint: true,
         checkSyntacticErrors: true,
         tsconfig: paths.appTsConfig,
-        reportFiles: [
-          '**/*.ts$',
-          '**/*.tsx$',
-          '!**/*.json',
-          '!**/__tests__/**',
-          '!**/?(*.)(spec|test).*',
-          '!**/src/setupProxy.*',
-          '!**/src/setupTests.*',
-        ],
+        reportFiles: ['**/*.ts$', '**/*.tsx$', '!**/?(*.)(test).*', '!**/src/setupTests.*'],
         watch: paths.appSrc,
         silent: true,
       }),

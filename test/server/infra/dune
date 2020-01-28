@@ -1,9 +1,0 @@
-(rule
- (alias runtest)
- (deps (source_tree data_real/))
- (action (run ./tests.exe)))
-
-(executable
-  (name tests)
-  (libraries alcotest alcotest-lwt sxfiler.core sxfiler.server.infra test_fixtures)
-  (preprocess (pps lwt_ppx)))

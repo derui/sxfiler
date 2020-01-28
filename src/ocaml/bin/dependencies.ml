@@ -1,160 +1,169 @@
-(** This module declares dependencies for signature-only modules in {!Sxfiler_domain} and
-    {!Sxfiler_usecase} *)
+(** This module declares dependencies for signature-only modules in {!Sxfiler_domain} and {!Sxfiler_workflow} *)
 
-module C = Sxfiler_server_core
-module U = Sxfiler_usecase
+open Sxfiler_core
+module R = Sxfiler_rpc
 module D = Sxfiler_domain
-module I = Sxfiler_server_infra
-module TR = Sxfiler_server_task.Runner_intf
+module F = Sxfiler_workflow
+module I = Sxfiler_infrastructure
 
-module type Option = sig
+(* Clock module to get current unix time *)
+module Common_step = struct
+  let now () = Option.get @@ Time.of_float @@ Unix.gettimeofday ()
+end
+
+module type Option' = sig
   val option : App_option.t
 end
 
 module type S = sig
   module System : Sxfiler_core.System.S
-  module Clock : D.Location_record.Clock
-  module Key_map_repo : D.Key_map_repository.S
-  module Condition_repo : D.Condition.Repository
-  module Filer_repo : D.Filer.Repository
-  module Filer_factory : D.Filer.Factory.S
-  module Configuration_repo : D.Configuration.Repository
-  module Completion_repo : D.Completion.Repository
-  module Message_notification_factory : I.Message_notification_factory.S
-  module Progress_notification_factory : I.Progress_notification_factory.S
-  module Notification_service : I.Notification_service.S
-  module Item_transporter_service : D.Item_transporter_service.S
-  module Item_replication_service : D.Item_replication_service.S
-  module Location_scanner_service : D.Location_scanner_service.S
-  module Item_trash_service : D.Item_trash_service.S
-  module Key_map_resolve_service : D.Key_map_resolve_service.S
-  module Task_repo : D.Task.Repository
-  module Task_factory : D.Task.Factory.S
-  module Bookmark_repo : D.Bookmark_repository.S
 
-  module Usecase : sig
-    module Keymap_get : U.Keymap.Get.S
-    module Keymap_reload : U.Keymap.Reload.S
-    module Configuration_get : U.Configuration.Get.S
-    module Completion_setup : U.Completion.Setup.S
-    module Completion_read : U.Completion.Read.S
-    module Filer_make : U.Filer.Make.S
-    module Filer_get : U.Filer.Get.S
-    module Filer_move_parent : U.Filer.Move_parent.S
-    module Filer_enter_directory : U.Filer.Enter_directory.S
-    module Filer_toggle_mark : U.Filer.Toggle_mark.S
-    module Filer_move : U.Filer.Move.S
-    module Filer_copy : U.Filer.Copy.S
-    module Filer_delete : U.Filer.Delete.S
-    module Filer_jump_location : U.Filer.Jump_location.S
-    module Task_send_reply : U.Task.Send_reply.S
-    module Task_cancel : U.Task.Cancel.S
-    module Bookmark_list_all : U.Bookmark.List_all.S
-    module Bookmark_register : U.Bookmark.Register.S
-    module Bookmark_delete : U.Bookmark.Delete.S
+  module Client : R.Client.Instance
+
+  module Server : R.Server.Instance
+
+  module Mediator : R.Interaction_mediator.Instance
+
+  module Completer : D.Completer.Instance
+
+  module Step : sig
+    val scan_location : F.Common_step.File_list.scan_location
+
+    val demand_action : F.Common_step.Interaction.demand_decision
+
+    val load_configuration : F.Common_step.Configuration.load
+
+    val copy_item : F.Common_step.Filer.copy_item
+
+    val delete_item : F.Common_step.Filer.delete_item
+
+    val move_item : F.Common_step.Filer.move_item
+
+    val store_keymap : F.Common_step.Keymap.store_keymap
+
+    val resolve_keymap : F.Common_step.Keymap.resolve_keymap
+
+    val load_keymap : F.Common_step.Keymap.load_keymap
+
+    val update_collection : F.Common_step.Completer.update_collection
+
+    val provide_collection : F.Common_step.Completer.provide_collection
   end
+
+  module Work_flow : sig
+    module Filer : sig
+      val initialize : F.Filer.Initialize.work_flow
+
+      val reload_all : F.Filer.Reload_all.work_flow
+
+      val move_location : F.Filer.Move_location.work_flow
+
+      val open_node : F.Filer.Open_node.work_flow
+
+      val up_directory : F.Filer.Up_directory.work_flow
+
+      val toggle_mark : F.Filer.Toggle_mark.work_flow
+    end
+
+    module Keymap : sig
+      val add_key_binding : F.Keymap.Add_key_binding.work_flow
+
+      val remove_key_binding : F.Keymap.Remove_key_binding.work_flow
+
+      val reload : F.Keymap.Reload.work_flow
+    end
+
+    module Completer : sig
+      val initialize : F.Completer.Initialize.work_flow
+
+      val complete : F.Completer.Complete.work_flow
+    end
+  end
+
+  val post_event : R.Event_handler.publish
+  (** function to post event *)
 end
 
-module Make
-    (Option : Option)
-    (Conn : C.Rpc_connection.Instance)
-    (Completer : D.Completer.Instance)
-    (Runner : TR.Instance) : S = struct
-  module System = Sxfiler_core.System.Real
-  module Clock = Global.Clock
-  module Key_map_repo : D.Key_map_repository.S = I.Key_map_repo.Make (Global.Keymap)
-  module Condition_repo : D.Condition.Repository = I.Condition_repo.Make (Global.Condition)
-  module Notification_service = I.Notification_service.Make (C.Rpc_client.Make (Conn))
-  module Filer_repo : D.Filer.Repository = I.Filer_repo.Make (Global.Root) (Notification_service)
-  module Filer_factory : D.Filer.Factory.S = D.Filer.Factory.Make (I.Id_generator.Gen_uuid)
+module Id_generator_string = struct
+  type id = string
 
-  module Configuration_repo : D.Configuration.Repository =
-    I.Configuration_repo.Make (Global.Configuration)
+  let state = Random.get_state ()
 
-  module Completion_repo = I.Completion_repo.Make (Global.Cached_source)
-  module Message_notification_factory = I.Message_notification_factory.Make (I.Id_generator.Gen_uuid)
-
-  module Progress_notification_factory =
-    I.Progress_notification_factory.Make (I.Id_generator.Gen_uuid)
-
-  module Key_map_resolve_service = I.Key_map_resolve_service.Make (struct
-    let path =
-      Sxfiler_core.Path.of_list
-        [ Option.option.App_option.configuration; Constants.key_map_file_name ]
-  end)
-
-  module Item_transporter_service =
-    I.Item_transporter_service.Make (Notification_service) (Message_notification_factory)
-      (Progress_notification_factory)
-
-  module Item_replication_service =
-    I.Item_replication_service.Make (Notification_service) (Message_notification_factory)
-      (Progress_notification_factory)
-
-  module Location_scanner_service : D.Location_scanner_service.S = I.Location_scanner_service
-
-  module Item_trash_service =
-    I.Item_trash_service.Make (Notification_service) (Message_notification_factory)
-      (Progress_notification_factory)
-
-  module Task_repo = I.Task_repo.Make (Global.Root) (Runner) (Notification_service)
-  module Task_factory = D.Task.Factory.Make (I.Id_generator.Gen_uuid)
-  module Bookmark_repo = I.Bookmark_repo.Make (Global.Bookmark)
-
-  module Usecase = struct
-    module Keymap_get = U.Keymap.Get.Make (Condition_repo) (Key_map_repo)
-
-    module Keymap_reload =
-      U.Keymap.Reload.Make (Condition_repo) (Key_map_repo) (Key_map_resolve_service)
-
-    module Configuration_get = U.Configuration.Get.Make (Configuration_repo)
-    module Completion_setup = U.Completion.Setup.Make (Completion_repo)
-    module Completion_read = U.Completion.Read.Make (Completion_repo) (Completer)
-
-    module Filer_make =
-      U.Filer.Make.Make (Configuration_repo) (Filer_repo) (Filer_factory) (Location_scanner_service)
-
-    module Filer_get = U.Filer.Get.Make (Filer_repo)
-
-    module Filer_move_parent =
-      U.Filer.Move_parent.Make (Filer_repo) (Location_scanner_service) (Clock)
-
-    module Filer_jump_location =
-      U.Filer.Jump_location.Make (Filer_repo) (Location_scanner_service) (Clock)
-
-    module Filer_enter_directory =
-      U.Filer.Enter_directory.Make (Filer_repo) (Location_scanner_service) (Clock)
-
-    module Filer_toggle_mark = U.Filer.Toggle_mark.Make (Filer_repo)
-
-    module Filer_move = U.Filer.Move.Make (struct
-      module FR = Filer_repo
-      module TF = Task_factory
-      module TR = Task_repo
-      module Scan = Location_scanner_service
-      module Transport = Item_transporter_service
-    end)
-
-    module Filer_copy = U.Filer.Copy.Make (struct
-      module FR = Filer_repo
-      module TF = Task_factory
-      module TR = Task_repo
-      module Scan = Location_scanner_service
-      module Replicate = Item_replication_service
-    end)
-
-    module Filer_delete = U.Filer.Delete.Make (struct
-      module FR = Filer_repo
-      module TF = Task_factory
-      module TR = Task_repo
-      module Scan = Location_scanner_service
-      module Trash = Item_trash_service
-    end)
-
-    module Task_send_reply = U.Task.Send_reply.Make (Task_repo)
-    module Task_cancel = U.Task.Cancel.Make (Task_repo)
-    module Bookmark_list_all = U.Bookmark.List_all.Make (Bookmark_repo)
-    module Bookmark_register = U.Bookmark.Register.Make (I.Id_generator.Gen_uuid) (Bookmark_repo)
-    module Bookmark_delete = U.Bookmark.Delete.Make (Bookmark_repo)
-  end
+  let generate () = Uuidm.v4_gen state () |> Uuidm.to_string
 end
+
+module Id_generator_uuid = struct
+  type id = Uuidm.t
+
+  let state = Random.get_state ()
+
+  let generate () = Uuidm.v4_gen state ()
+end
+
+let make (module Option' : Option') (module Completer : D.Completer.Instance) (module Ws_actor : I.Ws_actor.Instance) =
+  let module Client = (val R.Client.make (module Id_generator_string) (module Ws_actor)) in
+  let module Mediator = (val R.Interaction_mediator.make (module Client)) in
+  let module Server = (val R.Server.make (module Ws_actor)) in
+  ( module struct
+    module System = Sxfiler_core.System.Real
+    module Client = Client
+    module Server = Server
+    module Mediator = Mediator
+    module Completer = Completer
+
+    module Step = struct
+      let scan_location = I.Filer_step.scan_location
+
+      let demand_action command = Mediator.(Mediator.require_action instance ~command)
+
+      let load_configuration () = Global.Configuration.get ()
+
+      let copy_item = I.Filer_step.copy_item
+
+      let move_item = I.Filer_step.move_item
+
+      let delete_item = I.Filer_step.delete_item
+
+      let store_keymap = I.Keymap_step.store_keymap (module Global.Keymap)
+
+      let resolve_keymap = I.Keymap_step.resolve_keymap (module Global.Keymap)
+
+      let load_keymap = I.Keymap_step.load_keymap
+
+      let update_collection = Global.Cached_collection.update
+
+      let provide_collection = Global.Cached_collection.get
+    end
+
+    module Work_flow = struct
+      module Filer = struct
+        let initialize = F.Filer.initialize Global.Filer.get Step.scan_location Step.load_configuration
+
+        let reload_all = F.Filer.reload_all Step.scan_location
+
+        let move_location = F.Filer.move_location Common_step.now Step.scan_location
+
+        let open_node = F.Filer.open_node Step.scan_location Common_step.now
+
+        let up_directory = F.Filer.up_directory Step.scan_location Common_step.now
+
+        let toggle_mark = F.Filer.toggle_mark
+      end
+
+      module Keymap = struct
+        let add_key_binding = F.Keymap.add_key_binding Step.resolve_keymap Step.store_keymap
+
+        let remove_key_binding = F.Keymap.remove_key_binding Step.resolve_keymap Step.store_keymap
+
+        let reload = F.Keymap.reload Step.load_keymap Step.store_keymap
+      end
+
+      module Completer = struct
+        let initialize = F.Completer.initialize Step.update_collection
+
+        let complete = F.Completer.complete Step.provide_collection (module Completer) F.Common_step.Completer.read
+      end
+    end
+
+    let post_event = Event_handlers.setup_handlers (module Client)
+  end : S )

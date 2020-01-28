@@ -1,63 +1,55 @@
+open Sxfiler_core
 (** Persist current status of the application *)
 
-module S = Sxfiler_domain
-module T = Sxfiler_server_translator
-module G = Sxfiler_server_generated
-
-type filer_stat = {
-  id : string;
-  name : string;
-  location : string;
-  history : G.Filer.LocationHistory.t option;
-}
-[@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
+module D = Sxfiler_domain
+module F = Sxfiler_workflow
+module T = Sxfiler_translator
+module G = Sxfiler_generated
+module Tr = Sxfiler_translator
 
 type t = {
-  filers : filer_stat list;
-  bookmarks : G.Bookmark.Bookmark.t list;
+  filer : G.Filer.Filer.t option;
+  bookmarks : G.Bookmark.BookmarkList.t option;
 }
 [@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
 
-let empty = { filers = []; bookmarks = [] }
+let empty = { filer = None; bookmarks = None }
 
-let put_bookmarks bookmarks stat =
-  let bookmarks = List.map T.Bookmark.of_domain bookmarks in
-  { stat with bookmarks }
+let put_bookmarks bookmarks stat = { stat with bookmarks = Some bookmarks }
 
-let restore_bookmarks stat = List.map T.Bookmark.to_domain stat.bookmarks
+let restore_bookmarks { bookmarks; _ } = bookmarks |> Option.map Tr.Bookmarks.to_domain
 
 (** [add_filer_stat filer stat] add the filer to stat *)
-let add_filer_stat (filer : S.Filer.t) stat =
-  let filer' = T.Filer.of_domain filer in
-  let value =
-    {
-      id = filer'.id;
-      name = filer'.name;
-      location = (match filer'.fileList with Some l -> l.location | None -> "");
-      history = filer'.history;
-    }
-  in
-  { stat with filers = value :: stat.filers }
+let add_filer_stat (filer : D.Filer.t) stat =
+  let filer' = Tr.Filer.of_domain filer in
+  { stat with filer = Some filer' }
 
 (** [add_filer_stat filer stat] add the filer to stat *)
-let restore_filer_stats ~(scanner : (module S.Location_scanner_service.S)) stat =
-  let module Scan = (val scanner) in
-  let convert_filer value =
-    let v' =
-      {
-        G.Filer.Filer.id = value.id;
-        name = value.name;
-        history = value.history;
-        sortOrder = G.Types.SortType.Name;
-        markedItems = [];
-        fileList = Some { G.Filer.FileList.location = value.location; items = [] };
-      }
+let restore_filer_stats ~(initialize : F.Filer.Initialize.work_flow) stat =
+  let open Option.Infix in
+  let file_lists =
+    let* filer = stat.filer in
+    let* left_location =
+      filer.left_file_window >>= fun v ->
+      v.G.Filer.FileWindow.file_list >|= fun v -> v.location |> Path.of_string
     in
-    T.Filer.to_domain v'
+    let* right_location =
+      filer.right_file_window >>= fun v ->
+      v.G.Filer.FileWindow.file_list >|= fun v -> v.location |> Path.of_string
+    in
+    let left_history =
+      filer.left_file_window >>= fun v ->
+      v.G.Filer.FileWindow.history >>= fun v -> Tr.Location_history.to_domain v |> Result.to_option
+    in
+    let right_history =
+      filer.right_file_window >>= fun v ->
+      v.G.Filer.FileWindow.history >>= fun v -> Tr.Location_history.to_domain v |> Result.to_option
+    in
+    Some (left_location, right_location, left_history, right_history)
   in
-  let filers = List.map convert_filer stat.filers in
-  Lwt_list.map_p
-    (fun v ->
-      let%lwt file_list = Scan.scan v.S.Filer.file_list.location in
-      S.Filer.update_list v ~file_list |> Lwt.return)
-    filers
+  match file_lists with
+  | Some (Ok left_location, Ok right_location, left_history, right_history) ->
+      let input = { F.Filer.Initialize.left_location; right_location; left_history; right_history } in
+      let open Lwt.Infix in
+      initialize input >|= List.map (fun v -> F.Filer v)
+  | Some _ | None -> Lwt.return []

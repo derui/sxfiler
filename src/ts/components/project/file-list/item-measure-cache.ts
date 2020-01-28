@@ -15,7 +15,7 @@ export class ItemMeasureCache {
   public observe(handler: Handler): () => void {
     this.handlers.push(handler);
     return () => {
-      this.handlers = this.handlers.filter(v => v !== handler);
+      this.handlers = this.handlers.filter((v) => v !== handler);
     };
   }
 
@@ -32,7 +32,7 @@ export class ItemMeasureCache {
     this.cache.set(key, measure);
 
     const updatedCache = new Map(this.cache);
-    this.handlers.forEach(v => v(updatedCache));
+    this.handlers.forEach((v) => v(updatedCache));
   }
 
   public get(key: number) {

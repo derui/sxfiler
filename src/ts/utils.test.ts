@@ -1,20 +1,6 @@
-import { unwrap, range, between } from "./utils";
+import { range, between } from "./utils";
 
 describe("Global utility", () => {
-  describe("unwrap", () => {
-    it("throw error when pass undefined", () => {
-      expect(() => unwrap(undefined)).toThrowError();
-    });
-
-    it("throw error when pass null", () => {
-      expect(() => unwrap(null)).toThrowError();
-    });
-
-    it("return value when the value is not undefined or null", () => {
-      expect(unwrap(100)).toEqual(100);
-    });
-  });
-
   describe("range", () => {
     it("get empty iterator when start = end", () => {
       const array = Array.from(range(0, 0));

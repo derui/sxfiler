@@ -1,0 +1,57 @@
+.file-list__root {
+  display: grid;
+  grid-template-rows: calc(var(--space-base) * 2 + 1rem) 1fr;
+  margin: 0;
+  padding: 0;
+  color: rgb(var(--color-base01));
+  overflow: hidden;
+  background-color: rgb(var(--color-base03));
+  font-size: 1rem;
+}
+
+.file-list__autosizer {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.file-list__empty {
+  flex: 1 1 auto;
+  margin: auto 0;
+  text-align: center;
+  color: rgb(var(--color-red));
+
+  &::after {
+    content: "no any node";
+    font-family: monospace;
+  }
+}
+
+.file-list__list-root {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  position: relative;
+  font-size: 1rem;
+  border-right: 1px solid rgb(var(--color-base0));
+
+  &:last-of-type {
+    border-right: none;
+  }
+}
+
+.file-list__header {
+  flex: 0 0 auto;
+  padding: var(--space-base) 0;
+  margin: 0;
+  font-weight: bold;
+  color: rgb(var(--color-base1));
+  background-color: rgb(var(--color-base03));
+  font-family: monospace;
+  border-bottom: 1px solid rgb(var(--color-base01));
+
+  &[data-focused="true"] {
+    color: rgb(var(--color-yellow));
+  }
+}

@@ -1,0 +1,14 @@
+(library
+ (name sxfiler_infrastructure)
+ (public_name sxfiler.infrastructure)
+ (libraries lwt lwt.unix
+            sxfiler.core
+            sxfiler.workflow
+            sxfiler.translator
+            migemocaml
+            logs.lwt
+            uuidm
+            websocket
+            websocket-lwt-unix.cohttp
+            unix)
+ (preprocess (pps lwt_ppx ppx_deriving.std)))

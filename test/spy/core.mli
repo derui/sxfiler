@@ -1,4 +1,5 @@
 module Wrap : Core_intf.S
+
 module Wrap2 : Core_intf.S2
 
 val wrap : ('a -> 'b) -> 'a Wrap.t * ('a -> 'b)

@@ -1,5 +1,4 @@
-import * as React from "react";
-import { styled } from "@/components/theme";
+import { h } from "preact";
 
 interface Prop {
   isDirectory: boolean;
@@ -7,22 +6,15 @@ interface Prop {
   name: string;
 }
 
-const Name = styled.span`
-  flex: 1 0 auto;
-  padding: 0;
-  font-weight: bold;
-
-  &[data-directory="true"] {
-    color: ${props => props.theme.colors.yellow};
-  }
-
-  &[data-symlink="true"] {
-    color: ${props => props.theme.colors.orange};
-  }
-`;
-
-export const Component: React.FC<Prop> = ({ isDirectory, name, isSymlink }) => (
-  <Name data-directory={isDirectory && !isSymlink} data-symlink={isSymlink}>
-    {name}
-  </Name>
-);
+export const Component: preact.FunctionComponent<Prop> = ({ isDirectory, name, isSymlink }) => {
+  return (
+    <span
+      class="file-item__item-name"
+      data-testid="fileItem-nameSlot"
+      data-directory={isDirectory && !isSymlink}
+      data-symlink={isSymlink}
+    >
+      {name}
+    </span>
+  );
+};

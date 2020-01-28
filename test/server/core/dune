@@ -1,5 +1,0 @@
-(test
- (name tests)
- (libraries alcotest alcotest-lwt
-  sxfiler.server.core)
- (preprocess (pps lwt_ppx)))
