@@ -1,6 +1,5 @@
-import * as React from "react";
-import * as enzyme from "enzyme";
-
+import { h } from "preact";
+import { render, cleanup } from "@testing-library/preact";
 import * as Manager from "./resize-observer";
 import * as ResizeSensor from "./resize-sensor";
 
@@ -8,27 +7,37 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-describe("Resize Sensor for React", () => {
+afterEach(cleanup);
+
+describe("Resize Sensor for preact", () => {
   describe("Observer Element", () => {
     it("observe when component mounted", () => {
       const spy = jest.spyOn(Manager, "observe");
 
-      const wrapper = enzyme.mount(
+      const wrapper = render(
         <ResizeSensor.Component>
-          <span>foo</span>
+          {(ref) => (
+            <span date-testid="span" ref={ref}>
+              foo
+            </span>
+          )}
         </ResizeSensor.Component>
       );
 
       expect(spy.mock.calls).toHaveLength(1);
-      expect(wrapper.find("span")).toHaveLength(1);
+      expect(wrapper.queryByTestId("span")).toBeDefined();
     });
 
     it("unobserve when component unmounted", () => {
       const spyObserve = jest.spyOn(Manager, "observe");
       const spyUnobserve = jest.spyOn(Manager, "unobserve");
-      const wrapper = enzyme.mount(
+      const wrapper = render(
         <ResizeSensor.Component>
-          <span>foo</span>
+          {(ref) => (
+            <span date-testid="test" ref={ref}>
+              foo
+            </span>
+          )}
         </ResizeSensor.Component>
       );
       wrapper.unmount();
@@ -41,15 +50,28 @@ describe("Resize Sensor for React", () => {
       it("reobserve if handler changed", () => {
         const handler = jest.fn();
 
-        const wrapper = enzyme.mount(
+        const wrapper = render(
           <ResizeSensor.Component onResize={handler}>
-            <span>foo</span>
+            {(ref) => (
+              <span data-testid="test" ref={ref}>
+                foo
+              </span>
+            )}
           </ResizeSensor.Component>
         );
 
-        const observe = jest.spyOn(wrapper.instance() as any, "observe");
+        const observe = jest.spyOn(Manager, "observe");
+        wrapper.unmount();
 
-        wrapper.setProps({ onResize: () => {} });
+        wrapper.rerender(
+          <ResizeSensor.Component onResize={() => {}}>
+            {(ref) => (
+              <span data-testid="test" ref={ref}>
+                foo
+              </span>
+            )}
+          </ResizeSensor.Component>
+        );
 
         expect(observe).toHaveBeenCalledTimes(1);
       });

@@ -1,9 +1,13 @@
 syntax = "proto3";
 
 import "types.proto";
+package configuration;
 
 message Configuration {
-  SortType defaultSortOrder = 1;
+  SortType default_sort_order = 1;
+  bool confirmation_when_delete = 2;
+  uint32 max_history_num = 3;
+  string current_theme = 4;
 }
 
 message GetRequest {}

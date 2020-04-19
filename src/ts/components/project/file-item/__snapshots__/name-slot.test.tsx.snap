@@ -1,41 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Project Node Item Name slot should print name as directory 1`] = `
-<span
-  className="sc-bdVaJa ienCUd"
-  data-directory={true}
-  data-symlink={false}
->
-  name
-</span>
-`;
+exports[`Project Node Item Name slot should print name as directory 1`] = `"<span class=\\"file-item__item-name\\" data-testid=\\"fileItem-nameSlot\\" data-directory>name</span>"`;
 
-exports[`Project Node Item Name slot should print name as symlink 1`] = `
-<span
-  className="sc-bdVaJa ienCUd"
-  data-directory={false}
-  data-symlink={true}
->
-  name
-</span>
-`;
+exports[`Project Node Item Name slot should print name as symlink 1`] = `"<span class=\\"file-item__item-name\\" data-testid=\\"fileItem-nameSlot\\" data-symlink>name</span>"`;
 
-exports[`Project Node Item Name slot should print name as symlink when directory and symlink flag are enabled 1`] = `
-<span
-  className="sc-bdVaJa ienCUd"
-  data-directory={false}
-  data-symlink={true}
->
-  name
-</span>
-`;
+exports[`Project Node Item Name slot should print name as symlink when directory and symlink flag are enabled 1`] = `"<span class=\\"file-item__item-name\\" data-testid=\\"fileItem-nameSlot\\" data-symlink>name</span>"`;
 
-exports[`Project Node Item Name slot should print name simply 1`] = `
-<span
-  className="sc-bdVaJa ienCUd"
-  data-directory={false}
-  data-symlink={false}
->
-  name
-</span>
-`;
+exports[`Project Node Item Name slot should print name simply 1`] = `"<span class=\\"file-item__item-name\\" data-testid=\\"fileItem-nameSlot\\">name</span>"`;

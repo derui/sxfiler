@@ -1,14 +1,15 @@
-import { Context as ReactContext, createContext } from "react";
+import { createContext } from "preact";
 
-import { ApiMethod } from "./apis";
-import { Client } from "./libs/json-rpc/client";
 import { ContextLike } from "./context";
-import { CommandRegistrar } from "./commands/command-registrar";
+import * as CommandResolver from "./commands/command-resolver";
+import * as CommandExecutor from "./commands/command-executor";
+import * as EventHub from "./typed-event-hub";
 
 export type Locator = {
   readonly context?: ContextLike;
-  readonly client?: Client<ApiMethod>;
-  readonly commandRegistrar?: CommandRegistrar;
+  readonly commandExecutor?: CommandExecutor.Type;
+  readonly commandResolver?: CommandResolver.Type;
+  readonly eventHub?: EventHub.Type;
 };
 
 let locator: Locator = {};
@@ -17,8 +18,8 @@ let locator: Locator = {};
  * Set new locator to global context
  * @param newLocator
  */
-export const setLocator = function setLocator(newLocator: Locator) {
+export const setLocator = (newLocator: Locator) => {
   Object.assign(locator, newLocator);
 };
 
-export const LocatorContext: ReactContext<Locator> = createContext(locator);
+export const LocatorContext = createContext(locator);

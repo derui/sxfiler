@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Container Log Viewer Container should render correctly 1`] = `"<div class=\\"log-viewer-container__root\\" data-testid=\\"logViewerContainer\\"><div class=\\"log-viewer__root\\" data-testid=\\"logViewer-root\\"></div></div>"`;

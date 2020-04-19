@@ -1,5 +1,4 @@
-import * as React from "react";
-import { styled } from "@/components/theme";
+import { h } from "preact";
 
 export type Props = {
   timestamp: Date;
@@ -16,15 +15,11 @@ const format = function format(timestamp: Date): string {
   return `${year}/${month}/${date}`;
 };
 
-const Timestamp = styled.span`
-  flex: 0 1 auto;
-  padding: 0 ${props => props.theme.spaces.small};
-  text-align: right;
-
-  white-space: nowrap;
-`;
-
-export const Component: React.FC<Props> = prop => {
+export const Component: preact.FunctionComponent<Props> = (prop) => {
   const date = format(prop.timestamp);
-  return <Timestamp>{date}</Timestamp>;
+  return (
+    <span class="file-item__item-timestamp" data-testid="fileItem-timestampSlot">
+      {date}
+    </span>
+  );
 };

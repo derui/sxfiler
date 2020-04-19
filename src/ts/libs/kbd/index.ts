@@ -25,7 +25,7 @@ const specialKeyMapping = {
 export const make = function make(key: string, option: MakeOption = { ctrl: false, meta: false }): Key {
   const mapping = Object.entries(specialKeyMapping)
     .map(([k, v]) => ({ key: k, value: v }))
-    .find(v => v.key === key);
+    .find((v) => v.key === key);
 
   return {
     key: mapping ? mapping.value : key,

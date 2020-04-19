@@ -1,0 +1,4 @@
+(test
+  (name tests)
+  (libraries alcotest alcotest-lwt sxfiler.core sxfiler.rpc test_fixtures)
+  (preprocess (pps lwt_ppx)))

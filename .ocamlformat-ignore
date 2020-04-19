@@ -1,0 +1,8 @@
+src/ocaml/generated/bookmark.ml
+src/ocaml/generated/completer.ml
+src/ocaml/generated/configuration.ml
+src/ocaml/generated/dune
+src/ocaml/generated/filer.ml
+src/ocaml/generated/keymap.ml
+src/ocaml/generated/service.ml
+src/ocaml/generated/types.ml

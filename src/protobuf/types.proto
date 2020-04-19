@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 enum SortType {
-  Name = 0;
-  Size = 1;
-  Date = 2;
+  NAME = 0;
+  SIZE = 1;
+  DATE = 2;
 }

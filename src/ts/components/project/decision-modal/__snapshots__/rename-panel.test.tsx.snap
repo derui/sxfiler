@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Project Rename decision change style when selected 1`] = `"<div class=\\"decision-modal__panel\\" data-testid=\\"decisionModal-rename\\" aria-selected><p class=\\"decision-modal__label\\" data-testid=\\"decisionModal-renameLabel\\">Rename</p><label><input class=\\"decision-modal__input\\" data-testid=\\"decisionModal-input\\" type=\\"text\\" placeholder=\\"New name of the node\\" value=\\"node\\" /></label></div>"`;
+
+exports[`Project Rename decision do not render with other decision 1`] = `"<div class=\\"decision-modal__panel\\" data-testid=\\"decisionModal-rename\\"><p class=\\"decision-modal__label\\" data-testid=\\"decisionModal-renameLabel\\">Rename</p><label><input class=\\"decision-modal__input\\" data-testid=\\"decisionModal-input\\" type=\\"text\\" placeholder=\\"New name of the node\\" value=\\"node\\" /></label></div>"`;
+
+exports[`Project Rename decision render with rename decision 1`] = `"<div class=\\"decision-modal__panel\\" data-testid=\\"decisionModal-rename\\"><p class=\\"decision-modal__label\\" data-testid=\\"decisionModal-renameLabel\\">Rename</p><label><input class=\\"decision-modal__input\\" data-testid=\\"decisionModal-input\\" type=\\"text\\" placeholder=\\"New name of the node\\" value=\\"node\\" /></label></div>"`;

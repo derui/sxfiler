@@ -1,0 +1,140 @@
+import { Command } from "@/generated/service_pb";
+import {
+  UpdatedNotificationResponse,
+  UpdatedNotificationRequest,
+  CopyUserDecisionRequest,
+  CopyUserDecisionResponse,
+  Action,
+  UpdatedFileWindowNotificationRequest,
+  Side as SideMap,
+  UpdatedFileWindowNotificationResponse,
+} from "@/generated/filer_pb";
+import { State } from "@/modules";
+import { descriptors } from "@/commands/internal";
+import * as CommandExecutor from "@/commands/command-executor";
+import * as CommandResolver from "@/commands/command-resolver";
+import * as winston from "winston";
+import { Loggers } from "@/loggers";
+import { DecisionRequiredOp, DecisionAction } from "@/modules/decision/reducer";
+import { ResponseSender, ProcessResult } from "@/libs/websocket-rpc/server";
+import { TypedSubscriber, EventTypes } from "@/typed-event-hub";
+import { Side } from "@/modules/filer/reducer";
+
+/**
+ * this module provides handler to handle commands that are notifications sent from server.
+ */
+
+/**
+ * factory constructor arguments
+ */
+export type Args = {
+  getState: () => State;
+  getCommandResolver: () => CommandResolver.Type;
+  getCommandExecutor: () => CommandExecutor.Type;
+  getSubscriber: () => TypedSubscriber;
+};
+
+type InnerCommandHandler = (args: Args, id: string, payload: Uint8Array, lazyResponse: ResponseSender) => void;
+
+/**
+ * handler for `CopyUserDecisionRequest`
+ */
+const handleCopyUserDecision: InnerCommandHandler = (args, id, payload, lazyResponse) => {
+  const logger = winston.loggers.get(Loggers.RPC);
+  const request = CopyUserDecisionRequest.deserializeBinary(payload);
+  const factory = args.getCommandResolver().resolveBy(descriptors.decisionRequest);
+  const reset = args.getCommandResolver().resolveBy(descriptors.decisionReset);
+  const item = request.getItem();
+  if (!factory || !item || !reset) {
+    logger.error(`Invalid path: ${descriptors.filerUpdate.identifier}`);
+    lazyResponse(ProcessResult.ignored());
+    return;
+  }
+
+  logger.info("Start handling event request decision for copy");
+
+  args.getCommandExecutor().execute(factory, args.getState(), {
+    requiredOp: DecisionRequiredOp.Copy,
+    fileItem: item,
+  });
+  const unsubscribe = args.getSubscriber().subscribe(EventTypes.FinishDecision, (e) => {
+    switch (e.kind) {
+      case EventTypes.FinishDecision: {
+        if (e.processId !== id) {
+          return;
+        }
+
+        const response = new CopyUserDecisionResponse();
+        switch (e.resultAction.kind) {
+          case DecisionAction.Overwrite:
+            response.setAction(Action.OVERWRITE);
+            break;
+          case DecisionAction.Rename:
+            response.setAction(Action.RENAME);
+            response.setNewName(e.resultAction.newName);
+            break;
+          default:
+            return;
+        }
+
+        lazyResponse(ProcessResult.successed(response.serializeBinary()));
+        unsubscribe();
+        args.getCommandExecutor().execute(reset, args.getState(), undefined);
+      }
+    }
+  });
+};
+
+/**
+ * The notification handler for pushing notification from server
+ */
+export const notificationHandler = function notificationHandler(
+  args: Args
+): (id: string, command: number, payload: Uint8Array, lazyResponse: ResponseSender) => void {
+  return (id, command, payload, lazyResponse) => {
+    const logger = winston.loggers.get(Loggers.RPC);
+    switch (command) {
+      case Command.FILER_UPDATED:
+        {
+          const request = UpdatedNotificationRequest.deserializeBinary(payload);
+          const factory = args.getCommandResolver().resolveBy(descriptors.filerUpdate);
+          if (!factory) {
+            logger.error(`Invalid path: ${descriptors.filerUpdate.identifier}`);
+            lazyResponse(ProcessResult.ignored());
+            return;
+          }
+
+          logger.info("Start handling event filer_updated");
+
+          args.getCommandExecutor().execute(factory, args.getState(), { filer: request.getFiler() });
+
+          lazyResponse(ProcessResult.successed(new UpdatedNotificationResponse().serializeBinary()));
+        }
+        break;
+      case Command.FILER_UPDATED_FILE_WINDOW:
+        {
+          const request = UpdatedFileWindowNotificationRequest.deserializeBinary(payload);
+          const factory = args.getCommandResolver().resolveBy(descriptors.filerUpdateFileWindow);
+          if (!factory) {
+            logger.error(`Invalid path: ${descriptors.filerUpdateFileWindow.identifier}`);
+            lazyResponse(ProcessResult.ignored());
+            return;
+          }
+
+          logger.info("Start handling event filer_updated_file_window");
+
+          const side = request.getSide() === SideMap.LEFT ? Side.Left : Side.Right;
+          args.getCommandExecutor().execute(factory, args.getState(), { side, fileWindow: request.getFileWindow() });
+
+          lazyResponse(ProcessResult.successed(new UpdatedFileWindowNotificationResponse().serializeBinary()));
+        }
+        break;
+      case Command.FILER_COPY_INTERACTION:
+        handleCopyUserDecision(args, id, payload, lazyResponse);
+        break;
+      default:
+        lazyResponse(ProcessResult.ignored());
+        break;
+    }
+  };
+};

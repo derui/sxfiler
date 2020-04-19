@@ -1,8 +1,8 @@
-// This module provides the interface to resolve some of clients in this application.
-import { ApiMethod } from "@/apis";
-import { Client } from "@/libs/json-rpc/client";
+import { Client } from "@/rpc/client";
 
-export type ApiClientLike = Client<ApiMethod>;
+// This module provides the interface to resolve some of clients in this application.
+
+export type RPCClientLike = Client;
 
 /**
    The client contains some operations for operating application directly.
@@ -28,5 +28,5 @@ export type ClientResolverLike = {
   /**
      Resolve the application client. Do not save the reference to other place.
    */
-  apiClient(): ApiClientLike;
+  rpcClient(): RPCClientLike;
 };

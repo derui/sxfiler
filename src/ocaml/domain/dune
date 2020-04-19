@@ -1,5 +1,5 @@
 (library
  (name sxfiler_domain)
  (public_name sxfiler.domain)
- (libraries sxfiler.kbd sxfiler.core lwt uuidm fmt)
+ (libraries sxfiler.kbd sxfiler.core fmt)
  (preprocess (pps ppx_deriving.std)))

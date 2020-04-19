@@ -1,71 +1,28 @@
-open Sxfiler_core
-(** Scanner module provides type to scan file tree. *)
+type left_file_window = File_window.left_side File_window.t [@@deriving eq, show]
 
-type id = Uuidm.t [@@deriving eq, show]
-
-module Marked_item_set = struct
-  include Set.Make (struct
-    type t = File_item.id
-
-    let compare = Stdlib.compare
-  end)
-
-  let pp fmt t =
-    let ids = to_seq t |> List.of_seq |> List.sort Stdlib.compare in
-    let printer = [%derive.show: File_item.id list] in
-    Format.fprintf fmt "%s" @@ printer ids
-end
+type right_file_window = File_window.right_side File_window.t [@@deriving eq, show]
 
 type t = {
-  id : id;
-  name : string;
-  file_list : File_list.t;
-  history : Location_history.t;
-  marked_items : Marked_item_set.t;
-  sort_order : Types.Sort_type.t;
+  left_file_window : left_file_window;
+  right_file_window : right_file_window;
 }
-[@@deriving eq, show, make]
+[@@deriving show, eq]
 
-let has_same_id { id = id1; _ } { id = id2; _ } = equal_id id1 id2
-let find_item t = File_list.find_item t.file_list
+let make ~left_file_window ~right_file_window = { left_file_window; right_file_window }
 
-let update_list t ~file_list =
-  let marked_items =
-    if Path.equal file_list.File_list.location t.file_list.location then
-      let current_items =
-        List.map (fun v -> v.File_item.id) file_list.File_list.items |> Marked_item_set.of_list
-      in
-      Marked_item_set.inter t.marked_items current_items
-    else Marked_item_set.empty
-  in
-  { t with file_list = File_list.sort_items file_list ~order:t.sort_order; marked_items }
+(* converter between file lists *)
+let left_to_right : left_file_window -> right_file_window =
+ fun File_window.{ file_list; history } -> File_window.make_right ~file_list ~history
 
-let move_location t ~file_list clock =
-  let record = Location_record.record_of ~location:file_list.File_list.location clock in
-  let history = Location_history.add_record t.history ~record in
-  let t' = update_list t ~file_list in
-  { t' with history }
+let right_to_left : right_file_window -> left_file_window =
+ fun File_window.{ file_list; history } -> File_window.make_left ~file_list ~history
 
-let add_mark t ~ids =
-  let marked_items = List.fold_left (fun set id -> Marked_item_set.add id set) t.marked_items ids in
-  { t with marked_items }
+let swap_side { left_file_window; right_file_window } =
+  let left_file_window = right_to_left right_file_window and right_file_window = left_to_right left_file_window in
+  { left_file_window; right_file_window }
 
-let remove_mark t ~ids =
-  let marked_items =
-    List.fold_left (fun set id -> Marked_item_set.remove id set) t.marked_items ids
-  in
-  { t with marked_items }
+let update_left window t =
+  { t with left_file_window = File_window.make_left ~file_list:window.File_window.file_list ~history:window.history }
 
-module type Repository = Filer_intf.Repository with type t := t and type id := id
-
-(** Factory interface *)
-module Factory = struct
-  module type S = Filer_intf.Factory with type t := t
-
-  module Make (G : Id_generator_intf.Gen_random with type id = id) : S = struct
-    let create ~name ~file_list ~sort_order =
-      let file_list = File_list.sort_items ~order:sort_order file_list in
-      make ~id:(G.generate ()) ~name ~file_list ~sort_order ~history:(Location_history.make ())
-        ~marked_items:Marked_item_set.empty
-  end
-end
+let update_right window t =
+  { t with right_file_window = File_window.make_right ~file_list:window.File_window.file_list ~history:window.history }

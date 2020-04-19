@@ -1,38 +1,52 @@
-import * as React from "react";
-import renderer from "react-test-renderer";
-import { wrap } from "@/components/theme/test-util";
+import { h } from "preact";
+import { render } from "preact-render-to-string";
 import { Component as T } from "./mode-slot";
-
-import { emptyCapability, allowToRead } from "@/domains/capability";
-import { emptyMode, changeOwner } from "@/domains/mode";
+import { Mode, Capability } from "@/generated/filer_pb";
+import { also } from "@/libs/fn";
 
 describe("Project", () => {
   describe("Node Item", () => {
     describe("Mode slot", () => {
       it("should print name simply", () => {
-        const mode = emptyMode();
-        const tree = renderer.create(wrap(<T mode={mode} isDirectory={false} isSymlink={false} />)).toJSON();
+        const mode = new Mode();
+        const tree = render(<T mode={mode.toObject()} isDirectory={false} isSymlink={false} />);
 
         expect(tree).toMatchSnapshot();
       });
 
       it("should print directory mode", () => {
-        const mode = changeOwner(allowToRead(emptyCapability()))(emptyMode());
-        const tree = renderer.create(wrap(<T mode={mode} isDirectory={true} isSymlink={false} />)).toJSON();
+        const mode = new Mode();
+        mode.setOwner(
+          also(new Capability(), (v) => {
+            v.setReadable(true);
+          })
+        );
+        const tree = render(<T mode={mode.toObject()} isDirectory={true} isSymlink={false} />);
 
         expect(tree).toMatchSnapshot();
       });
 
       it("should print symlink mode", () => {
-        const mode = changeOwner(allowToRead(emptyCapability()))(emptyMode());
-        const tree = renderer.create(wrap(<T mode={mode} isDirectory={false} isSymlink={true} />)).toJSON();
+        const mode = new Mode();
+        mode.setOwner(
+          also(new Capability(), (v) => {
+            v.setReadable(true);
+          })
+        );
+        const tree = render(<T mode={mode.toObject()} isDirectory={false} isSymlink={true} />);
 
         expect(tree).toMatchSnapshot();
       });
 
       it("should print symlink when directory and symlink are true", () => {
-        const mode = changeOwner(allowToRead(emptyCapability()))(emptyMode());
-        const tree = renderer.create(wrap(<T mode={mode} isDirectory={true} isSymlink={true} />)).toJSON();
+        const mode = new Mode();
+        mode.setOwner(
+          also(new Capability(), (v) => {
+            v.setReadable(true);
+          })
+        );
+
+        const tree = render(<T mode={mode.toObject()} isDirectory={true} isSymlink={true} />);
 
         expect(tree).toMatchSnapshot();
       });

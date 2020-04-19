@@ -1,71 +1,55 @@
-import * as React from "react";
 import "resize-observer-polyfill";
 
 import * as Manager from "./resize-observer";
+import { useEffect, useRef } from "preact/hooks";
+
+type OnResizeHandler = (entry: ResizeObserverEntry, unobserve: () => void) => void;
 
 export type Props = {
-  refName?: string;
-  onResize?: (entry: ResizeObserverEntry, unobserve: () => void) => void;
-  children: React.ReactElement;
+  onResize?: OnResizeHandler;
+  children: (ref: preact.Ref<any>) => preact.VNode<any>;
 };
 
 /**
-   Resize Sensor provides ability to catch element resized.
- */
-export class Component extends React.Component<Props> {
-  private currentTarget: React.RefObject<Element> = React.createRef();
+   The callback handles resize event of the element.
+*/
+const handleResize = (onResize: OnResizeHandler | undefined) => (entry: ResizeObserverEntry, unobserve: () => void) => {
+  if (onResize) {
+    onResize(entry, unobserve);
+  }
+};
 
-  public componentDidMount() {
-    this.observe();
+/**
+   add element to list of ResizeObserver
+*/
+const observe = (currentTarget: preact.RefObject<Element>, onResize: OnResizeHandler | undefined) => {
+  if (!currentTarget.current) {
+    return;
   }
 
-  public componentWillUnmount() {
-    this.unobserve();
+  Manager.observe(currentTarget.current, handleResize(onResize));
+};
+
+/**
+   remove element from list of ResizeObserver
+*/
+const unobserve = (currentTarget: preact.RefObject<Element>) => {
+  if (!currentTarget.current) {
+    return;
   }
 
-  public componentDidUpdate(prevProps: Props) {
-    if (prevProps.onResize !== this.props.onResize) {
-      this.unobserve();
-      this.observe();
-    }
-  }
+  Manager.unobserve(currentTarget.current);
+};
 
-  /**
-     The callback handles resize event of the element.
-   */
-  private handleResize = (entry: ResizeObserverEntry, unobserve: () => void) => {
-    if (this.props.onResize) {
-      this.props.onResize(entry, unobserve);
-    }
-  };
+export const Component: preact.FunctionComponent<Props> = (props) => {
+  const { children } = props;
+  const currentTarget = useRef<any>();
 
-  /**
-     add element to list of ResizeObserver
-   */
-  private observe = () => {
-    if (!this.currentTarget.current) {
-      return;
-    }
+  useEffect(() => {
+    observe(currentTarget, props.onResize);
 
-    Manager.observe(this.currentTarget.current, this.handleResize);
-  };
+    return () => unobserve(currentTarget);
+  }, []);
 
-  /**
-     remove element from list of ResizeObserver
-   */
-  private unobserve = () => {
-    if (!this.currentTarget.current) {
-      return;
-    }
-
-    Manager.unobserve(this.currentTarget.current);
-  };
-
-  public render(): JSX.Element {
-    const { refName = "ref", children } = this.props;
-
-    return React.cloneElement(children, {
-      [refName]: this.currentTarget,
-    });
-  }
-}
+  return children(currentTarget);
+};

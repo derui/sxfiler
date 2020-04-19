@@ -1,28 +1,27 @@
-import bigInt from "big-integer";
-import Int64 from "node-int64";
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import { createStore, Store } from "redux";
+import { h, render } from "preact";
+import { createStore, Store, applyMiddleware } from "redux";
 import * as kbd from "@/libs/kbd";
 
-import { Actions } from "./ts/actions";
-import { ApiMethod } from "./ts/apis";
-import { Component as App } from "./ts/app";
-import { createContext } from "./ts/context";
-import { Dispatcher } from "./ts/dispatcher";
-import * as jrpc from "./ts/libs/json-rpc";
-import { LocatorContext, Locator } from "./ts/locator";
-import { reducer } from "./ts/reducers";
-import { AppState } from "./ts/states";
+import { Actions } from "@/modules";
+import { Component as App } from "@/app";
+import { createContext } from "@/context";
+import { Dispatcher } from "@/dispatcher";
+import { LocatorContext, Locator } from "@/locator";
+import { reducer, State } from "@/modules";
 
-import { createUseCase } from "./ts/usecases/filer/initialize";
-import { createCommandRegistrar } from "./ts/commands/command-registrar";
-import { registAllCommand } from "./ts/commands/builtins";
-import * as Get from "./ts/usecases/keymap/get";
-import * as List from "./ts/usecases/bookmark/list";
-import * as NotificationHandlers from "./ts/notification-handlers";
+import * as Commands from "@/commands";
 import { ModalRootContext } from "./ts/modal-root";
-import { findBinding } from "@/states/keymap";
+import * as WsRpc from "@/libs/websocket-rpc";
+import * as Rpc from "@/rpc/client";
+import { notificationHandler } from "@/rpc/notification-handler";
+import { descriptors } from "@/commands/interactive";
+import { descriptors as internalDescriptors } from "@/commands/internal";
+import { initializeLoggers, Loggers } from "@/loggers";
+import * as winston from "winston";
+import { UIContext } from "@/types/ui-context";
+import * as CommandExecutor from "@/commands/command-executor";
+import * as TypedEventHub from "@/typed-event-hub";
+import * as GlobalEventPublisher from "@/global-event-publisher";
 
 declare var window: Window & {
   ipcRenderer: any;
@@ -31,59 +30,85 @@ declare var window: Window & {
   };
 };
 
+// initialize logger
+initializeLoggers(process.env.NODE_ENV !== "production");
+
 const url = process.env.NODE_ENV === "production" ? window.applicationConfig.serverURL : "ws://localhost:50789";
+// setup global store
+const eventHub = TypedEventHub.create();
+const store = createStore(reducer, applyMiddleware(GlobalEventPublisher.create(eventHub)));
 
+// setup WebSocket-based RPC
 const ws = new WebSocket(url || "");
-const jsonrpc = jrpc.initialize(ws);
+ws.binaryType = "arraybuffer";
+const wsHub = WsRpc.WebSocketHub.create(ws);
+const clientImpl = WsRpc.Client.create(wsHub);
+const rpcClient = Rpc.create(clientImpl);
 
-const client = jrpc.createClient<ApiMethod>(jsonrpc, () => {
-  return bigInt.randBetween(bigInt(Int64.MIN_INT), bigInt(Int64.MAX_INT)).toString();
-});
-
-const store = createStore(reducer);
-
+// setup context and locator
 const dispatcher = new Dispatcher<Actions>();
 dispatcher.subscribe(store.dispatch);
 
+const commandExecutor = CommandExecutor.create(
+  {
+    rpcClient: () => rpcClient,
+    appClient() {
+      return {
+        quit() {
+          // send quit event to main process
+          window.ipcRenderer.send("quit");
+        },
+      };
+    },
+  },
+  createContext({ dispatcher })
+);
+
 const locator = {
-  context: createContext({ client, dispatcher }),
-  client,
-  commandRegistrar: registAllCommand(
-    createCommandRegistrar({
-      apiClient: () => client,
-      appClient() {
-        return {
-          quit() {
-            // send quit event to main process
-            window.ipcRenderer.send("quit");
-          },
-        };
-      },
-    })
-  ),
+  commandExecutor,
+  commandResolver: Commands.makeWiredResolver(),
 };
 
-// register notification handlers
-jrpc.createNotificationServer(jsonrpc, locator.context, {
-  "notification/message": NotificationHandlers.handleMessageNotification,
-  "notification/progress": NotificationHandlers.handleProgressNotification,
-  "notification/task/finished": NotificationHandlers.handleTaskFinished,
-  "notification/task/needInteraction": NotificationHandlers.handleTaskInteraction,
-  "notification/filerUpdated": NotificationHandlers.handleFilerUpdated,
-});
+const wiredResolver = Commands.makeWiredResolver();
 
-const initializeState = () => {
-  locator.context.use(Get.createUseCase(client))({});
-  locator.context.use(createUseCase(client))({ location: "." });
-  locator.context.use(List.createUseCase(client))({});
-};
+// set up notification server
+const server = WsRpc.Server.create();
+server.setCommandHandler(
+  notificationHandler({
+    getState: store.getState,
+    getCommandResolver() {
+      return wiredResolver;
+    },
+    getCommandExecutor() {
+      return commandExecutor;
+    },
+    getSubscriber() {
+      return eventHub;
+    },
+  })
+);
+server.start(wsHub);
+
+wsHub.start();
 
 ws.onopen = () => {
-  initializeState();
+  const reloadAll = wiredResolver.resolveBy(descriptors.filerReloadAll);
+  const getKeymap = wiredResolver.resolveBy(descriptors.keymapGet);
+  const addContext = wiredResolver.resolveBy(internalDescriptors.keymapAddContext);
+  if (reloadAll && getKeymap && addContext) {
+    commandExecutor.execute(addContext, store.getState(), { context: UIContext.OnFileTree });
+    commandExecutor.execute(reloadAll, store.getState(), undefined);
+    commandExecutor.execute(getKeymap, store.getState(), undefined);
+  }
+
+  const getConfiguration = wiredResolver.resolveBy(internalDescriptors.configurationInitialize);
+  if (getConfiguration) {
+    commandExecutor.execute(getConfiguration, store.getState(), undefined);
+  }
 };
 
-const render = function render(state: AppState) {
-  ReactDOM.render(
+const renderApp = (state: State) => {
+  render(
     <ModalRootContext.Provider value={{ element: document.getElementById("modal-root") }}>
       <LocatorContext.Provider value={locator}>
         <App state={state} />
@@ -94,31 +119,42 @@ const render = function render(state: AppState) {
 };
 
 store.subscribe(() => {
-  render(store.getState());
+  renderApp(store.getState());
 });
 
 /**
  * handle keyboard event that all keydown event on application
  * @param props properties of component
  */
-const handleKeyDown = function handleKeyDown(locator: Locator, store: Store<AppState, Actions>) {
+const handleKeyDown = function handleKeyDown(locator: Locator, store: Store<State, Actions>) {
   return (ev: KeyboardEvent) => {
+    const logger = winston.loggers.get(Loggers.KEY_EVENT);
+    logger.debug("Start handling key event", ev);
+
     const state = store.getState();
-    const { context, commandRegistrar } = locator;
+    const { commandExecutor, commandResolver } = locator;
 
     switch (ev.type) {
       case "keydown": {
         const key = kbd.make(ev.key, { meta: ev.metaKey, ctrl: ev.ctrlKey });
-        const binding = findBinding(state.keymap, state.context, kbd.toKeySeq(key));
+        const binding = state.keymap.currentKeymap[kbd.toKeySeq(key)];
 
         if (!binding) {
+          logger.debug("Not found binding for key seq");
           break;
         }
 
         ev.preventDefault();
         ev.stopPropagation();
-        if (context && commandRegistrar) {
-          commandRegistrar.execute(binding.action, context, { state });
+
+        if (commandExecutor && commandResolver) {
+          logger.debug(`Resolve command having identifier: ${binding}`);
+          const command = commandResolver.resolveById(binding);
+          if (!command) {
+            logger.warn(`Can not resolve command: ${binding}`);
+            return;
+          }
+          commandExecutor.execute(command, state, undefined);
         }
         break;
       }
@@ -130,4 +166,4 @@ const handleKeyDown = function handleKeyDown(locator: Locator, store: Store<AppS
   };
 };
 
-document.body.addEventListener("keydown", ev => handleKeyDown(locator, store)(ev));
+document.body.addEventListener("keydown", handleKeyDown(locator, store));

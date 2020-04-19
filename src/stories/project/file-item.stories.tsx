@@ -1,43 +1,41 @@
 import { withInfo } from "@storybook/addon-info";
 import { boolean, withKnobs } from "@storybook/addon-knobs";
-import { storiesOf } from "@storybook/react";
-import * as React from "react";
-import { Theme, ThemeProvider } from "@/components/theme";
+import { storiesOf } from "@storybook/preact";
+import { h } from "preact";
 
-import { createFileItem } from "@/domains/file-item";
-
-import { Component as FileItemComponent } from "@/components/project/file-item/file-item";
-import { createFileStat } from "@/domains/file-stat";
-import { emptyMode, createMode } from "@/domains/mode";
-import { fullCapability, disallowToWrite } from "@/domains/capability";
+import { Component as FileItemComponent } from "@/components/project/file-item";
+import { also } from "@/libs/fn";
+import { FileItem, FileStat, Mode } from "@/generated/filer_pb";
 
 storiesOf("Project/File Item Item", module)
   .addParameters({ info: { inline: true } })
   .add(
     "simple file item",
     () => {
-      const item = createFileItem({
-        id: "file item",
-        name: "file.txt",
-        marked: false,
-        stat: createFileStat({
-          mode: emptyMode(),
-          uid: 1000,
-          gid: 1000,
-          atime: "0",
-          ctime: "0",
-          mtime: "0",
-          size: "10",
-          isDirectory: false,
-          isFile: true,
-          isSymlink: false,
-        }),
-        parentDirectory: "/",
+      const item = also(new FileItem(), v => {
+        v.setId("file item");
+        v.setName("file.txt");
+        v.setMarked(false);
+        v.setStat(
+          also(new FileStat(), v => {
+            v.setMode(new Mode());
+            v.setUid(1000);
+            v.setGid(1000);
+            v.setAtime("0");
+            v.setCtime("0");
+            v.setMtime("0");
+            v.setSize("10");
+            v.setIsDirectory(false);
+            v.setIsFile(true);
+            v.setIsSymlink(false);
+          })
+        );
+        v.setParent("/");
       });
       return (
-        <ThemeProvider theme={Theme}>
-          <FileItemComponent item={item} selected={boolean("Selected", false)} />
-        </ThemeProvider>
+        <div class="theme__default">
+          <FileItemComponent item={item.toObject()} selected={boolean("Selected", false)} bookmarked={false} />
+        </div>
       );
     },
     { decorators: [withInfo, withKnobs] }
@@ -45,32 +43,30 @@ storiesOf("Project/File Item Item", module)
   .add(
     "simple directory file item",
     () => {
-      const item = createFileItem({
-        id: "file item",
-        name: "file",
-        marked: false,
-        stat: createFileStat({
-          mode: createMode({
-            owner: fullCapability(),
-            group: fullCapability(),
-            others: disallowToWrite(fullCapability()),
-          }),
-          uid: 1000,
-          gid: 1000,
-          atime: "0",
-          ctime: "0",
-          mtime: "0",
-          size: "10",
-          isDirectory: true,
-          isFile: false,
-          isSymlink: false,
-        }),
-        parentDirectory: "/",
+      const item = also(new FileItem(), v => {
+        v.setId("file item");
+        v.setName("file.txt");
+        v.setMarked(false);
+        v.setStat(
+          also(new FileStat(), v => {
+            v.setMode(new Mode());
+            v.setUid(1000);
+            v.setGid(1000);
+            v.setAtime("0");
+            v.setCtime("0");
+            v.setMtime("0");
+            v.setSize("10");
+            v.setIsDirectory(true);
+            v.setIsFile(false);
+            v.setIsSymlink(false);
+          })
+        );
+        v.setParent("/");
       });
       return (
-        <ThemeProvider theme={Theme}>
-          <FileItemComponent item={item} selected={boolean("Selected", false)} />
-        </ThemeProvider>
+        <div class="theme__default">
+          <FileItemComponent item={item.toObject()} selected={boolean("Selected", false)} bookmarked={false} />
+        </div>
       );
     },
     { decorators: [withInfo, withKnobs] }
@@ -78,32 +74,31 @@ storiesOf("Project/File Item Item", module)
   .add(
     "simple symlink file item",
     () => {
-      const item = createFileItem({
-        id: "file item",
-        name: "file",
-        marked: false,
-        stat: createFileStat({
-          mode: createMode({
-            owner: fullCapability(),
-            group: fullCapability(),
-            others: disallowToWrite(fullCapability()),
-          }),
-          uid: 1000,
-          gid: 1000,
-          atime: "0",
-          ctime: "0",
-          mtime: "0",
-          size: "10",
-          isDirectory: false,
-          isFile: false,
-          isSymlink: true,
-        }),
-        parentDirectory: "/",
+      const item = also(new FileItem(), v => {
+        v.setId("file item");
+        v.setName("file.txt");
+        v.setMarked(false);
+        v.setStat(
+          also(new FileStat(), v => {
+            v.setMode(new Mode());
+            v.setUid(1000);
+            v.setGid(1000);
+            v.setAtime("0");
+            v.setCtime("0");
+            v.setMtime("0");
+            v.setSize("10");
+            v.setIsDirectory(false);
+            v.setIsFile(false);
+            v.setIsSymlink(true);
+          })
+        );
+        v.setParent("/");
       });
+
       return (
-        <ThemeProvider theme={Theme}>
-          <FileItemComponent item={item} selected={boolean("Selected", false)} />
-        </ThemeProvider>
+        <div class="theme__default">
+          <FileItemComponent item={item.toObject()} selected={boolean("Selected", false)} bookmarked={true} />
+        </div>
       );
     },
     { decorators: [withInfo, withKnobs] }
@@ -111,32 +106,31 @@ storiesOf("Project/File Item Item", module)
   .add(
     "marked file item",
     () => {
-      const item = createFileItem({
-        id: "file item",
-        name: "file",
-        marked: true,
-        stat: createFileStat({
-          mode: createMode({
-            owner: fullCapability(),
-            group: fullCapability(),
-            others: disallowToWrite(fullCapability()),
-          }),
-          uid: 1000,
-          gid: 1000,
-          atime: "0",
-          ctime: "0",
-          mtime: "0",
-          size: "10",
-          isDirectory: false,
-          isFile: false,
-          isSymlink: true,
-        }),
-        parentDirectory: "/",
+      const item = also(new FileItem(), v => {
+        v.setId("file item");
+        v.setName("file.txt");
+        v.setMarked(true);
+        v.setStat(
+          also(new FileStat(), v => {
+            v.setMode(new Mode());
+            v.setUid(1000);
+            v.setGid(1000);
+            v.setAtime("0");
+            v.setCtime("0");
+            v.setMtime("0");
+            v.setSize("10");
+            v.setIsDirectory(false);
+            v.setIsFile(true);
+            v.setIsSymlink(false);
+          })
+        );
+        v.setParent("/");
       });
+
       return (
-        <ThemeProvider theme={Theme}>
-          <FileItemComponent item={item} selected={boolean("Selected", false)} />
-        </ThemeProvider>
+        <div class="theme__default">
+          <FileItemComponent item={item.toObject()} selected={boolean("Selected", false)} bookmarked={false} />
+        </div>
       );
     },
     { decorators: [withInfo, withKnobs] }
@@ -144,32 +138,31 @@ storiesOf("Project/File Item Item", module)
   .add(
     "bookmarked file item",
     () => {
-      const item = createFileItem({
-        id: "file item",
-        name: "file",
-        marked: false,
-        stat: createFileStat({
-          mode: createMode({
-            owner: fullCapability(),
-            group: fullCapability(),
-            others: disallowToWrite(fullCapability()),
-          }),
-          uid: 1000,
-          gid: 1000,
-          atime: "0",
-          ctime: "0",
-          mtime: "0",
-          size: "10",
-          isDirectory: false,
-          isFile: false,
-          isSymlink: true,
-        }),
-        parentDirectory: "/",
+      const item = also(new FileItem(), v => {
+        v.setId("file item");
+        v.setName("file.txt");
+        v.setMarked(false);
+        v.setStat(
+          also(new FileStat(), v => {
+            v.setMode(new Mode());
+            v.setUid(1000);
+            v.setGid(1000);
+            v.setAtime("0");
+            v.setCtime("0");
+            v.setMtime("0");
+            v.setSize("10");
+            v.setIsDirectory(false);
+            v.setIsFile(true);
+            v.setIsSymlink(false);
+          })
+        );
+        v.setParent("/");
       });
+
       return (
-        <ThemeProvider theme={Theme}>
-          <FileItemComponent bookmarked={true} item={item} selected={boolean("Selected", false)} />
-        </ThemeProvider>
+        <div class="theme__default">
+          <FileItemComponent bookmarked={true} item={item.toObject()} selected={boolean("Selected", false)} />
+        </div>
       );
     },
     { decorators: [withInfo, withKnobs] }

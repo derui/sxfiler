@@ -74,7 +74,7 @@ function spawnServer(configDir, port) {
     {
       stdio: ['pipe', out, out],
     }
-  ).on('error', error => {
+  ).on('error', (error) => {
     if (error) {
       throw error;
     }
@@ -93,7 +93,7 @@ async function launch() {
   const app = electron.app;
 
   const server = spawnServer(configDir, port);
-  const serverClosed = new Promise(resolve => {
+  const serverClosed = new Promise((resolve) => {
     server.on('exit', resolve);
   });
   process.env.SERVER_URL = `ws://localhost:${port}`;

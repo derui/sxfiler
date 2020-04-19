@@ -6,9 +6,8 @@
             websocket
             websocket-lwt-unix.cohttp
             logs.fmt
-            jsonrpc-ocaml.yojson
-            sxfiler.server
-            sxfiler.server.task
+            sxfiler.rpc
+            sxfiler.infrastructure
             sxfiler.domain
             logs
             ppx_protocol_conv_json)

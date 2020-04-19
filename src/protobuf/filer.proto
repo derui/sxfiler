@@ -3,6 +3,11 @@ syntax = "proto3";
 // types
 import "types.proto";
 
+enum Side {
+  LEFT = 0;
+  RIGHT = 1;
+}
+
 message Capability {
   bool writable = 1;
   bool readable = 2;
@@ -23,29 +28,33 @@ message FileStat {
   string ctime = 5;
   string mtime = 6;
   string size = 7;
-  bool isDirectory = 8;
-  bool isFile = 9;
-  bool isSymlink = 10;
+  string link_path = 11;
+  bool is_directory = 8;
+  bool is_file = 9;
+  bool is_symlink = 10;
 }
 
 message FileItem {
   string id = 1;
   string parent = 2;
   string name = 3;
-  string fullPath = 4;
+  string full_path = 4;
   FileStat stat = 5;
-  bool hasLinkPath = 6;
-  string linkPath = 7;
+  bool has_link_path = 6;
+  string link_path = 7;
+  bool marked = 8;
 }
 
 message FileList {
+  string id = 3;
   string location = 1;
   repeated FileItem items = 2;
+  SortType sort_order = 4;
 }
 
 message LocationHistory {
   repeated LocationRecord records = 1;
-  int32 maxRecordNumber = 2;
+  int32 max_record_number = 2;
 }
 
 message LocationRecord {
@@ -53,97 +62,100 @@ message LocationRecord {
   string timestamp = 2;
 }
 
+message FileWindow {
+  FileList file_list = 1;
+  LocationHistory history = 2;
+}
+
 // domain representation type
 message Filer {
-  string id = 1;
-  string name = 2;
-  FileList fileList = 3;
-  LocationHistory history = 4;
-  repeated string markedItems = 5;
-  SortType sortOrder = 6;
+  FileWindow left_file_window = 1;
+  FileWindow right_file_window = 2;
 }
 
-// the request to make filer
-message FilerMakeRequest {
-  string initialLocation = 1;
-  string name = 2;
+message InitializeRequest {
+  string left_location = 1;
+  string right_location = 2;
 }
+message InitializeResponse {}
 
-message FilerMakeResponse {
-  Filer filer = 1;
-}
+message ReloadAllRequest {}
+message ReloadAllResponse {}
 
-message FilerGetRequest {
-  string name = 1;
-}
-
-message FilerGetResponse {
-  Filer filer = 1;
-}
-
-message FilerMoveParentRequest {
-  string name = 1;
-}
-
-message FilerMoveParentResponse {
-  Filer filer = 1;
-}
-
-message FilerEnterDirectoryRequest {
-  string name = 1;
-  string itemId = 2;
-}
-
-message FilerEnterDirectoryResponse {
-  Filer filer = 1;
-}
-
-message FilerToggleMarkRequest {
-  string name = 1;
-  repeated string itemIds = 2;
-}
-
-message FilerToggleMarkResponse {
-  Filer filer = 1;
-}
-
-message FilerMoveRequest {
-  string source = 1;
-  string dest = 2;
-  repeated string itemIds = 3;
-}
-
-message FilerMoveResponse {
-  string taskId = 1;
-  string taskName = 2;
-}
-
-message FilerDeleteRequest {
-  string source = 1;
-  repeated string itemIds = 2;
-}
-
-message FilerDeleteResponse {
-  string taskId = 1;
-  string taskName = 2;
-}
-
-message FilerCopyRequest {
-  string source = 1;
-  string dest = 2;
-  repeated string itemIds = 3;
-}
-
-message FilerCopyResponse {
-  string taskId = 1;
-  string taskName = 2;
-}
-
-message FilerJumpLocationRequest {
+message MoveLocationRequest {
   string location = 1;
-  string name = 2;
+  Side side = 2;
+}
+message MoveLocationResponse {}
+
+message UpDirectoryRequest {
+  Side side = 1;
+}
+message UpDirectoryResponse {
+  bool moved = 1;
 }
 
-message FilerJumpLocationResponse {
+message OpenFileItemRequest {
+  string file_item_id = 1;
+  Side side = 2;
+}
+
+message OpenFileItemResponse {
+  enum OpenResult {
+    NOT_IMPLEMENTED = 0;
+    DIRECTORY_OPENED = 1;
+  }
+
+  OpenResult result = 1;
+}
+
+message ToggleMarkOfItemRequest {
+  string item_id = 1;
+  Side side = 2;
+}
+message ToggleMarkOfItemResponse {}
+
+// common action of user decision
+enum Action {
+  RENAME = 0;
+  OVERWRITE = 1;
+  CANCEL = 2;
+}
+
+message CopyUserDecisionRequest {
+  FileItem item = 1;
+}
+message CopyUserDecisionResponse {
+  Action action = 1;
+  string new_name = 2;
+}
+
+message MoveUserDecisionRequest {
+  FileItem item = 1;
+}
+message MoveUserDecisionResponse {
+  Action action = 1;
+  string new_name = 2;
+}
+
+message DeleteUserDecisionRequest {
+  FileItem item = 1;
+}
+message DeleteUserDecisionResponse {
+  bool confirmed = 1;
+}
+
+// declarations notification service from server to client.
+// This service need to implement on client.
+message UpdatedNotificationRequest {
   Filer filer = 1;
 }
+
+message UpdatedNotificationResponse {}
+
+// This notification notifies updated the file window of the side
+message UpdatedFileWindowNotificationRequest {
+  FileWindow file_window = 1;
+  Side side = 2;
+}
+message UpdatedFileWindowNotificationResponse {}

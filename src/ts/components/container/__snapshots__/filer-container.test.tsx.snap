@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Container File List Container should render correctly 1`] = `"<div class=\\"filer-container__root\\" data-testid=\\"filerContainer\\"><div class=\\"file-list__root\\" data-testid=\\"fileList-root\\"><header class=\\"file-list__header\\" data-testid=\\"fileList-header\\" data-focused>/left</header><div style=\\"overflow: visible;\\" class=\\"file-list__autosizer\\"></div></div><div class=\\"filer-container__separator\\" data-testid=\\"filerContainer-separator\\"></div></div>"`;

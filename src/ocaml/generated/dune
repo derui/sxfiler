@@ -1,0 +1,7 @@
+(library
+ (name sxfiler_generated)
+ (public_name sxfiler.generated)
+ (flags (:standard -w -3))
+ (libraries ocaml-protoc-plugin
+            ppx_protocol_conv_json)
+ (preprocess (pps ppx_deriving.std ppx_protocol_conv)))

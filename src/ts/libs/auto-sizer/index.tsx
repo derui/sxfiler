@@ -1,66 +1,56 @@
-import * as React from "react";
+import { h } from "preact";
 
-import shallowequal from "shallowequal";
 import { ResizeSensor } from "@/libs/resize-sensor";
+import { useState, StateUpdater } from "preact/hooks";
 
-export interface Props {
-  refName?: string;
+export type Props = {
   container?: string;
-  className?: string;
+  class?: string;
   style?: object;
-  children: (size: { width: number; height: number }) => React.ReactElement;
-}
+  children: (size: { width: number; height: number }) => preact.VNode<any>;
+};
 
-interface State {
-  width: number;
-  height: number;
-}
-
-// AutoSizer is HoC to add ability to handle size of component
-export class AutoSizer extends React.Component<Props, State> {
-  state: State = {
-    width: 0,
-    height: 0,
-  };
-
-  // the callback to handle resize event
-  private handleResize = (entry: ResizeObserverEntry) => {
-    this.setState({
+// the callback to handle resize event
+function handleResize(setState: StateUpdater<{ width: number; height: number }>): (entry: ResizeObserverEntry) => void {
+  return (entry) => {
+    setState({
       width: entry.contentRect.width,
       height: entry.contentRect.height,
     });
   };
+}
 
-  public shouldComponentUpdate(newProps: Props, newState: State): boolean {
-    return !shallowequal(this.props, newProps) || !shallowequal(newState, this.state);
+export const AutoSizer: preact.FunctionComponent<Props> = (props) => {
+  const [state, setState] = useState({ width: 0, height: 0 });
+
+  const { children, container = "div", style, ...rest } = props;
+  const { width, height } = state;
+
+  const outerStyle = { overflow: "visible" };
+
+  let boilOnChildren = false;
+
+  if (width === 0 && height === 0) {
+    boilOnChildren = true;
   }
 
-  public render(): JSX.Element {
-    const { refName = "ref", children, container = "div", className, style } = this.props;
-    const { width, height } = this.state;
-
-    const outerStyle = { overflow: "visible" };
-
-    let boilOnChildren = false;
-
-    if (width === 0 && height === 0) {
-      boilOnChildren = true;
-    }
-
-    return (
-      <ResizeSensor onResize={this.handleResize} refName={refName}>
-        {React.createElement(
+  return (
+    <ResizeSensor onResize={handleResize(setState)}>
+      {(ref) => {
+        const v = h(
           container,
           {
-            className,
             style: {
               ...outerStyle,
               ...style,
             },
+            ...rest,
           },
-          boilOnChildren ? null : children(Object.assign({}, this.state))
-        )}
-      </ResizeSensor>
-    );
-  }
-}
+          boilOnChildren ? null : children(Object.assign({}, state))
+        );
+        v.ref = ref;
+        return v;
+      }}
+    </ResizeSensor>
+  );
+};

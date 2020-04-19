@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package keymap;
+
 // types
 message Keymap {
   repeated Binding bindings = 1;
@@ -12,20 +14,24 @@ message Binding {
 }
 
 // request/response
-message KeymapGetRequest {}
+message GetRequest {}
 
-message KeymapGetResponse {
+message GetResponse {
   Keymap keymap = 1;
 }
 
-message KeymapReloadRequest {}
+message ReloadRequest {}
+message ReloadResponse {}
 
-message KeymapReloadResponse {
-  Keymap keymap = 1;
+message AddKeyBindingRequest {
+  string key = 1;
+  string action = 2;
+  repeated string contexts = 3;
 }
+message AddKeyBindingResponse {}
 
-message KeymapStoreRequest {
-  Keymap keymap = 1;
+message RemoveKeyBindingRequest {
+  string key = 1;
+  repeated string contexts = 2;
 }
-
-message KeymapStoreResponse {}
+message RemoveKeyBindingResponse {}

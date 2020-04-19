@@ -9,15 +9,25 @@ type t = date * int64
 (* avoid warning in unused operator *)
 module Int64_op = struct
   let ( > ) v1 v2 = Int64.compare v1 v2 > 0
+
   let ( < ) v1 v2 = Int64.compare v1 v2 < 0
+
   let ( = ) v1 v2 = Int64.equal v1 v2
+
   let ( >= ) v1 v2 = not (v1 < v2)
+
   let ( <= ) v1 v2 = not (v1 > v2)
+
   let ( <> ) v1 v2 = not (v1 = v2)
+
   let ( - ) = Int64.sub
+
   let ( + ) = Int64.add
+
   let ( / ) = Int64.div
+
   let ( * ) = Int64.mul
+
   let ( % ) = Int64.rem
 end
 [@warning "-32"]
@@ -69,43 +79,42 @@ let month_to_int = function
 
 (** [month_of_int month] get [month] type from 1-origin month of a year *)
 let month_of_int = function
-  | 1 -> Jan
-  | 2 -> Feb
-  | 3 -> Mar
-  | 4 -> Apr
-  | 5 -> May
-  | 6 -> Jun
-  | 7 -> Jul
-  | 8 -> Aug
-  | 9 -> Sep
-  | 10 -> Oct
-  | 11 -> Nov
-  | 12 -> Dec
+  | 1      -> Jan
+  | 2      -> Feb
+  | 3      -> Mar
+  | 4      -> Apr
+  | 5      -> May
+  | 6      -> Jun
+  | 7      -> Jul
+  | 8      -> Aug
+  | 9      -> Sep
+  | 10     -> Oct
+  | 11     -> Nov
+  | 12     -> Dec
   | _ as v -> failwith @@ Printf.sprintf "Unknown month: %d" v
 
 (* helper constants *)
 let sec = 1_000_000L
+
 let sec_of_minute = Int64.mul 60L sec
+
 let sec_of_hour = Int64.mul 60L sec_of_minute
+
 let sec_of_day = Int64.mul 24L sec_of_hour
 
 (** [is_leapyear] is true, if and only if a year is a leap year *)
-let is_leapyear year =
-  year mod 4 = 0 && year mod 400 <> 100 && year mod 400 <> 200 && year mod 400 <> 300
+let is_leapyear year = year mod 4 = 0 && year mod 400 <> 100 && year mod 400 <> 200 && year mod 400 <> 300
 
 let days_since_start_of_year is_leapyear mm dd =
-  let monthes =
-    List.map month_to_int [ Jan; Feb; Mar; Apr; May; Jun; Jul; Aug; Sep; Oct; Nov; Dec ]
-  in
+  let monthes = List.map month_to_int [ Jan; Feb; Mar; Apr; May; Jun; Jul; Aug; Sep; Oct; Nov; Dec ] in
   List.fold_left
-    (fun accum month ->
-      if month < mm then accum + (month_of_int month |> days_in_month is_leapyear) else accum)
+    (fun accum month -> if month < mm then accum + (month_of_int month |> days_in_month is_leapyear) else accum)
     dd monthes
 
 let get_month_and_date is_leapyear days =
   let rec get_month days monthes =
     match monthes with
-    | [] -> (Dec, 31)
+    | []           -> (Dec, 31)
     | m :: monthes ->
         let days_for_m = days_in_month is_leapyear m in
         let days' = days - days_for_m in
@@ -158,48 +167,81 @@ let of_int64 microseconds =
   ({ year; month = month_to_int month; date }, secs_in_day)
 
 let min_ns = 0L
+
 let max_ns = Int64.sub sec_of_day 1L
+
 let min = ({ year = 0; month = 1; date = 1 }, min_ns)
+
 let max = ({ year = 9999; month = 12; date = 31 }, max_ns)
 
 let compare_date d1 d2 =
   let compare_year = Int.compare d1.year d2.year
   and compare_month = Int.compare d1.month d2.month
   and compare_date = Int.compare d1.date d2.date in
-  if compare_year = 0 then if compare_month = 0 then compare_date else compare_month
-  else compare_year
+  if compare_year = 0 then if compare_month = 0 then compare_date else compare_month else compare_year
 
 let compare (d1, ns1) (d2, ns2) =
   let compare_d = compare_date d1 d2 in
   if Int.equal 0 compare_d then Int64.compare ns1 ns2 else compare_d
 
-let equal v1 v2 = Int.equal (compare v1 v2) 0
+let equal v1 v2 = compare v1 v2 = 0
 
 let of_float ns =
   let gradural, fraction = Float.modf ns in
-  let fraction = Int64.of_float fraction
-  and gradural = gradural *. Int64.to_float sec |> Int64.of_float in
+  let fraction = Int64.of_float fraction and gradural = gradural *. Int64.to_float sec |> Int64.of_float in
   let ns = Int64_op.((fraction * sec) + gradural) in
   let t = of_int64 ns in
   if compare t min < 0 then None else if compare t max > 0 then None else Some t
 
+let of_rfc3339 s =
+  let module T = Time_rfc3339_syntax in
+  let lexing = Lexing.from_string s in
+  let open Option.Infix in
+  let* date_time =
+    try Time_parser.parse Time_lexer.token lexing |> Option.some with
+    | Time_parser.Error  -> None
+    | Time_lexer.Error _ -> None
+  in
+  let* { T.full_year; full_time } =
+    Time_rfc3339_syntax.(
+      validate
+        [
+          Validator.year_range;
+          Validator.month_range;
+          Validator.date_range is_leapyear;
+          Validator.hour_range;
+          Validator.second_range;
+          Validator.minute_range;
+          Validator.offset_range;
+          Validator.frac_range;
+        ]
+        date_time)
+  in
+  let ns =
+    let hour = full_time.T.hour |> Int64.of_int
+    and minute = full_time.minute |> Int64.of_int
+    and second = full_time.second |> Int64.of_int
+    and ms = full_time.sec_frac |> Option.value ~default:0 |> Int64.of_int in
+    let open Int64_op in
+    (hour * sec_of_hour) + (minute * sec_of_minute) + (second * sec) + ms
+  in
+  Some ({ year = full_year.year; month = full_year.month; date = full_year.mday }, ns)
+
 let to_float t =
   let open Int64_op in
   let msec = to_int64 t in
-  let secs = Int64.to_float (msec / sec)
-  and msec = Int64.to_float (msec % sec) /. Int64.to_float sec in
+  let secs = Int64.to_float (msec / sec) and msec = Int64.to_float (msec % sec) /. Int64.to_float sec in
   secs +. msec
 
-let to_rfc3399 t =
+let to_rfc3339 t =
   let { year; month; date }, ns = t in
   let open Int64_op in
   let hours = ns / sec_of_hour in
   let minutes = Int64.rem ns sec_of_hour / sec_of_minute in
   let seconds = Int64.rem ns sec_of_minute / sec in
   let ns = Int64.rem ns sec in
-  Printf.sprintf "%04d-%02d-%02dT%02Ld:%02Ld:%02Ld.%06Ld-00:00" year month date hours minutes
-    seconds ns
+  Printf.sprintf "%04d-%02d-%02dT%02Ld:%02Ld:%02Ld.%06LdZ" year month date hours minutes seconds ns
 
 let pp fmt t =
-  let rfc3399 = to_rfc3399 t in
-  Format.fprintf fmt "%s" rfc3399
+  let rfc3339 = to_rfc3339 t in
+  Format.fprintf fmt "%s" rfc3339

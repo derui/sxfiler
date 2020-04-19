@@ -1,4 +1,4 @@
-import { ClientResolverLike, ApiClientLike, AppClientLike } from "./client-resolver";
+import { ClientResolverLike, RPCClientLike, AppClientLike } from "./client-resolver";
 
 /**
    This module provides mock for the ClientResolverLike. DO NOT USE OUT OF TEST SOURCE.
@@ -10,10 +10,9 @@ const dispatcherMock = function createDispatcherMock() {
   };
 };
 
-const apiClientMock = function createApiClientMock() {
+const rpcClientMock = function createApiClientMock() {
   return {
-    call: jest.fn(),
-    notify: jest.fn(),
+    use: jest.fn(),
   };
 };
 
@@ -23,21 +22,21 @@ const appClientMock = function createAppClientMock() {
   };
 };
 
-const clientResolverMock = function createClientResolverMock(apiClient: ApiClientLike, appClient: AppClientLike) {
+const clientResolverMock = function createClientResolverMock(rpcClient: RPCClientLike, appClient: AppClientLike) {
   return {
-    apiClient: () => apiClient,
+    rpcClient: () => rpcClient,
     appClient: () => appClient,
   } as ClientResolverLike;
 };
 
 export const createResolverMocks = function createMocks() {
-  const apiClient = apiClientMock();
+  const rpcClient = rpcClientMock();
   const appClient = appClientMock();
 
   return {
     dispatcher: dispatcherMock(),
-    apiClient,
+    rpcClient,
     appClient,
-    clientResolver: clientResolverMock(apiClient, appClient),
+    clientResolver: clientResolverMock(rpcClient, appClient),
   };
 };

@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package completer;
+
+message Item {
+  string id = 1;
+  string value = 2;
+}
+
+message Candidate {
+  int32 start = 1;
+  int32 length = 2;
+  Item value = 3;
+}
+
+message InitializeRequest {
+  repeated Item source = 1;
+}
+message InitializeResponse {}
+
+message CompleteRequest {
+  string input = 1;
+}
+message CompleteResponse {}
+
+message CompletionResultNotificationRequest {
+  repeated Candidate candidates = 1;
+}
+message CompletionResultNotificationResponse {}

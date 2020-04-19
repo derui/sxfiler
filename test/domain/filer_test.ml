@@ -1,113 +1,40 @@
-open Sxfiler_core
-module D = Sxfiler_domain
-module N = D.File_item
-module F = D.Filer
-module TF = Test_fixtures
+open Sxfiler_domain
+module C = Sxfiler_core
+module F = Test_fixtures
 
-module Clock = struct
-  let unixtime () = Int64.min_int
-end
+let make_left_file_window file_list =
+  File_window.make_left ~file_list
+    ~history:(Location_history.make ~max_record_num:(Common.Positive_number.make 10 |> Option.get) ())
 
-module Factory = D.Filer.Factory.Make (struct
-  type id = Uuidm.t
-
-  let state = Random.get_state ()
-  let generate () = Uuidm.v4_gen state ()
-end)
-
-let update_test_set =
-  let stat = TF.File_stat.fixture () in
-  let item_1 = TF.File_item.fixture ~full_path:(Path.of_string ~env:`Unix "/foo") stat
-  and item_2 = TF.File_item.fixture ~full_path:(Path.of_string ~env:`Unix "/bar") stat in
-  [
-    ( "hold marked_items if the new file_list has same location",
-      `Quick,
-      fun () ->
-        let data = [ item_1 ] in
-        let expected = [ item_2; item_1 ] in
-        let file_list = D.File_list.make ~location:(Path.of_string "/") ~items:data () in
-        let file_list' = D.File_list.make ~location:(Path.of_string "/") ~items:expected () in
-        let data =
-          Factory.create ~name:"id" ~file_list ~sort_order:D.Types.Sort_type.Name
-          |> D.Filer.add_mark ~ids:[ item_1.id ]
-        in
-        let data = D.Filer.move_location data ~file_list:file_list' (module Clock) in
-        let expected = D.Filer.Marked_item_set.(empty |> add item_1.id) in
-        Alcotest.(check @@ of_pp D.Filer.Marked_item_set.pp)
-          "same item id" expected
-          F.(data.marked_items) );
-    ( "hold marked_items if the new file_list has only some items marked before",
-      `Quick,
-      fun () ->
-        let data = [ item_2; item_1 ] in
-        let expected = [ item_1 ] in
-        let file_list = D.File_list.make ~location:(Path.of_string "/") ~items:data () in
-        let file_list' = D.File_list.make ~location:(Path.of_string "/") ~items:expected () in
-        let data =
-          Factory.create ~name:"id" ~file_list ~sort_order:D.Types.Sort_type.Name
-          |> D.Filer.add_mark ~ids:[ item_1.id; item_2.id ]
-        in
-        let data = D.Filer.update_list data ~file_list:file_list' in
-        let expected = D.Filer.Marked_item_set.(empty |> add item_1.id) in
-        Alcotest.(check @@ of_pp D.Filer.Marked_item_set.pp)
-          "same item id" expected
-          F.(data.marked_items) );
-  ]
+let make_right_file_window file_list =
+  File_window.make_right ~file_list
+    ~history:(Location_history.make ~max_record_num:(Common.Positive_number.make 10 |> Option.get) ())
 
 let test_set =
-  let stat = TF.File_stat.fixture () in
-  let item_1 = TF.File_item.fixture ~full_path:(Path.of_string ~env:`Unix "/foo") stat
-  and item_2 = TF.File_item.fixture ~full_path:(Path.of_string ~env:`Unix "/bar") stat in
-  update_test_set
-  @ [
-      ( "should be sorted with send order when instance created by Factory",
-        `Quick,
-        fun () ->
-          let data = [ item_1; item_2 ] in
-          let expected = [ item_2; item_1 ] in
-          let file_list = D.File_list.make ~location:(Path.of_string "/") ~items:data () in
-          let data = Factory.create ~name:"id" ~file_list ~sort_order:D.Types.Sort_type.Name in
-          Alcotest.(check @@ list @@ TF.Testable.file_item)
-            "subset" expected
-            F.(data.file_list.items) );
-      ( "should be sorted when moved filer's location",
-        `Quick,
-        fun () ->
-          let data = [ item_1; item_2 ] in
-          let expected = [ item_2; item_1 ] in
-          let file_list = D.File_list.make ~location:(Path.of_string "/") ~items:data () in
-          let filer = Factory.create ~name:"id" ~file_list ~sort_order:D.Types.Sort_type.Name in
-          let filer =
-            F.move_location filer
-              ~file_list:D.File_list.(make ~location:(Path.of_string "/new") ~items:data ())
-              ( module struct
-                let unixtime () = Int64.zero
-              end )
-          in
-          Alcotest.(check @@ list @@ TF.Testable.file_item)
-            "subset" expected
-            F.(filer.file_list.items);
-          Alcotest.(check @@ of_pp Path.pp)
-            "location" (Path.of_string "/new")
-            F.(filer.file_list.location) );
-      ( "should be able to select nodes",
-        `Quick,
-        fun () ->
-          let file_list =
-            D.File_list.make ~location:(Path.of_string "/") ~items:[ item_1; item_2 ] ()
-          in
-          let filer = Factory.create ~name:"id" ~file_list ~sort_order:D.Types.Sort_type.Name in
-          let filer = F.add_mark filer ~ids:[ "id1" ] in
-          let expected = F.Marked_item_set.of_list [ "id1" ] in
-          Alcotest.(check @@ of_pp F.Marked_item_set.pp) "subset" expected F.(filer.marked_items) );
-      ( "should be able to remove nodes from selected these",
-        `Quick,
-        fun () ->
-          let file_list =
-            D.File_list.make ~location:(Path.of_string "/") ~items:[ item_1; item_2 ] ()
-          in
-          let filer = Factory.create ~name:"id" ~file_list ~sort_order:D.Types.Sort_type.Name in
-          let filer = F.add_mark filer ~ids:[ "id1"; "id2" ] |> F.remove_mark ~ids:[ "id2" ] in
-          let expected = F.Marked_item_set.of_list [ "id1" ] in
-          Alcotest.(check @@ of_pp F.Marked_item_set.pp) "subset" expected F.(filer.marked_items) );
-    ]
+  [
+    Alcotest_lwt.test_case_sync "swap file list between sides" `Quick (fun () ->
+        let left_list_items = [ F.File_item.fixture (); F.File_item.fixture () ]
+        and right_list_items = [ F.File_item.fixture (); F.File_item.fixture () ] in
+
+        let left_list =
+          File_list.(
+            make ~id:(Id.make "left")
+              ~location:(C.Path.of_string "/left" |> Result.get_ok)
+              ~sort_order:Types.Sort_type.Name)
+        and right_list =
+          File_list.(
+            make ~id:(Id.make "right")
+              ~location:(C.Path.of_string "/right" |> Result.get_ok)
+              ~sort_order:Types.Sort_type.Name)
+        in
+
+        let left_list = left_list |> File_list.scan (`Scanned left_list_items)
+        and right_list = right_list |> File_list.scan (`Scanned right_list_items) in
+        let left_file_window = make_left_file_window left_list
+        and right_file_window = make_right_file_window right_list in
+        let filer = Filer.make ~left_file_window ~right_file_window in
+        let Filer.{ left_file_window = left; right_file_window = right } = Filer.swap_side filer in
+
+        Alcotest.(check F.Testable.file_list_scanned) "swapped" left_file_window.file_list right.file_list;
+        Alcotest.(check F.Testable.file_list_scanned) "swapped" right_file_window.file_list left.file_list);
+  ]

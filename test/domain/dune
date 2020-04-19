@@ -1,3 +1,4 @@
 (test
  (name tests)
- (libraries alcotest alcotest-lwt sxfiler.core sxfiler.domain test_fixtures spy))
+ (libraries alcotest alcotest-lwt sxfiler.core sxfiler.domain test_fixtures spy)
+ (preprocess (pps lwt_ppx)))

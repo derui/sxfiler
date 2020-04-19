@@ -1,4 +1,0 @@
-(test
- (name tests)
- (libraries alcotest alcotest-lwt sxfiler_usecase spy test_fixtures)
- (preprocess (pps lwt_ppx)))
