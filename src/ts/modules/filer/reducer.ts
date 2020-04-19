@@ -1,12 +1,14 @@
 import { ActionTypes } from "./types";
 import { Actions } from "./actions";
 import * as N from "@/types/natural-number";
-import { Filer, FileWindow } from "@/generated/filer_pb";
+import { Filer, FileWindow, FileList } from "@/generated/filer_pb";
+import { ObjectEnum } from "@/utils";
 
-export enum Side {
-  Left = "Left",
-  Right = "Right",
-}
+export const Side = {
+  Left: "Left",
+  Right: "Right",
+} as const;
+export type Side = ObjectEnum<typeof Side>;
 
 // state of type. Please redefine to what you want.
 export type State = Readonly<{
@@ -32,6 +34,20 @@ export const emptyState: State = Object.freeze({
   },
   currentSide: Side.Left,
 });
+
+function sideMap<L, R>(
+  state: State,
+  left: (fw: FileWindow | undefined) => L,
+  right: (fw: FileWindow | undefined) => R
+): [L, R] | undefined {
+  const { filer } = state;
+
+  if (!filer) {
+    return undefined;
+  }
+
+  return [left(filer.getLeftFileWindow()), right(filer.getRightFileWindow())];
+}
 
 /**
  * reducer function for creator `actions.cursorDown`
@@ -142,6 +158,44 @@ const updateFileWindow = (state: State, payload: { fileWindow: FileWindow; side:
   });
 };
 
+const focusItem = (state: State, payload: { itemId: string }): State => {
+  const findIndex = (fw: FileList | undefined): number | undefined =>
+    fw?.getItemsList()?.findIndex((v) => v.getId() === payload.itemId);
+
+  const ret = sideMap(
+    state,
+    (fw) => {
+      const index = findIndex(fw?.getFileList());
+
+      if (index !== undefined) {
+        return N.create(index);
+      }
+      return state.currentCursorPosition.left;
+    },
+    (fw) => {
+      const index = findIndex(fw?.getFileList());
+
+      if (index !== undefined) {
+        return N.create(index);
+      }
+      return state.currentCursorPosition.right;
+    }
+  );
+
+  if (!ret) {
+    return state;
+  }
+  const [leftIndex, rightIndex] = ret;
+
+  return Object.freeze({
+    ...state,
+    currentCursorPosition: {
+      left: leftIndex,
+      right: rightIndex,
+    },
+  });
+};
+
 export const reducer = function reducer(state: State = emptyState, action: Actions): State {
   switch (action.type) {
     case ActionTypes.UPDATE:
@@ -154,6 +208,8 @@ export const reducer = function reducer(state: State = emptyState, action: Actio
       return changeSide(state);
     case ActionTypes.UPDATE_FILE_WINDOW:
       return updateFileWindow(state, action.payload);
+    case ActionTypes.FOCUS_ITEM:
+      return focusItem(state, action.payload);
     default:
       return state;
   }

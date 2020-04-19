@@ -12,7 +12,7 @@ const currentIndexSelector = (state: State) => {
   }
 };
 const getCurrentSide = (state: State) => state.currentSide;
-const currentSideItemsSelector = (state: State) => {
+export const currentSideItemsSelector = (state: State) => {
   switch (state.currentSide) {
     case Side.Left:
       return state.filer?.getLeftFileWindow()?.getFileList()?.getItemsList() || [];

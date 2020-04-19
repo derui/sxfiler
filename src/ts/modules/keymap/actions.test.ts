@@ -24,6 +24,12 @@ describe("Modules", () => {
 
         expect(action).toEqual({ type: ActionTypes.ADD_CONTEXTS, payload: { contexts: [UIContext.ForFinder] } });
       });
+
+      it("create replaceContexts action", () => {
+        const action = actions.replaceContext([UIContext.ForFinder]);
+
+        expect(action).toEqual({ type: ActionTypes.REPLACE_CONTEXT, payload: { contexts: [UIContext.ForFinder] } });
+      });
     });
   });
 });

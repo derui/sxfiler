@@ -1,11 +1,11 @@
 import { DecisionRequiredOp, SelectableAction } from "@/modules/decision/reducer";
 import * as EventHub from "@/libs/event-hub";
+import { ObjectEnum } from "./utils";
 
 export const EventTypes = {
   FinishDecision: "FinishDecision",
 } as const;
-
-export type EventTypes = typeof EventTypes[keyof typeof EventTypes];
+export type EventTypes = ObjectEnum<typeof EventTypes>;
 
 type FinishDecisionEvent = {
   kind: "FinishDecision";

@@ -1,4 +1,7 @@
 import { DescriptorsType } from "@/commands/type";
+import * as finderClose from "./finder/close";
+import * as finderConfirm from "./finder/confirm";
+import * as finderOpen from "./finder/open";
 import * as filerToggleMark from "./filer/toggle-mark";
 import * as filerUpDirectory from "./filer/up-directory";
 import * as filerOpenNode from "./filer/open-node";
@@ -14,6 +17,9 @@ import { Type } from "../command-resolver";
 
 // prettier-ignore
 export const descriptors = {
+  finderClose: finderClose.descriptor,
+  finderConfirm: finderConfirm.descriptor,
+  finderOpen: finderOpen.descriptor,
   filerToggleMark: filerToggleMark.descriptor,
   filerUpDirectory: filerUpDirectory.descriptor,
   filerOpenNode: filerOpenNode.descriptor,
@@ -34,6 +40,9 @@ export type Descriptors = DescriptorsType<typeof descriptors>;
  */
 // prettier-ignore
 export const registerToResolver = function registerToResolver(resolver: Type) {
+  resolver.register({descriptor: finderClose.descriptor, factory: finderClose.createCommand});
+  resolver.register({descriptor: finderConfirm.descriptor, factory: finderConfirm.createCommand});
+  resolver.register({descriptor: finderOpen.descriptor, factory: finderOpen.createCommand});
   resolver.register({descriptor: filerToggleMark.descriptor, factory: filerToggleMark.createCommand});
   resolver.register({descriptor: filerUpDirectory.descriptor, factory: filerUpDirectory.createCommand});
   resolver.register({descriptor: filerOpenNode.descriptor, factory: filerOpenNode.createCommand});

@@ -1,4 +1,5 @@
 import { DescriptorsType } from "@/commands/type";
+import * as completerUpdateCandidates from "./completer/update-candidates";
 import * as completerInitialize from "./completer/initialize";
 import * as completerComplete from "./completer/complete";
 import * as filerUpdateFileWindow from "./filer/update-file-window";
@@ -15,6 +16,7 @@ import { Type } from "../command-resolver";
 
 // prettier-ignore
 export const descriptors = {
+  completerUpdateCandidates: completerUpdateCandidates.descriptor,
   completerInitialize: completerInitialize.descriptor,
   completerComplete: completerComplete.descriptor,
   filerUpdateFileWindow: filerUpdateFileWindow.descriptor,
@@ -36,6 +38,7 @@ export type Descriptors = DescriptorsType<typeof descriptors>;
  */
 // prettier-ignore
 export const registerToResolver = function registerToResolver(resolver: Type) {
+  resolver.register({descriptor: completerUpdateCandidates.descriptor, factory: completerUpdateCandidates.createCommand});
   resolver.register({descriptor: completerInitialize.descriptor, factory: completerInitialize.createCommand});
   resolver.register({descriptor: completerComplete.descriptor, factory: completerComplete.createCommand});
   resolver.register({descriptor: filerUpdateFileWindow.descriptor, factory: filerUpdateFileWindow.createCommand});

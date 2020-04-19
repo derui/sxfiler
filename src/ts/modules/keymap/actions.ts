@@ -5,6 +5,10 @@ import { UIContext } from "@/types/ui-context";
 
 // implememt action. Use command `hygen module add:action [name of action]` to add template into this place.
 //#ACTION INSERTION INDICATOR
+export const replaceContext = (contexts: UIContext[]) => {
+  return { type: ActionTypes.REPLACE_CONTEXT, payload: { contexts } };
+};
+
 export const removeContexts = function removeContexts(contexts: UIContext[]) {
   return { type: ActionTypes.REMOVE_CONTEXTS, payload: { contexts } };
 };
@@ -20,6 +24,7 @@ export const update = function update(keymap: Keymap) {
 // Do not delete this comment below.
 // prettier-ignore
 export const actions = {
+replaceContext,
   removeContexts,
   addContexts,
   update,

@@ -1,13 +1,15 @@
 import { ActionTypes } from "./types";
 import { Actions } from "./actions";
 import { FileItem } from "@/generated/filer_pb";
+import { ObjectEnum } from "@/utils";
 
 // Operation type to be required from server.
-export enum DecisionRequiredOp {
-  Copy = "Copy",
-  Move = "Move",
-  Delete = "Delete",
-}
+export const DecisionRequiredOp = {
+  Copy: "Copy",
+  Move: "Move",
+  Delete: "Delete",
+} as const;
+export type DecisionRequiredOp = ObjectEnum<typeof DecisionRequiredOp>;
 
 // types of actions to decision
 export const DecisionAction = {
@@ -15,7 +17,7 @@ export const DecisionAction = {
   Rename: "rename",
   Confirm: "confirm",
 } as const;
-export type DecisionAction = typeof DecisionAction[keyof typeof DecisionAction];
+export type DecisionAction = ObjectEnum<typeof DecisionAction>;
 
 export type OverwriteAction = {
   kind: "overwrite";

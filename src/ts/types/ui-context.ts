@@ -1,11 +1,14 @@
+import { ObjectEnum } from "@/utils";
+
 // UIContext defines current context of UI.
-export enum UIContext {
-  OnFileTree = "onFileTree",
-  OnSuggestion = "onSuggestion",
-  OnCompletion = "onCompletion",
-  ForHistory = "forHistory",
-  ForFinder = "forFinder",
-}
+export const UIContext = {
+  OnFileTree: "onFileTree",
+  OnSuggestion: "onSuggestion",
+  OnCompletion: "onCompletion",
+  ForHistory: "forHistory",
+  ForFinder: "forFinder",
+} as const;
+export type UIContext = ObjectEnum<typeof UIContext>;
 
 /**
  * convert string to UIContext.
