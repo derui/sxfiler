@@ -40,4 +40,5 @@ let construct_services (module Dep : Dependencies.S) options =
       construct_filer_endpoints (module Dep);
       construct_keymap_endpoints (module Dep) options;
       construct_configuration_endpoints (module Dep);
+      construct_completer_endpoints (module Dep);
     ]

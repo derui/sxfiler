@@ -20,10 +20,12 @@
     {"action": "interactive.task.sendReply", "key": "Enter", "contexts": ["onSuggestion"]},
     {"action": "interactive.task.cancel", "key": "Escape", "contexts": ["onSuggestion"]},
     {"action": "interactive.finder.open", "key": "f", "contexts": ["onFileTree"]},
-    {"action": "interactive.finder.select", "key": "Enter", "contexts": ["onCompletion", "forFinder"]},
-    {"action": "interactive.completer.close", "key": "Escape", "contexts": ["onCompletion"]},
-    {"action": "interactive.completer.cursorUp", "key": "ArrowUp", "contexts": ["onCompletion"]},
-    {"action": "interactive.completer.cursorDown", "key": "ArrowDown", "contexts": ["onCompletion"]},
+    {"action": "interactive.finder.confirm", "key": "Enter", "contexts": ["onCompletion", "forFinder"]},
+    {"action": "interactive.finder.close", "key": "Escape", "contexts": ["onCompletion", "forFinder"]},
+    {"action": "interactive.completer.cursor-up", "key": "ArrowUp", "contexts": ["onCompletion"]},
+    {"action": "interactive.completer.cursor-up", "key": "C-p", "contexts": ["onCompletion"]},
+    {"action": "interactive.completer.cursor-down", "key": "ArrowDown", "contexts": ["onCompletion"]},
+    {"action": "interactive.completer.cursor-down", "key": "C-n", "contexts": ["onCompletion"]},
     {"action": "interactive.bookmark.toggle", "key": "C-b", "contexts": ["onFileTree"]}
   ]
 }

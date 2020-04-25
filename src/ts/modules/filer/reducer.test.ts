@@ -12,7 +12,20 @@ describe("Modules", () => {
             v.setFileList(
               also(new FileList(), (v) => {
                 v.setLocation("location");
-                v.setItemsList([new FileItem(), new FileItem(), new FileItem()]);
+                v.setItemsList([
+                  also(new FileItem(), (v) => {
+                    v.setId("id1");
+                    v.setName("name1");
+                  }),
+                  also(new FileItem(), (v) => {
+                    v.setId("id2");
+                    v.setName("name2");
+                  }),
+                  also(new FileItem(), (v) => {
+                    v.setId("id3");
+                    v.setName("name3");
+                  }),
+                ]);
               })
             );
           })
@@ -109,6 +122,16 @@ describe("Modules", () => {
 
         const fileWindow = filer.getLeftFileWindow()!!;
         state = reducer(state, actions.updateFileWindow(fileWindow, Side.Left));
+
+        expect(state.filer?.getLeftFileWindow()?.toObject()).toEqual(fileWindow.toObject());
+        expect(state.currentCursorPosition.left.value).toEqual(2);
+      });
+
+      test("focus specified item of the current side", () => {
+        let state = pipe((v) => reducer(v, actions.update(filer)))(undefined);
+
+        const fileWindow = filer.getLeftFileWindow()!!;
+        state = reducer(state, actions.focusItem("id3"));
 
         expect(state.filer?.getLeftFileWindow()?.toObject()).toEqual(fileWindow.toObject());
         expect(state.currentCursorPosition.left.value).toEqual(2);

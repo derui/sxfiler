@@ -3,11 +3,11 @@
  */
 import * as winston from "winston";
 
-export enum Loggers {
-  RPC = "RPC",
-  COMMAND = "Command",
-  KEY_EVENT = "KeyEvent",
-}
+export const Loggers = {
+  RPC: "RPC",
+  COMMAND: "Command",
+  KEY_EVENT: "KeyEvent",
+} as const;
 
 export const initializeLoggers = function initializeLoggers(debug = false) {
   const format = winston.format;

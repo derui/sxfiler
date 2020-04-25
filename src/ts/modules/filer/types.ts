@@ -1,5 +1,6 @@
 // prettier-ignore
 export const ActionTypes = {
+FOCUS_ITEM: "filer/focusItem",
 UPDATE_FILE_WINDOW: "filer/updateFileWindow",
 CHANGE_SIDE: "filer/changeSide",
 UPDATE: "filer/update",

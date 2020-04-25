@@ -9,6 +9,8 @@ export type SplittedCandidate = {
 };
 
 const getCandidates = (state: State) => state.candidates;
+const getCurrentCursor = (state: State) => state.currentCursorPosition;
+const isOpened = (state: State) => state.opened;
 
 /**
  * get candidates splitted by matching.
@@ -27,3 +29,15 @@ export const getSplittedByMatching = createSelector(getCandidates, (candidates) 
     };
   });
 });
+
+export const selectCurrentFocusedItem = createSelector(
+  getCandidates,
+  getCurrentCursor,
+  isOpened,
+  (candidates, cursor, opened) => {
+    if (!opened) {
+      return undefined;
+    }
+    return candidates[cursor.value];
+  }
+);

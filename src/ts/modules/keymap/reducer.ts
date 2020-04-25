@@ -109,6 +109,22 @@ const addContexts = function (state: State, contexts: UIContext[]) {
   };
 };
 
+const replaceContext = (state: State, contexts: UIContext[]) => {
+  const globalKeymap = state.globalKeymap;
+
+  const newContexts = new Set(contexts);
+
+  if (!globalKeymap) {
+    return { ...state, contexts: newContexts };
+  }
+
+  return {
+    ...state,
+    currentKeymap: extractCurrentKeymap(newContexts, globalKeymap),
+    contexts: newContexts,
+  };
+};
+
 export const reducer = function reducer(state: State = emptyState, action: Actions): State {
   switch (action.type) {
     case ActionTypes.UPDATE:
@@ -123,6 +139,9 @@ export const reducer = function reducer(state: State = emptyState, action: Actio
 
     case ActionTypes.REMOVE_CONTEXTS:
       return removeContexts(state, action.payload.contexts);
+
+    case ActionTypes.REPLACE_CONTEXT:
+      return replaceContext(state, action.payload.contexts);
 
     default:
       return state;

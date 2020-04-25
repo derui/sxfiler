@@ -32,6 +32,12 @@ describe("Modules", () => {
 
         expect(actions.updateFileWindow(fileWindow, Side.Left).type).toEqual(ActionTypes.UPDATE_FILE_WINDOW);
       });
+
+      test("create action to focus item", () => {
+        const action = actions.focusItem("id");
+        expect(action.type).toEqual(ActionTypes.FOCUS_ITEM);
+        expect(action.payload).toEqual({ itemId: "id" });
+      });
     });
   });
 });

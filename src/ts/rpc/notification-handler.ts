@@ -19,6 +19,8 @@ import { DecisionRequiredOp, DecisionAction } from "@/modules/decision/reducer";
 import { ResponseSender, ProcessResult } from "@/libs/websocket-rpc/server";
 import { TypedSubscriber, EventTypes } from "@/typed-event-hub";
 import { Side } from "@/modules/filer/reducer";
+import { lazy } from "preact/compat/src";
+import { CompletionResultNotificationRequest, CompletionResultNotificationResponse } from "@/generated/completer_pb";
 
 /**
  * this module provides handler to handle commands that are notifications sent from server.
@@ -85,6 +87,23 @@ const handleCopyUserDecision: InnerCommandHandler = (args, id, payload, lazyResp
   });
 };
 
+const handleCandidateUpdated: InnerCommandHandler = (args, id, payload, lazyResponse) => {
+  const logger = winston.loggers.get(Loggers.RPC);
+  const request = CompletionResultNotificationRequest.deserializeBinary(payload);
+  const factory = args.getCommandResolver().resolveBy(descriptors.completerUpdateCandidates);
+  if (!factory) {
+    logger.error(`Invalid path: ${descriptors.completerUpdateCandidates.identifier}`);
+    lazyResponse(ProcessResult.ignored());
+    return;
+  }
+
+  logger.info("Start handling event request to be notified candidates");
+
+  args.getCommandExecutor().execute(factory, args.getState(), { candidates: request.getCandidatesList() });
+
+  lazyResponse(ProcessResult.successed(new CompletionResultNotificationResponse().serializeBinary()));
+};
+
 /**
  * The notification handler for pushing notification from server
  */
@@ -131,6 +150,9 @@ export const notificationHandler = function notificationHandler(
         break;
       case Command.FILER_COPY_INTERACTION:
         handleCopyUserDecision(args, id, payload, lazyResponse);
+        break;
+      case Command.COMPLETER_NOTIFY_COMPLETED:
+        handleCandidateUpdated(args, id, payload, lazyResponse);
         break;
       default:
         lazyResponse(ProcessResult.ignored());
