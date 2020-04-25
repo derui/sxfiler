@@ -109,7 +109,7 @@ const addContexts = function (state: State, contexts: UIContext[]) {
   };
 };
 
-const replaceContext = (state: State, contexts: UIContext[]) => {
+const replaceContext = function (state: State, contexts: UIContext[]) {
   const globalKeymap = state.globalKeymap;
 
   const newContexts = new Set(contexts);
@@ -125,7 +125,7 @@ const replaceContext = (state: State, contexts: UIContext[]) => {
   };
 };
 
-export const reducer = function reducer(state: State = emptyState, action: Actions): State {
+export const reducer = (state: State = emptyState, action: Actions): State => {
   switch (action.type) {
     case ActionTypes.UPDATE:
       return {
