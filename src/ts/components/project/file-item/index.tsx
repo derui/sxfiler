@@ -11,9 +11,17 @@ export type Props = {
   selected: boolean;
   hidden?: boolean;
   bookmarked: boolean;
+  onRefUpdated?: (e: HTMLElement) => void;
 };
 
-export const Component: preact.FunctionComponent<Props> = ({ item, selected, bookmarked, hidden = false, ...rest }) => {
+export const Component: preact.FunctionComponent<Props> = ({
+  item,
+  selected,
+  bookmarked,
+  hidden = false,
+  onRefUpdated = undefined,
+  ...rest
+}) => {
   const stat = item.stat;
   if (!stat) {
     return null;
@@ -27,7 +35,11 @@ export const Component: preact.FunctionComponent<Props> = ({ item, selected, boo
       data-marked={item.marked}
       data-bookmarked={bookmarked}
       aria-hidden={hidden}
-      ref={rest.ref}
+      ref={(e) => {
+        if (onRefUpdated && e) {
+          onRefUpdated(e);
+        }
+      }}
       {...rest}
     >
       <Mode key="mode" mode={stat.mode} isDirectory={stat.isDirectory} isSymlink={stat.isSymlink} />

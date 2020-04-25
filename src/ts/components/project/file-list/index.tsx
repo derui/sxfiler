@@ -7,7 +7,7 @@ import { ItemMeasureCache } from "./item-measure-cache";
 import { ListLayoutCalculator, VirtualizedWindow } from "./list-layout-calculator";
 import { FileItem } from "@/generated/filer_pb";
 import { Bookmark } from "@/generated/bookmark_pb";
-import { useMemo } from "preact/hooks";
+import { useState } from "preact/hooks";
 
 export type Props = {
   location: string;
@@ -18,17 +18,15 @@ export type Props = {
 };
 
 function useItemMeasureCache() {
-  const cache = useMemo(() => new ItemMeasureCache(), undefined);
+  const [cache] = useState(new ItemMeasureCache());
   return cache;
 }
 
 const useLayoutCalculator = () => {
-  const calculator = useMemo(
-    () =>
-      new ListLayoutCalculator({
-        estimatedItemSize: 24,
-      }),
-    undefined
+  const [calculator] = useState(
+    new ListLayoutCalculator({
+      estimatedItemSize: 24,
+    })
   );
 
   return calculator;
@@ -66,7 +64,7 @@ const makeListItems = (layout: VirtualizedWindow, props: Props, itemMeasureCache
     return (
       <ListItem.Component
         key={index + layout.startIndex}
-        ref={(e: HTMLElement) => itemMeasureCache.set(index + layout.startIndex, e)}
+        onRefUpdated={(e: HTMLElement) => itemMeasureCache.set(index + layout.startIndex, e)}
         item={item}
         bookmarked={!!keyAsPathBookmark[item.fullPath]}
         selected={selected}
