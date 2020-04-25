@@ -161,13 +161,14 @@ const updateFileWindow = (state: State, payload: { fileWindow: FileWindow; side:
 const focusItem = (state: State, payload: { itemId: string }): State => {
   const findIndex = (fw: FileList | undefined): number | undefined =>
     fw?.getItemsList()?.findIndex((v) => v.getId() === payload.itemId);
+  const currentSide = state.currentSide;
 
   const ret = sideMap(
     state,
     (fw) => {
       const index = findIndex(fw?.getFileList());
 
-      if (index !== undefined) {
+      if (index !== undefined && currentSide === Side.Left) {
         return N.create(index);
       }
       return state.currentCursorPosition.left;
@@ -175,7 +176,7 @@ const focusItem = (state: State, payload: { itemId: string }): State => {
     (fw) => {
       const index = findIndex(fw?.getFileList());
 
-      if (index !== undefined) {
+      if (index !== undefined && currentSide === Side.Right) {
         return N.create(index);
       }
       return state.currentCursorPosition.right;
