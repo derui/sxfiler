@@ -39,6 +39,38 @@ end = struct
     | n -> Error (`Unknown_enum_value n)
   
 end
+and Direction : sig
+  type t = LEFT_TO_RIGHT | RIGHT_TO_LEFT [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  val to_int: t -> int
+  val from_int: int -> (t, [> Runtime'.Result.error]) result
+end = struct 
+  type t = LEFT_TO_RIGHT | RIGHT_TO_LEFT [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  let to_int = function
+    | LEFT_TO_RIGHT -> 0
+    | RIGHT_TO_LEFT -> 1
+  
+  let from_int = function
+    | 0 -> Ok LEFT_TO_RIGHT
+    | 1 -> Ok RIGHT_TO_LEFT
+    | n -> Error (`Unknown_enum_value n)
+  
+end
+and Target : sig
+  type t = MARKED | ONE [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  val to_int: t -> int
+  val from_int: int -> (t, [> Runtime'.Result.error]) result
+end = struct 
+  type t = MARKED | ONE [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  let to_int = function
+    | MARKED -> 0
+    | ONE -> 1
+  
+  let from_int = function
+    | 0 -> Ok MARKED
+    | 1 -> Ok ONE
+    | n -> Error (`Unknown_enum_value n)
+  
+end
 and Action : sig
   type t = RENAME | OVERWRITE | CANCEL [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
   val to_int: t -> int
@@ -641,6 +673,48 @@ end = struct
   let from_proto =
     let constructor = fun _extensions confirmed -> { confirmed } in
     let spec = Runtime'.Deserialize.C.( basic (1, bool, proto3) ^:: nil ) in
+    let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
+    fun writer -> deserialize writer |> Runtime'.Result.open_error
+  
+end
+and MoveRequest : sig
+  val name': unit -> string
+  type t = { direction: Direction.t; target: Target.t; target_id: string } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  val to_proto: t -> Runtime'.Writer.t
+  val from_proto: Runtime'.Reader.t -> (t, [> Runtime'.Result.error]) result
+end = struct 
+  let name' () = "filer.MoveRequest"
+  type t = { direction: Direction.t; target: Target.t; target_id: string }[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  let to_proto =
+    let apply = fun ~f:f' { direction; target; target_id } -> f' [] direction target target_id in
+    let spec = Runtime'.Serialize.C.( basic (1, (enum Direction.to_int), proto3) ^:: basic (2, (enum Target.to_int), proto3) ^:: basic (3, string, proto3) ^:: nil ) in
+    let serialize = Runtime'.Serialize.serialize [] (spec) in
+    fun t -> apply ~f:serialize t
+  
+  let from_proto =
+    let constructor = fun _extensions direction target target_id -> { direction; target; target_id } in
+    let spec = Runtime'.Deserialize.C.( basic (1, (enum Direction.from_int), proto3) ^:: basic (2, (enum Target.from_int), proto3) ^:: basic (3, string, proto3) ^:: nil ) in
+    let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
+    fun writer -> deserialize writer |> Runtime'.Result.open_error
+  
+end
+and MoveResponse : sig
+  val name': unit -> string
+  type t = unit [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  val to_proto: t -> Runtime'.Writer.t
+  val from_proto: Runtime'.Reader.t -> (t, [> Runtime'.Result.error]) result
+end = struct 
+  let name' () = "filer.MoveResponse"
+  type t = unit[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  let to_proto =
+    let apply = fun ~f () -> f [] in
+    let spec = Runtime'.Serialize.C.( nil ) in
+    let serialize = Runtime'.Serialize.serialize [] (spec) in
+    fun t -> apply ~f:serialize t
+  
+  let from_proto =
+    let constructor = fun _extension -> () in
+    let spec = Runtime'.Deserialize.C.( nil ) in
     let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
     fun writer -> deserialize writer |> Runtime'.Result.open_error
   

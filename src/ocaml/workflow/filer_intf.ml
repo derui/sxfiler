@@ -9,6 +9,7 @@ type side =
 type direction =
   | Left_to_right
   | Right_to_left
+[@@deriving eq, show]
 
 type event =
   | Updated             of D.Filer.t
@@ -68,12 +69,14 @@ module Move = struct
   type target =
     | Marked
     | One    of D.File_item.Id.t
+  [@@deriving eq, show]
 
   type input = {
     direction : direction;
     filer : D.Filer.t;
     target : target;
   }
+  [@@deriving eq, show]
 
   type work_flow = input -> event list Lwt.t
 end

@@ -5,49 +5,65 @@
 /**
  * wrapped type
  */
-export type NaturalNumber = {
+export type Type = {
   readonly value: number;
 };
 
 /**
+ * create a natural number from number.
+ */
+export const create = (value: number = 0): Type => {
+  let validated = value < 0 ? 0 : value;
+  validated = Math.floor(validated);
+
+  return Object.freeze({
+    get value() {
+      return validated;
+    },
+  });
+};
+
+export const zero = create(0);
+
+/**
  * increment natural value
  */
-export const inc = function increment(value: NaturalNumber): NaturalNumber {
+export const inc = (value: Type): Type => {
   return create(value.value + 1);
 };
 
 /**
  * decrement natural value
  */
-export const dec = function decrement(value: NaturalNumber): NaturalNumber {
+export const dec = (value: Type): Type => {
   return create(value.value - 1);
 };
 
 /**
  * add natural values
  */
-export const add = function add(v1: NaturalNumber, v2: NaturalNumber): NaturalNumber {
+export const add = (v1: Type, v2: Type): Type => {
   return create(v1.value + v2.value);
 };
 
 /**
  * subtract natural values
  */
-export const sub = function sub(v1: NaturalNumber, v2: NaturalNumber): NaturalNumber {
+export const sub = (v1: Type, v2: Type): Type => {
   return create(v1.value - v2.value);
 };
 
 /**
  * multiply natural values
  */
-export const mul = function mul(v1: NaturalNumber, v2: NaturalNumber): NaturalNumber {
+export const mul = (v1: Type, v2: Type): Type => {
   return create(v1.value * v2.value);
 };
 
 /**
  * divide natural value with other natural value
  */
-export const div = function div(v1: NaturalNumber, v2: NaturalNumber): NaturalNumber | undefined {
+export const div = (v1: Type, v2: Type): Type | undefined => {
   if (v2.value === 0) {
     return undefined;
   }
@@ -58,7 +74,7 @@ export const div = function div(v1: NaturalNumber, v2: NaturalNumber): NaturalNu
 /**
  * get maximum number from v1 and v2
  */
-export const max = function max(v: NaturalNumber, ...args: NaturalNumber[]): NaturalNumber {
+export const max = (v: Type, ...args: Type[]): Type => {
   if (args.length === 0) {
     return v;
   }
@@ -71,7 +87,7 @@ export const max = function max(v: NaturalNumber, ...args: NaturalNumber[]): Nat
 /**
  * get minimum number from v1 and v2
  */
-export const min = function min(v: NaturalNumber, ...args: NaturalNumber[]): NaturalNumber {
+export const min = (v: Type, ...args: Type[]): Type => {
   if (args.length === 0) {
     return v;
   }
@@ -79,18 +95,4 @@ export const min = function min(v: NaturalNumber, ...args: NaturalNumber[]): Nat
   return args.reduce((current, next) => {
     return current.value < next.value ? current : next;
   }, v);
-};
-
-/**
- * create a natural number from number.
- */
-export const create = function createNaturalNumber(value: number = 0): NaturalNumber {
-  let validated = value < 0 ? 0 : value;
-  validated = Math.floor(validated);
-
-  return Object.freeze({
-    get value() {
-      return validated;
-    },
-  });
 };

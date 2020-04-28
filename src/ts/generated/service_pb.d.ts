@@ -145,6 +145,7 @@ export interface CommandMap {
   COMPLETER_INITIALIZE: 18;
   COMPLETER_COMPLETE: 19;
   COMPLETER_NOTIFY_COMPLETED: 20;
+  FILER_MOVE: 21;
 }
 
 export const Command: CommandMap;

@@ -19,11 +19,11 @@
 
 open Ocaml_protoc_plugin.Runtime [@@warning "-33"]
 module rec Command : sig
-  type t = UNKNOWN_COMMAND | FILER_INITIALIZE | FILER_RELOAD_ALL | FILER_MOVE_LOCATION | FILER_UPDATED | FILER_COPY_INTERACTION | FILER_MOVE_INTERACTION | FILER_DELETE_INTERACTION | KEYMAP_ADD_KEY_BINDING | KEYMAP_REMOVE_KEY_BINDING | KEYMAP_GET | KEYMAP_RELOAD | KEYMAP_UPDATED | FILER_OPEN_FILE_ITEM | CONFIGURATION_GET | FILER_UP_DIRECTORY | FILER_TOGGLE_MARK_OF_ITEM | FILER_UPDATED_FILE_WINDOW | COMPLETER_INITIALIZE | COMPLETER_COMPLETE | COMPLETER_NOTIFY_COMPLETED [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = UNKNOWN_COMMAND | FILER_INITIALIZE | FILER_RELOAD_ALL | FILER_MOVE_LOCATION | FILER_UPDATED | FILER_COPY_INTERACTION | FILER_MOVE_INTERACTION | FILER_DELETE_INTERACTION | KEYMAP_ADD_KEY_BINDING | KEYMAP_REMOVE_KEY_BINDING | KEYMAP_GET | KEYMAP_RELOAD | KEYMAP_UPDATED | FILER_OPEN_FILE_ITEM | CONFIGURATION_GET | FILER_UP_DIRECTORY | FILER_TOGGLE_MARK_OF_ITEM | FILER_UPDATED_FILE_WINDOW | COMPLETER_INITIALIZE | COMPLETER_COMPLETE | COMPLETER_NOTIFY_COMPLETED | FILER_MOVE [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
   val to_int: t -> int
   val from_int: int -> (t, [> Runtime'.Result.error]) result
 end = struct 
-  type t = UNKNOWN_COMMAND | FILER_INITIALIZE | FILER_RELOAD_ALL | FILER_MOVE_LOCATION | FILER_UPDATED | FILER_COPY_INTERACTION | FILER_MOVE_INTERACTION | FILER_DELETE_INTERACTION | KEYMAP_ADD_KEY_BINDING | KEYMAP_REMOVE_KEY_BINDING | KEYMAP_GET | KEYMAP_RELOAD | KEYMAP_UPDATED | FILER_OPEN_FILE_ITEM | CONFIGURATION_GET | FILER_UP_DIRECTORY | FILER_TOGGLE_MARK_OF_ITEM | FILER_UPDATED_FILE_WINDOW | COMPLETER_INITIALIZE | COMPLETER_COMPLETE | COMPLETER_NOTIFY_COMPLETED [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = UNKNOWN_COMMAND | FILER_INITIALIZE | FILER_RELOAD_ALL | FILER_MOVE_LOCATION | FILER_UPDATED | FILER_COPY_INTERACTION | FILER_MOVE_INTERACTION | FILER_DELETE_INTERACTION | KEYMAP_ADD_KEY_BINDING | KEYMAP_REMOVE_KEY_BINDING | KEYMAP_GET | KEYMAP_RELOAD | KEYMAP_UPDATED | FILER_OPEN_FILE_ITEM | CONFIGURATION_GET | FILER_UP_DIRECTORY | FILER_TOGGLE_MARK_OF_ITEM | FILER_UPDATED_FILE_WINDOW | COMPLETER_INITIALIZE | COMPLETER_COMPLETE | COMPLETER_NOTIFY_COMPLETED | FILER_MOVE [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
   let to_int = function
     | UNKNOWN_COMMAND -> 0
     | FILER_INITIALIZE -> 1
@@ -46,6 +46,7 @@ end = struct
     | COMPLETER_INITIALIZE -> 18
     | COMPLETER_COMPLETE -> 19
     | COMPLETER_NOTIFY_COMPLETED -> 20
+    | FILER_MOVE -> 21
   
   let from_int = function
     | 0 -> Ok UNKNOWN_COMMAND
@@ -69,6 +70,7 @@ end = struct
     | 18 -> Ok COMPLETER_INITIALIZE
     | 19 -> Ok COMPLETER_COMPLETE
     | 20 -> Ok COMPLETER_NOTIFY_COMPLETED
+    | 21 -> Ok FILER_MOVE
     | n -> Error (`Unknown_enum_value n)
   
 end
@@ -193,6 +195,9 @@ module FilerService = struct
     ( (module Request : Runtime'.Service.Message with type t = Request.t ), 
     (module Response : Runtime'.Service.Message with type t = Response.t ) ) 
   let toggleMarkOfItem = 
+    ( (module Request : Runtime'.Service.Message with type t = Request.t ), 
+    (module Response : Runtime'.Service.Message with type t = Response.t ) ) 
+  let move = 
     ( (module Request : Runtime'.Service.Message with type t = Request.t ), 
     (module Response : Runtime'.Service.Message with type t = Response.t ) ) 
   let requireUserDecisionForCopy = 

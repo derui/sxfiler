@@ -29,7 +29,7 @@ module type S = sig
   module Step : sig
     val scan_location : F.Common_step.File_list.scan_location
 
-    val demand_action : F.Common_step.Interaction.demand_decision
+    val demand_decision : F.Common_step.Interaction.demand_decision
 
     val load_configuration : F.Common_step.Configuration.load
 
@@ -63,6 +63,8 @@ module type S = sig
       val up_directory : F.Filer.Up_directory.work_flow
 
       val toggle_mark : F.Filer.Toggle_mark.work_flow
+
+      val move : F.Filer.Move.work_flow
     end
 
     module Keymap : sig
@@ -114,7 +116,7 @@ let make (module Option' : Option') (module Completer : D.Completer.Instance) (m
     module Step = struct
       let scan_location = I.Filer_step.scan_location
 
-      let demand_action command = Mediator.(Mediator.require_action instance ~command)
+      let demand_decision command = Mediator.(Mediator.require_action instance ~command)
 
       let load_configuration () = Global.Configuration.get ()
 
@@ -148,6 +150,8 @@ let make (module Option' : Option') (module Completer : D.Completer.Instance) (m
         let up_directory = F.Filer.up_directory Step.scan_location Common_step.now
 
         let toggle_mark = F.Filer.toggle_mark
+
+        let move = F.Filer.move Step.demand_decision Step.scan_location Step.move_item
       end
 
       module Keymap = struct

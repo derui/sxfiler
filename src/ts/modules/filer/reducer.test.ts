@@ -127,6 +127,43 @@ describe("Modules", () => {
         expect(state.currentCursorPosition.left.value).toEqual(2);
       });
 
+      test("revise cursor position when number of items less than before updating", () => {
+        const updatedFiler = also(new Filer(), (v) => {
+          v.setLeftFileWindow(
+            also(new FileWindow(), (v) => {
+              v.setFileList(
+                also(new FileList(), (v) => {
+                  v.setLocation("location");
+                  v.setItemsList([
+                    also(new FileItem(), (v) => {
+                      v.setId("id1");
+                      v.setName("name1");
+                    }),
+                    also(new FileItem(), (v) => {
+                      v.setId("id2");
+                      v.setName("name2");
+                    }),
+                  ]);
+                })
+              );
+            })
+          );
+        });
+
+        let state = pipe(
+          (v) => reducer(v, actions.update(filer)),
+          (v) => reducer(v, actions.cursorDown()),
+          (v) => reducer(v, actions.cursorDown()),
+          (v) => reducer(v, actions.update(updatedFiler))
+        )(undefined);
+
+        const fileWindow = updatedFiler.getLeftFileWindow()!!;
+        state = reducer(state, actions.updateFileWindow(fileWindow, Side.Left));
+
+        expect(state.filer?.getLeftFileWindow()?.toObject()).toEqual(fileWindow.toObject());
+        expect(state.currentCursorPosition.left.value).toEqual(1);
+      });
+
       test("focus specified item of the current side", () => {
         let state = pipe((v) => reducer(v, actions.update(filer)))(undefined);
 

@@ -3,7 +3,7 @@ import * as FileList from "@/components/project/file-list";
 import * as F from "@/modules/filer";
 import * as FilerReducer from "@/modules/filer/reducer";
 import * as FilerPb from "@/generated/filer_pb";
-import { NaturalNumber } from "@/types/natural-number";
+import { Type } from "@/types/natural-number";
 import {
   leftSideCursorPositionSelector,
   leftSideFileListSelector,
@@ -18,7 +18,7 @@ export type Props = {
 /* create filer from state and key */
 const createFiler = (
   side: FilerReducer.Side,
-  currentCursorIndex: NaturalNumber,
+  currentCursorIndex: Type,
   currentSide: FilerReducer.Side,
   fileList?: FilerPb.FileList
 ): FileList.ElementType | null => {
