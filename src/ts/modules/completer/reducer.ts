@@ -5,7 +5,7 @@ import { Candidate } from "@/generated/completer_pb";
 
 // state of type. Please redefine to what you want.
 export type State = Readonly<{
-  currentCursorPosition: N.NaturalNumber;
+  currentCursorPosition: N.Type;
   candidates: Candidate.AsObject[];
   opened: boolean;
   title?: string;

@@ -13,6 +13,7 @@ import * as filerCursorDown from "./filer/cursor-down";
 import * as filerChangeSide from "./filer/change-side";
 import * as completerCursorDown from "./completer/cursor-down";
 import * as completerCursorUp from "./completer/cursor-up";
+import * as filerMove from "./filer/move";
 import { Type } from "../command-resolver";
 
 // prettier-ignore
@@ -31,6 +32,7 @@ export const descriptors = {
   filerChangeSide: filerChangeSide.descriptor,
   completerCursorDown: completerCursorDown.descriptor,
   completerCursorUp: completerCursorUp.descriptor,
+  filerMove: filerMove.descriptor
 } as const;
 
 export type Descriptors = DescriptorsType<typeof descriptors>;
@@ -54,4 +56,5 @@ export const registerToResolver = function registerToResolver(resolver: Type) {
   resolver.register({descriptor: filerChangeSide.descriptor, factory: filerChangeSide.createCommand});
   resolver.register({descriptor: completerCursorDown.descriptor, factory: completerCursorDown.createCommand});
   resolver.register({descriptor: completerCursorUp.descriptor, factory: completerCursorUp.createCommand});
+  resolver.register({descriptor: filerMove.descriptor, factory: filerMove.createCommand});
 };

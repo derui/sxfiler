@@ -56,3 +56,7 @@ export const currentFocusingItemSelector = createSelector(
     return { item: items[index.value], side };
   }
 );
+
+export const currentSideMarkedItems = createSelector(currentSideItemsSelector, (items) => {
+  return items.filter((v) => v.getMarked());
+});

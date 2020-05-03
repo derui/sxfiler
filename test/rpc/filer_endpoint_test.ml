@@ -33,4 +33,26 @@ let test_set =
         Alcotest.(check & of_pp G.Service.Status.pp) "invalid" G.Service.Status.INVALID_REQUEST_PAYLOAD res.status;
         Alcotest.(check & list & of_pp F.pp_event) "events" [] events;
         Lwt.return_unit);
+    Alcotest_lwt.test_case "call move work flow with marked" `Quick (fun _ () ->
+        let input' = ref None in
+        let work_flow input =
+          input' := Some input;
+          Lwt.return [ F.Filer.Updated filer ]
+        in
+        let get () = Lwt.return_some filer in
+        let request =
+          {
+            G.Service.Request.id = "id";
+            command = G.Service.Command.FILER_MOVE;
+            payload =
+              { G.Filer.MoveRequest.direction = LEFT_TO_RIGHT; target = MARKED; target_id = "" }
+              |> G.Filer.MoveRequest.to_proto |> Pb.Writer.contents |> Bytes.of_string;
+          }
+        in
+        let%lwt res, events = R.Filer_endpoint.move get work_flow request in
+        let expected = Some { F.Filer.Move.target = Marked; direction = F.Filer.Left_to_right; filer } in
+        Alcotest.(check & string) "same id" "id" res.id;
+        Alcotest.(check & option & of_pp F.Filer.Move.pp_input) "input" expected !input';
+        Alcotest.(check & list & of_pp F.pp_event) "events" [ F.Filer (F.Filer.Updated filer) ] events;
+        Lwt.return_unit);
   ]

@@ -156,3 +156,34 @@ let toggle_mark : toggle_mark =
       | Error F.Filer.Toggle_mark.Not_initialized -> E.Filer_error.not_initialized |> E.filer |> Lwt.return_error
       | Error F.Filer.Toggle_mark.Item_not_found -> E.Filer_error.item_not_found item_id |> E.filer |> Lwt.return_error
       | Ok events -> Lwt.return_ok ((), to_global_events events))
+
+(* move implementation *)
+type move = F.Common_step.Filer.get -> F.Filer.Move.work_flow -> Endpoint.t
+
+let move : move =
+ fun get_filer flow request ->
+  Endpoint.with_request (G.Filer.MoveRequest.from_proto, G.Filer.MoveResponse.to_proto) request ~f:(fun input ->
+      let%lwt filer = get_filer () in
+      let target =
+        match input.target with
+        | G.Filer.Target.MARKED -> F.Filer.Move.Marked
+        | ONE                   -> F.Filer.Move.One (D.File_item.Id.make input.target_id)
+      in
+      let filer = Option.to_result ~none:(E.Filer_error.not_initialized |> E.filer) filer in
+      let input =
+        let open Result.Infix in
+        filer >>= fun filer ->
+        Ok
+          {
+            F.Filer.Move.direction =
+              ( match input.direction with
+              | G.Filer.Direction.LEFT_TO_RIGHT -> Left_to_right
+              | RIGHT_TO_LEFT                   -> Right_to_left );
+            filer;
+            target;
+          }
+      in
+      let open Lwt_result.Infix in
+      Lwt_result.lift input >>= fun input ->
+      let%lwt events = flow input in
+      Lwt.return_ok ((), to_global_events events))

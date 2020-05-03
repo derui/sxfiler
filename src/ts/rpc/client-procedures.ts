@@ -12,6 +12,8 @@ import {
   UpDirectoryResponse,
   ToggleMarkOfItemRequest,
   ToggleMarkOfItemResponse,
+  MoveRequest,
+  MoveResponse,
 } from "@/generated/filer_pb";
 import * as uuid from "uuid";
 import { ProcedureDef } from "./client";
@@ -110,6 +112,12 @@ export namespace Filer {
     Command.FILER_TOGGLE_MARK_OF_ITEM,
     (v) => v.serializeBinary(),
     ToggleMarkOfItemResponse.deserializeBinary
+  );
+
+  export const move: ProcedureDef<MoveRequest, MoveResponse> = callGeneric(
+    Command.FILER_MOVE,
+    (v) => v.serializeBinary(),
+    MoveResponse.deserializeBinary
   );
 }
 

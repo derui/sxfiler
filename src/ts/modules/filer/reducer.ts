@@ -16,8 +16,8 @@ export type State = Readonly<{
   filer: Filer | undefined;
   // 0-origin current cursor position.
   currentCursorPosition: {
-    left: N.NaturalNumber;
-    right: N.NaturalNumber;
+    left: N.Type;
+    right: N.Type;
   };
   // current side
   currentSide: Side;
@@ -29,8 +29,8 @@ export type State = Readonly<{
 export const emptyState: State = Object.freeze({
   filer: undefined,
   currentCursorPosition: {
-    left: N.create(0),
-    right: N.create(0),
+    left: N.zero,
+    right: N.zero,
   },
   currentSide: Side.Left,
 });
@@ -73,7 +73,7 @@ const cursorDown = (state: State): State => {
   if (!size) {
     return state;
   }
-  const naturalSize = N.create(size.length - 1);
+  const naturalSize = N.max(N.zero, N.create(size.length - 1));
 
   return Object.freeze({
     ...state,
@@ -105,24 +105,38 @@ const cursorUp = (state: State): State => {
   });
 };
 
-const changeSide = (state: State): State => {
+function changeSide(state: State): State {
   let nextSide = state.currentSide === Side.Left ? Side.Right : Side.Left;
   return Object.freeze({ ...state, currentSide: nextSide });
-};
+}
+
+function reviseIndex(fileList: FileList | undefined, currentCursor: N.Type) {
+  if (!fileList) {
+    return N.zero;
+  }
+
+  const size = fileList.getItemsList().length;
+
+  return N.min(currentCursor, N.create(size - 1));
+}
 
 const update = (state: State, filer: Filer): State => {
   const currentLeftLocation = state.filer?.getLeftFileWindow()?.getFileList()?.getLocation();
   const currentRightLocation = state.filer?.getRightFileWindow()?.getFileList()?.getLocation();
 
-  const nextLeftLocation = filer.getLeftFileWindow()?.getFileList()?.getLocation();
-  const nextRightLocation = filer.getRightFileWindow()?.getFileList()?.getLocation();
+  const nextLeftFileList = filer?.getLeftFileWindow()?.getFileList();
+  const nextRightFileList = filer?.getRightFileWindow()?.getFileList();
+  const nextLeftLocation = nextLeftFileList?.getLocation();
+  const nextRightLocation = nextRightFileList?.getLocation();
+
+  const { left, right } = state.currentCursorPosition;
 
   return Object.freeze({
     ...state,
     filer,
     currentCursorPosition: {
-      left: currentLeftLocation === nextLeftLocation ? state.currentCursorPosition.left : N.create(0),
-      right: currentRightLocation === nextRightLocation ? state.currentCursorPosition.right : N.create(0),
+      left: currentLeftLocation === nextLeftLocation ? reviseIndex(nextLeftFileList, left) : N.zero,
+      right: currentRightLocation === nextRightLocation ? reviseIndex(nextRightFileList, right) : N.zero,
     },
   });
 };
@@ -152,8 +166,8 @@ const updateFileWindow = (state: State, payload: { fileWindow: FileWindow; side:
     ...state,
     filer,
     currentCursorPosition: {
-      left: payload.side === Side.Left && !sameLocation ? N.create(0) : state.currentCursorPosition.left,
-      right: payload.side === Side.Right && !sameLocation ? N.create(0) : state.currentCursorPosition.right,
+      left: payload.side === Side.Left && !sameLocation ? N.zero : state.currentCursorPosition.left,
+      right: payload.side === Side.Right && !sameLocation ? N.zero : state.currentCursorPosition.right,
     },
   });
 };

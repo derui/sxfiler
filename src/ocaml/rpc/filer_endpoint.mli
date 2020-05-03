@@ -31,3 +31,8 @@ type toggle_mark = F.Common_step.Filer.get -> F.Filer.Toggle_mark.work_flow -> E
 
 val toggle_mark : toggle_mark
 (** The function to toggle mark of item *)
+
+type move = F.Common_step.Filer.get -> F.Filer.Move.work_flow -> Endpoint.t
+
+val move : move
+(** The function to move items *)

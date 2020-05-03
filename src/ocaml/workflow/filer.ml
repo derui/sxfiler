@@ -132,11 +132,12 @@ let move demand_action scan_location move_item : Move.work_flow =
   let reload = Common_step_file_list.reload scan_location in
 
   let rec move_item' ?(overwrite = false) ?new_name item =
-    let dest = Option.map (Path.join dest) new_name |> Option.value ~default:dest in
+    let item_name = full_path_of_item item |> Path.basename in
+    let dest = Option.map (Path.join dest) new_name |> Option.value ~default:(Path.join dest item_name) in
     let operation = { Common_step_filer.source = full_path_of_item item; dest; overwrite } in
     let%lwt result = move_item operation in
     match result with
-    | Ok _ -> Lwt.return_unit
+    | Ok () -> Lwt.return_unit
     | Error (Common_step_filer.Not_exists _) | Error (No_permission _) | Error (Unknown _) -> Lwt.return_unit
     | Error (Destination_exists _) -> (
         match%lwt interaction item with
@@ -147,7 +148,7 @@ let move demand_action scan_location move_item : Move.work_flow =
   in
 
   (* run real workflow *)
-  let%lwt _ = Lwt_list.iter_p move_item' targets in
+  let%lwt () = Lwt_list.iter_p move_item' targets in
   let%lwt dest_file_list = reload dest_file_window.file_list
   and source_file_list = reload source_file_window.file_list in
   let dest_file_window = File_window.reload_list dest_file_list dest_file_window

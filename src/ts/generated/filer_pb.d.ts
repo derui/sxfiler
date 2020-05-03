@@ -695,6 +695,50 @@ export namespace DeleteUserDecisionResponse {
   }
 }
 
+export class MoveRequest extends jspb.Message {
+  getDirection(): DirectionMap[keyof DirectionMap];
+  setDirection(value: DirectionMap[keyof DirectionMap]): void;
+
+  getTarget(): TargetMap[keyof TargetMap];
+  setTarget(value: TargetMap[keyof TargetMap]): void;
+
+  getTargetId(): string;
+  setTargetId(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): MoveRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: MoveRequest): MoveRequest.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: MoveRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): MoveRequest;
+  static deserializeBinaryFromReader(message: MoveRequest, reader: jspb.BinaryReader): MoveRequest;
+}
+
+export namespace MoveRequest {
+  export type AsObject = {
+    direction: DirectionMap[keyof DirectionMap],
+    target: TargetMap[keyof TargetMap],
+    targetId: string,
+  }
+}
+
+export class MoveResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): MoveResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: MoveResponse): MoveResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: MoveResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): MoveResponse;
+  static deserializeBinaryFromReader(message: MoveResponse, reader: jspb.BinaryReader): MoveResponse;
+}
+
+export namespace MoveResponse {
+  export type AsObject = {
+  }
+}
+
 export class UpdatedNotificationRequest extends jspb.Message {
   hasFiler(): boolean;
   clearFiler(): void;
@@ -781,6 +825,20 @@ export interface SideMap {
 }
 
 export const Side: SideMap;
+
+export interface DirectionMap {
+  LEFT_TO_RIGHT: 0;
+  RIGHT_TO_LEFT: 1;
+}
+
+export const Direction: DirectionMap;
+
+export interface TargetMap {
+  MARKED: 0;
+  ONE: 1;
+}
+
+export const Target: TargetMap;
 
 export interface ActionMap {
   RENAME: 0;

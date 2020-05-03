@@ -8,6 +8,16 @@ enum Side {
   RIGHT = 1;
 }
 
+enum Direction {
+  LEFT_TO_RIGHT = 0;
+  RIGHT_TO_LEFT = 1;
+}
+
+enum Target {
+  MARKED = 0;
+  ONE = 1;
+}
+
 message Capability {
   bool writable = 1;
   bool readable = 2;
@@ -144,6 +154,13 @@ message DeleteUserDecisionRequest {
 message DeleteUserDecisionResponse {
   bool confirmed = 1;
 }
+
+message MoveRequest {
+  Direction direction = 1;
+  Target target = 2;
+  string target_id = 3;
+}
+message MoveResponse {}
 
 // declarations notification service from server to client.
 // This service need to implement on client.
