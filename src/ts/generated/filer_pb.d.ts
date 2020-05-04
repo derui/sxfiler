@@ -799,6 +799,50 @@ export namespace CopyResponse {
   }
 }
 
+export class DeleteRequest extends jspb.Message {
+  getSide(): SideMap[keyof SideMap];
+  setSide(value: SideMap[keyof SideMap]): void;
+
+  getTarget(): TargetMap[keyof TargetMap];
+  setTarget(value: TargetMap[keyof TargetMap]): void;
+
+  getTargetId(): string;
+  setTargetId(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteRequest): DeleteRequest.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: DeleteRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteRequest;
+  static deserializeBinaryFromReader(message: DeleteRequest, reader: jspb.BinaryReader): DeleteRequest;
+}
+
+export namespace DeleteRequest {
+  export type AsObject = {
+    side: SideMap[keyof SideMap],
+    target: TargetMap[keyof TargetMap],
+    targetId: string,
+  }
+}
+
+export class DeleteResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteResponse): DeleteResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: DeleteResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteResponse;
+  static deserializeBinaryFromReader(message: DeleteResponse, reader: jspb.BinaryReader): DeleteResponse;
+}
+
+export namespace DeleteResponse {
+  export type AsObject = {
+  }
+}
+
 export class UpdatedNotificationRequest extends jspb.Message {
   hasFiler(): boolean;
   clearFiler(): void;

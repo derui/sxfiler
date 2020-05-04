@@ -20,9 +20,9 @@ let put_bookmarks bookmarks stat = { stat with bookmarks = Some bookmarks }
 let restore_bookmarks { bookmarks; _ } = bookmarks |> Option.map Tr.Bookmarks.to_domain
 
 (** [add_filer_stat filer stat] add the filer to stat *)
-let add_filer_stat (filer : D.Filer.t) stat =
-  let filer' = Tr.Filer.of_domain filer in
-  { stat with filer = Some filer' }
+let add_filer_stat (filer : D.Filer.t option) stat =
+  let filer = Option.map Tr.Filer.of_domain filer in
+  { stat with filer }
 
 (** [add_filer_stat filer stat] add the filer to stat *)
 let restore_filer_stats ~(initialize : F.Filer.Initialize.work_flow) stat =

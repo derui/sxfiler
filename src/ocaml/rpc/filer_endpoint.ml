@@ -203,3 +203,27 @@ let copy : copy =
   Endpoint.with_request (G.Filer.CopyRequest.from_proto, G.Filer.CopyResponse.to_proto) request ~f:(fun input ->
       let of_input filer target direction = { F.Filer.Copy.direction; filer; target } in
       transfer of_input get_filer flow input.transfer)
+
+(* delete implementation *)
+type delete = F.Common_step.Filer.get -> F.Filer.Delete.work_flow -> Endpoint.t
+
+let delete : delete =
+ fun get_filer flow request ->
+  Endpoint.with_request (G.Filer.DeleteRequest.from_proto, G.Filer.DeleteResponse.to_proto) request ~f:(fun input ->
+      let%lwt filer = get_filer () in
+      let filer = Option.to_result ~none:(E.Filer_error.not_initialized |> E.filer) filer in
+      let input =
+        let open Result.Infix in
+        let* filer = filer in
+        let target =
+          match input.target with
+          | G.Filer.Target.MARKED -> F.Filer.Marked
+          | ONE                   -> F.Filer.One (D.File_item.Id.make input.target_id)
+        in
+        let side = match input.side with G.Filer.Side.LEFT -> F.Filer.Left | RIGHT -> Right in
+        Ok { F.Filer.Delete.side; target; filer }
+      in
+      let open Lwt_result.Infix in
+      Lwt_result.lift input >>= fun input ->
+      let%lwt events = flow input in
+      Lwt.return_ok ((), to_global_events events))

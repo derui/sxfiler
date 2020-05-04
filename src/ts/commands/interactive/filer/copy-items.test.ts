@@ -1,14 +1,14 @@
-import * as C from "./move";
+import * as C from "./copy-items";
 import * as M from "@/commands/client-resolver-mock";
 import { emptyState } from "@/modules";
 import * as FilerModule from "@/modules/filer";
-import { Filer, FileWindow, FileList, FileItem, MoveRequest, Target, Direction, Transfer } from "@/generated/filer_pb";
+import { Filer, FileWindow, FileList, FileItem, CopyRequest, Target, Direction, Transfer } from "@/generated/filer_pb";
 import { also } from "@/libs/fn";
 import * as Procs from "@/rpc/client-procedures";
 
 describe("Commands", () => {
-  describe("interactive:filer:Move", () => {
-    test("call RPC to move when have no any marked items", async () => {
+  describe("interactive:filer:Copy", () => {
+    test("call RPC to copy when have no any marked items", async () => {
       const command = C.createCommand();
       const mocks = M.createResolverMocks();
 
@@ -41,9 +41,9 @@ describe("Commands", () => {
       const executor = jest.fn();
       mocks.rpcClient.use.mockImplementation(() => executor);
       await command.execute(mocks.dispatcher, { clientResolver: mocks.clientResolver, state }, undefined);
-      expect(mocks.rpcClient.use).toBeCalledWith(Procs.Filer.move);
+      expect(mocks.rpcClient.use).toBeCalledWith(Procs.Filer.copyItems);
 
-      const expected = also(new MoveRequest(), (v) => {
+      const expected = also(new CopyRequest(), (v) => {
         const transfer = also(new Transfer(), (v) => {
           v.setTarget(Target.ONE);
           v.setDirection(Direction.LEFT_TO_RIGHT);

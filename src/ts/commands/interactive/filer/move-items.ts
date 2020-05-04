@@ -2,12 +2,12 @@ import { Actions } from "@/modules";
 import { CommandLike, CommandState, CommandDescriptor } from "@/commands/type";
 import { Dispatcher } from "@/types";
 import { currentFocusingItemSelector, currentSideMarkedItems, getCurrentSideInPb } from "@/modules/filer/selectors";
-import { CopyRequest, Side, Direction, Target, Transfer } from "@/generated/filer_pb";
+import { MoveRequest, Side, Direction, Target, Transfer } from "@/generated/filer_pb";
 import { Loggers } from "@/loggers";
 import { loggers } from "winston";
 import * as Procs from "@/rpc/client-procedures";
 
-const identifier = "interactive.filer.copy";
+const identifier = "interactive.filer.move-items";
 
 export type Payload = undefined;
 export type Command = CommandLike<Payload>;
@@ -28,7 +28,7 @@ export const createCommand = (): Command => {
 
       const markedItems = currentSideMarkedItems(filer);
       const side = getCurrentSideInPb(filer);
-      const request = new CopyRequest();
+      const request = new MoveRequest();
       const transfer = new Transfer();
 
       switch (side) {
@@ -44,7 +44,7 @@ export const createCommand = (): Command => {
         const focused = currentFocusingItemSelector(filer);
 
         if (!focused) {
-          loggers.get(Loggers.COMMAND).warn("Did not initialize filer before copy.");
+          loggers.get(Loggers.COMMAND).warn("Did not initialize filer before move.");
           return;
         }
         transfer.setTarget(Target.ONE);
@@ -54,7 +54,7 @@ export const createCommand = (): Command => {
       }
       request.setTransfer(transfer);
 
-      await args.clientResolver.rpcClient().use(Procs.Filer.copy)(request);
+      await args.clientResolver.rpcClient().use(Procs.Filer.moveItems)(request);
     },
   };
 };
