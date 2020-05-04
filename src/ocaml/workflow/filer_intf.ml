@@ -16,6 +16,11 @@ type event =
   | Updated_file_window of (side * D.File_window.free D.File_window.t)
 [@@deriving eq, show]
 
+type transfer_target =
+  | Marked
+  | One    of D.File_item.Id.t
+[@@deriving eq, show]
+
 (** move location of file list placed on left side *)
 module Move_location = struct
   type error = Not_initialized
@@ -52,29 +57,20 @@ end
 
 (** the workflow to copy item from one side to another side *)
 module Copy = struct
-  type target =
-    | Marked
-    | One    of D.File_item.Id.t
-
   type input = {
     direction : direction;
     filer : D.Filer.t;
-    target : target;
+    target : transfer_target;
   }
 
   type work_flow = input -> event list Lwt.t
 end
 
 module Move = struct
-  type target =
-    | Marked
-    | One    of D.File_item.Id.t
-  [@@deriving eq, show]
-
   type input = {
     direction : direction;
     filer : D.Filer.t;
-    target : target;
+    target : transfer_target;
   }
   [@@deriving eq, show]
 

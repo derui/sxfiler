@@ -82,8 +82,8 @@ let copy demand_action scan_location copy_item : Copy.work_flow =
   let dest_file_window = file_window_from_side input.filer dest_side in
   let targets =
     match input.target with
-    | Copy.Marked -> File_list.marked_items source_file_window.file_list
-    | Copy.One id ->
+    | Marked -> File_list.marked_items source_file_window.file_list
+    | One id ->
         File_list.find_item ~id source_file_window.file_list |> Option.map (fun v -> [ v ]) |> Option.value ~default:[]
   in
   let dest = File_list.location dest_file_window.file_list in
@@ -91,7 +91,8 @@ let copy demand_action scan_location copy_item : Copy.work_flow =
   let reload = Common_step_file_list.reload scan_location in
 
   let rec copy_item' ?(overwrite = false) ?new_name item =
-    let dest = Option.map (fun name -> Path.join dest name) new_name |> Option.value ~default:dest in
+    let item_name = File_item.item item |> File_item.Item.full_path |> Path.basename in
+    let dest = Option.value ~default:item_name new_name |> Path.join dest in
     let operation = { Common_step_filer.source = full_path_of_item item; dest; overwrite } in
     let%lwt result = copy_item operation in
     match result with
@@ -123,8 +124,8 @@ let move demand_action scan_location move_item : Move.work_flow =
   let dest_file_window = file_window_from_side input.filer dest_side in
   let targets =
     match input.target with
-    | Move.Marked -> File_list.marked_items source_file_window.file_list
-    | Move.One id ->
+    | Marked -> File_list.marked_items source_file_window.file_list
+    | One id ->
         File_list.find_item ~id source_file_window.file_list |> Option.map (fun v -> [ v ]) |> Option.value ~default:[]
   in
   let dest = File_list.location dest_file_window.file_list in

@@ -157,33 +157,49 @@ let toggle_mark : toggle_mark =
       | Error F.Filer.Toggle_mark.Item_not_found -> E.Filer_error.item_not_found item_id |> E.filer |> Lwt.return_error
       | Ok events -> Lwt.return_ok ((), to_global_events events))
 
+let transfer of_input get_filer flow (input : G.Filer.Transfer.t option) =
+  let%lwt filer = get_filer () in
+  let input =
+    input
+    |> Option.to_result
+         ~none:([ E.Validation_error.make ~field:"transfer" ~message:"empty transfer" ] |> E.invalid_input)
+  in
+  let filer = Option.to_result ~none:(E.Filer_error.not_initialized |> E.filer) filer in
+  let input =
+    let open Result.Infix in
+    let* filer = filer in
+    let* input = input in
+    let target =
+      match input.target with
+      | G.Filer.Target.MARKED -> F.Filer.Marked
+      | ONE                   -> F.Filer.One (D.File_item.Id.make input.target_id)
+    in
+    let direction =
+      match input.direction with
+      | G.Filer.Direction.LEFT_TO_RIGHT -> F.Filer.Left_to_right
+      | RIGHT_TO_LEFT                   -> Right_to_left
+    in
+    Ok (of_input filer target direction)
+  in
+  let open Lwt_result.Infix in
+  Lwt_result.lift input >>= fun input ->
+  let%lwt events = flow input in
+  Lwt.return_ok ((), to_global_events events)
+
 (* move implementation *)
 type move = F.Common_step.Filer.get -> F.Filer.Move.work_flow -> Endpoint.t
 
 let move : move =
  fun get_filer flow request ->
   Endpoint.with_request (G.Filer.MoveRequest.from_proto, G.Filer.MoveResponse.to_proto) request ~f:(fun input ->
-      let%lwt filer = get_filer () in
-      let target =
-        match input.target with
-        | G.Filer.Target.MARKED -> F.Filer.Move.Marked
-        | ONE                   -> F.Filer.Move.One (D.File_item.Id.make input.target_id)
-      in
-      let filer = Option.to_result ~none:(E.Filer_error.not_initialized |> E.filer) filer in
-      let input =
-        let open Result.Infix in
-        filer >>= fun filer ->
-        Ok
-          {
-            F.Filer.Move.direction =
-              ( match input.direction with
-              | G.Filer.Direction.LEFT_TO_RIGHT -> Left_to_right
-              | RIGHT_TO_LEFT                   -> Right_to_left );
-            filer;
-            target;
-          }
-      in
-      let open Lwt_result.Infix in
-      Lwt_result.lift input >>= fun input ->
-      let%lwt events = flow input in
-      Lwt.return_ok ((), to_global_events events))
+      let of_input filer target direction = { F.Filer.Move.direction; filer; target } in
+      transfer of_input get_filer flow input.transfer)
+
+(* copy implementation *)
+type copy = F.Common_step.Filer.get -> F.Filer.Copy.work_flow -> Endpoint.t
+
+let copy : copy =
+ fun get_filer flow request ->
+  Endpoint.with_request (G.Filer.CopyRequest.from_proto, G.Filer.CopyResponse.to_proto) request ~f:(fun input ->
+      let of_input filer target direction = { F.Filer.Copy.direction; filer; target } in
+      transfer of_input get_filer flow input.transfer)

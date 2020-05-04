@@ -695,7 +695,7 @@ export namespace DeleteUserDecisionResponse {
   }
 }
 
-export class MoveRequest extends jspb.Message {
+export class Transfer extends jspb.Message {
   getDirection(): DirectionMap[keyof DirectionMap];
   setDirection(value: DirectionMap[keyof DirectionMap]): void;
 
@@ -704,6 +704,30 @@ export class MoveRequest extends jspb.Message {
 
   getTargetId(): string;
   setTargetId(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): Transfer.AsObject;
+  static toObject(includeInstance: boolean, msg: Transfer): Transfer.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: Transfer, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Transfer;
+  static deserializeBinaryFromReader(message: Transfer, reader: jspb.BinaryReader): Transfer;
+}
+
+export namespace Transfer {
+  export type AsObject = {
+    direction: DirectionMap[keyof DirectionMap],
+    target: TargetMap[keyof TargetMap],
+    targetId: string,
+  }
+}
+
+export class MoveRequest extends jspb.Message {
+  hasTransfer(): boolean;
+  clearTransfer(): void;
+  getTransfer(): Transfer | undefined;
+  setTransfer(value?: Transfer): void;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): MoveRequest.AsObject;
@@ -717,9 +741,7 @@ export class MoveRequest extends jspb.Message {
 
 export namespace MoveRequest {
   export type AsObject = {
-    direction: DirectionMap[keyof DirectionMap],
-    target: TargetMap[keyof TargetMap],
-    targetId: string,
+    transfer?: Transfer.AsObject,
   }
 }
 
@@ -735,6 +757,44 @@ export class MoveResponse extends jspb.Message {
 }
 
 export namespace MoveResponse {
+  export type AsObject = {
+  }
+}
+
+export class CopyRequest extends jspb.Message {
+  hasTransfer(): boolean;
+  clearTransfer(): void;
+  getTransfer(): Transfer | undefined;
+  setTransfer(value?: Transfer): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CopyRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: CopyRequest): CopyRequest.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: CopyRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CopyRequest;
+  static deserializeBinaryFromReader(message: CopyRequest, reader: jspb.BinaryReader): CopyRequest;
+}
+
+export namespace CopyRequest {
+  export type AsObject = {
+    transfer?: Transfer.AsObject,
+  }
+}
+
+export class CopyResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CopyResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: CopyResponse): CopyResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: CopyResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CopyResponse;
+  static deserializeBinaryFromReader(message: CopyResponse, reader: jspb.BinaryReader): CopyResponse;
+}
+
+export namespace CopyResponse {
   export type AsObject = {
   }
 }

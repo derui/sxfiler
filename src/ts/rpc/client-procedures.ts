@@ -14,6 +14,8 @@ import {
   ToggleMarkOfItemResponse,
   MoveRequest,
   MoveResponse,
+  CopyRequest,
+  CopyResponse,
 } from "@/generated/filer_pb";
 import * as uuid from "uuid";
 import { ProcedureDef } from "./client";
@@ -118,6 +120,12 @@ export namespace Filer {
     Command.FILER_MOVE,
     (v) => v.serializeBinary(),
     MoveResponse.deserializeBinary
+  );
+
+  export const copy: ProcedureDef<CopyRequest, CopyResponse> = callGeneric(
+    Command.FILER_COPY,
+    (v) => v.serializeBinary(),
+    CopyResponse.deserializeBinary
   );
 }
 

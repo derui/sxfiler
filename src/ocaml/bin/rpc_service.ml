@@ -13,6 +13,7 @@ let construct_filer_endpoints (module Dep : Dependencies.S) =
     ( G.Service.Command.FILER_TOGGLE_MARK_OF_ITEM,
       R.Filer_endpoint.toggle_mark Global.Filer.get Dep.Work_flow.Filer.toggle_mark );
     (G.Service.Command.FILER_MOVE, R.Filer_endpoint.move Global.Filer.get Dep.Work_flow.Filer.move);
+    (G.Service.Command.FILER_COPY, R.Filer_endpoint.copy Global.Filer.get Dep.Work_flow.Filer.copy);
   ]
 
 let construct_keymap_endpoints (module Dep : Dependencies.S) options =
