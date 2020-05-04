@@ -155,12 +155,21 @@ message DeleteUserDecisionResponse {
   bool confirmed = 1;
 }
 
-message MoveRequest {
+message Transfer {
   Direction direction = 1;
   Target target = 2;
   string target_id = 3;
 }
+
+message MoveRequest {
+  Transfer transfer = 1;
+}
 message MoveResponse {}
+
+message CopyRequest {
+  Transfer transfer = 1;
+}
+message CopyResponse {}
 
 // declarations notification service from server to client.
 // This service need to implement on client.

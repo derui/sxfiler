@@ -188,8 +188,9 @@ let test_set =
             (fun _ -> Lwt.return Interaction.Canceled)
             scan_location
             (fun { source; dest; _ } ->
+              let file_name = File_item.(item target |> Item.full_path) |> Path.basename in
               Alcotest.(check & of_pp Path.pp) "source" File_item.(item target |> Item.full_path) source;
-              Alcotest.(check & of_pp Path.pp) "dest" right_list.location dest;
+              Alcotest.(check & of_pp Path.pp) "dest" Path.(join right_list.location file_name) dest;
               Lwt.return_ok ())
         in
         let%lwt filer = filer () in

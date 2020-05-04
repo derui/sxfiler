@@ -677,13 +677,13 @@ end = struct
     fun writer -> deserialize writer |> Runtime'.Result.open_error
   
 end
-and MoveRequest : sig
+and Transfer : sig
   val name': unit -> string
   type t = { direction: Direction.t; target: Target.t; target_id: string } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
   val to_proto: t -> Runtime'.Writer.t
   val from_proto: Runtime'.Reader.t -> (t, [> Runtime'.Result.error]) result
 end = struct 
-  let name' () = "filer.MoveRequest"
+  let name' () = "filer.Transfer"
   type t = { direction: Direction.t; target: Target.t; target_id: string }[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
   let to_proto =
     let apply = fun ~f:f' { direction; target; target_id } -> f' [] direction target target_id in
@@ -698,6 +698,27 @@ end = struct
     fun writer -> deserialize writer |> Runtime'.Result.open_error
   
 end
+and MoveRequest : sig
+  val name': unit -> string
+  type t = { transfer: Transfer.t option } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  val to_proto: t -> Runtime'.Writer.t
+  val from_proto: Runtime'.Reader.t -> (t, [> Runtime'.Result.error]) result
+end = struct 
+  let name' () = "filer.MoveRequest"
+  type t = { transfer: Transfer.t option }[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  let to_proto =
+    let apply = fun ~f:f' { transfer } -> f' [] transfer in
+    let spec = Runtime'.Serialize.C.( basic_opt (1, (message (fun t -> Transfer.to_proto t))) ^:: nil ) in
+    let serialize = Runtime'.Serialize.serialize [] (spec) in
+    fun t -> apply ~f:serialize t
+  
+  let from_proto =
+    let constructor = fun _extensions transfer -> { transfer } in
+    let spec = Runtime'.Deserialize.C.( basic_opt (1, (message (fun t -> Transfer.from_proto t))) ^:: nil ) in
+    let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
+    fun writer -> deserialize writer |> Runtime'.Result.open_error
+  
+end
 and MoveResponse : sig
   val name': unit -> string
   type t = unit [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
@@ -705,6 +726,48 @@ and MoveResponse : sig
   val from_proto: Runtime'.Reader.t -> (t, [> Runtime'.Result.error]) result
 end = struct 
   let name' () = "filer.MoveResponse"
+  type t = unit[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  let to_proto =
+    let apply = fun ~f () -> f [] in
+    let spec = Runtime'.Serialize.C.( nil ) in
+    let serialize = Runtime'.Serialize.serialize [] (spec) in
+    fun t -> apply ~f:serialize t
+  
+  let from_proto =
+    let constructor = fun _extension -> () in
+    let spec = Runtime'.Deserialize.C.( nil ) in
+    let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
+    fun writer -> deserialize writer |> Runtime'.Result.open_error
+  
+end
+and CopyRequest : sig
+  val name': unit -> string
+  type t = { transfer: Transfer.t option } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  val to_proto: t -> Runtime'.Writer.t
+  val from_proto: Runtime'.Reader.t -> (t, [> Runtime'.Result.error]) result
+end = struct 
+  let name' () = "filer.CopyRequest"
+  type t = { transfer: Transfer.t option }[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  let to_proto =
+    let apply = fun ~f:f' { transfer } -> f' [] transfer in
+    let spec = Runtime'.Serialize.C.( basic_opt (1, (message (fun t -> Transfer.to_proto t))) ^:: nil ) in
+    let serialize = Runtime'.Serialize.serialize [] (spec) in
+    fun t -> apply ~f:serialize t
+  
+  let from_proto =
+    let constructor = fun _extensions transfer -> { transfer } in
+    let spec = Runtime'.Deserialize.C.( basic_opt (1, (message (fun t -> Transfer.from_proto t))) ^:: nil ) in
+    let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
+    fun writer -> deserialize writer |> Runtime'.Result.open_error
+  
+end
+and CopyResponse : sig
+  val name': unit -> string
+  type t = unit [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  val to_proto: t -> Runtime'.Writer.t
+  val from_proto: Runtime'.Reader.t -> (t, [> Runtime'.Result.error]) result
+end = struct 
+  let name' () = "filer.CopyResponse"
   type t = unit[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
   let to_proto =
     let apply = fun ~f () -> f [] in

@@ -23,6 +23,7 @@ enum Command {
   COMPLETER_COMPLETE = 19;
   COMPLETER_NOTIFY_COMPLETED = 20;
   FILER_MOVE = 21;
+  FILER_COPY = 22;
 }
 
 // common request
@@ -81,6 +82,9 @@ service FilerService {
 
   // move items
   rpc move(Request) returns (Response);
+
+  // copy items
+  rpc copy(Request) returns (Response);
 
   // notification to request interaction
   rpc requireUserDecisionForCopy(Request) returns (Response);

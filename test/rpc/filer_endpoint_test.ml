@@ -45,7 +45,7 @@ let test_set =
             G.Service.Request.id = "id";
             command = G.Service.Command.FILER_MOVE;
             payload =
-              { G.Filer.MoveRequest.direction = LEFT_TO_RIGHT; target = MARKED; target_id = "" }
+              { G.Filer.MoveRequest.transfer = Some { direction = LEFT_TO_RIGHT; target = MARKED; target_id = "" } }
               |> G.Filer.MoveRequest.to_proto |> Pb.Writer.contents |> Bytes.of_string;
           }
         in

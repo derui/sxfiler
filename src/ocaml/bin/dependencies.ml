@@ -65,6 +65,8 @@ module type S = sig
       val toggle_mark : F.Filer.Toggle_mark.work_flow
 
       val move : F.Filer.Move.work_flow
+
+      val copy : F.Filer.Copy.work_flow
     end
 
     module Keymap : sig
@@ -152,6 +154,8 @@ let make (module Option' : Option') (module Completer : D.Completer.Instance) (m
         let toggle_mark = F.Filer.toggle_mark
 
         let move = F.Filer.move Step.demand_decision Step.scan_location Step.move_item
+
+        let copy = F.Filer.copy Step.demand_decision Step.scan_location Step.copy_item
       end
 
       module Keymap = struct

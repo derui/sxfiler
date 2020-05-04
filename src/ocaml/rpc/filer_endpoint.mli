@@ -36,3 +36,8 @@ type move = F.Common_step.Filer.get -> F.Filer.Move.work_flow -> Endpoint.t
 
 val move : move
 (** The function to move items *)
+
+type copy = F.Common_step.Filer.get -> F.Filer.Copy.work_flow -> Endpoint.t
+
+val copy : copy
+(** The function to copy items *)

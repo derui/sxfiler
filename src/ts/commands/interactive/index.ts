@@ -1,4 +1,5 @@
 import { DescriptorsType } from "@/commands/type";
+import * as filerCopy from "./filer/copy";
 import * as finderClose from "./finder/close";
 import * as finderConfirm from "./finder/confirm";
 import * as finderOpen from "./finder/open";
@@ -18,6 +19,7 @@ import { Type } from "../command-resolver";
 
 // prettier-ignore
 export const descriptors = {
+  filerCopy: filerCopy.descriptor,
   finderClose: finderClose.descriptor,
   finderConfirm: finderConfirm.descriptor,
   finderOpen: finderOpen.descriptor,
@@ -42,6 +44,7 @@ export type Descriptors = DescriptorsType<typeof descriptors>;
  */
 // prettier-ignore
 export const registerToResolver = function registerToResolver(resolver: Type) {
+  resolver.register({descriptor: filerCopy.descriptor, factory: filerCopy.createCommand});
   resolver.register({descriptor: finderClose.descriptor, factory: finderClose.createCommand});
   resolver.register({descriptor: finderConfirm.descriptor, factory: finderConfirm.createCommand});
   resolver.register({descriptor: finderOpen.descriptor, factory: finderOpen.createCommand});

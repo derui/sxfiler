@@ -7,6 +7,7 @@
   margin: 0 auto auto auto;
   border-radius: 0 0 var(--space-small) var(--space-small);
   box-shadow: var(--box-shadow);
+  z-index: 1;
 }
 
 .decision-modal__header {
