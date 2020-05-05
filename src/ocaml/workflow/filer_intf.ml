@@ -78,14 +78,10 @@ module Move = struct
 end
 
 module Delete = struct
-  type target =
-    | Marked
-    | One    of D.File_item.Id.t
-
   type input = {
     side : side;
     filer : D.Filer.t;
-    target : target;
+    target : transfer_target;
   }
 
   type work_flow = input -> event list Lwt.t

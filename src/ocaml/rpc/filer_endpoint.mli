@@ -41,3 +41,8 @@ type copy = F.Common_step.Filer.get -> F.Filer.Copy.work_flow -> Endpoint.t
 
 val copy : copy
 (** The function to copy items *)
+
+type delete = F.Common_step.Filer.get -> F.Filer.Delete.work_flow -> Endpoint.t
+
+val delete : delete
+(** The function to delete items *)

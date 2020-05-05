@@ -107,6 +107,8 @@ let persist_app_state ~file_name =
   let%lwt bookmarks = Global.Bookmarks.get () in
   let bookmarks = Tr.Bookmarks.of_domain bookmarks in
   let app_state = App_state.put_bookmarks bookmarks app_state in
+  let%lwt filer = Global.Filer.get () in
+  let app_state = App_state.add_filer_stat filer app_state in
   let json = App_state.to_json app_state in
   Yojson.Safe.to_file file_name json;
   Log.info (fun m -> m "Finish app state persisting")

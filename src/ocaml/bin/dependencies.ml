@@ -67,6 +67,8 @@ module type S = sig
       val move : F.Filer.Move.work_flow
 
       val copy : F.Filer.Copy.work_flow
+
+      val delete : F.Filer.Delete.work_flow
     end
 
     module Keymap : sig
@@ -156,6 +158,8 @@ let make (module Option' : Option') (module Completer : D.Completer.Instance) (m
         let move = F.Filer.move Step.demand_decision Step.scan_location Step.move_item
 
         let copy = F.Filer.copy Step.demand_decision Step.scan_location Step.copy_item
+
+        let delete = F.Filer.delete Step.demand_decision Step.scan_location Step.load_configuration Step.delete_item
       end
 
       module Keymap = struct

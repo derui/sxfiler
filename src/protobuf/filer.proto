@@ -171,6 +171,13 @@ message CopyRequest {
 }
 message CopyResponse {}
 
+message DeleteRequest {
+  Side side = 1;
+  Target target = 2;
+  string target_id = 3;
+}
+message DeleteResponse {}
+
 // declarations notification service from server to client.
 // This service need to implement on client.
 message UpdatedNotificationRequest {

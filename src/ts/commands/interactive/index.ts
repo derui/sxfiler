@@ -1,5 +1,6 @@
 import { DescriptorsType } from "@/commands/type";
-import * as filerCopy from "./filer/copy";
+import * as filerDeleteItems from "./filer/delete-items";
+import * as filerCopyItems from "./filer/copy-items";
 import * as finderClose from "./finder/close";
 import * as finderConfirm from "./finder/confirm";
 import * as finderOpen from "./finder/open";
@@ -14,12 +15,13 @@ import * as filerCursorDown from "./filer/cursor-down";
 import * as filerChangeSide from "./filer/change-side";
 import * as completerCursorDown from "./completer/cursor-down";
 import * as completerCursorUp from "./completer/cursor-up";
-import * as filerMove from "./filer/move";
+import * as filerMoveItems from "./filer/move-items";
 import { Type } from "../command-resolver";
 
 // prettier-ignore
 export const descriptors = {
-  filerCopy: filerCopy.descriptor,
+  filerDeleteItems: filerDeleteItems.descriptor,
+  filerCopyItems: filerCopyItems.descriptor,
   finderClose: finderClose.descriptor,
   finderConfirm: finderConfirm.descriptor,
   finderOpen: finderOpen.descriptor,
@@ -34,7 +36,7 @@ export const descriptors = {
   filerChangeSide: filerChangeSide.descriptor,
   completerCursorDown: completerCursorDown.descriptor,
   completerCursorUp: completerCursorUp.descriptor,
-  filerMove: filerMove.descriptor
+  filerMoveItems: filerMoveItems.descriptor
 } as const;
 
 export type Descriptors = DescriptorsType<typeof descriptors>;
@@ -44,7 +46,8 @@ export type Descriptors = DescriptorsType<typeof descriptors>;
  */
 // prettier-ignore
 export const registerToResolver = function registerToResolver(resolver: Type) {
-  resolver.register({descriptor: filerCopy.descriptor, factory: filerCopy.createCommand});
+  resolver.register({descriptor: filerDeleteItems.descriptor, factory: filerDeleteItems.createCommand});
+  resolver.register({descriptor: filerCopyItems.descriptor, factory: filerCopyItems.createCommand});
   resolver.register({descriptor: finderClose.descriptor, factory: finderClose.createCommand});
   resolver.register({descriptor: finderConfirm.descriptor, factory: finderConfirm.createCommand});
   resolver.register({descriptor: finderOpen.descriptor, factory: finderOpen.createCommand});
@@ -59,5 +62,5 @@ export const registerToResolver = function registerToResolver(resolver: Type) {
   resolver.register({descriptor: filerChangeSide.descriptor, factory: filerChangeSide.createCommand});
   resolver.register({descriptor: completerCursorDown.descriptor, factory: completerCursorDown.createCommand});
   resolver.register({descriptor: completerCursorUp.descriptor, factory: completerCursorUp.createCommand});
-  resolver.register({descriptor: filerMove.descriptor, factory: filerMove.createCommand});
+  resolver.register({descriptor: filerMoveItems.descriptor, factory: filerMoveItems.createCommand});
 };

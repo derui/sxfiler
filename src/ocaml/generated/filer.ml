@@ -782,6 +782,48 @@ end = struct
     fun writer -> deserialize writer |> Runtime'.Result.open_error
   
 end
+and DeleteRequest : sig
+  val name': unit -> string
+  type t = { side: Side.t; target: Target.t; target_id: string } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  val to_proto: t -> Runtime'.Writer.t
+  val from_proto: Runtime'.Reader.t -> (t, [> Runtime'.Result.error]) result
+end = struct 
+  let name' () = "filer.DeleteRequest"
+  type t = { side: Side.t; target: Target.t; target_id: string }[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  let to_proto =
+    let apply = fun ~f:f' { side; target; target_id } -> f' [] side target target_id in
+    let spec = Runtime'.Serialize.C.( basic (1, (enum Side.to_int), proto3) ^:: basic (2, (enum Target.to_int), proto3) ^:: basic (3, string, proto3) ^:: nil ) in
+    let serialize = Runtime'.Serialize.serialize [] (spec) in
+    fun t -> apply ~f:serialize t
+  
+  let from_proto =
+    let constructor = fun _extensions side target target_id -> { side; target; target_id } in
+    let spec = Runtime'.Deserialize.C.( basic (1, (enum Side.from_int), proto3) ^:: basic (2, (enum Target.from_int), proto3) ^:: basic (3, string, proto3) ^:: nil ) in
+    let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
+    fun writer -> deserialize writer |> Runtime'.Result.open_error
+  
+end
+and DeleteResponse : sig
+  val name': unit -> string
+  type t = unit [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  val to_proto: t -> Runtime'.Writer.t
+  val from_proto: Runtime'.Reader.t -> (t, [> Runtime'.Result.error]) result
+end = struct 
+  let name' () = "filer.DeleteResponse"
+  type t = unit[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  let to_proto =
+    let apply = fun ~f () -> f [] in
+    let spec = Runtime'.Serialize.C.( nil ) in
+    let serialize = Runtime'.Serialize.serialize [] (spec) in
+    fun t -> apply ~f:serialize t
+  
+  let from_proto =
+    let constructor = fun _extension -> () in
+    let spec = Runtime'.Deserialize.C.( nil ) in
+    let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
+    fun writer -> deserialize writer |> Runtime'.Result.open_error
+  
+end
 and UpdatedNotificationRequest : sig
   val name': unit -> string
   type t = { filer: Filer.t option } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]

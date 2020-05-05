@@ -166,9 +166,8 @@ let delete demand_action scan_location load_configuration delete_item : Delete.w
   let file_window = file_window_from_side input.filer input.side in
   let targets =
     match input.target with
-    | Delete.Marked -> File_list.marked_items file_window.file_list
-    | Delete.One id ->
-        File_list.find_item ~id file_window.file_list |> Option.map (fun v -> [ v ]) |> Option.value ~default:[]
+    | Marked -> File_list.marked_items file_window.file_list
+    | One id -> File_list.find_item ~id file_window.file_list |> Option.map (fun v -> [ v ]) |> Option.value ~default:[]
   in
   let interaction = Common_step_filer.request_delete_interaction demand_action in
   let reload = Common_step_file_list.reload scan_location in
