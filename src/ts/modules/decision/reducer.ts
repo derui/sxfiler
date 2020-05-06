@@ -106,6 +106,21 @@ const selectPreviousAction = (state: State): State => {
   });
 };
 
+const updateNewName = (state: State, newName: string): State => {
+  const { selectableActions } = state;
+  const updated = selectableActions.map((v) => {
+    if (v.kind === "rename") {
+      return { ...v, newName };
+    }
+    return v;
+  });
+
+  return Object.freeze({
+    ...state,
+    selectableActions: updated,
+  });
+};
+
 export const reducer = (state: State = emptyState, action: Actions): State => {
   switch (action.type) {
     case ActionTypes.SELECT_NEXT_ACTION:
@@ -122,6 +137,8 @@ export const reducer = (state: State = emptyState, action: Actions): State => {
       return requireDecisionFor(state, action.payload, DecisionRequiredOp.Move);
     case ActionTypes.REQUIRE_DECISION_FOR_DELETE:
       return requireDecisionFor(state, action.payload, DecisionRequiredOp.Delete);
+    case ActionTypes.UPDATE_NEW_NAME:
+      return updateNewName(state, action.payload.newName);
     default:
       return state;
   }

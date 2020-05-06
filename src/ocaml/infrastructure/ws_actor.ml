@@ -39,32 +39,37 @@ module Impl (IG : D.Id_generator.S with type id = Uuidm.t) = struct
 
   let start t =
     let module C = (val t.conn) in
+    L.info (fun m -> m "Starting actor...") |> Lwt.ignore_result;
     let handle () =
       C.(
         Connection.process_input instance ~f:(fun frame ->
             L.debug (fun m -> m "Start handle a frame");%lwt
-            let%lwt receivers = Lwt_mutex.with_lock t.receiver_lock (fun () -> Lwt.return t.receivers) in
-            let receivers' = Receiver_map.to_seq receivers |> List.of_seq in
-            let%lwt results =
-              Lwt_list.map_p
-                (fun (id, r) ->
-                  let%lwt result = r frame in
-                  Lwt.return (id, result))
-                receivers'
-            in
-            let new_receivers =
-              List.filter (fun (_, ret) -> match ret with `Finished -> true | `Continue -> false) results
-              |> List.fold_left (fun map (id, _) -> Receiver_map.remove id map) receivers
-            in
-            Lwt_mutex.with_lock t.receiver_lock (fun () ->
-                t.receivers <- new_receivers;
-                Lwt.return_unit);%lwt
+            Lwt.async (fun () ->
+                let%lwt receivers = Lwt_mutex.with_lock t.receiver_lock (fun () -> Lwt.return t.receivers) in
+                let receivers' = Receiver_map.to_seq receivers |> List.of_seq in
+                let%lwt results =
+                  Lwt_list.map_p
+                    (fun (id, r) ->
+                      L.debug (fun m -> m "handle frame with receiver: %s" (Uuidm.to_string id));%lwt
+                      let%lwt result = r frame in
+                      Lwt.return (id, result))
+                    receivers'
+                in
+                let new_receivers =
+                  List.filter (fun (_, ret) -> match ret with `Finished -> true | `Continue -> false) results
+                  |> List.fold_left (fun map (id, _) -> Receiver_map.remove id map) receivers
+                in
+                Lwt_mutex.with_lock t.receiver_lock (fun () ->
+                    t.receivers <- new_receivers;
+                    Lwt.return_unit));
             L.debug (fun m -> m "Finish handling a frame")))
     in
     Lwt.async handle;
     t.waiter
 
-  let stop t = Lwt.wakeup t.wakener ()
+  let stop t =
+    L.info (fun m -> m "Stopping actor...") |> Lwt.ignore_result;
+    Lwt.wakeup t.wakener ()
 end
 
 let make (module IG : D.Id_generator.S with type id = Uuidm.t) (module C : Ws_connection.Instance) =

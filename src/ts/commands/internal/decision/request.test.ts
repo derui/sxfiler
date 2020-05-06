@@ -18,6 +18,7 @@ describe("Commands", () => {
         {
           requiredOp: DecisionRequiredOp.Copy,
           fileItem,
+          processId: "copy",
         }
       );
 
@@ -35,6 +36,7 @@ describe("Commands", () => {
         {
           requiredOp: DecisionRequiredOp.Move,
           fileItem,
+          processId: "move",
         }
       );
 
@@ -52,6 +54,7 @@ describe("Commands", () => {
         {
           requiredOp: DecisionRequiredOp.Delete,
           fileItem,
+          processId: "delete",
         }
       );
 

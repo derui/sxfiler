@@ -140,7 +140,7 @@ const handleKeyDown = function handleKeyDown(locator: Locator, store: Store<Stat
         const binding = state.keymap.currentKeymap[kbd.toKeySeq(key)];
 
         if (!binding) {
-          logger.debug("Not found binding for key seq");
+          logger.debug(`Not found binding for key seq: ${JSON.stringify(key)}`);
           break;
         }
 

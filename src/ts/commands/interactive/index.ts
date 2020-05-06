@@ -1,4 +1,7 @@
 import { DescriptorsType } from "@/commands/type";
+import * as decisionFinish from "./decision/finish";
+import * as decisionCursorDown from "./decision/cursor-down";
+import * as decisionCursorUp from "./decision/cursor-up";
 import * as filerDeleteItems from "./filer/delete-items";
 import * as filerCopyItems from "./filer/copy-items";
 import * as finderClose from "./finder/close";
@@ -20,6 +23,9 @@ import { Type } from "../command-resolver";
 
 // prettier-ignore
 export const descriptors = {
+  decisionFinish: decisionFinish.descriptor,
+  decisionCursorDown: decisionCursorDown.descriptor,
+  decisionCursorUp: decisionCursorUp.descriptor,
   filerDeleteItems: filerDeleteItems.descriptor,
   filerCopyItems: filerCopyItems.descriptor,
   finderClose: finderClose.descriptor,
@@ -46,6 +52,9 @@ export type Descriptors = DescriptorsType<typeof descriptors>;
  */
 // prettier-ignore
 export const registerToResolver = function registerToResolver(resolver: Type) {
+  resolver.register({descriptor: decisionFinish.descriptor, factory: decisionFinish.createCommand});
+  resolver.register({descriptor: decisionCursorDown.descriptor, factory: decisionCursorDown.createCommand});
+  resolver.register({descriptor: decisionCursorUp.descriptor, factory: decisionCursorUp.createCommand});
   resolver.register({descriptor: filerDeleteItems.descriptor, factory: filerDeleteItems.createCommand});
   resolver.register({descriptor: filerCopyItems.descriptor, factory: filerCopyItems.createCommand});
   resolver.register({descriptor: finderClose.descriptor, factory: finderClose.createCommand});

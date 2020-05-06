@@ -3,7 +3,7 @@ import { ObjectEnum } from "@/utils";
 // UIContext defines current context of UI.
 export const UIContext = {
   OnFileTree: "onFileTree",
-  OnSuggestion: "onSuggestion",
+  OnDecision: "onDecision",
   OnCompletion: "onCompletion",
   ForHistory: "forHistory",
   ForFinder: "forFinder",
