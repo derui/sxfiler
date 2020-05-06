@@ -5,7 +5,6 @@ import * as completerComplete from "./completer/complete";
 import * as filerUpdateFileWindow from "./filer/update-file-window";
 import * as decisionReset from "./decision/reset";
 import * as decisionRequest from "./decision/request";
-import * as decisionFinish from "./decision/finish";
 import * as decisionUpdateNewName from "./decision/update-new-name";
 import * as configurationInitialize from "./configuration/initialize";
 import * as keymapRemoveContext from "./keymap/remove-context";
@@ -22,7 +21,6 @@ export const descriptors = {
   filerUpdateFileWindow: filerUpdateFileWindow.descriptor,
   decisionReset: decisionReset.descriptor,
   decisionRequest: decisionRequest.descriptor,
-  decisionFinish: decisionFinish.descriptor,
   decisionUpdateNewName: decisionUpdateNewName.descriptor,
   configurationInitialize: configurationInitialize.descriptor,
   keymapRemoveContext: keymapRemoveContext.descriptor,
@@ -44,7 +42,6 @@ export const registerToResolver = function registerToResolver(resolver: Type) {
   resolver.register({descriptor: filerUpdateFileWindow.descriptor, factory: filerUpdateFileWindow.createCommand});
   resolver.register({descriptor: decisionReset.descriptor, factory: decisionReset.createCommand});
   resolver.register({descriptor: decisionRequest.descriptor, factory: decisionRequest.createCommand});
-  resolver.register({descriptor: decisionFinish.descriptor, factory: decisionFinish.createCommand});
   resolver.register({descriptor: decisionUpdateNewName.descriptor, factory: decisionUpdateNewName.createCommand});
   resolver.register({descriptor: configurationInitialize.descriptor, factory: configurationInitialize.createCommand});
   resolver.register({descriptor: keymapRemoveContext.descriptor, factory: keymapRemoveContext.createCommand});

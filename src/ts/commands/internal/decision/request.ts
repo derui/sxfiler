@@ -4,11 +4,14 @@ import { Dispatcher } from "@/types";
 import { DecisionRequiredOp } from "@/modules/decision/reducer";
 import { FileItem } from "@/generated/filer_pb";
 import { actions } from "@/modules/decision";
+import { actions as keymapActions } from "@/modules/keymap";
+import { UIContext } from "@/types/ui-context";
 
 const identifier = "internal.decision.request";
 
 export type Payload = {
   requiredOp: DecisionRequiredOp;
+  processId: string;
   fileItem: FileItem;
 };
 export type Command = CommandLike<Payload>;
@@ -25,14 +28,20 @@ export const createCommand = (): Command => {
   return {
     identifier,
     async execute(dispatcher: Dispatcher<Actions>, _: CommandState, payload: Payload) {
-      const { fileItem, requiredOp } = payload;
+      const { fileItem, requiredOp, processId } = payload;
       switch (requiredOp) {
         case DecisionRequiredOp.Copy:
-          return dispatcher.dispatch(actions.requireDecisionForCopy("copy", fileItem));
+          dispatcher.dispatch(actions.requireDecisionForCopy(processId, fileItem));
+          dispatcher.dispatch(keymapActions.replaceContext([UIContext.OnDecision]));
+          break;
         case DecisionRequiredOp.Move:
-          return dispatcher.dispatch(actions.requireDecisionForMove("move", fileItem));
+          dispatcher.dispatch(actions.requireDecisionForMove(processId, fileItem));
+          dispatcher.dispatch(keymapActions.replaceContext([UIContext.OnDecision]));
+          break;
         case DecisionRequiredOp.Delete:
-          return dispatcher.dispatch(actions.requireDecisionForDelete("delete", fileItem));
+          dispatcher.dispatch(actions.requireDecisionForDelete(processId, fileItem));
+          dispatcher.dispatch(keymapActions.replaceContext([UIContext.OnDecision]));
+          break;
         default:
           return;
       }

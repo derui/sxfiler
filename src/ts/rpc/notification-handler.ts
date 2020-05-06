@@ -8,6 +8,10 @@ import {
   UpdatedFileWindowNotificationRequest,
   Side as SideMap,
   UpdatedFileWindowNotificationResponse,
+  MoveUserDecisionRequest,
+  MoveUserDecisionResponse,
+  DeleteUserDecisionRequest,
+  DeleteUserDecisionResponse,
 } from "@/generated/filer_pb";
 import { State } from "@/modules";
 import { descriptors } from "@/commands/internal";
@@ -19,7 +23,6 @@ import { DecisionRequiredOp, DecisionAction } from "@/modules/decision/reducer";
 import { ResponseSender, ProcessResult } from "@/libs/websocket-rpc/server";
 import { TypedSubscriber, EventTypes } from "@/typed-event-hub";
 import { Side } from "@/modules/filer/reducer";
-import { lazy } from "preact/compat/src";
 import { CompletionResultNotificationRequest, CompletionResultNotificationResponse } from "@/generated/completer_pb";
 
 /**
@@ -58,6 +61,7 @@ const handleCopyUserDecision: InnerCommandHandler = (args, id, payload, lazyResp
   args.getCommandExecutor().execute(factory, args.getState(), {
     requiredOp: DecisionRequiredOp.Copy,
     fileItem: item,
+    processId: id,
   });
   const unsubscribe = args.getSubscriber().subscribe(EventTypes.FinishDecision, (e) => {
     switch (e.kind) {
@@ -87,7 +91,104 @@ const handleCopyUserDecision: InnerCommandHandler = (args, id, payload, lazyResp
   });
 };
 
-const handleCandidateUpdated: InnerCommandHandler = (args, id, payload, lazyResponse) => {
+/**
+ * handler for `MoveUserDecisionRequest`
+ */
+const handleMoveUserDecision: InnerCommandHandler = (args, id, payload, lazyResponse) => {
+  const logger = winston.loggers.get(Loggers.RPC);
+  const request = MoveUserDecisionRequest.deserializeBinary(payload);
+  const factory = args.getCommandResolver().resolveBy(descriptors.decisionRequest);
+  const reset = args.getCommandResolver().resolveBy(descriptors.decisionReset);
+  const item = request.getItem();
+  if (!factory || !item || !reset) {
+    logger.error(`Invalid path: ${descriptors.filerUpdate.identifier}`);
+    lazyResponse(ProcessResult.ignored());
+    return;
+  }
+
+  logger.info("Start handling event request decision for move");
+
+  args.getCommandExecutor().execute(factory, args.getState(), {
+    requiredOp: DecisionRequiredOp.Move,
+    fileItem: item,
+    processId: id,
+  });
+  const unsubscribe = args.getSubscriber().subscribe(EventTypes.FinishDecision, (e) => {
+    switch (e.kind) {
+      case EventTypes.FinishDecision: {
+        if (e.processId !== id) {
+          return;
+        }
+
+        const response = new MoveUserDecisionResponse();
+        switch (e.resultAction.kind) {
+          case DecisionAction.Overwrite:
+            response.setAction(Action.OVERWRITE);
+            break;
+          case DecisionAction.Rename:
+            response.setAction(Action.RENAME);
+            response.setNewName(e.resultAction.newName);
+            break;
+          default:
+            return;
+        }
+
+        lazyResponse(ProcessResult.successed(response.serializeBinary()));
+        unsubscribe();
+        args.getCommandExecutor().execute(reset, args.getState(), undefined);
+      }
+    }
+  });
+};
+
+/**
+ * handler for `MoveUserDecisionRequest`
+ */
+const handleDeleteUserDecision: InnerCommandHandler = (args, id, payload, lazyResponse) => {
+  const logger = winston.loggers.get(Loggers.RPC);
+  const request = DeleteUserDecisionRequest.deserializeBinary(payload);
+  const factory = args.getCommandResolver().resolveBy(descriptors.decisionRequest);
+  const reset = args.getCommandResolver().resolveBy(descriptors.decisionReset);
+  const item = request.getItem();
+  if (!factory || !item || !reset) {
+    logger.error(`Invalid path: ${descriptors.filerUpdate.identifier}`);
+    lazyResponse(ProcessResult.ignored());
+    return;
+  }
+
+  logger.info("Start handling event request decision for move");
+
+  args.getCommandExecutor().execute(factory, args.getState(), {
+    requiredOp: DecisionRequiredOp.Move,
+    fileItem: item,
+    processId: id,
+  });
+  const unsubscribe = args.getSubscriber().subscribe(EventTypes.FinishDecision, (e) => {
+    switch (e.kind) {
+      case EventTypes.FinishDecision: {
+        if (e.processId !== id) {
+          return;
+        }
+
+        const response = new DeleteUserDecisionResponse();
+        response.setConfirmed(false);
+        switch (e.resultAction.kind) {
+          case DecisionAction.Confirm:
+            response.setConfirmed(true);
+            break;
+          default:
+            break;
+        }
+
+        lazyResponse(ProcessResult.successed(response.serializeBinary()));
+        unsubscribe();
+        args.getCommandExecutor().execute(reset, args.getState(), undefined);
+      }
+    }
+  });
+};
+
+const handleCandidateUpdated: InnerCommandHandler = (args, _, payload, lazyResponse) => {
   const logger = winston.loggers.get(Loggers.RPC);
   const request = CompletionResultNotificationRequest.deserializeBinary(payload);
   const factory = args.getCommandResolver().resolveBy(descriptors.completerUpdateCandidates);
@@ -150,6 +251,12 @@ export const notificationHandler = function notificationHandler(
         break;
       case Command.FILER_COPY_INTERACTION:
         handleCopyUserDecision(args, id, payload, lazyResponse);
+        break;
+      case Command.FILER_MOVE_INTERACTION:
+        handleMoveUserDecision(args, id, payload, lazyResponse);
+        break;
+      case Command.FILER_DELETE_INTERACTION:
+        handleDeleteUserDecision(args, id, payload, lazyResponse);
         break;
       case Command.COMPLETER_NOTIFY_COMPLETED:
         handleCandidateUpdated(args, id, payload, lazyResponse);

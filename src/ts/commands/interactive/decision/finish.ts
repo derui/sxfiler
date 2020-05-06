@@ -1,9 +1,11 @@
 import { Actions } from "@/modules";
-import { CommandLike, CommandDescriptor } from "@/commands/type";
+import { CommandLike, CommandState, CommandDescriptor } from "@/commands/type";
 import { Dispatcher } from "@/types";
 import { actions } from "@/modules/decision";
+import { actions as keymapActions } from "@/modules/keymap";
+import { UIContext } from "@/types/ui-context";
 
-const identifier = "internal.decision.finish";
+const identifier = "interactive.decision.finish";
 
 export type Payload = undefined;
 export type Command = CommandLike<Payload>;
@@ -21,6 +23,7 @@ export const createCommand = (): Command => {
     identifier,
     async execute(dispatcher: Dispatcher<Actions>) {
       dispatcher.dispatch(actions.finish());
+      dispatcher.dispatch(keymapActions.replaceContext([UIContext.OnFileTree]));
     },
   };
 };
