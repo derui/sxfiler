@@ -108,13 +108,15 @@ let copy demand_action scan_location copy_item : Copy.work_flow =
 
   (* run real workflow *)
   let%lwt _ = Lwt_list.iter_p copy_item' targets in
-  let%lwt dest_file_list = reload dest_file_window.file_list in
-  let dest_file_window = File_window.reload_list dest_file_list dest_file_window in
-  match dest_file_window with
-  | Ok dest_file_window ->
-      let filer = update_side dest_file_window dest_side input.filer in
+  let%lwt dest_file_list = reload dest_file_window.file_list
+  and source_file_list = reload source_file_window.file_list in
+  let dest_file_window = File_window.reload_list dest_file_list dest_file_window
+  and source_file_window = File_window.reload_list source_file_list source_file_window in
+  match (dest_file_window, source_file_window) with
+  | Ok dest_file_window, Ok source_file_window ->
+      let filer = update_side dest_file_window dest_side input.filer |> update_side source_file_window source_side in
       Lwt.return [ Updated filer ]
-  | Error `Not_same     -> Lwt.return []
+  | Error `Not_same, _ | _, Error `Not_same -> Lwt.return []
 
 let move demand_action scan_location move_item : Move.work_flow =
  fun input ->
