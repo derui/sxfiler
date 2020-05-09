@@ -1,6 +1,7 @@
-import { h } from "preact";
+import { h, Fragment } from "preact";
 import { createPortal } from "preact/compat";
 import classnames from "classnames";
+import { Transition, TransitionState } from "./transition";
 
 type BaseProps = preact.JSX.HTMLAttributes<HTMLElement> & {
   position?: "top" | undefined;
@@ -12,6 +13,7 @@ type BaseContainerProps = {
 
 type BaseOverlayProps = {
   opened: boolean;
+  transition: TransitionState;
 };
 
 export type Props<ContainerProps extends object = {}, T extends BaseProps = BaseProps> = T & {
@@ -23,15 +25,15 @@ export type Props<ContainerProps extends object = {}, T extends BaseProps = Base
 const DefaultRoot: preact.FunctionComponent<BaseProps> = (props) => {
   const className = classnames({
     "ui-modal__root": !props.position,
-    "ui-modal__root--top": props.position === "top",
+    "ui-modal__root--top": props.position === "top" || !props.position,
   });
 
   return <div class={className} data-testid="modal-root" {...props} />;
 };
 DefaultRoot.displayName = "DefaultRoot";
 
-const Overlay: preact.FunctionComponent<BaseOverlayProps> = ({ opened }) =>
-  opened ? <div class="ui-modal__overlay" data-testid="modal-overlay" /> : null;
+const Overlay: preact.FunctionComponent<BaseOverlayProps> = ({ opened, transition }) =>
+  opened ? <div class="ui-modal__overlay" data-state={transition} data-testid="modal-overlay" /> : null;
 Overlay.displayName = "Overlay";
 
 export const createComponent = function createComponent<
@@ -51,10 +53,20 @@ export const createComponent = function createComponent<
     ...props
   }: Props<ContainerProps, T>) => {
     return createPortal(
-      <Root aria-hidden={!opened} {...props}>
-        <Overlay opened={opened} />
-        {container && h(Container, { ...container, opened })}
-      </Root>,
+      <Transition in={opened} timeout={200}>
+        {(state) => {
+          console.log(state);
+          return (
+            <Fragment>
+              <Overlay opened={opened} transition={state} />
+              <Root data-state={state} aria-hidden={!opened} {...props}>
+                {container && h(Container, { ...container, opened })}
+              </Root>
+            </Fragment>
+          );
+        }}
+      </Transition>,
+
       dialogRoot
     );
   };

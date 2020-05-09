@@ -6,7 +6,7 @@
   width: 100%;
   height: 100%;
   justify-content: center;
-  z-index: 1;
+  z-index: 2;
 
   &[aria-hidden="true"] {
     display: none;
@@ -20,22 +20,23 @@
   height: 100%;
   justify-content: center;
   top: 0;
+  transform: translateY(-100%);
 
   &[aria-hidden="true"] {
     display: none;
   }
 
   &[data-state="entering"] {
-    transform: translateY(-100%);
-  }
-
-  &[data-state="entered"] {
     transform: translateY(0);
     transition: transform ease-out 200ms;
   }
 
-  &[data-state="exited"] {
+  &[data-state="entered"] {
     transform: translateY(0);
+  }
+
+  &[data-state="exited"] {
+    transform: translateY(-100%);
   }
 
   &[data-state="exiting"] {
@@ -50,7 +51,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 1;
 
   /* color for overlay */
   background-color: rgba(0, 0, 0, 0.2);
@@ -67,6 +68,10 @@
   &[data-state="exiting"] {
     opacity: 0.1;
     transition: opacity ease-out 200ms;
+  }
+
+  &[data-state="exited"] {
+    opacity: 0;
   }
 }
 
