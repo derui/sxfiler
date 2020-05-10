@@ -4,6 +4,9 @@ import { FileItem } from "@/generated/filer_pb";
 
 // implememt action. Use command `hygen module add:action [name of action]` to add template into this place.
 //#ACTION INSERTION INDICATOR
+export const cancel = () => {
+  return { type: ActionTypes.CANCEL, payload: {} };
+};
 export const reset = () => {
   return { type: ActionTypes.RESET, payload: {} };
 };
@@ -38,6 +41,7 @@ export const requireDecisionForCopy = (processId: string, item: FileItem) => {
 // Do not delete this comment below.
 // prettier-ignore
 export const actions = {
+cancel,
 reset,
 updateNewName,
 selectPreviousAction,

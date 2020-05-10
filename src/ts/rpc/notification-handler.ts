@@ -64,13 +64,21 @@ const handleCopyUserDecision: InnerCommandHandler = (args, id, payload, lazyResp
     processId: id,
   });
   const unsubscribe = args.getSubscriber().subscribe(EventTypes.FinishDecision, (e) => {
+    const response = new CopyUserDecisionResponse();
     switch (e.kind) {
+      case EventTypes.CancelDecision: {
+        if (e.processId !== id) {
+          return;
+        }
+
+        response.setAction(Action.CANCEL);
+        break;
+      }
       case EventTypes.FinishDecision: {
         if (e.processId !== id) {
           return;
         }
 
-        const response = new CopyUserDecisionResponse();
         switch (e.resultAction.kind) {
           case DecisionAction.Overwrite:
             response.setAction(Action.OVERWRITE);
@@ -79,15 +87,13 @@ const handleCopyUserDecision: InnerCommandHandler = (args, id, payload, lazyResp
             response.setAction(Action.RENAME);
             response.setNewName(e.resultAction.newName);
             break;
-          default:
-            return;
         }
-
-        lazyResponse(ProcessResult.successed(response.serializeBinary()));
-        unsubscribe();
-        args.getCommandExecutor().execute(reset, args.getState(), undefined);
       }
     }
+
+    lazyResponse(ProcessResult.successed(response.serializeBinary()));
+    unsubscribe();
+    args.getCommandExecutor().execute(reset, args.getState(), undefined);
   });
 };
 
@@ -113,14 +119,22 @@ const handleMoveUserDecision: InnerCommandHandler = (args, id, payload, lazyResp
     fileItem: item,
     processId: id,
   });
+
   const unsubscribe = args.getSubscriber().subscribe(EventTypes.FinishDecision, (e) => {
+    const response = new MoveUserDecisionResponse();
     switch (e.kind) {
+      case EventTypes.CancelDecision: {
+        if (e.processId !== id) {
+          return;
+        }
+        response.setAction(Action.CANCEL);
+        break;
+      }
       case EventTypes.FinishDecision: {
         if (e.processId !== id) {
           return;
         }
 
-        const response = new MoveUserDecisionResponse();
         switch (e.resultAction.kind) {
           case DecisionAction.Overwrite:
             response.setAction(Action.OVERWRITE);
@@ -129,15 +143,13 @@ const handleMoveUserDecision: InnerCommandHandler = (args, id, payload, lazyResp
             response.setAction(Action.RENAME);
             response.setNewName(e.resultAction.newName);
             break;
-          default:
-            return;
         }
-
-        lazyResponse(ProcessResult.successed(response.serializeBinary()));
-        unsubscribe();
-        args.getCommandExecutor().execute(reset, args.getState(), undefined);
       }
     }
+
+    lazyResponse(ProcessResult.successed(response.serializeBinary()));
+    unsubscribe();
+    args.getCommandExecutor().execute(reset, args.getState(), undefined);
   });
 };
 
@@ -164,13 +176,21 @@ const handleDeleteUserDecision: InnerCommandHandler = (args, id, payload, lazyRe
     processId: id,
   });
   const unsubscribe = args.getSubscriber().subscribe(EventTypes.FinishDecision, (e) => {
+    const response = new DeleteUserDecisionResponse();
+
     switch (e.kind) {
+      case EventTypes.CancelDecision: {
+        if (e.processId !== id) {
+          return;
+        }
+        response.setConfirmed(false);
+        break;
+      }
       case EventTypes.FinishDecision: {
         if (e.processId !== id) {
           return;
         }
 
-        const response = new DeleteUserDecisionResponse();
         response.setConfirmed(false);
         switch (e.resultAction.kind) {
           case DecisionAction.Confirm:
@@ -179,12 +199,12 @@ const handleDeleteUserDecision: InnerCommandHandler = (args, id, payload, lazyRe
           default:
             break;
         }
-
-        lazyResponse(ProcessResult.successed(response.serializeBinary()));
-        unsubscribe();
-        args.getCommandExecutor().execute(reset, args.getState(), undefined);
       }
     }
+
+    lazyResponse(ProcessResult.successed(response.serializeBinary()));
+    unsubscribe();
+    args.getCommandExecutor().execute(reset, args.getState(), undefined);
   });
 };
 

@@ -4,6 +4,7 @@ import { ObjectEnum } from "./utils";
 
 export const EventTypes = {
   FinishDecision: "FinishDecision",
+  CancelDecision: "CancelDecision",
 } as const;
 export type EventTypes = ObjectEnum<typeof EventTypes>;
 
@@ -13,11 +14,19 @@ type FinishDecisionEvent = {
   decisionOp: DecisionRequiredOp;
   resultAction: SelectableAction;
 };
+type CancelDecisionEvent = {
+  kind: "CancelDecision";
+  processId: string;
+};
 
-export type Events = FinishDecisionEvent;
+export type Events = FinishDecisionEvent | CancelDecisionEvent;
 export const EventCreators = Object.freeze({
   finishDecision(args: Omit<FinishDecisionEvent, "kind">): FinishDecisionEvent {
     return { ...args, kind: EventTypes.FinishDecision };
+  },
+
+  cancelDecision(args: { processId: string }): CancelDecisionEvent {
+    return { ...args, kind: EventTypes.CancelDecision };
   },
 });
 

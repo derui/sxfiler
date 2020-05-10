@@ -1,5 +1,6 @@
 // prettier-ignore
 export const ActionTypes = {
+CANCEL: "decision/cancel",
 RESET: "decision/reset",
 UPDATE_NEW_NAME: "decision/updateNewName",
 SELECT_PREVIOUS_ACTION: "decision/selectPreviousAction",
