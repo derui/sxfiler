@@ -27,6 +27,16 @@ export const create = (eventHub: TypedPublisher): Middleware<{}, State> => {
           );
         }
         break;
+      case Decision.ActionTypes.CANCEL:
+        {
+          const { processId } = state.decision;
+          if (!processId) {
+            break;
+          }
+
+          eventHub.publish(EventCreators.cancelDecision({ processId }));
+        }
+        break;
       default:
         break;
     }

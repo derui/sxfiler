@@ -65,6 +65,10 @@ const finish = (state: State): State => {
  */
 const reset = () => emptyState;
 
+const cancel = (state: State) => {
+  return Object.freeze({ ...state, processing: false });
+};
+
 /**
  * common reducer for `ActionTypes.REQUIRE_DECISION_FOR_*`
  */
@@ -131,6 +135,8 @@ export const reducer = (state: State = emptyState, action: Actions): State => {
       return finish(state);
     case ActionTypes.RESET:
       return reset();
+    case ActionTypes.CANCEL:
+      return cancel(state);
     case ActionTypes.REQUIRE_DECISION_FOR_COPY:
       return requireDecisionFor(state, action.payload, DecisionRequiredOp.Copy);
     case ActionTypes.REQUIRE_DECISION_FOR_MOVE:
