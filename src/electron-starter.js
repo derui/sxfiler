@@ -7,6 +7,8 @@ if (require.main !== module) {
 }
 
 const app = electron.app;
+// it will be 'true' in Electron 9.
+app.allowRendererProcessReuse = true;
 
 app.on('ready', () => {
   const browserWindow = new electron.BrowserWindow({
