@@ -91,6 +91,8 @@ setupConfigurations(configDir);
 async function launch() {
   const port = await findAvailablePort();
   const app = electron.app;
+  // it will be 'true' in Electron 9.
+  app.allowRendererProcessReuse = true;
 
   const server = spawnServer(configDir, port);
   const serverClosed = new Promise((resolve) => {
