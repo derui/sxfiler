@@ -89,6 +89,24 @@ end = struct
     | n -> Error (`Unknown_enum_value n)
   
 end
+and TransferStatus : sig
+  type t = SUCCESS | FAILED | CANCELED [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  val to_int: t -> int
+  val from_int: int -> (t, [> Runtime'.Result.error]) result
+end = struct 
+  type t = SUCCESS | FAILED | CANCELED [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  let to_int = function
+    | SUCCESS -> 0
+    | FAILED -> 1
+    | CANCELED -> 2
+  
+  let from_int = function
+    | 0 -> Ok SUCCESS
+    | 1 -> Ok FAILED
+    | 2 -> Ok CANCELED
+    | n -> Error (`Unknown_enum_value n)
+  
+end
 and Capability : sig
   val name': unit -> string
   type t = { writable: bool; readable: bool; executable: bool } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
@@ -698,6 +716,27 @@ end = struct
     fun writer -> deserialize writer |> Runtime'.Result.open_error
   
 end
+and TransferResult : sig
+  val name': unit -> string
+  type t = { source: string; destination: string; status: TransferStatus.t; timestamp: string } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  val to_proto: t -> Runtime'.Writer.t
+  val from_proto: Runtime'.Reader.t -> (t, [> Runtime'.Result.error]) result
+end = struct 
+  let name' () = "filer.TransferResult"
+  type t = { source: string; destination: string; status: TransferStatus.t; timestamp: string }[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  let to_proto =
+    let apply = fun ~f:f' { source; destination; status; timestamp } -> f' [] source destination status timestamp in
+    let spec = Runtime'.Serialize.C.( basic (1, string, proto3) ^:: basic (2, string, proto3) ^:: basic (3, (enum TransferStatus.to_int), proto3) ^:: basic (4, string, proto3) ^:: nil ) in
+    let serialize = Runtime'.Serialize.serialize [] (spec) in
+    fun t -> apply ~f:serialize t
+  
+  let from_proto =
+    let constructor = fun _extensions source destination status timestamp -> { source; destination; status; timestamp } in
+    let spec = Runtime'.Deserialize.C.( basic (1, string, proto3) ^:: basic (2, string, proto3) ^:: basic (3, (enum TransferStatus.from_int), proto3) ^:: basic (4, string, proto3) ^:: nil ) in
+    let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
+    fun writer -> deserialize writer |> Runtime'.Result.open_error
+  
+end
 and MoveRequest : sig
   val name': unit -> string
   type t = { transfer: Transfer.t option } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
@@ -721,21 +760,21 @@ end = struct
 end
 and MoveResponse : sig
   val name': unit -> string
-  type t = unit [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { results: TransferResult.t list } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
   val to_proto: t -> Runtime'.Writer.t
   val from_proto: Runtime'.Reader.t -> (t, [> Runtime'.Result.error]) result
 end = struct 
   let name' () = "filer.MoveResponse"
-  type t = unit[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { results: TransferResult.t list }[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
   let to_proto =
-    let apply = fun ~f () -> f [] in
-    let spec = Runtime'.Serialize.C.( nil ) in
+    let apply = fun ~f:f' { results } -> f' [] results in
+    let spec = Runtime'.Serialize.C.( repeated (1, (message (fun t -> TransferResult.to_proto t)), not_packed) ^:: nil ) in
     let serialize = Runtime'.Serialize.serialize [] (spec) in
     fun t -> apply ~f:serialize t
   
   let from_proto =
-    let constructor = fun _extension -> () in
-    let spec = Runtime'.Deserialize.C.( nil ) in
+    let constructor = fun _extensions results -> { results } in
+    let spec = Runtime'.Deserialize.C.( repeated (1, (message (fun t -> TransferResult.from_proto t)), not_packed) ^:: nil ) in
     let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
     fun writer -> deserialize writer |> Runtime'.Result.open_error
   
@@ -763,21 +802,42 @@ end = struct
 end
 and CopyResponse : sig
   val name': unit -> string
-  type t = unit [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { results: TransferResult.t list } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
   val to_proto: t -> Runtime'.Writer.t
   val from_proto: Runtime'.Reader.t -> (t, [> Runtime'.Result.error]) result
 end = struct 
   let name' () = "filer.CopyResponse"
-  type t = unit[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { results: TransferResult.t list }[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
   let to_proto =
-    let apply = fun ~f () -> f [] in
-    let spec = Runtime'.Serialize.C.( nil ) in
+    let apply = fun ~f:f' { results } -> f' [] results in
+    let spec = Runtime'.Serialize.C.( repeated (1, (message (fun t -> TransferResult.to_proto t)), not_packed) ^:: nil ) in
     let serialize = Runtime'.Serialize.serialize [] (spec) in
     fun t -> apply ~f:serialize t
   
   let from_proto =
-    let constructor = fun _extension -> () in
-    let spec = Runtime'.Deserialize.C.( nil ) in
+    let constructor = fun _extensions results -> { results } in
+    let spec = Runtime'.Deserialize.C.( repeated (1, (message (fun t -> TransferResult.from_proto t)), not_packed) ^:: nil ) in
+    let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
+    fun writer -> deserialize writer |> Runtime'.Result.open_error
+  
+end
+and DeleteResult : sig
+  val name': unit -> string
+  type t = { path: string; timestamp: string } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  val to_proto: t -> Runtime'.Writer.t
+  val from_proto: Runtime'.Reader.t -> (t, [> Runtime'.Result.error]) result
+end = struct 
+  let name' () = "filer.DeleteResult"
+  type t = { path: string; timestamp: string }[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  let to_proto =
+    let apply = fun ~f:f' { path; timestamp } -> f' [] path timestamp in
+    let spec = Runtime'.Serialize.C.( basic (1, string, proto3) ^:: basic (2, string, proto3) ^:: nil ) in
+    let serialize = Runtime'.Serialize.serialize [] (spec) in
+    fun t -> apply ~f:serialize t
+  
+  let from_proto =
+    let constructor = fun _extensions path timestamp -> { path; timestamp } in
+    let spec = Runtime'.Deserialize.C.( basic (1, string, proto3) ^:: basic (2, string, proto3) ^:: nil ) in
     let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
     fun writer -> deserialize writer |> Runtime'.Result.open_error
   
@@ -805,21 +865,21 @@ end = struct
 end
 and DeleteResponse : sig
   val name': unit -> string
-  type t = unit [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { results: DeleteResult.t list } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
   val to_proto: t -> Runtime'.Writer.t
   val from_proto: Runtime'.Reader.t -> (t, [> Runtime'.Result.error]) result
 end = struct 
   let name' () = "filer.DeleteResponse"
-  type t = unit[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { results: DeleteResult.t list }[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
   let to_proto =
-    let apply = fun ~f () -> f [] in
-    let spec = Runtime'.Serialize.C.( nil ) in
+    let apply = fun ~f:f' { results } -> f' [] results in
+    let spec = Runtime'.Serialize.C.( repeated (1, (message (fun t -> DeleteResult.to_proto t)), not_packed) ^:: nil ) in
     let serialize = Runtime'.Serialize.serialize [] (spec) in
     fun t -> apply ~f:serialize t
   
   let from_proto =
-    let constructor = fun _extension -> () in
-    let spec = Runtime'.Deserialize.C.( nil ) in
+    let constructor = fun _extensions results -> { results } in
+    let spec = Runtime'.Deserialize.C.( repeated (1, (message (fun t -> DeleteResult.from_proto t)), not_packed) ^:: nil ) in
     let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
     fun writer -> deserialize writer |> Runtime'.Result.open_error
   

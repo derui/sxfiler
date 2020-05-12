@@ -1,4 +1,5 @@
 //#IMPORT INDICATOR
+import * as LogEvent from "./log-event";
 import * as Configuration from "./configuration";
 import * as Keymap from "./keymap";
 import * as Filer from "./filer";
@@ -10,6 +11,7 @@ import { combineReducers } from "redux";
 // export combined types
 // prettier-ignore
 export type Actions =
+  | LogEvent.Actions
   | Configuration.Actions
   | Keymap.Actions
   | Filer.Actions
@@ -20,6 +22,7 @@ export type Actions =
 // export combined reducer
 // prettier-ignore
 export const reducer = combineReducers({
+  logEvent: LogEvent.reducer,
   configuration: Configuration.reducer,
   keymap: Keymap.reducer,
   filer: Filer.reducer,
@@ -28,6 +31,7 @@ export const reducer = combineReducers({
 })
 
 export const emptyState = {
+  logEvent: LogEvent.emptyState,
   configuration: Configuration.emptyState,
   keymap: Keymap.emptyState,
   filer: Filer.emptyState,

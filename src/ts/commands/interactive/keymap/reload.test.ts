@@ -1,4 +1,4 @@
-import * as C from "./get";
+import * as C from "./reload";
 import * as M from "@/commands/client-resolver-mock";
 import { CommandState } from "@/commands/type";
 import * as P from "@/rpc/client-procedures";

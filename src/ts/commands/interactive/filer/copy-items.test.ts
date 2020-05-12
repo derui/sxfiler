@@ -2,9 +2,22 @@ import * as C from "./copy-items";
 import * as M from "@/commands/client-resolver-mock";
 import { emptyState } from "@/modules";
 import * as FilerModule from "@/modules/filer";
-import { Filer, FileWindow, FileList, FileItem, CopyRequest, Target, Direction, Transfer } from "@/generated/filer_pb";
+import {
+  Filer,
+  FileWindow,
+  FileList,
+  FileItem,
+  CopyRequest,
+  Target,
+  Direction,
+  Transfer,
+  CopyResponse,
+  TransferResult,
+  TransferStatus,
+} from "@/generated/filer_pb";
 import { also } from "@/libs/fn";
 import * as Procs from "@/rpc/client-procedures";
+import { actions as logEventActions, LogEventCreators } from "@/modules/log-event";
 
 describe("Commands", () => {
   describe("interactive:filer:Copy", () => {
@@ -39,6 +52,18 @@ describe("Commands", () => {
       };
 
       const executor = jest.fn();
+      executor.mockImplementation(() =>
+        also(new CopyResponse(), (v) => {
+          v.setResultsList([
+            also(new TransferResult(), (v) => {
+              v.setSource("source");
+              v.setDestination("dest");
+              v.setTimestamp("2020-05-20T10:00:00.000Z");
+              v.setStatus(TransferStatus.SUCCESS);
+            }),
+          ]);
+        })
+      );
       mocks.rpcClient.use.mockImplementation(() => executor);
       await command.execute(mocks.dispatcher, { clientResolver: mocks.clientResolver, state }, undefined);
       expect(mocks.rpcClient.use).toBeCalledWith(Procs.Filer.copyItems);
@@ -52,6 +77,9 @@ describe("Commands", () => {
         v.setTransfer(transfer);
       });
       expect(executor).toBeCalledWith(expected);
+      expect(mocks.dispatcher.dispatch).toBeCalledWith(
+        logEventActions.send([LogEventCreators.createCopyItem(new Date("2020-05-20T10:00:00.000Z"), "source", "dest")])
+      );
     });
   });
 });

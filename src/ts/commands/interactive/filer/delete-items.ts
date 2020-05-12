@@ -6,6 +6,7 @@ import { DeleteRequest, Target } from "@/generated/filer_pb";
 import { Loggers } from "@/loggers";
 import { loggers } from "winston";
 import * as Procs from "@/rpc/client-procedures";
+import { LogEventCreators, actions } from "@/modules/log-event";
 
 const identifier = "interactive.filer.delete-items";
 
@@ -23,7 +24,7 @@ export const descriptor: CommandDescriptor<Payload> = Object.freeze({
 export const createCommand = (): Command => {
   return {
     identifier,
-    async execute(_: Dispatcher<Actions>, args: CommandState) {
+    async execute(dispatcher: Dispatcher<Actions>, args: CommandState) {
       const { filer } = args.state;
 
       const markedItems = currentSideMarkedItems(filer);
@@ -45,7 +46,11 @@ export const createCommand = (): Command => {
         request.setTarget(Target.MARKED);
       }
 
-      await args.clientResolver.rpcClient().use(Procs.Filer.deleteItems)(request);
+      const response = await args.clientResolver.rpcClient().use(Procs.Filer.deleteItems)(request);
+      const events = response.getResultsList().map((v) => {
+        return LogEventCreators.createDeleteItem(new Date(v.getTimestamp()), v.getPath());
+      });
+      dispatcher.dispatch(actions.send(events));
     },
   };
 };

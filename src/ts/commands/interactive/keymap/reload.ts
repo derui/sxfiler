@@ -4,6 +4,7 @@ import { Dispatcher } from "@/types";
 import { GetRequest } from "@/generated/keymap_pb";
 import * as Procs from "@/rpc/client-procedures";
 import { actions } from "@/modules/keymap";
+import { actions as logEventActions, LogEventCreators } from "@/modules/log-event";
 import * as winston from "winston";
 import { Loggers } from "@/loggers";
 
@@ -37,6 +38,7 @@ export const createCommand = function createCommand(): Command {
 
       logger.debug(`Get keymap`);
       dispatcher.dispatch(actions.update(keymap));
+      dispatcher.dispatch(logEventActions.send(LogEventCreators.createKeymapReload(new Date())));
     },
   };
 };

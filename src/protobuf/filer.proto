@@ -161,22 +161,46 @@ message Transfer {
   string target_id = 3;
 }
 
+enum TransferStatus {
+  SUCCESS = 0;
+  FAILED = 1;
+  CANCELED = 2;
+}
+
+message TransferResult {
+  string source = 1;
+  string destination = 2;
+  TransferStatus status = 3;
+  string timestamp = 4;
+}
+
 message MoveRequest {
   Transfer transfer = 1;
 }
-message MoveResponse {}
+message MoveResponse {
+  repeated TransferResult results = 1;
+}
 
 message CopyRequest {
   Transfer transfer = 1;
 }
-message CopyResponse {}
+message CopyResponse {
+  repeated TransferResult results = 1;
+}
+
+message DeleteResult {
+  string path = 1;
+  string timestamp = 2;
+}
 
 message DeleteRequest {
   Side side = 1;
   Target target = 2;
   string target_id = 3;
 }
-message DeleteResponse {}
+message DeleteResponse {
+  repeated DeleteResult results = 1;
+}
 
 // declarations notification service from server to client.
 // This service need to implement on client.

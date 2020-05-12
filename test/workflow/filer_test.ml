@@ -78,6 +78,7 @@ let test_set =
     Alcotest_lwt.test_case "delete specified item" `Quick (fun _ () ->
         let work_flow =
           FL.delete
+            (fun () -> Time.of_float 0. |> Option.get)
             (fun _ -> Lwt.return (Interaction.Filer_delete_selected Interaction.Filer_delete_selected.Confirm))
             (fun _ -> Lwt.return_ok [])
             (fun () -> Lwt.return Configuration.default)
@@ -85,22 +86,26 @@ let test_set =
               Alcotest.(check @@ F.Testable.file_item) "delete" (List.nth left_list_items 0) item;
               Lwt.return_ok ())
         in
+        let target = left_list_items |> Fun.flip List.nth 0 in
         let%lwt filer = filer () in
-        let%lwt filer' =
+        let%lwt filer', results =
           match%lwt
             work_flow FL.Delete.{ filer; side = FL.Left; target = One (List.nth left_list_items 0 |> File_item.id) }
           with
-          | [ FL.Updated v ] -> Lwt.return v
-          | _                -> Alcotest.fail "illegal path"
+          | { events = [ FL.Updated v ]; results } -> Lwt.return (v, results)
+          | _                                      -> Alcotest.fail "illegal path"
         in
         Alcotest.(check @@ list F.Testable.file_item) "left" [] (File_list.items filer'.left_file_window.file_list);
         Alcotest.(check @@ list F.Testable.file_item)
           "right" (sort_items right_list_items)
           (File_list.items filer'.right_file_window.file_list |> sort_items);
+        let expected = [ { FL.item = target; timestamp = Time.of_float 0. |> Option.get } ] in
+        Alcotest.(check @@ list @@ of_pp FL.pp_delete_result) "deleted" expected results;
         Lwt.return_unit);
     Alcotest_lwt.test_case "do not delete when canceled" `Quick (fun _ () ->
         let work_flow =
           FL.delete
+            (fun () -> Time.of_float 0. |> Option.get)
             (fun _ -> Lwt.return Interaction.Canceled)
             (fun _ -> Lwt.return_ok [])
             (fun () -> Lwt.return Configuration.default)
@@ -113,8 +118,8 @@ let test_set =
           match%lwt
             work_flow FL.Delete.{ filer; side = FL.Left; target = One (List.nth left_list_items 0 |> File_item.id) }
           with
-          | [ FL.Updated v ] -> Lwt.return v
-          | _                -> Alcotest.fail "illegal path"
+          | { events = [ FL.Updated v ]; results = [] } -> Lwt.return v
+          | _ -> Alcotest.fail "illegal path"
         in
         Alcotest.(check @@ list F.Testable.file_item) "left" [] (File_list.items filer'.left_file_window.file_list);
         Lwt.return_unit);
@@ -126,8 +131,9 @@ let test_set =
           | "right" -> Lwt.return_ok (target :: right_list_items)
           | _       -> Alcotest.fail "unknown course"
         in
+        let now () = Time.of_float 0. |> Option.get in
         let work_flow =
-          FL.copy
+          FL.copy now
             (fun _ -> Lwt.return Interaction.Canceled)
             scan_location
             (fun { source; _ } ->
@@ -135,15 +141,19 @@ let test_set =
               Lwt.return_ok ())
         in
         let%lwt filer = filer () in
-        let%lwt filer' =
+        let%lwt filer', results =
           match%lwt work_flow FL.Copy.{ filer; direction = FL.Left_to_right; target = One (File_item.id target) } with
-          | [ FL.Updated v ] -> Lwt.return v
-          | _                -> Alcotest.fail "illegal path"
+          | { events = [ FL.Updated v ]; results } -> Lwt.return (v, results)
+          | _                                      -> Alcotest.fail "illegal path"
         in
         Alcotest.(check @@ list F.Testable.file_item)
           "right"
           (target :: right_list_items |> sort_items)
           (File_list.items filer'.right_file_window.file_list |> sort_items);
+        Alcotest.(check @@ of_pp Path.pp)
+          "source"
+          (List.nth results 0 |> fun v -> v.source)
+          File_item.(item target |> Item.full_path);
         Lwt.return_unit);
     Alcotest_lwt.test_case "do not copy when it canceled" `Quick (fun _ () ->
         let target = List.nth left_list_items 0 in
@@ -156,6 +166,7 @@ let test_set =
         let counter = ref 0 in
         let work_flow =
           FL.copy
+            (fun () -> Time.of_float 0. |> Option.get)
             (fun _ -> Lwt.return Interaction.Canceled)
             scan_location
             (fun { source; _ } ->
@@ -165,14 +176,18 @@ let test_set =
               else Alcotest.fail "do not call twice")
         in
         let%lwt filer = filer () in
-        let%lwt filer' =
+        let%lwt filer', results =
           match%lwt work_flow FL.Copy.{ filer; direction = FL.Left_to_right; target = One (File_item.id target) } with
-          | [ FL.Updated v ] -> Lwt.return v
-          | _                -> Alcotest.fail "illegal path"
+          | { events = [ FL.Updated v ]; results } -> Lwt.return (v, results)
+          | _                                      -> Alcotest.fail "illegal path"
         in
         Alcotest.(check @@ list F.Testable.file_item)
           "right" []
           (File_list.items filer'.right_file_window.file_list |> sort_items);
+        Alcotest.(check @@ of_pp Path.pp)
+          "source"
+          (List.nth results 0 |> fun v -> v.source)
+          File_item.(item target |> Item.full_path);
         Lwt.return_unit);
     Alcotest_lwt.test_case "move items" `Quick (fun _ () ->
         let target = List.nth left_list_items 0 in
@@ -185,6 +200,7 @@ let test_set =
         in
         let work_flow =
           FL.move
+            (fun () -> Time.of_float 0. |> Option.get)
             (fun _ -> Lwt.return Interaction.Canceled)
             scan_location
             (fun { source; dest; _ } ->
@@ -194,10 +210,10 @@ let test_set =
               Lwt.return_ok ())
         in
         let%lwt filer = filer () in
-        let%lwt filer' =
+        let%lwt filer', results =
           match%lwt work_flow FL.Move.{ filer; direction = FL.Left_to_right; target = One (File_item.id target) } with
-          | [ FL.Updated v ] -> Lwt.return v
-          | _                -> Alcotest.fail "illegal path"
+          | { events = [ FL.Updated v ]; results } -> Lwt.return (v, results)
+          | _                                      -> Alcotest.fail "illegal path"
         in
         Alcotest.(check @@ list F.Testable.file_item)
           "left" (left_updated |> sort_items)
@@ -206,6 +222,10 @@ let test_set =
           "right"
           (target :: right_list_items |> sort_items)
           (File_list.items filer'.right_file_window.file_list |> sort_items);
+        Alcotest.(check @@ of_pp Path.pp)
+          "source"
+          (List.nth results 0 |> fun v -> v.source)
+          File_item.(item target |> Item.full_path);
         Lwt.return_unit);
     Alcotest_lwt.test_case "open directory node" `Quick (fun _ () ->
         let target = List.nth left_list_items 2 in

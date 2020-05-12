@@ -21,6 +21,26 @@ type transfer_target =
   | One    of D.File_item.Id.t
 [@@deriving eq, show]
 
+type transfer_status =
+  | Success
+  | Failed
+  | Canceled
+[@@deriving eq, show]
+
+type transfer_result = {
+  source : Path.t;
+  dest : Path.t;
+  status : transfer_status;
+  timestamp : Time.t;
+}
+[@@deriving eq, show]
+
+type delete_result = {
+  item : D.File_item.t;
+  timestamp : Time.t;
+}
+[@@deriving eq, show]
+
 (** move location of file list placed on left side *)
 module Move_location = struct
   type error = Not_initialized
@@ -63,7 +83,12 @@ module Copy = struct
     target : transfer_target;
   }
 
-  type work_flow = input -> event list Lwt.t
+  type output = {
+    events : event list;
+    results : transfer_result list;
+  }
+
+  type work_flow = input -> output Lwt.t
 end
 
 module Move = struct
@@ -74,7 +99,13 @@ module Move = struct
   }
   [@@deriving eq, show]
 
-  type work_flow = input -> event list Lwt.t
+  type output = {
+    events : event list;
+    results : transfer_result list;
+  }
+  [@@deriving eq, show]
+
+  type work_flow = input -> output Lwt.t
 end
 
 module Delete = struct
@@ -84,7 +115,12 @@ module Delete = struct
     target : transfer_target;
   }
 
-  type work_flow = input -> event list Lwt.t
+  type output = {
+    results : delete_result list;
+    events : event list;
+  }
+
+  type work_flow = input -> output Lwt.t
 end
 
 module Open_node = struct

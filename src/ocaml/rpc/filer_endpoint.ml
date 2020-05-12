@@ -157,7 +157,7 @@ let toggle_mark : toggle_mark =
       | Error F.Filer.Toggle_mark.Item_not_found -> E.Filer_error.item_not_found item_id |> E.filer |> Lwt.return_error
       | Ok events -> Lwt.return_ok ((), to_global_events events))
 
-let transfer of_input get_filer flow (input : G.Filer.Transfer.t option) =
+let transfer of_input to_output get_filer flow (input : G.Filer.Transfer.t option) =
   let%lwt filer = get_filer () in
   let input =
     input
@@ -183,8 +183,8 @@ let transfer of_input get_filer flow (input : G.Filer.Transfer.t option) =
   in
   let open Lwt_result.Infix in
   Lwt_result.lift input >>= fun input ->
-  let%lwt events = flow input in
-  Lwt.return_ok ((), to_global_events events)
+  let%lwt output = flow input in
+  Lwt.return_ok @@ to_output output
 
 (* move implementation *)
 type move = F.Common_step.Filer.get -> F.Filer.Move.work_flow -> Endpoint.t
@@ -193,7 +193,27 @@ let move : move =
  fun get_filer flow request ->
   Endpoint.with_request (G.Filer.MoveRequest.from_proto, G.Filer.MoveResponse.to_proto) request ~f:(fun input ->
       let of_input filer target direction = { F.Filer.Move.direction; filer; target } in
-      transfer of_input get_filer flow input.transfer)
+      let to_output { F.Filer.Move.events; results } =
+        let result =
+          {
+            G.Filer.MoveResponse.results =
+              results
+              |> List.map (fun { F.Filer.source; dest; status; timestamp } ->
+                     {
+                       G.Filer.TransferResult.source = Path.to_string source;
+                       destination = Path.to_string dest;
+                       status =
+                         ( match status with
+                         | Success  -> G.Filer.TransferStatus.SUCCESS
+                         | Failed   -> FAILED
+                         | Canceled -> CANCELED );
+                       timestamp = Time.to_rfc3339 timestamp;
+                     });
+          }
+        in
+        (result, to_global_events events)
+      in
+      transfer of_input to_output get_filer flow input.transfer)
 
 (* copy implementation *)
 type copy = F.Common_step.Filer.get -> F.Filer.Copy.work_flow -> Endpoint.t
@@ -202,7 +222,27 @@ let copy : copy =
  fun get_filer flow request ->
   Endpoint.with_request (G.Filer.CopyRequest.from_proto, G.Filer.CopyResponse.to_proto) request ~f:(fun input ->
       let of_input filer target direction = { F.Filer.Copy.direction; filer; target } in
-      transfer of_input get_filer flow input.transfer)
+      let to_output { F.Filer.Copy.events; results } =
+        let result =
+          {
+            G.Filer.CopyResponse.results =
+              results
+              |> List.map (fun { F.Filer.source; dest; status; timestamp } ->
+                     {
+                       G.Filer.TransferResult.source = Path.to_string source;
+                       destination = Path.to_string dest;
+                       status =
+                         ( match status with
+                         | Success  -> G.Filer.TransferStatus.SUCCESS
+                         | Failed   -> FAILED
+                         | Canceled -> CANCELED );
+                       timestamp = Time.to_rfc3339 timestamp;
+                     });
+          }
+        in
+        (result, to_global_events events)
+      in
+      transfer of_input to_output get_filer flow input.transfer)
 
 (* delete implementation *)
 type delete = F.Common_step.Filer.get -> F.Filer.Delete.work_flow -> Endpoint.t
@@ -225,5 +265,18 @@ let delete : delete =
       in
       let open Lwt_result.Infix in
       Lwt_result.lift input >>= fun input ->
-      let%lwt events = flow input in
-      Lwt.return_ok ((), to_global_events events))
+      let%lwt { F.Filer.Delete.events; results } = flow input in
+      Lwt.return_ok
+        ( {
+            G.Filer.DeleteResponse.results =
+              results
+              |> List.map (fun { F.Filer.item; timestamp } ->
+                     let full_path =
+                       match item with
+                       | D.File_item.Marked { full_path; _ }   -> full_path
+                       | D.File_item.Unmarked { full_path; _ } -> full_path
+                     in
+                     let full_path = Path.to_string full_path in
+                     { G.Filer.DeleteResult.path = full_path; timestamp = Time.to_rfc3339 timestamp });
+          },
+          to_global_events events ))

@@ -37,7 +37,7 @@ let test_set =
         let input' = ref None in
         let work_flow input =
           input' := Some input;
-          Lwt.return [ F.Filer.Updated filer ]
+          Lwt.return { F.Filer.Move.events = [ F.Filer.Updated filer ]; results = [] }
         in
         let get () = Lwt.return_some filer in
         let request =

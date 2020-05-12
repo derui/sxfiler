@@ -723,6 +723,38 @@ export namespace Transfer {
   }
 }
 
+export class TransferResult extends jspb.Message {
+  getSource(): string;
+  setSource(value: string): void;
+
+  getDestination(): string;
+  setDestination(value: string): void;
+
+  getStatus(): TransferStatusMap[keyof TransferStatusMap];
+  setStatus(value: TransferStatusMap[keyof TransferStatusMap]): void;
+
+  getTimestamp(): string;
+  setTimestamp(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): TransferResult.AsObject;
+  static toObject(includeInstance: boolean, msg: TransferResult): TransferResult.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: TransferResult, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): TransferResult;
+  static deserializeBinaryFromReader(message: TransferResult, reader: jspb.BinaryReader): TransferResult;
+}
+
+export namespace TransferResult {
+  export type AsObject = {
+    source: string,
+    destination: string,
+    status: TransferStatusMap[keyof TransferStatusMap],
+    timestamp: string,
+  }
+}
+
 export class MoveRequest extends jspb.Message {
   hasTransfer(): boolean;
   clearTransfer(): void;
@@ -746,6 +778,11 @@ export namespace MoveRequest {
 }
 
 export class MoveResponse extends jspb.Message {
+  clearResultsList(): void;
+  getResultsList(): Array<TransferResult>;
+  setResultsList(value: Array<TransferResult>): void;
+  addResults(value?: TransferResult, index?: number): TransferResult;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): MoveResponse.AsObject;
   static toObject(includeInstance: boolean, msg: MoveResponse): MoveResponse.AsObject;
@@ -758,6 +795,7 @@ export class MoveResponse extends jspb.Message {
 
 export namespace MoveResponse {
   export type AsObject = {
+    resultsList: Array<TransferResult.AsObject>,
   }
 }
 
@@ -784,6 +822,11 @@ export namespace CopyRequest {
 }
 
 export class CopyResponse extends jspb.Message {
+  clearResultsList(): void;
+  getResultsList(): Array<TransferResult>;
+  setResultsList(value: Array<TransferResult>): void;
+  addResults(value?: TransferResult, index?: number): TransferResult;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CopyResponse.AsObject;
   static toObject(includeInstance: boolean, msg: CopyResponse): CopyResponse.AsObject;
@@ -796,6 +839,31 @@ export class CopyResponse extends jspb.Message {
 
 export namespace CopyResponse {
   export type AsObject = {
+    resultsList: Array<TransferResult.AsObject>,
+  }
+}
+
+export class DeleteResult extends jspb.Message {
+  getPath(): string;
+  setPath(value: string): void;
+
+  getTimestamp(): string;
+  setTimestamp(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteResult.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteResult): DeleteResult.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: DeleteResult, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteResult;
+  static deserializeBinaryFromReader(message: DeleteResult, reader: jspb.BinaryReader): DeleteResult;
+}
+
+export namespace DeleteResult {
+  export type AsObject = {
+    path: string,
+    timestamp: string,
   }
 }
 
@@ -828,6 +896,11 @@ export namespace DeleteRequest {
 }
 
 export class DeleteResponse extends jspb.Message {
+  clearResultsList(): void;
+  getResultsList(): Array<DeleteResult>;
+  setResultsList(value: Array<DeleteResult>): void;
+  addResults(value?: DeleteResult, index?: number): DeleteResult;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): DeleteResponse.AsObject;
   static toObject(includeInstance: boolean, msg: DeleteResponse): DeleteResponse.AsObject;
@@ -840,6 +913,7 @@ export class DeleteResponse extends jspb.Message {
 
 export namespace DeleteResponse {
   export type AsObject = {
+    resultsList: Array<DeleteResult.AsObject>,
   }
 }
 
@@ -951,4 +1025,12 @@ export interface ActionMap {
 }
 
 export const Action: ActionMap;
+
+export interface TransferStatusMap {
+  SUCCESS: 0;
+  FAILED: 1;
+  CANCELED: 2;
+}
+
+export const TransferStatus: TransferStatusMap;
 
