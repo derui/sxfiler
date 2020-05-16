@@ -13,18 +13,21 @@ val move_location : Common_step_common.now -> Common_step_file_list.scan_locatio
 (** The workflow to move location of file list specified side of the filer *)
 
 val copy :
+  Common_step_common.now ->
   Common_step_interaction.demand_decision ->
   Common_step_file_list.scan_location ->
   Common_step_filer.copy_item ->
   Copy.work_flow
 
 val move :
+  Common_step_common.now ->
   Common_step_interaction.demand_decision ->
   Common_step_file_list.scan_location ->
   Common_step_filer.move_item ->
   Move.work_flow
 
 val delete :
+  Common_step_common.now ->
   Common_step_interaction.demand_decision ->
   Common_step_file_list.scan_location ->
   Common_step_configuration.load ->

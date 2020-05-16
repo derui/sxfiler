@@ -93,7 +93,7 @@ wsHub.start();
 
 ws.onopen = () => {
   const reloadAll = wiredResolver.resolveBy(descriptors.filerReloadAll);
-  const getKeymap = wiredResolver.resolveBy(descriptors.keymapGet);
+  const getKeymap = wiredResolver.resolveBy(descriptors.keymapReload);
   const addContext = wiredResolver.resolveBy(internalDescriptors.keymapAddContext);
   if (reloadAll && getKeymap && addContext) {
     commandExecutor.execute(addContext, store.getState(), { context: UIContext.OnFileTree });

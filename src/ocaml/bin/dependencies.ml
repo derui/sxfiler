@@ -155,11 +155,13 @@ let make (module Option' : Option') (module Completer : D.Completer.Instance) (m
 
         let toggle_mark = F.Filer.toggle_mark
 
-        let move = F.Filer.move Step.demand_decision Step.scan_location Step.move_item
+        let move = F.Filer.move Common_step.now Step.demand_decision Step.scan_location Step.move_item
 
-        let copy = F.Filer.copy Step.demand_decision Step.scan_location Step.copy_item
+        let copy = F.Filer.copy Common_step.now Step.demand_decision Step.scan_location Step.copy_item
 
-        let delete = F.Filer.delete Step.demand_decision Step.scan_location Step.load_configuration Step.delete_item
+        let delete =
+          F.Filer.delete Common_step.now Step.demand_decision Step.scan_location Step.load_configuration
+            Step.delete_item
       end
 
       module Keymap = struct

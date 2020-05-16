@@ -27,7 +27,7 @@ export const Component: preact.FunctionComponent<Props> = ({ state }) => {
     >
       <FilerContainer.Component state={filer} />
       <DecisionModalContainer.Component state={state} />
-      <LogViewerContainer.Component />
+      <LogViewerContainer.Component state={state} />
       <CompleterContainer.Component state={state} />
     </div>
   );

@@ -74,7 +74,7 @@ let move_location now scan_location : Move_location.work_flow =
 
 (* work flows for manipulation items in filer *)
 
-let copy demand_action scan_location copy_item : Copy.work_flow =
+let copy now demand_action scan_location copy_item : Copy.work_flow =
  fun input ->
   (* setup value and functions *)
   let source_side, dest_side = direction_to_side input.direction in
@@ -94,20 +94,22 @@ let copy demand_action scan_location copy_item : Copy.work_flow =
     let item_name = File_item.item item |> File_item.Item.full_path |> Path.basename in
     let dest = Option.value ~default:item_name new_name |> Path.join dest in
     let operation = { Common_step_filer.source = full_path_of_item item; dest; overwrite } in
+    let to_result status = { source = full_path_of_item item; dest; status; timestamp = now () } in
     let%lwt result = copy_item operation in
     match result with
-    | Ok _ -> Lwt.return_unit
-    | Error (Common_step_filer.Not_exists _) | Error (No_permission _) | Error (Unknown _) -> Lwt.return_unit
+    | Ok _ -> to_result Success |> Lwt.return
+    | Error (Common_step_filer.Not_exists _) | Error (No_permission _) | Error (Unknown _) ->
+        to_result Failed |> Lwt.return
     | Error (Destination_exists _) -> (
         match%lwt interaction item with
-        | Error Canceled -> Lwt.return_unit
+        | Error Canceled -> to_result Canceled |> Lwt.return
         | Ok Interaction.Filer_copy_selected.Overwrite -> copy_item' ~overwrite:true item
         | Ok (Interaction.Filer_copy_selected.Rename name) ->
             copy_item' ~new_name:(Common.Not_empty_string.value name) item )
   in
 
   (* run real workflow *)
-  let%lwt _ = Lwt_list.iter_p copy_item' targets in
+  let%lwt results = Lwt_list.map_p copy_item' targets in
   let%lwt dest_file_list = reload dest_file_window.file_list
   and source_file_list = reload source_file_window.file_list in
   let dest_file_window = File_window.reload_list dest_file_list dest_file_window
@@ -115,10 +117,10 @@ let copy demand_action scan_location copy_item : Copy.work_flow =
   match (dest_file_window, source_file_window) with
   | Ok dest_file_window, Ok source_file_window ->
       let filer = update_side dest_file_window dest_side input.filer |> update_side source_file_window source_side in
-      Lwt.return [ Updated filer ]
-  | Error `Not_same, _ | _, Error `Not_same -> Lwt.return []
+      Lwt.return { Copy.events = [ Updated filer ]; results }
+  | Error `Not_same, _ | _, Error `Not_same -> Lwt.return { Copy.events = []; results }
 
-let move demand_action scan_location move_item : Move.work_flow =
+let move now demand_action scan_location move_item : Move.work_flow =
  fun input ->
   (* setup value and functions *)
   let source_side, dest_side = direction_to_side input.direction in
@@ -138,20 +140,22 @@ let move demand_action scan_location move_item : Move.work_flow =
     let item_name = full_path_of_item item |> Path.basename in
     let dest = Option.map (Path.join dest) new_name |> Option.value ~default:(Path.join dest item_name) in
     let operation = { Common_step_filer.source = full_path_of_item item; dest; overwrite } in
+    let to_result status = { source = full_path_of_item item; dest; status; timestamp = now () } in
     let%lwt result = move_item operation in
     match result with
-    | Ok () -> Lwt.return_unit
-    | Error (Common_step_filer.Not_exists _) | Error (No_permission _) | Error (Unknown _) -> Lwt.return_unit
+    | Ok () -> to_result Success |> Lwt.return
+    | Error (Common_step_filer.Not_exists _) | Error (No_permission _) | Error (Unknown _) ->
+        to_result Failed |> Lwt.return
     | Error (Destination_exists _) -> (
         match%lwt interaction item with
-        | Error Canceled -> Lwt.return_unit
+        | Error Canceled -> to_result Canceled |> Lwt.return
         | Ok Interaction.Filer_move_selected.Overwrite -> move_item' ~overwrite:true item
         | Ok (Interaction.Filer_move_selected.Rename name) ->
             move_item' ~new_name:(Common.Not_empty_string.value name) item )
   in
 
   (* run real workflow *)
-  let%lwt () = Lwt_list.iter_p move_item' targets in
+  let%lwt results = Lwt_list.map_p move_item' targets in
   let%lwt dest_file_list = reload dest_file_window.file_list
   and source_file_list = reload source_file_window.file_list in
   let dest_file_window = File_window.reload_list dest_file_list dest_file_window
@@ -159,10 +163,10 @@ let move demand_action scan_location move_item : Move.work_flow =
   match (dest_file_window, source_file_window) with
   | Ok dest_file_window, Ok source_file_window ->
       let filer = input.filer |> update_side dest_file_window dest_side |> update_side source_file_window source_side in
-      Lwt.return [ Updated filer ]
-  | Error _, _ | _, Error _ -> Lwt.return []
+      Lwt.return { Move.events = [ Updated filer ]; results }
+  | Error _, _ | _, Error _ -> Lwt.return { Move.events = []; results }
 
-let delete demand_action scan_location load_configuration delete_item : Delete.work_flow =
+let delete now demand_action scan_location load_configuration delete_item : Delete.work_flow =
  fun input ->
   (* setup value and functions *)
   let file_window = file_window_from_side input.filer input.side in
@@ -178,34 +182,34 @@ let delete demand_action scan_location load_configuration delete_item : Delete.w
   let delete_item' item =
     if conf.Configuration.confirmation_when_delete then
       match%lwt interaction item with
-      | Error Canceled -> Lwt.return_unit
+      | Error Canceled -> Lwt.return_none
       | Ok Interaction.Filer_delete_selected.Confirm -> (
           match%lwt delete_item item with
-          | Ok _ -> Lwt.return_unit
+          | Ok _ -> Lwt.return_some { item; timestamp = now () }
           | Error (Common_step_filer.Not_exists _)
           | Error (No_permission _)
           | Error (Destination_exists _)
           | Error (Unknown _) ->
-              Lwt.return_unit )
+              Lwt.return_none )
     else
       match%lwt delete_item item with
-      | Ok _ -> Lwt.return_unit
+      | Ok _ -> Lwt.return_some { item; timestamp = now () }
       | Error (Common_step_filer.Not_exists _)
       | Error (No_permission _)
       | Error (Destination_exists _)
       | Error (Unknown _) ->
-          Lwt.return_unit
+          Lwt.return_none
   in
 
   (* run real workflow *)
-  let%lwt _ = Lwt_list.iter_p delete_item' targets in
+  let%lwt deleted_items = Lwt_list.filter_map_p delete_item' targets in
   let%lwt file_list = reload file_window.file_list in
   let file_window = File_window.reload_list file_list file_window in
   match file_window with
   | Ok dest_file_window ->
       let filer = update_side dest_file_window input.side input.filer in
-      Lwt.return [ Updated filer ]
-  | Error `Not_same     -> Lwt.return []
+      Lwt.return { Delete.events = [ Updated filer ]; results = deleted_items }
+  | Error `Not_same     -> Lwt.return { Delete.events = []; results = deleted_items }
 
 (* implementation for open_node flow *)
 let open_node scan_location now : Open_node.work_flow =

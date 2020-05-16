@@ -11,7 +11,7 @@ import * as finderOpen from "./finder/open";
 import * as filerToggleMark from "./filer/toggle-mark";
 import * as filerUpDirectory from "./filer/up-directory";
 import * as filerOpenNode from "./filer/open-node";
-import * as keymapGet from "./keymap/get";
+import * as keymapReload from "./keymap/reload";
 import * as filerReloadAll from "./filer/reload-all";
 import * as filerMoveLocation from "./filer/move-location";
 import * as filerCursorUp from "./filer/cursor-up";
@@ -36,7 +36,7 @@ export const descriptors = {
   filerToggleMark: filerToggleMark.descriptor,
   filerUpDirectory: filerUpDirectory.descriptor,
   filerOpenNode: filerOpenNode.descriptor,
-  keymapGet: keymapGet.descriptor,
+  keymapReload: keymapReload.descriptor,
   filerReloadAll: filerReloadAll.descriptor,
   filerMoveLocation: filerMoveLocation.descriptor,
   filerCursorUp: filerCursorUp.descriptor,
@@ -66,7 +66,7 @@ export const registerToResolver = function registerToResolver(resolver: Type) {
   resolver.register({descriptor: filerToggleMark.descriptor, factory: filerToggleMark.createCommand});
   resolver.register({descriptor: filerUpDirectory.descriptor, factory: filerUpDirectory.createCommand});
   resolver.register({descriptor: filerOpenNode.descriptor, factory: filerOpenNode.createCommand});
-  resolver.register({descriptor: keymapGet.descriptor, factory: keymapGet.createCommand});
+  resolver.register({descriptor: keymapReload.descriptor, factory: keymapReload.createCommand});
   resolver.register({descriptor: filerReloadAll.descriptor, factory: filerReloadAll.createCommand});
   resolver.register({descriptor: filerMoveLocation.descriptor, factory: filerMoveLocation.createCommand});
   resolver.register({descriptor: filerCursorUp.descriptor, factory: filerCursorUp.createCommand});

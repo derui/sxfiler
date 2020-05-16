@@ -2,10 +2,12 @@ import { Actions } from "@/modules";
 import { CommandLike, CommandState, CommandDescriptor } from "@/commands/type";
 import { Dispatcher } from "@/types";
 import { currentFocusingItemSelector, currentSideMarkedItems, getCurrentSideInPb } from "@/modules/filer/selectors";
-import { CopyRequest, Side, Direction, Target, Transfer } from "@/generated/filer_pb";
+import { CopyRequest, Side, Direction, Target, Transfer, TransferStatus } from "@/generated/filer_pb";
 import { Loggers } from "@/loggers";
 import { loggers } from "winston";
 import * as Procs from "@/rpc/client-procedures";
+import { LogEventCreators } from "@/modules/log-event";
+import { actions } from "@/modules/log-event";
 
 const identifier = "interactive.filer.copy-items";
 
@@ -23,7 +25,7 @@ export const descriptor: CommandDescriptor<Payload> = Object.freeze({
 export const createCommand = (): Command => {
   return {
     identifier,
-    async execute(_: Dispatcher<Actions>, args: CommandState) {
+    async execute(dispatcher: Dispatcher<Actions>, args: CommandState) {
       const { filer } = args.state;
 
       const markedItems = currentSideMarkedItems(filer);
@@ -54,7 +56,14 @@ export const createCommand = (): Command => {
       }
       request.setTransfer(transfer);
 
-      await args.clientResolver.rpcClient().use(Procs.Filer.copyItems)(request);
+      const response = await args.clientResolver.rpcClient().use(Procs.Filer.copyItems)(request);
+      const events = response
+        .getResultsList()
+        .filter((v) => v.getStatus() === TransferStatus.SUCCESS)
+        .map((v) => {
+          return LogEventCreators.createCopyItem(new Date(v.getTimestamp()), v.getSource(), v.getDestination());
+        });
+      dispatcher.dispatch(actions.send(events));
     },
   };
 };

@@ -1,18 +1,34 @@
 import { h } from "preact";
+import { LogEvents } from "@/modules/log-event";
 
 export type Props = {
-  entries: string[];
+  entries: LogEvents[];
   hidden: boolean;
+};
+
+const logEventToEntry = (event: LogEvents) => {
+  const timestamp = event.timestamp.toISOString();
+  switch (event.kind) {
+    case "COPY_EVENT":
+      return `[${timestamp}] Copied: ${event.source} -> ${event.destination}`;
+    case "MOVE_EVENT":
+      return `[${timestamp}] Moved: ${event.source} -> ${event.destination}`;
+    case "DELETE_EVENT":
+      return `[${timestamp}] Deleted: ${event.fullPath}`;
+    case "KEYMAP_RELOAD_EVENT":
+      return `[${timestamp}] Keymap reloaded.`;
+  }
 };
 
 /**
  * make item for a log entry
  */
-const makeItem = (entry: string) => {
+const makeItem = (event: LogEvents, index: number) => {
   let level = "info";
 
+  const entry = logEventToEntry(event);
   return (
-    <div role="listitem" class="log-viewer__log-item" data-testid="logViewer-logItem" key={entry}>
+    <div role="listitem" class="log-viewer__log-item" data-testid="logViewer-logItem" key={index}>
       <span class="log-viewer__item-level" data-testid="logViewer-itemLevel" data-level={level}>
         [{level.toUpperCase()}]
       </span>
