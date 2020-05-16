@@ -20,15 +20,21 @@ module.exports = {
     project: "./tsconfig.json",
   },
   rules: {
-    "func-style": ["error", "expression"],
+    "func-style": ["error", "expression", {allowArrowFunctions: true}],
     "react/prop-types": "off",
     "import/no-unresolved": "off",
     "react/jsx-uses-vars": "warn",
+    "react/jsx-in-jsx-scope": "off",
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/no-unnecessary-type-assertion": "error",
     "prettier/prettier": ['error'],
   },
   settings:  {
+    "react": {
+      "createClass": "createClass",
+      "pragma": "h",
+      "pragmaFrag": "Fragment"
+    },
     "import/parsers": {
       "@typescript-eslint/parser": [".ts", ".tsx", ".js"]
     },

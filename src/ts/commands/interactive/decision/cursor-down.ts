@@ -1,5 +1,5 @@
 import { Actions } from "@/modules";
-import { CommandLike, CommandState, CommandDescriptor } from "@/commands/type";
+import { CommandLike, CommandDescriptor } from "@/commands/type";
 import { Dispatcher } from "@/types";
 import { actions } from "@/modules/decision";
 

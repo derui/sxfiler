@@ -1,6 +1,5 @@
 import { Actions as Actions$ } from "./actions";
-import { State as State$ } from "./reducer";
-import { LogEvents as LogEvents_ } from "./reducer";
+import { State as State$, LogEvents as LogEvents_ } from "./reducer";
 
 export type Actions = Actions$;
 export type State = State$;

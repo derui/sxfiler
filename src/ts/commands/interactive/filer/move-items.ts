@@ -7,7 +7,6 @@ import { Loggers } from "@/loggers";
 import { loggers } from "winston";
 import * as Procs from "@/rpc/client-procedures";
 import { actions, LogEventCreators } from "@/modules/log-event";
-import { LogEvents } from "@/modules/log-event/reducer";
 
 const identifier = "interactive.filer.move-items";
 

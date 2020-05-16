@@ -20,7 +20,7 @@ export const descriptor: CommandDescriptor<Payload> = {
 export const createCommand = function createCommand(): Command {
   return {
     identifier,
-    async execute(_: Dispatcher<Actions>, args: CommandState, payload) {
+    async execute(_: Dispatcher<Actions>, args: CommandState) {
       const request = new ReloadAllRequest();
       await args.clientResolver.rpcClient().use(P.Filer.reloadAll)(request);
     },

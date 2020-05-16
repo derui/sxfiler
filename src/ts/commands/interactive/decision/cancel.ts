@@ -1,5 +1,5 @@
 import { Actions } from "@/modules";
-import { CommandLike, CommandState, CommandDescriptor } from "@/commands/type";
+import { CommandLike, CommandDescriptor } from "@/commands/type";
 import { Dispatcher } from "@/types";
 import { actions } from "@/modules/decision";
 import { actions as keymapActions } from "@/modules/keymap";
@@ -21,7 +21,7 @@ export const descriptor: CommandDescriptor<Payload> = Object.freeze({
 export const createCommand = (): Command => {
   return {
     identifier,
-    async execute(dispatcher: Dispatcher<Actions>, args: CommandState) {
+    async execute(dispatcher: Dispatcher<Actions>) {
       dispatcher.dispatch(actions.cancel());
       dispatcher.dispatch(keymapActions.replaceContext([UIContext.OnFileTree]));
     },

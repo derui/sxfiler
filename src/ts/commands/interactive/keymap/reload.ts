@@ -38,7 +38,7 @@ export const createCommand = function createCommand(): Command {
 
       logger.debug(`Get keymap`);
       dispatcher.dispatch(actions.update(keymap));
-      dispatcher.dispatch(logEventActions.send(LogEventCreators.createKeymapReload(new Date())));
+      dispatcher.dispatch(logEventActions.send([LogEventCreators.createKeymapReload(new Date())]));
     },
   };
 };

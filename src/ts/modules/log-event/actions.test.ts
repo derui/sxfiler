@@ -8,9 +8,9 @@ describe("Modules", () => {
       test("create action to send log event", () => {
         const event = LogEventCreators.createDeleteItem(new Date(), "fullPath");
 
-        expect(actions.send(event)).toEqual({
+        expect(actions.send([event])).toEqual({
           type: ActionTypes.SEND,
-          payload: event,
+          payload: [event],
         });
       });
     });

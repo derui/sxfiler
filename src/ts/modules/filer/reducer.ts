@@ -35,11 +35,11 @@ export const emptyState: State = Object.freeze({
   currentSide: Side.Left,
 });
 
-function sideMap<L, R>(
+const sideMap = <L, R>(
   state: State,
   left: (fw: FileWindow | undefined) => L,
   right: (fw: FileWindow | undefined) => R
-): [L, R] | undefined {
+): [L, R] | undefined => {
   const { filer } = state;
 
   if (!filer) {
@@ -47,7 +47,7 @@ function sideMap<L, R>(
   }
 
   return [left(filer.getLeftFileWindow()), right(filer.getRightFileWindow())];
-}
+};
 
 /**
  * reducer function for creator `actions.cursorDown`
@@ -105,12 +105,12 @@ const cursorUp = (state: State): State => {
   });
 };
 
-function changeSide(state: State): State {
+const changeSide = (state: State): State => {
   let nextSide = state.currentSide === Side.Left ? Side.Right : Side.Left;
   return Object.freeze({ ...state, currentSide: nextSide });
-}
+};
 
-function reviseIndex(fileList: FileList | undefined, currentCursor: N.Type) {
+const reviseIndex = (fileList: FileList | undefined, currentCursor: N.Type) => {
   if (!fileList) {
     return N.zero;
   }
@@ -118,7 +118,7 @@ function reviseIndex(fileList: FileList | undefined, currentCursor: N.Type) {
   const size = fileList.getItemsList().length;
 
   return N.min(currentCursor, N.create(size - 1));
-}
+};
 
 const update = (state: State, filer: Filer): State => {
   const currentLeftLocation = state.filer?.getLeftFileWindow()?.getFileList()?.getLocation();

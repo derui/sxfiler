@@ -52,7 +52,7 @@ export const create = function create(): Type {
         return undefined;
       }
 
-      return factory as CommandFactory<any>;
+      return factory;
     },
   };
 };
