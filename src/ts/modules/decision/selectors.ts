@@ -1,4 +1,3 @@
-import { createSelector } from "reselect";
 import { State, DecisionAction, SelectableAction } from "./reducer";
 
 // get selectable action

@@ -1,2 +1,3 @@
-import { createSelector } from "reselect";
 import { State } from "./reducer";
+
+export const currentKeymap = (state: State) => state.currentKeymap;

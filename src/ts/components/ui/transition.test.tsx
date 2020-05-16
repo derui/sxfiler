@@ -23,7 +23,9 @@ describe("UI Kit", () => {
 
       expect(stateRef).toEqual("entering");
 
-      act(() => jest.advanceTimersByTime(101));
+      act(() => {
+        jest.advanceTimersByTime(101);
+      });
 
       // wait re-rendering
 
@@ -43,7 +45,9 @@ describe("UI Kit", () => {
 
       expect(stateRef).toEqual("entering");
 
-      act(() => jest.advanceTimersByTime(101));
+      act(() => {
+        jest.advanceTimersByTime(101);
+      });
       expect(stateRef).toEqual("entered");
 
       act(() =>
@@ -58,7 +62,9 @@ describe("UI Kit", () => {
       );
       expect(stateRef).toEqual("exiting");
 
-      act(() => jest.advanceTimersByTime(101));
+      act(() => {
+        jest.advanceTimersByTime(101);
+      });
       expect(stateRef).toEqual("exited");
 
       const span = await findByTestId("span");
@@ -77,7 +83,9 @@ describe("UI Kit", () => {
       );
 
       expect(stateRef).toEqual("entering");
-      act(() => jest.advanceTimersByTime(50));
+      act(() => {
+        jest.advanceTimersByTime(50);
+      });
       expect(stateRef).toEqual("entering");
 
       act(() =>
@@ -92,7 +100,9 @@ describe("UI Kit", () => {
       );
       expect(stateRef).toEqual("exiting");
 
-      act(() => jest.advanceTimersByTime(101));
+      act(() => {
+        jest.advanceTimersByTime(101);
+      });
       expect(stateRef).toEqual("exited");
 
       const span = await findByTestId("span");

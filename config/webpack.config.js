@@ -236,12 +236,14 @@ module.exports = function (webpackEnv) {
         typescript: resolve.sync('typescript', {
           basedir: paths.appNodeModules,
         }),
+        async: false,
         eslint: true,
         checkSyntacticErrors: true,
+        measureCompileTime: true,
         tsconfig: paths.appTsConfig,
-        reportFiles: ['**/*.ts$', '**/*.tsx$', '!**/?(*.)(test).*', '!**/src/setupTests.*'],
+        reportFiles: ['src/**/*.{ts, tsx}', '!src/**/?(*.)(test).*', '!**/src/setupTests.*'],
         watch: paths.appSrc,
-        silent: true,
+        silent: false,
       }),
     ].filter(Boolean),
     // Some libraries import Node modules but don't use them in the browser.

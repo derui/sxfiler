@@ -6,8 +6,7 @@ import { CopyRequest, Side, Direction, Target, Transfer, TransferStatus } from "
 import { Loggers } from "@/loggers";
 import { loggers } from "winston";
 import * as Procs from "@/rpc/client-procedures";
-import { LogEventCreators } from "@/modules/log-event";
-import { actions } from "@/modules/log-event";
+import { LogEventCreators, actions } from "@/modules/log-event";
 
 const identifier = "interactive.filer.copy-items";
 
