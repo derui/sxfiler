@@ -64,7 +64,6 @@ message FileList {
 
 message LocationHistory {
   repeated LocationRecord records = 1;
-  int32 max_record_number = 2;
 }
 
 message LocationRecord {

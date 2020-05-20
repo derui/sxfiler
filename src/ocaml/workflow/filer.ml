@@ -18,21 +18,20 @@ let update_side (file_window : File_window.free File_window.t) side filer =
 
 (* work flow implementations *)
 
-let initialize get scan_location load_configuration : Initialize.work_flow =
- fun { left_location; right_location; left_history; right_history } ->
+let initialize get scan_location : Initialize.work_flow =
+ fun { left_location; right_location; left_history; right_history; left_sort_order; right_sort_order } ->
   let%lwt filer = get () in
   match filer with
   | Some filer -> Lwt.return [ Updated filer ]
   | None       ->
-      let%lwt config = load_configuration () in
-      let sort_order = config.Configuration.default_sort_order in
-      let max_record_num = config.max_history_num in
-      let left_list = File_list.make ~id:File_list.Id.(make "left") ~location:left_location ~sort_order
-      and right_list = File_list.make ~id:File_list.Id.(make "right") ~location:right_location ~sort_order in
+      let left_list = File_list.make ~id:File_list.Id.(make "left") ~location:left_location ~sort_order:left_sort_order
+      and right_list =
+        File_list.make ~id:File_list.Id.(make "right") ~location:right_location ~sort_order:right_sort_order
+      in
       let scan = Common_step_file_list.scan scan_location in
       let%lwt left_list = scan left_list and right_list = scan right_list in
-      let left_history = Option.value ~default:(Location_history.make ~max_record_num ()) left_history
-      and right_history = Option.value ~default:(Location_history.make ~max_record_num ()) right_history in
+      let left_history = Option.value ~default:(Location_history.make ()) left_history
+      and right_history = Option.value ~default:(Location_history.make ()) right_history in
       let left_file_window = File_window.make_left ~file_list:left_list ~history:left_history
       and right_file_window = File_window.make_right ~file_list:right_list ~history:right_history in
       [ Updated (Filer.make ~left_file_window ~right_file_window) ] |> Lwt.return
@@ -166,7 +165,7 @@ let move now demand_action scan_location move_item : Move.work_flow =
       Lwt.return { Move.events = [ Updated filer ]; results }
   | Error _, _ | _, Error _ -> Lwt.return { Move.events = []; results }
 
-let delete now demand_action scan_location load_configuration delete_item : Delete.work_flow =
+let delete now scan_location delete_item : Delete.work_flow =
  fun input ->
   (* setup value and functions *)
   let file_window = file_window_from_side input.filer input.side in
@@ -175,30 +174,16 @@ let delete now demand_action scan_location load_configuration delete_item : Dele
     | Marked -> File_list.marked_items file_window.file_list
     | One id -> File_list.find_item ~id file_window.file_list |> Option.map (fun v -> [ v ]) |> Option.value ~default:[]
   in
-  let interaction = Common_step_filer.request_delete_interaction demand_action in
   let reload = Common_step_file_list.reload scan_location in
-  let%lwt conf = load_configuration () in
 
   let delete_item' item =
-    if conf.Configuration.confirmation_when_delete then
-      match%lwt interaction item with
-      | Error Canceled -> Lwt.return_none
-      | Ok Interaction.Filer_delete_selected.Confirm -> (
-          match%lwt delete_item item with
-          | Ok _ -> Lwt.return_some { item; timestamp = now () }
-          | Error (Common_step_filer.Not_exists _)
-          | Error (No_permission _)
-          | Error (Destination_exists _)
-          | Error (Unknown _) ->
-              Lwt.return_none )
-    else
-      match%lwt delete_item item with
-      | Ok _ -> Lwt.return_some { item; timestamp = now () }
-      | Error (Common_step_filer.Not_exists _)
-      | Error (No_permission _)
-      | Error (Destination_exists _)
-      | Error (Unknown _) ->
-          Lwt.return_none
+    match%lwt delete_item item with
+    | Ok _ -> Lwt.return_some { item; timestamp = now () }
+    | Error (Common_step_filer.Not_exists _)
+    | Error (No_permission _)
+    | Error (Destination_exists _)
+    | Error (Unknown _) ->
+        Lwt.return_none
   in
 
   (* run real workflow *)

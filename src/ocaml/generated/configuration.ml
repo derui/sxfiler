@@ -26,21 +26,21 @@ end
 module Configuration = struct
   module rec Configuration : sig
     val name': unit -> string
-    type t = { default_sort_order: Imported'modules.Types.SortType.t; confirmation_when_delete: bool; max_history_num: int; current_theme: string } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+    type t = { key: string list; json_value: string } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
     val to_proto: t -> Runtime'.Writer.t
     val from_proto: Runtime'.Reader.t -> (t, [> Runtime'.Result.error]) result
   end = struct 
     let name' () = "configuration.configuration.Configuration"
-    type t = { default_sort_order: Imported'modules.Types.SortType.t; confirmation_when_delete: bool; max_history_num: int; current_theme: string }[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+    type t = { key: string list; json_value: string }[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
     let to_proto =
-      let apply = fun ~f:f' { default_sort_order; confirmation_when_delete; max_history_num; current_theme } -> f' [] default_sort_order confirmation_when_delete max_history_num current_theme in
-      let spec = Runtime'.Serialize.C.( basic (1, (enum Imported'modules.Types.SortType.to_int), proto3) ^:: basic (2, bool, proto3) ^:: basic (3, uint32_int, proto3) ^:: basic (4, string, proto3) ^:: nil ) in
+      let apply = fun ~f:f' { key; json_value } -> f' [] key json_value in
+      let spec = Runtime'.Serialize.C.( repeated (1, string, packed) ^:: basic (2, string, proto3) ^:: nil ) in
       let serialize = Runtime'.Serialize.serialize [] (spec) in
       fun t -> apply ~f:serialize t
     
     let from_proto =
-      let constructor = fun _extensions default_sort_order confirmation_when_delete max_history_num current_theme -> { default_sort_order; confirmation_when_delete; max_history_num; current_theme } in
-      let spec = Runtime'.Deserialize.C.( basic (1, (enum Imported'modules.Types.SortType.from_int), proto3) ^:: basic (2, bool, proto3) ^:: basic (3, uint32_int, proto3) ^:: basic (4, string, proto3) ^:: nil ) in
+      let constructor = fun _extensions key json_value -> { key; json_value } in
+      let spec = Runtime'.Deserialize.C.( repeated (1, string, packed) ^:: basic (2, string, proto3) ^:: nil ) in
       let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
       fun writer -> deserialize writer |> Runtime'.Result.open_error
     
@@ -68,63 +68,21 @@ module Configuration = struct
   end
   and GetResponse : sig
     val name': unit -> string
-    type t = { configuration: Configuration.t option } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+    type t = { configurations: Configuration.t list } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
     val to_proto: t -> Runtime'.Writer.t
     val from_proto: Runtime'.Reader.t -> (t, [> Runtime'.Result.error]) result
   end = struct 
     let name' () = "configuration.configuration.GetResponse"
-    type t = { configuration: Configuration.t option }[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+    type t = { configurations: Configuration.t list }[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
     let to_proto =
-      let apply = fun ~f:f' { configuration } -> f' [] configuration in
-      let spec = Runtime'.Serialize.C.( basic_opt (1, (message (fun t -> Configuration.to_proto t))) ^:: nil ) in
+      let apply = fun ~f:f' { configurations } -> f' [] configurations in
+      let spec = Runtime'.Serialize.C.( repeated (1, (message (fun t -> Configuration.to_proto t)), not_packed) ^:: nil ) in
       let serialize = Runtime'.Serialize.serialize [] (spec) in
       fun t -> apply ~f:serialize t
     
     let from_proto =
-      let constructor = fun _extensions configuration -> { configuration } in
-      let spec = Runtime'.Deserialize.C.( basic_opt (1, (message (fun t -> Configuration.from_proto t))) ^:: nil ) in
-      let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
-      fun writer -> deserialize writer |> Runtime'.Result.open_error
-    
-  end
-  and StoreRequest : sig
-    val name': unit -> string
-    type t = { configuration: Configuration.t option } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
-    val to_proto: t -> Runtime'.Writer.t
-    val from_proto: Runtime'.Reader.t -> (t, [> Runtime'.Result.error]) result
-  end = struct 
-    let name' () = "configuration.configuration.StoreRequest"
-    type t = { configuration: Configuration.t option }[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
-    let to_proto =
-      let apply = fun ~f:f' { configuration } -> f' [] configuration in
-      let spec = Runtime'.Serialize.C.( basic_opt (1, (message (fun t -> Configuration.to_proto t))) ^:: nil ) in
-      let serialize = Runtime'.Serialize.serialize [] (spec) in
-      fun t -> apply ~f:serialize t
-    
-    let from_proto =
-      let constructor = fun _extensions configuration -> { configuration } in
-      let spec = Runtime'.Deserialize.C.( basic_opt (1, (message (fun t -> Configuration.from_proto t))) ^:: nil ) in
-      let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
-      fun writer -> deserialize writer |> Runtime'.Result.open_error
-    
-  end
-  and StoreResponse : sig
-    val name': unit -> string
-    type t = unit [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
-    val to_proto: t -> Runtime'.Writer.t
-    val from_proto: Runtime'.Reader.t -> (t, [> Runtime'.Result.error]) result
-  end = struct 
-    let name' () = "configuration.configuration.StoreResponse"
-    type t = unit[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
-    let to_proto =
-      let apply = fun ~f () -> f [] in
-      let spec = Runtime'.Serialize.C.( nil ) in
-      let serialize = Runtime'.Serialize.serialize [] (spec) in
-      fun t -> apply ~f:serialize t
-    
-    let from_proto =
-      let constructor = fun _extension -> () in
-      let spec = Runtime'.Deserialize.C.( nil ) in
+      let constructor = fun _extensions configurations -> { configurations } in
+      let spec = Runtime'.Deserialize.C.( repeated (1, (message (fun t -> Configuration.from_proto t)), not_packed) ^:: nil ) in
       let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
       fun writer -> deserialize writer |> Runtime'.Result.open_error
     

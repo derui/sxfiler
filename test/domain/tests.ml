@@ -11,4 +11,5 @@ let () =
          ("Bookmarks", Bookmarks_test.test_set);
          ("Keymap", Keymap_test.test_set);
          ("Filer", Filer_test.test_set);
+         ("Configuration store", Configuration_store_test.test_set);
        ]

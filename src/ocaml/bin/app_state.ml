@@ -31,11 +31,13 @@ let restore_filer_stats ~(initialize : F.Filer.Initialize.work_flow) stat =
     let* filer = stat.filer in
     let* left_location =
       filer.left_file_window >>= fun v ->
-      v.G.Filer.FileWindow.file_list >|= fun v -> v.location |> Path.of_string
+      v.G.Filer.FileWindow.file_list >|= fun v ->
+      (v.location |> Path.of_string, v.sort_order |> Tr.Types.Sort_type.to_domain)
     in
     let* right_location =
       filer.right_file_window >>= fun v ->
-      v.G.Filer.FileWindow.file_list >|= fun v -> v.location |> Path.of_string
+      v.G.Filer.FileWindow.file_list >|= fun v ->
+      (v.location |> Path.of_string, v.sort_order |> Tr.Types.Sort_type.to_domain)
     in
     let left_history =
       filer.left_file_window >>= fun v ->
@@ -48,8 +50,18 @@ let restore_filer_stats ~(initialize : F.Filer.Initialize.work_flow) stat =
     Some (left_location, right_location, left_history, right_history)
   in
   match file_lists with
-  | Some (Ok left_location, Ok right_location, left_history, right_history) ->
-      let input = { F.Filer.Initialize.left_location; right_location; left_history; right_history } in
+  | Some ((Ok left_location, Ok left_sort_order), (Ok right_location, Ok right_sort_order), left_history, right_history)
+    ->
+      let input =
+        {
+          F.Filer.Initialize.left_location;
+          right_location;
+          left_history;
+          right_history;
+          left_sort_order;
+          right_sort_order;
+        }
+      in
       let open Lwt.Infix in
       initialize input >|= List.map (fun v -> F.Filer v)
   | Some _ | None -> Lwt.return []

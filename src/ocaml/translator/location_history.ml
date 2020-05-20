@@ -4,9 +4,8 @@ module L = D.Location_history
 module G = Sxfiler_generated
 
 type error =
-  | Invalid_path       of string
-  | Invalid_timestamp  of string
-  | Invalid_record_num of int
+  | Invalid_path      of string
+  | Invalid_timestamp of string
 [@@deriving eq, show]
 
 module Record = struct
@@ -23,17 +22,10 @@ module Record = struct
     |> Result.map_error (fun _ -> Invalid_path t.location)
 end
 
-let of_domain (t : L.t) =
-  {
-    G.Filer.LocationHistory.records = List.map Record.of_domain t.records;
-    max_record_number = D.Common.Positive_number.value t.max_record_num;
-  }
+let of_domain (t : L.t) = { G.Filer.LocationHistory.records = List.map Record.of_domain t.records }
 
 let to_domain (t : G.Filer.LocationHistory.t) =
   let open Result.Infix in
-  let* max_record_num =
-    D.Common.Positive_number.make t.max_record_number |> Option.to_result ~none:(Invalid_record_num t.max_record_number)
-  in
   let* records =
     List.fold_left
       (fun list v ->
@@ -43,4 +35,4 @@ let to_domain (t : G.Filer.LocationHistory.t) =
       (Ok []) t.records
   in
   let records = List.rev records in
-  L.make ~records ~max_record_num () |> Result.ok
+  L.make ~records () |> Result.ok

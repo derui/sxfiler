@@ -61,6 +61,8 @@ module Initialize = struct
     right_location : Path.t;
     left_history : D.Location_history.t option;
     right_history : D.Location_history.t option;
+    left_sort_order : D.Types.Sort_type.t;
+    right_sort_order : D.Types.Sort_type.t;
   }
 
   type work_flow = input -> event list Lwt.t

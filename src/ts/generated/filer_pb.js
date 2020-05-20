@@ -2445,8 +2445,7 @@ proto.LocationHistory.prototype.toObject = function(opt_includeInstance) {
 proto.LocationHistory.toObject = function(includeInstance, msg) {
   var f, obj = {
     recordsList: jspb.Message.toObjectList(msg.getRecordsList(),
-    proto.LocationRecord.toObject, includeInstance),
-    maxRecordNumber: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    proto.LocationRecord.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -2488,10 +2487,6 @@ proto.LocationHistory.deserializeBinaryFromReader = function(msg, reader) {
       reader.readMessage(value,proto.LocationRecord.deserializeBinaryFromReader);
       msg.addRecords(value);
       break;
-    case 2:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setMaxRecordNumber(value);
-      break;
     default:
       reader.skipField();
       break;
@@ -2527,13 +2522,6 @@ proto.LocationHistory.serializeBinaryToWriter = function(message, writer) {
       1,
       f,
       proto.LocationRecord.serializeBinaryToWriter
-    );
-  }
-  f = message.getMaxRecordNumber();
-  if (f !== 0) {
-    writer.writeInt32(
-      2,
-      f
     );
   }
 };
@@ -2574,24 +2562,6 @@ proto.LocationHistory.prototype.addRecords = function(opt_value, opt_index) {
  */
 proto.LocationHistory.prototype.clearRecordsList = function() {
   return this.setRecordsList([]);
-};
-
-
-/**
- * optional int32 max_record_number = 2;
- * @return {number}
- */
-proto.LocationHistory.prototype.getMaxRecordNumber = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.LocationHistory} returns this
- */
-proto.LocationHistory.prototype.setMaxRecordNumber = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 

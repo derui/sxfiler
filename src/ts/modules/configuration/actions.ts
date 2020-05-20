@@ -4,7 +4,7 @@ import { Configuration } from "@/generated/configuration_pb";
 
 // implememt action. Use command `hygen module add:action [name of action]` to add template into this place.
 //#ACTION INSERTION INDICATOR
-export const update = (config: Configuration) => {
+export const update = (config: Configuration[]) => {
   return {
     type: ActionTypes.UPDATE,
     payload: { config },

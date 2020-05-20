@@ -37,10 +37,10 @@ module Bookmarks = I.Statable.Make (struct
   let empty () = D.Bookmarks.empty
 end)
 
-module Configuration = I.Statable.Make (struct
-  type t = D.Configuration.t
+module Configuration_store = I.Statable.Make (struct
+  type t = D.Configuration_store.t
 
-  let empty () = D.Configuration.default
+  let empty () = D.Configuration_store.empty
 end)
 
 module Context = I.Statable.Make (struct

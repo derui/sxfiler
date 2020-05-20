@@ -2,8 +2,6 @@
 
 module D = Sxfiler_domain
 
-let configuration = Alcotest.testable D.Configuration.pp D.Configuration.equal
-
 let file_stat = Alcotest.testable D.File_stat.pp D.File_stat.equal
 
 let file_item = Alcotest.testable D.File_item.pp D.File_item.equal

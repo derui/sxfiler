@@ -3,7 +3,7 @@ module D = Sxfiler_domain
 module Tr = Sxfiler_translator
 
 let test_set =
-  let history = D.Location_history.make ~max_record_num:D.Common.(Positive_number.make 10 |> Option.get) () in
+  let history = D.Location_history.make () in
   [
     Alcotest_lwt.test_case_sync "can translate to/from domain" `Quick (fun () ->
         let location = Path.of_string "/root" |> Result.get_ok in
@@ -31,17 +31,11 @@ let test_set =
                 left_file_window =
                   Some
                     Filer.FileWindow.
-                      {
-                        file_list = Some expected_file_list;
-                        history = Some Filer.LocationHistory.{ records = []; max_record_number = 10 };
-                      };
+                      { file_list = Some expected_file_list; history = Some Filer.LocationHistory.{ records = [] } };
                 right_file_window =
                   Some
                     Filer.FileWindow.
-                      {
-                        file_list = Some expected_file_list;
-                        history = Some Filer.LocationHistory.{ records = []; max_record_number = 10 };
-                      };
+                      { file_list = Some expected_file_list; history = Some Filer.LocationHistory.{ records = [] } };
               })
         in
         Alcotest.(check @@ of_pp Sxfiler_generated.Filer.Filer.pp) "domain" expected filer);

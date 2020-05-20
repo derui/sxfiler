@@ -1,9 +1,8 @@
 open Sxfiler_generated
 
 type error =
-  | Invalid_path       of string
-  | Invalid_timestamp  of string
-  | Invalid_record_num of int
+  | Invalid_path      of string
+  | Invalid_timestamp of string
 [@@deriving eq, show]
 
 include

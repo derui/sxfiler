@@ -19,25 +19,19 @@ module Location_set = Set.Make (struct
     Stdlib.compare v1 v2
 end)
 
-type t = {
-  records : Record.t list;
-  max_record_num : Common.Positive_number.t;
-}
-[@@deriving eq, show]
+type t = { records : Record.t list } [@@deriving eq, show]
 
 let sort_by_timestamp = List.sort (fun a b -> Time.compare a.Record.timestamp b.timestamp) %> List.rev
 
 (** [make ?max_record_num ()] gets new history.
 
     Use default value of [max_record_num] is [100] if it did not give any value. *)
-let make ~max_record_num ?(records = []) () =
+let make ?(records = []) () =
   let records = sort_by_timestamp records in
-  { records; max_record_num }
+  { records }
 
 (** [add_record t ~record] makes new record and *)
 let add_record record t =
   let set = Location_set.of_list (record :: t.records) in
   let records = Location_set.to_seq set |> List.of_seq |> sort_by_timestamp in
-  let max_record_num = Common.Positive_number.value t.max_record_num in
-  if max_record_num < List.length records then { t with records = List.rev records |> List.tl |> List.rev }
-  else { t with records }
+  { records }

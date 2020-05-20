@@ -7,9 +7,11 @@ describe("Modules", () => {
     describe("Reducer", () => {
       test("update configuration given", () => {
         const config = new Configuration();
-        const state = reducer(emptyState, actions.update(config));
+        config.setKeyList(["key", "list"]);
+        config.setJsonValue(JSON.stringify({ value: 100 }));
+        const state = reducer(emptyState, actions.update([config]));
 
-        expect(state.configuration).toEqual(config.toObject());
+        expect(state.configuration).toEqual({ "key.list": 100 });
       });
     });
   });

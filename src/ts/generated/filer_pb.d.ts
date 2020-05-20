@@ -218,9 +218,6 @@ export class LocationHistory extends jspb.Message {
   setRecordsList(value: Array<LocationRecord>): void;
   addRecords(value?: LocationRecord, index?: number): LocationRecord;
 
-  getMaxRecordNumber(): number;
-  setMaxRecordNumber(value: number): void;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): LocationHistory.AsObject;
   static toObject(includeInstance: boolean, msg: LocationHistory): LocationHistory.AsObject;
@@ -234,7 +231,6 @@ export class LocationHistory extends jspb.Message {
 export namespace LocationHistory {
   export type AsObject = {
     recordsList: Array<LocationRecord.AsObject>,
-    maxRecordNumber: number,
   }
 }
 
