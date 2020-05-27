@@ -33,7 +33,15 @@ let initialize : initialize =
                  E.invalid_input
                    [ E.Validation_error.make ~field:"right_location" ~message:"Right location must not be empty" ])
         in
-        Ok { F.Filer.Initialize.left_location; right_location; left_history = None; right_history = None }
+        Ok
+          {
+            F.Filer.Initialize.left_location;
+            right_location;
+            left_history = None;
+            right_history = None;
+            left_sort_order = D.Types.Sort_type.Name;
+            right_sort_order = D.Types.Sort_type.Name;
+          }
       in
       match input with
       | Error e  -> Lwt.return_error e

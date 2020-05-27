@@ -28,13 +28,9 @@ export const createCommand = function createCommand(): Command {
       const request = new GetRequest();
       const res = await args.clientResolver.rpcClient().use(Procs.Configuration.getConfiguration)(request);
 
-      const configuration = res.getConfiguration();
-      if (!configuration) {
-        logger.warn("Do not get configuration");
-        return;
-      }
-
-      dispatcher.dispatch(actions.update(configuration));
+      logger.debug("Get the configuration");
+      const configurations = res.getConfigurationsList();
+      dispatcher.dispatch(actions.update(configurations));
     },
   };
 };

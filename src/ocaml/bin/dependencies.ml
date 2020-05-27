@@ -122,7 +122,7 @@ let make (module Option' : Option') (module Completer : D.Completer.Instance) (m
 
       let demand_decision command = Mediator.(Mediator.require_action instance ~command)
 
-      let load_configuration () = Global.Configuration.get ()
+      let load_configuration () = Global.Configuration_store.get ()
 
       let copy_item = I.Filer_step.copy_item
 
@@ -143,7 +143,7 @@ let make (module Option' : Option') (module Completer : D.Completer.Instance) (m
 
     module Work_flow = struct
       module Filer = struct
-        let initialize = F.Filer.initialize Global.Filer.get Step.scan_location Step.load_configuration
+        let initialize = F.Filer.initialize Global.Filer.get Step.scan_location
 
         let reload_all = F.Filer.reload_all Step.scan_location
 
@@ -159,9 +159,7 @@ let make (module Option' : Option') (module Completer : D.Completer.Instance) (m
 
         let copy = F.Filer.copy Common_step.now Step.demand_decision Step.scan_location Step.copy_item
 
-        let delete =
-          F.Filer.delete Common_step.now Step.demand_decision Step.scan_location Step.load_configuration
-            Step.delete_item
+        let delete = F.Filer.delete Common_step.now Step.scan_location Step.delete_item
       end
 
       module Keymap = struct

@@ -4,15 +4,24 @@ import { Configuration } from "@/generated/configuration_pb";
 
 // state of type. Please redefine to what you want.
 export type State = {
-  configuration: Configuration.AsObject | undefined;
+  configuration: { [p: string]: any };
 };
 
-export const emptyState: State = { configuration: undefined };
+export const emptyState: State = { configuration: {} };
+
+const update = function (value: Configuration[]): State {
+  return Object.freeze({
+    configuration: value.reduce((acc, value) => {
+      acc[value.getKeyList().join(".")] = JSON.parse(value.getJsonValue()).value;
+      return acc;
+    }, {} as { [p: string]: any }),
+  });
+};
 
 export const reducer = (state: State = emptyState, action: Actions): State => {
   switch (action.type) {
     case ActionTypes.UPDATE:
-      return Object.freeze({ ...state, configuration: action.payload.config.toObject() });
+      return update(action.payload.config);
     default:
       return state;
   }

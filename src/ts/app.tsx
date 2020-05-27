@@ -2,15 +2,20 @@ import { h, Fragment } from "preact";
 import * as MainContainer from "./components/container/main-container";
 import { State } from "@/modules";
 import { ThemeContext } from "./theme";
-import { getCurrentTheme } from "./modules/configuration/selectors";
 import { ModalThemeUpdater } from "./modal-theme-updater";
+import { definition } from "./configurations";
+import { selectItem } from "./modules/configuration/selectors";
 
 export type Props = {
   state: State;
 };
 
 export const Component: preact.FunctionComponent<Props> = ({ state }) => {
-  const theme = getCurrentTheme(state.configuration);
+  const theme = selectItem(state.configuration, definition.general.theme.currentTheme);
+
+  if (!theme) {
+    return null;
+  }
 
   return (
     <Fragment>

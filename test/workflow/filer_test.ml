@@ -4,13 +4,9 @@ module F = Test_fixtures
 module S = Sxfiler_workflow.Common_step
 module FL = Sxfiler_workflow.Filer
 
-let make_left_file_window file_list =
-  File_window.make_left ~file_list
-    ~history:(Location_history.make ~max_record_num:(Common.Positive_number.make 10 |> Option.get) ())
+let make_left_file_window file_list = File_window.make_left ~file_list ~history:(Location_history.make ())
 
-let make_right_file_window file_list =
-  File_window.make_right ~file_list
-    ~history:(Location_history.make ~max_record_num:(Common.Positive_number.make 10 |> Option.get) ())
+let make_right_file_window file_list = File_window.make_right ~file_list ~history:(Location_history.make ())
 
 let sort_items = List.sort & File_item.compare_by Types.Sort_type.Name
 
@@ -33,8 +29,6 @@ let test_set =
     Filer.make ~left_file_window ~right_file_window |> Lwt.return
   in
 
-  let load_configuration () = Lwt.return Configuration.default in
-
   [
     Alcotest_lwt.test_case "initialize the filer from locations" `Quick (fun _ () ->
         let scan_location path =
@@ -44,7 +38,7 @@ let test_set =
           | _       -> Alcotest.fail "unknown course"
         in
         let get () = Lwt.return_none in
-        let work_flow = FL.initialize get scan_location load_configuration in
+        let work_flow = FL.initialize get scan_location in
         let%lwt filer =
           work_flow
             FL.Initialize.
@@ -53,6 +47,8 @@ let test_set =
                 right_location = right_list.location;
                 left_history = None;
                 right_history = None;
+                left_sort_order = Types.Sort_type.Name;
+                right_sort_order = Types.Sort_type.Name;
               }
         in
         let filer = match filer with [ FL.Updated v ] -> v | _ -> Alcotest.fail "illegal path" in
@@ -79,9 +75,7 @@ let test_set =
         let work_flow =
           FL.delete
             (fun () -> Time.of_float 0. |> Option.get)
-            (fun _ -> Lwt.return (Interaction.Filer_delete_selected Interaction.Filer_delete_selected.Confirm))
             (fun _ -> Lwt.return_ok [])
-            (fun () -> Lwt.return Configuration.default)
             (fun item ->
               Alcotest.(check @@ F.Testable.file_item) "delete" (List.nth left_list_items 0) item;
               Lwt.return_ok ())
@@ -101,27 +95,6 @@ let test_set =
           (File_list.items filer'.right_file_window.file_list |> sort_items);
         let expected = [ { FL.item = target; timestamp = Time.of_float 0. |> Option.get } ] in
         Alcotest.(check @@ list @@ of_pp FL.pp_delete_result) "deleted" expected results;
-        Lwt.return_unit);
-    Alcotest_lwt.test_case "do not delete when canceled" `Quick (fun _ () ->
-        let work_flow =
-          FL.delete
-            (fun () -> Time.of_float 0. |> Option.get)
-            (fun _ -> Lwt.return Interaction.Canceled)
-            (fun _ -> Lwt.return_ok [])
-            (fun () -> Lwt.return Configuration.default)
-            (fun _ ->
-              Alcotest.fail "do not call delete step" |> ignore;
-              Lwt.return_ok ())
-        in
-        let%lwt filer = filer () in
-        let%lwt filer' =
-          match%lwt
-            work_flow FL.Delete.{ filer; side = FL.Left; target = One (List.nth left_list_items 0 |> File_item.id) }
-          with
-          | { events = [ FL.Updated v ]; results = [] } -> Lwt.return v
-          | _ -> Alcotest.fail "illegal path"
-        in
-        Alcotest.(check @@ list F.Testable.file_item) "left" [] (File_list.items filer'.left_file_window.file_list);
         Lwt.return_unit);
     Alcotest_lwt.test_case "copy items" `Quick (fun _ () ->
         let target = List.nth left_list_items 0 in
@@ -244,7 +217,6 @@ let test_set =
         Alcotest.(check F.Testable.History.t)
           "location"
           (Location_history.make
-             ~max_record_num:(Common.Positive_number.make 10 |> Option.get)
              ~records:
                [
                  Location_history.Record.make

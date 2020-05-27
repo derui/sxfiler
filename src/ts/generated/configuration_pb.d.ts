@@ -5,17 +5,13 @@ import * as jspb from "google-protobuf";
 import * as types_pb from "./types_pb";
 
 export class Configuration extends jspb.Message {
-  getDefaultSortOrder(): types_pb.SortTypeMap[keyof types_pb.SortTypeMap];
-  setDefaultSortOrder(value: types_pb.SortTypeMap[keyof types_pb.SortTypeMap]): void;
+  clearKeyList(): void;
+  getKeyList(): Array<string>;
+  setKeyList(value: Array<string>): void;
+  addKey(value: string, index?: number): string;
 
-  getConfirmationWhenDelete(): boolean;
-  setConfirmationWhenDelete(value: boolean): void;
-
-  getMaxHistoryNum(): number;
-  setMaxHistoryNum(value: number): void;
-
-  getCurrentTheme(): string;
-  setCurrentTheme(value: string): void;
+  getJsonValue(): string;
+  setJsonValue(value: string): void;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Configuration.AsObject;
@@ -29,10 +25,8 @@ export class Configuration extends jspb.Message {
 
 export namespace Configuration {
   export type AsObject = {
-    defaultSortOrder: types_pb.SortTypeMap[keyof types_pb.SortTypeMap],
-    confirmationWhenDelete: boolean,
-    maxHistoryNum: number,
-    currentTheme: string,
+    keyList: Array<string>,
+    jsonValue: string,
   }
 }
 
@@ -53,10 +47,10 @@ export namespace GetRequest {
 }
 
 export class GetResponse extends jspb.Message {
-  hasConfiguration(): boolean;
-  clearConfiguration(): void;
-  getConfiguration(): Configuration | undefined;
-  setConfiguration(value?: Configuration): void;
+  clearConfigurationsList(): void;
+  getConfigurationsList(): Array<Configuration>;
+  setConfigurationsList(value: Array<Configuration>): void;
+  addConfigurations(value?: Configuration, index?: number): Configuration;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetResponse.AsObject;
@@ -70,45 +64,7 @@ export class GetResponse extends jspb.Message {
 
 export namespace GetResponse {
   export type AsObject = {
-    configuration?: Configuration.AsObject,
-  }
-}
-
-export class StoreRequest extends jspb.Message {
-  hasConfiguration(): boolean;
-  clearConfiguration(): void;
-  getConfiguration(): Configuration | undefined;
-  setConfiguration(value?: Configuration): void;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): StoreRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: StoreRequest): StoreRequest.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: StoreRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): StoreRequest;
-  static deserializeBinaryFromReader(message: StoreRequest, reader: jspb.BinaryReader): StoreRequest;
-}
-
-export namespace StoreRequest {
-  export type AsObject = {
-    configuration?: Configuration.AsObject,
-  }
-}
-
-export class StoreResponse extends jspb.Message {
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): StoreResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: StoreResponse): StoreResponse.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: StoreResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): StoreResponse;
-  static deserializeBinaryFromReader(message: StoreResponse, reader: jspb.BinaryReader): StoreResponse;
-}
-
-export namespace StoreResponse {
-  export type AsObject = {
+    configurationsList: Array<Configuration.AsObject>,
   }
 }
 

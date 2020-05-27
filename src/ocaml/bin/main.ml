@@ -32,7 +32,7 @@ let initialize_modules ~migemo ~option =
       Logs.warn (fun m ->
           m "Detect errors when load configuration. Use default configuration: %s" & Configuration_file.show_error e);
       Lwt.return_unit
-  | Ok config -> Global.Configuration.update config
+  | Ok config -> Global.Configuration_store.update config
 
 (* Load migemo from specified directory that contains dictionary and conversions. *)
 let load_migemo dict_dir =
@@ -75,6 +75,8 @@ let restore_app_state (module Dep : Dependencies.S) option =
           right_location = Path.of_string option.initial_loc |> Result.get_ok;
           left_history = None;
           right_history = None;
+          left_sort_order = D.Types.Sort_type.Name;
+          right_sort_order = D.Types.Sort_type.Name;
         }
       in
       let open Lwt.Infix in

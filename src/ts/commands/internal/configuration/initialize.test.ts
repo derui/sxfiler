@@ -14,7 +14,7 @@ describe("Commands", () => {
       mocks.rpcClient.use.mockImplementation(() => mockForUse);
       mockForUse.mockImplementation(() => {
         const res = new GetResponse();
-        res.setConfiguration(config);
+        res.setConfigurationsList([config]);
         return res;
       });
 
@@ -25,7 +25,7 @@ describe("Commands", () => {
 
       const expected = new GetRequest();
       expect(mockForUse).toBeCalledWith(expected);
-      expect(mocks.dispatcher.dispatch).toBeCalledWith(actions.update(config));
+      expect(mocks.dispatcher.dispatch).toBeCalledWith(actions.update([config]));
     });
   });
 });

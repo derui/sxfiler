@@ -2,7 +2,7 @@ let () =
   Lwt_main.run
   @@ Alcotest_lwt.run "translators"
        [
-         ("configuration translator", Configuration_test.test_set);
+         ("configuration store translator", Configuration_store_test.test_set);
          ("completer translator", Completer_test.test_set);
          ("context translator", Context_test.test_set);
          ("file_stat translator", File_stat_test.test_set);

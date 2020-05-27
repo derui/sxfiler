@@ -3,13 +3,9 @@ module C = Sxfiler_core
 module F = Test_fixtures
 module S = Sxfiler_workflow.Common_step
 
-let make_left_file_window file_list =
-  File_window.make_left ~file_list
-    ~history:(Location_history.make ~max_record_num:(Common.Positive_number.make 10 |> Option.get) ())
+let make_left_file_window file_list = File_window.make_left ~file_list ~history:(Location_history.make ())
 
-let make_right_file_window file_list =
-  File_window.make_right ~file_list
-    ~history:(Location_history.make ~max_record_num:(Common.Positive_number.make 10 |> Option.get) ())
+let make_right_file_window file_list = File_window.make_right ~file_list ~history:(Location_history.make ())
 
 let test_set =
   let left_list_items = [ F.File_item.fixture (); F.File_item.fixture () ]

@@ -1,5 +1,5 @@
 (library
  (name sxfiler_domain)
  (public_name sxfiler.domain)
- (libraries sxfiler.kbd sxfiler.core fmt)
+ (libraries sxfiler.kbd sxfiler.core fmt yojson)
  (preprocess (pps ppx_deriving.std)))

@@ -214,21 +214,21 @@ end = struct
 end
 and LocationHistory : sig
   val name': unit -> string
-  type t = { records: LocationRecord.t list; max_record_number: int } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { records: LocationRecord.t list } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
   val to_proto: t -> Runtime'.Writer.t
   val from_proto: Runtime'.Reader.t -> (t, [> Runtime'.Result.error]) result
 end = struct 
   let name' () = "filer.LocationHistory"
-  type t = { records: LocationRecord.t list; max_record_number: int }[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = { records: LocationRecord.t list }[@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
   let to_proto =
-    let apply = fun ~f:f' { records; max_record_number } -> f' [] records max_record_number in
-    let spec = Runtime'.Serialize.C.( repeated (1, (message (fun t -> LocationRecord.to_proto t)), not_packed) ^:: basic (2, int32_int, proto3) ^:: nil ) in
+    let apply = fun ~f:f' { records } -> f' [] records in
+    let spec = Runtime'.Serialize.C.( repeated (1, (message (fun t -> LocationRecord.to_proto t)), not_packed) ^:: nil ) in
     let serialize = Runtime'.Serialize.serialize [] (spec) in
     fun t -> apply ~f:serialize t
   
   let from_proto =
-    let constructor = fun _extensions records max_record_number -> { records; max_record_number } in
-    let spec = Runtime'.Deserialize.C.( repeated (1, (message (fun t -> LocationRecord.from_proto t)), not_packed) ^:: basic (2, int32_int, proto3) ^:: nil ) in
+    let constructor = fun _extensions records -> { records } in
+    let spec = Runtime'.Deserialize.C.( repeated (1, (message (fun t -> LocationRecord.from_proto t)), not_packed) ^:: nil ) in
     let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
     fun writer -> deserialize writer |> Runtime'.Result.open_error
   

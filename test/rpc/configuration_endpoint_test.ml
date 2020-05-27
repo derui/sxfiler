@@ -5,24 +5,28 @@ module G = Sxfiler_generated
 module Pb = Ocaml_protoc_plugin
 module F = Sxfiler_workflow
 module T = Sxfiler_translator
+module K = D.Configuration_store.Key
 
 let test_set =
+  let value_t = Alcotest.testable G.Configuration.Configuration.pp G.Configuration.Configuration.equal in
   [
     Alcotest_lwt.test_case "get configuration from step" `Quick (fun _ () ->
         let request =
           { G.Service.Request.id = "id"; command = G.Service.Command.CONFIGURATION_GET; payload = Bytes.empty }
         in
-        let actual = D.Configuration.default |> D.Configuration.current_theme "sample" in
-        let expected = T.Configuration.of_domain actual in
+        let actual =
+          D.Configuration_store.empty
+          |> D.Configuration_store.put ~key:(K.from_list [ "sample" ] |> Option.get) ~value:(`String "sample")
+        in
+        let expected = T.Configuration_store.of_domain actual in
         let step () = Lwt.return actual in
         let%lwt res, events = R.Configuration_endpoint.get step request in
         let payload =
           res.payload |> Bytes.to_string |> Pb.Reader.create |> G.Configuration.GetResponse.from_proto |> Result.get_ok
         in
-        Alcotest.(check & string) "same id" "id" res.id;
+        Alcotest.(check string) "same id" "id" res.id;
         Alcotest.(check & list & of_pp F.pp_event) "events" [] events;
         Alcotest.(check & of_pp G.Service.Status.pp) "invalid" G.Service.Status.SUCCESS res.status;
-        Alcotest.(check & option & testable G.Configuration.Configuration.pp G.Configuration.Configuration.equal)
-          "configuration" (Some expected) payload.configuration;
+        Alcotest.(check & list value_t) "configuration" expected payload.configurations;
         Lwt.return_unit);
   ]

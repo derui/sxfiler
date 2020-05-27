@@ -4,18 +4,11 @@ import "types.proto";
 package configuration;
 
 message Configuration {
-  SortType default_sort_order = 1;
-  bool confirmation_when_delete = 2;
-  uint32 max_history_num = 3;
-  string current_theme = 4;
+  repeated string key = 1;
+  string json_value = 2;
 }
 
 message GetRequest {}
 message GetResponse {
-  Configuration configuration = 1;
+  repeated Configuration configurations = 1;
 }
-
-message StoreRequest {
-  Configuration configuration = 1;
-}
-message StoreResponse {}
