@@ -12,3 +12,19 @@ message GetRequest {}
 message GetResponse {
   repeated Configuration configurations = 1;
 }
+
+message UpdateRequest {
+  repeated string key = 1;
+  string json_value = 2;
+}
+message UpdateResponse {
+  repeated string key = 1;
+}
+
+// declarations notification service from server to client.
+// This service need to implement on client.
+message UpdatedNotificationRequest {
+  repeated Configuration configurations = 1;
+}
+
+message UpdatedNotificationResponse {}

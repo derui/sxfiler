@@ -1,4 +1,6 @@
 import { DescriptorsType } from "@/commands/type";
+import * as configurationCloseEditor from "./configuration/close-editor";
+import * as configurationOpenEditor from "./configuration/open-editor";
 import * as decisionCancel from "./decision/cancel";
 import * as decisionFinish from "./decision/finish";
 import * as decisionCursorDown from "./decision/cursor-down";
@@ -24,6 +26,8 @@ import { Type } from "../command-resolver";
 
 // prettier-ignore
 export const descriptors = {
+  configurationCloseEditor: configurationCloseEditor.descriptor,
+  configurationOpenEditor: configurationOpenEditor.descriptor,
   decisionCancel: decisionCancel.descriptor,
   decisionFinish: decisionFinish.descriptor,
   decisionCursorDown: decisionCursorDown.descriptor,
@@ -54,6 +58,8 @@ export type Descriptors = DescriptorsType<typeof descriptors>;
  */
 // prettier-ignore
 export const registerToResolver = function registerToResolver(resolver: Type) {
+  resolver.register({descriptor: configurationCloseEditor.descriptor, factory: configurationCloseEditor.createCommand});
+  resolver.register({descriptor: configurationOpenEditor.descriptor, factory: configurationOpenEditor.createCommand});
   resolver.register({descriptor: decisionCancel.descriptor, factory: decisionCancel.createCommand});
   resolver.register({descriptor: decisionFinish.descriptor, factory: decisionFinish.createCommand});
   resolver.register({descriptor: decisionCursorDown.descriptor, factory: decisionCursorDown.createCommand});

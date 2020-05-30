@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UI Switch display unchecked when property is not given 1`] = `
+"<span class=\\"switch\\" data-testid=\\"switch-root\\"><span class=\\"
+switch__rail
+
+\\"><span class=\\"
+switch__box
+
+\\"></span></span><input class=\\"switch__input\\" type=\\"checkbox\\" /></span>"
+`;
+
+exports[`UI Switch display unchecked when property is not given 2`] = `
+"<span class=\\"switch\\" data-testid=\\"switch-root\\"><span class=\\"
+switch__rail
+switch__rail--checked
+\\"><span class=\\"
+switch__box
+switch__box--checked
+\\"></span></span><input class=\\"switch__input\\" type=\\"checkbox\\" checked /></span>"
+`;

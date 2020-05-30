@@ -154,6 +154,12 @@ export namespace Configuration {
     (v) => v.serializeBinary(),
     Con.GetResponse.deserializeBinary
   );
+
+  export const updateConfiguration: ProcedureDef<Con.UpdateRequest, Con.UpdateResponse> = callGeneric(
+    Command.CONFIGURATION_UPDATE,
+    (v) => v.serializeBinary(),
+    Con.UpdateResponse.deserializeBinary
+  );
 }
 
 export namespace Completer {

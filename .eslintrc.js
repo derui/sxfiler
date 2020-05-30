@@ -25,6 +25,7 @@ module.exports = {
     "import/no-unresolved": "off",
     "react/jsx-uses-vars": "warn",
     "react/jsx-in-jsx-scope": "off",
+    "react/no-unknown-property": "off",
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/no-unnecessary-type-assertion": "error",
     "prettier/prettier": ['error'],
@@ -44,6 +45,7 @@ module.exports = {
       }
     },
     react:  {
+      pragma: 'h',
       version:  'detect',  // Tells eslint-plugin-react to automatically detect the version of React to use
     },
   },

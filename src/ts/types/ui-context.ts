@@ -5,6 +5,7 @@ export const UIContext = {
   OnFileTree: "onFileTree",
   OnDecision: "onDecision",
   OnCompletion: "onCompletion",
+  OnConfigurationEditor: "onConfigurationEditor",
   ForHistory: "forHistory",
   ForFinder: "forFinder",
 } as const;

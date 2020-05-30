@@ -33,6 +33,8 @@ module type S = sig
 
     val load_configuration : F.Common_step.Configuration.load
 
+    val save_configuration : F.Common_step.Configuration.save
+
     val copy_item : F.Common_step.Filer.copy_item
 
     val delete_item : F.Common_step.Filer.delete_item
@@ -84,6 +86,10 @@ module type S = sig
 
       val complete : F.Completer.Complete.work_flow
     end
+
+    module Configuration : sig
+      val update : F.Configuration.Update.work_flow
+    end
   end
 
   val post_event : R.Event_handler.publish
@@ -123,6 +129,8 @@ let make (module Option' : Option') (module Completer : D.Completer.Instance) (m
       let demand_decision command = Mediator.(Mediator.require_action instance ~command)
 
       let load_configuration () = Global.Configuration_store.get ()
+
+      let save_configuration = Global.Configuration_store.update
 
       let copy_item = I.Filer_step.copy_item
 
@@ -174,6 +182,10 @@ let make (module Option' : Option') (module Completer : D.Completer.Instance) (m
         let initialize = F.Completer.initialize Step.update_collection
 
         let complete = F.Completer.complete Step.provide_collection (module Completer) F.Common_step.Completer.read
+      end
+
+      module Configuration = struct
+        let update = F.Configuration.update Step.load_configuration Step.save_configuration
       end
     end
 

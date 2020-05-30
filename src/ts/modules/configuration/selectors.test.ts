@@ -9,6 +9,7 @@ describe("Modules", () => {
             "key.test": 1,
             "key.second": 3,
           },
+          selectedSection: null,
         });
         expect(result.sort()).toEqual(["key.test", "key.second"].sort());
       });

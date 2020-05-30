@@ -148,6 +148,8 @@ export interface CommandMap {
   FILER_MOVE: 21;
   FILER_COPY: 22;
   FILER_DELETE: 23;
+  CONFIGURATION_UPDATE: 24;
+  CONFIGURATION_NOTIFY_UPDATED: 25;
 }
 
 export const Command: CommandMap;

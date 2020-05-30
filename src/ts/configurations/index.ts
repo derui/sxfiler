@@ -1,144 +1,92 @@
-import { ObjectEnum } from "@/utils";
 import { SortType, SortTypeMap } from "@/generated/types_pb";
+import { Category, Item, Section, ItemKey, SectionKey, CategoryKey } from "./types";
+import { createCategory, createSection, createItem } from "./creators";
+import * as ItemCreators from "./item-creators";
 
-export type Descriptor = {
-  readonly key: string;
-  readonly displayName: string;
-  readonly description: string;
-};
+const itemKeyFrom = <T>(section: SectionKey, key: string): ItemKey<T> => [section[0], section[1], key];
+const categoryKeyOf = (key: ItemKey<any>): CategoryKey => [key[0]];
+const sectionKeyOf = (key: ItemKey<any>): SectionKey => [key[0], key[1]];
+const sectionKeyFrom = (category: CategoryKey, key: string): SectionKey => [category[0], key];
+export const qualified = (key: readonly string[]): string => key.join(".");
 
-export type SelectOption = {
-  value: any;
-  toString(): string;
-  display: string;
-};
-
-export const ItemType = {
-  text: "text",
-  number: "number",
-  boolean: "boolean",
-  selectOne: "selectOne",
-} as const;
-export type ItemType = ObjectEnum<typeof ItemType>;
-
-export type ItemKind<K extends ItemType> = {
-  kind: K;
-};
-
-export type TextItemType = ItemKind<"text"> & {
-  defaultValue?: string;
-};
-export type NumberItemType = ItemKind<"number"> & {
-  defaultValue?: number;
-};
-export type BooleanItemType = ItemKind<"boolean"> & {
-  defaultValue: boolean;
-};
-export type SelectOneItemType = ItemKind<"selectOne"> & {
-  options: SelectOption[];
-  defaultValue: string;
-};
-
-export type ItemValue = TextItemType | NumberItemType | BooleanItemType | SelectOneItemType;
-
-namespace ItemDefinitionCreators {
-  export const text = (value?: string) => ({ kind: ItemType.text, defaultValue: value });
-  export const number = (value?: number) => ({ kind: ItemType.number, defaultValue: value });
-  export const boolean = (value: boolean) => ({ kind: ItemType.boolean, defaultValue: value });
-  export const selectOne = (options: SelectOption[], value: string) => ({
-    kind: ItemType.selectOne,
-    options,
-    defaultValue: value,
-  });
-}
-
-export type Item = Descriptor & {
-  readonly definition: ItemValue;
-};
-
-export type Section = Descriptor & {
-  readonly items: { [p: string]: Item };
-};
-
-export type Category = Descriptor & {
-  readonly sections: { [p: string]: Section };
-};
-
-const category = function (descriptor: Descriptor, sections: { [p: string]: Section }): Category {
-  return { ...descriptor, sections };
-};
-
-const section = function (descriptor: Descriptor, items: { [p: string]: Item }): Section {
-  return { ...descriptor, items };
-};
-
-const item = function (descriptor: Descriptor, definition: ItemValue): Item {
-  return { ...descriptor, definition };
-};
-
-export const findBy = (key: string[], category: Category): Item | undefined => {
-  const [categoryKey, sectionKey, itemKey] = key;
-  if (category.key !== categoryKey) {
+export const findItemBy = (key: ItemKey<any>, category: Category): Item | undefined => {
+  const categoryKey = categoryKeyOf(key);
+  const sectionKey = sectionKeyOf(key);
+  if (qualified(category.key) !== qualified(categoryKey)) {
     return;
   }
-  const section = category.sections[sectionKey];
+  const section = category.sections.find((v) => v.key === sectionKey);
   if (!section) {
     return;
   }
 
-  return section.items[itemKey];
+  return section.items.find((v) => qualified(v.key) === qualified(key));
 };
 
-export type Key<T> = readonly [string, string, string];
-const asText = (key: [string, string, string]): Key<string> => key;
-const asNumber = (key: [string, string, string]): Key<number> => key;
-const asBoolean = (key: [string, string, string]): Key<boolean> => key;
-const asType = <T>(key: [string, string, string]): Key<T> => key;
+export const findSectionBy = (key: SectionKey, category: Category): Section | undefined => {
+  return category.sections.find((v) => qualified(v.key) === qualified(key));
+};
 
-export const definition = {
+export const findValueBy = (configuration: { [p: string]: any }, item: Item): any => {
+  const value = configuration[qualified(item.key)];
+  if (value === undefined || value === null) {
+    return;
+  }
+
+  return value;
+};
+
+export const categories = {
+  general: ["general"],
+} as const;
+
+export const sections = {
+  behaviors: sectionKeyFrom(categories.general, "behaviors"),
+  theme: sectionKeyFrom(categories.general, "theme"),
+} as const;
+
+export const itemKeys = {
   general: {
     behaviors: {
-      confirmationWhenDelete: asBoolean(["general", "behaviors", "confirmation_when_delete"]),
-      maxNumberOfHistories: asNumber(["general", "behaviors", "max_number_of_histories"]),
-      defaultSortOrder: asType<SortTypeMap>(["general", "behaviors", "default_sort_order"]),
+      confirmationWhenDelete: itemKeyFrom<string>(sections.behaviors, "confirmation_when_delete"),
+      maxNumberOfHistories: itemKeyFrom<number>(sections.behaviors, "max_number_of_histories"),
+      defaultSortOrder: itemKeyFrom<SortTypeMap>(sections.behaviors, "default_sort_order"),
     },
     theme: {
-      currentTheme: asText(["general", "theme", "current_theme"]),
+      currentTheme: itemKeyFrom<string>(sections.theme, "current_theme"),
     },
   },
 } as const;
 
 export namespace Configurations {
-  const general = category(
-    { key: "general", displayName: "General", description: "General configurations" },
-    {
-      behaviors: section(
-        { key: "behaviors", displayName: "Behaviors", description: "Behaviors" },
-        {
-          confirmationWhenDelete: item(
-            {
-              key: "confirmation_when_delete",
-              displayName: "Confirmation when delete",
-              description: "Need user confirmation when delete something",
-            },
-            ItemDefinitionCreators.boolean(true)
-          ),
-          maxNumberOfHistories: item(
-            {
-              key: "max_number_of_histories",
-              displayName: "Maximum number of histories",
-              description:
-                "History is the history of moved directory in a pane. This setting defines maximum number of histories in a pane",
-            },
-            ItemDefinitionCreators.number(100)
-          ),
-          defaultSortOrder: item(
-            {
-              key: "default_sort_order",
-              displayName: "Default sort order of Pane",
-              description: "This setting defines sort order of filer when open this application",
-            },
-            ItemDefinitionCreators.selectOne(
+  const general = createCategory({
+    key: categories.general,
+    displayName: "General",
+    description: "General configurations",
+    sections: [
+      createSection({
+        key: sections.behaviors,
+        displayName: "Behaviors",
+        description: "Behaviors",
+        items: [
+          createItem({
+            key: itemKeys.general.behaviors.confirmationWhenDelete,
+            displayName: "Confirmation when delete",
+            description: "Need user confirmation when delete something",
+            type: ItemCreators.createBoolean(true),
+          }),
+          createItem({
+            key: itemKeys.general.behaviors.maxNumberOfHistories,
+            displayName: "Maximum number of histories",
+            description:
+              "History is the history of moved directory in a pane. This setting defines maximum number of histories in a pane",
+            type: ItemCreators.createNumber(100),
+          }),
+          createItem({
+            key: itemKeys.general.behaviors.defaultSortOrder,
+            displayName: "Default sort order of Pane",
+            description: "This setting defines sort order of filer when open this application",
+            type: ItemCreators.createSelectOne(
               [
                 {
                   display: "Date",
@@ -163,21 +111,25 @@ export namespace Configurations {
                 },
               ],
               `${SortType.NAME}`
-            )
-          ),
-        }
-      ),
-      theme: section(
-        { key: "theme", displayName: "Theme", description: "Theme" },
-        {
-          currentTheme: item(
-            { key: "current_theme", displayName: "Current theme", description: "Select current theme" },
-            ItemDefinitionCreators.text("default")
-          ),
-        }
-      ),
-    }
-  );
+            ),
+          }),
+        ],
+      }),
+      createSection({
+        key: sections.theme,
+        displayName: "Theme",
+        description: "Theme",
+        items: [
+          createItem({
+            key: itemKeys.general.theme.currentTheme,
+            displayName: "Current theme",
+            description: "Select current theme",
+            type: ItemCreators.createText("default"),
+          }),
+        ],
+      }),
+    ],
+  });
 
   export const definitions = {
     general,

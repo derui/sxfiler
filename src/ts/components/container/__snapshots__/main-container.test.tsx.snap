@@ -1,3 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Container Main Container render correctly when context not initialized and empty state 1`] = `"<div class=\\"main-container__root \\" data-testid=\\"mainContainer\\"><div class=\\"log-viewer-container__root\\" data-testid=\\"logViewerContainer\\"><div class=\\"log-viewer__root\\" data-testid=\\"logViewer-root\\"></div></div></div>"`;
+exports[`Container Main Container render correctly when context not initialized and empty state 1`] = `
+"<div class=\\"main-container__root \\" data-testid=\\"mainContainer\\"><div class=\\"log-viewer-container__root\\" data-testid=\\"logViewerContainer\\"><div class=\\"log-viewer__root\\" data-testid=\\"logViewer-root\\"></div></div><div class=\\"configuration-editor\\" aria-hidden data-testid=\\"configuration-editor\\"><section class=\\"configuration-navigator\\"><div class=\\"configuration-navigator__category\\" data-testid=\\"configuration-navigator-category\\"><span class=\\"
+    configuration-navigator__category-name
+    
+  \\" data-testid=\\"configuration-navigator-category-name\\">General</span><ul class=\\"configuration-navigator__section-tree\\" data-testid=\\"configuration-navigator-section-tree\\" aria-hidden><li class=\\"configuration-navigator__section\\" data-testid=\\"configuration-navigator-section\\">Behaviors</li><li class=\\"configuration-navigator__section\\" data-testid=\\"configuration-navigator-section\\">Theme</li></ul></div></section></div></div>"
+`;

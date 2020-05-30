@@ -3,7 +3,7 @@ import * as MainContainer from "./components/container/main-container";
 import { State } from "@/modules";
 import { ThemeContext } from "./theme";
 import { ModalThemeUpdater } from "./modal-theme-updater";
-import { definition } from "./configurations";
+import { itemKeys } from "./configurations";
 import { selectItem } from "./modules/configuration/selectors";
 
 export type Props = {
@@ -11,7 +11,7 @@ export type Props = {
 };
 
 export const Component: preact.FunctionComponent<Props> = ({ state }) => {
-  const theme = selectItem(state.configuration, definition.general.theme.currentTheme);
+  const theme = selectItem(state.configuration, itemKeys.general.theme.currentTheme);
 
   if (!theme) {
     return null;

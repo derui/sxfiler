@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Project Configuration Boolean Cell render correctly 1`] = `
+"<div class=\\"configuration-cell__root\\" data-testid=\\"configuration-boolean-cell-root\\"><label class=\\"configuration-cell__label\\">name</label><div class=\\"configuration-cell__switch-container\\" data-testid=\\"configuration-boolean-cell-container\\"><span class=\\"switch\\" data-testid=\\"switch-root\\"><span class=\\"
+switch__rail
+switch__rail--checked
+\\"><span class=\\"
+switch__box
+switch__box--checked
+\\"></span></span><input class=\\"switch__input\\" type=\\"checkbox\\" checked /></span></div><p class=\\"configuration-cell__description\\">description</p></div>"
+`;

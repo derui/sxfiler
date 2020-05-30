@@ -16,7 +16,8 @@ module Completer = Completer
 
 (** All event that will raise from this module *)
 type event =
-  | Filer     of Filer.event
-  | Keymap    of Keymap.event
-  | Completer of Completer.event
+  | Filer         of Filer.event
+  | Keymap        of Keymap.event
+  | Completer     of Completer.event
+  | Configuration of Configuration.event
 [@@deriving show, eq]

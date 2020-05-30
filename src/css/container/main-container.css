@@ -1,4 +1,5 @@
 .main-container__root {
+  position: relative;
   max-width: 100%;
   min-width: 0;
   max-height: 100%;
