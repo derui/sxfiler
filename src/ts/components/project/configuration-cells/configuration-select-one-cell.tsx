@@ -1,5 +1,6 @@
 import { h } from "preact";
 import { Item, SelectOption, ItemElementType } from "@/configurations/types";
+import { qualified } from "@/configurations";
 
 type Callback = (value: string) => void;
 
@@ -39,7 +40,7 @@ export const Component: preact.FunctionComponent<Props> = ({ item, onUpdated }) 
         <select
           class="configuration-cell__select-input"
           data-testid="configuration-select"
-          name={item.key}
+          name={qualified(item.key)}
           onChange={handleChange(onUpdated)}
         >
           {item.type.options.map(makeOption(item.type.defaultValue))}
