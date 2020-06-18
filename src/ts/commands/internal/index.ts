@@ -1,4 +1,7 @@
 import { DescriptorsType } from "@/commands/type";
+import * as configurationUpdateAll from "./configuration/update-all";
+import * as configurationUpdate from "./configuration/update";
+import * as configurationSelectSection from "./configuration/select-section";
 import * as completerUpdateCandidates from "./completer/update-candidates";
 import * as completerInitialize from "./completer/initialize";
 import * as completerComplete from "./completer/complete";
@@ -15,6 +18,9 @@ import { Type } from "../command-resolver";
 
 // prettier-ignore
 export const descriptors = {
+  configurationUpdateAll: configurationUpdateAll.descriptor,
+  configurationUpdate: configurationUpdate.descriptor,
+  configurationSelectSection: configurationSelectSection.descriptor,
   completerUpdateCandidates: completerUpdateCandidates.descriptor,
   completerInitialize: completerInitialize.descriptor,
   completerComplete: completerComplete.descriptor,
@@ -36,6 +42,9 @@ export type Descriptors = DescriptorsType<typeof descriptors>;
  */
 // prettier-ignore
 export const registerToResolver = function registerToResolver(resolver: Type) {
+  resolver.register({descriptor: configurationUpdateAll.descriptor, factory: configurationUpdateAll.createCommand});
+  resolver.register({descriptor: configurationUpdate.descriptor, factory: configurationUpdate.createCommand});
+  resolver.register({descriptor: configurationSelectSection.descriptor, factory: configurationSelectSection.createCommand});
   resolver.register({descriptor: completerUpdateCandidates.descriptor, factory: completerUpdateCandidates.createCommand});
   resolver.register({descriptor: completerInitialize.descriptor, factory: completerInitialize.createCommand});
   resolver.register({descriptor: completerComplete.descriptor, factory: completerComplete.createCommand});

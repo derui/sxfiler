@@ -5,7 +5,7 @@ module FL = Sxfiler_workflow
 
 let test_set =
   let conf_t = Alcotest.testable Configuration_store.pp Configuration_store.equal in
-  let event_t = Alcotest.testable FL.Configuration.pp_events FL.Configuration.equal_events in
+  let event_t = Alcotest.testable FL.Configuration.pp_event FL.Configuration.equal_event in
   [
     Alcotest_lwt.test_case "update configuration entirely" `Quick (fun _ () ->
         let key = Configuration_store.Key.from_list [ "a" ] |> Option.get in

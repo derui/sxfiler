@@ -4,3 +4,6 @@
 @import "./log-viewer.css";
 @import "./scroll-bar.css";
 @import "./decision-modal.css";
+@import "./configuration-navigator.css";
+@import "./configuration-cell.css";
+@import "./configuration-section.css";

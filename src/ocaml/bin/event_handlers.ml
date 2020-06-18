@@ -47,5 +47,14 @@ let update_filer (module C : R.Client.Instance) = function
           Lwt.return_unit )
   | _ -> Lwt.return_unit
 
+let notify_configuration (module C : R.Client.Instance) = function
+  | F.Configuration (F.Configuration.Updated store) ->
+      let request =
+        { G.Configuration.UpdatedNotificationRequest.configurations = Tr.Configuration_store.of_domain store }
+      in
+      (Lwt.ignore_result & C.(Client.call instance R.Client_command.Configuration.notify_updated request));
+      Lwt.return_unit
+  | _ -> Lwt.return_unit
+
 let setup_handlers (module C : R.Client.Instance) =
-  R.Event_handler.setup [ update_filer (module C); notify_candidates (module C) ]
+  R.Event_handler.setup [ update_filer (module C); notify_candidates (module C); notify_configuration (module C) ]

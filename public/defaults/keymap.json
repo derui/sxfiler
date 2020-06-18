@@ -25,6 +25,8 @@
     {"action": "interactive.completer.cursor-up", "key": "C-p", "contexts": ["onCompletion"]},
     {"action": "interactive.completer.cursor-down", "key": "ArrowDown", "contexts": ["onCompletion"]},
     {"action": "interactive.completer.cursor-down", "key": "C-n", "contexts": ["onCompletion"]},
-    {"action": "interactive.bookmark.toggle", "key": "C-b", "contexts": ["onFileTree"]}
+    {"action": "interactive.bookmark.toggle", "key": "C-b", "contexts": ["onFileTree"]},
+    {"action": "interactive.configuration.open-editor", "key": "O", "contexts": ["onFileTree"]},
+    {"action": "interactive.configuration.close-editor", "key": "Escape", "contexts": ["onConfigurationEditor"]}
   ]
 }

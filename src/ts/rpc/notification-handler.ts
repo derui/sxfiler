@@ -24,6 +24,7 @@ import { ResponseSender, ProcessResult } from "@/libs/websocket-rpc/server";
 import { TypedSubscriber, EventTypes } from "@/typed-event-hub";
 import { Side } from "@/modules/filer/reducer";
 import { CompletionResultNotificationRequest, CompletionResultNotificationResponse } from "@/generated/completer_pb";
+import * as Con from "@/generated/configuration_pb";
 
 /**
  * this module provides handler to handle commands that are notifications sent from server.
@@ -225,6 +226,24 @@ const handleCandidateUpdated: InnerCommandHandler = (args, _, payload, lazyRespo
   lazyResponse(ProcessResult.successed(new CompletionResultNotificationResponse().serializeBinary()));
 };
 
+const handleConfigurationUpdated: InnerCommandHandler = (args, _, payload, lazyResponse) => {
+  // TODO: Need to notify partial configuration from server.
+  const logger = winston.loggers.get(Loggers.RPC);
+  const request = Con.UpdatedNotificationRequest.deserializeBinary(payload);
+  const factory = args.getCommandResolver().resolveBy(descriptors.configurationUpdateAll);
+  if (!factory) {
+    logger.error(`Invalid path: ${descriptors.configurationUpdateAll.identifier}`);
+    lazyResponse(ProcessResult.ignored());
+    return;
+  }
+
+  logger.info("Start handling event configuration_updated");
+
+  args.getCommandExecutor().execute(factory, args.getState(), { configurations: request.getConfigurationsList() });
+
+  lazyResponse(ProcessResult.successed(new Con.UpdatedNotificationResponse().serializeBinary()));
+};
+
 /**
  * The notification handler for pushing notification from server
  */
@@ -268,6 +287,9 @@ export const notificationHandler = function notificationHandler(
 
           lazyResponse(ProcessResult.successed(new UpdatedFileWindowNotificationResponse().serializeBinary()));
         }
+        break;
+      case Command.CONFIGURATION_NOTIFY_UPDATED:
+        handleConfigurationUpdated(args, id, payload, lazyResponse);
         break;
       case Command.FILER_COPY_INTERACTION:
         handleCopyUserDecision(args, id, payload, lazyResponse);

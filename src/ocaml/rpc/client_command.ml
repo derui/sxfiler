@@ -51,3 +51,12 @@ module Completer = struct
       reader = G.Completer.Completer.CompletionResultNotificationResponse.from_proto;
     }
 end
+
+module Configuration = struct
+  let notify_updated =
+    {
+      command = G.Service.Command.CONFIGURATION_NOTIFY_UPDATED;
+      writer = G.Configuration.UpdatedNotificationRequest.to_proto;
+      reader = G.Configuration.UpdatedNotificationResponse.from_proto;
+    }
+end

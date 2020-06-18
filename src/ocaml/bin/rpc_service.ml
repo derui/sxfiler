@@ -29,7 +29,10 @@ let construct_keymap_endpoints (module Dep : Dependencies.S) options =
   ]
 
 let construct_configuration_endpoints (module Dep : Dependencies.S) =
-  [ (G.Service.Command.CONFIGURATION_GET, R.Configuration_endpoint.get Dep.Step.load_configuration) ]
+  [
+    (G.Service.Command.CONFIGURATION_GET, R.Configuration_endpoint.get Dep.Step.load_configuration);
+    (G.Service.Command.CONFIGURATION_UPDATE, R.Configuration_endpoint.update Dep.Work_flow.Configuration.update);
+  ]
 
 let construct_completer_endpoints (module Dep : Dependencies.S) =
   [

@@ -1,6 +1,6 @@
 open Abbrev
 
-type events = Updated of D.Configuration_store.t [@@deriving eq, show]
+type event = Updated of D.Configuration_store.t [@@deriving eq, show]
 
 module Update = struct
   type input = {
@@ -8,7 +8,7 @@ module Update = struct
     value : Yojson.Basic.t;
   }
 
-  type work_flow = input -> events list Lwt.t
+  type work_flow = input -> event list Lwt.t
   (** workflow to add a key binding for action to key map *)
 end
 

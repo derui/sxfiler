@@ -1,0 +1,24 @@
+.configuration-section {
+  font-size: 1rem;
+  grid-template-rows: 2rem 1fr;
+  background-color: rgb(var(--color-base03));
+  box-shadow: var(--box-shadow);
+}
+
+.configuration-section__header {
+  position: relative;
+  font-size: 1.5em;
+  line-height: 1.5em;
+  padding: var(--space-large) var(--space-base);
+  color: rgb(var(--color-base3));
+  background-color: rgb(var(--color-base02));
+
+  /* border */
+  box-shadow: var(--box-shadow);
+}
+
+.configuration-section__cell-container {
+  padding-top: var(--space-base);
+  padding-bottom: var(--space-base);
+  background-color: rgb(var(--color-base03));
+}

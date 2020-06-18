@@ -32,3 +32,8 @@ module Completer : sig
     t
   (** command to notify complete selecting candidates *)
 end
+
+module Configuration : sig
+  val notify_updated : (G.Configuration.UpdatedNotificationRequest.t, G.Configuration.UpdatedNotificationResponse.t) t
+  (** command to notify that updating store is complete *)
+end

@@ -20,7 +20,7 @@
     "isolatedModules": true,
     "jsx": "react",
     "jsxFactory": "h",
-    "incremental": true,
+    "incremental": false,
     "baseUrl": "./",
     "outDir": "generated",
     "paths": {
