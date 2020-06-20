@@ -52,9 +52,9 @@ describe("Project", () => {
 
       const callback = jest.fn();
       const query = render(<Cell.Component item={item} onUpdated={callback} />);
-      const input = await query.findByTestId("configuration-select");
+      const input = await query.findByTestId("configuration-select-option-0");
 
-      fireEvent.change(input, { target: { value: "foo" } });
+      fireEvent.click(input);
 
       expect(callback).toBeCalledWith("foo");
     });
