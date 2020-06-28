@@ -2,7 +2,6 @@ open Sxfiler_core
 module I = Sxfiler_infrastructure
 module D = Sxfiler_domain
 module G = Sxfiler_generated
-module Tr = Sxfiler_translator
 module F = Sxfiler_workflow
 
 exception Fail_load_migemo
@@ -11,9 +10,8 @@ module Log = (val I.Logger.make [ "main" ])
 
 (** Load stat file from specified file *)
 let load_stat config =
-  let module Y = App_state in
-  let config = Yojson.Safe.from_file config in
-  Y.of_json config |> Result.map_error (fun _ -> `Invalid_json)
+  let module A = App_state in
+  Yojson.Basic.from_file config |> A.of_json |> Result.ok
 
 (* Get config from file, but get default when some error happened *)
 let get_config f config () = if Sys.file_exists config then f config else Error `Not_exists
@@ -87,16 +85,67 @@ let restore_app_state (module Dep : Dependencies.S) option =
       Logs.info (fun m -> m "Restoring persisted stats...");
       let restore_filer =
         Log.info (fun m -> m "Restoring persisted filers...");%lwt
-        let%lwt events = App_state.restore_filer_stats ~initialize:Dep.Work_flow.Filer.initialize v in
+        let open Option.Infix in
+        let locations =
+          let* left_loc, right_loc = App_state_key.(read_by ~key:Key.filer_location v) in
+          Some (left_loc |> Path.of_string |> Result.get_ok, right_loc |> Path.of_string |> Result.get_ok)
+        in
+        let histories =
+          let* left_history, right_history = App_state_key.(read_by ~key:Key.filer_histories v) in
+          let to_record (timestamp, path) =
+            let* location = Path.of_string path |> Result.to_option in
+            let* timestamp = Time.of_rfc3339 timestamp in
+            Some D.Location_history.Record.(make ~location ~timestamp)
+          in
+          let to_history records =
+            List.fold_left
+              (fun histories record ->
+                match record with Some record -> D.Location_history.add_record record histories | None -> histories)
+              (D.Location_history.make ()) records
+          in
+          let left_history = left_history |> List.map to_record |> to_history in
+          let right_history = right_history |> List.map to_record |> to_history in
+          Some (left_history, right_history)
+        in
+        let initial_locs =
+          let initial_loc = Path.of_string option.App_option.initial_loc |> Result.get_ok in
+          (initial_loc, initial_loc)
+        in
+        let left_loc, right_loc = Option.value locations ~default:initial_locs in
+        let module F = Sxfiler_workflow in
+        let input =
+          {
+            F.Filer.Initialize.left_location = left_loc;
+            right_location = right_loc;
+            left_history = Option.map fst histories;
+            right_history = Option.map snd histories;
+            left_sort_order = D.Types.Sort_type.Name;
+            right_sort_order = D.Types.Sort_type.Name;
+          }
+        in
+        let open Lwt.Infix in
+        let%lwt events = Dep.Work_flow.Filer.initialize input >|= List.map (fun v -> F.Filer v) in
         let%lwt () = Dep.post_event events in
         Log.info (fun m -> m "Finish restoring persisted filers")
       in
       let restore_bookmarks =
         Log.info (fun m -> m "Restoring persisted bookmarks...");%lwt
         let%lwt () =
-          match App_state.restore_bookmarks v with
-          | Some (Ok bookmarks)   -> Global.Bookmarks.update bookmarks
-          | Some (Error _) | None -> Lwt.return_unit
+          let bookmarks =
+            App_state_key.(read_by ~key:Key.bookmarks v)
+            |> Option.value ~default:[]
+            |> List.fold_left
+                 (fun bookmarks (name, path) ->
+                   let name = D.Bookmarks.Name.make name and path = Path.of_string path in
+                   match path with
+                   | Ok path -> D.Bookmarks.insert ~name ~path bookmarks
+                   | Error _ ->
+                       Log.info (fun m -> m "Can not restore bookmark: name=%s" (D.Bookmarks.Name.show name))
+                       |> Lwt.ignore_result;
+                       bookmarks)
+                 D.Bookmarks.empty
+          in
+          Global.Bookmarks.update bookmarks
         in
         Log.info (fun m -> m "Finish restoring persisted bookmarks")
       in
@@ -104,15 +153,42 @@ let restore_app_state (module Dep : Dependencies.S) option =
 
 let persist_app_state ~file_name =
   Log.info (fun m -> m "Start app state persisting...");%lwt
-  let app_state = App_state.empty in
+  let app_state = App_state.create () in
+
   Log.info (fun m -> m "Persist bookmarks...");%lwt
+  (* persist bookmark state *)
   let%lwt bookmarks = Global.Bookmarks.get () in
-  let bookmarks = Tr.Bookmarks.of_domain bookmarks in
-  let app_state = App_state.put_bookmarks bookmarks app_state in
+  let bookmarks =
+    D.Bookmarks.items bookmarks
+    |> List.map (fun (v : D.Bookmarks.Item.t) -> (v.name |> D.Bookmarks.Name.value, v.path |> Path.to_string))
+  in
+  App_state_key.(write_by ~key:Key.bookmarks ~value:bookmarks app_state);
+
+  Log.info (fun m -> m "Persist filer status...");%lwt
   let%lwt filer = Global.Filer.get () in
-  let app_state = App_state.add_filer_stat filer app_state in
+  Option.iter
+    (fun (filer : D.Filer.t) ->
+      let locations =
+        let left = filer.left_file_window.file_list |> D.File_list.location
+        and right = filer.right_file_window.file_list |> D.File_list.location in
+        (Path.to_string left, Path.to_string right)
+      in
+      App_state_key.(write_by ~key:Key.filer_location ~value:locations app_state);
+
+      let histories =
+        let of_history history =
+          history.D.Location_history.records
+          |> List.map (fun record ->
+                 (record.D.Location_history.Record.timestamp |> Time.to_rfc3339, record.location |> Path.to_string))
+        in
+        let left = filer.left_file_window.history and right = filer.right_file_window.history in
+        (of_history left, of_history right)
+      in
+      App_state_key.(write_by ~key:Key.filer_histories ~value:histories app_state))
+    filer;
+
   let json = App_state.to_json app_state in
-  Yojson.Safe.to_file file_name json;
+  Yojson.Basic.to_file file_name json;
   Log.info (fun m -> m "Finish app state persisting")
 
 let construct_deps (module Actor : I.Ws_actor.Instance) option =
