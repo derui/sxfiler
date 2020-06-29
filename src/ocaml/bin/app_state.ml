@@ -1,67 +1,60 @@
 open Sxfiler_core
-(** Persist current status of the application *)
 
-module D = Sxfiler_domain
-module F = Sxfiler_workflow
-module T = Sxfiler_translator
-module G = Sxfiler_generated
-module Tr = Sxfiler_translator
+type _ typ =
+  | Int : int typ
+  | String : string typ
+  | Bool : bool typ
+  | Pair   : ('a typ * 'b typ) -> ('a * 'b) typ
+  | List   : 'a typ -> 'a list typ
 
-type t = {
-  filer : G.Filer.Filer.t option;
-  bookmarks : G.Bookmark.BookmarkList.t option;
-}
-[@@deriving show, protocol ~driver:(module Protocol_conv_json.Json)]
+let ( %* ) a b = Pair (a, b)
 
-let empty = { filer = None; bookmarks = None }
+type state = State : ('a typ * 'a) -> state
 
-let put_bookmarks bookmarks stat = { stat with bookmarks = Some bookmarks }
+type (_, _) eq = Eq : ('a, 'a) eq
 
-let restore_bookmarks { bookmarks; _ } = bookmarks |> Option.map Tr.Bookmarks.to_domain
+let rec eq_type : type a b. a typ -> b typ -> (a, b) eq option =
+ fun a b ->
+  match (a, b) with
+  | Int, Int                     -> Some Eq
+  | String, String               -> Some Eq
+  | Bool, Bool                   -> Some Eq
+  | Pair (a1, a2), Pair (b1, b2) -> (
+      match (eq_type a1 b1, eq_type a2 b2) with Some Eq, Some Eq -> Some Eq | _, _ -> None )
+  | List a, List b               -> ( match eq_type a b with Some Eq -> Some Eq | _ -> None )
+  | _, _                         -> None
 
-(** [add_filer_stat filer stat] add the filer to stat *)
-let add_filer_stat (filer : D.Filer.t option) stat =
-  let filer = Option.map Tr.Filer.of_domain filer in
-  { stat with filer }
+let try_cast : type a. a typ -> state -> a option =
+ fun typ (State (ty, v)) -> match eq_type typ ty with Some Eq -> Some v | None -> None
 
-(** [add_filer_stat filer stat] add the filer to stat *)
-let restore_filer_stats ~(initialize : F.Filer.Initialize.work_flow) stat =
+type app_state = (string, state) Hashtbl.t
+
+let create () = Hashtbl.create 0
+
+let read_state : type a. typ:a typ -> key:string -> app_state -> a option =
+ fun ~typ ~key app_state ->
   let open Option.Infix in
-  let file_lists =
-    let* filer = stat.filer in
-    let* left_location =
-      filer.left_file_window >>= fun v ->
-      v.G.Filer.FileWindow.file_list >|= fun v ->
-      (v.location |> Path.of_string, v.sort_order |> Tr.Types.Sort_type.to_domain)
-    in
-    let* right_location =
-      filer.right_file_window >>= fun v ->
-      v.G.Filer.FileWindow.file_list >|= fun v ->
-      (v.location |> Path.of_string, v.sort_order |> Tr.Types.Sort_type.to_domain)
-    in
-    let left_history =
-      filer.left_file_window >>= fun v ->
-      v.G.Filer.FileWindow.history >>= fun v -> Tr.Location_history.to_domain v |> Result.to_option
-    in
-    let right_history =
-      filer.right_file_window >>= fun v ->
-      v.G.Filer.FileWindow.history >>= fun v -> Tr.Location_history.to_domain v |> Result.to_option
-    in
-    Some (left_location, right_location, left_history, right_history)
-  in
-  match file_lists with
-  | Some ((Ok left_location, Ok left_sort_order), (Ok right_location, Ok right_sort_order), left_history, right_history)
-    ->
-      let input =
-        {
-          F.Filer.Initialize.left_location;
-          right_location;
-          left_history;
-          right_history;
-          left_sort_order;
-          right_sort_order;
-        }
-      in
-      let open Lwt.Infix in
-      initialize input >|= List.map (fun v -> F.Filer v)
-  | Some _ | None -> Lwt.return []
+  let* state = Hashtbl.find_opt app_state key in
+  try_cast typ state
+
+let write_state : type a. typ:a typ -> key:string -> value:a -> app_state -> unit =
+ fun ~typ ~key ~value app_state -> Hashtbl.add app_state key (State (typ, value))
+
+let to_json : app_state -> Yojson.Basic.t =
+ fun app_state ->
+  let assocs = Hashtbl.fold (fun key value lst -> (key, `String (Marshal.to_string value [])) :: lst) app_state [] in
+  `Assoc assocs
+
+let of_json json =
+  match Yojson.Basic.Util.(filter_assoc [ json ]) with
+  | []          -> create ()
+  | assocs :: _ ->
+      let app_state = create () in
+      assocs
+      |> List.iter (fun (key, value) ->
+             match value with
+             | `String value ->
+                 let value = Marshal.from_string value 0 in
+                 Hashtbl.add app_state key value
+             | _             -> ());
+      app_state
