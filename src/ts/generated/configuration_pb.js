@@ -12,8 +12,6 @@ var jspb = require('google-protobuf');
 var goog = jspb;
 var global = Function('return this')();
 
-var types_pb = require('./types_pb.js');
-goog.object.extend(proto, types_pb);
 goog.exportSymbol('proto.configuration.Configuration', null, global);
 goog.exportSymbol('proto.configuration.GetRequest', null, global);
 goog.exportSymbol('proto.configuration.GetResponse', null, global);

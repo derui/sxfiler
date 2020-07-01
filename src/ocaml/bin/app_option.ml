@@ -8,6 +8,7 @@ type t = {
   keymap_file : Path.t;
   config_file : string;
   initial_loc : string;
+  theme_dir : string;
   port : int;
   debug : bool;
 }
@@ -21,6 +22,7 @@ let parse executable_dir =
   let keymap_file = ref default_keymap_file in
   let config_file = ref "config.json" in
   let debug = ref false in
+  let theme_dir = ref "themes" in
   let port = ref 50789 in
   let initial_loc = ref (Sys.getenv_opt "HOME" |> Option.value ~default:".") in
   let arg_specs =
@@ -31,6 +33,7 @@ let parse executable_dir =
       ("--keymap_file", Arg.String (fun v -> keymap_file := v), "File name of key map file");
       ("--config_file", Arg.String (fun v -> config_file := v), "File name of configuration file");
       ("--initial_loc", Arg.String (fun v -> initial_loc := v), "Initial location when stat file is not created");
+      ("--theme_dir", Arg.String (fun v -> theme_dir := v), "Directory to store theme uploaded");
       ("--debug", Arg.Unit (fun () -> debug := true), "Verbose mode");
       ("--port", Arg.Int (fun v -> port := v), "The port to run server with");
     ]
@@ -48,5 +51,6 @@ let parse executable_dir =
     config_file = !config_file;
     stat_file = !stat_file;
     initial_loc = !initial_loc;
+    theme_dir = !theme_dir;
     port = !port;
   }

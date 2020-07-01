@@ -1,6 +1,5 @@
 syntax = "proto3";
 
-import "types.proto";
 package configuration;
 
 message Configuration {

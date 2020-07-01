@@ -5,3 +5,4 @@ module Filer = Filer
 module Completer = Completer
 module Bookmark = Bookmark
 module Types = Types
+module Theme = Theme.Theme

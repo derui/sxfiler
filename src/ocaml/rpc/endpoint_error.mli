@@ -42,16 +42,38 @@ module Keymap_error : sig
   val to_endpoint_error : t -> G.Service.Error.t
 end
 
+module Theme_error : sig
+  type t = private
+    | Invalid_color_format
+    | Duplicated           of string
+    | Not_found_theme      of string
+
+  val invalid_color_format : t
+
+  val duplicated : string -> t
+
+  val not_found_theme : string -> t
+
+  val to_endpoint_error : t -> G.Service.Error.t
+end
+
 type t = private
   | Invalid_input of Validation_error.t list
   | Filer         of Filer_error.t
   | Keymap        of Keymap_error.t
+  | Theme         of Theme_error.t
+  | Unknown       of string
 
 val invalid_input : Validation_error.t list -> t
 
 val filer : Filer_error.t -> t
 
 val keymap : Keymap_error.t -> t
+
+val theme : Theme_error.t -> t
+
+val unknown : string -> t
+(** [unknown e] gets unexpected error. *)
 
 val to_endpoint_error : t -> G.Service.Error.t
 (** convert [t] to the error of service *)

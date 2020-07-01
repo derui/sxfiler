@@ -12,7 +12,7 @@ module Make (T : Base) : S with type 'a t := 'a T.t = struct
   module Infix = struct
     let ( >>= ) m f = bind m ~f
 
-    let ( >|= ) m f = fmap m ~f
+    let ( >>| ) m f = fmap m ~f
 
     let ( let* ) m f = bind m ~f
 
@@ -32,7 +32,7 @@ module Make2 (T : Base2) : S2 with type ('a, 'b) t := ('a, 'b) T.t = struct
   module Infix = struct
     let ( >>= ) m f = bind m ~f
 
-    let ( >|= ) m f = fmap m ~f
+    let ( >>| ) m f = fmap m ~f
 
     let ( let* ) m f = bind m ~f
 

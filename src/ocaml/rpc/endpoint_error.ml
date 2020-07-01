@@ -61,16 +61,40 @@ module Keymap_error = struct
     | Invalid_keymap  -> { G.Service.Error.status = -103; error_message = "Invalid keymap"; details = [] }
 end
 
+module Theme_error = struct
+  type t =
+    | Invalid_color_format
+    | Duplicated           of string
+    | Not_found_theme      of string
+
+  let invalid_color_format = Invalid_color_format
+
+  let duplicated v = Duplicated v
+
+  let not_found_theme v = Not_found_theme v
+
+  let to_endpoint_error = function
+    | Invalid_color_format -> { G.Service.Error.status = -201; error_message = "Invalid color format"; details = [] }
+    | Duplicated _         -> { G.Service.Error.status = -202; error_message = "Duplicated"; details = [] }
+    | Not_found_theme _    -> { G.Service.Error.status = -203; error_message = "Not found theme"; details = [] }
+end
+
 type t =
   | Invalid_input of Validation_error.t list
   | Filer         of Filer_error.t
   | Keymap        of Keymap_error.t
+  | Theme         of Theme_error.t
+  | Unknown       of string
 
 let invalid_input errors = Invalid_input errors
 
 let filer e = Filer e
 
 let keymap e = Keymap e
+
+let theme e = Theme e
+
+let unknown e = Unknown e
 
 (** convert [t] to the error of service *)
 let to_endpoint_error = function
@@ -82,3 +106,9 @@ let to_endpoint_error = function
       }
   | Filer e              -> Filer_error.to_endpoint_error e
   | Keymap e             -> Keymap_error.to_endpoint_error e
+  | Theme e              -> Theme_error.to_endpoint_error e
+  | Unknown e            -> {
+                              G.Service.Error.status = -1;
+                              error_message = Printf.sprintf "Unknown error: %s" e;
+                              details = [];
+                            }

@@ -25,7 +25,7 @@ let option_tests =
       `Quick,
       fun () ->
         let open Option.Infix in
-        Alcotest.(check @@ option string) "option" (Some "bar" >|= fun v -> v ^ "foo") @@ Option.some "barfoo" );
+        Alcotest.(check @@ option string) "option" (Some "bar" >>| fun v -> v ^ "foo") @@ Option.some "barfoo" );
   ]
 
 let result_tests =
@@ -53,7 +53,7 @@ let result_tests =
       `Quick,
       fun () ->
         let open Result.Infix in
-        Alcotest.(check @@ result string string) "result" (Ok "bar" >|= fun v -> v ^ "foo") @@ Ok "barfoo" );
+        Alcotest.(check @@ result string string) "result" (Ok "bar" >>| fun v -> v ^ "foo") @@ Ok "barfoo" );
   ]
 
 let path_tests =
@@ -335,6 +335,24 @@ let time_tests =
         Alcotest.(check @@ option time_t) "invalid offset" None (Time.of_rfc3339 "1970-01-01T00:00:00.0") );
   ]
 
+let string_tests =
+  [
+    ( "empty list when apply split for empty string",
+      `Quick,
+      fun () -> Alcotest.(check @@ list string) "empty" [] & String.split_by_len ~len:1 "" );
+    ( "singleton list when apply split by length that is large than size of string ",
+      `Quick,
+      fun () -> Alcotest.(check @@ list string) "empty" [ "abc" ] & String.split_by_len ~len:5 "abc" );
+    ( "split to each character when pass 0 or minus value to 'len'",
+      `Quick,
+      fun () ->
+        Alcotest.(check @@ list string) "list" [ "a"; "b"; "c" ] & String.split_by_len ~len:0 "abc";
+        Alcotest.(check @@ list string) "list" [ "a"; "b"; "c" ] & String.split_by_len ~len:(-1) "abc" );
+    ( "do not return same size when function can not divide length of string by len",
+      `Quick,
+      fun () -> Alcotest.(check @@ list string) "list" [ "ab"; "cd"; "e" ] & String.split_by_len ~len:2 "abcde" );
+  ]
+
 let testcases =
   [
     ("Option", option_tests);
@@ -344,6 +362,7 @@ let testcases =
     ("Error", error_tests);
     ("Time", time_tests);
     ("Comparable", Comparable_test.tests);
+    ("String", string_tests);
   ]
 
 let () = Alcotest.run "Core functionally" testcases

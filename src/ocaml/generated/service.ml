@@ -19,11 +19,11 @@
 
 open Ocaml_protoc_plugin.Runtime [@@warning "-33"]
 module rec Command : sig
-  type t = UNKNOWN_COMMAND | FILER_INITIALIZE | FILER_RELOAD_ALL | FILER_MOVE_LOCATION | FILER_UPDATED | FILER_COPY_INTERACTION | FILER_MOVE_INTERACTION | FILER_DELETE_INTERACTION | KEYMAP_ADD_KEY_BINDING | KEYMAP_REMOVE_KEY_BINDING | KEYMAP_GET | KEYMAP_RELOAD | KEYMAP_UPDATED | FILER_OPEN_FILE_ITEM | CONFIGURATION_GET | FILER_UP_DIRECTORY | FILER_TOGGLE_MARK_OF_ITEM | FILER_UPDATED_FILE_WINDOW | COMPLETER_INITIALIZE | COMPLETER_COMPLETE | COMPLETER_NOTIFY_COMPLETED | FILER_MOVE | FILER_COPY | FILER_DELETE | CONFIGURATION_UPDATE | CONFIGURATION_NOTIFY_UPDATED [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = UNKNOWN_COMMAND | FILER_INITIALIZE | FILER_RELOAD_ALL | FILER_MOVE_LOCATION | FILER_UPDATED | FILER_COPY_INTERACTION | FILER_MOVE_INTERACTION | FILER_DELETE_INTERACTION | KEYMAP_ADD_KEY_BINDING | KEYMAP_REMOVE_KEY_BINDING | KEYMAP_GET | KEYMAP_RELOAD | KEYMAP_UPDATED | FILER_OPEN_FILE_ITEM | CONFIGURATION_GET | FILER_UP_DIRECTORY | FILER_TOGGLE_MARK_OF_ITEM | FILER_UPDATED_FILE_WINDOW | COMPLETER_INITIALIZE | COMPLETER_COMPLETE | COMPLETER_NOTIFY_COMPLETED | FILER_MOVE | FILER_COPY | FILER_DELETE | CONFIGURATION_UPDATE | CONFIGURATION_NOTIFY_UPDATED | THEME_LIST | THEME_ADD | THEME_REMOVE [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
   val to_int: t -> int
   val from_int: int -> (t, [> Runtime'.Result.error]) result
 end = struct 
-  type t = UNKNOWN_COMMAND | FILER_INITIALIZE | FILER_RELOAD_ALL | FILER_MOVE_LOCATION | FILER_UPDATED | FILER_COPY_INTERACTION | FILER_MOVE_INTERACTION | FILER_DELETE_INTERACTION | KEYMAP_ADD_KEY_BINDING | KEYMAP_REMOVE_KEY_BINDING | KEYMAP_GET | KEYMAP_RELOAD | KEYMAP_UPDATED | FILER_OPEN_FILE_ITEM | CONFIGURATION_GET | FILER_UP_DIRECTORY | FILER_TOGGLE_MARK_OF_ITEM | FILER_UPDATED_FILE_WINDOW | COMPLETER_INITIALIZE | COMPLETER_COMPLETE | COMPLETER_NOTIFY_COMPLETED | FILER_MOVE | FILER_COPY | FILER_DELETE | CONFIGURATION_UPDATE | CONFIGURATION_NOTIFY_UPDATED [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+  type t = UNKNOWN_COMMAND | FILER_INITIALIZE | FILER_RELOAD_ALL | FILER_MOVE_LOCATION | FILER_UPDATED | FILER_COPY_INTERACTION | FILER_MOVE_INTERACTION | FILER_DELETE_INTERACTION | KEYMAP_ADD_KEY_BINDING | KEYMAP_REMOVE_KEY_BINDING | KEYMAP_GET | KEYMAP_RELOAD | KEYMAP_UPDATED | FILER_OPEN_FILE_ITEM | CONFIGURATION_GET | FILER_UP_DIRECTORY | FILER_TOGGLE_MARK_OF_ITEM | FILER_UPDATED_FILE_WINDOW | COMPLETER_INITIALIZE | COMPLETER_COMPLETE | COMPLETER_NOTIFY_COMPLETED | FILER_MOVE | FILER_COPY | FILER_DELETE | CONFIGURATION_UPDATE | CONFIGURATION_NOTIFY_UPDATED | THEME_LIST | THEME_ADD | THEME_REMOVE [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
   let to_int = function
     | UNKNOWN_COMMAND -> 0
     | FILER_INITIALIZE -> 1
@@ -51,6 +51,9 @@ end = struct
     | FILER_DELETE -> 23
     | CONFIGURATION_UPDATE -> 24
     | CONFIGURATION_NOTIFY_UPDATED -> 25
+    | THEME_LIST -> 26
+    | THEME_ADD -> 27
+    | THEME_REMOVE -> 28
   
   let from_int = function
     | 0 -> Ok UNKNOWN_COMMAND
@@ -79,6 +82,9 @@ end = struct
     | 23 -> Ok FILER_DELETE
     | 24 -> Ok CONFIGURATION_UPDATE
     | 25 -> Ok CONFIGURATION_NOTIFY_UPDATED
+    | 26 -> Ok THEME_LIST
+    | 27 -> Ok THEME_ADD
+    | 28 -> Ok THEME_REMOVE
     | n -> Error (`Unknown_enum_value n)
   
 end
@@ -266,6 +272,17 @@ module CompleterService = struct
     ( (module Request : Runtime'.Service.Message with type t = Request.t ), 
     (module Response : Runtime'.Service.Message with type t = Response.t ) ) 
   let notifyCompleted = 
+    ( (module Request : Runtime'.Service.Message with type t = Request.t ), 
+    (module Response : Runtime'.Service.Message with type t = Response.t ) ) 
+end
+module ThemeService = struct
+  let add = 
+    ( (module Request : Runtime'.Service.Message with type t = Request.t ), 
+    (module Response : Runtime'.Service.Message with type t = Response.t ) ) 
+  let remove = 
+    ( (module Request : Runtime'.Service.Message with type t = Request.t ), 
+    (module Response : Runtime'.Service.Message with type t = Response.t ) ) 
+  let list = 
     ( (module Request : Runtime'.Service.Message with type t = Request.t ), 
     (module Response : Runtime'.Service.Message with type t = Response.t ) ) 
 end

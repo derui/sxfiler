@@ -1,6 +1,7 @@
 module Filer_step = Filer_step
 module Forward_match_completer = Forward_match_completer
 module Keymap_step = Keymap_step
+module Theme_step = Theme_step
 module Logger = Logger
 module Migemo_completer = Migemo_completer
 module Statable = Statable

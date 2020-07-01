@@ -24,6 +24,7 @@ PROTO_FILE_DEPS += completer
 PROTO_FILE_DEPS += configuration
 PROTO_FILE_DEPS += filer
 PROTO_FILE_DEPS += keymap
+PROTO_FILE_DEPS += theme
 PROTO_FILE_DEPS += types
 PROTO_FILE_DEPS += service
 

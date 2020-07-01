@@ -28,7 +28,7 @@ module type S = sig
   module Infix : sig
     val ( >>= ) : 'a t -> ('a -> 'b t) -> 'b t
 
-    val ( >|= ) : 'a t -> ('a -> 'b) -> 'b t
+    val ( >>| ) : 'a t -> ('a -> 'b) -> 'b t
 
     val ( let* ) : 'a t -> ('a -> 'b t) -> 'b t
 
@@ -68,7 +68,7 @@ module type S2 = sig
   module Infix : sig
     val ( >>= ) : ('a, 'b) t -> ('a -> ('c, 'b) t) -> ('c, 'b) t
 
-    val ( >|= ) : ('a, 'b) t -> ('a -> 'c) -> ('c, 'b) t
+    val ( >>| ) : ('a, 'b) t -> ('a -> 'c) -> ('c, 'b) t
 
     val ( let* ) : ('a, 'b) t -> ('a -> ('c, 'b) t) -> ('c, 'b) t
 

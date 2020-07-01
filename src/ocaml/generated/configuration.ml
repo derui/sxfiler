@@ -18,11 +18,6 @@
 *)
 
 open Ocaml_protoc_plugin.Runtime [@@warning "-33"]
-(**/**)
-module Imported'modules = struct
-  module Types = Types
-end
-(**/**)
 module Configuration = struct
   module rec Configuration : sig
     val name': unit -> string

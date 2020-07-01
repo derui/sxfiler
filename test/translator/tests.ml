@@ -11,4 +11,5 @@ let () =
          ("location_history translator", Location_history_test.test_set);
          ("keymap translator", Keymap_test.test_set);
          ("filer translator", Filer_test.test_set);
+         ("theme translator", Theme_test.test_set);
        ]

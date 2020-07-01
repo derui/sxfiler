@@ -40,6 +40,13 @@ let construct_completer_endpoints (module Dep : Dependencies.S) =
     (G.Service.Command.COMPLETER_COMPLETE, R.Completer_endpoint.complete Dep.Work_flow.Completer.complete);
   ]
 
+let construct_theme_endpoints (module Dep : Dependencies.S) =
+  [
+    (G.Service.Command.THEME_ADD, R.Theme_endpoint.add_theme Dep.Work_flow.Theme.add);
+    (G.Service.Command.THEME_LIST, R.Theme_endpoint.list Dep.Work_flow.Theme.list);
+    (G.Service.Command.THEME_REMOVE, R.Theme_endpoint.remove_theme Dep.Work_flow.Theme.remove);
+  ]
+
 let construct_services (module Dep : Dependencies.S) options =
   List.concat
     [

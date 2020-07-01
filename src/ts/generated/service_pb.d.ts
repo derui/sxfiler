@@ -150,6 +150,9 @@ export interface CommandMap {
   FILER_DELETE: 23;
   CONFIGURATION_UPDATE: 24;
   CONFIGURATION_NOTIFY_UPDATED: 25;
+  THEME_LIST: 26;
+  THEME_ADD: 27;
+  THEME_REMOVE: 28;
 }
 
 export const Command: CommandMap;

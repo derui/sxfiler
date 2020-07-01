@@ -8,4 +8,5 @@ let () =
          ("Filer work flows", Filer_test.test_set);
          ("Keymap work flows", Keymap_test.test_set);
          ("Configuration work flows", Configuration_test.test_set);
+         ("Theme work flows", Theme_test.test_set);
        ]

@@ -50,6 +50,12 @@ module type S = sig
     val update_collection : F.Common_step.Completer.update_collection
 
     val provide_collection : F.Common_step.Completer.provide_collection
+
+    val store_theme : F.Common_step.Theme.Store_theme.t
+
+    val remove_theme : F.Common_step.Theme.Remove_theme.t
+
+    val list_theme : F.Common_step.Theme.List_theme.t
   end
 
   module Work_flow : sig
@@ -89,6 +95,14 @@ module type S = sig
 
     module Configuration : sig
       val update : F.Configuration.Update.work_flow
+    end
+
+    module Theme : sig
+      val add : F.Theme.Add_theme.work_flow
+
+      val remove : F.Theme.Remove_theme.work_flow
+
+      val list : F.Theme.List_theme.work_flow
     end
   end
 
@@ -147,6 +161,12 @@ let make (module Option' : Option') (module Completer : D.Completer.Instance) (m
       let update_collection = Global.Cached_collection.update
 
       let provide_collection = Global.Cached_collection.get
+
+      let store_theme = I.Theme_step.store_theme (Path.of_string Option'.option.theme_dir |> Result.get_ok)
+
+      let remove_theme = I.Theme_step.remove_theme (Path.of_string Option'.option.theme_dir |> Result.get_ok)
+
+      let list_theme = I.Theme_step.list_theme (Path.of_string Option'.option.theme_dir |> Result.get_ok)
     end
 
     module Work_flow = struct
@@ -186,6 +206,14 @@ let make (module Option' : Option') (module Completer : D.Completer.Instance) (m
 
       module Configuration = struct
         let update = F.Configuration.update Step.load_configuration Step.save_configuration
+      end
+
+      module Theme = struct
+        let add = F.Theme.add_theme Step.store_theme
+
+        let remove = F.Theme.remove_theme Step.list_theme Step.remove_theme
+
+        let list = F.Theme.list_theme Step.list_theme
       end
     end
 

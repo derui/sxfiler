@@ -8,3 +8,4 @@ module Configuration_endpoint = Configuration_endpoint
 module Interaction_mediator = Interaction_mediator
 module Server = Server
 module Completer_endpoint = Completer_endpoint
+module Theme_endpoint = Theme_endpoint

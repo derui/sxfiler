@@ -2,6 +2,7 @@ let ( = ) = Int.equal
 
 let (( == )[@deprecated "Use phys_equal instead"]) = Stdlib.( == )
 
+module String = String
 module Comparable = Comparable
 module Error = Error
 module File = File

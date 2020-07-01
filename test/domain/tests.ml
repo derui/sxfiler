@@ -12,4 +12,5 @@ let () =
          ("Keymap", Keymap_test.test_set);
          ("Filer", Filer_test.test_set);
          ("Configuration store", Configuration_store_test.test_set);
+         ("Theme", Theme_test.test_set);
        ]
