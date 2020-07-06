@@ -1,4 +1,7 @@
 import { DescriptorsType } from "@/commands/type";
+import * as themeSelect from "./theme/select";
+import * as themeUpload from "./theme/upload";
+import * as themeUpdateList from "./theme/update-list";
 import * as configurationUpdateAll from "./configuration/update-all";
 import * as configurationUpdate from "./configuration/update";
 import * as configurationSelectSection from "./configuration/select-section";
@@ -18,6 +21,9 @@ import { Type } from "../command-resolver";
 
 // prettier-ignore
 export const descriptors = {
+  themeSelect: themeSelect.descriptor,
+  themeUpload: themeUpload.descriptor,
+  themeUpdateList: themeUpdateList.descriptor,
   configurationUpdateAll: configurationUpdateAll.descriptor,
   configurationUpdate: configurationUpdate.descriptor,
   configurationSelectSection: configurationSelectSection.descriptor,
@@ -42,6 +48,9 @@ export type Descriptors = DescriptorsType<typeof descriptors>;
  */
 // prettier-ignore
 export const registerToResolver = function registerToResolver(resolver: Type) {
+  resolver.register({descriptor: themeSelect.descriptor, factory: themeSelect.createCommand});
+  resolver.register({descriptor: themeUpload.descriptor, factory: themeUpload.createCommand});
+  resolver.register({descriptor: themeUpdateList.descriptor, factory: themeUpdateList.createCommand});
   resolver.register({descriptor: configurationUpdateAll.descriptor, factory: configurationUpdateAll.createCommand});
   resolver.register({descriptor: configurationUpdate.descriptor, factory: configurationUpdate.createCommand});
   resolver.register({descriptor: configurationSelectSection.descriptor, factory: configurationSelectSection.createCommand});

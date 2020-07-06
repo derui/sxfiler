@@ -1,0 +1,10 @@
+:root {
+  --base-font-size: 13.5px;
+  --base-border-radius: 4px;
+  --header-shadow: 0 7px 3px rgba(0, 0, 0, 0.2);
+  --box-shadow: 4px 4px 7px rgba(0, 0, 0, 0.3), -4px 0 7px rgba(0, 0, 0, 0.3);
+  --space-large: 16px;
+  --space-base: 8px;
+  --space-small: 4px;
+  --space-nano: 2px;
+}

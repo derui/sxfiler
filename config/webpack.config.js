@@ -233,17 +233,20 @@ module.exports = function (webpackEnv) {
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
       // TypeScript type checking
       new ForkTsCheckerWebpackPlugin({
-        typescript: resolve.sync('typescript', {
-          basedir: paths.appNodeModules,
-        }),
+        typescript: {
+          enabled: true,
+          profile: true,
+          configFile: paths.appTsConfig,
+          diagnosticOptions: {
+            syntactic: true,
+          },
+        },
         async: false,
-        eslint: true,
-        checkSyntacticErrors: true,
-        measureCompileTime: true,
-        tsconfig: paths.appTsConfig,
-        reportFiles: ['src/**/*.{ts, tsx}', '!src/**/?(*.)(test).*', '!**/src/setupTests.*'],
-        watch: paths.appSrc,
-        silent: false,
+        eslint: {
+          enabled: true,
+          files: 'src/**/*.{ts, tsx}',
+        },
+        logger: { infrastructure: 'console', issues: 'console' },
       }),
     ].filter(Boolean),
     // Some libraries import Node modules but don't use them in the browser.

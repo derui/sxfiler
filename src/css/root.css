@@ -1,5 +1,5 @@
 @import "./reset.css";
-@import "./default-theme.css";
+@import "./default-variables.css";
 @import "./ui/root.css";
 @import "./project/root.css";
 @import "./container/root.css";
