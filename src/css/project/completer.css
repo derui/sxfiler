@@ -13,18 +13,25 @@
   flex: 0 0 auto;
   list-style: none;
   padding: var(--space-small) var(--space-base);
-  color: rgb(var(--color-base3));
+
+  /* color: rgb(var(--color-base3)); */
+  color: var(--color-completer-candidateText);
   font-size: 0.8rem;
 
   &[aria-selected="true"] {
-    background-color: rgba(var(--color-base2), 0.3);
+    /* background-color: rgba(var(--color-base2), 0.3); */
+    background-color: var(--color-completer-selectedCandidateBackground);
   }
 }
 
 .completer__matching-area {
   border-radius: var(--base-border-radius);
-  color: rgb(var(--color-base03));
-  background-color: rgb(var(--color-yellow));
+
+  /* color: rgb(var(--color-base03)); */
+  color: var(--color-completer-matchingAreaText);
+
+  /* background-color: rgb(var(--color-yellow)); */
+  background-color: var(--color-completer-matchingAreaBackground);
 }
 
 .completer__container {
@@ -37,7 +44,9 @@
   width: 75%;
   max-height: 80%;
   border-radius: 0 0 var(--space-small) var(--space-small);
-  background-color: rgb(var(--color-base02));
+
+  /* background-color: rgb(var(--color-base02)); */
+  background-color: var(--color-completer-baseBackground);
   box-shadow: var(--box-shadow);
 
   &[data-state="entering"] {
@@ -56,8 +65,11 @@
 }
 
 .completer__title {
-  color: rgb(var(--color-base03));
-  background-color: rgb(var(--color-base3));
+  /* color: rgb(var(--color-base03)); */
+  color: var(--color-completer-titleText);
+
+  /* background-color: rgb(var(--color-base3)); */
+  background-color: var(--color-completer-titleBackground);
   padding: var(--space-base);
   margin: 0;
   box-shadow: var(--header-shadow);
@@ -73,8 +85,14 @@
 .completer__input {
   flex: 1 1 auto;
   outline: none;
-  border: 1px solid rgb(var(--color-blue));
+
+  /* border: 1px solid rgb(var(--color-blue)); */
+  border: 1px solid var(--color-completer-inputBorder);
   font-size: 1rem;
-  color: rgb(var(--color-base3));
-  background-color: rgb(var(--color-base03));
+
+  /* color: rgb(var(--color-base3)); */
+  color: var(--color-completer-inputText);
+
+  /* background-color: rgb(var(--color-base03)); */
+  background-color: var(--color-completer-inputBackground);
 }

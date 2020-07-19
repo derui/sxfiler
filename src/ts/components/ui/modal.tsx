@@ -55,7 +55,6 @@ export const createComponent = function createComponent<
     return createPortal(
       <Transition in={opened} timeout={200}>
         {(state) => {
-          console.log(state);
           return (
             <Fragment>
               <Overlay opened={opened} transition={state} />

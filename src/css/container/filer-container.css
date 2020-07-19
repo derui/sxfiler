@@ -2,14 +2,15 @@
   display: grid;
   grid-template-rows: auto;
   grid-template-columns: 0.5fr auto 0.5fr;
-  color: rgb(var(--color-base1));
+  color: var(--color-fileList-baseText);
   overflow: hidden;
-  background-color: rgb(var(--color-base03));
+  background-color: var(--color-fileList-baseBackground);
   font-size: 1rem;
 }
 
 .filer-container__separator {
   width: 2px;
-  background-color: rgb(var(--color-base00));
+  /* background-color: rgb(var(--color-base00)); */
+  background-color: var(--color-fileList-separator);
   margin: 0 var(--space-nano);
 }

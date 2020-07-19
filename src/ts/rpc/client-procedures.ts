@@ -26,6 +26,7 @@ import { RPCClient } from "@/libs/websocket-rpc/client";
 import { GetRequest, GetResponse } from "@/generated/keymap_pb";
 import * as Con from "@/generated/configuration_pb";
 import * as CompleterPb from "@/generated/completer_pb";
+import * as ThemePb from "@/generated/theme_pb";
 
 /**
  * make Request with payload and command
@@ -173,5 +174,25 @@ export namespace Completer {
     Command.COMPLETER_COMPLETE,
     (v) => v.serializeBinary(),
     CompleterPb.CompleteResponse.deserializeBinary
+  );
+}
+
+export namespace Theme {
+  export const add: ProcedureDef<ThemePb.AddRequest, ThemePb.AddResponse> = callGeneric(
+    Command.THEME_ADD,
+    (v) => v.serializeBinary(),
+    ThemePb.AddResponse.deserializeBinary
+  );
+
+  export const remove: ProcedureDef<ThemePb.RemoveRequest, ThemePb.RemoveResponse> = callGeneric(
+    Command.THEME_REMOVE,
+    (v) => v.serializeBinary(),
+    ThemePb.RemoveResponse.deserializeBinary
+  );
+
+  export const list: ProcedureDef<ThemePb.ListRequest, ThemePb.ListResponse> = callGeneric(
+    Command.THEME_LIST,
+    (v) => v.serializeBinary(),
+    ThemePb.ListResponse.deserializeBinary
   );
 }

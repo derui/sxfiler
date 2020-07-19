@@ -1,31 +1,41 @@
-import { h, Fragment } from "preact";
+import { h } from "preact";
 import * as MainContainer from "./components/container/main-container";
 import { State } from "@/modules";
-import { ThemeContext } from "./theme";
-import { ModalThemeUpdater } from "./modal-theme-updater";
 import { itemKeys } from "./configurations";
 import { selectItem } from "./modules/configuration/selectors";
+import { useState, useEffect } from "preact/hooks";
+import { selectColorPairs } from "./modules/theme/selectors";
 
 export type Props = {
   state: State;
 };
 
+const makeCSSVariables = (colorPairs: { [p: string]: string }): string => {
+  const variables = Object.entries(colorPairs).map(([k, v]) => {
+    return `--color-${k.replace(".", "-")}: ${v};`;
+  });
+  return `
+:root {
+${variables.join("\n")}
+}
+`;
+};
+
 export const Component: preact.FunctionComponent<Props> = ({ state }) => {
   const theme = selectItem(state.configuration, itemKeys.general.theme.currentTheme);
 
-  if (!theme) {
-    return null;
-  }
+  const [style] = useState(document.createElement("style"));
 
-  return (
-    <Fragment>
-      <ThemeContext.Provider value={theme}>
-        <ModalThemeUpdater />
-      </ThemeContext.Provider>
+  useEffect(() => {
+    const colorPairs = selectColorPairs(state.theme, theme || "");
 
-      <ThemeContext.Provider value={theme}>
-        <MainContainer.Component state={state} />
-      </ThemeContext.Provider>
-    </Fragment>
-  );
+    style.innerHTML = makeCSSVariables(colorPairs);
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, [theme]);
+
+  return <MainContainer.Component state={state} />;
 };

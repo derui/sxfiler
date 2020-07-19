@@ -12,15 +12,18 @@
 
 .decision-modal__header {
   margin: 0;
-  color: rgb(var(--color-base03));
-  background-color: rgb(var(--color-base3));
+  /* color: rgb(var(--color-base03)); */
+  color: var(--color-decisionModal-headerText);
+  /* background-color: rgb(var(--color-base3)); */
+  background-color: var(--color-decisionModal-headerBackground);
   padding: var(--space-large);
   box-shadow: var(--header-shadow);
 }
 
 .decision-modal__panel-container {
   padding: var(--space-base);
-  background-color: rgb(var(--color-base03));
+  /* background-color: rgb(var(--color-base03)); */
+  background-color: var(--color-decisionModal-panelBackground);
 }
 
 .decision-modal__panel {
@@ -30,14 +33,19 @@
   padding: var(--space-base);
   margin: 0 $baseSpace;
   border-left: var(--space-small) solid transparent;
-  color: rgb(var(--color-base3));
-  background-color: rgb(var(--color-base03));
+  /* color: rgb(var(--color-base3)); */
+  color: var(--color-decisionModal-panelText);
+  /* background-color: rgb(var(--color-base03)); */
+  background-color: var(--color-decisionModal-panelBackground);
   transition: background-color ease-out 150ms, color ease-out 150ms;
 
   &[aria-selected="true"] {
-    color: rgb(var(--color-base03));
-    background-color: rgb(var(--color-base3));
-    border-left: var(--space-small) solid rgb(var(--color-red));
+    /* color: rgb(var(--color-base03)); */
+    color: var(--color-decisionModal-panelSelectedText);
+    /* background-color: rgb(var(--color-base3)); */
+    background-color: var(--color-decisionModal-panelSelectedBackground);
+    /* border-left: var(--space-small) solid rgb(var(--color-red)); */
+    border-left: var(--space-small) solid var(--color-decisionModal-panelSelectedMarker);
   }
 }
 
