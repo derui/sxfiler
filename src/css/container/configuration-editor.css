@@ -7,7 +7,6 @@
   height: 100%;
   grid-template-columns: 30% 1fr;
   grid-gap: var(--space-base);
-  /* background-color: rgb(var(--color-base3)); */
   background-color: var(--color-configurationEditor-background);
 
   &[aria-hidden="true"] {

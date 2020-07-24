@@ -3,10 +3,8 @@
   grid-template-rows: calc(var(--space-base) * 2 + 1rem) 1fr;
   margin: 0;
   padding: 0;
-  /* color: rgb(var(--color-base01)); */
   color: var(--color-fileList-baseText);
   overflow: hidden;
-  /* background-color: rgb(var(--color-base03)); */
   background-color: var(--color-fileList-baseBackground);
   font-size: 1rem;
 }
@@ -22,7 +20,6 @@
   flex: 1 1 auto;
   margin: auto 0;
   text-align: center;
-  /* color: rgb(var(--color-red)); */
   color: var(--color-fileList-emptyText);
 
   &::after {
@@ -37,7 +34,6 @@
   flex: 1 1 auto;
   position: relative;
   font-size: 1rem;
-  /* border-right: 1px solid rgb(var(--color-base0)); */
   border-right: 1px solid var(--color-fileList-separator);
 
   &:last-of-type {
@@ -50,13 +46,10 @@
   padding: var(--space-base) 0;
   margin: 0;
   font-weight: bold;
-  /* color: rgb(var(--color-base1)); */
   color: var(--color-fileList-headerText);
-  /* background-color: rgb(var(--color-base03)); */
   background-color: var(--color-fileList-headerBackground);
   font-family: monospace;
-  /* border-bottom: 1px solid rgb(var(--color-base01)); */
-  border-bottom: 1px solid rgb(var(--color-fileList-headerBorder));
+  border-bottom: 1px solid var(--color-fileList-headerBorder);
 
   &[data-focused="true"] {
     /* color: rgb(var(--color-yellow)); */

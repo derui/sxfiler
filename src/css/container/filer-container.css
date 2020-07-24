@@ -10,7 +10,6 @@
 
 .filer-container__separator {
   width: 2px;
-  /* background-color: rgb(var(--color-base00)); */
   background-color: var(--color-fileList-separator);
   margin: 0 var(--space-nano);
 }

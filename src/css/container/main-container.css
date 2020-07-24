@@ -7,7 +7,6 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
-  /* background-color: rgb(var(--color-base03)); */
   background-color: var(--color-root-background);
   display: grid;
   grid-template-rows: 1fr 10% auto;

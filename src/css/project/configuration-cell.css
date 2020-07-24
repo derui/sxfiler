@@ -5,8 +5,6 @@
   align-items: center;
   padding: var(--space-large) var(--space-base);
   margin: 0;
-
-  /* border-top: 2px solid rgb(var(--color-base3)); */
   border-top: 2px solid var(--color-configuration-cellSeparator);
 
   &:first-of-type {
@@ -14,11 +12,7 @@
   }
 
   /* colors */
-
-  /* background-color: rgb(var(--color-base02)); */
   background-color: var(--color-configuration-cellBackground);
-
-  /* color: rgb(var(--color-base3)); */
   color: var(--color-configuration-cellText);
 
   /* fonts */
@@ -51,7 +45,6 @@
   transition: box-shadow ease-out 150ms;
 
   &:focus {
-    /* box-shadow: 0 0 3px 3px rgb(var(--color-orange)); */
     box-shadow: 0 0 3px 3px var(--color-configuration-shadowCellFocused);
   }
 }
@@ -76,11 +69,7 @@
   position: relative;
   display: inline-block;
   padding: var(--space-base);
-
-  /* color: rgb(var(--color-base03)); */
   color: var(--color-configuration-selectText);
-
-  /* background-color: rgb(var(--color-base3)); */
   background-color: var(--color-configuration-selectBackground);
   min-width: 8em;
 }
@@ -96,8 +85,6 @@
     height: 0;
     border-style: solid;
     border-width: 8.7px 5px 0 5px;
-
-    /* border-color: rgb(var(--color-base03)) transparent transparent transparent; */
     border-color: var(--color-configuration-dropdownMark) transparent transparent transparent;
     transition: transform ease-out 100ms;
   }
@@ -112,11 +99,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
-
-  /* color: rgb(var(--color-base03)); */
   color: var(--color-configuration-selectionMenuText);
-
-  /* background-color: rgb(var(--color-base3)); */
   background-color: var(--color-configuration-selectionMenuBackground);
   box-shadow: var(--box-shadow);
   opacity: 0;
@@ -134,18 +117,13 @@
   cursor: pointer;
 
   &:hover {
-    /* color: rgb(var(--color-base3)); */
     color: var(--color-configuration-selectionOptionText);
-
-    /* background-color: rgb(var(--color-cyan)); */
     background-color: var(--color-configuration-selectionOptionBackground);
   }
 }
 
 .configuration-cell__option-separator {
   margin: 0 var(--base-space);
-
-  /* border-bottom: 1px solid rgb(var(--color-base01)); */
   border-bottom: 1px solid var(--color-configuration-selectionOptionSeparator);
 
   &:last-of-type {

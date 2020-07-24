@@ -1,8 +1,6 @@
 .configuration-section {
   font-size: 1rem;
   grid-template-rows: 2rem 1fr;
-
-  /* background-color: rgb(var(--color-base03)); */
   background-color: var(--color-configuration-sectionBackground);
   box-shadow: var(--box-shadow);
 }
@@ -12,11 +10,7 @@
   font-size: 1.5em;
   line-height: 1.5em;
   padding: var(--space-large) var(--space-base);
-
-  /* color: rgb(var(--color-base3)); */
   color: var(--color-configuration-sectionHeaderText);
-
-  /* background-color: rgb(var(--color-base02)); */
   background-color: var(--color-configuration-sectionHeaderBackground);
 
   /* border */
@@ -26,7 +20,5 @@
 .configuration-section__cell-container {
   padding-top: var(--space-base);
   padding-bottom: var(--space-base);
-
-  /* background-color: rgb(var(--color-base03)); */
   background-color: var(--color-configuration-sectionCellBackground);
 }
