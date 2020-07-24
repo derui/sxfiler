@@ -3,6 +3,8 @@
 open Abbrev
 open Sxfiler_core
 
+module L = (val I.Logger.make [ "rpc_server" ])
+
 type response = (G.Service.Response.t * F.event list) Lwt.t
 
 type request = G.Service.Request.t
@@ -30,23 +32,35 @@ let with_request (from_proto, to_proto) request ~f =
                 };
           },
           [] )
-  | Ok payload -> (
-      match%lwt f payload with
-      | Ok (payload, events) ->
-          Lwt.return
-            ( {
-                G.Service.Response.id;
-                status = G.Service.Status.SUCCESS;
-                payload = to_proto payload |> Pb.Writer.contents |> Bytes.of_string;
-                error = None;
-              },
-              events )
-      | Error error          ->
+  | Ok payload ->
+      Lwt.catch
+        (fun () ->
+          match%lwt f payload with
+          | Ok (payload, events) ->
+              Lwt.return
+                ( {
+                    G.Service.Response.id;
+                    status = G.Service.Status.SUCCESS;
+                    payload = to_proto payload |> Pb.Writer.contents |> Bytes.of_string;
+                    error = None;
+                  },
+                  events )
+          | Error error          ->
+              Lwt.return
+                ( {
+                    G.Service.Response.id;
+                    status = G.Service.Status.COMMAND_FAILED;
+                    payload = Bytes.empty;
+                    error = Some (Endpoint_error.to_endpoint_error error);
+                  },
+                  [] ))
+        (fun e ->
+          L.err (fun m -> m "Raise error: %s" (Printexc.to_string e));%lwt
           Lwt.return
             ( {
                 G.Service.Response.id;
                 status = G.Service.Status.COMMAND_FAILED;
                 payload = Bytes.empty;
-                error = Some (Endpoint_error.to_endpoint_error error);
+                error = Some Endpoint_error.(to_endpoint_error @@ unknown @@ Printf.sprintf "raise unknown error");
               },
-              [] ) )
+              [] ))
