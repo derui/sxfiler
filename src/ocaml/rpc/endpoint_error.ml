@@ -64,19 +64,15 @@ end
 module Theme_error = struct
   type t =
     | Invalid_color_format
-    | Duplicated           of string
-    | Not_found_theme      of string
+    | Store_error
 
   let invalid_color_format = Invalid_color_format
 
-  let duplicated v = Duplicated v
-
-  let not_found_theme v = Not_found_theme v
+  let store_error = Store_error
 
   let to_endpoint_error = function
     | Invalid_color_format -> { G.Service.Error.status = -201; error_message = "Invalid color format"; details = [] }
-    | Duplicated _         -> { G.Service.Error.status = -202; error_message = "Duplicated"; details = [] }
-    | Not_found_theme _    -> { G.Service.Error.status = -203; error_message = "Not found theme"; details = [] }
+    | Store_error          -> { G.Service.Error.status = -202; error_message = "Store error"; details = [] }
 end
 
 type t =

@@ -53,7 +53,7 @@ export const itemKeys = {
       defaultSortOrder: itemKeyFrom<SortTypeMap>(sections.behaviors, "default_sort_order"),
     },
     theme: {
-      currentTheme: itemKeyFrom<string>(sections.theme, "current_theme"),
+      configuration: itemKeyFrom<string>(sections.theme, "configuration"),
     },
   },
 } as const;
@@ -121,7 +121,7 @@ export namespace Configurations {
         description: "Theme",
         items: [
           createItem({
-            key: itemKeys.general.theme.currentTheme,
+            key: itemKeys.general.theme.configuration,
             displayName: "Current theme",
             description: "Select current theme",
             type: ItemCreators.createText("default"),

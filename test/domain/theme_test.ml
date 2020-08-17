@@ -24,4 +24,21 @@ let test_set =
         Alcotest.(check & option string)
           "RGBA notation" (Some "#11223344")
           T.Color_code.(of_string "#11223344" >>| to_string));
+    Alcotest_lwt.test_case_sync "Theme: return theme based on default" `Quick (fun () ->
+        let module E = Sxfiler_domain.Common.Not_empty_string in
+        let theme =
+          T.Definition.make
+            ~name:(E.make "name" |> Option.get)
+            ~description:(E.make "foo" |> Option.get)
+            ~colors:[ (E.make "color" |> Option.get, T.Color_code.of_string "#222" |> Option.get) ]
+            ()
+        in
+        let colors = T.Definition.extract_color theme |> T.Color_map.to_seq |> List.of_seq in
+        Alcotest.(check & testable E.pp E.equal) "name of theme" E.(make "name" |> Option.get) theme.name;
+        Alcotest.(check string)
+          "colors in updated" "#222222"
+          T.Color_code.(to_string @@ List.assoc E.(make "color" |> Option.get) colors);
+        Alcotest.(check string)
+          "colors in default" "#002B36"
+          T.Color_code.(to_string @@ List.assoc E.(make "ui.switchRail" |> Option.get) colors));
   ]

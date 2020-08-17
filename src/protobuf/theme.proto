@@ -2,33 +2,25 @@ syntax = "proto3";
 
 package theme;
 
-message ColorCode {
+message ColorPair {
   string name = 1;
   string hex_color = 2;
 }
 
-message Theme {
-  string name = 1;
-  string description = 2;
-  repeated ColorCode color_codes = 3;
+message ColorTheme {
+  repeated ColorPair color_pairs = 1;
 }
 
-message ListRequest {
+message GetRequest {
 }
-message ListResponse {
-  repeated Theme themes = 1;
+message GetResponse {
+  ColorTheme theme = 1;
 }
 
-message RemoveRequest {
-  string name = 1;
+message UpdateRequest {
+  repeated ColorPair color_pairs = 1;
+  string base_theme = 2;
 }
-message RemoveResponse {}
-
-message AddRequest {
-  string name = 1;
-  string description = 2;
-  repeated ColorCode color_codes = 3;
-}
-message AddResponse {
-  Theme theme = 1;
+message UpdateResponse {
+  ColorTheme theme = 1;
 }

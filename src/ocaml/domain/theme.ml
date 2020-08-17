@@ -96,13 +96,144 @@ module Color_map = struct
     formatter fmt entries
 end
 
-type t = {
-  name : Common.Not_empty_string.t;
-  description : Common.Not_empty_string.t option;
-  colors : Color_code.t Color_map.t;
-}
-[@@deriving show, eq]
+type color_pairs = (Common.Not_empty_string.t * Color_code.t) list
 
-let make ~name ?description ~colors () =
-  let colors = List.fold_left (fun accum (key, color) -> Color_map.add key color accum) Color_map.empty colors in
-  { name; description; colors }
+module Definition = struct
+  type t = {
+    name : Common.Not_empty_string.t;
+    description : Common.Not_empty_string.t option;
+    colors : Color_code.t Color_map.t;
+    base : t option;
+  }
+  [@@deriving show, eq]
+
+  let base_colors =
+    [
+      ("base03", Color_code.of_string "#002b36" |> Option.get);
+      ("base02", Color_code.of_string "#073642" |> Option.get);
+      ("base01", Color_code.of_string "#586e75" |> Option.get);
+      ("base00", Color_code.of_string "#657b83" |> Option.get);
+      ("base0", Color_code.of_string "#839496" |> Option.get);
+      ("base1", Color_code.of_string "#93a1a1" |> Option.get);
+      ("base2", Color_code.of_string "#eee8d5" |> Option.get);
+      ("base3", Color_code.of_string "#fdf6e3" |> Option.get);
+      ("yellow", Color_code.of_string "#b58900" |> Option.get);
+      ("orange", Color_code.of_string "#cb4b16" |> Option.get);
+      ("red", Color_code.of_string "#dc322f" |> Option.get);
+      ("magenta", Color_code.of_string "#d33682" |> Option.get);
+      ("violet", Color_code.of_string "#6d71c4" |> Option.get);
+      ("blue", Color_code.of_string "#268bd2" |> Option.get);
+      ("cyan", Color_code.of_string "#2aa198" |> Option.get);
+      ("green", Color_code.of_string "#859900" |> Option.get);
+    ]
+    |> List.fold_left
+         (fun map (name, color) -> Color_map.add (Common.Not_empty_string.make name |> Option.get) color map)
+         Color_map.empty
+
+  let base =
+    let name = Common.Not_empty_string.make "default" |> Option.get
+    and description = Common.Not_empty_string.make "The theme for default" in
+    let color name = Color_map.find (Common.Not_empty_string.make name |> Option.get) base_colors in
+    let colors =
+      [
+        ("ui.switchRail", color "base03");
+        ("ui.switchRailChecked", color "blue");
+        ("ui.switchBox", color "base3");
+        ("completer.candidateText", color "base3");
+        ( "completer.selectedCandidateBackground",
+          Printf.sprintf "%s4d" (color "base2" |> Color_code.to_string) |> Color_code.of_string |> Option.get );
+        ("completer.matchingAreaText", color "base03");
+        ("completer.matchingAreaBackground", color "yellow");
+        ("completer.baseBackground", color "base02");
+        ("completer.titleText", color "base03");
+        ("completer.titleBackground", color "base3");
+        ("completer.inputBorder", color "blue");
+        ("completer.inputText", color "base3");
+        ("completer.inputBackground", color "base03");
+        ("configuration.cellSeparator", color "base3");
+        ("configuration.cellBackground", color "base02");
+        ("configuration.cellText", color "base3");
+        ("configuration.shadowCellFocused", color "orange");
+        ("configuration.selectBackground", color "base3");
+        ("configuration.dropdownMark", color "base03");
+        ("configuration.selectionMenuText", color "base03");
+        ("configuration.selectionMenuBackground", color "base3");
+        ("configuration.selectionOptionText", color "base3");
+        ("configuration.selectionOptionBackground", color "cyan");
+        ("configuration.selectionOptionSeparator", color "base01");
+        ("configuration.navigatorBackground", color "base02");
+        ("configuration.navigatorText", color "base3");
+        ("configuration.navigatorCatgegoryMarker", color "base3");
+        ("configuration.navigatorSectionText", color "base3");
+        ("configuration.navigatorSectionHover", color "orange");
+        ("configuration.sectionBackground", color "base03");
+        ("configuration.sectionHeaderText", color "base3");
+        ("configuration.sectionHeaderBackground", color "base02");
+        ("configuration.sectionCellBackground", color "base03");
+        ("decisionModal.headerText", color "base03");
+        ("decisionModal.headerBackground", color "base3");
+        ("decisionModal.panelText", color "base3");
+        ("decisionModal.panelBackground", color "base03");
+        ("decisionModal.panelSelectedText", color "base03");
+        ("decisionModal.panelSelectedBackground", color "base3");
+        ("decisionModal.panelSelectedMarker", color "red");
+        ("fileItem.baseText", color "base2");
+        ("fileItem.baseBackground", color "base03");
+        ("fileItem.selectedMarker", color "orange");
+        ( "fileItem.mark",
+          Printf.sprintf "%s3f" (color "blue" |> Color_code.to_string) |> Color_code.of_string |> Option.get );
+        ("fileItem.bookmark", color "cyan");
+        ("fileItem.directoryText", color "yellow");
+        ("fileItem.symlinkText", color "orange");
+        ("fileList.baseText", color "base01");
+        ("fileList.baseBackground", color "base03");
+        ("fileList.emptyText", color "red");
+        ("fileList.separator", color "base0");
+        ("fileList.headerText", color "base1");
+        ("fileList.headerBackground", color "base03");
+        ("fileList.headerBorder", color "base01");
+        ("fileList.focusedText", color "yellow");
+        ("logViewer.text", color "base2");
+        ("logViewer.background", color "base03");
+        ("logViewer.infoLevel", color "blue");
+        ("logViewer.warningLevel", color "orange");
+        ("logViewer.errorLevel", color "red");
+        ("scrollBar.background", color "base01");
+        ("configurationEditor.background", color "base3");
+        ("fileList.separator", color "base00");
+        ("logViewer.separator", color "base00");
+      ]
+      |> List.fold_left
+           (fun map (name, color) -> Color_map.add (Common.Not_empty_string.make name |> Option.get) color map)
+           Color_map.empty
+    in
+    { description; name; colors; base = None }
+
+  let make ?description ?base:base' ~name ~colors () =
+    let colors = List.fold_left (fun accum (key, color) -> Color_map.add key color accum) Color_map.empty colors in
+    let base' = match base' with None -> Some base | _ as v -> v in
+    { name; description; colors; base = base' }
+
+  let extract_color { colors; base; _ } =
+    Option.map (fun { colors; _ } -> colors) base
+    |> Option.value ~default:Color_map.empty
+    |> Color_map.merge (fun _ base original -> match original with Some _ -> original | None -> base) colors
+end
+
+module Configuration = struct
+  type t = {
+    colors : Color_code.t Color_map.t;
+    base : Definition.t;
+  }
+
+  let make ~colors ?base () =
+    {
+      colors = List.fold_left (fun acc (key, value) -> Color_map.add key value acc) Color_map.empty colors;
+      base = Option.value ~default:Definition.base base;
+    }
+
+  let merge_color t =
+    let colors = Definition.extract_color t.base in
+    Color_map.merge (fun _ base override -> match override with None -> base | Some _ -> override) colors t.colors
+    |> Color_map.to_seq |> List.of_seq
+end

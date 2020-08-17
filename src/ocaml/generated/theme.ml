@@ -10,7 +10,7 @@
 open Ocaml_protoc_plugin.Runtime [@@warning "-33"]
 
 module Theme = struct
-  module rec ColorCode : sig
+  module rec ColorPair : sig
     val name' : unit -> string
 
     type t = {
@@ -23,7 +23,7 @@ module Theme = struct
 
     val from_proto : Runtime'.Reader.t -> (t, [> Runtime'.Result.error ]) result
   end = struct
-    let name' () = "theme.theme.ColorCode"
+    let name' () = "theme.theme.ColorPair"
 
     type t = {
       name : string;
@@ -44,55 +44,33 @@ module Theme = struct
       fun writer -> deserialize writer |> Runtime'.Result.open_error
   end
 
-  and Theme : sig
+  and ColorTheme : sig
     val name' : unit -> string
 
-    type t = {
-      name : string;
-      description : string;
-      color_codes : ColorCode.t list;
-    }
-    [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+    type t = { color_pairs : ColorPair.t list } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
     val to_proto : t -> Runtime'.Writer.t
 
     val from_proto : Runtime'.Reader.t -> (t, [> Runtime'.Result.error ]) result
   end = struct
-    let name' () = "theme.theme.Theme"
+    let name' () = "theme.theme.ColorTheme"
 
-    type t = {
-      name : string;
-      description : string;
-      color_codes : ColorCode.t list;
-    }
-    [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+    type t = { color_pairs : ColorPair.t list } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
     let to_proto =
-      let apply ~f:f' { name; description; color_codes } = f' [] name description color_codes in
-      let spec =
-        Runtime'.Serialize.C.(
-          basic (1, string, proto3)
-          ^:: basic (2, string, proto3)
-          ^:: repeated (3, message (fun t -> ColorCode.to_proto t), not_packed)
-          ^:: nil)
-      in
+      let apply ~f:f' { color_pairs } = f' [] color_pairs in
+      let spec = Runtime'.Serialize.C.(repeated (1, message (fun t -> ColorPair.to_proto t), not_packed) ^:: nil) in
       let serialize = Runtime'.Serialize.serialize [] spec in
       fun t -> apply ~f:serialize t
 
     let from_proto =
-      let constructor _extensions name description color_codes = { name; description; color_codes } in
-      let spec =
-        Runtime'.Deserialize.C.(
-          basic (1, string, proto3)
-          ^:: basic (2, string, proto3)
-          ^:: repeated (3, message (fun t -> ColorCode.from_proto t), not_packed)
-          ^:: nil)
-      in
+      let constructor _extensions color_pairs = { color_pairs } in
+      let spec = Runtime'.Deserialize.C.(repeated (1, message (fun t -> ColorPair.from_proto t), not_packed) ^:: nil) in
       let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
       fun writer -> deserialize writer |> Runtime'.Result.open_error
   end
 
-  and ListRequest : sig
+  and GetRequest : sig
     val name' : unit -> string
 
     type t = unit [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
@@ -101,7 +79,7 @@ module Theme = struct
 
     val from_proto : Runtime'.Reader.t -> (t, [> Runtime'.Result.error ]) result
   end = struct
-    let name' () = "theme.theme.ListRequest"
+    let name' () = "theme.theme.GetRequest"
 
     type t = unit [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
@@ -118,154 +96,94 @@ module Theme = struct
       fun writer -> deserialize writer |> Runtime'.Result.open_error
   end
 
-  and ListResponse : sig
+  and GetResponse : sig
     val name' : unit -> string
 
-    type t = { themes : Theme.t list } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+    type t = { theme : ColorTheme.t option } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
     val to_proto : t -> Runtime'.Writer.t
 
     val from_proto : Runtime'.Reader.t -> (t, [> Runtime'.Result.error ]) result
   end = struct
-    let name' () = "theme.theme.ListResponse"
+    let name' () = "theme.theme.GetResponse"
 
-    type t = { themes : Theme.t list } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let to_proto =
-      let apply ~f:f' { themes } = f' [] themes in
-      let spec = Runtime'.Serialize.C.(repeated (1, message (fun t -> Theme.to_proto t), not_packed) ^:: nil) in
-      let serialize = Runtime'.Serialize.serialize [] spec in
-      fun t -> apply ~f:serialize t
-
-    let from_proto =
-      let constructor _extensions themes = { themes } in
-      let spec = Runtime'.Deserialize.C.(repeated (1, message (fun t -> Theme.from_proto t), not_packed) ^:: nil) in
-      let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
-      fun writer -> deserialize writer |> Runtime'.Result.open_error
-  end
-
-  and RemoveRequest : sig
-    val name' : unit -> string
-
-    type t = { name : string } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
-
-    val to_proto : t -> Runtime'.Writer.t
-
-    val from_proto : Runtime'.Reader.t -> (t, [> Runtime'.Result.error ]) result
-  end = struct
-    let name' () = "theme.theme.RemoveRequest"
-
-    type t = { name : string } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let to_proto =
-      let apply ~f:f' { name } = f' [] name in
-      let spec = Runtime'.Serialize.C.(basic (1, string, proto3) ^:: nil) in
-      let serialize = Runtime'.Serialize.serialize [] spec in
-      fun t -> apply ~f:serialize t
-
-    let from_proto =
-      let constructor _extensions name = { name } in
-      let spec = Runtime'.Deserialize.C.(basic (1, string, proto3) ^:: nil) in
-      let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
-      fun writer -> deserialize writer |> Runtime'.Result.open_error
-  end
-
-  and RemoveResponse : sig
-    val name' : unit -> string
-
-    type t = unit [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
-
-    val to_proto : t -> Runtime'.Writer.t
-
-    val from_proto : Runtime'.Reader.t -> (t, [> Runtime'.Result.error ]) result
-  end = struct
-    let name' () = "theme.theme.RemoveResponse"
-
-    type t = unit [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let to_proto =
-      let apply ~f () = f [] in
-      let spec = Runtime'.Serialize.C.(nil) in
-      let serialize = Runtime'.Serialize.serialize [] spec in
-      fun t -> apply ~f:serialize t
-
-    let from_proto =
-      let constructor _extension = () in
-      let spec = Runtime'.Deserialize.C.(nil) in
-      let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
-      fun writer -> deserialize writer |> Runtime'.Result.open_error
-  end
-
-  and AddRequest : sig
-    val name' : unit -> string
-
-    type t = {
-      name : string;
-      description : string;
-      color_codes : ColorCode.t list;
-    }
-    [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
-
-    val to_proto : t -> Runtime'.Writer.t
-
-    val from_proto : Runtime'.Reader.t -> (t, [> Runtime'.Result.error ]) result
-  end = struct
-    let name' () = "theme.theme.AddRequest"
-
-    type t = {
-      name : string;
-      description : string;
-      color_codes : ColorCode.t list;
-    }
-    [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
-
-    let to_proto =
-      let apply ~f:f' { name; description; color_codes } = f' [] name description color_codes in
-      let spec =
-        Runtime'.Serialize.C.(
-          basic (1, string, proto3)
-          ^:: basic (2, string, proto3)
-          ^:: repeated (3, message (fun t -> ColorCode.to_proto t), not_packed)
-          ^:: nil)
-      in
-      let serialize = Runtime'.Serialize.serialize [] spec in
-      fun t -> apply ~f:serialize t
-
-    let from_proto =
-      let constructor _extensions name description color_codes = { name; description; color_codes } in
-      let spec =
-        Runtime'.Deserialize.C.(
-          basic (1, string, proto3)
-          ^:: basic (2, string, proto3)
-          ^:: repeated (3, message (fun t -> ColorCode.from_proto t), not_packed)
-          ^:: nil)
-      in
-      let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
-      fun writer -> deserialize writer |> Runtime'.Result.open_error
-  end
-
-  and AddResponse : sig
-    val name' : unit -> string
-
-    type t = { theme : Theme.t option } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
-
-    val to_proto : t -> Runtime'.Writer.t
-
-    val from_proto : Runtime'.Reader.t -> (t, [> Runtime'.Result.error ]) result
-  end = struct
-    let name' () = "theme.theme.AddResponse"
-
-    type t = { theme : Theme.t option } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+    type t = { theme : ColorTheme.t option } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
 
     let to_proto =
       let apply ~f:f' { theme } = f' [] theme in
-      let spec = Runtime'.Serialize.C.(basic_opt (1, message (fun t -> Theme.to_proto t)) ^:: nil) in
+      let spec = Runtime'.Serialize.C.(basic_opt (1, message (fun t -> ColorTheme.to_proto t)) ^:: nil) in
       let serialize = Runtime'.Serialize.serialize [] spec in
       fun t -> apply ~f:serialize t
 
     let from_proto =
       let constructor _extensions theme = { theme } in
-      let spec = Runtime'.Deserialize.C.(basic_opt (1, message (fun t -> Theme.from_proto t)) ^:: nil) in
+      let spec = Runtime'.Deserialize.C.(basic_opt (1, message (fun t -> ColorTheme.from_proto t)) ^:: nil) in
+      let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
+      fun writer -> deserialize writer |> Runtime'.Result.open_error
+  end
+
+  and UpdateRequest : sig
+    val name' : unit -> string
+
+    type t = {
+      color_pairs : ColorPair.t list;
+      base_theme : string;
+    }
+    [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+
+    val to_proto : t -> Runtime'.Writer.t
+
+    val from_proto : Runtime'.Reader.t -> (t, [> Runtime'.Result.error ]) result
+  end = struct
+    let name' () = "theme.theme.UpdateRequest"
+
+    type t = {
+      color_pairs : ColorPair.t list;
+      base_theme : string;
+    }
+    [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let to_proto =
+      let apply ~f:f' { color_pairs; base_theme } = f' [] color_pairs base_theme in
+      let spec =
+        Runtime'.Serialize.C.(
+          repeated (1, message (fun t -> ColorPair.to_proto t), not_packed) ^:: basic (2, string, proto3) ^:: nil)
+      in
+      let serialize = Runtime'.Serialize.serialize [] spec in
+      fun t -> apply ~f:serialize t
+
+    let from_proto =
+      let constructor _extensions color_pairs base_theme = { color_pairs; base_theme } in
+      let spec =
+        Runtime'.Deserialize.C.(
+          repeated (1, message (fun t -> ColorPair.from_proto t), not_packed) ^:: basic (2, string, proto3) ^:: nil)
+      in
+      let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
+      fun writer -> deserialize writer |> Runtime'.Result.open_error
+  end
+
+  and UpdateResponse : sig
+    val name' : unit -> string
+
+    type t = { theme : ColorTheme.t option } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+
+    val to_proto : t -> Runtime'.Writer.t
+
+    val from_proto : Runtime'.Reader.t -> (t, [> Runtime'.Result.error ]) result
+  end = struct
+    let name' () = "theme.theme.UpdateResponse"
+
+    type t = { theme : ColorTheme.t option } [@@deriving eq, show, protocol ~driver:(module Protocol_conv_json.Json)]
+
+    let to_proto =
+      let apply ~f:f' { theme } = f' [] theme in
+      let spec = Runtime'.Serialize.C.(basic_opt (1, message (fun t -> ColorTheme.to_proto t)) ^:: nil) in
+      let serialize = Runtime'.Serialize.serialize [] spec in
+      fun t -> apply ~f:serialize t
+
+    let from_proto =
+      let constructor _extensions theme = { theme } in
+      let spec = Runtime'.Deserialize.C.(basic_opt (1, message (fun t -> ColorTheme.from_proto t)) ^:: nil) in
       let deserialize = Runtime'.Deserialize.deserialize [] spec constructor in
       fun writer -> deserialize writer |> Runtime'.Result.open_error
   end

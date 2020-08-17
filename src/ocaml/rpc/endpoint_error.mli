@@ -45,14 +45,11 @@ end
 module Theme_error : sig
   type t = private
     | Invalid_color_format
-    | Duplicated           of string
-    | Not_found_theme      of string
+    | Store_error
 
   val invalid_color_format : t
 
-  val duplicated : string -> t
-
-  val not_found_theme : string -> t
+  val store_error : t
 
   val to_endpoint_error : t -> G.Service.Error.t
 end
