@@ -1,26 +1,18 @@
 open Abbrev
 
 module Store_theme = struct
-  type error =
-    | Duplicate_name of string
-    | Unknown_error  of string
-  [@@deriving show, eq]
+  type base_theme = D.Common.Not_empty_string.t
 
-  type t = D.Theme.t -> (unit, error) result Lwt.t
+  type error = Unknown_error of string [@@deriving show, eq]
+
+  type t =
+    (D.Common.Not_empty_string.t * D.Theme.Color_code.t) list ->
+    base_theme option ->
+    (D.Theme.color_pairs, error) result Lwt.t
   (** store theme *)
 end
 
-module Remove_theme = struct
-  type error =
-    | Not_found_theme of string
-    | Unknown_error   of string
-  [@@deriving show, eq]
-
-  type t = D.Theme.t -> (unit, error) result Lwt.t
-  (** remove theme *)
-end
-
-module List_theme = struct
-  type t = unit -> D.Theme.t list Lwt.t
-  (** list theme *)
+module Get_current_theme = struct
+  type t = unit -> D.Theme.color_pairs Lwt.t
+  (** Get current theme *)
 end

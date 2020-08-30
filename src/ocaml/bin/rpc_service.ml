@@ -42,9 +42,8 @@ let construct_completer_endpoints (module Dep : Dependencies.S) =
 
 let construct_theme_endpoints (module Dep : Dependencies.S) =
   [
-    (G.Service.Command.THEME_ADD, R.Theme_endpoint.add_theme Dep.Work_flow.Theme.add);
-    (G.Service.Command.THEME_LIST, R.Theme_endpoint.list Dep.Work_flow.Theme.list);
-    (G.Service.Command.THEME_REMOVE, R.Theme_endpoint.remove_theme Dep.Work_flow.Theme.remove);
+    (G.Service.Command.THEME_GET, R.Theme_endpoint.get Dep.Work_flow.Theme.get);
+    (G.Service.Command.THEME_UPDATE, R.Theme_endpoint.update Dep.Work_flow.Theme.update);
   ]
 
 let construct_services (module Dep : Dependencies.S) options =
@@ -54,4 +53,5 @@ let construct_services (module Dep : Dependencies.S) options =
       construct_keymap_endpoints (module Dep) options;
       construct_configuration_endpoints (module Dep);
       construct_completer_endpoints (module Dep);
+      construct_theme_endpoints (module Dep);
     ]

@@ -22,12 +22,10 @@ ${variables.join("\n")}
 };
 
 export const Component: preact.FunctionComponent<Props> = ({ state }) => {
-  const theme = selectItem(state.configuration, itemKeys.general.theme.currentTheme);
-
   const [style] = useState(document.createElement("style"));
 
   useEffect(() => {
-    const colorPairs = selectColorPairs(state.theme, theme || "");
+    const colorPairs = selectColorPairs(state.theme);
 
     style.innerHTML = makeCSSVariables(colorPairs);
     document.head.appendChild(style);
@@ -35,7 +33,7 @@ export const Component: preact.FunctionComponent<Props> = ({ state }) => {
     return () => {
       document.head.removeChild(style);
     };
-  }, [theme]);
+  }, [state.theme]);
 
   return <MainContainer.Component state={state} />;
 };

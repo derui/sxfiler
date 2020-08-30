@@ -3,7 +3,7 @@
 
 import * as jspb from "google-protobuf";
 
-export class ColorCode extends jspb.Message {
+export class ColorPair extends jspb.Message {
   getName(): string;
   setName(value: string): void;
 
@@ -11,175 +11,127 @@ export class ColorCode extends jspb.Message {
   setHexColor(value: string): void;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): ColorCode.AsObject;
-  static toObject(includeInstance: boolean, msg: ColorCode): ColorCode.AsObject;
+  toObject(includeInstance?: boolean): ColorPair.AsObject;
+  static toObject(includeInstance: boolean, msg: ColorPair): ColorPair.AsObject;
   static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
   static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: ColorCode, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): ColorCode;
-  static deserializeBinaryFromReader(message: ColorCode, reader: jspb.BinaryReader): ColorCode;
+  static serializeBinaryToWriter(message: ColorPair, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ColorPair;
+  static deserializeBinaryFromReader(message: ColorPair, reader: jspb.BinaryReader): ColorPair;
 }
 
-export namespace ColorCode {
+export namespace ColorPair {
   export type AsObject = {
     name: string,
     hexColor: string,
   }
 }
 
-export class Theme extends jspb.Message {
-  getName(): string;
-  setName(value: string): void;
-
-  getDescription(): string;
-  setDescription(value: string): void;
-
-  clearColorCodesList(): void;
-  getColorCodesList(): Array<ColorCode>;
-  setColorCodesList(value: Array<ColorCode>): void;
-  addColorCodes(value?: ColorCode, index?: number): ColorCode;
+export class ColorTheme extends jspb.Message {
+  clearColorPairsList(): void;
+  getColorPairsList(): Array<ColorPair>;
+  setColorPairsList(value: Array<ColorPair>): void;
+  addColorPairs(value?: ColorPair, index?: number): ColorPair;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): Theme.AsObject;
-  static toObject(includeInstance: boolean, msg: Theme): Theme.AsObject;
+  toObject(includeInstance?: boolean): ColorTheme.AsObject;
+  static toObject(includeInstance: boolean, msg: ColorTheme): ColorTheme.AsObject;
   static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
   static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: Theme, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): Theme;
-  static deserializeBinaryFromReader(message: Theme, reader: jspb.BinaryReader): Theme;
+  static serializeBinaryToWriter(message: ColorTheme, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ColorTheme;
+  static deserializeBinaryFromReader(message: ColorTheme, reader: jspb.BinaryReader): ColorTheme;
 }
 
-export namespace Theme {
+export namespace ColorTheme {
   export type AsObject = {
-    name: string,
-    description: string,
-    colorCodesList: Array<ColorCode.AsObject>,
+    colorPairsList: Array<ColorPair.AsObject>,
   }
 }
 
-export class ListRequest extends jspb.Message {
+export class GetRequest extends jspb.Message {
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): ListRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: ListRequest): ListRequest.AsObject;
+  toObject(includeInstance?: boolean): GetRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetRequest): GetRequest.AsObject;
   static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
   static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: ListRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): ListRequest;
-  static deserializeBinaryFromReader(message: ListRequest, reader: jspb.BinaryReader): ListRequest;
+  static serializeBinaryToWriter(message: GetRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetRequest;
+  static deserializeBinaryFromReader(message: GetRequest, reader: jspb.BinaryReader): GetRequest;
 }
 
-export namespace ListRequest {
+export namespace GetRequest {
   export type AsObject = {
   }
 }
 
-export class ListResponse extends jspb.Message {
-  clearThemesList(): void;
-  getThemesList(): Array<Theme>;
-  setThemesList(value: Array<Theme>): void;
-  addThemes(value?: Theme, index?: number): Theme;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): ListResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: ListResponse): ListResponse.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: ListResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): ListResponse;
-  static deserializeBinaryFromReader(message: ListResponse, reader: jspb.BinaryReader): ListResponse;
-}
-
-export namespace ListResponse {
-  export type AsObject = {
-    themesList: Array<Theme.AsObject>,
-  }
-}
-
-export class RemoveRequest extends jspb.Message {
-  getName(): string;
-  setName(value: string): void;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): RemoveRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: RemoveRequest): RemoveRequest.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: RemoveRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): RemoveRequest;
-  static deserializeBinaryFromReader(message: RemoveRequest, reader: jspb.BinaryReader): RemoveRequest;
-}
-
-export namespace RemoveRequest {
-  export type AsObject = {
-    name: string,
-  }
-}
-
-export class RemoveResponse extends jspb.Message {
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): RemoveResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: RemoveResponse): RemoveResponse.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: RemoveResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): RemoveResponse;
-  static deserializeBinaryFromReader(message: RemoveResponse, reader: jspb.BinaryReader): RemoveResponse;
-}
-
-export namespace RemoveResponse {
-  export type AsObject = {
-  }
-}
-
-export class AddRequest extends jspb.Message {
-  getName(): string;
-  setName(value: string): void;
-
-  getDescription(): string;
-  setDescription(value: string): void;
-
-  clearColorCodesList(): void;
-  getColorCodesList(): Array<ColorCode>;
-  setColorCodesList(value: Array<ColorCode>): void;
-  addColorCodes(value?: ColorCode, index?: number): ColorCode;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): AddRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: AddRequest): AddRequest.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: AddRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): AddRequest;
-  static deserializeBinaryFromReader(message: AddRequest, reader: jspb.BinaryReader): AddRequest;
-}
-
-export namespace AddRequest {
-  export type AsObject = {
-    name: string,
-    description: string,
-    colorCodesList: Array<ColorCode.AsObject>,
-  }
-}
-
-export class AddResponse extends jspb.Message {
+export class GetResponse extends jspb.Message {
   hasTheme(): boolean;
   clearTheme(): void;
-  getTheme(): Theme | undefined;
-  setTheme(value?: Theme): void;
+  getTheme(): ColorTheme | undefined;
+  setTheme(value?: ColorTheme): void;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): AddResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: AddResponse): AddResponse.AsObject;
+  toObject(includeInstance?: boolean): GetResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetResponse): GetResponse.AsObject;
   static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
   static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: AddResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): AddResponse;
-  static deserializeBinaryFromReader(message: AddResponse, reader: jspb.BinaryReader): AddResponse;
+  static serializeBinaryToWriter(message: GetResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetResponse;
+  static deserializeBinaryFromReader(message: GetResponse, reader: jspb.BinaryReader): GetResponse;
 }
 
-export namespace AddResponse {
+export namespace GetResponse {
   export type AsObject = {
-    theme?: Theme.AsObject,
+    theme?: ColorTheme.AsObject,
+  }
+}
+
+export class UpdateRequest extends jspb.Message {
+  clearColorPairsList(): void;
+  getColorPairsList(): Array<ColorPair>;
+  setColorPairsList(value: Array<ColorPair>): void;
+  addColorPairs(value?: ColorPair, index?: number): ColorPair;
+
+  getBaseTheme(): string;
+  setBaseTheme(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UpdateRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateRequest): UpdateRequest.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: UpdateRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateRequest;
+  static deserializeBinaryFromReader(message: UpdateRequest, reader: jspb.BinaryReader): UpdateRequest;
+}
+
+export namespace UpdateRequest {
+  export type AsObject = {
+    colorPairsList: Array<ColorPair.AsObject>,
+    baseTheme: string,
+  }
+}
+
+export class UpdateResponse extends jspb.Message {
+  hasTheme(): boolean;
+  clearTheme(): void;
+  getTheme(): ColorTheme | undefined;
+  setTheme(value?: ColorTheme): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UpdateResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateResponse): UpdateResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: UpdateResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateResponse;
+  static deserializeBinaryFromReader(message: UpdateResponse, reader: jspb.BinaryReader): UpdateResponse;
+}
+
+export namespace UpdateResponse {
+  export type AsObject = {
+    theme?: ColorTheme.AsObject,
   }
 }
 

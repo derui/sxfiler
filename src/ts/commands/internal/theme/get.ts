@@ -1,12 +1,13 @@
 import { Actions } from "@/modules";
 import { CommandLike, CommandState, CommandDescriptor } from "@/commands/type";
 import { Dispatcher } from "@/types";
-import { selectTheme } from "@/modules/theme/selectors";
 import { actions } from "@/modules/theme";
+import { GetRequest } from "@/generated/theme_pb";
+import { Theme } from "@/rpc/client-procedures";
 
 const identifier = "internal.theme.select";
 
-export type Payload = { name: string };
+export type Payload = undefined;
 export type Command = CommandLike<Payload>;
 
 /**
@@ -20,14 +21,13 @@ export const descriptor: CommandDescriptor<Payload> = Object.freeze({
 export const createCommand = (): Command => {
   return {
     identifier,
-    execute(dispatcher: Dispatcher<Actions>, args: CommandState, payload: Payload) {
-      const theme = selectTheme(args.state.theme, payload.name);
+    async execute(dispatcher: Dispatcher<Actions>, args: CommandState) {
+      const res = await args.clientResolver.rpcClient().use(Theme.getTheme)(new GetRequest());
 
+      const theme = res.getTheme();
       if (theme) {
-        dispatcher.dispatch(actions.select(name));
+        dispatcher.dispatch(actions.update(theme));
       }
-
-      return Promise.resolve();
     },
   };
 };

@@ -178,21 +178,15 @@ export namespace Completer {
 }
 
 export namespace Theme {
-  export const add: ProcedureDef<ThemePb.AddRequest, ThemePb.AddResponse> = callGeneric(
-    Command.THEME_ADD,
+  export const update: ProcedureDef<ThemePb.UpdateRequest, ThemePb.UpdateResponse> = callGeneric(
+    Command.THEME_UPDATE,
     (v) => v.serializeBinary(),
-    ThemePb.AddResponse.deserializeBinary
+    ThemePb.UpdateResponse.deserializeBinary
   );
 
-  export const remove: ProcedureDef<ThemePb.RemoveRequest, ThemePb.RemoveResponse> = callGeneric(
-    Command.THEME_REMOVE,
+  export const getTheme: ProcedureDef<ThemePb.GetRequest, ThemePb.GetResponse> = callGeneric(
+    Command.THEME_GET,
     (v) => v.serializeBinary(),
-    ThemePb.RemoveResponse.deserializeBinary
-  );
-
-  export const list: ProcedureDef<ThemePb.ListRequest, ThemePb.ListResponse> = callGeneric(
-    Command.THEME_LIST,
-    (v) => v.serializeBinary(),
-    ThemePb.ListResponse.deserializeBinary
+    ThemePb.GetResponse.deserializeBinary
   );
 }

@@ -95,10 +95,12 @@ ws.onopen = () => {
   const reloadAll = wiredResolver.resolveBy(descriptors.filerReloadAll);
   const getKeymap = wiredResolver.resolveBy(descriptors.keymapReload);
   const addContext = wiredResolver.resolveBy(internalDescriptors.keymapAddContext);
-  if (reloadAll && getKeymap && addContext) {
+  const getTheme = wiredResolver.resolveBy(internalDescriptors.themeGet);
+  if (reloadAll && getKeymap && addContext && getTheme) {
     commandExecutor.execute(addContext, store.getState(), { context: UIContext.OnFileTree });
     commandExecutor.execute(reloadAll, store.getState(), undefined);
     commandExecutor.execute(getKeymap, store.getState(), undefined);
+    commandExecutor.execute(getTheme, store.getState(), undefined);
   }
 
   const getConfiguration = wiredResolver.resolveBy(internalDescriptors.configurationInitialize);

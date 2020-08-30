@@ -1,6 +1,5 @@
 {
   "general.behaviors.default_sort_order": "NAME",
   "general.behaviors.confirmation_when_delete": false,
-  "general.behaviors.max_number_of_histories": 100,
-  "general.theme.current_theme": "theme__default"
+  "general.behaviors.max_number_of_histories": 100
 }

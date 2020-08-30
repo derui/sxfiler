@@ -2,17 +2,12 @@
 
 open Abbrev
 
-type add_theme = F.Theme.Add_theme.work_flow -> Endpoint.t
+type get = F.Theme.Get_theme.work_flow -> Endpoint.t
 
-val add_theme : add_theme
-(** endpoint to add theme *)
+val get : get
+(** endpoint to get theme *)
 
-type remove_theme = F.Theme.Remove_theme.work_flow -> Endpoint.t
+type update = F.Theme.Update_theme.work_flow -> Endpoint.t
 
-val remove_theme : remove_theme
-(** endpoint to remove theme *)
-
-type list = F.Theme.List_theme.work_flow -> Endpoint.t
-
-val list : list
-(** Get all themes *)
+val update : update
+(** Update theme configuration *)

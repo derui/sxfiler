@@ -1,27 +1,22 @@
 import { ActionTypes } from "./types";
 import { Actions } from "./actions";
-import { Theme } from "@/generated/theme_pb";
+import { ColorTheme } from "@/generated/theme_pb";
 
 // state of type. Please redefine to what you want.
 export type State = {
-  themes: Theme[];
+  theme: ColorTheme;
 };
 
-export const defaultTheme = (() => {
-  const theme = new Theme();
-  return theme;
-})();
+export const emptyState: State = { theme: new ColorTheme() };
 
-export const emptyState: State = { themes: [] };
-
-const updateThemes = (state: State, themes: Theme[]) => {
-  return { ...state, themes };
+const updateTheme = (state: State, theme: ColorTheme) => {
+  return { ...state, theme };
 };
 
 export const reducer = (state: State = emptyState, action: Actions): State => {
   switch (action.type) {
-    case ActionTypes.UPDATE_LIST:
-      return updateThemes(state, action.payload.themes);
+    case ActionTypes.UPDATE:
+      return updateTheme(state, action.payload.theme);
     default:
       return state;
   }
