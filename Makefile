@@ -53,3 +53,30 @@ generate:
 	rm -rf $(TS_OUT_DIR)
 	mkdir -p $(TS_OUT_DIR)
 	$(foreach f,$(PROTO_FILE_DEPS),$(call generate_for_typescript,$f))
+
+.PHONY: build-linux build-windows
+
+build-linux:
+	scripts/build.sh linux
+	npm install -g yarn
+	yarn
+	yarn build
+	yarn package linux
+
+build-windows:
+	scripts/build.sh windows
+	npm install -g yarn
+	yarn
+	yarn build
+	yarn package win32
+
+.PHONY: build-builder build-builder-alpine build-builder-debian build-packager-debian
+
+build-builder-alpine:
+	docker build -t sxfiler-builder:alpine -f misc/Dockerfile.builder.alpine .
+
+build-builder-debian:
+	docker build -t sxfiler-builder:debian -f misc/Dockerfile.builder.debian .
+
+build-packager-debian:
+	docker build -t sxfiler-packager:debian -f misc/Dockerfile.packager .
