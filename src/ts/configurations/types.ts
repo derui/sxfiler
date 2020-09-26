@@ -1,14 +1,17 @@
 import { ObjectEnum } from "@/utils";
 
-export type ItemKey<T> = readonly [string, string, string];
-export type SectionKey = readonly [string, string];
-export type CategoryKey = readonly [string];
+export type ItemKey<T> = {
+  readonly type_?: T;
+  readonly key: readonly [string, string, string];
+};
+export type SectionKey = Readonly<{ key: readonly [string, string] }>;
+export type CategoryKey = Readonly<{ key: readonly [string] }>;
 
-export type Descriptor<T> = {
+export type Descriptor<T> = Readonly<{
   readonly key: T;
   readonly displayName: string;
   readonly description: string;
-};
+}>;
 
 export type CategoryDescriptor = Descriptor<CategoryKey>;
 

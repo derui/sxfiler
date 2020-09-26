@@ -22,7 +22,7 @@ describe("Commands", () => {
       expect(mocks.rpcClient.use).toBeCalledWith(P.Configuration.updateConfiguration);
 
       const expected = new UpdateRequest();
-      expected.setKeyList(Array.from(itemKeys.general.behaviors.confirmationWhenDelete));
+      expected.setKeyList(Array.from(itemKeys.general.behaviors.confirmationWhenDelete.key));
       expected.setJsonValue(JSON.stringify(false));
       expect(mockForUse).toBeCalledWith(expected);
     });

@@ -2,7 +2,7 @@ import { h } from "preact";
 import { render as renderAsText } from "preact-render-to-string";
 import { Component } from "./configuration-section";
 import { render, cleanup, fireEvent, act } from "@testing-library/preact";
-import { createSection, createItem } from "@/configurations/creators";
+import { createSection, createItem, toItemKey } from "@/configurations/creators";
 import { createText, createNumber } from "@/configurations/item-creators";
 
 describe("Project", () => {
@@ -28,13 +28,13 @@ describe("Project", () => {
         description: "description",
         items: [
           createItem({
-            key: ["cat", "section", "item1"],
+            key: toItemKey(["cat", "section", "item1"]),
             displayName: "item1",
             description: "description1",
             type: createText(""),
           }),
           createItem({
-            key: ["cat", "section", "item2"],
+            key: toItemKey(["cat", "section", "item2"]),
             displayName: "item2",
             description: "description2",
             type: createNumber(10),
@@ -53,13 +53,13 @@ describe("Project", () => {
         description: "description",
         items: [
           createItem({
-            key: ["cat", "section", "item1"],
+            key: toItemKey(["cat", "section", "item1"]),
             displayName: "item1",
             description: "description1",
             type: createText(),
           }),
           createItem({
-            key: ["cat", "section", "item2"],
+            key: toItemKey(["cat", "section", "item2"]),
             displayName: "item2",
             description: "description2",
             type: createNumber(),

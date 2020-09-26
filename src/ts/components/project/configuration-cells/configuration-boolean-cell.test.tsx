@@ -3,7 +3,7 @@ import { h } from "preact";
 import { render, cleanup, fireEvent, act } from "@testing-library/preact";
 import { render as renderAsText } from "preact-render-to-string";
 import { Component as Cell } from "./configuration-boolean-cell";
-import { createItem } from "@/configurations/creators";
+import { createItem, toItemKey } from "@/configurations/creators";
 import { createBoolean, createNumber } from "@/configurations/item-creators";
 
 describe("Project", () => {
@@ -14,7 +14,7 @@ describe("Project", () => {
 
     it("render correctly", () => {
       const item = createItem({
-        key: ["foo", "bar", "baz"],
+        key: toItemKey(["foo", "bar", "baz"]),
         displayName: "name",
         description: "description",
         type: createBoolean(false),
@@ -26,7 +26,7 @@ describe("Project", () => {
 
     it("invoke callback every event", async () => {
       const item = createItem({
-        key: ["foo", "bar", "baz"],
+        key: toItemKey(["foo", "bar", "baz"]),
         displayName: "name",
         description: "description",
         type: createBoolean(false),
@@ -45,7 +45,7 @@ describe("Project", () => {
 
     it("do not render component if definition is not boolean type", () => {
       const item = createItem({
-        key: ["foo", "bar", "baz"],
+        key: toItemKey(["foo", "bar", "baz"]),
         displayName: "name",
         description: "description",
         type: createNumber(10),

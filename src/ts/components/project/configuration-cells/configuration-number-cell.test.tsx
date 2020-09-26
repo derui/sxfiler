@@ -4,7 +4,7 @@ import { render, cleanup, fireEvent } from "@testing-library/preact";
 import { render as renderAsText } from "preact-render-to-string";
 import * as Cell from "./configuration-number-cell";
 import { createNumber, createBoolean } from "@/configurations/item-creators";
-import { createItem } from "@/configurations/creators";
+import { createItem, toItemKey } from "@/configurations/creators";
 
 describe("Project", () => {
   describe("Configuration Number Cell", () => {
@@ -14,7 +14,7 @@ describe("Project", () => {
 
     it("render correctly", () => {
       const item = createItem({
-        key: ["foo", "bar", "baz"],
+        key: toItemKey(["foo", "bar", "baz"]),
         displayName: "name",
         description: "description",
         type: createNumber(0),
@@ -26,7 +26,7 @@ describe("Project", () => {
 
     it("invoke callback every event", async () => {
       const item = createItem({
-        key: ["foo", "bar", "baz"],
+        key: toItemKey(["foo", "bar", "baz"]),
         displayName: "name",
         description: "description",
         type: createNumber(0),
@@ -43,7 +43,7 @@ describe("Project", () => {
 
     it("do not invoke callback when input is not valid integer", async () => {
       const item = createItem({
-        key: ["foo", "bar", "baz"],
+        key: toItemKey(["foo", "bar", "baz"]),
         displayName: "name",
         description: "description",
         type: createNumber(0),
@@ -60,7 +60,7 @@ describe("Project", () => {
 
     it("do not render component when definition is not number type", () => {
       const item = createItem({
-        key: ["foo", "bar", "baz"],
+        key: toItemKey(["foo", "bar", "baz"]),
         displayName: "name",
         description: "description",
         type: createBoolean(false),

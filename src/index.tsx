@@ -58,6 +58,9 @@ const commandExecutor = CommandExecutor.create(
           // send quit event to main process
           window.ipcRenderer.send("quit");
         },
+        openItem(fileItem) {
+          window.ipcRenderer.send("open-item", fileItem.getFullPath());
+        },
       };
     },
   },

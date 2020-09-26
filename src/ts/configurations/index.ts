@@ -3,11 +3,16 @@ import { Category, Item, Section, ItemKey, SectionKey, CategoryKey } from "./typ
 import { createCategory, createSection, createItem } from "./creators";
 import * as ItemCreators from "./item-creators";
 
-const itemKeyFrom = <T>(section: SectionKey, key: string): ItemKey<T> => [section[0], section[1], key];
-const categoryKeyOf = (key: ItemKey<any>): CategoryKey => [key[0]];
-const sectionKeyOf = (key: ItemKey<any>): SectionKey => [key[0], key[1]];
-const sectionKeyFrom = (category: CategoryKey, key: string): SectionKey => [category[0], key];
-export const qualified = (key: readonly string[]): string => key.join(".");
+const itemKeyFrom = <T>(section: SectionKey, key: string): ItemKey<T> => ({
+  type_: undefined,
+  key: [section.key[0], section.key[1], key],
+});
+const categoryKeyOf = (key: ItemKey<any>): CategoryKey => ({ key: [key.key[0]] });
+const sectionKeyOf = (key: ItemKey<any>): SectionKey => ({ key: [key.key[0], key.key[1]] });
+const sectionKeyFrom = (category: CategoryKey, key: string): SectionKey => ({
+  key: [category.key[0], key],
+});
+export const qualified = (key: { key: readonly string[] }): string => key.key.join(".");
 
 export const findItemBy = (key: ItemKey<any>, category: Category): Item | undefined => {
   const categoryKey = categoryKeyOf(key);
@@ -37,7 +42,7 @@ export const findValueBy = (configuration: { [p: string]: any }, item: Item): an
 };
 
 export const categories = {
-  general: ["general"],
+  general: { key: ["general"] },
 } as const;
 
 export const sections = {
@@ -60,12 +65,12 @@ export const itemKeys = {
 
 export namespace Configurations {
   const general = createCategory({
-    key: categories.general,
+    key: categories.general.key,
     displayName: "General",
     description: "General configurations",
     sections: [
       createSection({
-        key: sections.behaviors,
+        key: sections.behaviors.key,
         displayName: "Behaviors",
         description: "Behaviors",
         items: [
@@ -116,7 +121,7 @@ export namespace Configurations {
         ],
       }),
       createSection({
-        key: sections.theme,
+        key: sections.theme.key,
         displayName: "Theme",
         description: "Theme",
         items: [

@@ -1,6 +1,7 @@
 const electron = require("electron");
 const path = require("path");
 const url = require("url");
+const shell = electron.shell
 
 if (require.main !== module) {
   process.exit(1);
@@ -38,3 +39,6 @@ app.on('ready', () => {
 app.on('window-all-closed', () => app.quit());
 
 electron.ipcMain.on('quit', () => app.quit());
+electron.ipcMain.on('open-item', (e, itemPath) => {
+  shell.openPath(itemPath);
+})

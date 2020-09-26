@@ -23,7 +23,7 @@ export const createCommand = (): Command => {
     identifier,
     async execute(_: Dispatcher<Actions>, args: CommandState, payload: Payload) {
       const request = new UpdateRequest();
-      request.setKeyList(Array.from(payload.itemKey));
+      request.setKeyList(Array.from(payload.itemKey.key));
       request.setJsonValue(JSON.stringify(payload.value));
       await args.clientResolver.rpcClient().use(Proc.Configuration.updateConfiguration)(request);
     },
