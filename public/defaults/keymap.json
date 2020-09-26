@@ -1,6 +1,7 @@
 {
   "bindings": [
     {"action": "interactive.quit", "key": "q", "contexts": ["onFileTree"]},
+    {"action": "interactive.filer.open-item", "key": "C-Enter", "contexts": ["onFileTree"]},
     {"action": "interactive.filer.cursor-up", "key": "k", "contexts": ["onFileTree"]},
     {"action": "interactive.filer.cursor-down", "key": "j", "contexts": ["onFileTree"]},
     {"action": "interactive.filer.change-side", "key": "Tab", "contexts": ["onFileTree"]},

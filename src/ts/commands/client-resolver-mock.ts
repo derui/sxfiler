@@ -16,9 +16,10 @@ const rpcClientMock = function createApiClientMock() {
   };
 };
 
-const appClientMock = function createAppClientMock() {
+const appClientMock = function createAppClientMock(): AppClientLike {
   return {
     quit: jest.fn(),
+    openItem: jest.fn(),
   };
 };
 

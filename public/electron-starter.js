@@ -131,6 +131,9 @@ async function launch() {
   app.on('window-all-closed', () => app.quit());
   app.on('quit', exitHandler);
   electron.ipcMain.on('quit', () => app.quit());
+  electron.ipcMain.on('open-item', (e, itemPath) => {
+    electron.shell.openPath(itemPath);
+  });
 }
 
 launch();

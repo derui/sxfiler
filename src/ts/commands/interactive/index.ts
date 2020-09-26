@@ -1,4 +1,5 @@
 import { DescriptorsType } from "@/commands/type";
+import * as filerOpenItem from "./filer/open-item";
 import * as configurationCloseEditor from "./configuration/close-editor";
 import * as configurationOpenEditor from "./configuration/open-editor";
 import * as decisionCancel from "./decision/cancel";
@@ -26,6 +27,7 @@ import { Type } from "../command-resolver";
 
 // prettier-ignore
 export const descriptors = {
+  filerOpenItem: filerOpenItem.descriptor,
   configurationCloseEditor: configurationCloseEditor.descriptor,
   configurationOpenEditor: configurationOpenEditor.descriptor,
   decisionCancel: decisionCancel.descriptor,
@@ -58,6 +60,7 @@ export type Descriptors = DescriptorsType<typeof descriptors>;
  */
 // prettier-ignore
 export const registerToResolver = function registerToResolver(resolver: Type) {
+  resolver.register({descriptor: filerOpenItem.descriptor, factory: filerOpenItem.createCommand});
   resolver.register({descriptor: configurationCloseEditor.descriptor, factory: configurationCloseEditor.createCommand});
   resolver.register({descriptor: configurationOpenEditor.descriptor, factory: configurationOpenEditor.createCommand});
   resolver.register({descriptor: decisionCancel.descriptor, factory: decisionCancel.createCommand});

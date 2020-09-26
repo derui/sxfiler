@@ -4,7 +4,7 @@ import { render, cleanup, fireEvent } from "@testing-library/preact";
 import { render as renderAsText } from "preact-render-to-string";
 import * as Cell from "./configuration-select-one-cell";
 import { createSelectOne, createText } from "@/configurations/item-creators";
-import { createItem } from "@/configurations/creators";
+import { createItem, toItemKey } from "@/configurations/creators";
 
 describe("Project", () => {
   describe("Configuration Boolean Cell", () => {
@@ -14,7 +14,7 @@ describe("Project", () => {
 
     it("render correctly", () => {
       const item = createItem({
-        key: ["foo", "bar", "baz"],
+        key: toItemKey(["foo", "bar", "baz"]),
         displayName: "name",
         description: "description",
         type: createSelectOne([], ""),
@@ -26,7 +26,7 @@ describe("Project", () => {
 
     it("invoke callback every event", async () => {
       const item = createItem({
-        key: ["foo", "bar", "baz"],
+        key: toItemKey(["foo", "bar", "baz"]),
         displayName: "name",
         description: "description",
         type: createSelectOne(
@@ -61,7 +61,7 @@ describe("Project", () => {
 
     it("do not render component if definition is not selectOne type", () => {
       const item = createItem({
-        key: ["foo", "bar", "baz"],
+        key: toItemKey(["foo", "bar", "baz"]),
         displayName: "name",
         description: "description",
         type: createText(""),

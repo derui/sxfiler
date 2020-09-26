@@ -1,3 +1,4 @@
+import { FileItem } from "@/generated/filer_pb";
 import { Client } from "@/rpc/client";
 
 // This module provides the interface to resolve some of clients in this application.
@@ -14,6 +15,8 @@ export type AppClientLike = {
      Quit the current application. *WARNING:* This function quit this application immediately.
    */
   quit(): void;
+
+  openItem(item: FileItem): void;
 };
 
 /**

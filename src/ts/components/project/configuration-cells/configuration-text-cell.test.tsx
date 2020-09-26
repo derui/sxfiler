@@ -14,7 +14,7 @@ describe("Project", () => {
 
     it("render correctly", () => {
       const item = createItem({
-        key: ["foo", "bar", "baz"],
+        key: { key: ["foo", "bar", "baz"] },
         description: "description",
         displayName: "display",
         type: createText(""),
@@ -26,7 +26,7 @@ describe("Project", () => {
 
     it("invoke callback every event", async () => {
       const item = createItem({
-        key: ["foo", "bar", "baz"],
+        key: { key: ["foo", "bar", "baz"] },
         description: "description",
         displayName: "display",
         type: createText(""),
@@ -43,7 +43,7 @@ describe("Project", () => {
 
     it("do not render component if definition is not text type", () => {
       const item = createItem({
-        key: ["foo", "bar", "baz"],
+        key: { key: ["foo", "bar", "baz"] },
         description: "description",
         displayName: "display",
         type: createNumber(0),
