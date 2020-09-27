@@ -1,4 +1,4 @@
- name: Build release packages for Linux
+name: Build release packages for Linux
 on:
   push:
     tags:
