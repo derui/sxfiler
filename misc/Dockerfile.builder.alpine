@@ -11,7 +11,6 @@ WORKDIR /sxfiler
 COPY misc/entrypoint.sh /entrypoint.sh
 RUN chmod a+x /entrypoint.sh
 
-USER builder
 RUN opam init -n --disable-sandboxing --bare \
     && opam switch install 4.09.1 \
     && opam clean

@@ -1,7 +1,11 @@
-name: Build release packages
-on: [push]
+name: Build release packages for Linux
+on:
+  push:
+    tags:
+      - 'v*'
+
 jobs:
-  build:
+  preprocess:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,21 +23,80 @@ jobs:
         restore-keys: |
           ${{ runner.OS }}-node-
           ${{ runner.OS }}-
+
+  build_node:
+    needs: [preprocess]
+    steps:
     - run: npm install -g yarn
     - run: yarn
     - run: yarn test --all
 
+  preprocess_server:
+    needs: [preprocess]
+    steps:
     # make build image for Linux
-    - name: Build the Docker image
+    - name: Build the Docker image for linux
       run: docker build . -f misc/Dockerfile.builder.alpine -t builder:linux
+    - name: Build the Docker image
+      run: docker build . -f misc/Dockerfile.builder.debian -t builder:windows
 
+  build_server:
+    needs: [preprocess_server]
+
+    steps:
     # run container to build package for linux
     - name: Build linux package
       run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler builder:linux /sxfiler/scripts/build.sh linux
 
-    # package for linux
-    - run: yarn package linux
-    - uses: actions/upload-artifact@v1
-      with:
-        name: sxfiler_${{ github.sha }}_amd64
-        path: dist/linux
+    # run container to build package for linux
+    - name: Build windows package
+      run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler builder:windows /sxfiler/scripts/build.sh windows
+
+  package_linux:
+    needs: [build_server, build_node]
+
+    steps:
+    - run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler packager yarn package linux
+
+  package_windows:
+    needs: [build_server, build_node]
+
+    steps:
+    - run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler packager yarn package windows
+
+  create_release:
+    needs: [package_linux, package_windows]
+    steps:
+    - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+    - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./dist/sxfiler-linux-x64.tar.gz
+          asset_name: ./dist/sxfiler-linux_amd64.tar.gz
+          asset_content_type: application/zip
+
+    - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./dist/sxfiler-win32-x64.tar.gz
+          asset_name: ./dist/sxfiler-windows_amd64.tar.gz
+          asset_content_type: application/zip
