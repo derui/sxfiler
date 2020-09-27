@@ -29,7 +29,7 @@ jobs:
 
     # run container to build package for linux
     - name: Build linux package
-      run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler builder:linux /sxfiler/build.sh
+      run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler builder:linux /sxfiler/scripts/build.sh linux
 
     # package for linux
     - run: yarn package linux
