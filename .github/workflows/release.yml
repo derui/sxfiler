@@ -25,6 +25,7 @@ jobs:
           ${{ runner.OS }}-
 
   build_node:
+    runs-on: ubuntu-latest
     needs: [preprocess]
     steps:
     - run: npm install -g yarn
@@ -32,6 +33,7 @@ jobs:
     - run: yarn test --all
 
   preprocess_server:
+    runs-on: ubuntu-latest
     needs: [preprocess]
     steps:
     # make build image for Linux
@@ -43,6 +45,7 @@ jobs:
       run: docker build . -f misc/Dockerfile.packager -t packager
 
   build_server:
+    runs-on: ubuntu-latest
     needs: [preprocess_server]
 
     steps:
@@ -55,18 +58,21 @@ jobs:
       run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler builder:windows /sxfiler/scripts/build.sh windows
 
   package_linux:
+    runs-on: ubuntu-latest
     needs: [build_server, build_node]
 
     steps:
     - run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler packager yarn package linux
 
   package_windows:
+    runs-on: ubuntu-latest
     needs: [build_server, build_node]
 
     steps:
     - run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler packager yarn package windows
 
   create_release:
+    runs-on: ubuntu-latest
     needs: [package_linux, package_windows]
     steps:
     - name: Create Release
