@@ -5,9 +5,8 @@ on:
     - 'v*'
 
 jobs:
-  preprocess:
+  build_node:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
     - name: Use Node.js 12.x
@@ -23,52 +22,78 @@ jobs:
         restore-keys: |
           ${{ runner.OS }}-node-
           ${{ runner.OS }}-
-
-  build_node:
-    needs: [preprocess]
-    steps:
     - run: npm install -g yarn
     - run: yarn
     - run: yarn test --all
-
-  preprocess_server:
-    needs: [preprocess]
-    steps:
-    # make build image for Linux
-    - name: Build the Docker image for linux
-      run: docker build . -f misc/Dockerfile.builder.alpine -t builder:linux
-    - name: Build the Docker image
-      run: docker build . -f misc/Dockerfile.builder.debian -t builder:windows
-    - name: Build the packager image
-      run: docker build . -f misc/Dockerfile.packager -t packager
-
-  build_server:
-    needs: [preprocess_server]
-
-    steps:
-    # run container to build package for linux
-    - name: Build linux package
-      run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler builder:linux /sxfiler/scripts/build.sh linux
-
-    # run container to build package for linux
-    - name: Build windows package
-      run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler builder:windows /sxfiler/scripts/build.sh windows
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: node
+        path: build
 
   package_linux:
-    needs: [build_server, build_node]
+    runs-on: ubuntu-latest
+    needs: [build_node]
 
     steps:
+    - uses: actions/checkout@v1
+
+    - name: Build the Docker image for linux
+      run: docker build . -f misc/Dockerfile.builder.alpine -t builder:linux
+    - name: Build linux binary
+      run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler builder:linux /sxfiler/scripts/build.sh linux
+
+    - name: Build the packager image
+      run: docker build . -f misc/Dockerfile.packager -t packager
+    - name: Download a single artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: node
+
     - run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler packager yarn package linux
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: linux-binary
+        path: dist/sxfiler-linux-x64.tar.gz
 
   package_windows:
-    needs: [build_server, build_node]
+    runs-on: ubuntu-latest
+    needs: [build_node]
 
     steps:
+    - uses: actions/checkout@v1
+    - name: Build the Docker image
+      run: docker build . -f misc/Dockerfile.builder.debian -t builder:windows
+
+    - name: Build windows binary
+      run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler builder:windows /sxfiler/scripts/build.sh windows
+
+    - name: Build the packager image
+      run: docker build . -f misc/Dockerfile.packager -t packager
+    - name: Download a single artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: node
     - run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler packager yarn package windows
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: windows-binary
+        path: dist/sxfiler-wi32-x64.zip
 
   create_release:
+    runs-on: ubuntu-latest
     needs: [package_linux, package_windows]
     steps:
+    - name: Download a single artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: windows-binary
+    - name: Download a linux binary
+      uses: actions/download-artifact@v2
+      with:
+        name: linux-binary
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
