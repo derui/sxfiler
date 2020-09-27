@@ -1,0 +1,29 @@
+name: Build release packages
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - run: npm install -g yarn
+    - run: yarn test --all
+
+    # make build image for Linux
+    - name: Build the Docker image
+      run: docker build . -f misc/Dockerfile.builder.alpine -t builder:linux
+
+    # run container to build package for linux
+    - name: Build linux package
+      run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler builder:linux /sxfiler/build.sh
+
+    # package for linux
+    - run: yarn package linux
+    - uses: actions/upload-artifact@v1
+      with:
+        name: sxfiler_${{ github.sha }}_amd64
+        path: dist/linux
