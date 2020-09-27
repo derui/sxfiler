@@ -25,6 +25,7 @@ jobs:
     - run: npm install -g yarn
     - run: yarn
     - run: yarn test --all
+    - run: yarn build
     - name: Upload build artifact
       uses: actions/upload-artifact@v2
       with:
