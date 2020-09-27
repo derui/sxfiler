@@ -2,7 +2,7 @@ name: Build release packages for Linux
 on:
   push:
     tags:
-      - 'v*'
+    - 'v*'
 
 jobs:
   preprocess:
@@ -39,6 +39,8 @@ jobs:
       run: docker build . -f misc/Dockerfile.builder.alpine -t builder:linux
     - name: Build the Docker image
       run: docker build . -f misc/Dockerfile.builder.debian -t builder:windows
+    - name: Build the packager image
+      run: docker build . -f misc/Dockerfile.packager -t packager
 
   build_server:
     needs: [preprocess_server]
