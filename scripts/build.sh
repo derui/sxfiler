@@ -12,6 +12,7 @@ if [[ $BUILD_MODE == "linux" ]]; then
 fi
 
 if [[ $BUILD_MODE == "windows" ]]; then
+    opam install -y alcotest-windows alcotest-lwt-windows
     opam install -y -t --deps-only ./sxfiler-windows.opam
     dune build --display=short -x windows --profile windows
 fi
