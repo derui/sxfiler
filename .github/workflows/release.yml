@@ -51,7 +51,7 @@ jobs:
       with:
         name: node
 
-    - run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler packager yarn --cwd /sxfiler package linux
+    - run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler packager /sxfiler/scripts/package.sh linux
     - name: Upload build artifact
       uses: actions/upload-artifact@v2
       with:
@@ -76,7 +76,7 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: node
-    - run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler packager yarn --cwd /sxfiler package windows
+    - run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler packager /sxfiler/scripts/package.sh linux
     - name: Upload build artifact
       uses: actions/upload-artifact@v2
       with:
