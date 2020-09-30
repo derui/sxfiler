@@ -8,3 +8,5 @@ RUN apt update \
 ENV PATH /root/.yarn/bin:$PATH
 
 WORKDIR /sxfiler
+
+ENTRYPOINT ["/bin/bash"]
