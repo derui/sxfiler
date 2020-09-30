@@ -1,3 +1,3 @@
 #!/bin/bash -x
 
-yarn package $1
+yarn run package $1
