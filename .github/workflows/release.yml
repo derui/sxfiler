@@ -22,7 +22,6 @@ jobs:
         restore-keys: |
           ${{ runner.OS }}-node-
           ${{ runner.OS }}-
-    - run: npm install -g yarn
     - run: yarn
     - run: yarn test --all
     - run: yarn build
@@ -51,6 +50,11 @@ jobs:
       with:
         name: node
 
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - run: yarn
     - run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler packager /sxfiler/scripts/package.sh linux
     - name: Upload build artifact
       uses: actions/upload-artifact@v2
@@ -76,6 +80,11 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: node
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - run: yarn
     - run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler packager /sxfiler/scripts/package.sh linux
     - name: Upload build artifact
       uses: actions/upload-artifact@v2
