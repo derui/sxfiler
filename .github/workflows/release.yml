@@ -49,6 +49,7 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: node
+        path: build
 
     - name: Use Node.js 12.x
       uses: actions/setup-node@v1
@@ -63,7 +64,6 @@ jobs:
         restore-keys: |
           ${{ runner.OS }}-node-
           ${{ runner.OS }}-
-    - run: ls -la
     - run: yarn
     - run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler packager /sxfiler/scripts/package.sh linux
     - name: Upload build artifact
@@ -90,6 +90,7 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: node
+        path: build
     - name: Use Node.js 12.x
       uses: actions/setup-node@v1
       with:
