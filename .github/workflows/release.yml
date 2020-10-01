@@ -105,12 +105,12 @@ jobs:
           ${{ runner.OS }}-node-
           ${{ runner.OS }}-
     - run: yarn
-    - run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler packager /sxfiler/scripts/package.sh linux
+    - run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler packager /sxfiler/scripts/package.sh windows
     - name: Upload build artifact
       uses: actions/upload-artifact@v2
       with:
         name: windows-binary
-        path: dist/sxfiler-wi32-x64.zip
+        path: dist/sxfiler-win32-x64.zip
 
   create_release:
     runs-on: ubuntu-latest
