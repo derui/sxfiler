@@ -279,6 +279,7 @@ let () =
     let open Lwt in
     initialize_modules ~migemo ~option >>= fun () -> start_server "localhost" option
   in
+  Lwt_unix.(on_signal Sys.sigint (fun _ -> exit 0)) |> ignore;
   Lwt_main.at_exit (fun () ->
       Log.err (fun m -> m "Exiting in Lwt...");%lwt
       persist_app_state ~file_name:option.App_option.stat_file);
