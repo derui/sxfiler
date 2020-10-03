@@ -22,7 +22,7 @@ jobs:
         restore-keys: |
           ${{ runner.OS }}-node-
           ${{ runner.OS }}-
-    - run: yarn
+    - run: yarn install
     - run: yarn test --all
     - run: yarn build
     - name: Upload build artifact
@@ -64,7 +64,7 @@ jobs:
         restore-keys: |
           ${{ runner.OS }}-node-
           ${{ runner.OS }}-
-    - run: yarn
+    - run: yarn install
     - run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler packager /sxfiler/scripts/package.sh linux
     - name: Upload build artifact
       uses: actions/upload-artifact@v2
@@ -104,7 +104,7 @@ jobs:
         restore-keys: |
           ${{ runner.OS }}-node-
           ${{ runner.OS }}-
-    - run: yarn
+    - run: yarn install
     - run: docker run --rm -v $(pwd):/sxfiler:rw -w /sxfiler packager /sxfiler/scripts/package.sh win32
     - name: Upload build artifact
       uses: actions/upload-artifact@v2
@@ -154,6 +154,6 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-        asset_path: ./dist/sxfiler-win32-x64.zip
-        asset_name: ./dist/sxfiler-windows_amd64.zip
+        asset_path: sxfiler-win32-x64.zip
+        asset_name: sxfiler-windows_amd64.zip
         asset_content_type: application/zip
