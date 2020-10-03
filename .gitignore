@@ -41,4 +41,8 @@ _coverage/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+src/ocaml/generated/*
 /generated/
+!src/ocaml/generated/dune
+!src/ocaml/generated/sxfiler_generated
+src/ts/generated/*
