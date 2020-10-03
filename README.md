@@ -8,6 +8,9 @@ This is a **Simple** and **Extensible** , and having *Two screen* filer created 
 
 ## Development ##
 
+### First build ###
+You need to execute `make generate` first when you want to develop this repository. The command `make generate` generate OCaml/TypeScript sources from protobuf files in `src/protobuf`.
+
 ### Create new module ###
 Run command below on project root.
 
