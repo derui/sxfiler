@@ -1,8 +1,12 @@
 FROM debian:bullseye
 
 RUN apt update \
-    && apt install -y --no-install-recommends wine wine64 npm unzip \
-    && npm install -g yarn \
+    && apt install -y --no-install-recommends ca-certificates wine wine64 nodejs unzip curl \
+    && curl -o- -L https://yarnpkg.com/install.sh | bash \
     && rm -rf /var/cache/apt/archives
 
+ENV PATH /root/.yarn/bin:$PATH
+
 WORKDIR /sxfiler
+
+ENTRYPOINT ["/bin/bash"]
