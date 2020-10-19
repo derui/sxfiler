@@ -7,7 +7,7 @@ let test_set =
   [
     Alcotest_lwt.test_case_sync "can translate to/from domain" `Quick (fun () ->
         let location = Path.of_string "/root" |> Result.get_ok in
-        let list = D.File_list.make ~id:(D.File_list.Id.make "id") ~location ~sort_order:D.Types.Sort_type.Name in
+        let list = D.File_list.make ~id:(D.File_list.Id.make "id") ~location ~sort_type:D.Types.Sort_type.Name in
         let item = Test_fixtures.File_item.fixture () in
         let list' = D.File_list.scan (`Scanned [ item ]) list in
         let left_file_window = D.File_window.make_left ~file_list:list' ~history in
@@ -20,7 +20,8 @@ let test_set =
                 id = "id";
                 location = "/root";
                 items = [ Tr.File_item.of_domain item ];
-                sort_order = Types.SortType.NAME;
+                file_item_orders =
+                  [ Filer.FileItemOrder.{ file_id = D.File_item.id item |> D.File_item.Id.value; sort_level = 0 } ];
               })
         in
 

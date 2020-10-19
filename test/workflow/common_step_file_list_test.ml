@@ -24,7 +24,7 @@ let scan_step_tests =
           File_list.(
             make ~id:(Id.make "test")
               ~location:(C.Path.of_string "/location" |> Result.get_ok)
-              ~sort_order:Types.Sort_type.Name)
+              ~sort_type:Types.Sort_type.Name)
         in
         let scan_location _ = Lwt.return_ok [ file_item ] in
         let%lwt scanned = S.scan scan_location list in
@@ -38,7 +38,7 @@ let scan_step_tests =
           File_list.(
             make ~id:(Id.make "test")
               ~location:(C.Path.of_string "/location" |> Result.get_ok)
-              ~sort_order:Types.Sort_type.Name)
+              ~sort_type:Types.Sort_type.Name)
         in
         let scan_location path = Lwt.return_error (`Not_exists path) in
         let%lwt scanned = S.scan scan_location list in
@@ -54,7 +54,7 @@ and reload_step_tests =
           File_list.(
             make ~id:(Id.make "test")
               ~location:(C.Path.of_string "/location" |> Result.get_ok)
-              ~sort_order:Types.Sort_type.Name)
+              ~sort_type:Types.Sort_type.Name)
         in
         let scan_location _ = Lwt.return_ok [ file_item ] in
         let reload_scan_location _ = Lwt.return_ok [] in
@@ -66,7 +66,7 @@ and reload_step_tests =
         Lwt.return_unit);
     Alcotest_lwt.test_case "reload step returns No_location when current location not exists" `Quick (fun _ () ->
         let location = C.Path.of_string "/location" |> Result.get_ok in
-        let list = File_list.make ~id:(File_list.Id.make "test") ~location ~sort_order:Types.Sort_type.Name in
+        let list = File_list.make ~id:(File_list.Id.make "test") ~location ~sort_type:Types.Sort_type.Name in
         let scan_location _ = Lwt.return_ok [ file_item ] in
         let reload_scan_location path = Lwt.return_error (`Not_exists path) in
         let open Lwt.Infix in

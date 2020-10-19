@@ -1,8 +1,5 @@
 syntax = "proto3";
 
-// types
-import "types.proto";
-
 enum Side {
   LEFT = 0;
   RIGHT = 1;
@@ -55,11 +52,16 @@ message FileItem {
   bool marked = 8;
 }
 
+message FileItemOrder {
+  string file_id = 1;
+  int64 sort_level = 2;
+}
+
 message FileList {
   string id = 3;
   string location = 1;
   repeated FileItem items = 2;
-  SortType sort_order = 4;
+  repeated FileItemOrder file_item_orders = 5;
 }
 
 message LocationHistory {

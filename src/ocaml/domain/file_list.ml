@@ -18,54 +18,53 @@ type scanned =
       id : Id.t;
       location : Path.t;
       items : File_item.t list;
-      sort_order : Types.Sort_type.t;
+      file_item_order : File_item_order.t;
     }
   | No_location of {
       id : Id.t;
       location : Path.t;
-      sort_order : Types.Sort_type.t;
+      file_item_order : File_item_order.t;
     }
 [@@deriving eq, show]
 
 type unscanned = {
   id : Id.t;
   location : Path.t;
-  sort_order : Types.Sort_type.t;
+  file_item_order : File_item_order.t;
 }
 [@@deriving eq, show]
 
 let location = function Valid { location; _ } -> location | No_location { location; _ } -> location
 
-let make ~id ~location ~sort_order = { id; location; sort_order }
+let make ~id ~location ~sort_type = { id; location; file_item_order = File_item_order.make ~sort_type }
 
-(* sort items with sort_order in [t] *)
+(* sort items with file_item_order in [t] *)
 let sort_items t =
-  let is_not_directory = not % File_item.is_directory in
   match t with
-  | Valid ({ items; sort_order; _ } as t) ->
-      let sort_fun = File_item.compare_by sort_order in
-      let dirs = List.filter File_item.is_directory items and files = List.filter is_not_directory items in
-      Valid { t with items = List.concat [ List.sort sort_fun dirs; List.sort sort_fun files ] }
-  | No_location _ as v                    -> v
+  | Valid ({ items; file_item_order; _ } as t) ->
+      Valid { t with file_item_order = File_item_order.update_order_mapping ~file_items:items file_item_order }
+  | No_location _ as v -> v
 
 let reload result = function
   | Valid t       -> (
       match result with
-      | `No_location   -> No_location { id = t.id; location = t.location; sort_order = t.sort_order }
+      | `No_location   -> No_location { id = t.id; location = t.location; file_item_order = t.file_item_order }
       | `Scanned items -> Valid { t with items } |> sort_items )
   | No_location t -> (
       match result with
       | `No_location   -> No_location t
-      | `Scanned items -> Valid { id = t.id; location = t.location; sort_order = t.sort_order; items } |> sort_items )
+      | `Scanned items ->
+          Valid { id = t.id; location = t.location; file_item_order = t.file_item_order; items } |> sort_items )
 
 let scan result t =
   match result with
-  | `No_location   -> No_location { id = t.id; location = t.location; sort_order = t.sort_order }
-  | `Scanned items -> Valid { id = t.id; location = t.location; sort_order = t.sort_order; items } |> sort_items
+  | `No_location   -> No_location { id = t.id; location = t.location; file_item_order = t.file_item_order }
+  | `Scanned items ->
+      Valid { id = t.id; location = t.location; file_item_order = t.file_item_order; items } |> sort_items
 
 let change_location ~location = function
-  | Valid { id; sort_order; _ }       -> { id; sort_order; location }
-  | No_location { id; sort_order; _ } -> { id; sort_order; location }
+  | Valid { id; file_item_order; _ }       -> { id; file_item_order; location }
+  | No_location { id; file_item_order; _ } -> { id; file_item_order; location }
 
 (* make {!Item_map} from [items] *)
 let make_item_map items =

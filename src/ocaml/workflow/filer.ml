@@ -24,9 +24,9 @@ let initialize get scan_location : Initialize.work_flow =
   match filer with
   | Some filer -> Lwt.return [ Updated filer ]
   | None       ->
-      let left_list = File_list.make ~id:File_list.Id.(make "left") ~location:left_location ~sort_order:left_sort_order
+      let left_list = File_list.make ~id:File_list.Id.(make "left") ~location:left_location ~sort_type:left_sort_order
       and right_list =
-        File_list.make ~id:File_list.Id.(make "right") ~location:right_location ~sort_order:right_sort_order
+        File_list.make ~id:File_list.Id.(make "right") ~location:right_location ~sort_type:right_sort_order
       in
       let scan = Common_step_file_list.scan scan_location in
       let%lwt left_list = scan left_list and right_list = scan right_list in

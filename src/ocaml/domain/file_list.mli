@@ -10,19 +10,19 @@ type scanned = private
       id : Id.t;
       location : Path.t;
       items : File_item.t list;
-      sort_order : Types.Sort_type.t;
+      file_item_order : File_item_order.t;
     }
   | No_location of {
       id : Id.t;
       location : Path.t;
-      sort_order : Types.Sort_type.t;
+      file_item_order : File_item_order.t;
     }
 [@@deriving eq, show]
 
 type unscanned = private {
   id : Id.t;
   location : Path.t;
-  sort_order : Types.Sort_type.t;
+  file_item_order : File_item_order.t;
 }
 [@@deriving eq, show]
 (** The type of {!File_list} that did not scanned. *)
@@ -30,7 +30,7 @@ type unscanned = private {
 val location : scanned -> Path.t
 (** [location t] is getter for [location] in [t] *)
 
-val make : id:Id.t -> location:Path.t -> sort_order:Types.Sort_type.t -> unscanned
+val make : id:Id.t -> location:Path.t -> sort_type:Types.Sort_type.t -> unscanned
 (** [make ~id ~location ~sort_order] makes the instance [t] from arguments *)
 
 val reload : [ `Scanned     of File_item.t list | `No_location ] -> scanned -> scanned

@@ -17,10 +17,10 @@ let test_set =
 
   let left_list =
     File_list.(
-      make ~id:(Id.make "left") ~location:(Path.of_string "/left" |> Result.get_ok) ~sort_order:Types.Sort_type.Name)
+      make ~id:(Id.make "left") ~location:(Path.of_string "/left" |> Result.get_ok) ~sort_type:Types.Sort_type.Name)
   and right_list =
     File_list.(
-      make ~id:(Id.make "right") ~location:(Path.of_string "/right" |> Result.get_ok) ~sort_order:Types.Sort_type.Name)
+      make ~id:(Id.make "right") ~location:(Path.of_string "/right" |> Result.get_ok) ~sort_type:Types.Sort_type.Name)
   in
   let filer () =
     let%lwt left_list = left_list |> S.File_list.scan (fun _ -> Lwt.return_ok left_list_items)

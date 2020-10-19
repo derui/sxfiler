@@ -23,7 +23,7 @@ let base_tests =
           File_list.(
             make ~id:(Id.make "test")
               ~location:(C.Path.of_string "/location" |> Result.get_ok)
-              ~sort_order:Types.Sort_type.Name)
+              ~sort_type:Types.Sort_type.Name)
         in
         Alcotest.(check @@ of_pp File_list.Id.pp) "empty" File_list.Id.(make "test") list.id);
     Alcotest_lwt.test_case_sync "find item in list" `Quick (fun () ->
@@ -31,7 +31,7 @@ let base_tests =
           File_list.(
             make ~id:(Id.make "test")
               ~location:(C.Path.of_string "/location" |> Result.get_ok)
-              ~sort_order:Types.Sort_type.Name)
+              ~sort_type:Types.Sort_type.Name)
         in
         let scanned = File_list.scan (`Scanned [ file_item ]) list in
         Alcotest.(check @@ option Test_fixtures.Testable.file_item)
@@ -49,7 +49,7 @@ and mark_tests =
           File_list.(
             make ~id:(Id.make "test")
               ~location:(C.Path.of_string "/location" |> Result.get_ok)
-              ~sort_order:Types.Sort_type.Name)
+              ~sort_type:Types.Sort_type.Name)
         in
         let scanned = File_list.scan (`Scanned [ file_item ]) list in
         let scanned = File_list.mark_items ~ids:[ File_item.id file_item ] scanned in
@@ -60,7 +60,7 @@ and mark_tests =
           File_list.(
             make ~id:(Id.make "test")
               ~location:(C.Path.of_string "/location" |> Result.get_ok)
-              ~sort_order:Types.Sort_type.Name)
+              ~sort_type:Types.Sort_type.Name)
         in
         let scanned = File_list.scan (`Scanned [ file_item ]) list in
         let ids = [ File_item.id file_item ] in
@@ -72,7 +72,7 @@ and mark_tests =
           File_list.(
             make ~id:(Id.make "test")
               ~location:(C.Path.of_string "/location" |> Result.get_ok)
-              ~sort_order:Types.Sort_type.Name)
+              ~sort_type:Types.Sort_type.Name)
         in
         let scanned = File_list.scan (`Scanned [ file_item ]) list in
         let scanned = File_list.mark_items ~ids:[ File_item.Id.make "unknown" ] scanned in

@@ -16,12 +16,12 @@ let test_set =
           File_list.(
             make ~id:(Id.make "left")
               ~location:(C.Path.of_string "/left" |> Result.get_ok)
-              ~sort_order:Types.Sort_type.Name)
+              ~sort_type:Types.Sort_type.Name)
         and right_list =
           File_list.(
             make ~id:(Id.make "right")
               ~location:(C.Path.of_string "/right" |> Result.get_ok)
-              ~sort_order:Types.Sort_type.Name)
+              ~sort_type:Types.Sort_type.Name)
         in
 
         let left_list = left_list |> File_list.scan (`Scanned left_list_items)
