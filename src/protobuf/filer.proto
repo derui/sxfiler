@@ -203,6 +203,25 @@ message DeleteResponse {
   repeated DeleteResult results = 1;
 }
 
+enum FileEventType {
+  ADD = 0;
+  DELETE = 1;
+  UPDATE = 2;
+}
+
+message FileEvent {
+  FileEventType event_type = 1;
+  FileItem file_item = 2;
+}
+
+// declaration to notify file event
+message FileEventNotificationRequest {
+  string file_list_id = 1;
+  repeated FileEvent events = 2;
+  repeated FileItemOrder file_item_orders = 3;
+}
+message FileEventNotificationResponse {}
+
 // declarations notification service from server to client.
 // This service need to implement on client.
 message UpdatedNotificationRequest {
