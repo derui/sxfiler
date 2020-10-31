@@ -57,3 +57,12 @@ val items : scanned -> File_item.t list
 
 val find_item : id:File_item.Id.t -> scanned -> File_item.t option
 (** [find_item ~id t] find item that have [id] from [t] *)
+
+type file_diff =
+  [ `In_left  of File_item.t
+  | `In_right of File_item.t
+  ]
+[@@deriving show, eq]
+
+val diff : left:scanned -> right:scanned -> file_diff list
+(** [diff ~left ~right] return difference between [left] and [right] file lists. *)

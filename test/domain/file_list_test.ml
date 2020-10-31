@@ -80,4 +80,57 @@ and mark_tests =
         Alcotest.(check @@ list @@ of_pp File_item.pp) "list of items" [] items);
   ]
 
-let test_set = List.concat [ base_tests; mark_tests ]
+and diff_tests =
+  let file_item =
+    File_item.(make ~id:(Id.make "string") ~full_path:C.Path.(of_string "test.txt" |> Result.get_ok) ~stat:file_stat)
+  in
+  let left_only_item =
+    File_item.(make ~id:(Id.make "left") ~full_path:C.Path.(of_string "left.txt" |> Result.get_ok) ~stat:file_stat)
+  in
+  let right_only_item =
+    File_item.(make ~id:(Id.make "right") ~full_path:C.Path.(of_string "right.txt" |> Result.get_ok) ~stat:file_stat)
+  in
+
+  [
+    Alcotest_lwt.test_case_sync "no have difference file_lists that are no_location" `Quick (fun () ->
+        let list =
+          File_list.(
+            make ~id:(Id.make "test")
+              ~location:(C.Path.of_string "/location" |> Result.get_ok)
+              ~sort_type:Types.Sort_type.Name)
+        in
+        let left = File_list.scan `No_location list in
+        let right = File_list.scan `No_location list in
+
+        let items = File_list.diff ~left ~right in
+        Alcotest.(check @@ list @@ of_pp Fmt.nop) "difference" [] items);
+    Alcotest_lwt.test_case_sync "only left side items when right is no location" `Quick (fun () ->
+        let list =
+          File_list.(
+            make ~id:(Id.make "test")
+              ~location:(C.Path.of_string "/location" |> Result.get_ok)
+              ~sort_type:Types.Sort_type.Name)
+        in
+        let left = File_list.scan (`Scanned [ file_item ]) list in
+        let right = File_list.scan `No_location list in
+
+        let items = File_list.diff ~left ~right in
+        Alcotest.(check @@ list @@ of_pp Fmt.nop) "difference" [ `In_left file_item ] items);
+    Alcotest_lwt.test_case_sync "only right side items when left is no location" `Quick (fun () ->
+        let list =
+          File_list.(
+            make ~id:(Id.make "test")
+              ~location:(C.Path.of_string "/location" |> Result.get_ok)
+              ~sort_type:Types.Sort_type.Name)
+        in
+        let left = File_list.scan (`Scanned [ file_item; left_only_item ]) list in
+        let right = File_list.scan (`Scanned [ file_item; right_only_item ]) list in
+
+        let items = File_list.diff ~left ~right in
+        Alcotest.(check @@ list @@ of_pp Fmt.nop)
+          "difference"
+          [ `In_left left_only_item; `In_right right_only_item ]
+          items);
+  ]
+
+let test_set = List.concat [ base_tests; mark_tests; diff_tests ]

@@ -1,8 +1,8 @@
 (** This module provides order of items in file list. *)
 
-type id = File_item.Id.t
+type id = File_item.Id.t [@@deriving eq, show]
 
-type sort_level = Types.sort_level
+type sort_level = Types.sort_level [@@deriving eq, show]
 
 type sort_type = Types.Sort_type.t
 

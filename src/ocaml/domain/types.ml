@@ -11,7 +11,7 @@ module Sort_type = struct
   [@@deriving eq, show]
 end
 
-type sort_level = int
+type sort_level = int [@@deriving eq, show]
 
 type file_id = string
 

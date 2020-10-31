@@ -91,3 +91,47 @@ let items = function Valid { items; _ } -> items | No_location _ -> []
 let marked_items t = items t |> List.filter (function File_item.Marked _ -> true | Unmarked _ -> false)
 
 let find_item ~id t = items t |> List.find_opt (fun item -> File_item.id item |> File_item.Id.equal id)
+
+type file_diff =
+  [ `In_left  of File_item.t
+  | `In_right of File_item.t
+  ]
+[@@deriving show, eq]
+
+module File_item_id_set = Set.Make (struct
+  type t = File_item.Id.t
+
+  let compare = File_item.Id.compare
+end)
+
+let diff ~left ~right =
+  let diff_items left right =
+    let left_items = List.fold_left (fun map v -> Item_map.add (File_item.id v) v map) Item_map.empty left
+    and right_items = List.fold_left (fun map v -> Item_map.add (File_item.id v) v map) Item_map.empty right in
+    let left_id_set = Item_map.to_seq left_items |> Seq.map fst |> File_item_id_set.of_seq
+    and right_id_set = Item_map.to_seq right_items |> Seq.map fst |> File_item_id_set.of_seq in
+
+    let items_only_left = File_item_id_set.diff left_id_set right_id_set
+    and items_only_right = File_item_id_set.diff right_id_set left_id_set in
+    let items_only_left =
+      File_item_id_set.to_seq items_only_left
+      |> Seq.filter_map (fun v -> Item_map.find_opt v left_items |> Option.map (fun v -> `In_left v))
+      |> List.of_seq
+    and items_only_right =
+      File_item_id_set.to_seq items_only_right
+      |> Seq.filter_map (fun v -> Item_map.find_opt v right_items |> Option.map (fun v -> `In_right v))
+      |> List.of_seq
+    in
+    items_only_left @ items_only_right
+  in
+
+  match (left, right) with
+  | No_location _, No_location _          -> []
+  | Valid (_ as left), No_location _      -> List.map (fun v -> `In_left v) left.items
+  | No_location _, Valid (_ as right)     -> List.map (fun v -> `In_right v) right.items
+  | Valid (_ as left), Valid (_ as right) ->
+      if Path.equal left.location right.location then diff_items left.items right.items
+      else
+        let diff_left_items = List.map (fun v -> `In_left v) left.items
+        and diff_right_items = List.map (fun v -> `In_right v) right.items in
+        diff_left_items @ diff_right_items

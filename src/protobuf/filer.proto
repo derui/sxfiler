@@ -207,6 +207,7 @@ enum FileEventType {
   ADD = 0;
   DELETE = 1;
   UPDATE = 2;
+  LOCATION_MOVED = 3;
 }
 
 message FileEvent {
