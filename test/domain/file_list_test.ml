@@ -99,10 +99,10 @@ and diff_tests =
               ~location:(C.Path.of_string "/location" |> Result.get_ok)
               ~sort_type:Types.Sort_type.Name)
         in
-        let left = File_list.scan `No_location list in
-        let right = File_list.scan `No_location list in
+        let prev = File_list.scan `No_location list in
+        let next = File_list.scan `No_location list in
 
-        let items = File_list.diff ~left ~right in
+        let items = File_list.diff ~prev ~next in
         Alcotest.(check @@ list @@ of_pp Fmt.nop) "difference" [] items);
     Alcotest_lwt.test_case_sync "only left side items when right is no location" `Quick (fun () ->
         let list =
@@ -111,11 +111,11 @@ and diff_tests =
               ~location:(C.Path.of_string "/location" |> Result.get_ok)
               ~sort_type:Types.Sort_type.Name)
         in
-        let left = File_list.scan (`Scanned [ file_item ]) list in
-        let right = File_list.scan `No_location list in
+        let prev = File_list.scan (`Scanned [ file_item ]) list in
+        let next = File_list.scan `No_location list in
 
-        let items = File_list.diff ~left ~right in
-        Alcotest.(check @@ list @@ of_pp Fmt.nop) "difference" [ `In_left file_item ] items);
+        let items = File_list.diff ~prev ~next in
+        Alcotest.(check @@ list @@ of_pp Fmt.nop) "difference" [ `Only_left file_item ] items);
     Alcotest_lwt.test_case_sync "only right side items when left is no location" `Quick (fun () ->
         let list =
           File_list.(
@@ -123,13 +123,13 @@ and diff_tests =
               ~location:(C.Path.of_string "/location" |> Result.get_ok)
               ~sort_type:Types.Sort_type.Name)
         in
-        let left = File_list.scan (`Scanned [ file_item; left_only_item ]) list in
-        let right = File_list.scan (`Scanned [ file_item; right_only_item ]) list in
+        let prev = File_list.scan (`Scanned [ file_item; left_only_item ]) list in
+        let next = File_list.scan (`Scanned [ file_item; right_only_item ]) list in
 
-        let items = File_list.diff ~left ~right in
+        let items = File_list.diff ~prev ~next in
         Alcotest.(check @@ list @@ of_pp Fmt.nop)
           "difference"
-          [ `In_left left_only_item; `In_right right_only_item ]
+          [ `Only_left left_only_item; `Only_right right_only_item ]
           items);
   ]
 

@@ -35,11 +35,11 @@ module Filer = struct
       reader = G.Filer.UpdatedNotificationResponse.from_proto;
     }
 
-  let notify_updated_file_window =
+  let notify_file_event =
     {
-      command = G.Service.Command.FILER_UPDATED_FILE_WINDOW;
-      writer = G.Filer.UpdatedFileWindowNotificationRequest.to_proto;
-      reader = G.Filer.UpdatedFileWindowNotificationResponse.from_proto;
+      command = G.Service.Command.FILER_FILE_EVENT;
+      writer = G.Filer.FileEventNotificationRequest.to_proto;
+      reader = G.Filer.FileEventNotificationResponse.from_proto;
     }
 end
 

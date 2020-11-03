@@ -9,7 +9,7 @@ let test_set =
   let filer = Test_fixtures.Filer.fixture () in
   [
     Alcotest_lwt.test_case "call initialize work flow with valid input" `Quick (fun _ () ->
-        let work_flow _ = Lwt.return [ F.Filer.Updated filer ] in
+        let work_flow _ = Lwt.return [ F.Filer.Initialized filer ] in
         let request =
           {
             G.Service.Request.id = "id";
@@ -21,10 +21,10 @@ let test_set =
         in
         let%lwt res, events = R.Filer_endpoint.initialize work_flow request in
         Alcotest.(check & string) "same id" "id" res.id;
-        Alcotest.(check & list & of_pp F.pp_event) "events" [ F.Filer (F.Filer.Updated filer) ] events;
+        Alcotest.(check & list & of_pp F.pp_event) "events" [ F.Filer (F.Filer.Initialized filer) ] events;
         Lwt.return_unit);
     Alcotest_lwt.test_case "call initialize work flow with invalid input" `Quick (fun _ () ->
-        let work_flow _ = Lwt.return [ F.Filer.Updated filer ] in
+        let work_flow _ = Lwt.return [ F.Filer.Initialized filer ] in
         let request =
           { G.Service.Request.id = "id"; command = G.Service.Command.FILER_INITIALIZE; payload = Bytes.of_string "a" }
         in
@@ -37,7 +37,15 @@ let test_set =
         let input' = ref None in
         let work_flow input =
           input' := Some input;
-          Lwt.return { F.Filer.Move.events = [ F.Filer.Updated filer ]; results = [] }
+          Lwt.return
+            {
+              F.Filer.Move.events =
+                [
+                  F.Filer.Updated (F.Filer.Left, filer.D.Filer.left_file_window |> D.File_window.as_free);
+                  F.Filer.Updated (F.Filer.Right, filer.D.Filer.right_file_window |> D.File_window.as_free);
+                ];
+              results = [];
+            }
         in
         let get () = Lwt.return_some filer in
         let request =
@@ -53,6 +61,12 @@ let test_set =
         let expected = Some { F.Filer.Move.target = Marked; direction = F.Filer.Left_to_right; filer } in
         Alcotest.(check & string) "same id" "id" res.id;
         Alcotest.(check & option & of_pp F.Filer.Move.pp_input) "input" expected !input';
-        Alcotest.(check & list & of_pp F.pp_event) "events" [ F.Filer (F.Filer.Updated filer) ] events;
+        Alcotest.(check & list & of_pp F.pp_event)
+          "events"
+          [
+            F.Filer (F.Filer.Updated (F.Filer.Left, filer.D.Filer.left_file_window |> D.File_window.as_free));
+            F.Filer (F.Filer.Updated (F.Filer.Right, filer.D.Filer.right_file_window |> D.File_window.as_free));
+          ]
+          events;
         Lwt.return_unit);
   ]

@@ -29,6 +29,7 @@ enum Command {
   CONFIGURATION_NOTIFY_UPDATED = 25;
   THEME_GET = 26;
   THEME_UPDATE = 27;
+  FILER_FILE_EVENT = 28;
 }
 
 // common request

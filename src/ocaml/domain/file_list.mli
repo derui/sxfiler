@@ -27,6 +27,9 @@ type unscanned = private {
 [@@deriving eq, show]
 (** The type of {!File_list} that did not scanned. *)
 
+val id : scanned -> Id.t
+(** [id t] get the identifier of [t]. *)
+
 val location : scanned -> Path.t
 (** [location t] is getter for [location] in [t] *)
 
@@ -59,10 +62,11 @@ val find_item : id:File_item.Id.t -> scanned -> File_item.t option
 (** [find_item ~id t] find item that have [id] from [t] *)
 
 type file_diff =
-  [ `In_left  of File_item.t
-  | `In_right of File_item.t
+  [ `Only_left  of File_item.t
+  | `Only_right of File_item.t
+  | `Changed    of File_item.t
   ]
 [@@deriving show, eq]
 
-val diff : left:scanned -> right:scanned -> file_diff list
-(** [diff ~left ~right] return difference between [left] and [right] file lists. *)
+val diff : prev:scanned -> next:scanned -> file_diff list
+(** [diff ~prev ~next] return difference between [prev] and [next] file lists. *)

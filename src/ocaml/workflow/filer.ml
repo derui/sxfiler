@@ -13,16 +13,13 @@ let full_path_of_item = function
   | File_item.Marked { full_path; _ }   -> full_path
   | File_item.Unmarked { full_path; _ } -> full_path
 
-let update_side (file_window : File_window.free File_window.t) side filer =
-  match side with Left -> Filer.update_left file_window filer | Right -> Filer.update_right file_window filer
-
 (* work flow implementations *)
 
 let initialize get scan_location : Initialize.work_flow =
  fun { left_location; right_location; left_history; right_history; left_sort_order; right_sort_order } ->
   let%lwt filer = get () in
   match filer with
-  | Some filer -> Lwt.return [ Updated filer ]
+  | Some filer -> Lwt.return [ Initialized filer ]
   | None       ->
       let left_list = File_list.make ~id:File_list.Id.(make "left") ~location:left_location ~sort_type:left_sort_order
       and right_list =
@@ -34,7 +31,7 @@ let initialize get scan_location : Initialize.work_flow =
       and right_history = Option.value ~default:(Location_history.make ()) right_history in
       let left_file_window = File_window.make_left ~file_list:left_list ~history:left_history
       and right_file_window = File_window.make_right ~file_list:right_list ~history:right_history in
-      [ Updated (Filer.make ~left_file_window ~right_file_window) ] |> Lwt.return
+      [ Initialized (Filer.make ~left_file_window ~right_file_window) ] |> Lwt.return
 
 let reload_all scan_location : Reload_all.work_flow =
  fun t ->
@@ -47,7 +44,7 @@ let reload_all scan_location : Reload_all.work_flow =
       and reload_right = Common_step_filer.reload_right scan_location reload in
       (* do workflow *)
       let%lwt left_file_window = reload_left t and right_file_window = reload_right t in
-      Lwt.return_ok [ Updated (Filer.make ~left_file_window ~right_file_window) ]
+      Lwt.return_ok [ Initialized (Filer.make ~left_file_window ~right_file_window) ]
 
 let move_location now scan_location : Move_location.work_flow =
  fun { filer; side; location } ->
@@ -62,14 +59,10 @@ let move_location now scan_location : Move_location.work_flow =
       let history = generate_record location |> Fun.flip Location_history.add_record file_window.history in
       let result =
         match side with
-        | Left  ->
-            let left_file_window = File_window.make_left ~file_list ~history in
-            Filer.make ~right_file_window:filer.right_file_window ~left_file_window
-        | Right ->
-            let right_file_window = File_window.make_right ~file_list ~history in
-            Filer.make ~left_file_window:filer.left_file_window ~right_file_window
+        | Left  -> File_window.make_left ~file_list ~history |> File_window.as_free
+        | Right -> File_window.make_right ~file_list ~history |> File_window.as_free
       in
-      Lwt.return_ok [ Updated result ]
+      Lwt.return_ok [ Updated (side, result) ]
 
 (* work flows for manipulation items in filer *)
 
@@ -115,8 +108,8 @@ let copy now demand_action scan_location copy_item : Copy.work_flow =
   and source_file_window = File_window.reload_list source_file_list source_file_window in
   match (dest_file_window, source_file_window) with
   | Ok dest_file_window, Ok source_file_window ->
-      let filer = update_side dest_file_window dest_side input.filer |> update_side source_file_window source_side in
-      Lwt.return { Copy.events = [ Updated filer ]; results }
+      Lwt.return
+        { Copy.events = [ Updated (source_side, source_file_window); Updated (dest_side, dest_file_window) ]; results }
   | Error `Not_same, _ | _, Error `Not_same -> Lwt.return { Copy.events = []; results }
 
 let move now demand_action scan_location move_item : Move.work_flow =
@@ -161,8 +154,8 @@ let move now demand_action scan_location move_item : Move.work_flow =
   and source_file_window = File_window.reload_list source_file_list source_file_window in
   match (dest_file_window, source_file_window) with
   | Ok dest_file_window, Ok source_file_window ->
-      let filer = input.filer |> update_side dest_file_window dest_side |> update_side source_file_window source_side in
-      Lwt.return { Move.events = [ Updated filer ]; results }
+      Lwt.return
+        { Move.events = [ Updated (source_side, source_file_window); Updated (dest_side, dest_file_window) ]; results }
   | Error _, _ | _, Error _ -> Lwt.return { Move.events = []; results }
 
 let delete now scan_location delete_item : Delete.work_flow =
@@ -192,8 +185,7 @@ let delete now scan_location delete_item : Delete.work_flow =
   let file_window = File_window.reload_list file_list file_window in
   match file_window with
   | Ok dest_file_window ->
-      let filer = update_side dest_file_window input.side input.filer in
-      Lwt.return { Delete.events = [ Updated filer ]; results = deleted_items }
+      Lwt.return { Delete.events = [ Updated (input.side, dest_file_window) ]; results = deleted_items }
   | Error `Not_same     -> Lwt.return { Delete.events = []; results = deleted_items }
 
 (* implementation for open_node flow *)
@@ -224,14 +216,7 @@ let open_node scan_location now : Open_node.work_flow =
     Lwt_result.lift
     @@ (D.File_window.move_location ~file_list ~timestamp file_window |> Result.map_error (fun _ -> `Same_location))
   in
-  let update_filer file_window =
-    let filer =
-      match input.side with
-      | Left  -> Filer.update_left file_window input.filer
-      | Right -> Filer.update_right file_window input.filer
-    in
-    Lwt.return_ok (Open_node.Open_directory [ Updated filer ])
-  in
+  let update_filer file_window = Lwt.return_ok (Open_node.Open_directory [ Updated (input.side, file_window) ]) in
   let%lwt ret = item >>= scan_item_location >>= move_location_of_file_window >>= update_filer in
   match ret with
   | Error (`No_location path) -> Lwt.return_error (Open_node.Location_not_exists path)
@@ -257,14 +242,7 @@ let up_directory scan_location now : Up_directory.work_flow =
     let%lwt file_list = File_list.change_location ~location:parent_location file_window.file_list |> scan in
     let timestamp = now () in
     let file_window = File_window.move_location ~file_list ~timestamp file_window in
-    let open Result.Infix in
-    let result =
-      file_window >>= fun file_window ->
-      match side with
-      | Left  -> Filer.update_left file_window filer |> Result.ok
-      | Right -> Filer.update_right file_window filer |> Result.ok
-    in
-    match result with Error `Same -> Lwt.return_ok [] | Ok v -> Lwt.return_ok [ Updated v ]
+    match file_window with Error `Same -> Lwt.return_ok [] | Ok v -> Lwt.return_ok [ Updated (side, v) ]
 
 (* implementation for toggle_mark *)
 let toggle_mark : Toggle_mark.work_flow =
@@ -291,4 +269,4 @@ let toggle_mark : Toggle_mark.work_flow =
   match result with
   | Error `Not_found | Error `Not_same -> Lwt.return_error Toggle_mark.Item_not_found
   | Error `Not_initialized             -> Lwt.return_error Toggle_mark.Not_initialized
-  | Ok file_window                     -> Lwt.return_ok [ Updated_file_window (side, file_window) ]
+  | Ok file_window                     -> Lwt.return_ok [ Updated (side, file_window) ]
