@@ -230,10 +230,3 @@ message UpdatedNotificationRequest {
 }
 
 message UpdatedNotificationResponse {}
-
-// This notification notifies updated the file window of the side
-message UpdatedFileWindowNotificationRequest {
-  FileWindow file_window = 1;
-  Side side = 2;
-}
-message UpdatedFileWindowNotificationResponse {}

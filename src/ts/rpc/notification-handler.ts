@@ -5,13 +5,12 @@ import {
   CopyUserDecisionRequest,
   CopyUserDecisionResponse,
   Action,
-  UpdatedFileWindowNotificationRequest,
-  Side as SideMap,
-  UpdatedFileWindowNotificationResponse,
   MoveUserDecisionRequest,
   MoveUserDecisionResponse,
   DeleteUserDecisionRequest,
   DeleteUserDecisionResponse,
+  FileEventNotificationResponse,
+  FileEventNotificationRequest,
 } from "@/generated/filer_pb";
 import { State } from "@/modules";
 import { descriptors } from "@/commands/internal";
@@ -22,7 +21,6 @@ import { Loggers } from "@/loggers";
 import { DecisionRequiredOp, DecisionAction } from "@/modules/decision/reducer";
 import { ResponseSender, ProcessResult } from "@/libs/websocket-rpc/server";
 import { TypedSubscriber, EventTypes } from "@/typed-event-hub";
-import { Side } from "@/modules/filer/reducer";
 import { CompletionResultNotificationRequest, CompletionResultNotificationResponse } from "@/generated/completer_pb";
 import * as Con from "@/generated/configuration_pb";
 
@@ -270,9 +268,9 @@ export const notificationHandler = function notificationHandler(
           lazyResponse(ProcessResult.successed(new UpdatedNotificationResponse().serializeBinary()));
         }
         break;
-      case Command.FILER_UPDATED_FILE_WINDOW:
+      case Command.FILER_FILE_EVENT:
         {
-          const request = UpdatedFileWindowNotificationRequest.deserializeBinary(payload);
+          const request = FileEventNotificationRequest.deserializeBinary(payload);
           const factory = args.getCommandResolver().resolveBy(descriptors.filerUpdateFileWindow);
           if (!factory) {
             logger.error(`Invalid path: ${descriptors.filerUpdateFileWindow.identifier}`);
@@ -282,10 +280,13 @@ export const notificationHandler = function notificationHandler(
 
           logger.info("Start handling event filer_updated_file_window");
 
-          const side = request.getSide() === SideMap.LEFT ? Side.Left : Side.Right;
-          args.getCommandExecutor().execute(factory, args.getState(), { side, fileWindow: request.getFileWindow() });
+          args.getCommandExecutor().execute(factory, args.getState(), {
+            fileListId: request.getFileListId(),
+            events: request.getEventsList(),
+            itemOrders: request.getFileItemOrdersList(),
+          });
 
-          lazyResponse(ProcessResult.successed(new UpdatedFileWindowNotificationResponse().serializeBinary()));
+          lazyResponse(ProcessResult.successed(new FileEventNotificationResponse().serializeBinary()));
         }
         break;
       case Command.CONFIGURATION_NOTIFY_UPDATED:

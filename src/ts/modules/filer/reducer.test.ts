@@ -1,7 +1,7 @@
 import { reducer, Side } from "./reducer";
 import { actions } from "./actions";
 import { pipe, also } from "@/libs/fn";
-import { Filer, FileWindow, FileList, FileItem } from "@/generated/filer_pb";
+import { Filer, FileWindow, FileList, FileItem, FileItemOrder } from "@/generated/filer_pb";
 
 describe("Modules", () => {
   describe("Filer", () => {
@@ -11,6 +11,7 @@ describe("Modules", () => {
           also(new FileWindow(), (v) => {
             v.setFileList(
               also(new FileList(), (v) => {
+                v.setId("id");
                 v.setLocation("location");
                 v.setItemsList([
                   also(new FileItem(), (v) => {
@@ -99,69 +100,20 @@ describe("Modules", () => {
         expect(state.currentSide).toEqual(Side.Left);
       });
 
-      test("update file window specified side", () => {
+      test("update item orders for file list", () => {
         let state = pipe(
           (v) => reducer(v, actions.update(filer)),
           (v) => reducer(v, actions.cursorDown()),
           (v) => reducer(v, actions.cursorDown())
         )(undefined);
 
-        const fileWindow = new FileWindow();
-        state = reducer(state, actions.updateFileWindow(fileWindow, Side.Left));
+        const orders = [new FileItemOrder()];
+        const fileWindow = filer.getLeftFileWindow()?.clone();
+        fileWindow?.getFileList()?.setFileItemOrdersList(orders);
 
-        expect(state.filer?.getLeftFileWindow()?.toObject()).toEqual(fileWindow.toObject());
+        state = reducer(state, actions.updateItemOrders("id", orders));
+        expect(state.filer?.getLeftFileWindow()?.toObject()).toEqual(fileWindow?.toObject());
         expect(state.currentCursorPosition.left.value).toEqual(0);
-      });
-
-      test("update file window and cursor position", () => {
-        let state = pipe(
-          (v) => reducer(v, actions.update(filer)),
-          (v) => reducer(v, actions.cursorDown()),
-          (v) => reducer(v, actions.cursorDown())
-        )(undefined);
-
-        const fileWindow = filer.getLeftFileWindow()!!;
-        state = reducer(state, actions.updateFileWindow(fileWindow, Side.Left));
-
-        expect(state.filer?.getLeftFileWindow()?.toObject()).toEqual(fileWindow.toObject());
-        expect(state.currentCursorPosition.left.value).toEqual(2);
-      });
-
-      test("revise cursor position when number of items less than before updating", () => {
-        const updatedFiler = also(new Filer(), (v) => {
-          v.setLeftFileWindow(
-            also(new FileWindow(), (v) => {
-              v.setFileList(
-                also(new FileList(), (v) => {
-                  v.setLocation("location");
-                  v.setItemsList([
-                    also(new FileItem(), (v) => {
-                      v.setId("id1");
-                      v.setName("name1");
-                    }),
-                    also(new FileItem(), (v) => {
-                      v.setId("id2");
-                      v.setName("name2");
-                    }),
-                  ]);
-                })
-              );
-            })
-          );
-        });
-
-        let state = pipe(
-          (v) => reducer(v, actions.update(filer)),
-          (v) => reducer(v, actions.cursorDown()),
-          (v) => reducer(v, actions.cursorDown()),
-          (v) => reducer(v, actions.update(updatedFiler))
-        )(undefined);
-
-        const fileWindow = updatedFiler.getLeftFileWindow()!!;
-        state = reducer(state, actions.updateFileWindow(fileWindow, Side.Left));
-
-        expect(state.filer?.getLeftFileWindow()?.toObject()).toEqual(fileWindow.toObject());
-        expect(state.currentCursorPosition.left.value).toEqual(1);
       });
 
       test("focus specified item of the current side", () => {

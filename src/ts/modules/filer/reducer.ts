@@ -1,7 +1,7 @@
 import { ActionTypes } from "./types";
 import { Actions } from "./actions";
 import * as N from "@/types/natural-number";
-import { Filer, FileWindow, FileList } from "@/generated/filer_pb";
+import { Filer, FileWindow, FileList, FileItemOrder } from "@/generated/filer_pb";
 import { ObjectEnum } from "@/utils";
 
 export const Side = {
@@ -141,33 +141,41 @@ const update = (state: State, filer: Filer): State => {
   });
 };
 
-const updateFileWindow = (state: State, payload: { fileWindow: FileWindow; side: Side }) => {
+const updateItemOrders = (state: State, payload: { itemOrders: FileItemOrder[]; fileListId: string }) => {
   const { filer: oldFiler } = state;
   if (!oldFiler) {
     return state;
   }
   const filer = oldFiler.clone();
   let currentFileWindow: FileWindow | undefined;
+  let side: Side | undefined;
 
-  switch (payload.side) {
-    case Side.Left:
-      currentFileWindow = oldFiler.getLeftFileWindow();
-      filer.setLeftFileWindow(payload.fileWindow);
-      break;
-    case Side.Right:
-      currentFileWindow = oldFiler.getRightFileWindow();
-      filer.setRightFileWindow(payload.fileWindow);
-      break;
+  if (oldFiler.getLeftFileWindow()?.getFileList()?.getId() === payload.fileListId) {
+    const fileList = oldFiler.getLeftFileWindow()?.getFileList();
+    fileList?.setFileItemOrdersList(payload.itemOrders);
+
+    currentFileWindow?.setFileList(fileList);
+    if (currentFileWindow) {
+      filer.setLeftFileWindow(currentFileWindow);
+    }
+    side = Side.Left;
+  } else if (oldFiler.getRightFileWindow()?.getFileList()?.getId() === payload.fileListId) {
+    const fileList = oldFiler.getRightFileWindow()?.getFileList();
+    fileList?.setFileItemOrdersList(payload.itemOrders);
+
+    currentFileWindow?.setFileList(fileList);
+    if (currentFileWindow) {
+      filer.setRightFileWindow(currentFileWindow);
+    }
+    side = Side.Right;
   }
-  const sameLocation =
-    currentFileWindow?.getFileList()?.getLocation() === payload.fileWindow.getFileList()?.getLocation();
 
   return Object.freeze({
     ...state,
     filer,
     currentCursorPosition: {
-      left: payload.side === Side.Left && !sameLocation ? N.zero : state.currentCursorPosition.left,
-      right: payload.side === Side.Right && !sameLocation ? N.zero : state.currentCursorPosition.right,
+      left: side === Side.Left ? N.zero : state.currentCursorPosition.left,
+      right: side === Side.Right ? N.zero : state.currentCursorPosition.right,
     },
   });
 };
@@ -221,8 +229,8 @@ export const reducer = function reducer(state: State = emptyState, action: Actio
       return cursorUp(state);
     case ActionTypes.CHANGE_SIDE:
       return changeSide(state);
-    case ActionTypes.UPDATE_FILE_WINDOW:
-      return updateFileWindow(state, action.payload);
+    case ActionTypes.UPDATE_ITEM_ORDERS:
+      return updateItemOrders(state, action.payload);
     case ActionTypes.FOCUS_ITEM:
       return focusItem(state, action.payload);
     default:
