@@ -271,9 +271,9 @@ export const notificationHandler = function notificationHandler(
       case Command.FILER_FILE_EVENT:
         {
           const request = FileEventNotificationRequest.deserializeBinary(payload);
-          const factory = args.getCommandResolver().resolveBy(descriptors.filerUpdateFileWindow);
+          const factory = args.getCommandResolver().resolveBy(descriptors.filerApplyFileEvents);
           if (!factory) {
-            logger.error(`Invalid path: ${descriptors.filerUpdateFileWindow.identifier}`);
+            logger.error(`Invalid path: ${descriptors.filerApplyFileEvents.identifier}`);
             lazyResponse(ProcessResult.ignored());
             return;
           }

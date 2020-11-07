@@ -1,7 +1,6 @@
 import { actions } from "./actions";
 import { ActionTypes } from "./types";
-import { Filer, FileWindow } from "@/generated/filer_pb";
-import { Side } from "./reducer";
+import { Filer } from "@/generated/filer_pb";
 
 describe("Modules", () => {
   describe("Filer", () => {
@@ -27,10 +26,8 @@ describe("Modules", () => {
         expect(action.type).toEqual(ActionTypes.CHANGE_SIDE);
       });
 
-      test("create update file window action", () => {
-        const fileWindow = new FileWindow();
-
-        expect(actions.updateFileWindow(fileWindow, Side.Left).type).toEqual(ActionTypes.UPDATE_FILE_WINDOW);
+      test("create apply file events action", () => {
+        expect(actions.applyEvents("id", []).type).toEqual(ActionTypes.APPLY_EVENTS);
       });
 
       test("create action to focus item", () => {

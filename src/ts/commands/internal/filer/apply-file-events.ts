@@ -4,7 +4,7 @@ import { Dispatcher } from "@/types";
 import { FileEvent, FileItemOrder } from "@/generated/filer_pb";
 import { actions } from "@/modules/filer";
 
-const identifier = "internal.filer.update-file-window";
+const identifier = "internal.filer.apply-file-events";
 
 export interface Payload {
   readonly fileListId: string;
@@ -25,7 +25,7 @@ export const createCommand = (): Command => {
   return {
     identifier,
     async execute(dispatcher: Dispatcher<Actions>, _: CommandState, payload: Payload) {
-      dispatcher.dispatch(actions.updateFileWindow(payload.fileWindow, payload.side));
+      dispatcher.dispatch(actions.applyEvents(payload.fileListId, payload.events));
     },
   };
 };

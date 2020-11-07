@@ -1,10 +1,13 @@
 import { ActionsType } from "../type";
 import { ActionTypes } from "./types";
-import { FileItemOrder, Filer, FileWindow } from "@/generated/filer_pb";
-import { Side } from "./reducer";
+import { FileEvent, FileItemOrder, Filer } from "@/generated/filer_pb";
 
 // implememt action. Use command `hygen module add:action [name of action]` to add template into this place.
 //#ACTION INSERTION INDICATOR
+export const applyEvents = (fileListId: string, fileEvents: FileEvent[]) => {
+  return { type: ActionTypes.APPLY_EVENTS, payload: { fileListId, fileEvents } };
+};
+
 export const updateItemOrders = (fileListId: string, itemOrders: FileItemOrder[]) => {
   return { type: ActionTypes.UPDATE_ITEM_ORDERS, payload: { fileListId, itemOrders } };
 };
@@ -32,6 +35,7 @@ export const cursorUp = function cursorUp() {
 // Do not delete this comment below.
 // prettier-ignore
 export const actions = {
+applyEvents,
 updateItemOrders,
 focusItem,
 changeSide,
