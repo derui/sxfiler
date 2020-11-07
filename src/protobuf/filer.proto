@@ -207,12 +207,15 @@ enum FileEventType {
   ADD = 0;
   DELETE = 1;
   UPDATE = 2;
-  LOCATION_MOVED = 3;
 }
 
 message FileEvent {
   FileEventType event_type = 1;
   FileItem file_item = 2;
+}
+
+enum FileListEventType {
+  LOCATION_CHANGED = 0;
 }
 
 // declaration to notify file event
@@ -222,6 +225,13 @@ message FileEventNotificationRequest {
   repeated FileItemOrder file_item_orders = 3;
 }
 message FileEventNotificationResponse {}
+
+// declaration to notify event for file list
+message FileListEventNotificationRequest {
+  FileListEventType event_type = 1;
+  FileList file_list = 2;
+}
+message FileListEventNotificationResponse {}
 
 // declarations notification service from server to client.
 // This service need to implement on client.
