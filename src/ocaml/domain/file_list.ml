@@ -129,7 +129,7 @@ let diff ~prev ~next =
       File_item_id_set.to_seq intersected_id
       |> Seq.filter_map (fun v ->
              match (Item_map.find_opt v prev_items, Item_map.find_opt v next_items) with
-             | Some v, Some v' when File_item.equal v v' -> Some (`Changed v')
+             | Some v, Some v' when not (File_item.equal v v') -> Some (`Changed v')
              | _ -> None)
       |> List.of_seq
     in

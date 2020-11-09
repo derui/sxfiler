@@ -127,7 +127,7 @@ and diff_tests =
         let next = File_list.scan (`Scanned [ file_item; right_only_item ]) list in
 
         let items = File_list.diff ~prev ~next in
-        Alcotest.(check @@ list @@ of_pp Fmt.nop)
+        Alcotest.(check @@ list @@ of_pp File_list.pp_file_diff)
           "difference"
           [ `Only_left left_only_item; `Only_right right_only_item ]
           items);

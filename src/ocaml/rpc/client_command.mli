@@ -22,6 +22,10 @@ module Filer : sig
 
   val notify_file_event : (G.Filer.FileEventNotificationRequest.t, G.Filer.FileEventNotificationResponse.t) t
   (** command to notify occurred file events *)
+
+  val notify_file_list_event :
+    (G.Filer.FileListEventNotificationRequest.t, G.Filer.FileListEventNotificationResponse.t) t
+  (** command to notify occurred file list event *)
 end
 
 module Completer : sig

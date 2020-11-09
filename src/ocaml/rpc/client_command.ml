@@ -41,6 +41,13 @@ module Filer = struct
       writer = G.Filer.FileEventNotificationRequest.to_proto;
       reader = G.Filer.FileEventNotificationResponse.from_proto;
     }
+
+  let notify_file_list_event =
+    {
+      command = G.Service.Command.FILER_FILE_EVENT;
+      writer = G.Filer.FileListEventNotificationRequest.to_proto;
+      reader = G.Filer.FileListEventNotificationResponse.from_proto;
+    }
 end
 
 module Completer = struct

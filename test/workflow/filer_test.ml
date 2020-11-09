@@ -205,7 +205,7 @@ let test_set =
         let%lwt filer = filer () in
         let%lwt window' =
           match%lwt work_flow FL.Open_node.{ filer; side = Left; item_id = File_item.id target } with
-          | Ok (FL.Open_node.Open_directory [ Updated (_, v) ]) -> Lwt.return v
+          | Ok (FL.Open_node.Open_directory [ Location_changed (_, v) ]) -> Lwt.return v
           | _ -> Alcotest.fail "illegal path"
         in
         Alcotest.(check @@ list F.Testable.file_item)

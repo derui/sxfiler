@@ -62,7 +62,7 @@ let move_location now scan_location : Move_location.work_flow =
         | Left  -> File_window.make_left ~file_list ~history |> File_window.as_free
         | Right -> File_window.make_right ~file_list ~history |> File_window.as_free
       in
-      Lwt.return_ok [ Updated (side, result) ]
+      Lwt.return_ok [ Location_changed (side, result) ]
 
 (* work flows for manipulation items in filer *)
 
@@ -216,7 +216,9 @@ let open_node scan_location now : Open_node.work_flow =
     Lwt_result.lift
     @@ (D.File_window.move_location ~file_list ~timestamp file_window |> Result.map_error (fun _ -> `Same_location))
   in
-  let update_filer file_window = Lwt.return_ok (Open_node.Open_directory [ Updated (input.side, file_window) ]) in
+  let update_filer file_window =
+    Lwt.return_ok (Open_node.Open_directory [ Location_changed (input.side, file_window) ])
+  in
   let%lwt ret = item >>= scan_item_location >>= move_location_of_file_window >>= update_filer in
   match ret with
   | Error (`No_location path) -> Lwt.return_error (Open_node.Location_not_exists path)
