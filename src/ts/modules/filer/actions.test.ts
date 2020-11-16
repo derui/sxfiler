@@ -1,6 +1,6 @@
 import { actions } from "./actions";
 import { ActionTypes } from "./types";
-import { Filer } from "@/generated/filer_pb";
+import { FileList, Filer } from "@/generated/filer_pb";
 
 describe("Modules", () => {
   describe("Filer", () => {
@@ -28,6 +28,10 @@ describe("Modules", () => {
 
       test("create apply file events action", () => {
         expect(actions.applyEvents("id", []).type).toEqual(ActionTypes.APPLY_EVENTS);
+      });
+
+      test("create apply file list event action", () => {
+        expect(actions.applyFileListEvent(0, new FileList()).type).toEqual(ActionTypes.APPLY_FILE_LIST_EVENT);
       });
 
       test("create action to focus item", () => {

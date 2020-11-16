@@ -1,5 +1,6 @@
 // prettier-ignore
 export const ActionTypes = {
+APPLY_FILE_LIST_EVENT: "filer/applyFileListEvent",
 APPLY_EVENTS: "filer/applyEvents",
 UPDATE_ITEM_ORDERS: "filer/updateItemOrders",
 FOCUS_ITEM: "filer/focusItem",

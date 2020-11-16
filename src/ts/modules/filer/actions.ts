@@ -1,9 +1,13 @@
 import { ActionsType } from "../type";
 import { ActionTypes } from "./types";
-import { FileEvent, FileItemOrder, Filer } from "@/generated/filer_pb";
+import { FileEvent, FileItemOrder, FileList, Filer } from "@/generated/filer_pb";
 
 // implememt action. Use command `hygen module add:action [name of action]` to add template into this place.
 //#ACTION INSERTION INDICATOR
+export const applyFileListEvent = (fileListEventType: number, fileList: FileList) => {
+  return { type: ActionTypes.APPLY_FILE_LIST_EVENT, payload: { fileListEventType, fileList } };
+};
+
 export const applyEvents = (fileListId: string, fileEvents: FileEvent[]) => {
   return { type: ActionTypes.APPLY_EVENTS, payload: { fileListId, fileEvents } };
 };
@@ -35,6 +39,7 @@ export const cursorUp = function cursorUp() {
 // Do not delete this comment below.
 // prettier-ignore
 export const actions = {
+applyFileListEvent,
 applyEvents,
 updateItemOrders,
 focusItem,

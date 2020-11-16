@@ -1,4 +1,5 @@
 import { DescriptorsType } from "@/commands/type";
+import * as filerApplyFileListEvent from "./filer/apply-file-list-event";
 import * as themeGet from "./theme/get";
 import * as themeUpload from "./theme/upload";
 import * as configurationUpdateAll from "./configuration/update-all";
@@ -20,6 +21,7 @@ import { Type } from "../command-resolver";
 
 // prettier-ignore
 export const descriptors = {
+  filerApplyFileListEvent: filerApplyFileListEvent.descriptor,
   themeGet: themeGet.descriptor,
   themeUpload: themeUpload.descriptor,
   configurationUpdateAll: configurationUpdateAll.descriptor,
@@ -46,6 +48,7 @@ export type Descriptors = DescriptorsType<typeof descriptors>;
  */
 // prettier-ignore
 export const registerToResolver = function registerToResolver(resolver: Type) {
+  resolver.register({descriptor: filerApplyFileListEvent.descriptor, factory: filerApplyFileListEvent.createCommand});
   resolver.register({descriptor: themeGet.descriptor, factory: themeGet.createCommand});
   resolver.register({descriptor: themeUpload.descriptor, factory: themeUpload.createCommand});
   resolver.register({descriptor: configurationUpdateAll.descriptor, factory: configurationUpdateAll.createCommand});

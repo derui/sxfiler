@@ -11,6 +11,7 @@ import {
   DeleteUserDecisionResponse,
   FileEventNotificationResponse,
   FileEventNotificationRequest,
+  FileListEventNotificationRequest,
 } from "@/generated/filer_pb";
 import { State } from "@/modules";
 import { descriptors } from "@/commands/internal";
@@ -284,6 +285,27 @@ export const notificationHandler = function notificationHandler(
             fileListId: request.getFileListId(),
             events: request.getEventsList(),
             itemOrders: request.getFileItemOrdersList(),
+          });
+
+          lazyResponse(ProcessResult.successed(new FileEventNotificationResponse().serializeBinary()));
+        }
+        break;
+      case Command.FILER_FILE_LIST_EVENT:
+        {
+          const request = FileListEventNotificationRequest.deserializeBinary(payload);
+          const factory = args.getCommandResolver().resolveBy(descriptors.filerApplyFileListEvent);
+          const fileList = request.getFileList();
+          if (!factory || !fileList) {
+            logger.error(`Invalid path: ${descriptors.filerApplyFileListEvent.identifier}`);
+            lazyResponse(ProcessResult.ignored());
+            return;
+          }
+
+          logger.info("Start handling event filer_updated_file_window");
+
+          args.getCommandExecutor().execute(factory, args.getState(), {
+            fileListEventType: request.getEventType(),
+            fileList: fileList,
           });
 
           lazyResponse(ProcessResult.successed(new FileEventNotificationResponse().serializeBinary()));

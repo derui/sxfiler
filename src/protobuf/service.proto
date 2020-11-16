@@ -29,6 +29,7 @@ enum Command {
   THEME_GET = 26;
   THEME_UPDATE = 27;
   FILER_FILE_EVENT = 28;
+  FILER_FILE_LIST_EVENT = 29;
 }
 
 // common request

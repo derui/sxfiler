@@ -1,7 +1,15 @@
 import { ActionTypes } from "./types";
 import { Actions } from "./actions";
 import * as N from "@/types/natural-number";
-import { Filer, FileWindow, FileList, FileItemOrder, FileEvent, FileEventType } from "@/generated/filer_pb";
+import {
+  Filer,
+  FileWindow,
+  FileList,
+  FileItemOrder,
+  FileEvent,
+  FileEventType,
+  FileListEventType,
+} from "@/generated/filer_pb";
 import { ObjectEnum } from "@/utils";
 
 export const Side = {
@@ -281,6 +289,40 @@ const applyEvents = (state: State, payload: { fileListId: string; fileEvents: Fi
   return { ...state, filer };
 };
 
+const applyFileListEvent = (state: State, fileListEventType: number, fileList: FileList): State => {
+  switch (fileListEventType) {
+    case FileListEventType.LOCATION_CHANGED: {
+      const { filer } = state;
+      const updateFileList = (window: FileWindow | undefined) => {
+        if (!window) {
+          return window;
+        }
+
+        if (window.getFileList()?.getId() !== fileList.getId()) {
+          return window;
+        }
+        const cloned = window.clone();
+        cloned.setFileList(fileList);
+        return cloned;
+      };
+      const result = sideMap(state, updateFileList, updateFileList);
+
+      if (!result || !filer) {
+        return state;
+      }
+
+      const [left, right] = result;
+      const cloned = filer.clone();
+      filer.setLeftFileWindow(left);
+      filer.setRightFileWindow(right);
+
+      return update(state, cloned);
+    }
+    default:
+      return state;
+  }
+};
+
 export const reducer = function reducer(state: State = emptyState, action: Actions): State {
   switch (action.type) {
     case ActionTypes.UPDATE:
@@ -297,6 +339,8 @@ export const reducer = function reducer(state: State = emptyState, action: Actio
       return focusItem(state, action.payload);
     case ActionTypes.APPLY_EVENTS:
       return applyEvents(state, action.payload);
+    case ActionTypes.APPLY_FILE_LIST_EVENT:
+      return applyFileListEvent(state, action.payload.fileListEventType, action.payload.fileList);
     default:
       return state;
   }
