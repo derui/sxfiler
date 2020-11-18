@@ -44,7 +44,7 @@ module Filer = struct
 
   let notify_file_list_event =
     {
-      command = G.Service.Command.FILER_FILE_EVENT;
+      command = G.Service.Command.FILER_FILE_LIST_EVENT;
       writer = G.Filer.FileListEventNotificationRequest.to_proto;
       reader = G.Filer.FileListEventNotificationResponse.from_proto;
     }

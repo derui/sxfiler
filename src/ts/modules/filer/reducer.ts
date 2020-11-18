@@ -156,7 +156,6 @@ const updateItemOrders = (state: State, payload: { itemOrders: FileItemOrder[]; 
   }
   const filer = oldFiler.clone();
   let currentFileWindow: FileWindow | undefined;
-  let side: Side | undefined;
 
   if (oldFiler.getLeftFileWindow()?.getFileList()?.getId() === payload.fileListId) {
     const fileList = oldFiler.getLeftFileWindow()?.getFileList();
@@ -169,7 +168,6 @@ const updateItemOrders = (state: State, payload: { itemOrders: FileItemOrder[]; 
       currentFileWindow.setFileList(fileList);
       filer.setLeftFileWindow(currentFileWindow);
     }
-    side = Side.Left;
   } else if (oldFiler.getRightFileWindow()?.getFileList()?.getId() === payload.fileListId) {
     const fileList = oldFiler.getRightFileWindow()?.getFileList();
     fileList?.setFileItemOrdersList(payload.itemOrders);
@@ -179,16 +177,11 @@ const updateItemOrders = (state: State, payload: { itemOrders: FileItemOrder[]; 
       currentFileWindow.setFileList(fileList);
       filer.setRightFileWindow(currentFileWindow);
     }
-    side = Side.Right;
   }
 
   return Object.freeze({
     ...state,
     filer,
-    currentCursorPosition: {
-      left: side === Side.Left ? N.zero : state.currentCursorPosition.left,
-      right: side === Side.Right ? N.zero : state.currentCursorPosition.right,
-    },
   });
 };
 
@@ -313,8 +306,8 @@ const applyFileListEvent = (state: State, fileListEventType: number, fileList: F
 
       const [left, right] = result;
       const cloned = filer.clone();
-      filer.setLeftFileWindow(left);
-      filer.setRightFileWindow(right);
+      cloned.setLeftFileWindow(left);
+      cloned.setRightFileWindow(right);
 
       return update(state, cloned);
     }

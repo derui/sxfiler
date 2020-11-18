@@ -12,6 +12,7 @@ import {
   FileEventNotificationResponse,
   FileEventNotificationRequest,
   FileListEventNotificationRequest,
+  FileListEventNotificationResponse,
 } from "@/generated/filer_pb";
 import { State } from "@/modules";
 import { descriptors } from "@/commands/internal";
@@ -308,7 +309,7 @@ export const notificationHandler = function notificationHandler(
             fileList: fileList,
           });
 
-          lazyResponse(ProcessResult.successed(new FileEventNotificationResponse().serializeBinary()));
+          lazyResponse(ProcessResult.successed(new FileListEventNotificationResponse().serializeBinary()));
         }
         break;
       case Command.CONFIGURATION_NOTIFY_UPDATED:

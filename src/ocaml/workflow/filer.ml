@@ -244,7 +244,7 @@ let up_directory scan_location now : Up_directory.work_flow =
     let%lwt file_list = File_list.change_location ~location:parent_location file_window.file_list |> scan in
     let timestamp = now () in
     let file_window = File_window.move_location ~file_list ~timestamp file_window in
-    match file_window with Error `Same -> Lwt.return_ok [] | Ok v -> Lwt.return_ok [ Updated (side, v) ]
+    match file_window with Error `Same -> Lwt.return_ok [] | Ok v -> Lwt.return_ok [ Location_changed (side, v) ]
 
 (* implementation for toggle_mark *)
 let toggle_mark : Toggle_mark.work_flow =

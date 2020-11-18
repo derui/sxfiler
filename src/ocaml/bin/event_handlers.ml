@@ -58,7 +58,7 @@ let update_filer (module C : R.Client.Instance) = function
       apply_file_window (module C) side file_window' to_request R.Client_command.Filer.notify_file_list_event
   | F.Filer (F.Filer.Updated (side, file_window')) ->
       let to_request side new_window old_window =
-        let diff = D.File_list.diff ~prev:new_window.D.File_window.file_list ~next:old_window.D.File_window.file_list in
+        let diff = D.File_list.diff ~next:new_window.D.File_window.file_list ~prev:old_window.D.File_window.file_list in
         {
           G.Filer.FileEventNotificationRequest.file_list_id =
             D.File_list.id new_window.file_list |> D.File_list.Id.value;
