@@ -8,7 +8,7 @@ let test_set =
         let list =
           D.File_list.make ~id:(D.File_list.Id.make "id")
             ~location:(Path.of_string "/root" |> Result.get_ok)
-            ~sort_order:D.Types.Sort_type.Name
+            ~sort_type:D.Types.Sort_type.Name
         in
         let item = Test_fixtures.File_item.fixture () in
         let list' = D.File_list.scan (`Scanned [ item ]) list in
@@ -20,7 +20,8 @@ let test_set =
                 id = "id";
                 location = "/root";
                 items = [ Tr.File_item.of_domain item ];
-                sort_order = Types.SortType.NAME;
+                file_item_orders =
+                  [ Filer.FileItemOrder.{ file_id = D.File_item.Id.value @@ D.File_item.id item; sort_level = 0 } ];
               })
         in
         Alcotest.(check @@ of_pp Sxfiler_generated.Filer.FileList.pp) "domain" expected list');

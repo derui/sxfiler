@@ -10,27 +10,30 @@ type scanned = private
       id : Id.t;
       location : Path.t;
       items : File_item.t list;
-      sort_order : Types.Sort_type.t;
+      file_item_order : File_item_order.t;
     }
   | No_location of {
       id : Id.t;
       location : Path.t;
-      sort_order : Types.Sort_type.t;
+      file_item_order : File_item_order.t;
     }
 [@@deriving eq, show]
 
 type unscanned = private {
   id : Id.t;
   location : Path.t;
-  sort_order : Types.Sort_type.t;
+  file_item_order : File_item_order.t;
 }
 [@@deriving eq, show]
 (** The type of {!File_list} that did not scanned. *)
 
+val id : scanned -> Id.t
+(** [id t] get the identifier of [t]. *)
+
 val location : scanned -> Path.t
 (** [location t] is getter for [location] in [t] *)
 
-val make : id:Id.t -> location:Path.t -> sort_order:Types.Sort_type.t -> unscanned
+val make : id:Id.t -> location:Path.t -> sort_type:Types.Sort_type.t -> unscanned
 (** [make ~id ~location ~sort_order] makes the instance [t] from arguments *)
 
 val reload : [ `Scanned     of File_item.t list | `No_location ] -> scanned -> scanned
@@ -57,3 +60,13 @@ val items : scanned -> File_item.t list
 
 val find_item : id:File_item.Id.t -> scanned -> File_item.t option
 (** [find_item ~id t] find item that have [id] from [t] *)
+
+type file_diff =
+  [ `Only_left  of File_item.t
+  | `Only_right of File_item.t
+  | `Changed    of File_item.t
+  ]
+[@@deriving show, eq]
+
+val diff : prev:scanned -> next:scanned -> file_diff list
+(** [diff ~prev ~next] return difference between [prev] and [next] file lists. *)

@@ -7,7 +7,7 @@ let test_set =
 
   let file_list =
     File_list.(
-      make ~id:(Id.make "left") ~location:(C.Path.of_string "/left" |> Result.get_ok) ~sort_order:Types.Sort_type.Name)
+      make ~id:(Id.make "left") ~location:(C.Path.of_string "/left" |> Result.get_ok) ~sort_type:Types.Sort_type.Name)
   in
 
   let file_list = file_list |> File_list.scan (`Scanned list_items) in
@@ -28,7 +28,7 @@ let test_set =
         let window = File_window.make_left ~file_list ~history:(Location_history.make ()) in
         let new_location = C.Path.of_string "/root" |> Result.get_ok in
         let file_list' =
-          File_list.(make ~id:(Id.make "left") ~location:new_location ~sort_order:Types.Sort_type.Name)
+          File_list.(make ~id:(Id.make "left") ~location:new_location ~sort_type:Types.Sort_type.Name)
           |> File_list.scan (`Scanned [])
         in
         let timestamp = C.Time.of_float 0. |> Option.get in

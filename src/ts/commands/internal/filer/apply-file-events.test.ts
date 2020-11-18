@@ -1,7 +1,5 @@
-import * as C from "./update-file-window";
+import * as C from "./apply-file-events";
 import * as M from "@/commands/client-resolver-mock";
-import { FileWindow } from "@/generated/filer_pb";
-import { Side } from "@/modules/filer/reducer";
 import { State } from "@/modules";
 import { actions } from "@/modules/filer";
 
@@ -12,17 +10,17 @@ describe("Commands", () => {
       const command = C.createCommand();
       const state = {} as State;
 
-      const fileWindow = new FileWindow();
       await command.execute(
         mocks.dispatcher,
         { clientResolver: mocks.clientResolver, state },
         {
-          side: Side.Left,
-          fileWindow,
+          fileListId: "id",
+          events: [],
+          itemOrders: [],
         }
       );
 
-      expect(mocks.dispatcher.dispatch).toBeCalledWith(actions.updateFileWindow(fileWindow, Side.Left));
+      expect(mocks.dispatcher.dispatch).toBeCalledWith(actions.applyEvents("id", []));
     });
   });
 });

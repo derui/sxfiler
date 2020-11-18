@@ -23,7 +23,7 @@ let base_tests =
           File_list.(
             make ~id:(Id.make "test")
               ~location:(C.Path.of_string "/location" |> Result.get_ok)
-              ~sort_order:Types.Sort_type.Name)
+              ~sort_type:Types.Sort_type.Name)
         in
         Alcotest.(check @@ of_pp File_list.Id.pp) "empty" File_list.Id.(make "test") list.id);
     Alcotest_lwt.test_case_sync "find item in list" `Quick (fun () ->
@@ -31,7 +31,7 @@ let base_tests =
           File_list.(
             make ~id:(Id.make "test")
               ~location:(C.Path.of_string "/location" |> Result.get_ok)
-              ~sort_order:Types.Sort_type.Name)
+              ~sort_type:Types.Sort_type.Name)
         in
         let scanned = File_list.scan (`Scanned [ file_item ]) list in
         Alcotest.(check @@ option Test_fixtures.Testable.file_item)
@@ -49,7 +49,7 @@ and mark_tests =
           File_list.(
             make ~id:(Id.make "test")
               ~location:(C.Path.of_string "/location" |> Result.get_ok)
-              ~sort_order:Types.Sort_type.Name)
+              ~sort_type:Types.Sort_type.Name)
         in
         let scanned = File_list.scan (`Scanned [ file_item ]) list in
         let scanned = File_list.mark_items ~ids:[ File_item.id file_item ] scanned in
@@ -60,7 +60,7 @@ and mark_tests =
           File_list.(
             make ~id:(Id.make "test")
               ~location:(C.Path.of_string "/location" |> Result.get_ok)
-              ~sort_order:Types.Sort_type.Name)
+              ~sort_type:Types.Sort_type.Name)
         in
         let scanned = File_list.scan (`Scanned [ file_item ]) list in
         let ids = [ File_item.id file_item ] in
@@ -72,7 +72,7 @@ and mark_tests =
           File_list.(
             make ~id:(Id.make "test")
               ~location:(C.Path.of_string "/location" |> Result.get_ok)
-              ~sort_order:Types.Sort_type.Name)
+              ~sort_type:Types.Sort_type.Name)
         in
         let scanned = File_list.scan (`Scanned [ file_item ]) list in
         let scanned = File_list.mark_items ~ids:[ File_item.Id.make "unknown" ] scanned in
@@ -80,4 +80,57 @@ and mark_tests =
         Alcotest.(check @@ list @@ of_pp File_item.pp) "list of items" [] items);
   ]
 
-let test_set = List.concat [ base_tests; mark_tests ]
+and diff_tests =
+  let file_item =
+    File_item.(make ~id:(Id.make "string") ~full_path:C.Path.(of_string "test.txt" |> Result.get_ok) ~stat:file_stat)
+  in
+  let left_only_item =
+    File_item.(make ~id:(Id.make "left") ~full_path:C.Path.(of_string "left.txt" |> Result.get_ok) ~stat:file_stat)
+  in
+  let right_only_item =
+    File_item.(make ~id:(Id.make "right") ~full_path:C.Path.(of_string "right.txt" |> Result.get_ok) ~stat:file_stat)
+  in
+
+  [
+    Alcotest_lwt.test_case_sync "no have difference file_lists that are no_location" `Quick (fun () ->
+        let list =
+          File_list.(
+            make ~id:(Id.make "test")
+              ~location:(C.Path.of_string "/location" |> Result.get_ok)
+              ~sort_type:Types.Sort_type.Name)
+        in
+        let prev = File_list.scan `No_location list in
+        let next = File_list.scan `No_location list in
+
+        let items = File_list.diff ~prev ~next in
+        Alcotest.(check @@ list @@ of_pp Fmt.nop) "difference" [] items);
+    Alcotest_lwt.test_case_sync "only left side items when right is no location" `Quick (fun () ->
+        let list =
+          File_list.(
+            make ~id:(Id.make "test")
+              ~location:(C.Path.of_string "/location" |> Result.get_ok)
+              ~sort_type:Types.Sort_type.Name)
+        in
+        let prev = File_list.scan (`Scanned [ file_item ]) list in
+        let next = File_list.scan `No_location list in
+
+        let items = File_list.diff ~prev ~next in
+        Alcotest.(check @@ list @@ of_pp Fmt.nop) "difference" [ `Only_left file_item ] items);
+    Alcotest_lwt.test_case_sync "only right side items when left is no location" `Quick (fun () ->
+        let list =
+          File_list.(
+            make ~id:(Id.make "test")
+              ~location:(C.Path.of_string "/location" |> Result.get_ok)
+              ~sort_type:Types.Sort_type.Name)
+        in
+        let prev = File_list.scan (`Scanned [ file_item; left_only_item ]) list in
+        let next = File_list.scan (`Scanned [ file_item; right_only_item ]) list in
+
+        let items = File_list.diff ~prev ~next in
+        Alcotest.(check @@ list @@ of_pp File_list.pp_file_diff)
+          "difference"
+          [ `Only_left left_only_item; `Only_right right_only_item ]
+          items);
+  ]
+
+let test_set = List.concat [ base_tests; mark_tests; diff_tests ]

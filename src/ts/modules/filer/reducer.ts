@@ -1,7 +1,15 @@
 import { ActionTypes } from "./types";
 import { Actions } from "./actions";
 import * as N from "@/types/natural-number";
-import { Filer, FileWindow, FileList } from "@/generated/filer_pb";
+import {
+  Filer,
+  FileWindow,
+  FileList,
+  FileItemOrder,
+  FileEvent,
+  FileEventType,
+  FileListEventType,
+} from "@/generated/filer_pb";
 import { ObjectEnum } from "@/utils";
 
 export const Side = {
@@ -141,7 +149,7 @@ const update = (state: State, filer: Filer): State => {
   });
 };
 
-const updateFileWindow = (state: State, payload: { fileWindow: FileWindow; side: Side }) => {
+const updateItemOrders = (state: State, payload: { itemOrders: FileItemOrder[]; fileListId: string }) => {
   const { filer: oldFiler } = state;
   if (!oldFiler) {
     return state;
@@ -149,26 +157,31 @@ const updateFileWindow = (state: State, payload: { fileWindow: FileWindow; side:
   const filer = oldFiler.clone();
   let currentFileWindow: FileWindow | undefined;
 
-  switch (payload.side) {
-    case Side.Left:
-      currentFileWindow = oldFiler.getLeftFileWindow();
-      filer.setLeftFileWindow(payload.fileWindow);
-      break;
-    case Side.Right:
-      currentFileWindow = oldFiler.getRightFileWindow();
-      filer.setRightFileWindow(payload.fileWindow);
-      break;
+  if (oldFiler.getLeftFileWindow()?.getFileList()?.getId() === payload.fileListId) {
+    const fileList = oldFiler.getLeftFileWindow()?.getFileList();
+    fileList?.setFileItemOrdersList(payload.itemOrders);
+    currentFileWindow = oldFiler.getLeftFileWindow();
+
+    currentFileWindow?.setFileList(fileList);
+
+    if (currentFileWindow) {
+      currentFileWindow.setFileList(fileList);
+      filer.setLeftFileWindow(currentFileWindow);
+    }
+  } else if (oldFiler.getRightFileWindow()?.getFileList()?.getId() === payload.fileListId) {
+    const fileList = oldFiler.getRightFileWindow()?.getFileList();
+    fileList?.setFileItemOrdersList(payload.itemOrders);
+    currentFileWindow = oldFiler.getLeftFileWindow();
+
+    if (currentFileWindow) {
+      currentFileWindow.setFileList(fileList);
+      filer.setRightFileWindow(currentFileWindow);
+    }
   }
-  const sameLocation =
-    currentFileWindow?.getFileList()?.getLocation() === payload.fileWindow.getFileList()?.getLocation();
 
   return Object.freeze({
     ...state,
     filer,
-    currentCursorPosition: {
-      left: payload.side === Side.Left && !sameLocation ? N.zero : state.currentCursorPosition.left,
-      right: payload.side === Side.Right && !sameLocation ? N.zero : state.currentCursorPosition.right,
-    },
   });
 };
 
@@ -211,6 +224,98 @@ const focusItem = (state: State, payload: { itemId: string }): State => {
   });
 };
 
+const applyEvents = (state: State, payload: { fileListId: string; fileEvents: FileEvent[] }): State => {
+  const { fileListId, fileEvents } = payload;
+  let targetFileWindow: FileWindow | undefined;
+  let side: Side = Side.Left;
+
+  if (state.filer?.getLeftFileWindow()?.getFileList()?.getId() === fileListId) {
+    targetFileWindow = state.filer?.getLeftFileWindow();
+    side = Side.Left;
+  } else if (state.filer?.getRightFileWindow()?.getFileList()?.getId() === fileListId) {
+    targetFileWindow = state.filer?.getRightFileWindow();
+    side = Side.Right;
+  }
+
+  const targetFileList = targetFileWindow?.getFileList();
+  const filer = state.filer?.clone();
+
+  if (!targetFileWindow || !targetFileList || !filer) return state;
+
+  fileEvents.forEach((event) => {
+    switch (event.getEventType()) {
+      case FileEventType.ADD:
+        targetFileList.addItems(event.getFileItem());
+        break;
+      case FileEventType.DELETE:
+        {
+          const items = targetFileList.getItemsList().filter((v) => v.getId() !== event.getFileItem()?.getId());
+
+          targetFileList.setItemsList(items);
+        }
+        break;
+      case FileEventType.UPDATE:
+        {
+          const item = event.getFileItem();
+          const items = targetFileList.getItemsList().map((v) => {
+            if (!item) return v;
+            if (v.getId() !== item.getId()) return v;
+
+            return item;
+          });
+
+          targetFileList.setItemsList(items);
+        }
+        break;
+      default:
+        break;
+    }
+  });
+
+  targetFileWindow.setFileList(targetFileList);
+  if (side === Side.Left) {
+    filer.setLeftFileWindow(targetFileWindow);
+  } else if (side === Side.Right) {
+    filer.setRightFileWindow(targetFileWindow);
+  }
+
+  return { ...state, filer };
+};
+
+const applyFileListEvent = (state: State, fileListEventType: number, fileList: FileList): State => {
+  switch (fileListEventType) {
+    case FileListEventType.LOCATION_CHANGED: {
+      const { filer } = state;
+      const updateFileList = (window: FileWindow | undefined) => {
+        if (!window) {
+          return window;
+        }
+
+        if (window.getFileList()?.getId() !== fileList.getId()) {
+          return window;
+        }
+        const cloned = window.clone();
+        cloned.setFileList(fileList);
+        return cloned;
+      };
+      const result = sideMap(state, updateFileList, updateFileList);
+
+      if (!result || !filer) {
+        return state;
+      }
+
+      const [left, right] = result;
+      const cloned = filer.clone();
+      cloned.setLeftFileWindow(left);
+      cloned.setRightFileWindow(right);
+
+      return update(state, cloned);
+    }
+    default:
+      return state;
+  }
+};
+
 export const reducer = function reducer(state: State = emptyState, action: Actions): State {
   switch (action.type) {
     case ActionTypes.UPDATE:
@@ -221,10 +326,14 @@ export const reducer = function reducer(state: State = emptyState, action: Actio
       return cursorUp(state);
     case ActionTypes.CHANGE_SIDE:
       return changeSide(state);
-    case ActionTypes.UPDATE_FILE_WINDOW:
-      return updateFileWindow(state, action.payload);
+    case ActionTypes.UPDATE_ITEM_ORDERS:
+      return updateItemOrders(state, action.payload);
     case ActionTypes.FOCUS_ITEM:
       return focusItem(state, action.payload);
+    case ActionTypes.APPLY_EVENTS:
+      return applyEvents(state, action.payload);
+    case ActionTypes.APPLY_FILE_LIST_EVENT:
+      return applyFileListEvent(state, action.payload.fileListEventType, action.payload.fileList);
     default:
       return state;
   }

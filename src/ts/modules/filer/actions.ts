@@ -1,16 +1,23 @@
 import { ActionsType } from "../type";
 import { ActionTypes } from "./types";
-import { Filer, FileWindow } from "@/generated/filer_pb";
-import { Side } from "./reducer";
+import { FileEvent, FileItemOrder, FileList, Filer } from "@/generated/filer_pb";
 
 // implememt action. Use command `hygen module add:action [name of action]` to add template into this place.
 //#ACTION INSERTION INDICATOR
-export const focusItem = (itemId: string) => {
-  return { type: ActionTypes.FOCUS_ITEM, payload: { itemId } };
+export const applyFileListEvent = (fileListEventType: number, fileList: FileList) => {
+  return { type: ActionTypes.APPLY_FILE_LIST_EVENT, payload: { fileListEventType, fileList } };
 };
 
-export const updateFileWindow = (fileWindow: FileWindow, side: Side) => {
-  return { type: ActionTypes.UPDATE_FILE_WINDOW, payload: { fileWindow, side } };
+export const applyEvents = (fileListId: string, fileEvents: FileEvent[]) => {
+  return { type: ActionTypes.APPLY_EVENTS, payload: { fileListId, fileEvents } };
+};
+
+export const updateItemOrders = (fileListId: string, itemOrders: FileItemOrder[]) => {
+  return { type: ActionTypes.UPDATE_ITEM_ORDERS, payload: { fileListId, itemOrders } };
+};
+
+export const focusItem = (itemId: string) => {
+  return { type: ActionTypes.FOCUS_ITEM, payload: { itemId } };
 };
 
 export const changeSide = function changeSide() {
@@ -32,8 +39,10 @@ export const cursorUp = function cursorUp() {
 // Do not delete this comment below.
 // prettier-ignore
 export const actions = {
+applyFileListEvent,
+applyEvents,
+updateItemOrders,
 focusItem,
-updateFileWindow,
 changeSide,
 update,
 cursorDown,

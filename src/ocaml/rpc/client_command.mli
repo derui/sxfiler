@@ -20,9 +20,12 @@ module Filer : sig
   val notify_updated : (G.Filer.UpdatedNotificationRequest.t, G.Filer.UpdatedNotificationResponse.t) t
   (** command to notify filer updated *)
 
-  val notify_updated_file_window :
-    (G.Filer.UpdatedFileWindowNotificationRequest.t, G.Filer.UpdatedFileWindowNotificationResponse.t) t
-  (** command to notify file window updated *)
+  val notify_file_event : (G.Filer.FileEventNotificationRequest.t, G.Filer.FileEventNotificationResponse.t) t
+  (** command to notify occurred file events *)
+
+  val notify_file_list_event :
+    (G.Filer.FileListEventNotificationRequest.t, G.Filer.FileListEventNotificationResponse.t) t
+  (** command to notify occurred file list event *)
 end
 
 module Completer : sig

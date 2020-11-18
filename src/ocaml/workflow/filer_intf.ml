@@ -12,8 +12,9 @@ type direction =
 [@@deriving eq, show]
 
 type event =
-  | Updated             of D.Filer.t
-  | Updated_file_window of (side * D.File_window.free D.File_window.t)
+  | Initialized      of D.Filer.t
+  | Location_changed of (side * D.File_window.free D.File_window.t)
+  | Updated          of (side * D.File_window.free D.File_window.t)
 [@@deriving eq, show]
 
 type transfer_target =

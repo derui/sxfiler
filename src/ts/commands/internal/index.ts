@@ -1,4 +1,5 @@
 import { DescriptorsType } from "@/commands/type";
+import * as filerApplyFileListEvent from "./filer/apply-file-list-event";
 import * as themeGet from "./theme/get";
 import * as themeUpload from "./theme/upload";
 import * as configurationUpdateAll from "./configuration/update-all";
@@ -7,7 +8,7 @@ import * as configurationSelectSection from "./configuration/select-section";
 import * as completerUpdateCandidates from "./completer/update-candidates";
 import * as completerInitialize from "./completer/initialize";
 import * as completerComplete from "./completer/complete";
-import * as filerUpdateFileWindow from "./filer/update-file-window";
+import * as filerAppleFileEvents from "./filer/apply-file-events";
 import * as decisionReset from "./decision/reset";
 import * as decisionRequest from "./decision/request";
 import * as decisionUpdateNewName from "./decision/update-new-name";
@@ -20,6 +21,7 @@ import { Type } from "../command-resolver";
 
 // prettier-ignore
 export const descriptors = {
+  filerApplyFileListEvent: filerApplyFileListEvent.descriptor,
   themeGet: themeGet.descriptor,
   themeUpload: themeUpload.descriptor,
   configurationUpdateAll: configurationUpdateAll.descriptor,
@@ -28,7 +30,7 @@ export const descriptors = {
   completerUpdateCandidates: completerUpdateCandidates.descriptor,
   completerInitialize: completerInitialize.descriptor,
   completerComplete: completerComplete.descriptor,
-  filerUpdateFileWindow: filerUpdateFileWindow.descriptor,
+  filerApplyFileEvents: filerAppleFileEvents.descriptor,
   decisionReset: decisionReset.descriptor,
   decisionRequest: decisionRequest.descriptor,
   decisionUpdateNewName: decisionUpdateNewName.descriptor,
@@ -46,6 +48,7 @@ export type Descriptors = DescriptorsType<typeof descriptors>;
  */
 // prettier-ignore
 export const registerToResolver = function registerToResolver(resolver: Type) {
+  resolver.register({descriptor: filerApplyFileListEvent.descriptor, factory: filerApplyFileListEvent.createCommand});
   resolver.register({descriptor: themeGet.descriptor, factory: themeGet.createCommand});
   resolver.register({descriptor: themeUpload.descriptor, factory: themeUpload.createCommand});
   resolver.register({descriptor: configurationUpdateAll.descriptor, factory: configurationUpdateAll.createCommand});
@@ -54,7 +57,7 @@ export const registerToResolver = function registerToResolver(resolver: Type) {
   resolver.register({descriptor: completerUpdateCandidates.descriptor, factory: completerUpdateCandidates.createCommand});
   resolver.register({descriptor: completerInitialize.descriptor, factory: completerInitialize.createCommand});
   resolver.register({descriptor: completerComplete.descriptor, factory: completerComplete.createCommand});
-  resolver.register({descriptor: filerUpdateFileWindow.descriptor, factory: filerUpdateFileWindow.createCommand});
+  resolver.register({descriptor: filerAppleFileEvents.descriptor, factory: filerAppleFileEvents.createCommand});
   resolver.register({descriptor: decisionReset.descriptor, factory: decisionReset.createCommand});
   resolver.register({descriptor: decisionRequest.descriptor, factory: decisionRequest.createCommand});
   resolver.register({descriptor: decisionUpdateNewName.descriptor, factory: decisionUpdateNewName.createCommand});

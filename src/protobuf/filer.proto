@@ -1,8 +1,5 @@
 syntax = "proto3";
 
-// types
-import "types.proto";
-
 enum Side {
   LEFT = 0;
   RIGHT = 1;
@@ -55,11 +52,16 @@ message FileItem {
   bool marked = 8;
 }
 
+message FileItemOrder {
+  string file_id = 1;
+  int64 sort_level = 2;
+}
+
 message FileList {
   string id = 3;
   string location = 1;
   repeated FileItem items = 2;
-  SortType sort_order = 4;
+  repeated FileItemOrder file_item_orders = 5;
 }
 
 message LocationHistory {
@@ -201,6 +203,36 @@ message DeleteResponse {
   repeated DeleteResult results = 1;
 }
 
+enum FileEventType {
+  ADD = 0;
+  DELETE = 1;
+  UPDATE = 2;
+}
+
+message FileEvent {
+  FileEventType event_type = 1;
+  FileItem file_item = 2;
+}
+
+enum FileListEventType {
+  LOCATION_CHANGED = 0;
+}
+
+// declaration to notify file event
+message FileEventNotificationRequest {
+  string file_list_id = 1;
+  repeated FileEvent events = 2;
+  repeated FileItemOrder file_item_orders = 3;
+}
+message FileEventNotificationResponse {}
+
+// declaration to notify event for file list
+message FileListEventNotificationRequest {
+  FileListEventType event_type = 1;
+  FileList file_list = 2;
+}
+message FileListEventNotificationResponse {}
+
 // declarations notification service from server to client.
 // This service need to implement on client.
 message UpdatedNotificationRequest {
@@ -208,10 +240,3 @@ message UpdatedNotificationRequest {
 }
 
 message UpdatedNotificationResponse {}
-
-// This notification notifies updated the file window of the side
-message UpdatedFileWindowNotificationRequest {
-  FileWindow file_window = 1;
-  Side side = 2;
-}
-message UpdatedFileWindowNotificationResponse {}

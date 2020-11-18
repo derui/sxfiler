@@ -4,8 +4,8 @@ enum Command {
   UNKNOWN_COMMAND= 0;
   FILER_INITIALIZE = 1;
   FILER_RELOAD_ALL= 2;
-  FILER_MOVE_LOCATION= 3;
-  FILER_UPDATED= 4;
+  FILER_MOVE_LOCATION = 3;
+  FILER_UPDATED = 4;
   FILER_COPY_INTERACTION= 5;
   FILER_MOVE_INTERACTION= 6;
   FILER_DELETE_INTERACTION  = 7;
@@ -18,7 +18,6 @@ enum Command {
   CONFIGURATION_GET = 14;
   FILER_UP_DIRECTORY = 15;
   FILER_TOGGLE_MARK_OF_ITEM = 16;
-  FILER_UPDATED_FILE_WINDOW = 17;
   COMPLETER_INITIALIZE = 18;
   COMPLETER_COMPLETE = 19;
   COMPLETER_NOTIFY_COMPLETED = 20;
@@ -29,6 +28,8 @@ enum Command {
   CONFIGURATION_NOTIFY_UPDATED = 25;
   THEME_GET = 26;
   THEME_UPDATE = 27;
+  FILER_FILE_EVENT = 28;
+  FILER_FILE_LIST_EVENT = 29;
 }
 
 // common request
@@ -101,7 +102,7 @@ service FilerService {
 
   // notification that filer updated
   rpc notifyUpdated(Request) returns (Response);
-  rpc notifyUpdatedFileWindow(Request) returns (Response);
+  rpc notifyFileEvent(Request) returns (Response);
 }
 
 // keymap service
