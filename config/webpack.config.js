@@ -62,7 +62,7 @@ module.exports = function (webpackEnv) {
       pathinfo: isEnvDevelopment,
       // There will be one main bundle, and one file per asynchronous chunk.
       // In development, it does not produce real files.
-      filename: isEnvProduction ? 'static/js/[name].[chunkhash:8].js' : isEnvDevelopment && 'static/js/bundle.js',
+      filename: 'static/js/[name].[chunkhash:8].js',
       // There are also additional JS chunk files if you use code splitting.
       chunkFilename: isEnvProduction
         ? 'static/js/[name].[chunkhash:8].chunk.js'
@@ -117,9 +117,6 @@ module.exports = function (webpackEnv) {
           // Use multi-process parallel running to improve the build speed
           // Default number of concurrent runs: os.cpus().length - 1
           parallel: true,
-          // Enable file caching
-          cache: true,
-          sourceMap: shouldUseSourceMap,
         }),
       ],
       // Automatically split vendor and commons
@@ -127,7 +124,6 @@ module.exports = function (webpackEnv) {
       // https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
       splitChunks: {
         chunks: 'all',
-        name: false,
       },
       // Keep the runtime chunk separated to enable long term caching
       // https://twitter.com/wSokra/status/969679223278505985
@@ -146,6 +142,20 @@ module.exports = function (webpackEnv) {
         react: 'preact/compat',
         'react-dom': 'preact/compat',
         '@': path.resolve(paths.appSrc, 'ts'),
+      },
+      fallback: {
+        os: require.resolve('os-browserify/browser'),
+        https: require.resolve('https-browserify'),
+        http: require.resolve('stream-http'),
+        path: require.resolve('path-browserify'),
+        zlib: false,
+        module: false,
+        dgram: false,
+        dns: 'mock',
+        fs: false,
+        net: false,
+        tls: false,
+        child_process: false,
       },
       // These are the reasonable defaults supported by the Node ecosystem.
       // We also include JSX as a common component filename extension to support
@@ -193,6 +203,10 @@ module.exports = function (webpackEnv) {
       ],
     },
     plugins: [
+      new webpack.ProvidePlugin({
+        process: 'process',
+        Buffer: ['buffer', 'Buffer'],
+      }),
       // Generates an `index.html` file with the <script> injected.
       new HtmlWebpackPlugin(
         Object.assign(
@@ -230,7 +244,7 @@ module.exports = function (webpackEnv) {
       // Watcher doesn't work well if you mistype casing in a path so we use
       // a plugin that prints an error when you attempt to do this.
       // See https://github.com/facebook/create-react-app/issues/240
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      new webpack.IgnorePlugin({ resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ }),
       // TypeScript type checking
       new ForkTsCheckerWebpackPlugin({
         typescript: {
@@ -252,13 +266,7 @@ module.exports = function (webpackEnv) {
     // Some libraries import Node modules but don't use them in the browser.
     // Tell Webpack to provide empty mocks for them so importing them works.
     node: {
-      module: 'empty',
-      dgram: 'empty',
-      dns: 'mock',
-      fs: 'empty',
-      net: 'empty',
-      tls: 'empty',
-      child_process: 'empty',
+      global: true,
     },
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter

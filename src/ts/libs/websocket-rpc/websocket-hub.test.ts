@@ -30,7 +30,7 @@ describe("Library", () => {
       const promise = new Promise((resolve) => {
         hub.subscribe((message) => {
           expect(message).toBe("from server");
-          resolve();
+          resolve(undefined);
         });
       });
 

@@ -37,7 +37,7 @@ describe("Project", () => {
               selectableActions: [{ kind: DecisionAction.Rename, newName: "empty.js" }],
               onNewNameChange: (newName) => {
                 expect(newName).toEqual("newName");
-                resolve();
+                resolve(undefined);
               },
             }}
           />

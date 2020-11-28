@@ -4,7 +4,7 @@ import { storiesOf } from "@storybook/preact";
 import { h } from "preact";
 
 import { Component } from "@/components/project/configuration-section";
-import { createSection, createItem } from "@/configurations/creators";
+import { createSection, createItem, toItemKey } from "@/configurations/creators";
 import { createText, createNumber, createBoolean } from "@/configurations/item-creators";
 
 storiesOf("Project/Configuration Section", module)
@@ -13,7 +13,7 @@ storiesOf("Project/Configuration Section", module)
     "empty section",
     () => {
       const section = createSection({
-        key: "section1",
+        key: ["category", "section1"],
         displayName: "section1",
         description: "description",
         items: [],
@@ -30,12 +30,12 @@ storiesOf("Project/Configuration Section", module)
     "single item",
     () => {
       const section = createSection({
-        key: "section1",
+        key: ["category", "section1"],
         displayName: "section1",
         description: "looooooooooooooooooooooooooooooooong looooooooooooooooooooong long long long \ndescription",
         items: [
           createItem({
-            key: ["key", "section1", "item"],
+            key: toItemKey(["key", "section1", "item"]),
             displayName: "Item for Text",
             description: "input text to this item",
             type: createText(),
@@ -54,24 +54,24 @@ storiesOf("Project/Configuration Section", module)
     "multiple items",
     () => {
       const section = createSection({
-        key: "section1",
+        key: ["category", "section1"],
         displayName: "section1",
         description: "description",
         items: [
           createItem({
-            key: ["key", "section1", "foo"],
+            key: toItemKey(["key", "section1", "foo"]),
             displayName: "Item for Text",
             description: "input text to this item",
             type: createText(),
           }),
           createItem({
-            key: ["key", "section1", "bar"],
+            key: toItemKey(["key", "section1", "bar"]),
             displayName: "Item for Number",
             description: "input number to this item",
             type: createNumber(),
           }),
           createItem({
-            key: ["key", "section1", "baz"],
+            key: toItemKey(["key", "section1", "baz"]),
             displayName: "Item for Boolean",
             description: "toggle switch",
             type: createBoolean(false),

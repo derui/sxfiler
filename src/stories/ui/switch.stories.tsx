@@ -1,5 +1,5 @@
 import { withInfo } from "@storybook/addon-info";
-import { boolean, boolean, withKnobs } from "@storybook/addon-knobs";
+import { withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/preact";
 import { h } from "preact";
 

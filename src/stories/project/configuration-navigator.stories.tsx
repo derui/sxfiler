@@ -13,18 +13,18 @@ storiesOf("Project/Configuration Navigator", module)
     () => {
       const categories = [
         createCategory({
-          key: "key",
+          key: ["key"],
           displayName: "category1",
           description: "description",
           sections: [
             createSection({
-              key: "section1",
+              key: ["key", "section1"],
               displayName: "section1",
               description: "description",
               items: [],
             }),
             createSection({
-              key: "section2",
+              key: ["key", "section2"],
               displayName: "section2",
               description: "description",
               items: [],
@@ -45,18 +45,18 @@ storiesOf("Project/Configuration Navigator", module)
     () => {
       const categories = [
         createCategory({
-          key: "key",
+          key: ["key"],
           displayName: "category1",
           description: "description",
           sections: [
             createSection({
-              key: "section1",
+              key: ["key", "section1"],
               displayName: "section1",
               description: "description",
               items: [],
             }),
             createSection({
-              key: "section2",
+              key: ["key", "section2"],
               displayName: "section2",
               description: "description",
               items: [],
@@ -64,18 +64,18 @@ storiesOf("Project/Configuration Navigator", module)
           ],
         }),
         createCategory({
-          key: "key2",
+          key: ["key2"],
           displayName: "category2",
           description: "description",
           sections: [
             createSection({
-              key: "section1",
+              key: ["key2", "section1"],
               displayName: "section1",
               description: "description",
               items: [],
             }),
             createSection({
-              key: "section2",
+              key: ["key2", "section2"],
               displayName: "section2",
               description: "description",
               items: [],
