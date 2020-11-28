@@ -1,3 +1,6 @@
 **/*.test.tsx
 **/*.test.ts
 **/*.stories.tsx
+src/ts/generated/**
+react-app-env.d.ts
+setupTests.ts

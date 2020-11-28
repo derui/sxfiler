@@ -1,4 +1,4 @@
-import { Request, Response, Status, Command, Error } from "@/generated/service_pb";
+import { Request, Response, Status, Command } from "@/generated/service_pb";
 import * as F from "../../generated/filer_pb";
 import { create, ProcessResult } from "./server";
 import * as WebSocketHub from "./websocket-hub";
@@ -61,7 +61,7 @@ describe("Library", () => {
             const res = Response.deserializeBinary(data);
             expect(res.getId()).toBe("id");
             expect(res.getStatus()).toBe(Status.SUCCESS);
-            resolve();
+            resolve(undefined);
           });
 
           hub.start();

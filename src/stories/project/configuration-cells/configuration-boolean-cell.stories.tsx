@@ -4,7 +4,7 @@ import { storiesOf } from "@storybook/preact";
 import { h } from "preact";
 
 import { Component } from "@/components/project/configuration-cells/configuration-boolean-cell";
-import { createItem } from "@/configurations/creators";
+import { createItem, toItemKey } from "@/configurations/creators";
 import { createBoolean } from "@/configurations/item-creators";
 
 storiesOf("Project/Configuration Cell/Boolean", module)
@@ -13,7 +13,7 @@ storiesOf("Project/Configuration Cell/Boolean", module)
     "empty value",
     () => {
       const item = createItem({
-        key: ["key", "section", "item"],
+        key: toItemKey(["key", "section", "item"]),
         displayName: "boolean",
         description: "description",
         type: createBoolean(false),
@@ -31,7 +31,7 @@ storiesOf("Project/Configuration Cell/Boolean", module)
     "default value",
     () => {
       const item = createItem({
-        key: ["key", "section", "item"],
+        key: toItemKey(["key", "section", "item"]),
         displayName: "boolean",
         description: "description",
         type: createBoolean(true),

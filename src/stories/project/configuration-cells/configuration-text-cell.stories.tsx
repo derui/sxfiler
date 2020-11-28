@@ -4,7 +4,7 @@ import { storiesOf } from "@storybook/preact";
 import { h } from "preact";
 
 import { Component } from "@/components/project/configuration-cells/configuration-text-cell";
-import { createItem } from "@/configurations/creators";
+import { createItem, toItemKey } from "@/configurations/creators";
 import { createText } from "@/configurations/item-creators";
 
 storiesOf("Project/Configuration Cell/Text", module)
@@ -13,7 +13,7 @@ storiesOf("Project/Configuration Cell/Text", module)
     "empty value",
     () => {
       const item = createItem({
-        key: ["key", "section", "item"],
+        key: toItemKey(["key", "section", "item"]),
         displayName: "text",
         description: "description",
         type: createText(),
@@ -31,7 +31,7 @@ storiesOf("Project/Configuration Cell/Text", module)
     "default value",
     () => {
       const item = createItem({
-        key: ["key", "section", "item"],
+        key: toItemKey(["key", "section", "item"]),
         displayName: "text",
         description: "description",
         type: createText("test"),
