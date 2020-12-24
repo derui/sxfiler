@@ -17,10 +17,10 @@ export type Props = {
   focused: boolean;
 };
 
-function useItemMeasureCache() {
+const useItemMeasureCache = function useItemMeasureCache() {
   const [cache] = useState(new ItemMeasureCache());
   return cache;
-}
+};
 
 const useLayoutCalculator = () => {
   const [calculator] = useState(
