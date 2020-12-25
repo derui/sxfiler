@@ -1,6 +1,7 @@
 import { createSelector } from "reselect";
 import { State, Side } from "./reducer";
-import { Side as PbSide } from "@/generated/filer_pb";
+import { FileList, FileWindow, Side as PbSide } from "@/generated/filer_pb";
+import { SortTypeMap } from "@/generated/types_pb";
 
 // helper selector
 const currentIndexSelector = (state: State) => {
@@ -21,11 +22,28 @@ export const currentSideItemsSelector = (state: State) => {
   }
 };
 
+const getSortedFileList = function getSortedFileList(
+  sortType: SortTypeMap,
+  fileWindow: FileWindow
+): FileList | undefined {
+  const fileList = fileWindow.getFileList();
+
+  if (!fileList) {
+    return undefined;
+  }
+
+  const orders = fileList.getFileItemOrdersList();
+};
+
 /**
  * select specified side file list
  */
-export const leftSideFileListSelector = (state: State) => state.filer?.getLeftFileWindow()?.getFileList();
-export const rightSideFileListSelector = (state: State) => state.filer?.getRightFileWindow()?.getFileList();
+export const leftSideFileListSelector = (state: State) => {
+  return state.filer?.getLeftFileWindow()?.getFileList();
+};
+export const rightSideFileListSelector = (state: State) => {
+  return state.filer?.getRightFileWindow()?.getFileList();
+};
 export const leftSideCursorPositionSelector = (state: State) => state.currentCursorPosition.left;
 export const rightSideCursorPositionSelector = (state: State) => state.currentCursorPosition.right;
 
