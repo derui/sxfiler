@@ -1,7 +1,6 @@
 import { createSelector } from "reselect";
 import { State, Side } from "./reducer";
 import { FileList, FileWindow, Side as PbSide } from "@/generated/filer_pb";
-import { SortTypeMap } from "@/generated/types_pb";
 
 // helper selector
 const currentIndexSelector = (state: State) => {
@@ -23,7 +22,6 @@ export const currentSideItemsSelector = (state: State) => {
 };
 
 const getSortedFileList = function getSortedFileList(
-  sortType: SortTypeMap,
   fileWindow: FileWindow
 ): FileList | undefined {
   const fileList = fileWindow.getFileList();
@@ -32,17 +30,49 @@ const getSortedFileList = function getSortedFileList(
     return undefined;
   }
 
-  const orders = fileList.getFileItemOrdersList();
+  const orders = fileList.getFileItemOrdersList().reduce((obj , v) => {
+    obj[v.getFileId()] = v.getSortLevel();
+    return obj;
+  }, {} as {[key:string]: number});
+
+  const sortedItems = fileList.getItemsList().sort((v1, v2) => {
+    const v1Order = orders[v1.getId()];
+    const v2Order = orders[v2.getId()];
+    const v = Math.abs(v1Order - v2Order);
+
+    if ( v < Number.EPSILON) {
+      return -v;
+    } else {
+      return v;
+    }
+  });
+
+  const newFileList = fileList.clone();
+  newFileList.setItemsList(sortedItems);
+
+  return newFileList;
 };
 
 /**
  * select specified side file list
  */
 export const leftSideFileListSelector = (state: State) => {
-  return state.filer?.getLeftFileWindow()?.getFileList();
+  const fileWindow =  state.filer?.getLeftFileWindow() ;
+
+  if (!fileWindow) {
+    return null;
+  }
+
+  return getSortedFileList(fileWindow);
 };
 export const rightSideFileListSelector = (state: State) => {
-  return state.filer?.getRightFileWindow()?.getFileList();
+  const fileWindow =  state.filer?.getRightFileWindow() ;
+
+  if (!fileWindow) {
+    return null;
+  }
+
+  return getSortedFileList(fileWindow);
 };
 export const leftSideCursorPositionSelector = (state: State) => state.currentCursorPosition.left;
 export const rightSideCursorPositionSelector = (state: State) => state.currentCursorPosition.right;

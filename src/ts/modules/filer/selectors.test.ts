@@ -5,7 +5,7 @@ import {
   rightSideFileListSelector,
 } from "./selectors";
 import { also } from "@/libs/fn";
-import { Filer, FileWindow, FileList, FileItem, Side as PbSide } from "@/generated/filer_pb";
+import { Filer, FileWindow, FileList, FileItem, Side as PbSide, FileItemOrder } from "@/generated/filer_pb";
 import { reducer, Side, emptyState } from "./reducer";
 import { actions } from "./actions";
 
@@ -74,20 +74,41 @@ describe("Modules", () => {
 
       test("get left file list if it exists", () => {
         expect(leftSideFileListSelector(emptyState)).toBeUndefined();
+        const fileItems = [
+          also(new FileItem(), (v) => {
+            v.setId("1");
+          }),
+          also(new FileItem(), (v) => {
+            v.setId("2");
+          }),
+        ];
+
         const filer = also(new Filer(), (v) => {
           v.setLeftFileWindow(
             also(new FileWindow(), (v) => {
               v.setFileList(
                 also(new FileList(), (v) => {
-                  v.setItemsList([]);
+                  v.setFileItemOrdersList([
+                    also(new FileItemOrder(), (v) => {
+                      v.setFileId("1");
+                      v.setSortLevel(2);
+                    }),
+                    also(new FileItemOrder(), (v) => {
+                      v.setFileId("2");
+                      v.setSortLevel(1);
+                    }),
+                  ]);
+                  v.setItemsList(fileItems);
                 })
               );
             })
           );
         });
+        const expected = filer.getLeftFileWindow()?.getFileList()?.clone();
+        expected?.setItemsList([fileItems[1], fileItems[0]]);
 
         const state = reducer(undefined, actions.update(filer));
-        expect(leftSideFileListSelector(state)).toEqual(filer.getLeftFileWindow()?.getFileList());
+        expect(leftSideFileListSelector(state)).toEqual(expected);
       });
 
       test("get right file list if it exists", () => {
