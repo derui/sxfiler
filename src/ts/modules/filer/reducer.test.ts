@@ -113,7 +113,7 @@ describe("Modules", () => {
 
         state = reducer(state, actions.updateItemOrders("id", orders));
         expect(state.filer?.getLeftFileWindow()?.toObject()).toEqual(fileWindow?.toObject());
-        expect(state.currentCursorPosition.left.value).toEqual(0);
+        expect(state.currentCursorPosition.left.value).toEqual(2);
       });
 
       test("focus specified item of the current side", () => {

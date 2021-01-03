@@ -104,11 +104,12 @@ describe("Modules", () => {
             })
           );
         });
+
         const expected = filer.getLeftFileWindow()?.getFileList()?.clone();
         expected?.setItemsList([fileItems[1], fileItems[0]]);
 
         const state = reducer(undefined, actions.update(filer));
-        expect(leftSideFileListSelector(state)).toEqual(expected);
+        expect(leftSideFileListSelector(state)?.toObject()).toEqual(expected?.toObject());
       });
 
       test("get right file list if it exists", () => {
@@ -126,7 +127,9 @@ describe("Modules", () => {
         });
 
         const state = reducer(undefined, actions.update(filer));
-        expect(rightSideFileListSelector(state)).toEqual(filer.getRightFileWindow()?.getFileList());
+        expect(rightSideFileListSelector(state)?.toObject()).toEqual(
+          filer.getRightFileWindow()?.getFileList()?.toObject()
+        );
       });
     });
   });

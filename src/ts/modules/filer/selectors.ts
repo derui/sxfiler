@@ -21,29 +21,29 @@ export const currentSideItemsSelector = (state: State) => {
   }
 };
 
-const getSortedFileList = function getSortedFileList(
-  fileWindow: FileWindow
-): FileList | undefined {
+const getSortedFileList = function getSortedFileList(fileWindow: FileWindow): FileList | undefined {
   const fileList = fileWindow.getFileList();
 
   if (!fileList) {
     return undefined;
   }
 
-  const orders = fileList.getFileItemOrdersList().reduce((obj , v) => {
+  const orders = fileList.getFileItemOrdersList().reduce((obj, v) => {
     obj[v.getFileId()] = v.getSortLevel();
     return obj;
-  }, {} as {[key:string]: number});
+  }, {} as { [key: string]: number });
 
   const sortedItems = fileList.getItemsList().sort((v1, v2) => {
     const v1Order = orders[v1.getId()];
     const v2Order = orders[v2.getId()];
     const v = Math.abs(v1Order - v2Order);
 
-    if ( v < Number.EPSILON) {
-      return -v;
+    if (v1Order < v2Order) {
+      return -1;
+    } else if (v < Number.EPSILON) {
+      return 0;
     } else {
-      return v;
+      return 1;
     }
   });
 
@@ -57,19 +57,19 @@ const getSortedFileList = function getSortedFileList(
  * select specified side file list
  */
 export const leftSideFileListSelector = (state: State) => {
-  const fileWindow =  state.filer?.getLeftFileWindow() ;
+  const fileWindow = state.filer?.getLeftFileWindow();
 
   if (!fileWindow) {
-    return null;
+    return undefined;
   }
 
   return getSortedFileList(fileWindow);
 };
 export const rightSideFileListSelector = (state: State) => {
-  const fileWindow =  state.filer?.getRightFileWindow() ;
+  const fileWindow = state.filer?.getRightFileWindow();
 
   if (!fileWindow) {
-    return null;
+    return undefined;
   }
 
   return getSortedFileList(fileWindow);
