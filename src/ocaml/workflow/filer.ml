@@ -203,7 +203,7 @@ let open_node scan_location now : Open_node.work_flow =
   in
   let open Lwt_result.Infix in
   let scan_item_location item =
-    if D.File_item.is_directory item then
+    if not & D.File_item.is_file item then
       let location = full_path_of_item item in
       let file_list = D.File_list.change_location ~location file_window.file_list in
       match%lwt Common_step_file_list.scan scan_location file_list with
