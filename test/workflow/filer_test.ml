@@ -234,7 +234,7 @@ let test_set =
         let work_flow = FL.up_directory scan_location now in
         let%lwt filer = filer () in
         let%lwt ret = work_flow FL.Up_directory.{ side = FL.Left; filer = Some filer } in
-        let window = match ret with Ok [ FL.Updated (Left, v) ] -> v | _ -> Alcotest.fail "illegal path" in
+        let window = match ret with Ok [ FL.Location_changed (Left, v) ] -> v | _ -> Alcotest.fail "illegal path" in
         let sort_items = List.sort & File_item.compare_by Types.Sort_type.Name in
         let left_expected = sort_items right_list_items
         and left_actual = File_list.items window.file_list |> sort_items in
