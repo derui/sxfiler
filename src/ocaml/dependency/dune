@@ -1,5 +1,4 @@
 (library
  (name sxfiler_dependency)
  (public_name sxfiler.dependency)
- (libraries sxfiler.core lwt fmt)
- (preprocess (pps lwt_ppx)))
+ (libraries sxfiler.core))

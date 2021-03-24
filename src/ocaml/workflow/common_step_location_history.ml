@@ -1,6 +1,7 @@
-open Sxfiler_core
-module D = Sxfiler_domain
+open Abbrev
+include Common_step_intf.Location_history
 
-type generate_record = Common_step_common.now -> Path.t -> D.Location_history.Record.t
-
-let generate_record : generate_record = fun now location -> D.Location_history.Record.make ~location ~timestamp:(now ())
+let generate_record location =
+  let open S.Infix in
+  let* now = S.fetch ~tag:(fun ctx -> `Step_common_now ctx) in
+  S.return @@ D.Location_history.Record.make ~location ~timestamp:(now ())

@@ -1,12 +1,4 @@
-open Abbrev
-
-type provide_collection = unit -> D.Completer.collection Lwt.t
-(** collection provider *)
-
-type update_collection = D.Completer.collection -> unit Lwt.t
-(** collection updater *)
-
-type read = provide_collection -> (module D.Completer.Instance) -> string -> D.Completer.candidates Lwt.t
+include module type of Common_step_intf.Completer
 (** signature to get candidates from collection with input *)
 
 val read : read

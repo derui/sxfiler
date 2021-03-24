@@ -1,7 +1,4 @@
-open Abbrev
-open Sxfiler_core
-
-type generate_record = Common_step_common.now -> Path.t -> D.Location_history.Record.t
+include module type of Common_step_intf.Location_history
 
 val generate_record : generate_record
-(** [generate_record now location] returns new record *)
+(** [generate_record location] returns new record *)

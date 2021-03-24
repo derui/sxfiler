@@ -1,5 +1,6 @@
 open Sxfiler_core
 module D = Sxfiler_domain
+module S = Sxfiler_dependency
 
 type side =
   | Left

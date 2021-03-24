@@ -1,5 +1,5 @@
 (library
  (name sxfiler_workflow)
  (public_name sxfiler.workflow)
- (libraries sxfiler.kbd sxfiler.core sxfiler.domain lwt fmt)
+ (libraries sxfiler.kbd sxfiler.core sxfiler.domain sxfiler.dependency lwt fmt)
  (preprocess (pps ppx_deriving.std lwt_ppx)))
