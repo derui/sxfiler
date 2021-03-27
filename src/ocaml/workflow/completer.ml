@@ -1,16 +1,22 @@
 include Completer_intf
 
-let initialize : Common_step_completer.update_collection -> Initialize.work_flow =
- fun update_collection input ->
-  let collection = input.Initialize.collection in
-  let%lwt () = update_collection collection in
-  Lwt.return_unit
+let initialize : Initialize.work_flow =
+ fun input ->
+  let open S.Infix in
+  let* update_collection = S.fetch ~tag:(fun c -> `Step_completer_update_collection c) in
+  let ret =
+    let collection = input.Initialize.collection in
+    let%lwt () = update_collection collection in
+    Lwt.return_unit
+  in
+  S.return ret
 
-let complete :
-    Common_step_completer.provide_collection ->
-    (module D.Completer.Instance) ->
-    Common_step_completer.read ->
-    Complete.work_flow =
- fun provichde_collection instance read input ->
-  let%lwt candidates = read provichde_collection instance input.Complete.input in
-  Lwt.return [ Completed candidates ]
+let complete : Complete.work_flow =
+ fun input ->
+  let open S.Infix in
+  let* candidates = C.read input.Complete.input in
+  let ret =
+    let%lwt candidates = candidates in
+    Lwt.return [ Completed candidates ]
+  in
+  S.return ret

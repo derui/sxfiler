@@ -18,10 +18,7 @@ type event =
   | Updated          of (side * D.File_window.free D.File_window.t)
 [@@deriving eq, show]
 
-type transfer_target =
-  | Marked
-  | One    of D.File_item.Id.t
-[@@deriving eq, show]
+type transfer_target = D.File_item.Id.t [@@deriving eq, show]
 
 type transfer_status =
   | Success
@@ -52,8 +49,6 @@ module Move_location = struct
     side : side;
     filer : D.Filer.t option;
   }
-
-  type work_flow = input -> (event list, error) result Lwt.t
 end
 
 (** the workflow to initialize filer from locations *)
@@ -66,8 +61,6 @@ module Initialize = struct
     left_sort_order : D.Types.Sort_type.t;
     right_sort_order : D.Types.Sort_type.t;
   }
-
-  type work_flow = input -> event list Lwt.t
 end
 
 (** the workflow to reload all file list in the filer *)
@@ -75,8 +68,6 @@ module Reload_all = struct
   type error = Not_initialized
 
   type input = D.Filer.t option
-
-  type work_flow = input -> (event list, error) result Lwt.t
 end
 
 (** the workflow to copy item from one side to another side *)
@@ -89,10 +80,8 @@ module Copy = struct
 
   type output = {
     events : event list;
-    results : transfer_result list;
+    result : transfer_result;
   }
-
-  type work_flow = input -> output Lwt.t
 end
 
 module Move = struct

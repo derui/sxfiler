@@ -7,17 +7,9 @@ module File_list = struct
     | `Not_directory of Path.t
     ]
 
-  type scan_location = Path.t -> (D.File_item.t list, scan_location_error) result Lwt.t
-
-  type scan =
-    D.File_list.unscanned ->
-    (D.File_list.scanned Lwt.t, [ `Step_file_list_scan_location of scan_location S.Context.t ]) S.t
-  (** workflow type to move location of a file_list [t] *)
-
-  type reload =
-    D.File_list.scanned ->
-    (D.File_list.scanned Lwt.t, [ `Step_file_list_scan_location of scan_location S.Context.t ]) S.t
-  (** workflow to reload a file_list [t] *)
+  module type Instance = sig
+    val scan_location : Path.t -> (D.File_item.t list, scan_location_error) result Lwt.t
+  end
 end
 
 module Completer = struct
@@ -38,38 +30,14 @@ module Completer = struct
 end
 
 module Interaction = struct
-  type demand_decision = D.Interaction.command -> D.Interaction.event Lwt.t
-  (** signature to demand decision by user from work flow. *)
+  module type Instance = sig
+    val demand_decision : D.Interaction.command -> D.Interaction.event Lwt.t
+    (** signature to demand decision by user from work flow. *)
+  end
 end
 
 module Filer = struct
   type error = Canceled
-
-  type reload_left =
-    D.Filer.t ->
-    (D.Filer.left_file_window Lwt.t, [ `Step_file_list_scan_location of File_list.scan_location S.Context.t ]) S.t
-
-  type reload_right =
-    D.Filer.t ->
-    (D.Filer.right_file_window Lwt.t, [ `Step_file_list_scan_location of File_list.scan_location S.Context.t ]) S.t
-
-  type request_copy_interaction =
-    D.File_item.t ->
-    ( (D.Interaction.Filer_copy_selected.t, error) Lwt_result.t,
-      [ `Step_interaction_demand_decision of Interaction.demand_decision S.Context.t ] )
-    S.t
-
-  type request_move_interaction =
-    D.File_item.t ->
-    ( (D.Interaction.Filer_move_selected.t, error) Lwt_result.t,
-      [ `Step_interaction_demand_decision of Interaction.demand_decision S.Context.t ] )
-    S.t
-
-  type request_delete_interaction =
-    D.File_item.t ->
-    ( (D.Interaction.Filer_delete_selected.t, error) Lwt_result.t,
-      [ `Step_interaction_demand_decision of Interaction.demand_decision S.Context.t ] )
-    S.t
 
   type operation_error =
     | Not_exists         of Path.t
@@ -84,37 +52,41 @@ module Filer = struct
     overwrite : bool;
   }
 
-  type get = unit -> D.Filer.t option Lwt.t
-  (** Get filer in application *)
+  module type Instance = sig
+    val get : unit -> D.Filer.t option Lwt.t
+    (** Get filer in application *)
 
-  type copy_item = operation_input -> (unit, operation_error) Lwt_result.t
-  (** copy an item from source to dest. Return [Not_exists] if source or destination is not exist. When [dest] is
-      directory, this function should copy [source] to destination with same name of it. *)
+    val copy_item : operation_input -> (unit, operation_error) Lwt_result.t
+    (** copy an item from source to dest. Return [Not_exists] if source or destination is not exist. When [dest] is
+        directory, this function should copy [source] to destination with same name of it. *)
 
-  type move_item = operation_input -> (unit, operation_error) Lwt_result.t
-  (** move an item from source to dest. Return [Not_exists_source] if source is not exist. Return [Not_exists_dest] if
-      [dest] is not exists. Whem [dest] is directory, this function should move [source] to destination with same name
-      of it. *)
+    val move_item : operation_input -> (unit, operation_error) Lwt_result.t
+    (** move an item from source to dest. Return [Not_exists_source] if source is not exist. Return [Not_exists_dest] if
+        [dest] is not exists. Whem [dest] is directory, this function should move [source] to destination with same name
+        of it. *)
 
-  type delete_item = D.File_item.t -> (unit, operation_error) Lwt_result.t
-  (** delete an item that given path. *)
+    val delete_item : D.File_item.t -> (unit, operation_error) Lwt_result.t
+    (** delete an item that given path. *)
+  end
 end
 
 module Keymap = struct
-  type resolve_keymap = unit -> D.Keymap.t Lwt.t
-  (** step to resolve key map *)
-
-  type store_keymap = D.Keymap.t -> unit Lwt.t
-  (** step to store key map *)
-
   type load_error =
     [ `Not_found
     | `Illegal_keymap of string
     ]
   [@@deriving eq, show]
 
-  type load_keymap = Path.t -> (D.Keymap.t, load_error) result Lwt.t
-  (** step to load keymap from the place *)
+  module type Instance = sig
+    type resolve_keymap = unit -> D.Keymap.t Lwt.t
+    (** step to resolve key map *)
+
+    type store_keymap = D.Keymap.t -> unit Lwt.t
+    (** step to store key map *)
+
+    type load_keymap = Path.t -> (D.Keymap.t, load_error) result Lwt.t
+    (** step to load keymap from the place *)
+  end
 end
 
 module Theme = struct
@@ -145,11 +117,8 @@ module Configuration = struct
 end
 
 module Common = struct
-  type now = unit -> Time.t
-  (** Common sub steps for workflow *)
-end
-
-module Location_history = struct
-  type generate_record = Path.t -> (D.Location_history.Record.t, [ `Step_common_now of Common.now S.Context.t ]) S.t
-  (** [generate_record location] returns new record *)
+  module type Instance = sig
+    val now : unit -> Time.t
+    (** Common sub steps for workflow *)
+  end
 end

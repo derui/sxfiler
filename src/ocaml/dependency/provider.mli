@@ -17,7 +17,7 @@ module Context : sig
   val value : 'a -> 'a t -> value
 end
 
-val run : ('a, void) t -> 'a
+val run : ('a, void) t -> 'a Lwt.t
 (** [run program] run the [program] and get the result. *)
 
 val provide : ('r -> Context.value) -> ('a, 'r) t -> ('a, 'v) t
@@ -30,3 +30,5 @@ val fetch : tag:('a Context.t -> 'r) -> ('a, 'r) t
 
     let* user = fetch ~tag:(fun ctx -> `User of ctx) in let id = User.id user in (* This line leads type of context like
     User.t Context.t *) return id *)
+
+val return_lwt : 'a Lwt.t -> ('a, 'b) t
