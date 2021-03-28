@@ -13,20 +13,13 @@ module File_list = struct
 end
 
 module Completer = struct
-  type provide_collection = unit -> D.Completer.collection Lwt.t
-  (** collection provider *)
+  module type Instance = sig
+    val provide_collection : unit -> D.Completer.collection Lwt.t
+    (** collection provider *)
 
-  type update_collection = D.Completer.collection -> unit Lwt.t
-  (** collection updater *)
-
-  type read =
-    string ->
-    ( D.Completer.candidates Lwt.t,
-      [ `Step_completer_provide_collection of provide_collection S.Context.t
-      | `Completer_instance                of (module D.Completer.Instance) S.Context.t
-      ] )
-    S.t
-  (** signature to get candidates from collection with input *)
+    val update_collection : D.Completer.collection -> unit Lwt.t
+    (** collection updater *)
+  end
 end
 
 module Interaction = struct
@@ -78,13 +71,13 @@ module Keymap = struct
   [@@deriving eq, show]
 
   module type Instance = sig
-    type resolve_keymap = unit -> D.Keymap.t Lwt.t
+    val resolve_keymap : unit -> D.Keymap.t Lwt.t
     (** step to resolve key map *)
 
-    type store_keymap = D.Keymap.t -> unit Lwt.t
+    val store_keymap : D.Keymap.t -> unit Lwt.t
     (** step to store key map *)
 
-    type load_keymap = Path.t -> (D.Keymap.t, load_error) result Lwt.t
+    val load_keymap : Path.t -> (D.Keymap.t, load_error) result Lwt.t
     (** step to load keymap from the place *)
   end
 end

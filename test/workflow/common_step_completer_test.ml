@@ -1,4 +1,5 @@
 open Sxfiler_domain
+module S = Sxfiler_dependency
 module F = Test_fixtures
 module FL = Sxfiler_workflow
 
@@ -16,11 +17,24 @@ let test_set =
 
     let this = ()
   end in
+  let get_mock expected =
+    ( module struct
+      let provide_collection () = Lwt.return expected
+
+      let update_collection _ = failwith "not implemented"
+    end : FL.Common_step.Completer.Instance )
+  in
+
   [
     ( Alcotest_lwt.test_case "call read API for completer" `Quick @@ fun _ () ->
-      let open Completer in
-      let provide_collection () = Lwt.return expected_collection in
-      let%lwt items = FL.Common_step.Completer.read provide_collection (module I : Instance) "input" in
+      let module V = (val get_mock expected_collection) in
+      let%lwt items =
+        FL.Common_step.Completer.read "input"
+        |> S.provide (function
+             | `Step_completer_instance c -> S.Context.value (module V : FL.Common_step.Completer.Instance) c
+             | `Completer_instance c      -> S.Context.value (module I : Completer.Instance) c)
+        |> S.run
+      in
       Alcotest.(check @@ list F.Testable.Completer.canditate) "items" [] items;
       Lwt.return_unit );
   ]

@@ -32,3 +32,9 @@ val fetch : tag:('a Context.t -> 'r) -> ('a, 'r) t
     User.t Context.t *) return id *)
 
 val return_lwt : 'a Lwt.t -> ('a, 'b) t
+
+val return_ok : 'a -> (('a, 'e) result, 'b) t
+(** [return_ok result] is a shortcut function *)
+
+val return_error : 'e -> (('a, 'e) result, 'b) t
+(** [return_error result] is a shortcut function *)

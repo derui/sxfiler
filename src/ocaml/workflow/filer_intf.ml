@@ -94,11 +94,9 @@ module Move = struct
 
   type output = {
     events : event list;
-    results : transfer_result list;
+    result : transfer_result;
   }
   [@@deriving eq, show]
-
-  type work_flow = input -> output Lwt.t
 end
 
 module Delete = struct
@@ -109,7 +107,7 @@ module Delete = struct
   }
 
   type output = {
-    results : delete_result list;
+    result : delete_result option;
     events : event list;
   }
 
@@ -130,8 +128,6 @@ module Open_node = struct
     filer : D.Filer.t;
     item_id : D.File_item.Id.t;
   }
-
-  type work_flow = input -> (output, error) result Lwt.t
 end
 
 (** up directory of specified side *)
@@ -142,8 +138,6 @@ module Up_directory = struct
     side : side;
     filer : D.Filer.t option;
   }
-
-  type work_flow = input -> (event list, error) result Lwt.t
 end
 
 (** toggle mark of the item *)
@@ -157,8 +151,6 @@ module Toggle_mark = struct
     item_id : D.File_item.Id.t;
     filer : D.Filer.t option;
   }
-
-  type work_flow = input -> (event list, error) result Lwt.t
 end
 
 type commands =

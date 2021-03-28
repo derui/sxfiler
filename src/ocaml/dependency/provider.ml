@@ -26,6 +26,12 @@ module type S = sig
   (** [fetch ~tag] get the monad to extract dependency from context. *)
 
   val return_lwt : 'a Lwt.t -> ('a, 'b) t
+
+  val return_ok : 'a -> (('a, 'e) result, 'b) t
+  (** [return_ok result] is a shortcut function *)
+
+  val return_error : 'e -> (('a, 'e) result, 'b) t
+  (** [return_error result] is a shortcut function *)
 end
 
 module Impl : S = struct
@@ -86,6 +92,10 @@ module Impl : S = struct
     fun ctx -> Lwt.return @@ unbox @@ Context.value key ctx
 
   let return_lwt v _ = v
+
+  let return_ok v = return @@ Ok v
+
+  let return_error v = return @@ Error v
 end
 
 include Impl
