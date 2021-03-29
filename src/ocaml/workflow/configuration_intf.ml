@@ -8,14 +8,7 @@ module Update = struct
     value : Yojson.Basic.t;
   }
 
-  type work_flow =
-    input ->
-    ( event list Lwt.t,
-      [ `Step_configuration_load of Common_step_configuration.load S.Context.t
-      | `Step_configuration_save of Common_step_configuration.save S.Context.t
-      ] )
-    S.t
-  (** workflow to add a key binding for action to key map *)
+  type output = event list
 end
 
 type commands = Update of Update.input

@@ -33,6 +33,11 @@ let test_set =
       let scan_location _ = Lwt.return_ok []
     end : S.File_list.Instance )
   in
+  let get_demand_mock ?demand_decision () =
+    ( module struct
+      let demand_decision = Option.value demand_decision ~default:(fun _ -> Lwt.return Interaction.Canceled)
+    end : S.Interaction.Instance )
+  in
   let filer () =
     let open P.Infix in
     let* left_list = left_list |> S.File_list.scan in
@@ -73,7 +78,12 @@ let test_set =
           | _                        -> Alcotest.fail "Invalid path"
         in
 
-        let request_copy_interaction = S.Filer.request_copy_interaction demand_action in
+        let mock = get_demand_mock ~demand_decision:demand_action () in
+        let request_copy_interaction v =
+          S.Filer.request_copy_interaction v
+          |> P.provide (function `Step_interaction_instance c -> P.Context.value mock c)
+          |> P.run
+        in
         let%lwt event = request_copy_interaction item in
 
         Alcotest.(check @@ result F.Testable.Interaction.filer_copy_selected @@ of_pp Fmt.nop)
@@ -87,8 +97,13 @@ let test_set =
               Lwt.return Interaction.(Canceled)
           | _                        -> Alcotest.fail "Invalid path"
         in
+        let mock = get_demand_mock ~demand_decision:demand_action () in
 
-        let request_copy_interaction = S.Filer.request_copy_interaction demand_action in
+        let request_copy_interaction v =
+          S.Filer.request_copy_interaction v
+          |> P.provide (function `Step_interaction_instance c -> P.Context.value mock c)
+          |> P.run
+        in
         let%lwt event = request_copy_interaction item in
 
         Alcotest.(check @@ result F.Testable.Interaction.filer_copy_selected @@ of_pp Fmt.nop)
@@ -102,8 +117,12 @@ let test_set =
               Lwt.return Interaction.(Filer_move_selected Filer_move_selected.Overwrite)
           | _                        -> Alcotest.fail "Invalid path"
         in
-
-        let request_move_interaction = S.Filer.request_move_interaction demand_action in
+        let mock = get_demand_mock ~demand_decision:demand_action () in
+        let request_move_interaction v =
+          S.Filer.request_move_interaction v
+          |> P.provide (function `Step_interaction_instance c -> P.Context.value mock c)
+          |> P.run
+        in
         let%lwt event = request_move_interaction item in
 
         Alcotest.(check @@ result F.Testable.Interaction.filer_move_selected @@ of_pp Fmt.nop)
@@ -117,8 +136,13 @@ let test_set =
               Lwt.return Interaction.(Canceled)
           | _                        -> Alcotest.fail "Invalid path"
         in
+        let mock = get_demand_mock ~demand_decision:demand_action () in
 
-        let request_move_interaction = S.Filer.request_move_interaction demand_action in
+        let request_move_interaction v =
+          S.Filer.request_move_interaction v
+          |> P.provide (function `Step_interaction_instance c -> P.Context.value mock c)
+          |> P.run
+        in
         let%lwt event = request_move_interaction item in
 
         Alcotest.(check @@ result F.Testable.Interaction.filer_move_selected @@ of_pp Fmt.nop)
@@ -132,8 +156,13 @@ let test_set =
               Lwt.return Interaction.(Filer_delete_selected Filer_delete_selected.Confirm)
           | _                          -> Alcotest.fail "Invalid path"
         in
+        let mock = get_demand_mock ~demand_decision:demand_action () in
 
-        let request_delete_interaction = S.Filer.request_delete_interaction demand_action in
+        let request_delete_interaction v =
+          S.Filer.request_delete_interaction v
+          |> P.provide (function `Step_interaction_instance c -> P.Context.value mock c)
+          |> P.run
+        in
         let%lwt event = request_delete_interaction item in
 
         Alcotest.(check @@ result F.Testable.Interaction.filer_delete_selected @@ of_pp Fmt.nop)
@@ -147,8 +176,13 @@ let test_set =
               Lwt.return Interaction.(Canceled)
           | _                          -> Alcotest.fail "Invalid path"
         in
+        let mock = get_demand_mock ~demand_decision:demand_action () in
 
-        let request_delete_interaction = S.Filer.request_delete_interaction demand_action in
+        let request_delete_interaction v =
+          S.Filer.request_delete_interaction v
+          |> P.provide (function `Step_interaction_instance c -> P.Context.value mock c)
+          |> P.run
+        in
         let%lwt event = request_delete_interaction item in
 
         Alcotest.(check @@ result F.Testable.Interaction.filer_delete_selected @@ of_pp Fmt.nop)

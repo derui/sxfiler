@@ -298,6 +298,6 @@ let toggle_mark { Toggle_mark.filer; side; item_id } =
 
   let result = Option.to_result ~none:`Not_initialized filer >>= mark_item >>= update_filer in
   match result with
-  | Error `Not_found | Error `Not_same -> S.return_error Toggle_mark.Item_not_found
-  | Error `Not_initialized             -> S.return_error Toggle_mark.Not_initialized
-  | Ok file_window                     -> S.return_ok [ Updated (side, file_window) ]
+  | Error `Not_found | Error `Not_same -> Lwt.return_error Toggle_mark.Item_not_found
+  | Error `Not_initialized             -> Lwt.return_error Toggle_mark.Not_initialized
+  | Ok file_window                     -> Lwt.return_ok [ Updated (side, file_window) ]

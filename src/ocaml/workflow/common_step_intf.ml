@@ -82,36 +82,36 @@ module Keymap = struct
   end
 end
 
-module Theme = struct
-  module Store_theme = struct
-    type base_theme = D.Common.Not_empty_string.t
-
-    type error = Unknown_error of string [@@deriving show, eq]
-
-    type t =
-      (D.Common.Not_empty_string.t * D.Theme.Color_code.t) list ->
-      base_theme option ->
-      (D.Theme.color_pairs, error) result Lwt.t
-    (** store theme *)
-  end
-
-  module Get_current_theme = struct
-    type t = unit -> D.Theme.color_pairs Lwt.t
-    (** Get current theme *)
-  end
-end
-
 module Configuration = struct
-  type load = unit -> D.Configuration_store.t Lwt.t
-  (** Type of step to load configuration *)
+  module type Instance = sig
+    val load : unit -> D.Configuration_store.t Lwt.t
+    (** Type of step to load configuration *)
 
-  type save = D.Configuration_store.t -> unit Lwt.t
-  (** Type of step to save the configuration *)
+    val save : D.Configuration_store.t -> unit Lwt.t
+    (** Type of step to save the configuration *)
+  end
 end
 
 module Common = struct
   module type Instance = sig
     val now : unit -> Time.t
     (** Common sub steps for workflow *)
+  end
+end
+
+module Theme = struct
+  type base_theme = D.Common.Not_empty_string.t
+
+  type error = Unknown_error of string [@@deriving show, eq]
+
+  module type Instance = sig
+    val get_current_theme : unit -> D.Theme.color_pairs Lwt.t
+    (** Get current theme *)
+
+    val store_theme :
+      (D.Common.Not_empty_string.t * D.Theme.Color_code.t) list ->
+      base_theme option ->
+      (D.Theme.color_pairs, error) result Lwt.t
+    (** store theme *)
   end
 end

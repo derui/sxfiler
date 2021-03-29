@@ -77,5 +77,5 @@ val up_directory :
   S.t
 (** A workflow to up directory of specified side. Don't do anything if the side is already located root directory *)
 
-val toggle_mark : Toggle_mark.input -> ((event list, Toggle_mark.error) result, [> ]) S.t
+val toggle_mark : Toggle_mark.input -> (event list, Toggle_mark.error) result Lwt.t
 (** A workflow to toggle mark of the item *)
