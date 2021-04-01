@@ -1,11 +1,6 @@
 open Sxfiler_workflow
-open Sxfiler_domain
 
-val resolve_keymap : (module Statable.S with type state = Keymap.t) -> Common_step.Keymap.resolve_keymap
-(** implementation for [Common_step.Keymap.resolve_keymap] *)
+module type State = Statable.S with type state = Sxfiler_domain.Keymap.t
 
-val store_keymap : (module Statable.S with type state = Keymap.t) -> Common_step.Keymap.store_keymap
-(** implementation for [Common_step.Keymap.store_keymap] *)
-
-val load_keymap : Common_step.Keymap.load_keymap
-(** implementation for [Common_step.Keymap.load_keymap] *)
+(** The instance of keymap *)
+module Instance (S : State) : Common_step.Keymap.Instance

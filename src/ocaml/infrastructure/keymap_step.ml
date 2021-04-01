@@ -2,12 +2,14 @@ open Sxfiler_core
 module D = Sxfiler_domain
 module F = Sxfiler_workflow
 
-let resolve_keymap (module M : Statable.S with type state = D.Keymap.t) : F.Common_step.Keymap.resolve_keymap =
- fun () -> M.get ()
+module type State = Statable.S with type state = Sxfiler_domain.Keymap.t
 
-let store_keymap (module M : Statable.S with type state = D.Keymap.t) : F.Common_step.Keymap.store_keymap =
- fun keymap -> M.update keymap
+module Instance (S : State) = struct
+  let resolve_keymap () = S.get ()
 
-let load_keymap path =
-  let keymap = Keymap_file.load path in
-  keymap |> Result.map_error (fun e -> `Illegal_keymap (Keymap_file.show_error e)) |> Lwt.return
+  let store_keymap keymap = S.update keymap
+
+  let load_keymap path =
+    let keymap = Keymap_file.load path in
+    keymap |> Result.map_error (fun e -> `Illegal_keymap (Keymap_file.show_error e)) |> Lwt.return
+end
