@@ -38,3 +38,6 @@ val return_ok : 'a -> (('a, 'e) result, 'b) t
 
 val return_error : 'e -> (('a, 'e) result, 'b) t
 (** [return_error result] is a shortcut function *)
+
+val catch : (unit -> ('a, 'b) t) -> (exn -> 'a) -> ('a, 'b) t
+(** [catch f error] is a short cut function for Lwt.catch *)

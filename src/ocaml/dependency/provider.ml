@@ -32,6 +32,9 @@ module type S = sig
 
   val return_error : 'e -> (('a, 'e) result, 'b) t
   (** [return_error result] is a shortcut function *)
+
+  val catch : (unit -> ('a, 'b) t) -> (exn -> 'a) -> ('a, 'b) t
+  (** [catch f error] is a short cut function for Lwt.catch *)
 end
 
 module Impl : S = struct
@@ -96,6 +99,10 @@ module Impl : S = struct
   let return_ok v = return @@ Ok v
 
   let return_error v = return @@ Error v
+
+  let catch f err =
+    let v = f () in
+    fun r -> Lwt.catch (fun () -> v r) (fun e -> err e |> Lwt.return)
 end
 
 include Impl
