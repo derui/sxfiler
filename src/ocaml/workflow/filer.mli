@@ -21,7 +21,7 @@ val reload_all :
 val move_location :
   Move_location.input ->
   ( (event list, Move_location.error) result,
-    [> `Step_common_now         of (module Common_step_common.Instance) S.Context.t
+    [> `Step_common_instance    of (module Common_step_common.Instance) S.Context.t
     | `Step_file_list_instance of (module Common_step_file_list.Instance) S.Context.t
     ] )
   S.t

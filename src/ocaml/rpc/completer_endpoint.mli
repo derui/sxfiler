@@ -2,12 +2,15 @@
 
 open Abbrev
 
-type initialize = F.Completer.Initialize.work_flow -> Endpoint.t
-
-val initialize : initialize
+val initialize :
+  ([> `Step_completer_instance of (module F.Common_step.Completer.Instance) S.Context.t ] -> S.Context.value) ->
+  Endpoint.t
 (** Initialize collection to complete *)
 
-type complete = F.Completer.Complete.work_flow -> Endpoint.t
-
-val complete : complete
+val complete :
+  ([> `Step_completer_instance of (module F.Common_step.Completer.Instance) S.Context.t
+   | `Completer_instance      of (module D.Completer.Instance) S.Context.t
+   ] ->
+  S.Context.value) ->
+  Endpoint.t
 (** Complete with input from collection initialized before *)

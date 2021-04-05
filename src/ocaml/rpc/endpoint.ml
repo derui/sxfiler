@@ -6,20 +6,20 @@ module S = Sxfiler_dependency
 
 module L = (val I.Logger.make [ "rpc_server" ])
 
-type 'a response = (G.Service.Response.t * F.event list, 'a) S.t
+type response = (G.Service.Response.t * F.event list) Lwt.t
 
 type request = G.Service.Request.t
 
-type 'a t = request -> 'a response
+type t = request -> response
 
-type 'a mapping = G.Service.Command.t * 'a t
+type mapping = G.Service.Command.t * t
 
 let with_request (from_proto, to_proto) request ~f =
   let id = request.G.Service.Request.id in
   let request_payload = request.G.Service.Request.payload |> Bytes.to_string |> Pb.Reader.create |> from_proto in
   match request_payload with
   | Error _    ->
-      S.return
+      Lwt.return
         ( {
             G.Service.Response.id;
             status = G.Service.Status.INVALID_REQUEST_PAYLOAD;
@@ -34,13 +34,11 @@ let with_request (from_proto, to_proto) request ~f =
           },
           [] )
   | Ok payload ->
-      let open S.Infix in
-      S.catch
+      Lwt.catch
         (fun () ->
-          let* v = f payload in
-          match v with
+          match%lwt f payload with
           | Ok (payload, events) ->
-              S.return
+              Lwt.return
                 ( {
                     G.Service.Response.id;
                     status = G.Service.Status.SUCCESS;
@@ -49,7 +47,7 @@ let with_request (from_proto, to_proto) request ~f =
                   },
                   events )
           | Error error          ->
-              S.return
+              Lwt.return
                 ( {
                     G.Service.Response.id;
                     status = G.Service.Status.COMMAND_FAILED;
@@ -59,10 +57,11 @@ let with_request (from_proto, to_proto) request ~f =
                   [] ))
         (fun e ->
           L.err (fun m -> m "Raise error: %s" (Printexc.to_string e)) |> Lwt.ignore_result;
-          ( {
-              G.Service.Response.id;
-              status = G.Service.Status.COMMAND_FAILED;
-              payload = Bytes.empty;
-              error = Some Endpoint_error.(to_endpoint_error @@ unknown @@ Printf.sprintf "raise unknown error");
-            },
-            [] ))
+          Lwt.return
+            ( {
+                G.Service.Response.id;
+                status = G.Service.Status.COMMAND_FAILED;
+                payload = Bytes.empty;
+                error = Some Endpoint_error.(to_endpoint_error @@ unknown @@ Printf.sprintf "raise unknown error");
+              },
+              [] ))

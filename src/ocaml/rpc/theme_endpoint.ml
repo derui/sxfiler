@@ -5,22 +5,17 @@ module E = Endpoint_error
 let validation_error field message = E.Validation_error.make ~field ~message
 
 (* implementation to add theme *)
-type get = F.Theme.Get_theme.work_flow -> Endpoint.t
 
-let get : get =
- fun flow ->
-  Endpoint.with_request (G.Theme.GetRequest.from_proto, G.Theme.GetResponse.to_proto) ~f:(fun () ->
+let get deps request =
+  Endpoint.with_request (G.Theme.GetRequest.from_proto, G.Theme.GetResponse.to_proto) request ~f:(fun () ->
       let module NE = D.Common.Not_empty_string in
-      let%lwt theme = flow () in
+      let%lwt theme = F.Theme.get_theme () |> S.provide deps |> S.run in
       let res = G.Theme.GetResponse.{ theme = theme |> Tr.Theme.of_domain |> Option.some } in
       Lwt.return_ok (res, []))
 
 (* implementation to list theme *)
-type update = F.Theme.Update_theme.work_flow -> Endpoint.t
-
-let update : update =
- fun flow ->
-  Endpoint.with_request (G.Theme.UpdateRequest.from_proto, G.Theme.UpdateResponse.to_proto)
+let update deps request =
+  Endpoint.with_request (G.Theme.UpdateRequest.from_proto, G.Theme.UpdateResponse.to_proto) request
     ~f:(fun (input : G.Theme.UpdateRequest.t) ->
       let module NE = D.Common.Not_empty_string in
       let input =
@@ -48,7 +43,7 @@ let update : update =
       match input with
       | Error e  -> E.invalid_input [ e ] |> Lwt.return_error
       | Ok input -> (
-          let%lwt theme = flow input in
+          let%lwt theme = F.Theme.update_theme input |> S.provide deps |> S.run in
           match theme with
           | Error (F.Theme.Invalid_color_format _) -> E.Theme_error.invalid_color_format |> E.theme |> Lwt.return_error
           | Error (F.Theme.Store_error _)          -> E.Theme_error.store_error |> E.theme |> Lwt.return_error

@@ -2,12 +2,10 @@
 
 open Abbrev
 
-type get = F.Theme.Get_theme.work_flow -> Endpoint.t
-
-val get : get
+val get :
+  ([> `Step_theme_instance of (module F.Common_step.Theme.Instance) S.Context.t ] -> S.Context.value) -> Endpoint.t
 (** endpoint to get theme *)
 
-type update = F.Theme.Update_theme.work_flow -> Endpoint.t
-
-val update : update
+val update :
+  ([> `Step_theme_instance of (module F.Common_step.Theme.Instance) S.Context.t ] -> S.Context.value) -> Endpoint.t
 (** Update theme configuration *)
