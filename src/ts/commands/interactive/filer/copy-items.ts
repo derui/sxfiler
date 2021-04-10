@@ -56,13 +56,16 @@ export const createCommand = (): Command => {
       request.setTransfer(transfer);
 
       const response = await args.clientResolver.rpcClient().use(Procs.Filer.copyItems)(request);
-      const events = response
-        .getResultsList()
-        .filter((v) => v.getStatus() === TransferStatus.SUCCESS)
-        .map((v) => {
-          return LogEventCreators.createCopyItem(new Date(v.getTimestamp()), v.getSource(), v.getDestination());
-        });
-      dispatcher.dispatch(actions.send(events));
+      const result = response.getResult();
+      if (!result) return;
+      if (result.getStatus() === TransferStatus.SUCCESS) {
+        const event = LogEventCreators.createCopyItem(
+          new Date(result.getTimestamp()),
+          result.getSource(),
+          result.getDestination()
+        );
+        dispatcher.dispatch(actions.send([event]));
+      }
     },
   };
 };
