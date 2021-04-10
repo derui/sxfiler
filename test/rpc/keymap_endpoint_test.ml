@@ -4,6 +4,7 @@ module R = Sxfiler_rpc
 module G = Sxfiler_generated
 module Pb = Ocaml_protoc_plugin
 module F = Sxfiler_workflow
+module S = Sxfiler_dependency
 
 let test_set =
   let keymap = D.Keymap.empty in
@@ -15,7 +16,7 @@ let test_set =
             ~action:(D.Keymap.Action.make "expected") keymap
         in
 
-        let work_flow _ = Lwt.return_ok [ F.Keymap.Added expected ] in
+        let work_flow _ = S.return_ok [ F.Keymap.Added expected ] in
         let request =
           {
             G.Service.Request.id = "id";
@@ -25,12 +26,12 @@ let test_set =
               |> G.Keymap.AddKeyBindingRequest.to_proto |> Pb.Writer.contents |> Bytes.of_string;
           }
         in
-        let%lwt res, events = R.Keymap_endpoint.add_key_binding work_flow request in
+        let%lwt res, events = R.Keymap_endpoint.add_key_binding work_flow (fun _ -> failwith "") request in
         Alcotest.(check & string) "same id" "id" res.id;
         Alcotest.(check & list & of_pp F.pp_event) "events" [ F.Keymap (F.Keymap.Added expected) ] events;
         Lwt.return_unit);
     Alcotest_lwt.test_case "get error when invalid key sequence" `Quick (fun _ () ->
-        let work_flow _ = Lwt.return_error (F.Keymap.Invalid_key "K-S") in
+        let work_flow _ = S.return_error (F.Keymap.Invalid_key "K-S") in
         let request =
           {
             G.Service.Request.id = "id";
@@ -40,7 +41,7 @@ let test_set =
               |> G.Keymap.AddKeyBindingRequest.to_proto |> Pb.Writer.contents |> Bytes.of_string;
           }
         in
-        let%lwt res, _ = R.Keymap_endpoint.add_key_binding work_flow request in
+        let%lwt res, _ = R.Keymap_endpoint.add_key_binding work_flow (fun _ -> failwith "") request in
         Alcotest.(check & string) "same id" "id" res.id;
         Alcotest.(check & of_pp G.Service.Status.pp) "invalid" G.Service.Status.COMMAND_FAILED res.status;
         Alcotest.(check int) "error status" (-102) (res.error |> Option.get |> fun v -> v.status);
@@ -48,7 +49,7 @@ let test_set =
     Alcotest_lwt.test_case "get error when give empty values" `Quick (fun _ () ->
         let work_flow _ =
           Alcotest.fail "invalid path" |> ignore;
-          Lwt.return_ok []
+          S.return_ok []
         in
         let request =
           {
@@ -59,7 +60,7 @@ let test_set =
               |> G.Keymap.AddKeyBindingRequest.to_proto |> Pb.Writer.contents |> Bytes.of_string;
           }
         in
-        let%lwt res, _ = R.Keymap_endpoint.add_key_binding work_flow request in
+        let%lwt res, _ = R.Keymap_endpoint.add_key_binding work_flow (fun _ -> failwith "") request in
         Alcotest.(check & string) "same id" "id" res.id;
         Alcotest.(check & of_pp G.Service.Status.pp) "invalid" G.Service.Status.COMMAND_FAILED res.status;
         Alcotest.(check int) "error status" (-102) (res.error |> Option.get |> fun v -> v.status);
@@ -69,7 +70,7 @@ let test_set =
         let work_flow { F.Keymap.Reload.path } =
           let path_test = Alcotest.testable Path.pp Path.equal in
           Alcotest.(check @@ path_test) "flow called" actual path;
-          Lwt.return_ok []
+          S.return_ok []
         in
         let request =
           {
@@ -78,7 +79,7 @@ let test_set =
             payload = G.Keymap.ReloadRequest.to_proto () |> Pb.Writer.contents |> Bytes.of_string;
           }
         in
-        let%lwt res, _ = R.Keymap_endpoint.reload actual work_flow request in
+        let%lwt res, _ = R.Keymap_endpoint.reload actual work_flow (fun _ -> failwith "") request in
         Alcotest.(check & string) "same id" "id" res.id;
         Alcotest.(check & of_pp G.Service.Status.pp) "invalid" G.Service.Status.SUCCESS res.status;
         Lwt.return_unit);

@@ -14,7 +14,7 @@ let get deps request =
       let%lwt store = I.load () in
       Lwt.return_ok ({ G.Configuration.GetResponse.configurations = Tr.Configuration_store.of_domain store }, []))
 
-let update deps request =
+let update workflow deps request =
   Endpoint.with_request (G.Configuration.UpdateRequest.from_proto, G.Configuration.UpdateResponse.to_proto) request
     ~f:(fun res ->
       let module E = Endpoint_error in
@@ -34,5 +34,5 @@ let update deps request =
       match input with
       | Error e  -> Lwt.return_error (E.invalid_input [ e ])
       | Ok input ->
-          let%lwt events = F.Configuration.update input |> S.provide deps |> S.run in
+          let%lwt events = workflow input |> S.provide deps |> S.run in
           Lwt.return_ok ({ G.Configuration.UpdateResponse.key = res.key }, to_global_event events))

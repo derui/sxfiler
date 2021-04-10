@@ -9,6 +9,8 @@ module Update = struct
   }
 
   type output = event list
+
+  type 'a work_flow = input -> (output, 'a) S.t
 end
 
 type commands = Update of Update.input
