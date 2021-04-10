@@ -3,23 +3,18 @@
 open Sxfiler_core
 open Abbrev
 
-type add_key_binding = F.Keymap.Add_key_binding.work_flow -> Endpoint.t
+val add_key_binding : 'a F.Keymap.Add_key_binding.work_flow -> ('a -> S.Context.value) -> Endpoint.t
 
-val add_key_binding : add_key_binding
 (** endpoint to add key binding to current key map *)
 
-type remove_key_binding = F.Keymap.Remove_key_binding.work_flow -> Endpoint.t
-
-val remove_key_binding : remove_key_binding
+val remove_key_binding : 'a F.Keymap.Remove_key_binding.work_flow -> ('a -> S.Context.value) -> Endpoint.t
 (** endpoint to remove key binding from current key map *)
 
-type reload = Path.t -> F.Keymap.Reload.work_flow -> Endpoint.t
-
-val reload : reload
+val reload : Path.t -> 'a F.Keymap.Reload.work_flow -> ('a -> S.Context.value) -> Endpoint.t
 (** Reload key map from specified path *)
 
 (* query endpoints *)
-type get = F.Common_step.Keymap.resolve_keymap -> Endpoint.t
 
-val get : get
+val get :
+  ([> `Step_keymap_instance of (module F.Common_step.Keymap.Instance) S.Context.t ] -> S.Context.value) -> Endpoint.t
 (** Query endpoint that get current key map *)

@@ -1,15 +1,11 @@
-module D = Sxfiler_domain
+open Abbrev
+include Common_step_intf.Completer
 
-type provide_collection = unit -> D.Completer.collection Lwt.t
-(** collection provider *)
-
-type update_collection = D.Completer.collection -> unit Lwt.t
-(** collection updater *)
-
-type read = provide_collection -> (module D.Completer.Instance) -> string -> D.Completer.candidates Lwt.t
-(** signature to get candidates from collection with input *)
-
-let read : read =
- fun provide_collection (module I : D.Completer.Instance) input ->
-  let%lwt collection = provide_collection () in
-  I.Completer.read ~input ~collection I.this |> Lwt.return
+let read input =
+  let open S.Infix in
+  let* instance = S.fetch ~tag:(fun c -> `Step_completer_instance c) in
+  let* completer = S.fetch ~tag:(fun c -> `Completer_instance c) in
+  let module I = (val completer : D.Completer.Instance) in
+  let module Instance = (val instance : Instance) in
+  let* collection = Instance.provide_collection () |> S.return_lwt in
+  I.Completer.read ~input ~collection I.this |> S.return

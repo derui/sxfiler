@@ -52,12 +52,12 @@ describe("Commands", () => {
       const executor = jest.fn();
       executor.mockImplementation(() =>
         also(new DeleteResponse(), (v) => {
-          v.setResultsList([
+          v.setResult(
             also(new DeleteResult(), (v) => {
               v.setPath("/foo");
               v.setTimestamp("2020-05-20T10:00:00.000Z");
-            }),
-          ]);
+            })
+          );
         })
       );
       mocks.rpcClient.use.mockImplementation(() => executor);

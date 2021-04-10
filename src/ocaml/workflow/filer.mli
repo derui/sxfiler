@@ -2,37 +2,89 @@
 
 include module type of Filer_intf
 
-val initialize : Common_step_filer.get -> Common_step_file_list.scan_location -> Initialize.work_flow
+val initialize :
+  Initialize.input ->
+  ( event list,
+    [> `Step_filer_instance     of (module Common_step_filer.Instance) S.Context.t
+    | `Step_file_list_instance of (module Common_step_file_list.Instance) S.Context.t
+    ] )
+  S.t
 (** The workflow to initialize filer with scanning locations *)
 
-val reload_all : Common_step_file_list.scan_location -> Reload_all.work_flow
+val reload_all :
+  Reload_all.input ->
+  ( (event list, Reload_all.error) result,
+    [> `Step_file_list_instance of (module Common_step_file_list.Instance) S.Context.t
+    | `Step_filer_instance     of (module Common_step_filer.Instance) S.Context.t
+    ] )
+  S.t
 (** The workflow to reload file lists in both side of the filer *)
 
-val move_location : Common_step_common.now -> Common_step_file_list.scan_location -> Move_location.work_flow
+val move_location :
+  Move_location.input ->
+  ( (event list, Move_location.error) result,
+    [> `Step_common_instance    of (module Common_step_common.Instance) S.Context.t
+    | `Step_file_list_instance of (module Common_step_file_list.Instance) S.Context.t
+    | `Step_filer_instance     of (module Common_step_filer.Instance) S.Context.t
+    ] )
+  S.t
 (** The workflow to move location of file list specified side of the filer *)
 
 val copy :
-  Common_step_common.now ->
-  Common_step_interaction.demand_decision ->
-  Common_step_file_list.scan_location ->
-  Common_step_filer.copy_item ->
-  Copy.work_flow
+  Copy.input ->
+  ( (Copy.output, Copy.error) result,
+    [> `Step_common_instance      of (module Common_step_common.Instance) S.Context.t
+    | `Step_file_list_instance   of (module Common_step_file_list.Instance) S.Context.t
+    | `Step_filer_instance       of (module Common_step_filer.Instance) S.Context.t
+    | `Step_interaction_instance of (module Common_step_interaction.Instance) S.Context.t
+    ] )
+  S.t
+(** The workflow to copy the item to other file window *)
 
 val move :
-  Common_step_common.now ->
-  Common_step_interaction.demand_decision ->
-  Common_step_file_list.scan_location ->
-  Common_step_filer.move_item ->
-  Move.work_flow
+  Move.input ->
+  ( (Move.output, Move.error) result,
+    [> `Step_common_instance      of (module Common_step_common.Instance) S.Context.t
+    | `Step_file_list_instance   of (module Common_step_file_list.Instance) S.Context.t
+    | `Step_filer_instance       of (module Common_step_filer.Instance) S.Context.t
+    | `Step_interaction_instance of (module Common_step_interaction.Instance) S.Context.t
+    ] )
+  S.t
+(** The workflow to move the item to other file window *)
 
 val delete :
-  Common_step_common.now -> Common_step_file_list.scan_location -> Common_step_filer.delete_item -> Delete.work_flow
+  Delete.input ->
+  ( (Delete.output, Delete.error) result,
+    [> `Step_common_instance      of (module Common_step_common.Instance) S.Context.t
+    | `Step_file_list_instance   of (module Common_step_file_list.Instance) S.Context.t
+    | `Step_filer_instance       of (module Common_step_filer.Instance) S.Context.t
+    | `Step_interaction_instance of (module Common_step_interaction.Instance) S.Context.t
+    ] )
+  S.t
 
-val open_node : Common_step_file_list.scan_location -> Common_step_common.now -> Open_node.work_flow
+val open_node :
+  Open_node.input ->
+  ( (Open_node.output, Open_node.error) result,
+    [> `Step_common_instance    of (module Common_step_common.Instance) S.Context.t
+    | `Step_filer_instance     of (module Common_step_filer.Instance) S.Context.t
+    | `Step_file_list_instance of (module Common_step_file_list.Instance) S.Context.t
+    ] )
+  S.t
 (** A workflow to open a node. Return some data when the node can open *)
 
-val up_directory : Common_step_file_list.scan_location -> Common_step_common.now -> Up_directory.work_flow
+val up_directory :
+  Up_directory.input ->
+  ( (event list, Up_directory.error) result,
+    [> `Step_common_instance    of (module Common_step_common.Instance) S.Context.t
+    | `Step_filer_instance     of (module Common_step_filer.Instance) S.Context.t
+    | `Step_file_list_instance of (module Common_step_file_list.Instance) S.Context.t
+    ] )
+  S.t
 (** A workflow to up directory of specified side. Don't do anything if the side is already located root directory *)
 
-val toggle_mark : Toggle_mark.work_flow
+val toggle_mark :
+  Toggle_mark.input ->
+  ( (event list, Toggle_mark.error) result,
+    [> `Step_filer_instance of (module Common_step_filer.Instance) S.Context.t ] )
+  S.t
 (** A workflow to toggle mark of the item *)

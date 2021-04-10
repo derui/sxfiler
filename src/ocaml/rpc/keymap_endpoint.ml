@@ -2,14 +2,11 @@ open Abbrev
 open Sxfiler_core
 module E = Endpoint_error
 
-type add_key_binding = F.Keymap.Add_key_binding.work_flow -> Endpoint.t
-
 let to_global_events = List.map (fun v -> F.Keymap v)
 
 (** endpoint to add key binding to current key map *)
-let add_key_binding : add_key_binding =
- fun flow ->
-  Endpoint.with_request (G.Keymap.AddKeyBindingRequest.from_proto, G.Keymap.AddKeyBindingResponse.to_proto)
+let add_key_binding workflow deps request =
+  Endpoint.with_request (G.Keymap.AddKeyBindingRequest.from_proto, G.Keymap.AddKeyBindingResponse.to_proto) request
     ~f:(fun (input : G.Keymap.AddKeyBindingRequest.t) ->
       let open Result.Infix in
       let input =
@@ -31,18 +28,15 @@ let add_key_binding : add_key_binding =
       match input with
       | Error err -> Lwt.return_error (E.invalid_input [ err ])
       | Ok input  -> (
-          let%lwt response = flow input in
+          let%lwt response = workflow input |> S.provide deps |> S.run in
           match response with
           | Error F.Keymap.Empty_context      -> E.Keymap_error.empty_context |> E.keymap |> Lwt.return_error
           | Error (F.Keymap.Invalid_key s)    -> E.Keymap_error.invalid_key s |> E.keymap |> Lwt.return_error
           | Error (F.Keymap.Invalid_keymap _) -> E.Keymap_error.invalid_keymap |> E.keymap |> Lwt.return_error
           | Ok events                         -> Lwt.return_ok ((), to_global_events events) ))
 
-type remove_key_binding = F.Keymap.Remove_key_binding.work_flow -> Endpoint.t
-
-let remove_key_binding : remove_key_binding =
- fun flow ->
-  Endpoint.with_request (G.Keymap.AddKeyBindingRequest.from_proto, G.Keymap.AddKeyBindingResponse.to_proto)
+let remove_key_binding workflow deps request =
+  Endpoint.with_request (G.Keymap.AddKeyBindingRequest.from_proto, G.Keymap.AddKeyBindingResponse.to_proto) request
     ~f:(fun (input : G.Keymap.AddKeyBindingRequest.t) ->
       let open Result.Infix in
       let input =
@@ -60,20 +54,17 @@ let remove_key_binding : remove_key_binding =
       match input with
       | Error err -> E.invalid_input [ err ] |> Lwt.return_error
       | Ok input  -> (
-          let%lwt response = flow input in
+          let%lwt response = workflow input |> S.provide deps |> S.run in
           match response with
           | Error F.Keymap.Empty_context      -> E.Keymap_error.empty_context |> E.keymap |> Lwt.return_error
           | Error (F.Keymap.Invalid_key s)    -> E.Keymap_error.invalid_key s |> E.keymap |> Lwt.return_error
           | Error (F.Keymap.Invalid_keymap _) -> E.Keymap_error.invalid_keymap |> E.keymap |> Lwt.return_error
           | Ok events                         -> Lwt.return_ok ((), to_global_events events) ))
 
-type reload = Path.t -> F.Keymap.Reload.work_flow -> Endpoint.t
-
-let reload : reload =
- fun path flow ->
-  Endpoint.with_request (G.Keymap.ReloadRequest.from_proto, G.Keymap.ReloadResponse.to_proto) ~f:(fun () ->
+let reload path workflow deps request =
+  Endpoint.with_request (G.Keymap.ReloadRequest.from_proto, G.Keymap.ReloadResponse.to_proto) request ~f:(fun () ->
       let input = { F.Keymap.Reload.path } in
-      let%lwt response = flow input in
+      let%lwt response = workflow input |> S.provide deps |> S.run in
       match response with
       | Error F.Keymap.Empty_context      -> E.Keymap_error.empty_context |> E.keymap |> Lwt.return_error
       | Error (F.Keymap.Invalid_key s)    -> E.Keymap_error.invalid_key s |> E.keymap |> Lwt.return_error
@@ -83,10 +74,9 @@ let reload : reload =
 (** Reload key map from specified path *)
 
 (* query endpoints *)
-type get = F.Common_step.Keymap.resolve_keymap -> Endpoint.t
-
-let get : get =
- fun resolve ->
-  Endpoint.with_request (G.Keymap.GetRequest.from_proto, G.Keymap.GetResponse.to_proto) ~f:(fun () ->
-      let%lwt keymap = resolve () in
+let get deps request =
+  Endpoint.with_request (G.Keymap.GetRequest.from_proto, G.Keymap.GetResponse.to_proto) request ~f:(fun () ->
+      let%lwt instance = S.fetch ~tag:(fun c -> `Step_keymap_instance c) |> S.provide deps |> S.run in
+      let module I = (val instance : F.Common_step.Keymap.Instance) in
+      let%lwt keymap = I.resolve_keymap () in
       Lwt.return_ok ({ G.Keymap.GetResponse.keymap = Tr.Keymap.of_domain keymap |> Option.some }, []))

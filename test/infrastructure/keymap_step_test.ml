@@ -29,7 +29,8 @@ let test_set =
 
           let empty () = keymap
         end) in
-        let%lwt resolved = I.Keymap_step.resolve_keymap (module S) () in
+        let module Instance = I.Keymap_step.Instance (S) in
+        let%lwt resolved = Instance.resolve_keymap () in
         Alcotest.(check @@ F.Testable.keymap) "keymap" resolved keymap;
         Lwt.return_unit);
     Alcotest_lwt.test_case "store key map " `Quick (fun _ () ->
@@ -41,11 +42,17 @@ let test_set =
         let binding = D.Keymap.Binding.make ~context:D.Context.empty ~key:(Sxfiler_kbd.of_keyseq "v" |> Option.get) in
         let action = D.Keymap.Action.make "action" in
         let keymap' = D.Keymap.add ~binding ~action keymap in
-        let%lwt () = I.Keymap_step.store_keymap (module S) keymap' in
+        let module Instance = I.Keymap_step.Instance (S) in
+        let%lwt () = Instance.store_keymap keymap' in
         let%lwt stored = S.get () in
         Alcotest.(check @@ F.Testable.keymap) "keymap" stored keymap';
         Lwt.return_unit);
     Alcotest_lwt.test_case "load key map" `Quick (fun _ () ->
+        let module S = I.Statable.Make (struct
+          type t = D.Keymap.t
+
+          let empty () = keymap
+        end) in
         let make_keymap list =
           List.fold_left
             (fun keymap (key, contexts, action) ->
@@ -59,12 +66,19 @@ let test_set =
         in
         let keymap = make_keymap [ ("k", [], "action1"); ("j", [ "foo" ], "action2"); ("h", [ "bar" ], "action3") ] in
         let path = Path.of_list [ "."; "data_real"; "key_map"; "test.json" ] |> Result.get_ok in
-        let%lwt keymap' = I.Keymap_step.load_keymap path in
+        let module Instance = I.Keymap_step.Instance (S) in
+        let%lwt keymap' = Instance.load_keymap path in
         Alcotest.(check & result F.Testable.keymap & of_pp Fmt.nop) "keymap" (Ok keymap) keymap';
         Lwt.return_unit);
     Alcotest_lwt.test_case "load invalid key map" `Quick (fun _ () ->
+        let module S = I.Statable.Make (struct
+          type t = D.Keymap.t
+
+          let empty () = keymap
+        end) in
         let path = Path.of_list [ "."; "data_real"; "key_map"; "invalid.json" ] |> Result.get_ok in
-        let%lwt keymap' = I.Keymap_step.load_keymap path in
+        let module Instance = I.Keymap_step.Instance (S) in
+        let%lwt keymap' = Instance.load_keymap path in
         let error = Alcotest.testable FL.Common_step.Keymap.pp_load_error FL.Common_step.Keymap.equal_load_error in
         Alcotest.(check & result F.Testable.keymap error)
           "keymap"

@@ -47,10 +47,11 @@ export const createCommand = (): Command => {
       }
 
       const response = await args.clientResolver.rpcClient().use(Procs.Filer.deleteItems)(request);
-      const events = response.getResultsList().map((v) => {
-        return LogEventCreators.createDeleteItem(new Date(v.getTimestamp()), v.getPath());
-      });
-      dispatcher.dispatch(actions.send(events));
+      const result = response.getResult();
+      if (!result) return;
+
+      const event = LogEventCreators.createDeleteItem(new Date(result.getTimestamp()), result.getPath());
+      dispatcher.dispatch(actions.send([event]));
     },
   };
 };

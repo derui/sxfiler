@@ -179,14 +179,14 @@ message MoveRequest {
   Transfer transfer = 1;
 }
 message MoveResponse {
-  repeated TransferResult results = 1;
+  TransferResult result = 1;
 }
 
 message CopyRequest {
   Transfer transfer = 1;
 }
 message CopyResponse {
-  repeated TransferResult results = 1;
+  TransferResult result = 1;
 }
 
 message DeleteResult {
@@ -200,7 +200,7 @@ message DeleteRequest {
   string target_id = 3;
 }
 message DeleteResponse {
-  repeated DeleteResult results = 1;
+  DeleteResult result = 1;
 }
 
 enum FileEventType {

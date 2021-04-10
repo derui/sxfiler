@@ -1,0 +1,4 @@
+(library
+ (name sxfiler_dependency)
+ (public_name sxfiler.dependency)
+ (libraries sxfiler.core lwt))

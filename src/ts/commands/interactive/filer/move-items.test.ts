@@ -55,14 +55,14 @@ describe("Commands", () => {
       const executor = jest.fn();
       executor.mockImplementation(() =>
         also(new MoveResponse(), (v) => {
-          v.setResultsList([
+          v.setResult(
             also(new TransferResult(), (v) => {
               v.setSource("source");
               v.setDestination("dest");
               v.setTimestamp("2020-05-20T10:00:00.000Z");
               v.setStatus(TransferStatus.SUCCESS);
-            }),
-          ]);
+            })
+          );
         })
       );
       mocks.rpcClient.use.mockImplementation(() => executor);

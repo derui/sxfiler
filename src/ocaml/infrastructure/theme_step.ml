@@ -5,7 +5,15 @@ module T = Sxfiler_translator.Theme
 module G = Sxfiler_generated
 module NE = D.Common.Not_empty_string
 
-type store_configuration = D.Theme.Configuration.t -> unit Lwt.t
+module type State = Statable.S with type state = Sxfiler_domain.Configuration_store.t
+
+module type Theme_option = sig
+  val theme_dir : string
+  (** the directory of theme *)
+
+  val theme_config_key : Sxfiler_domain.Configuration_store.Key.t
+  (** the configuration key for theme that in configuration store *)
+end
 
 module Theme_json = struct
   type t = {
@@ -152,17 +160,78 @@ let list_theme : Path.t -> D.Theme.Definition.t list Lwt.t =
           Lwt.return & List.map snd & Theme_map.bindings themes)
     (fun _ -> Lwt.return [])
 
-let store_theme : store_configuration -> Path.t -> F.Common_step.Theme.Store_theme.t =
- fun store_configuration dir color_pairs base_theme ->
-  let module NE = D.Common.Not_empty_string in
-  let module S = F.Common_step.Theme.Store_theme in
-  let%lwt themes = list_theme dir in
+module Instance (TO : Theme_option) (S : State) = struct
+  module Theme_config = struct
+    type t = {
+      colors : (string * string) list;
+      base_theme : string option;
+    }
+    [@@deriving protocol ~driver:(module Protocol_conv_json.Json)]
+  end
 
-  let base_theme =
-    Option.(
-      base_theme >>= fun base_theme ->
-      List.find_opt (fun theme -> NE.equal theme.D.Theme.Definition.name base_theme) themes)
-  in
-  let theme = D.Theme.Configuration.(make ~colors:color_pairs ?base:base_theme ()) in
-  let%lwt () = store_configuration theme in
-  Lwt.return_ok @@ D.Theme.Configuration.merge_color theme
+  let store_configuration theme =
+    let module T = D.Theme in
+    let module NE = D.Common.Not_empty_string in
+    let%lwt config = S.get () in
+    let theme =
+      {
+        Theme_config.colors =
+          T.Color_map.fold
+            (fun key value acc -> (D.Common.Not_empty_string.value key, T.Color_code.to_string value) :: acc)
+            theme.T.Configuration.colors [];
+        base_theme =
+          ( if NE.equal theme.T.Configuration.base.name T.Definition.base.name then None
+          else Some (NE.value theme.base.name) );
+      }
+    in
+    let config =
+      D.Configuration_store.put ~key:TO.theme_config_key
+        ~value:(Theme_config.to_json theme |> Yojson.Safe.to_basic)
+        config
+    in
+    let%lwt () = S.update config in
+    Lwt.return_unit
+
+  let store_theme color_pairs base_theme =
+    let module NE = D.Common.Not_empty_string in
+    let%lwt themes = list_theme @@ Result.get_ok @@ Path.of_string TO.theme_dir in
+
+    let base_theme =
+      Option.(
+        base_theme >>= fun base_theme ->
+        List.find_opt (fun theme -> NE.equal theme.D.Theme.Definition.name base_theme) themes)
+    in
+    let theme = D.Theme.Configuration.(make ~colors:color_pairs ?base:base_theme ()) in
+    let%lwt () = store_configuration theme in
+    Lwt.return_ok @@ D.Theme.Configuration.merge_color theme
+
+  let get_current_theme () =
+    let module T = D.Theme in
+    let module NE = D.Common.Not_empty_string in
+    let%lwt config = S.get () in
+    let%lwt themes = list_theme @@ Result.get_ok @@ Path.of_string TO.theme_dir in
+    let list_to_option = function [] -> None | v :: _ -> Some v in
+    let theme = D.Configuration_store.get ~key:TO.theme_config_key config in
+    let theme =
+      Option.map
+        (fun theme ->
+          let open Yojson.Basic.Util in
+          let colors =
+            [ theme ] |> filter_member "colors" |> filter_assoc |> list_to_option
+            |> Option.map (fun list ->
+                   List.fold_left
+                     (fun acc (key, v) ->
+                       (NE.make key |> Option.get, to_string v |> T.Color_code.of_string |> Option.get) :: acc)
+                     [] list)
+            |> Option.value ~default:[]
+          and base_theme =
+            [ theme ] |> filter_member "base_theme" |> filter_string |> list_to_option
+            |> Option.bind ~f:(fun theme ->
+                   List.find_opt (fun v -> String.equal (NE.value v.T.Definition.name) theme) themes)
+          in
+          T.Configuration.make ~colors ?base:base_theme () |> T.Configuration.merge_color)
+        theme
+      |> Option.value ~default:(T.Configuration.make ~colors:[] () |> T.Configuration.merge_color)
+    in
+    Lwt.return theme
+end

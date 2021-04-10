@@ -1,14 +1,13 @@
 open Abbrev
-
-type provide_collection = unit -> D.Completer.collection Lwt.t
-(** collection provider *)
-
-type update_collection = D.Completer.collection -> unit Lwt.t
-(** collection updater *)
-
-type read = provide_collection -> (module D.Completer.Instance) -> string -> D.Completer.candidates Lwt.t
+include module type of Common_step_intf.Completer
 (** signature to get candidates from collection with input *)
 
-val read : read
+val read : string ->
+    ( D.Completer.candidates,
+      [> `Step_completer_instance of (module Instance) S.Context.t
+      | `Completer_instance      of (module D.Completer.Instance) S.Context.t
+      ] )
+    S.t
+  (** signature to get candidates from collection with input *)
 (** Implementation for step [read]. Notice that this step caches collection provided dependency function, so need to
     recreate step when collection is updated*)

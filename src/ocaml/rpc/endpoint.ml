@@ -2,6 +2,7 @@
 
 open Abbrev
 open Sxfiler_core
+module S = Sxfiler_dependency
 
 module L = (val I.Logger.make [ "rpc_server" ])
 
@@ -55,7 +56,7 @@ let with_request (from_proto, to_proto) request ~f =
                   },
                   [] ))
         (fun e ->
-          L.err (fun m -> m "Raise error: %s" (Printexc.to_string e));%lwt
+          L.err (fun m -> m "Raise error: %s" (Printexc.to_string e)) |> Lwt.ignore_result;
           Lwt.return
             ( {
                 G.Service.Response.id;

@@ -1,5 +1,6 @@
 open Sxfiler_core
 module D = Sxfiler_domain
+module S = Sxfiler_dependency
 
 type side =
   | Left
@@ -17,10 +18,7 @@ type event =
   | Updated          of (side * D.File_window.free D.File_window.t)
 [@@deriving eq, show]
 
-type transfer_target =
-  | Marked
-  | One    of D.File_item.Id.t
-[@@deriving eq, show]
+type transfer_target = D.File_item.Id.t [@@deriving eq, show]
 
 type transfer_status =
   | Success
@@ -49,10 +47,9 @@ module Move_location = struct
   type input = {
     location : Path.t;
     side : side;
-    filer : D.Filer.t option;
   }
 
-  type work_flow = input -> (event list, error) result Lwt.t
+  type 'a work_flow = input -> ((event list, error) result, 'a) S.t
 end
 
 (** the workflow to initialize filer from locations *)
@@ -66,68 +63,72 @@ module Initialize = struct
     right_sort_order : D.Types.Sort_type.t;
   }
 
-  type work_flow = input -> event list Lwt.t
+  type 'a work_flow = input -> (event list, 'a) S.t
 end
 
 (** the workflow to reload all file list in the filer *)
 module Reload_all = struct
   type error = Not_initialized
 
-  type input = D.Filer.t option
+  type input = unit
 
-  type work_flow = input -> (event list, error) result Lwt.t
+  type 'a work_flow = input -> ((event list, error) result, 'a) S.t
 end
 
 (** the workflow to copy item from one side to another side *)
 module Copy = struct
+  type error = Not_initialized
+
   type input = {
     direction : direction;
-    filer : D.Filer.t;
     target : transfer_target;
   }
 
   type output = {
     events : event list;
-    results : transfer_result list;
+    result : transfer_result;
   }
 
-  type work_flow = input -> output Lwt.t
+  type 'a work_flow = input -> ((output, error) result, 'a) S.t
 end
 
 module Move = struct
+  type error = Not_initialized
+
   type input = {
     direction : direction;
-    filer : D.Filer.t;
     target : transfer_target;
   }
   [@@deriving eq, show]
 
   type output = {
     events : event list;
-    results : transfer_result list;
+    result : transfer_result;
   }
   [@@deriving eq, show]
 
-  type work_flow = input -> output Lwt.t
+  type 'a work_flow = input -> ((output, error) result, 'a) S.t
 end
 
 module Delete = struct
+  type error = Not_initialized
+
   type input = {
     side : side;
-    filer : D.Filer.t;
     target : transfer_target;
   }
 
   type output = {
-    results : delete_result list;
+    result : delete_result option;
     events : event list;
   }
 
-  type work_flow = input -> output Lwt.t
+  type 'a work_flow = input -> ((output, error) result, 'a) S.t
 end
 
 module Open_node = struct
   type error =
+    | Not_initialized
     | Item_not_found      of D.File_item.Id.t
     | Location_not_exists of Path.t
 
@@ -137,23 +138,19 @@ module Open_node = struct
 
   type input = {
     side : side;
-    filer : D.Filer.t;
     item_id : D.File_item.Id.t;
   }
 
-  type work_flow = input -> (output, error) result Lwt.t
+  type 'a work_flow = input -> ((output, error) result, 'a) S.t
 end
 
 (** up directory of specified side *)
 module Up_directory = struct
   type error = Not_initialized
 
-  type input = {
-    side : side;
-    filer : D.Filer.t option;
-  }
+  type input = { side : side }
 
-  type work_flow = input -> (event list, error) result Lwt.t
+  type 'a work_flow = input -> ((event list, error) result, 'a) S.t
 end
 
 (** toggle mark of the item *)
@@ -165,10 +162,9 @@ module Toggle_mark = struct
   type input = {
     side : side;
     item_id : D.File_item.Id.t;
-    filer : D.Filer.t option;
   }
 
-  type work_flow = input -> (event list, error) result Lwt.t
+  type 'a work_flow = input -> ((event list, error) result, 'a) S.t
 end
 
 type commands =

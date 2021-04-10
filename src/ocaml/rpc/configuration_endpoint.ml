@@ -5,19 +5,17 @@ module L = Sxfiler_infrastructure.Logger
 let to_global_event = List.map (fun e -> F.Configuration e)
 
 (* query endpoints *)
-type get = F.Common_step.Configuration.load -> Endpoint.t
 
-let get : get =
- fun load ->
-  Endpoint.with_request (G.Configuration.GetRequest.from_proto, G.Configuration.GetResponse.to_proto) ~f:(fun () ->
-      let%lwt store = load () in
+let get deps request =
+  let%lwt instance = S.fetch ~tag:(fun c -> `Step_configuration_instance c) |> S.provide deps |> S.run in
+  let module I = (val instance : F.Common_step.Configuration.Instance) in
+  Endpoint.with_request (G.Configuration.GetRequest.from_proto, G.Configuration.GetResponse.to_proto) request
+    ~f:(fun () ->
+      let%lwt store = I.load () in
       Lwt.return_ok ({ G.Configuration.GetResponse.configurations = Tr.Configuration_store.of_domain store }, []))
 
-type update = F.Configuration.Update.work_flow -> Endpoint.t
-
-let update : update =
- fun wf ->
-  Endpoint.with_request (G.Configuration.UpdateRequest.from_proto, G.Configuration.UpdateResponse.to_proto)
+let update workflow deps request =
+  Endpoint.with_request (G.Configuration.UpdateRequest.from_proto, G.Configuration.UpdateResponse.to_proto) request
     ~f:(fun res ->
       let module E = Endpoint_error in
       let open Result.Infix in
@@ -36,5 +34,5 @@ let update : update =
       match input with
       | Error e  -> Lwt.return_error (E.invalid_input [ e ])
       | Ok input ->
-          let%lwt events = wf input in
+          let%lwt events = workflow input |> S.provide deps |> S.run in
           Lwt.return_ok ({ G.Configuration.UpdateResponse.key = res.key }, to_global_event events))

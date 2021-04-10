@@ -1,14 +1,6 @@
 open Sxfiler_workflow
 (** This module provide implementation of steps of filer that are needed IO in implementation *)
 
-val scan_location : Common_step.File_list.scan_location
-(** implementations for [Common_step_file_list.scan_location] with real IO *)
+module type State = Statable.S with type state = Sxfiler_domain.Filer.t option
 
-val copy_item : Common_step.Filer.copy_item
-(** implementations for [Common_step_filer.copy_item] with real IO *)
-
-val move_item : Common_step.Filer.move_item
-(** implementations for [Common_step_filer.move_item] with real IO *)
-
-val delete_item : Common_step.Filer.delete_item
-(** implementations for [Common_step_filer.delete_item] with real IO *)
+module Instance (S : State) : Common_step.Filer.Instance

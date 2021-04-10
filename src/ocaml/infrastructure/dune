@@ -10,5 +10,6 @@
             uuidm
             websocket
             websocket-lwt-unix.cohttp
-            unix)
- (preprocess (pps lwt_ppx ppx_deriving.std)))
+            unix
+            ppx_protocol_conv_json)
+ (preprocess (pps lwt_ppx ppx_deriving.std ppx_protocol_conv)))

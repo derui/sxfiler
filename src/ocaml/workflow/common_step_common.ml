@@ -1,4 +1,1 @@
-open Sxfiler_core
-
-type now = unit -> Time.t
-(** Common sub steps for workflow *)
+include Common_step_intf.Common

@@ -2,13 +2,10 @@
 
 open Abbrev
 
-(* query endpoints *)
-type get = F.Common_step.Configuration.load -> Endpoint.t
-
-val get : get
+val get :
+  ([> `Step_configuration_instance of (module F.Common_step.Configuration.Instance) S.Context.t ] -> S.Context.value) ->
+  Endpoint.t
 (** Query endpoint that get current key map *)
 
-type update = F.Configuration.Update.work_flow -> Endpoint.t
-
-val update : update
+val update : 'a F.Configuration.Update.work_flow -> ('a -> S.Context.value) -> Endpoint.t
 (** Update specified key *)

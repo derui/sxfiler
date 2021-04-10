@@ -1,7 +1,9 @@
+open Sxfiler_core
 open Sxfiler_domain
 module C = Sxfiler_core
 module F = Test_fixtures
 module S = Sxfiler_workflow.Common_step
+module P = Sxfiler_dependency
 
 let make_left_file_window file_list = File_window.make_left ~file_list ~history:(Location_history.make ())
 
@@ -18,26 +20,53 @@ let test_set =
     File_list.(
       make ~id:(Id.make "right") ~location:(C.Path.of_string "/right" |> Result.get_ok) ~sort_type:Types.Sort_type.Name)
   in
+  let get_mock () =
+    ( module struct
+      let scan_location path =
+        if Path.equal path left_list.location then Lwt.return_ok left_list_items
+        else if Path.equal path right_list.location then Lwt.return_ok right_list_items
+        else failwith "Invalid"
+    end : S.File_list.Instance )
+  in
+  let get_empty_mock () =
+    ( module struct
+      let scan_location _ = Lwt.return_ok []
+    end : S.File_list.Instance )
+  in
+  let get_demand_mock ?demand_decision () =
+    ( module struct
+      let demand_decision = Option.value demand_decision ~default:(fun _ -> Lwt.return Interaction.Canceled)
+    end : S.Interaction.Instance )
+  in
   let filer () =
-    let%lwt left_list = left_list |> S.File_list.scan (fun _ -> Lwt.return_ok left_list_items)
-    and right_list = right_list |> S.File_list.scan (fun _ -> Lwt.return_ok right_list_items) in
+    let open P.Infix in
+    let* left_list = left_list |> S.File_list.scan in
+    let* right_list = right_list |> S.File_list.scan in
     let left_file_window = make_left_file_window left_list and right_file_window = make_right_file_window right_list in
-    Filer.make ~left_file_window ~right_file_window |> Lwt.return
+    Filer.make ~left_file_window ~right_file_window |> P.return
   in
 
   [
     Alcotest_lwt.test_case "reload left side file window " `Quick (fun _ () ->
-        let%lwt filer = filer () in
-        let reload_left = S.Filer.reload_left (fun _ -> Lwt.return_ok []) S.File_list.reload in
-        let%lwt left_file_window' = reload_left filer in
-
+        let%lwt filer =
+          filer () |> P.provide (function `Step_file_list_instance c -> P.Context.value (get_mock ()) c) |> P.run
+        in
+        let%lwt left_file_window' =
+          S.Filer.reload_left filer
+          |> P.provide (function `Step_file_list_instance c -> P.Context.value (get_empty_mock ()) c)
+          |> P.run
+        in
         Alcotest.(check @@ list F.Testable.file_item) "swapped" [] (File_list.items left_file_window'.file_list);
         Lwt.return_unit);
     Alcotest_lwt.test_case "reload right side file window " `Quick (fun _ () ->
-        let%lwt filer = filer () in
-        let reload_right = S.Filer.reload_right (fun _ -> Lwt.return_ok []) S.File_list.reload in
-        let%lwt right_file_window' = reload_right filer in
-
+        let%lwt filer =
+          filer () |> P.provide (function `Step_file_list_instance c -> P.Context.value (get_mock ()) c) |> P.run
+        in
+        let%lwt right_file_window' =
+          S.Filer.reload_right filer
+          |> P.provide (function `Step_file_list_instance c -> P.Context.value (get_empty_mock ()) c)
+          |> P.run
+        in
         Alcotest.(check @@ list F.Testable.file_item) "swapped" [] (File_list.items right_file_window'.file_list);
         Lwt.return_unit);
     Alcotest_lwt.test_case "interaction for copy request and response" `Quick (fun _ () ->
@@ -49,7 +78,12 @@ let test_set =
           | _                        -> Alcotest.fail "Invalid path"
         in
 
-        let request_copy_interaction = S.Filer.request_copy_interaction demand_action in
+        let mock = get_demand_mock ~demand_decision:demand_action () in
+        let request_copy_interaction v =
+          S.Filer.request_copy_interaction v
+          |> P.provide (function `Step_interaction_instance c -> P.Context.value mock c)
+          |> P.run
+        in
         let%lwt event = request_copy_interaction item in
 
         Alcotest.(check @@ result F.Testable.Interaction.filer_copy_selected @@ of_pp Fmt.nop)
@@ -63,8 +97,13 @@ let test_set =
               Lwt.return Interaction.(Canceled)
           | _                        -> Alcotest.fail "Invalid path"
         in
+        let mock = get_demand_mock ~demand_decision:demand_action () in
 
-        let request_copy_interaction = S.Filer.request_copy_interaction demand_action in
+        let request_copy_interaction v =
+          S.Filer.request_copy_interaction v
+          |> P.provide (function `Step_interaction_instance c -> P.Context.value mock c)
+          |> P.run
+        in
         let%lwt event = request_copy_interaction item in
 
         Alcotest.(check @@ result F.Testable.Interaction.filer_copy_selected @@ of_pp Fmt.nop)
@@ -78,8 +117,12 @@ let test_set =
               Lwt.return Interaction.(Filer_move_selected Filer_move_selected.Overwrite)
           | _                        -> Alcotest.fail "Invalid path"
         in
-
-        let request_move_interaction = S.Filer.request_move_interaction demand_action in
+        let mock = get_demand_mock ~demand_decision:demand_action () in
+        let request_move_interaction v =
+          S.Filer.request_move_interaction v
+          |> P.provide (function `Step_interaction_instance c -> P.Context.value mock c)
+          |> P.run
+        in
         let%lwt event = request_move_interaction item in
 
         Alcotest.(check @@ result F.Testable.Interaction.filer_move_selected @@ of_pp Fmt.nop)
@@ -93,8 +136,13 @@ let test_set =
               Lwt.return Interaction.(Canceled)
           | _                        -> Alcotest.fail "Invalid path"
         in
+        let mock = get_demand_mock ~demand_decision:demand_action () in
 
-        let request_move_interaction = S.Filer.request_move_interaction demand_action in
+        let request_move_interaction v =
+          S.Filer.request_move_interaction v
+          |> P.provide (function `Step_interaction_instance c -> P.Context.value mock c)
+          |> P.run
+        in
         let%lwt event = request_move_interaction item in
 
         Alcotest.(check @@ result F.Testable.Interaction.filer_move_selected @@ of_pp Fmt.nop)
@@ -108,8 +156,13 @@ let test_set =
               Lwt.return Interaction.(Filer_delete_selected Filer_delete_selected.Confirm)
           | _                          -> Alcotest.fail "Invalid path"
         in
+        let mock = get_demand_mock ~demand_decision:demand_action () in
 
-        let request_delete_interaction = S.Filer.request_delete_interaction demand_action in
+        let request_delete_interaction v =
+          S.Filer.request_delete_interaction v
+          |> P.provide (function `Step_interaction_instance c -> P.Context.value mock c)
+          |> P.run
+        in
         let%lwt event = request_delete_interaction item in
 
         Alcotest.(check @@ result F.Testable.Interaction.filer_delete_selected @@ of_pp Fmt.nop)
@@ -123,8 +176,13 @@ let test_set =
               Lwt.return Interaction.(Canceled)
           | _                          -> Alcotest.fail "Invalid path"
         in
+        let mock = get_demand_mock ~demand_decision:demand_action () in
 
-        let request_delete_interaction = S.Filer.request_delete_interaction demand_action in
+        let request_delete_interaction v =
+          S.Filer.request_delete_interaction v
+          |> P.provide (function `Step_interaction_instance c -> P.Context.value mock c)
+          |> P.run
+        in
         let%lwt event = request_delete_interaction item in
 
         Alcotest.(check @@ result F.Testable.Interaction.filer_delete_selected @@ of_pp Fmt.nop)

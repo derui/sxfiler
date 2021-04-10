@@ -3,6 +3,7 @@ module I = Sxfiler_infrastructure
 module D = Sxfiler_domain
 module G = Sxfiler_generated
 module F = Sxfiler_workflow
+module S = Sxfiler_dependency
 
 exception Fail_load_migemo
 
@@ -78,7 +79,15 @@ let restore_app_state (module Dep : Dependencies.S) option =
         }
       in
       let open Lwt.Infix in
-      let%lwt events = Dep.Work_flow.Filer.initialize input >|= List.map (fun v -> F.Filer v) in
+      let%lwt events =
+        F.Filer.initialize input
+        |> S.provide (function
+             | `Step_file_list_instance c ->
+                 S.Context.value (module Dep.Step.File_list : F.Common_step.File_list.Instance) c
+             | `Step_filer_instance c     -> S.Context.value (module Dep.Step.Filer : F.Common_step.Filer.Instance) c)
+        |> S.run
+        >|= List.map (fun v -> F.Filer v)
+      in
       let%lwt () = Dep.post_event events in
       Lwt.return_unit
   | Ok v    ->
@@ -124,7 +133,15 @@ let restore_app_state (module Dep : Dependencies.S) option =
           }
         in
         let open Lwt.Infix in
-        let%lwt events = Dep.Work_flow.Filer.initialize input >|= List.map (fun v -> F.Filer v) in
+        let%lwt events =
+          F.Filer.initialize input
+          |> S.provide (function
+               | `Step_file_list_instance c ->
+                   S.Context.value (module Dep.Step.File_list : F.Common_step.File_list.Instance) c
+               | `Step_filer_instance c     -> S.Context.value (module Dep.Step.Filer : F.Common_step.Filer.Instance) c)
+          |> S.run
+          >|= List.map (fun v -> F.Filer v)
+        in
         let%lwt () = Dep.post_event events in
         Log.info (fun m -> m "Finish restoring persisted filers")
       in
@@ -207,7 +224,12 @@ let call_initial_flows (module Dep : Dependencies.S) option =
   let keymap_file = option.App_option.keymap_file in
   let reload_keymap =
     let%lwt () = Log.info (fun m -> m "Start loading keymap...") in
-    let%lwt v = Dep.Work_flow.Keymap.reload { path = keymap_file } in
+    let%lwt v =
+      F.Keymap.reload { path = keymap_file }
+      |> S.provide (function `Step_keymap_instance c ->
+             S.Context.value (module Dep.Step.Keymap : F.Common_step.Keymap.Instance) c)
+      |> S.run
+    in
     Result.fold
       ~ok:(List.map (fun v -> F.Keymap v))
       ~error:(fun e ->
