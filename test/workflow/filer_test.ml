@@ -258,7 +258,7 @@ let test_set =
             ()
         in
         let work_flow v =
-          FL.copy v
+          FL.move v
           |> S.provide (function
                | `Step_common_instance c      -> S.Context.value common c
                | `Step_file_list_instance c   -> S.Context.value filer_list c

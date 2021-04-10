@@ -82,7 +82,7 @@ and reload_step_tests =
         let%lwt scanned =
           S.scan list >>= S.reload
           |> P.provide (function `Step_file_list_instance c ->
-                 P.Context.value (get_mock (fun counter _ -> if counter == 1 then Ok [ file_item ] else Ok [])) c)
+                 P.Context.value (get_mock (fun counter _ -> if counter = 0 then Ok [ file_item ] else Ok [])) c)
           |> P.run
         in
 
@@ -93,7 +93,7 @@ and reload_step_tests =
     Alcotest_lwt.test_case "reload step returns No_location when current location not exists" `Quick (fun _ () ->
         let location = C.Path.of_string "/location" |> Result.get_ok in
         let list = File_list.make ~id:(File_list.Id.make "test") ~location ~sort_type:Types.Sort_type.Name in
-        let scan_location counter path = if counter = 1 then Ok [ file_item ] else Error (`Not_exists path) in
+        let scan_location counter path = if counter = 0 then Ok [ file_item ] else Error (`Not_exists path) in
         let open P.Infix in
         let%lwt scanned =
           S.scan list >>= S.reload
