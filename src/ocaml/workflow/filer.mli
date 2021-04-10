@@ -14,7 +14,9 @@ val initialize :
 val reload_all :
   Reload_all.input ->
   ( (event list, Reload_all.error) result,
-    [> `Step_file_list_instance of (module Common_step_file_list.Instance) S.Context.t ] )
+    [> `Step_file_list_instance of (module Common_step_file_list.Instance) S.Context.t
+    | `Step_filer_instance     of (module Common_step_filer.Instance) S.Context.t
+    ] )
   S.t
 (** The workflow to reload file lists in both side of the filer *)
 
@@ -23,13 +25,14 @@ val move_location :
   ( (event list, Move_location.error) result,
     [> `Step_common_instance    of (module Common_step_common.Instance) S.Context.t
     | `Step_file_list_instance of (module Common_step_file_list.Instance) S.Context.t
+    | `Step_filer_instance     of (module Common_step_filer.Instance) S.Context.t
     ] )
   S.t
 (** The workflow to move location of file list specified side of the filer *)
 
 val copy :
   Copy.input ->
-  ( Copy.output,
+  ( (Copy.output, Copy.error) result,
     [> `Step_common_instance      of (module Common_step_common.Instance) S.Context.t
     | `Step_file_list_instance   of (module Common_step_file_list.Instance) S.Context.t
     | `Step_filer_instance       of (module Common_step_filer.Instance) S.Context.t
@@ -40,7 +43,7 @@ val copy :
 
 val move :
   Move.input ->
-  ( Move.output,
+  ( (Move.output, Move.error) result,
     [> `Step_common_instance      of (module Common_step_common.Instance) S.Context.t
     | `Step_file_list_instance   of (module Common_step_file_list.Instance) S.Context.t
     | `Step_filer_instance       of (module Common_step_filer.Instance) S.Context.t
@@ -51,7 +54,7 @@ val move :
 
 val delete :
   Delete.input ->
-  ( Delete.output,
+  ( (Delete.output, Delete.error) result,
     [> `Step_common_instance      of (module Common_step_common.Instance) S.Context.t
     | `Step_file_list_instance   of (module Common_step_file_list.Instance) S.Context.t
     | `Step_filer_instance       of (module Common_step_filer.Instance) S.Context.t
@@ -63,6 +66,7 @@ val open_node :
   Open_node.input ->
   ( (Open_node.output, Open_node.error) result,
     [> `Step_common_instance    of (module Common_step_common.Instance) S.Context.t
+    | `Step_filer_instance     of (module Common_step_filer.Instance) S.Context.t
     | `Step_file_list_instance of (module Common_step_file_list.Instance) S.Context.t
     ] )
   S.t
@@ -72,10 +76,15 @@ val up_directory :
   Up_directory.input ->
   ( (event list, Up_directory.error) result,
     [> `Step_common_instance    of (module Common_step_common.Instance) S.Context.t
+    | `Step_filer_instance     of (module Common_step_filer.Instance) S.Context.t
     | `Step_file_list_instance of (module Common_step_file_list.Instance) S.Context.t
     ] )
   S.t
 (** A workflow to up directory of specified side. Don't do anything if the side is already located root directory *)
 
-val toggle_mark : Toggle_mark.input -> (event list, Toggle_mark.error) result Lwt.t
+val toggle_mark :
+  Toggle_mark.input ->
+  ( (event list, Toggle_mark.error) result,
+    [> `Step_filer_instance of (module Common_step_filer.Instance) S.Context.t ] )
+  S.t
 (** A workflow to toggle mark of the item *)

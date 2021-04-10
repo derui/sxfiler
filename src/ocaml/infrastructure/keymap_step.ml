@@ -1,6 +1,5 @@
 open Sxfiler_core
 module D = Sxfiler_domain
-module F = Sxfiler_workflow
 
 module type State = Statable.S with type state = Sxfiler_domain.Keymap.t
 

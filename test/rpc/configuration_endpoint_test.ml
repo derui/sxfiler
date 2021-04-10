@@ -6,8 +6,16 @@ module Pb = Ocaml_protoc_plugin
 module F = Sxfiler_workflow
 module T = Sxfiler_translator
 module K = D.Configuration_store.Key
+module S = Sxfiler_dependency
 
 let test_set =
+  let get_mock conf =
+    ( module struct
+      let save _ = failwith "save"
+
+      let load () = Lwt.return conf
+    end : F.Common_step.Configuration.Instance )
+  in
   let value_t = Alcotest.testable G.Configuration.Configuration.pp G.Configuration.Configuration.equal in
   [
     Alcotest_lwt.test_case "get configuration from step" `Quick (fun _ () ->
@@ -19,8 +27,11 @@ let test_set =
           |> D.Configuration_store.put ~key:(K.from_list [ "sample" ] |> Option.get) ~value:(`String "sample")
         in
         let expected = T.Configuration_store.of_domain actual in
-        let step () = Lwt.return actual in
-        let%lwt res, events = R.Configuration_endpoint.get step request in
+        let%lwt res, events =
+          R.Configuration_endpoint.get
+            (function `Step_configuration_instance c -> S.Context.value (get_mock actual) c)
+            request
+        in
         let payload =
           res.payload |> Bytes.to_string |> Pb.Reader.create |> G.Configuration.GetResponse.from_proto |> Result.get_ok
         in

@@ -19,6 +19,8 @@ module Add_key_binding = struct
     key : D.Common.Not_empty_string.t;
     action : D.Common.Not_empty_string.t;
   }
+
+  type 'a work_flow = input -> ((event list, error) result, 'a) S.t
 end
 
 module Remove_key_binding = struct
@@ -26,10 +28,14 @@ module Remove_key_binding = struct
     context : D.Common.Not_empty_string.t list;
     key : D.Common.Not_empty_string.t;
   }
+
+  type 'a work_flow = input -> ((event list, error) result, 'a) S.t
 end
 
 module Reload = struct
   type input = { path : Path.t }
+
+  type 'a work_flow = input -> ((event list, error) result, 'a) S.t
 end
 
 type commands =

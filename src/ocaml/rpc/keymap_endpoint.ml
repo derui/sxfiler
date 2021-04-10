@@ -5,7 +5,7 @@ module E = Endpoint_error
 let to_global_events = List.map (fun v -> F.Keymap v)
 
 (** endpoint to add key binding to current key map *)
-let add_key_binding deps request =
+let add_key_binding workflow deps request =
   Endpoint.with_request (G.Keymap.AddKeyBindingRequest.from_proto, G.Keymap.AddKeyBindingResponse.to_proto) request
     ~f:(fun (input : G.Keymap.AddKeyBindingRequest.t) ->
       let open Result.Infix in
@@ -28,14 +28,14 @@ let add_key_binding deps request =
       match input with
       | Error err -> Lwt.return_error (E.invalid_input [ err ])
       | Ok input  -> (
-          let%lwt response = F.Keymap.add_key_binding input |> S.provide deps |> S.run in
+          let%lwt response = workflow input |> S.provide deps |> S.run in
           match response with
           | Error F.Keymap.Empty_context      -> E.Keymap_error.empty_context |> E.keymap |> Lwt.return_error
           | Error (F.Keymap.Invalid_key s)    -> E.Keymap_error.invalid_key s |> E.keymap |> Lwt.return_error
           | Error (F.Keymap.Invalid_keymap _) -> E.Keymap_error.invalid_keymap |> E.keymap |> Lwt.return_error
           | Ok events                         -> Lwt.return_ok ((), to_global_events events) ))
 
-let remove_key_binding deps request =
+let remove_key_binding workflow deps request =
   Endpoint.with_request (G.Keymap.AddKeyBindingRequest.from_proto, G.Keymap.AddKeyBindingResponse.to_proto) request
     ~f:(fun (input : G.Keymap.AddKeyBindingRequest.t) ->
       let open Result.Infix in
@@ -54,17 +54,17 @@ let remove_key_binding deps request =
       match input with
       | Error err -> E.invalid_input [ err ] |> Lwt.return_error
       | Ok input  -> (
-          let%lwt response = F.Keymap.remove_key_binding input |> S.provide deps |> S.run in
+          let%lwt response = workflow input |> S.provide deps |> S.run in
           match response with
           | Error F.Keymap.Empty_context      -> E.Keymap_error.empty_context |> E.keymap |> Lwt.return_error
           | Error (F.Keymap.Invalid_key s)    -> E.Keymap_error.invalid_key s |> E.keymap |> Lwt.return_error
           | Error (F.Keymap.Invalid_keymap _) -> E.Keymap_error.invalid_keymap |> E.keymap |> Lwt.return_error
           | Ok events                         -> Lwt.return_ok ((), to_global_events events) ))
 
-let reload path deps request =
+let reload path workflow deps request =
   Endpoint.with_request (G.Keymap.ReloadRequest.from_proto, G.Keymap.ReloadResponse.to_proto) request ~f:(fun () ->
       let input = { F.Keymap.Reload.path } in
-      let%lwt response = F.Keymap.reload input |> S.provide deps |> S.run in
+      let%lwt response = workflow input |> S.provide deps |> S.run in
       match response with
       | Error F.Keymap.Empty_context      -> E.Keymap_error.empty_context |> E.keymap |> Lwt.return_error
       | Error (F.Keymap.Invalid_key s)    -> E.Keymap_error.invalid_key s |> E.keymap |> Lwt.return_error

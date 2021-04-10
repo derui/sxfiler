@@ -96,12 +96,17 @@ let test_set =
         Lwt.return_unit);
     Alcotest_lwt.test_case "reload both side one time" `Quick (fun _ () ->
         let mock = get_mock (fun _ -> Lwt.return_ok []) in
-        let work_flow v =
-          FL.reload_all v |> S.provide (function `Step_file_list_instance c -> S.Context.value mock c) |> S.run
+        let work_flow filer () =
+          FL.reload_all ()
+          |> S.provide (function
+               | `Step_file_list_instance c -> S.Context.value mock c
+               | `Step_filer_instance c     ->
+                   S.Context.value (get_filer_mock ~get:(fun _ -> Lwt.return @@ Option.some filer) ()) c)
+          |> S.run
         in
         let%lwt filer = filer () in
         let%lwt filer' =
-          match%lwt work_flow (Some filer) with
+          match%lwt work_flow filer () with
           | Ok [ FL.Initialized v ] -> Lwt.return v
           | _                       -> Alcotest.fail "illegal path"
         in
@@ -109,10 +114,12 @@ let test_set =
         Alcotest.(check @@ list F.Testable.file_item) "right" [] (File_list.items filer'.right_file_window.file_list);
         Lwt.return_unit);
     Alcotest_lwt.test_case "delete specified item" `Quick (fun _ () ->
+        let%lwt filer = filer () in
         let common = get_common_mock () in
         let filer_list = get_mock (fun _ -> Lwt.return_ok []) in
         let filer_mock =
           get_filer_mock
+            ~get:(fun _ -> Lwt.return_some filer)
             ~delete_item:(fun item ->
               Alcotest.(check @@ F.Testable.file_item) "delete" (List.nth left_list_items 0) item;
               Lwt.return_ok ())
@@ -129,12 +136,9 @@ let test_set =
         in
 
         let target = left_list_items |> Fun.flip List.nth 0 in
-        let%lwt filer = filer () in
         let%lwt file_window', result =
-          match%lwt
-            work_flow FL.Delete.{ filer; side = FL.Left; target = List.nth left_list_items 0 |> File_item.id }
-          with
-          | { events = [ FL.Updated (_, window) ]; result } -> Lwt.return (window, result)
+          match%lwt work_flow FL.Delete.{ side = FL.Left; target = List.nth left_list_items 0 |> File_item.id } with
+          | Ok { events = [ FL.Updated (_, window) ]; result } -> Lwt.return (window, result)
           | _ -> Alcotest.fail "illegal path"
         in
         Alcotest.(check @@ list F.Testable.file_item) "left" [] (File_list.items file_window'.file_list);
@@ -151,8 +155,10 @@ let test_set =
         in
         let common = get_common_mock () in
         let filer_list = get_mock scan_location in
+        let%lwt filer = filer () in
         let filer_mock =
           get_filer_mock
+            ~get:(fun _ -> Lwt.return_some filer)
             ~copy_item:(fun { source; _ } ->
               Alcotest.(check & of_pp Path.pp) "source" File_item.(item target |> Item.full_path) source;
               Lwt.return_ok ())
@@ -172,10 +178,9 @@ let test_set =
                      c)
           |> S.run
         in
-        let%lwt filer = filer () in
         let%lwt (_, right_fw), result =
-          match%lwt work_flow FL.Copy.{ filer; direction = FL.Left_to_right; target = File_item.id target } with
-          | { events = [ FL.Updated (Left, left); FL.Updated (Right, right) ]; result } ->
+          match%lwt work_flow FL.Copy.{ direction = FL.Left_to_right; target = File_item.id target } with
+          | Ok { events = [ FL.Updated (Left, left); FL.Updated (Right, right) ]; result } ->
               Lwt.return ((left, right), result)
           | _ -> Alcotest.fail "illegal path"
         in
@@ -196,8 +201,10 @@ let test_set =
         let counter = ref 0 in
         let common = get_common_mock () in
         let filer_list = get_mock scan_location in
+        let%lwt filer = filer () in
         let filer_mock =
           get_filer_mock
+            ~get:(fun _ -> Lwt.return_some filer)
             ~copy_item:(fun { source; _ } ->
               if !counter = 0 then (
                 incr counter;
@@ -219,10 +226,9 @@ let test_set =
                      c)
           |> S.run
         in
-        let%lwt filer = filer () in
         let%lwt _, right_window', result =
-          match%lwt work_flow FL.Copy.{ filer; direction = FL.Left_to_right; target = File_item.id target } with
-          | { events = [ FL.Updated (_, left_window); FL.Updated (_, right_window) ]; result } ->
+          match%lwt work_flow FL.Copy.{ direction = FL.Left_to_right; target = File_item.id target } with
+          | Ok { events = [ FL.Updated (_, left_window); FL.Updated (_, right_window) ]; result } ->
               Lwt.return (left_window, right_window, result)
           | _ -> Alcotest.fail "illegal path"
         in
@@ -240,8 +246,10 @@ let test_set =
         in
         let common = get_common_mock () in
         let filer_list = get_mock scan_location in
+        let%lwt filer = filer () in
         let filer_mock =
           get_filer_mock
+            ~get:(fun _ -> Lwt.return_some filer)
             ~move_item:(fun { source; dest; _ } ->
               let file_name = File_item.(item target |> Item.full_path) |> Path.basename in
               Alcotest.(check & of_pp Path.pp) "source" File_item.(item target |> Item.full_path) source;
@@ -263,10 +271,9 @@ let test_set =
                      c)
           |> S.run
         in
-        let%lwt filer = filer () in
         let%lwt left_window', right_window', result =
-          match%lwt work_flow { filer; direction = FL.Left_to_right; target = File_item.id target } with
-          | { events = [ FL.Updated (Left, left_window); FL.Updated (Right, right_window) ]; result } ->
+          match%lwt work_flow { direction = FL.Left_to_right; target = File_item.id target } with
+          | Ok { events = [ FL.Updated (Left, left_window); FL.Updated (Right, right_window) ]; result } ->
               Lwt.return (left_window, right_window, result)
           | _ -> Alcotest.fail "illegal path"
         in
@@ -284,16 +291,18 @@ let test_set =
         let scan_location _ = Lwt.return_ok right_list_items in
         let common = get_common_mock () in
         let file_list = get_mock scan_location in
+        let%lwt filer = filer () in
+        let filer_mock = get_filer_mock ~get:(fun _ -> Lwt.return_some filer) () in
         let work_flow v =
           FL.open_node v
           |> S.provide (function
                | `Step_common_instance c    -> S.Context.value common c
+               | `Step_filer_instance c     -> S.Context.value filer_mock c
                | `Step_file_list_instance c -> S.Context.value file_list c)
           |> S.run
         in
-        let%lwt filer = filer () in
         let%lwt window' =
-          match%lwt work_flow FL.Open_node.{ filer; side = Left; item_id = File_item.id target } with
+          match%lwt work_flow FL.Open_node.{ side = Left; item_id = File_item.id target } with
           | Ok (FL.Open_node.Open_directory [ Location_changed (_, v) ]) -> Lwt.return v
           | _ -> Alcotest.fail "illegal path"
         in
@@ -321,15 +330,17 @@ let test_set =
         in
         let common = get_common_mock () in
         let file_list = get_mock scan_location in
+        let%lwt filer = filer () in
+        let filer_mock = get_filer_mock ~get:(fun _ -> Lwt.return_some filer) () in
         let work_flow v =
           FL.up_directory v
           |> S.provide (function
                | `Step_common_instance c    -> S.Context.value common c
+               | `Step_filer_instance c     -> S.Context.value filer_mock c
                | `Step_file_list_instance c -> S.Context.value file_list c)
           |> S.run
         in
-        let%lwt filer = filer () in
-        let%lwt ret = work_flow FL.Up_directory.{ side = FL.Left; filer = Some filer } in
+        let%lwt ret = work_flow FL.Up_directory.{ side = FL.Left } in
         let window = match ret with Ok [ FL.Location_changed (Left, v) ] -> v | _ -> Alcotest.fail "illegal path" in
         let sort_items = List.sort & File_item.compare_by Types.Sort_type.Name in
         let left_expected = sort_items right_list_items
@@ -340,17 +351,19 @@ let test_set =
         Alcotest.(check @@ list F.Testable.file_item) "right initialized" right_expected right_actual;
         Lwt.return_unit);
     Alcotest_lwt.test_case "mark item if it is not marked" `Quick (fun _ () ->
-        let work_flow v = FL.toggle_mark v in
         let%lwt filer = filer () in
+        let filer_mock = get_filer_mock ~get:(fun _ -> Lwt.return_some filer) () in
+        let work_flow v =
+          FL.toggle_mark v |> S.provide (function `Step_filer_instance c -> S.Context.value filer_mock c) |> S.run
+        in
         let item_id = List.nth left_list_items 0 |> File_item.id in
-        let%lwt ret = work_flow { FL.Toggle_mark.side = FL.Left; filer = Some filer; item_id } in
+        let%lwt ret = work_flow { FL.Toggle_mark.side = FL.Left; item_id } in
         let file_window = match ret with Ok [ FL.Updated (_, v) ] -> v | _ -> Alcotest.fail "illegal path" in
         let expected = List.nth left_list_items 0 |> File_item.mark in
         let actual = file_window.file_list |> File_list.find_item ~id:item_id |> Option.get in
         Alcotest.(check @@ F.Testable.file_item) "left item" expected actual;
         Lwt.return_unit);
     Alcotest_lwt.test_case "delete mark from the item if it is marked" `Quick (fun _ () ->
-        let work_flow = FL.toggle_mark in
         let%lwt filer = filer () in
         let item_id = List.nth left_list_items 0 |> File_item.id in
         let filer =
@@ -358,7 +371,11 @@ let test_set =
           let file_list = File_list.mark_items ~ids:[ item_id ] file_window.file_list in
           File_window.reload_list file_list file_window |> Result.get_ok |> Fun.flip Filer.update_left filer
         in
-        let%lwt ret = work_flow { FL.Toggle_mark.side = FL.Left; filer = Some filer; item_id } in
+        let filer_mock = get_filer_mock ~get:(fun _ -> Lwt.return_some filer) () in
+        let work_flow v =
+          FL.toggle_mark v |> S.provide (function `Step_filer_instance c -> S.Context.value filer_mock c) |> S.run
+        in
+        let%lwt ret = work_flow { FL.Toggle_mark.side = FL.Left; item_id } in
         let file_window = match ret with Ok [ FL.Updated (_, v) ] -> v | _ -> Alcotest.fail "illegal path" in
         let expected = List.nth left_list_items 0 in
         let actual = file_window.file_list |> File_list.find_item ~id:item_id |> Option.get in
