@@ -20,8 +20,8 @@ let rec eq_type : type a b. a typ -> b typ -> (a, b) eq option =
   | String, String               -> Some Eq
   | Bool, Bool                   -> Some Eq
   | Pair (a1, a2), Pair (b1, b2) -> (
-      match (eq_type a1 b1, eq_type a2 b2) with Some Eq, Some Eq -> Some Eq | _, _ -> None )
-  | List a, List b               -> ( match eq_type a b with Some Eq -> Some Eq | _ -> None )
+      match (eq_type a1 b1, eq_type a2 b2) with Some Eq, Some Eq -> Some Eq | _, _ -> None)
+  | List a, List b               -> ( match eq_type a b with Some Eq -> Some Eq | _ -> None)
   | _, _                         -> None
 
 let try_cast : type a. a typ -> state -> a option =

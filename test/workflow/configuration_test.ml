@@ -12,13 +12,13 @@ let test_set =
         let input = { FL.Configuration.Update.key; value = `String "foo" } in
         let expected = Configuration_store.put ~key ~value:(`String "foo") Configuration_store.empty in
         let mock =
-          ( module struct
+          (module struct
             let load () = Lwt.return Configuration_store.empty
 
             let save conf =
               Alcotest.(check conf_t) "conf" expected conf;
               Lwt.return_unit
-          end : FL.Common_step.Configuration.Instance )
+          end : FL.Common_step.Configuration.Instance)
         in
         let%lwt ret =
           FL.Configuration.update input

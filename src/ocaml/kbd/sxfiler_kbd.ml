@@ -58,8 +58,11 @@ let parse_sequence seq =
   | _  ->
       let k =
         List.fold_left
-          (fun item -> function Meta       -> { item with meta = true } | Ctrl       -> { item with ctrl = true }
-            | Key key    -> { item with key } | Whitespace -> item)
+          (fun item -> function
+            | Meta       -> { item with meta = true }
+            | Ctrl       -> { item with ctrl = true }
+            | Key key    -> { item with key }
+            | Whitespace -> item)
           empty tokens
       in
       if k.key = "" then None else Some k

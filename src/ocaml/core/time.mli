@@ -1,7 +1,10 @@
 (** {!Time} module define representation for micro-second based time.
 
-    Limitations: {- Only have micro-second resolution.} {- All offset [t] created from float is UTC.} {- Do not have any
-    calendar function. }*)
+    Limitations:
+
+    - Only have micro-second resolution.
+    - All offset [t] created from float is UTC.
+    - Do not have any calendar function. *)
 
 type t
 (** [t] is the abstract time of this module. [t] can have range between [min] and [max]. *)
@@ -30,7 +33,7 @@ val of_rfc3339 : string -> t option
 
 val to_int64 : t -> int64
 (** [to_int64 t] returns time of [t] that has micro-second resolution. Representation returned from this function
-    {{always}} has micro-second resolution, so it is [1_000_000_000] if [t] is converted from [epoch = 1] *)
+    *always* has micro-second resolution, so it is [1_000_000_000] if [t] is converted from [epoch = 1] *)
 
 val to_float : t -> float
 (** [to_float t] returns time of [t] that has seconds in fraction of the result and micro-seconds in exponent of it. *)

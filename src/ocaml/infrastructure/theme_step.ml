@@ -180,8 +180,8 @@ module Instance (TO : Theme_option) (S : State) = struct
             (fun key value acc -> (D.Common.Not_empty_string.value key, T.Color_code.to_string value) :: acc)
             theme.T.Configuration.colors [];
         base_theme =
-          ( if NE.equal theme.T.Configuration.base.name T.Definition.base.name then None
-          else Some (NE.value theme.base.name) );
+          (if NE.equal theme.T.Configuration.base.name T.Definition.base.name then None
+          else Some (NE.value theme.base.name));
       }
     in
     let config =

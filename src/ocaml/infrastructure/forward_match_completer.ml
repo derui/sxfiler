@@ -20,8 +20,8 @@ module Core = struct
 end
 
 let make () =
-  ( module struct
+  (module struct
     module Completer = Core
 
     let this = ()
-  end : T.Completer.Instance )
+  end : T.Completer.Instance)

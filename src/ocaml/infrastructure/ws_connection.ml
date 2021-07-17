@@ -37,7 +37,7 @@ module Impl = struct
       t.input_writer None;
       t.output_writer <- (fun _ -> ());
       let%lwt () = Log.info @@ fun m -> m "Connection disconnected" in
-      Lwt_stream.closed t.input_stream )
+      Lwt_stream.closed t.input_stream)
 
   let is_closed t = Lwt_stream.is_closed t.input_stream
 
@@ -54,8 +54,8 @@ end
 let make () =
   let input_stream, input_writer = Lwt_stream.create () in
   let t = { Impl.output_writer = (fun _ -> ()); input_stream; input_writer } in
-  ( module struct
+  (module struct
     module Connection = Impl
 
     let instance = t
-  end : Instance )
+  end : Instance)

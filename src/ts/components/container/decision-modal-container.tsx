@@ -15,17 +15,14 @@ export type Props = {
 
 export type ElementType = ReturnType<typeof Component>;
 
-const handleNewNameChange = (
-  state: State,
-  commandResolver: CommandResolver.Type,
-  commandExecutor: CommandExecutor.Type
-) => (newName: string) => {
-  const command = commandResolver.resolveBy(commands.descriptors.decisionUpdateNewName);
-  if (!command) {
-    return;
-  }
-  commandExecutor.execute(command, state, { updatedName: newName });
-};
+const handleNewNameChange =
+  (state: State, commandResolver: CommandResolver.Type, commandExecutor: CommandExecutor.Type) => (newName: string) => {
+    const command = commandResolver.resolveBy(commands.descriptors.decisionUpdateNewName);
+    if (!command) {
+      return;
+    }
+    commandExecutor.execute(command, state, { updatedName: newName });
+  };
 
 // Stateless container to render filer
 export const Component: preact.FunctionComponent<Props> = ({ state }): ElementType | null => {

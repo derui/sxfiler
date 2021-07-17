@@ -68,8 +68,8 @@ module Impl = struct
 end
 
 let make (module C : Client.Instance) =
-  ( module struct
+  (module struct
     module Mediator = Impl
 
     let instance = { Impl.client = (module C) }
-  end : Instance )
+  end : Instance)

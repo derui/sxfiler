@@ -1,4 +1,4 @@
-(** This module provides more functionally for {int64} *)
+(** This module provides more functionally for {!int64} *)
 include sig
   include module type of Stdlib.Int64
 

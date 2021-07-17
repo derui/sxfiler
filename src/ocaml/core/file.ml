@@ -28,7 +28,7 @@ let remove ?(recursive = true) path =
           if Sys.is_directory path then (
             let entries = Sys.readdir path |> Array.map (Filename.concat path) |> Array.to_list in
             remove_all_structure entries;
-            Unix.rmdir path )
+            Unix.rmdir path)
           else Sys.remove path;
           remove_all_structure rest
     in

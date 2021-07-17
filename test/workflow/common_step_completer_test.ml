@@ -18,11 +18,11 @@ let test_set =
     let this = ()
   end in
   let get_mock expected =
-    ( module struct
+    (module struct
       let provide_collection () = Lwt.return expected
 
       let update_collection _ = failwith "not implemented"
-    end : FL.Common_step.Completer.Instance )
+    end : FL.Common_step.Completer.Instance)
   in
 
   [

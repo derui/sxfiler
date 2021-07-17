@@ -75,9 +75,9 @@ end
 let make (module IG : D.Id_generator.S with type id = Uuidm.t) (module C : Ws_connection.Instance) =
   let waiter, wakener = Lwt.wait () in
   let module IM = Impl (IG) in
-  ( module struct
+  (module struct
     module Actor = IM
 
     let instance =
       { IM.conn = (module C); receivers = Receiver_map.empty; receiver_lock = Lwt_mutex.create (); waiter; wakener }
-  end : Instance )
+  end : Instance)

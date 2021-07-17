@@ -19,9 +19,9 @@ let file_item =
   File_item.(make ~id:(Id.make "string") ~full_path:C.Path.(of_string "test.txt" |> Result.get_ok) ~stat:file_stat)
 
 let get_mock scan_location =
-  ( module struct
+  (module struct
     let scan_location path = scan_location path |> Lwt.return
-  end : S.Instance )
+  end : S.Instance)
 
 let scan_step_tests =
   [
@@ -62,13 +62,13 @@ let scan_step_tests =
 
 and reload_step_tests =
   let get_mock scan_location =
-    ( module struct
+    (module struct
       let counter = ref 0
 
       let scan_location path =
         incr counter;
         scan_location !counter path |> Lwt.return
-    end : S.Instance )
+    end : S.Instance)
   in
   [
     Alcotest_lwt.test_case "reload scanned file list" `Quick (fun _ () ->
@@ -86,9 +86,9 @@ and reload_step_tests =
           |> P.run
         in
 
-        ( match scanned with
+        (match scanned with
         | File_list.Valid { items; _ } -> Alcotest.(check @@ list @@ of_pp File_item.pp) "reloaded" [] items
-        | No_location _                -> Alcotest.fail "not scanned" );
+        | No_location _                -> Alcotest.fail "not scanned");
         Lwt.return_unit);
     Alcotest_lwt.test_case "reload step returns No_location when current location not exists" `Quick (fun _ () ->
         let location = C.Path.of_string "/location" |> Result.get_ok in
@@ -100,11 +100,11 @@ and reload_step_tests =
           |> P.provide (function `Step_file_list_instance c -> P.Context.value (get_mock scan_location) c)
           |> P.run
         in
-        ( match scanned with
+        (match scanned with
         | File_list.Valid _ -> Alcotest.fail "invalid course"
         | No_location { id; location = location'; _ } ->
             Alcotest.(check @@ of_pp File_list.Id.pp) "reloaded" list.id id;
-            Alcotest.(check @@ of_pp C.Path.pp) "path" location location' );
+            Alcotest.(check @@ of_pp C.Path.pp) "path" location location');
         Lwt.return_unit);
   ]
 

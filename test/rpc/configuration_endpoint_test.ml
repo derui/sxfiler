@@ -10,11 +10,11 @@ module S = Sxfiler_dependency
 
 let test_set =
   let get_mock conf =
-    ( module struct
+    (module struct
       let save _ = failwith "save"
 
       let load () = Lwt.return conf
-    end : F.Common_step.Configuration.Instance )
+    end : F.Common_step.Configuration.Instance)
   in
   let value_t = Alcotest.testable G.Configuration.Configuration.pp G.Configuration.Configuration.equal in
   [

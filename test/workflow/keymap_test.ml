@@ -9,13 +9,13 @@ let test_set =
   let module E = Common.Not_empty_string in
   let make_e = Option.get % E.make in
   let get_mock ?(store_keymap = fun _ -> Lwt.return_unit) ?(load_keymap = fun _ -> failwith "") resolve =
-    ( module struct
+    (module struct
       let resolve_keymap () = Lwt.return resolve
 
       let store_keymap = store_keymap
 
       let load_keymap = load_keymap
-    end : FL.Common_step.Keymap.Instance )
+    end : FL.Common_step.Keymap.Instance)
   in
   [
     Alcotest_lwt.test_case "add key binding by work flow" `Quick (fun _ () ->

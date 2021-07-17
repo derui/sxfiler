@@ -65,7 +65,7 @@ let make (module Option' : Option') (module Completer : D.Completer.Instance) (m
   let module Client = (val R.Client.make (module Id_generator_string) (module Ws_actor)) in
   let module Mediator = (val R.Interaction_mediator.make (module Client)) in
   let module Server = (val R.Server.make (module Ws_actor)) in
-  ( module struct
+  (module struct
     module System = Sxfiler_core.System.Real
     module Client = Client
     module Server = Server
@@ -110,4 +110,4 @@ let make (module Option' : Option') (module Completer : D.Completer.Instance) (m
     end
 
     let post_event = Event_handlers.setup_handlers (module Client)
-  end : S )
+  end : S)

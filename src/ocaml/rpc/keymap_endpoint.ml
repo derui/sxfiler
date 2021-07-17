@@ -33,7 +33,7 @@ let add_key_binding workflow deps request =
           | Error F.Keymap.Empty_context      -> E.Keymap_error.empty_context |> E.keymap |> Lwt.return_error
           | Error (F.Keymap.Invalid_key s)    -> E.Keymap_error.invalid_key s |> E.keymap |> Lwt.return_error
           | Error (F.Keymap.Invalid_keymap _) -> E.Keymap_error.invalid_keymap |> E.keymap |> Lwt.return_error
-          | Ok events                         -> Lwt.return_ok ((), to_global_events events) ))
+          | Ok events                         -> Lwt.return_ok ((), to_global_events events)))
 
 let remove_key_binding workflow deps request =
   Endpoint.with_request (G.Keymap.AddKeyBindingRequest.from_proto, G.Keymap.AddKeyBindingResponse.to_proto) request
@@ -59,7 +59,7 @@ let remove_key_binding workflow deps request =
           | Error F.Keymap.Empty_context      -> E.Keymap_error.empty_context |> E.keymap |> Lwt.return_error
           | Error (F.Keymap.Invalid_key s)    -> E.Keymap_error.invalid_key s |> E.keymap |> Lwt.return_error
           | Error (F.Keymap.Invalid_keymap _) -> E.Keymap_error.invalid_keymap |> E.keymap |> Lwt.return_error
-          | Ok events                         -> Lwt.return_ok ((), to_global_events events) ))
+          | Ok events                         -> Lwt.return_ok ((), to_global_events events)))
 
 let reload path workflow deps request =
   Endpoint.with_request (G.Keymap.ReloadRequest.from_proto, G.Keymap.ReloadResponse.to_proto) request ~f:(fun () ->

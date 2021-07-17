@@ -46,7 +46,7 @@ module Impl (Id : D.Id_generator.S with type id = string) = struct
           | Error (`Pb_error e) ->
               let%lwt () = Lwt_mvar.put response_var (Error (`Pb_error e)) in
               cancel ();
-              Lwt.return `Finished )
+              Lwt.return `Finished)
       | _                     -> Lwt.return `Continue
     in
     let%lwt () = C.(Actor.add_receiver instance receiver) in
@@ -58,8 +58,8 @@ module Impl (Id : D.Id_generator.S with type id = string) = struct
 end
 
 let make (module Id : D.Id_generator.S with type id = string) (module A : I.Ws_actor.Instance) =
-  ( module struct
+  (module struct
     module Client = Impl (Id)
 
     let instance = { Client.actor = (module A) }
-  end : Instance )
+  end : Instance)

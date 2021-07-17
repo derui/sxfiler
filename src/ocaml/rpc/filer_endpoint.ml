@@ -82,8 +82,7 @@ let move_location workflow deps request =
           let%lwt ret = workflow input |> Dep.provide deps |> Dep.run in
           match ret with
           | Ok events -> Lwt.return_ok ((), to_global_events events)
-          | Error F.Filer.Move_location.Not_initialized -> E.Filer_error.not_initialized |> E.filer |> Lwt.return_error
-          ))
+          | Error F.Filer.Move_location.Not_initialized -> E.Filer_error.not_initialized |> E.filer |> Lwt.return_error))
 
 (** The function for move_location procedure implementation *)
 
@@ -179,10 +178,10 @@ let move workflow deps request =
                         G.Filer.TransferResult.source = Path.to_string source;
                         destination = Path.to_string dest;
                         status =
-                          ( match status with
+                          (match status with
                           | Success  -> G.Filer.TransferStatus.SUCCESS
                           | Failed   -> FAILED
-                          | Canceled -> CANCELED );
+                          | Canceled -> CANCELED);
                         timestamp = Time.to_rfc3339 timestamp;
                       } );
               }
@@ -208,10 +207,10 @@ let copy workflow deps request =
                         G.Filer.TransferResult.source = Path.to_string source;
                         destination = Path.to_string dest;
                         status =
-                          ( match status with
+                          (match status with
                           | Success  -> G.Filer.TransferStatus.SUCCESS
                           | Failed   -> FAILED
-                          | Canceled -> CANCELED );
+                          | Canceled -> CANCELED);
                         timestamp = Time.to_rfc3339 timestamp;
                       } );
               }

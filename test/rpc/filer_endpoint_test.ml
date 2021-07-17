@@ -9,16 +9,16 @@ module S = Sxfiler_dependency
 let test_set =
   let filer = Test_fixtures.Filer.fixture () in
   let file_list_mock () =
-    ( module struct
+    (module struct
       let scan_location v =
         match v |> Path.to_string with
         | "left"  -> filer.left_file_window.file_list |> D.File_list.items |> Lwt_result.return
         | "right" -> filer.right_file_window.file_list |> D.File_list.items |> Lwt_result.return
         | _       -> failwith ""
-    end : F.Common_step.File_list.Instance )
+    end : F.Common_step.File_list.Instance)
   in
   let filer_mock ?get () =
-    ( module struct
+    (module struct
       let get = Option.value ~default:(fun () -> failwith "get") get
 
       let copy_item _ = failwith ""
@@ -26,7 +26,7 @@ let test_set =
       let move_item _ = failwith ""
 
       let delete_item _ = failwith ""
-    end : F.Common_step.Filer.Instance )
+    end : F.Common_step.Filer.Instance)
   in
   let filer = Test_fixtures.Filer.fixture () in
   [

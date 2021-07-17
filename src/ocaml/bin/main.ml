@@ -42,7 +42,7 @@ let load_migemo dict_dir =
   let dict_file = Filename.concat dict_dir migemo_dict in
   if not & Sys.file_exists dict_file then (
     Logs.err (fun m -> m "Dict file not found: %s" dict_file);
-    None )
+    None)
   else
     let module M = Migemocaml in
     match M.Dict_tree.load_dict dict_file with
@@ -262,9 +262,9 @@ let handler option (conn : _ * Cohttp.Connection.t) (req : Cohttp_lwt_unix.Reque
           let actor_thread = Ws_actor.(Actor.start instance) in
           let server_thread = start_rpc_server (module Dep) option in
           Lwt.on_termination server_thread (fun () ->
-              ( Dep.Server.(Server.stop instance);
-                Ws_actor.(Actor.stop instance);
-                Logs.info (fun m -> m "Terminate thread") |> Lwt.return )
+              (Dep.Server.(Server.stop instance);
+               Ws_actor.(Actor.stop instance);
+               Logs.info (fun m -> m "Terminate thread") |> Lwt.return)
               |> Lwt.ignore_result);
           Lwt.join [ server_thread; actor_thread ]);
       let%lwt () = C.Connection.connect C.instance frames_out_fn in

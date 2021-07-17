@@ -65,13 +65,13 @@ module Color_code = struct
           | [ r; g; b ]    -> Some (RGB (hex_to_color (r ^ r), hex_to_color (g ^ g), hex_to_color (b ^ b)))
           | [ r; g; b; a ] ->
               Some (RGBA (hex_to_color (r ^ r), hex_to_color (g ^ g), hex_to_color (b ^ b), hex_to_color (a ^ a)))
-          | _              -> failwith "Invalid state" )
+          | _              -> failwith "Invalid state")
       | 6 | 8 -> (
           let colors = String.split_by_len ~len:2 hex in
           match colors with
           | [ r; g; b ]    -> Some (RGB (hex_to_color r, hex_to_color g, hex_to_color b))
           | [ r; g; b; a ] -> Some (RGBA (hex_to_color r, hex_to_color g, hex_to_color b, hex_to_color a))
-          | _              -> failwith "Invalid state" )
+          | _              -> failwith "Invalid state")
       | _     -> None
 
   let to_string = function

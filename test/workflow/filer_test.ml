@@ -24,17 +24,17 @@ let test_set =
       make ~id:(Id.make "right") ~location:(Path.of_string "/right" |> Result.get_ok) ~sort_type:Types.Sort_type.Name)
   in
   let get_common_mock () =
-    ( module struct
+    (module struct
       let now () = Time.of_float 0. |> Option.get
-    end : CS.Instance )
+    end : CS.Instance)
   in
   let get_mock scan_location =
-    ( module struct
+    (module struct
       let scan_location = scan_location
-    end : CS.File_list.Instance )
+    end : CS.File_list.Instance)
   in
   let get_filer_mock ?get ?copy_item ?move_item ?delete_item () =
-    ( module struct
+    (module struct
       let get = Option.value get ~default:(fun () -> failwith "")
 
       let copy_item = Option.value copy_item ~default:(fun _ -> failwith "")
@@ -42,7 +42,7 @@ let test_set =
       let move_item = Option.value move_item ~default:(fun _ -> failwith "")
 
       let delete_item = Option.value delete_item ~default:(fun _ -> failwith "")
-    end : CS.Filer.Instance )
+    end : CS.Filer.Instance)
   in
   let filer () =
     let%lwt left_list =
@@ -172,9 +172,9 @@ let test_set =
                | `Step_filer_instance c       -> S.Context.value filer_mock c
                | `Step_interaction_instance c ->
                    S.Context.value
-                     ( module struct
+                     (module struct
                        let demand_decision _ = Lwt.return Interaction.Canceled
-                     end : CS.Interaction.Instance )
+                     end : CS.Interaction.Instance)
                      c)
           |> S.run
         in
@@ -208,7 +208,7 @@ let test_set =
             ~copy_item:(fun { source; _ } ->
               if !counter = 0 then (
                 incr counter;
-                Lwt.return_error (CS.Filer.Destination_exists source) )
+                Lwt.return_error (CS.Filer.Destination_exists source))
               else Alcotest.fail "do not call twice")
             ()
         in
@@ -220,9 +220,9 @@ let test_set =
                | `Step_filer_instance c       -> S.Context.value filer_mock c
                | `Step_interaction_instance c ->
                    S.Context.value
-                     ( module struct
+                     (module struct
                        let demand_decision _ = Lwt.return Interaction.Canceled
-                     end : CS.Interaction.Instance )
+                     end : CS.Interaction.Instance)
                      c)
           |> S.run
         in
@@ -265,9 +265,9 @@ let test_set =
                | `Step_filer_instance c       -> S.Context.value filer_mock c
                | `Step_interaction_instance c ->
                    S.Context.value
-                     ( module struct
+                     (module struct
                        let demand_decision _ = Lwt.return Interaction.Canceled
-                     end : CS.Interaction.Instance )
+                     end : CS.Interaction.Instance)
                      c)
           |> S.run
         in

@@ -17,12 +17,12 @@ type ContainerContextProps = ContainerProps & {
   opened: boolean;
 };
 
-const handleInput = (cb: (input: string) => void, cb2: (input: string) => void) => (
-  e: preact.JSX.TargetedEvent<HTMLInputElement, Event>
-) => {
-  cb(e.currentTarget.value || "");
-  cb2(e.currentTarget.value || "");
-};
+const handleInput =
+  (cb: (input: string) => void, cb2: (input: string) => void) =>
+  (e: preact.JSX.TargetedEvent<HTMLInputElement, Event>) => {
+    cb(e.currentTarget.value || "");
+    cb2(e.currentTarget.value || "");
+  };
 
 const scrollItemIfNeeded = (parent: HTMLElement | null | undefined, selected: boolean) => (e: HTMLElement | null) => {
   if (!e || !parent || !selected) {

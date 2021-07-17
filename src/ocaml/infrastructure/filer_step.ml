@@ -74,8 +74,8 @@ module Instance (S : State) = struct
            | Unix.Unix_error (e, _, _) -> (
                match e with
                | Unix.EPERM -> Common_step.Filer.No_permission (Unix.error_message e)
-               | _          -> Unknown (Unix.error_message e) )
-           | _ as e                    -> Unknown (Printexc.to_string e)) )
+               | _          -> Unknown (Unix.error_message e))
+           | _ as e                    -> Unknown (Printexc.to_string e)))
 
   let move_item { Common_step.Filer.source; dest; overwrite } =
     let source' = Path.to_string source in
@@ -86,7 +86,7 @@ module Instance (S : State) = struct
            | Unix.Unix_error (e, _, _) -> (
                match e with
                | Unix.EPERM -> Common_step.Filer.No_permission "can not move"
-               | _          -> Common_step.Filer.Unknown (Unix.error_message e) )
+               | _          -> Common_step.Filer.Unknown (Unix.error_message e))
            | _ as e                    -> Common_step.Filer.Unknown (Printexc.to_string e))
     in
     if Sys.file_exists dest' && not & overwrite then Lwt.return_error (Common_step.Filer.Destination_exists dest)

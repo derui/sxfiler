@@ -49,4 +49,4 @@ let update deps request =
           | Error (F.Theme.Store_error _)          -> E.Theme_error.store_error |> E.theme |> Lwt.return_error
           | Ok theme                               ->
               let res = G.Theme.UpdateResponse.{ theme = theme |> Tr.Theme.of_domain |> Option.some } in
-              Lwt.return_ok (res, []) ))
+              Lwt.return_ok (res, [])))

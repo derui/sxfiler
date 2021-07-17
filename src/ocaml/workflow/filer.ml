@@ -106,7 +106,7 @@ let copy input =
                 | Error Canceled -> to_result Canceled |> S.return
                 | Ok Interaction.Filer_copy_selected.Overwrite -> copy_item' ~overwrite:true item
                 | Ok (Interaction.Filer_copy_selected.Rename name) ->
-                    copy_item' ~new_name:(D.Common.Not_empty_string.value name) item )
+                    copy_item' ~new_name:(D.Common.Not_empty_string.value name) item)
           in
 
           (* run real workflow *)
@@ -122,7 +122,7 @@ let copy input =
                   Copy.events = [ Updated (source_side, source_file_window); Updated (dest_side, dest_file_window) ];
                   result;
                 }
-          | Error `Not_same, _ | _, Error `Not_same -> S.return_ok { Copy.events = []; result } ) )
+          | Error `Not_same, _ | _, Error `Not_same -> S.return_ok { Copy.events = []; result }))
 
 let move input =
   (* setup value and functions *)
@@ -161,7 +161,7 @@ let move input =
                 | Error Canceled -> to_result Canceled |> S.return
                 | Ok Interaction.Filer_move_selected.Overwrite -> move_item' ~overwrite:true item
                 | Ok (Interaction.Filer_move_selected.Rename name) ->
-                    move_item' ~new_name:(D.Common.Not_empty_string.value name) item )
+                    move_item' ~new_name:(D.Common.Not_empty_string.value name) item)
           in
 
           (* run real workflow *)
@@ -177,7 +177,7 @@ let move input =
                   Move.events = [ Updated (source_side, source_file_window); Updated (dest_side, dest_file_window) ];
                   result;
                 }
-          | Error _, _ | _, Error _ -> S.return_ok { Move.events = []; result } ) )
+          | Error _, _ | _, Error _ -> S.return_ok { Move.events = []; result }))
 
 let delete input =
   (* setup value and functions *)
@@ -215,7 +215,7 @@ let delete input =
           match file_window with
           | Ok dest_file_window ->
               S.return_ok { Delete.events = [ Updated (input.side, dest_file_window) ]; result = deleted_item }
-          | Error `Not_same     -> S.return_ok { Delete.events = []; result = deleted_item } ) )
+          | Error `Not_same     -> S.return_ok { Delete.events = []; result = deleted_item }))
 
 (* implementation for open_node flow *)
 let open_node input =
@@ -255,8 +255,8 @@ let open_node input =
         | Ok file_list ->
             let timestamp = CS.now () in
             S.return
-            @@ ( D.File_window.move_location ~file_list ~timestamp file_window
-               |> Result.map_error (fun _ -> `Same_location) )
+            @@ (D.File_window.move_location ~file_list ~timestamp file_window
+               |> Result.map_error (fun _ -> `Same_location))
       in
       let update_filer file_window =
         match file_window with
@@ -269,7 +269,7 @@ let open_node input =
       | Error (`Not_exists item) -> S.return_error (Open_node.Item_not_found item)
       (* can not handle same location *)
       | Error `Same_location | Error `Do_not_directory -> S.return_ok Open_node.Not_implemented
-      | Ok v -> S.return_ok v )
+      | Ok v -> S.return_ok v)
 
 let up_directory { Up_directory.side } =
   let open S.Infix in
@@ -293,7 +293,7 @@ let up_directory { Up_directory.side } =
         in
         let timestamp = CS.now () in
         let file_window = File_window.move_location ~file_list ~timestamp file_window in
-        match file_window with Error `Same -> S.return_ok [] | Ok v -> S.return_ok [ Location_changed (side, v) ] )
+        match file_window with Error `Same -> S.return_ok [] | Ok v -> S.return_ok [ Location_changed (side, v) ])
 
 (* implementation for toggle_mark *)
 let toggle_mark { Toggle_mark.side; item_id } =
@@ -324,4 +324,4 @@ let toggle_mark { Toggle_mark.side; item_id } =
       let result = Ok filer >>= mark_item >>= update_filer in
       match result with
       | Error `Not_found | Error `Not_same -> S.return_error Toggle_mark.Item_not_found
-      | Ok file_window                     -> S.return_ok [ Updated (side, file_window) ] )
+      | Ok file_window                     -> S.return_ok [ Updated (side, file_window) ])

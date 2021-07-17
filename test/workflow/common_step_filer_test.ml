@@ -21,22 +21,22 @@ let test_set =
       make ~id:(Id.make "right") ~location:(C.Path.of_string "/right" |> Result.get_ok) ~sort_type:Types.Sort_type.Name)
   in
   let get_mock () =
-    ( module struct
+    (module struct
       let scan_location path =
         if Path.equal path left_list.location then Lwt.return_ok left_list_items
         else if Path.equal path right_list.location then Lwt.return_ok right_list_items
         else failwith "Invalid"
-    end : S.File_list.Instance )
+    end : S.File_list.Instance)
   in
   let get_empty_mock () =
-    ( module struct
+    (module struct
       let scan_location _ = Lwt.return_ok []
-    end : S.File_list.Instance )
+    end : S.File_list.Instance)
   in
   let get_demand_mock ?demand_decision () =
-    ( module struct
+    (module struct
       let demand_decision = Option.value demand_decision ~default:(fun _ -> Lwt.return Interaction.Canceled)
-    end : S.Interaction.Instance )
+    end : S.Interaction.Instance)
   in
   let filer () =
     let open P.Infix in

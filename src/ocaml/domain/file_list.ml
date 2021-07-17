@@ -51,12 +51,12 @@ let reload result = function
   | Valid t       -> (
       match result with
       | `No_location   -> No_location { id = t.id; location = t.location; file_item_order = t.file_item_order }
-      | `Scanned items -> Valid { t with items } |> sort_items )
+      | `Scanned items -> Valid { t with items } |> sort_items)
   | No_location t -> (
       match result with
       | `No_location   -> No_location t
       | `Scanned items ->
-          Valid { id = t.id; location = t.location; file_item_order = t.file_item_order; items } |> sort_items )
+          Valid { id = t.id; location = t.location; file_item_order = t.file_item_order; items } |> sort_items)
 
 let scan result t =
   match result with

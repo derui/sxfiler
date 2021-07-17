@@ -11,11 +11,11 @@ let test_set =
   and key_t = Alcotest.testable Common.Not_empty_string.pp Common.Not_empty_string.equal in
   let color_pair_t = Alcotest.pair key_t color_code_t in
   let get_mock ?(store_theme = fun _ _ -> failwith "") ?(get_current_theme = fun () -> failwith "") () =
-    ( module struct
+    (module struct
       let store_theme = store_theme
 
       let get_current_theme = get_current_theme
-    end : FL.Common_step.Theme.Instance )
+    end : FL.Common_step.Theme.Instance)
   in
   [
     Alcotest_lwt.test_case "add theme by work flow" `Quick (fun _ () ->

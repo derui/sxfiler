@@ -24,8 +24,8 @@ module Core = struct
 end
 
 let make ~migemo =
-  ( module struct
+  (module struct
     module Completer = Core
 
     let this = Core.make ~migemo
-  end : T.Completer.Instance )
+  end : T.Completer.Instance)

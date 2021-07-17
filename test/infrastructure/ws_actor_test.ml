@@ -5,7 +5,7 @@ module W = Websocket
 
 let test_set =
   let get_conn ?write_output () =
-    ( module struct
+    (module struct
       let stream, push = Lwt_stream.create ()
 
       module Connection = struct
@@ -29,7 +29,7 @@ let test_set =
       end
 
       let instance = ()
-    end : C.Instance )
+    end : C.Instance)
   in
   let module Gen = struct
     type id = Uuidm.t
@@ -81,11 +81,11 @@ let test_set =
         let receiver_1 frame =
           if !count = 0 then (
             incr count;
-            Lwt.return `Continue )
+            Lwt.return `Continue)
           else (
             Alcotest.(check & of_pp W.Frame.pp) "received" frame_2 frame;
             Lwt.wakeup wakener_1 ();
-            Lwt.return `Continue )
+            Lwt.return `Continue)
         in
         let receiver_2 frame =
           (* do not call twice *)

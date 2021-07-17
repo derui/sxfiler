@@ -100,8 +100,8 @@ end
 
 let make (module C : I.Ws_actor.Instance) =
   let waiter, wakener = Lwt.wait () in
-  ( module struct
+  (module struct
     module Server = Impl
 
     let instance = { Server.actor = (module C); waiter; wakener; cancel = (fun () -> ()) }
-  end : Instance )
+  end : Instance)

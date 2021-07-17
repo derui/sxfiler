@@ -74,7 +74,7 @@ let normalize_path ?env path =
     | _ as s -> Comp_filename s
   in
   let rec split_by_sep (path, rest) accum =
-    if rest = "" then List.rev & (path_to_component path :: accum)
+    if rest = "" then List.rev & path_to_component path :: accum
     else
       let accum = path_to_component path :: accum in
       split_by_sep (split_path_sep ?env rest) accum
@@ -127,14 +127,14 @@ let resolve ?env sys path =
           | Comp_current         -> resolve_relatives rest accum
           | Comp_empty           -> resolve_relatives rest accum
           | Comp_parent          -> resolve_relatives rest (List.tl accum)
-          | Comp_filename _ as a -> resolve_relatives rest (a :: accum) )
+          | Comp_filename _ as a -> resolve_relatives rest (a :: accum))
     in
     let root, components =
       match path.root with
       | None   -> (
           match of_string ?env & S.getcwd () with
           | Error _ -> (path.root, path.components)
-          | Ok cwd  -> (cwd.root, cwd.components @ path.components) )
+          | Ok cwd  -> (cwd.root, cwd.components @ path.components))
       | Some _ -> (path.root, path.components)
     in
     { root; resolved = true; components = resolve_relatives components [] }
