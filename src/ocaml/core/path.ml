@@ -74,7 +74,7 @@ let normalize_path ?env path =
     | _ as s -> Comp_filename s
   in
   let rec split_by_sep (path, rest) accum =
-    if rest = "" then List.rev & path_to_component path :: accum
+    if rest = "" then List.rev & (path_to_component path :: accum)
     else
       let accum = path_to_component path :: accum in
       split_by_sep (split_path_sep ?env rest) accum
